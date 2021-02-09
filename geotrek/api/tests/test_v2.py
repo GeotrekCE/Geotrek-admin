@@ -370,16 +370,16 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'difficulty_max': '3',
             'ascent_min': '150',
             'ascent_max': '1000',
-            'city': '31000',
-            'district': '420',
-            'structure': '8',
-            'accessibility': '4',
-            'theme': '15',
-            'portal': '16',
-            'label': '23',
-            'route': '68',
+            'cities': ['31000'],
+            'districts': ['420'],
+            'structures': ['8'],
+            'accessibilities': ['4'],
+            'themes': ['15'],
+            'portals': ['16'],
+            'labels': ['23'],
+            'routes': ['68'],
+            'practices': ['1'],
             'q': 'test string',
-            'practice': '1'
         })
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -390,8 +390,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_trek_list_filters_inexistant_zones(self):
         response = self.get_trek_list({
-            'city': '99999',
-            'district': '999',
+            'cities': ['99999'],
+            'districts': ['999'],
         })
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -401,7 +401,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')), 0)
 
     def test_trek_city(self):
-        response = self.get_trek_list({'city': self.city.pk})
+        response = self.get_trek_list({'cities': [self.city.pk]})
         self.assertEqual(len(response.json()['results']), 15)
 
     def test_tour_list(self):
@@ -579,7 +579,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          POI_PROPERTIES_GEOJSON_STRUCTURE)
 
-        response = self.get_poi_list({'type': self.poi_type.pk, 'trek': self.treks[0].pk})
+        response = self.get_poi_list({'types': [self.poi_type.pk], 'trek': self.treks[0].pk})
         self.assertEqual(response.status_code, 200)
 
     def test_poi_type(self):
@@ -644,39 +644,39 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_categories(self):
-        response = self.get_touristiccontent_list({'categories': self.content.category.pk})
+        response = self.get_touristiccontent_list({'categories': [self.content.category.pk]})
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_types(self):
-        response = self.get_touristiccontent_list({'types': self.content.type1.all()[0].pk})
+        response = self.get_touristiccontent_list({'types': [self.content.type1.all()[0].pk]})
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_city(self):
-        response = self.get_touristiccontent_list({'city': self.city.pk})
+        response = self.get_touristiccontent_list({'cities': [self.city.pk]})
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_inexistant_city(self):
-        response = self.get_touristiccontent_list({'city': '99999'})
+        response = self.get_touristiccontent_list({'cities': ['99999']})
         self.assertEqual(len(response.json()['results']), 0)
 
     def test_touristiccontent_district(self):
-        response = self.get_touristiccontent_list({'district': self.district.pk})
+        response = self.get_touristiccontent_list({'districts': [self.district.pk]})
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_inexistant_district(self):
-        response = self.get_touristiccontent_list({'district': 99999})
+        response = self.get_touristiccontent_list({'districts': [99999]})
         self.assertEqual(len(response.json()['results']), 0)
 
     def test_touristiccontent_structure(self):
-        response = self.get_touristiccontent_list({'structure': self.content.structure.pk})
+        response = self.get_touristiccontent_list({'structures': [self.content.structure.pk]})
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_theme(self):
-        response = self.get_touristiccontent_list({'theme': self.content.themes.all()[0].pk})
+        response = self.get_touristiccontent_list({'themes': [self.content.themes.all()[0].pk]})
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_portal(self):
-        response = self.get_touristiccontent_list({'portal': self.content.portal.all()[0].pk})
+        response = self.get_touristiccontent_list({'portals': [self.content.portal.all()[0].pk]})
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_q(self):
@@ -838,11 +838,11 @@ class APISwaggerTestCase(BaseApiTest):
 
     def test_schema_fields(self):
         response = self.client.get('/api/v2/?format=openapi')
-        self.assertContains(response, 'Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat')
-        self.assertContains(response, 'Set language for translation. Default: all. Example: fr')
-        self.assertContains(response, 'Set minimum difficulty for a trek. Difficulty usually goes ')
-        self.assertContains(response, 'Reference point to compute distance LNG,LAT')
-        self.assertContains(response, 'Practices ids separated by comas.')
+        self.assertContains(response, 'Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84).')
+        self.assertContains(response, 'Set language for translation. Can be all or a two-letters language code.')
+        self.assertContains(response, 'Filter by minimum difficulty level (id).')
+        self.assertContains(response, 'Reference point to compute distance (WGS84). Example: lng,lat.')
+        self.assertContains(response, 'Filter by one or more practice id, comma-separated.')
 
     def test_swagger_ui(self):
         response = self.client.get('/api/v2/')
@@ -897,7 +897,7 @@ class RatingScaleTestCase(TestCase):
             self.assertEqual(scale['name']['en'], 'AAA')
 
     def test_filter_practice(self):
-        response = self.client.get('/api/v2/ratingscale/?practice={}'.format(self.practice2.pk))
+        response = self.client.get('/api/v2/ratingscale/?practices={}'.format(self.practice2.pk))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for scale in response.json()['results']:
