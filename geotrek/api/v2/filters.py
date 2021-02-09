@@ -494,11 +494,11 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
 
 class GeotrekRatingFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        scale = request.GET.get('scale', None)
-        if scale is not None:
+        scale = request.GET.get('scale')
+        if scale:
             queryset = queryset.filter(scale__pk=scale)
-        q = request.GET.get('q', None)
-        if q is not None:
+        q = request.GET.get('q')
+        if q:
             queryset = queryset.filter(
                 Q(name__icontains=q) | Q(description__icontains=q) | Q(scale__name__icontains=q)
             )
@@ -515,6 +515,50 @@ class GeotrekRatingFilter(BaseFilterBackend):
                 name='q', required=False, location='query', schema=coreschema.String(
                     title=_("Query string"),
                     description=_('Filter by some case-insensitive text contained in name, scale name or description.')
+                )
+            ),
+        )
+
+
+class FlatPageFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        targets = request.GET.get('targets')
+        if targets:
+            queryset = queryset.filter(target__in=targets.split(','))
+        sources = request.GET.get('sources')
+        if sources:
+            queryset = queryset.filter(source__in=sources.split(','))
+        portals = request.GET.get('portals')
+        if portals:
+            queryset = queryset.filter(portal__in=portals.split(','))
+        q = request.GET.get('q')
+        if q:
+            queryset = queryset.filter(
+                Q(title__icontains=q) | Q(content__icontains=q)
+            )
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='targets', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Targets"),
+                    description=_('Filter by one or more target (all, mobile, hidden or web), comma-separated.')
+                )
+            ), Field(
+                name='sources', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Sources"),
+                    description=_('Filter by one or more source id, comma-separated.')
+                )
+            ), Field(
+                name='portals', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Portals"),
+                    description=_('Filter by one or more portal id, comma-separated.')
+                )
+            ), Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Filter by some case-insensitive text contained in name or content.')
                 )
             ),
         )

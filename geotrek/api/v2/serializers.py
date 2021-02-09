@@ -32,6 +32,8 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from geotrek.zoning import models as zoning_models
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor import models as outdoor_models
+if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+    from geotrek.flatpages import models as flatpages_models
 
 
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
@@ -724,3 +726,24 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'portal', 'source', 'information_desks', 'web_links', 'eid',
                 'orientation', 'wind', 'ratings_min', 'ratings_max',
             )
+
+if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+    class FlatPageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        title = serializers.SerializerMethodField(read_only=True)
+        content = serializers.SerializerMethodField(read_only=True)
+        published = serializers.SerializerMethodField(read_only=True)
+
+        class Meta:
+            model = flatpages_models.FlatPage
+            fields = (
+                'id', 'title', 'external_url', 'content', 'target', 'source', 'portal', 'order', 'published'
+            )
+
+        def get_title(self, obj):
+            return get_translation_or_dict('title', self, obj)
+
+        def get_content(self, obj):
+            return get_translation_or_dict('content', self, obj)
+
+        def get_published(self, obj):
+            return get_translation_or_dict('published', self, obj)

@@ -41,6 +41,8 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('sitetype', api_views.SiteTypeViewSet, basename='sitetype')
     router.register('ratingscale', api_views.RatingScaleViewSet, basename='ratingscale')
     router.register('rating', api_views.RatingViewSet, basename='rating')
+if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+    router.register('flatpage', api_views.FlatPageViewSet, basename='flatpage')
 
 app_name = 'apiv2'
 _urlpatterns = []
