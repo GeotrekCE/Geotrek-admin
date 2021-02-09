@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from django.db.models import Q
+from django.db.models import Q, Min, Max
 from django.db.models.functions import ExtractYear
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -27,9 +27,9 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 
 class InterventionManager(NoDeleteManager):
-    def all_years(self):
+    def year_choices(self):
         return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
-            .order_by('-year').values_list('year', flat=True).distinct()
+            .order_by('-year').distinct().values_list('year', 'year')
 
 
 class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
@@ -354,11 +354,11 @@ class ManDay(models.Model):
 
 
 class ProjectManager(NoDeleteManager):
-    def all_years(self):
-        all_years = list(self.existing().exclude(begin_year=None).values_list('begin_year', flat=True))
-        all_years += list(self.existing().exclude(end_year=None).values_list('end_year', flat=True))
-        all_years.sort(reverse=True)
-        return all_years
+    def year_choices(self):
+        bounds = self.existing().aggregate(min=Min('begin_year'), max=Max('end_year'))
+        if not bounds['min'] or not bounds['max']:
+            return []
+        return [(year, year) for year in range(bounds['min'], bounds['max'] + 1)]
 
 
 class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,

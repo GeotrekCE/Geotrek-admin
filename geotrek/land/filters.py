@@ -3,7 +3,6 @@ from django.utils.translation import gettext_lazy as _
 from mapentity.filters import MapEntityFilterSet
 
 from geotrek.common.models import Organism
-from geotrek.common.filters import StructureRelatedFilterSet
 
 from geotrek.core.filters import TopologyFilter, PathFilterSet, TrailFilterSet
 from geotrek.infrastructure.filters import InfrastructureFilterSet
@@ -19,19 +18,19 @@ from .models import (
 
 
 class PhysicalEdgeFilterSet(MapEntityFilterSet):
-    class Meta:
+    class Meta(MapEntityFilterSet.Meta):
         model = PhysicalEdge
         fields = ['physical_type']
 
 
-class LandEdgeFilterSet(StructureRelatedFilterSet):
-    class Meta:
+class LandEdgeFilterSet(MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
         fields = ['land_type', 'owner', 'agreement']
 
 
 class OrganismFilterSet(MapEntityFilterSet):
-    class Meta:
+    class Meta(MapEntityFilterSet.Meta):
         fields = ['organization']
 
 
@@ -60,36 +59,36 @@ class SignageManagementEdgeFilterSet(OrganismFilterSet):
 class TopologyFilterPhysicalType(TopologyFilter):
     model = PhysicalType
 
-    def value_to_edges(self, value):
-        return value.physicaledge_set.all()
+    def values_to_edges(self, values):
+        return PhysicalEdge.objects.filter(physical_type__in=values)
 
 
 class TopologyFilterLandType(TopologyFilter):
     model = LandType
 
-    def value_to_edges(self, value):
-        return value.landedge_set.all()
+    def values_to_edges(self, values):
+        return LandEdge.objects.filter(land_type__in=values)
 
 
 class TopologyFilterCompetenceEdge(TopologyFilter):
     model = Organism
 
-    def value_to_edges(self, value):
-        return value.competenceedge_set.select_related('organization').all()
+    def values_to_edges(self, values):
+        return CompetenceEdge.objects.filter(organization__in=values).select_related('organization')
 
 
 class TopologyFilterSignageManagementEdge(TopologyFilter):
     model = Organism
 
-    def value_to_edges(self, value):
-        return value.signagemanagementedge_set.select_related('organization').all()
+    def values_to_edges(self, values):
+        return SignageManagementEdge.objects.filter(organization__in=values).select_related('organization')
 
 
 class TopologyFilterWorkManagementEdge(TopologyFilter):
     model = Organism
 
-    def value_to_edges(self, value):
-        return value.workmanagementedge_set.select_related('organization').all()
+    def values_to_edges(self, values):
+        return WorkManagementEdge.objects.filter(organization__in=values).select_related('organization')
 
 
 def add_edge_filters(filter_set):

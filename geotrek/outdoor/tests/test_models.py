@@ -54,32 +54,32 @@ class SiteSuperTest(TestCase):
         self.assertQuerysetEqual(self.parent.super_practices, ['<Practice: Aaa>', '<Practice: Bbb>'])
 
     def test_super_practices_ascendants(self):
-        self.assertQuerysetEqual(self.grandchild2.super_practices, ['<Practice: Aaa>'])
+        self.assertQuerysetEqual(self.grandchild2.super_practices, [])
 
     def test_super_sectors_descendants(self):
         self.assertQuerysetEqual(self.parent.super_sectors, ['<Sector: Axx>', '<Sector: Bxx>'])
 
     def test_super_sectors_ascendants(self):
-        self.assertQuerysetEqual(self.grandchild2.super_sectors, ['<Sector: Axx>'])
+        self.assertQuerysetEqual(self.grandchild2.super_sectors, [])
 
     def test_super_orientation_descendants(self):
         self.assertEqual(self.parent.super_orientation, ['N', 'E', 'S'])
 
     def test_super_orientation_ascendants(self):
-        self.assertEqual(self.grandchild2.super_orientation, ['E', 'S'])
+        self.assertEqual(self.grandchild2.super_orientation, [])
 
     def test_super_wind_descendants(self):
         self.assertEqual(self.parent.super_wind, ['N', 'E', 'S'])
 
     def test_super_wind_ascendants(self):
-        self.assertEqual(self.grandchild2.super_wind, ['E', 'S'])
+        self.assertEqual(self.grandchild2.super_wind, [])
 
     def test_super_practices_display(self):
         self.assertEqual(self.alone.super_practices_display, "")
-        self.assertEqual(self.parent.super_practices_display, "(Aaa), Bbb")
-        self.assertEqual(self.child.super_practices_display, "Aaa, (Bbb)")
+        self.assertEqual(self.parent.super_practices_display, "<i>Aaa</i>, Bbb")
+        self.assertEqual(self.child.super_practices_display, "Aaa, <i>Bbb</i>")
         self.assertEqual(self.grandchild1.super_practices_display, "Bbb")
-        self.assertEqual(self.grandchild2.super_practices_display, "(Aaa)")
+        self.assertEqual(self.grandchild2.super_practices_display, "")
 
 
 class SectorTest(TestCase):

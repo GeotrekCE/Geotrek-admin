@@ -1,4 +1,5 @@
 from django_filters import FilterSet
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.filters import RightFilter
@@ -11,9 +12,10 @@ class IntersectionFilter(RightFilter):
     """
 
     def filter(self, qs, value):
-        if not value:
-            return qs
-        return qs.filter(geom__intersects=value.geom)
+        q = Q()
+        for subvalue in value:
+            q |= Q(geom__intersects=subvalue.geom)
+        return qs.filter(q)
 
 
 class IntersectionFilterCity(IntersectionFilter):

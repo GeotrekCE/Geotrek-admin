@@ -98,8 +98,11 @@ msgstr "ID externe"
 msgid "Species"
 msgstr "Espèces"
 
+msgid "Species or regulatory area"
+msgstr "Espèce ou zone réglementaire"
+
 msgid "Sensitive area"
-msgstr "Zone sensible"
+msgstr "Zone de sensibilité"
 
 msgid "Published"
 msgstr "Publiée"

@@ -48,56 +48,8 @@ $(window).on('entity:view:list', function (e, data) {
         e.stopPropagation();
     });
 
-    // Tooltips on categories in list view
-    if (data.modelname != 'touristiccontent')
-        return;
-    $('.categories-filter a').tooltip();
-
     var $addButton = $("#list-panel .btn-toolbar .btn.btn-success").first();
     var addUrl = $addButton.attr('href');
-
-    // Refresh list filter when click on a category button
-    $('.categories-filter a').click(function () {
-        var $this = $(this);
-
-        // Show current in orange
-        $('.categories-filter a').removeClass('btn-warning');
-        $this.addClass('btn-warning');
-
-        var category = $this.data('category');
-        if (category) {
-            // Category chosen
-            $('select#id_category').val(category)
-                                   .addClass('filter-set');
-            $addButton.attr('href', addUrl + '?category=' + category);
-        }
-        else {
-            // All chosen.
-            $("select#id_category option").prop("selected", false);
-            $('select#id_category').removeClass('filter-set');
-            $addButton.attr('href', addUrl);
-        }
-
-        // Simulate form submission
-        $('#mainfilter a#filter').click();
-    });
-
-    // Refresh types by category
-    $('#mainfilter #filter.btn.btn-primary').click(function() {
-        var category = $('#id_category').val()
-        if (category) {
-            $('.categories-filter a').removeClass('btn-warning');
-            $('.categories-filter a[data-category=' + category + ']').addClass('btn-warning');
-        }
-        else{
-            $('.categories-filter a').removeClass('btn-warning');
-            $('.categories-filter a').not('[data-category]').addClass('btn-warning');
-        }
-
-        update_touristiccontent_types('1');
-        update_touristiccontent_types('2');
-    });
-    $('#mainfilter #id_category').trigger('change');
 });
 
 

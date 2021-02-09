@@ -1,15 +1,14 @@
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
-from django_filters import ChoiceFilter
+from django_filters import ChoiceFilter, MultipleChoiceFilter
 
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
 from geotrek.core.models import Topology
-from geotrek.common.filters import (
-    StructureRelatedFilterSet, YearFilter, YearBetweenFilter)
+from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import RightFilter
-from geotrek.common.widgets import YearSelect
 from geotrek.zoning.filters import ZoningFilterSet
 from geotrek.zoning.models import City, District
 
@@ -19,25 +18,19 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
-class InterventionYearTargetFilter(YearFilter):
-    def do_filter(self, qs, year):
-        interventions = Intervention.objects.filter(date__year=year).values_list('target_id', flat=True)
-        return qs.filter(**{
-            'id__in': interventions
-        }).distinct()
-
-
 class PolygonInterventionFilterMixin(object):
     def get_geom(self, value):
         return value
 
-    def filter(self, qs, value):
-        if not value:
+    def filter(self, qs, values):
+        if not values:
             return qs
         lookup = self.lookup_expr
 
         blade_content_type = ContentType.objects.get_for_model(Blade)
-        topologies = list(Topology.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True))
+        topologies = []
+        for value in values:
+            topologies += Topology.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True)
         topologies_intervention = Intervention.objects.existing().filter(target_id__in=topologies).exclude(
             target_type=blade_content_type).distinct('pk').values_list('id', flat=True)
 
@@ -84,21 +77,13 @@ class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFil
         return value.geom
 
 
-class InterventionYearSelect(YearSelect):
-    label = _("Year")
-
-    def get_years(self):
-        return Intervention.objects.all_years()
-
-
 class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
                   ('trail', _("Trail")))
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
-    year = YearFilter(field_name='date',
-                      widget=InterventionYearSelect,
-                      label=_("Year"))
+    year = MultipleChoiceFilter(choices=Intervention.objects.year_choices(),
+                                field_name='date', lookup_expr='year', label=_("Year"))
     on = ChoiceFilter(field_name='target_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -108,24 +93,24 @@ class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         ]
 
 
-class ProjectYearSelect(YearSelect):
-    label = _("Year of activity")
-
-    def get_years(self):
-        return Project.objects.all_years()
-
-
 class ProjectFilterSet(StructureRelatedFilterSet):
     bbox = PythonPolygonFilter(field_name='geom')
-    in_year = YearBetweenFilter(field_name=('begin_year', 'end_year'),
-                                widget=ProjectYearSelect,
-                                label=_("Year of activity"))
+    year = MultipleChoiceFilter(
+        label=_("Year of activity"), method='filter_year',
+        choices=lambda: Project.objects.year_choices()  # Could change over time
+    )
     city = ProjectIntersectionFilterCity(label=_('City'), required=False)
     district = ProjectIntersectionFilterDistrict(label=_('District'), required=False)
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'in_year', 'type', 'domain', 'contractors', 'project_owner',
+            'year', 'type', 'domain', 'contractors', 'project_owner',
             'project_manager', 'founders'
         ]
+
+    def filter_year(self, qs, name, values):
+        q = Q()
+        for value in values:
+            q |= Q(begin_year__lte=value, end_year__gte=value)
+        return qs.filter(q)

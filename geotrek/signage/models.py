@@ -56,10 +56,11 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
 
 class SignageGISManager(NoDeleteManager):
     """ Overide default typology mixin manager, and filter by type. """
-    def all_implantation_years(self):
-        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
-            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
-        return all_years
+    def implantation_year_choices(self):
+        choices = self.get_queryset().existing().filter(implantation_year__isnull=False)\
+            .order_by('-implantation_year').distinct('implantation_year') \
+            .values_list('implantation_year', 'implantation_year')
+        return choices
 
 
 class Signage(MapEntityMixin, BaseInfrastructure):

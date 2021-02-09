@@ -4,7 +4,8 @@ from django_filters import CharFilter
 
 from .models import Topology, Path, Trail
 
-from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet, RightFilter
+from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.filters import OptionalRangeFilter, RightFilter
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
@@ -13,18 +14,18 @@ from geotrek.zoning.filters import ZoningFilterSet
 
 
 class TopologyFilter(RightFilter):
-    def filter(self, qs, value):
+    def filter(self, qs, values):
         """Overrides parent filter() method completely.
         """
-        if not value:
+        if not values:
             return qs
-        if issubclass(value.__class__, Topology):
-            edges = Topology.objects.filter(pk=value.pk)
+        if issubclass(values[0].__class__, Topology):
+            edges = Topology.objects.filter(pk__in=[value.pk for value in values])
         else:
-            edges = self.value_to_edges(value)
+            edges = self.values_to_edges(values)
         return self._topology_filter(qs, edges)
 
-    def value_to_edges(self, value):
+    def values_to_edges(self, values):
         """
         For an instance of this filter model, returns a Topology queryset.
         """
