@@ -2,16 +2,28 @@
 CHANGELOG
 =========
 
-2.48.1+dev
+2.49.0 (2021-02-09)
 -------------------
 
-**Changes**
+**BREAKING CHANGES**
 
-- MAP_STYLES setting should be now set in MAPENTITY_CONFIG['MAP_STYLES']. A fallback exists to keep configuration from MAP_STYLES.
+- MAP_STYLES setting should be now set in MAPENTITY_CONFIG['MAP_STYLES'].
+  A fallback exists to keep configuration from MAP_STYLES.
+- The name of several filters in APIv2 are now in plural form. See swagger doc.
 
 **Bug fixes**
 
--
+- Fix cities filter in API v2 when id begins with a zero
+- Fix cities and districts filter in API v2 when given id is nonexistant
+- Allow to pass more than one id in most API v2 filters (see swagger doc)
+- Allow to filter on several items in most list page filter
+
+**New features**
+
+- Add flatpage endpoint to API v2
+- Add sector filter to outdoor site liste page
+- Compute aggregated fields only from children, not parents for outdoor sites
+- Practice, sector, wind and orientation filters on outdoor sites now take children into account
 
 
 2.48.1 (2021-02-05)
