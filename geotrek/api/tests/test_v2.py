@@ -14,6 +14,7 @@ from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
 from geotrek.zoning import factories as zoning_factory, models as zoning_models
 from geotrek.outdoor import factories as outdoor_factory, models as outdoor_models
+from geotrek.flatpages import factories as flatpages_factory
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -969,3 +970,88 @@ class RatingTestCase(TestCase):
         self.assertEqual(response.json()['count'], 2)
         for rating in response.json()['results']:
             self.assertEqual(rating['scale'], self.scale2.pk)
+
+
+class FlatPageTestCase(TestCase):
+    maxDiff = None
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.source = common_factory.RecordSourceFactory()
+        cls.portal = common_factory.TargetPortalFactory()
+        cls.page1 = flatpages_factory.FlatPageFactory(
+            title='AAA', published=True, order=2, target='web', content='Blah',
+            sources=[cls.source], portals=[cls.portal]
+        )
+        cls.page2 = flatpages_factory.FlatPageFactory(
+            title='BBB', published=True, order=1, target='mobile', content='Blbh'
+        )
+
+    def test_list(self):
+        response = self.client.get('/api/v2/flatpage/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'count': 2,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'id': self.page2.pk,
+                'title': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
+                'content': {'en': 'Blbh', 'es': None, 'fr': None, 'it': None},
+                'external_url': '',
+                'order': 1,
+                'portal': [],
+                'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+                'source': [],
+                'target': 'mobile',
+            }, {
+                'id': self.page1.pk,
+                'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
+                'external_url': '',
+                'order': 2,
+                'portal': [self.portal.pk],
+                'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+                'source': [self.source.pk],
+                'target': 'web',
+            }]
+        })
+
+    def test_detail(self):
+        response = self.client.get('/api/v2/flatpage/{}/'.format(self.page1.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': self.page1.pk,
+            'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+            'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
+            'external_url': '',
+            'order': 2,
+            'portal': [self.portal.pk],
+            'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+            'source': [self.source.pk],
+            'target': 'web',
+        })
+
+    def test_filter_q(self):
+        response = self.client.get('/api/v2/flatpage/?q=BB')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['title']['en'], 'BBB')
+
+    def test_filter_targets(self):
+        response = self.client.get('/api/v2/flatpage/?targets=web')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
+
+    def test_filter_sources(self):
+        response = self.client.get('/api/v2/flatpage/?sources={}'.format(self.source.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
+
+    def test_filter_portals(self):
+        response = self.client.get('/api/v2/flatpage/?portals={}'.format(self.portal.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')

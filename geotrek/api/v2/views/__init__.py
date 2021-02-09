@@ -18,6 +18,8 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from .zoning import CityViewSet, DistrictViewSet  # noqa
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from .outdoor import SiteViewSet, OutdoorPracticeViewSet, SiteTypeViewSet, RatingScaleViewSet, RatingViewSet  # noqa
+if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+    from .flatpages import FlatPageViewSet  # noqa
 if 'drf_yasg' in settings.INSTALLED_APPS:
     from .swagger import schema_view  # noqa
 
