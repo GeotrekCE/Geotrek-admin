@@ -150,48 +150,6 @@ span.aggregation {
     margin-top: -5px;
 }
 
-#altitudegraph {
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    background-color: white;
-    border-radius: 5px;
-    border: 1px solid #d4d4d4;
-    padding: 5px;
-    width: 50%;
-}
-
-#altitudegraph h4 {
-    margin: 0px;
-}
-
-#altitudegraph.colapsed {
-    width: 20px;
-}
-#altitudegraph.colapsed img,
-#altitudegraph.colapsed h4 {
-    display: none;
-}
-
-#altitudegraph a.toggle {
-    background: url(images/toggle.png) no-repeat;
-    background-position: 1px 2px;
-    background-repeat: no-repeat;
-    float: right;
-    width: 20px;
-    outline: none;
-    text-decoration: none;
-}
-
-#altitudegraph.colapsed a.toggle {
-    background-position: 1px -18px;
-}
-
-body.screamshot #altitudegraph {
-    display: none;
-}
-
-
 .intervention table tr.total {
     border-top: solid 2px;
 }
@@ -282,6 +240,9 @@ body.screamshot #altitudegraph {
 
 /* Touristic content */
 
+.categories-filter .btn {
+    height: 20px;
+}
 .categories-filter .btn img {
     margin-top: -4px;
     max-height: 28px;
