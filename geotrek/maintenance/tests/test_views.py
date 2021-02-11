@@ -412,6 +412,7 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(PathAggregation.objects.count(), 1)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Intervention.objects.first().geom, path.geom)
+        self.assertEqual(Intervention.objects.first().target.kind, 'INTERVENTION')
 
 
 class ProjectViewsTest(CommonTest):
