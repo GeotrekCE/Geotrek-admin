@@ -649,8 +649,19 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_types(self):
-        response = self.get_touristiccontent_list({'types': [self.content.type1.all()[0].pk]})
+        tct1 = tourism_factory.TouristicContentType1Factory()
+        response = self.get_touristiccontent_list({'types': self.content.type1.all()[0].pk})
         self.assertEqual(len(response.json()['results']), 1)
+        response = self.get_touristiccontent_list({'types': self.content.type2.all()[0].pk})
+        self.assertEqual(len(response.json()['results']), 1)
+        response = self.get_touristiccontent_list({
+            'types': '{},{}'.format(self.content.type1.all()[0].pk, self.content.type2.all()[0].pk)
+        })
+        self.assertEqual(len(response.json()['results']), 1)
+        response = self.get_touristiccontent_list({'types': '{},{}'.format(self.content.type1.all()[0].pk, tct1.pk)})
+        self.assertEqual(len(response.json()['results']), 1)
+        response = self.get_touristiccontent_list({'types': '{},{}'.format(self.content.type2.all()[0].pk, tct1.pk)})
+        self.assertEqual(len(response.json()['results']), 0)
 
     def test_touristiccontent_city(self):
         response = self.get_touristiccontent_list({'cities': [self.city.pk]})

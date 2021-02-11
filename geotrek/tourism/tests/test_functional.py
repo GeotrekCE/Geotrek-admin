@@ -84,7 +84,12 @@ class TouristicContentViewsTests(CommonTest):
                 'name': 'Type1',
                 'pictogram': '/media/upload/touristiccontent-type1.png'
             }],
-            'type2': [],
+            'type2': [{
+                'id': self.obj.type2.get().pk,
+                'in_list': 2,
+                'name': 'Type2',
+                'pictogram': '/media/upload/touristiccontent-type2.png'
+            }],
             'videos': [],
             'website': None,
         }
