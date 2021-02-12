@@ -119,7 +119,7 @@ MapEntity.Context = new function() {
         if (context.maplayers) {
             var layers = context.maplayers;
             layers.push(objectsname);
-            $('form.leaflet-control-layers-list input').each(function () {
+            $('form.leaflet-control-layers-list input:checkbox').each(function () {
                 if ($.trim($(this).parent().text()) != objectsname) {
                     $(this).removeAttr('checked');
                 }
