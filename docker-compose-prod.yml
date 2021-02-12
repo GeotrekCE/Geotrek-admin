@@ -13,6 +13,8 @@ services:
 
   screamshotter:
     image: juank/screenshotter:latest
+    environment:
+      - SECRET_KEY="dev-dev-dev-dev"
 
   celery:
     image: geotrekce/admin:${GEOTREK_VERSION:-latest}
