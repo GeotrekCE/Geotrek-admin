@@ -12,7 +12,7 @@ services:
     image: makinacorpus/convertit:latest
 
   screamshotter:
-    image: makinacorpus/screamshotter:latest
+    image: juank/screenshotter:latest
 
   celery:
     image: geotrekce/admin:${GEOTREK_VERSION:-latest}
