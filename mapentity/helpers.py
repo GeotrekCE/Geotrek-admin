@@ -1,3 +1,4 @@
+import base64
 import itertools
 import json
 import logging
@@ -121,7 +122,7 @@ def get_source(url, headers):
     source = requests.get(url, headers=headers)
 
     status_error = 'Request on %s failed (status=%s)' % (url, source.status_code)
-    assert source.status_code == 200, status_error
+    assert source.status_code == 200, (status_error, source.json())
 
     content_error = 'Request on %s returned empty content' % url
     assert len(source.content) > 0, content_error
@@ -153,7 +154,7 @@ def download_to_stream(url, stream, silent=False, headers=None):
         return source
 
     try:
-        stream.write(source.content)
+        stream.write(base64.b64decode(source.json()['base64']))
         stream.flush()
     except IOError as e:
         logger.exception(e)
@@ -202,10 +203,11 @@ def capture_url(url, width=None, height=None, selector=None, waitfor=None):
     """Return URL to request a capture from Screamshotter
     """
     server = app_settings['CAPTURE_SERVER']
-    width = ('&width=%s' % width) if width else ''
-    height = ('&height=%s' % height) if height else ''
+    width = ('&viewport_width=%s' % width) if width else ''
+    height = ('&viewport_height=%s' % height) if height else ''
     selector = ('&selector=%s' % quote(selector)) if selector else ''
-    waitfor = ('&waitfor=%s' % quote(waitfor)) if waitfor else ''
+    waitfor = ('&wait_selectors=%s' % quote(waitfor)) if waitfor else ''
+
     params = '{width}{height}{selector}{waitfor}'.format(width=width,
                                                          height=height,
                                                          selector=selector,
