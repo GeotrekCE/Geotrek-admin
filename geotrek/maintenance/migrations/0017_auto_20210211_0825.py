@@ -4,6 +4,7 @@ from django.db import migrations
 
 
 def fix_topology_kind(apps, schema_editor):
+    # Fix topology kind of interventions
     Topology = apps.get_model('core', 'topology')
     ContentType = apps.get_model('contenttypes', 'contenttype')
     Intervention = apps.get_model('maintenance', 'intervention')
@@ -15,6 +16,12 @@ def fix_topology_kind(apps, schema_editor):
         print("\n  WARNING! Updated {} topologies directly linked to interventions with a wrong kind".format(n))
 
 
+def clean_tmp_topologies(apps, schema_editor):
+    # Remove temporary topologies
+    Topology = apps.get_model('core', 'topology')
+    Topology.objects.filter(kind__in=('TMP', 'TOPOLOGY')).delete()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -23,4 +30,5 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(fix_topology_kind),
+        migrations.RunPython(clean_tmp_topologies),
     ]
