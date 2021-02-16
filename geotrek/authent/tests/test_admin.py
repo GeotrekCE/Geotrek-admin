@@ -1,6 +1,33 @@
 from mapentity.tests.factories import SuperUserFactory
 from . import factories
+from django.test import TestCase
+from django.urls import reverse
+
+from geotrek.authent.models import Structure
+
 from .base import AuthentFixturesTest
+
+
+class AuthentAdminTest(TestCase):
+    def setUp(self):
+        self.admin = SuperUserFactory.create(password='booh')
+
+    def login(self, user):
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+
+    def test_cant_delete_last_structure(self):
+        self.login(self.admin)
+        delete_url = reverse('admin:authent_structure_delete', args=[Structure.objects.first().pk])
+        response = self.client.post(delete_url, {'post': 'yes'})
+        self.assertEqual(response.status_code, 403)
+
+    def test_can_delete_structure(self):
+        self.login(self.admin)
+        factories.StructureFactory.create()
+        delete_url = reverse('admin:authent_structure_delete', args=[Structure.objects.first().pk])
+        response = self.client.post(delete_url, {'post': 'yes'})
+        self.assertEqual(response.status_code, 403)
 
 
 class AdminSiteTest(AuthentFixturesTest):

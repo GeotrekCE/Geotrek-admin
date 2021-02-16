@@ -2,7 +2,6 @@ from django.db import migrations, models
 import embed_video.fields
 import paperclip.models
 from django.conf import settings
-import geotrek.authent.models
 import django.db.models.deletion
 
 

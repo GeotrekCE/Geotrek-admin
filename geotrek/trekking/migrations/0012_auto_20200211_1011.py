@@ -8,7 +8,6 @@ import django.contrib.gis.db.models.fields
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import geotrek.authent.models
 
 
 class Migration(migrations.Migration):

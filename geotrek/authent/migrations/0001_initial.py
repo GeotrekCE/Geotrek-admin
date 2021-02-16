@@ -1,6 +1,5 @@
 from django.db import migrations, models
 from django.conf import settings
-import geotrek.authent.models
 import django.db.models.deletion
 
 

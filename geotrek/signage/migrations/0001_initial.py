@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import geotrek.authent.models
 
 
 def move_data(apps, schema_editor):

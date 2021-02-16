@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.db import migrations, models
-import geotrek.authent.models
 import django.contrib.gis.db.models.fields
 import geotrek.common.mixins.models
 

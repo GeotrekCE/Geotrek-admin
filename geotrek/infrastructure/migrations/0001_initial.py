@@ -1,7 +1,6 @@
 from django.db import migrations, models
 import mapentity.models
 import django.db.models.deletion
-import geotrek.authent.models
 
 
 class Migration(migrations.Migration):

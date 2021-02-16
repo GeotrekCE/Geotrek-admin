@@ -1,6 +1,5 @@
 from django.db import migrations, models
 import mapentity.models
-import geotrek.authent.models
 import django.db.models.deletion
 
 

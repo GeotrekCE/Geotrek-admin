@@ -3,7 +3,6 @@ from django.db import migrations, models
 import datetime
 import mapentity.models
 import django.contrib.gis.db.models.fields
-import geotrek.authent.models
 import geotrek.common.mixins.models
 
 
