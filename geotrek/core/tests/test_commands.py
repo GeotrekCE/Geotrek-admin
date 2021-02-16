@@ -206,6 +206,7 @@ class LoadPathsCommandTest(TestCase):
         self.assertIn('2 objects will be create, 0 objects failed;', output.getvalue())
         self.assertEqual(Path.objects.count(), 0)
 
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
     def test_load_paths_fail_with_dry(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_path.geojson')
         output = StringIO()
