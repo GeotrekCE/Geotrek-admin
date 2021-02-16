@@ -122,7 +122,7 @@ def get_source(url, headers):
     source = requests.get(url, headers=headers)
 
     status_error = 'Request on %s failed (status=%s)' % (url, source.status_code)
-    assert source.status_code == 200, (status_error, source.json())
+    assert source.status_code == 200, (status_error, source.content)
 
     content_error = 'Request on %s returned empty content' % url
     assert len(source.content) > 0, content_error
@@ -154,7 +154,7 @@ def download_to_stream(url, stream, silent=False, headers=None):
         return source
 
     try:
-        stream.write(base64.b64decode(source.json()['base64']))
+        stream.write(source.content)
         stream.flush()
     except IOError as e:
         logger.exception(e)
@@ -203,15 +203,17 @@ def capture_url(url, width=None, height=None, selector=None, waitfor=None):
     """Return URL to request a capture from Screamshotter
     """
     server = app_settings['CAPTURE_SERVER']
+    render_format = '&format=png'
     width = ('&viewport_width=%s' % width) if width else ''
     height = ('&viewport_height=%s' % height) if height else ''
     selector = ('&selector=%s' % quote(selector)) if selector else ''
     waitfor = ('&wait_selectors=%s' % quote(waitfor)) if waitfor else ''
 
-    params = '{width}{height}{selector}{waitfor}'.format(width=width,
-                                                         height=height,
-                                                         selector=selector,
-                                                         waitfor=waitfor)
+    params = '{render_format}{width}{height}{selector}{waitfor}'.format(render_format=render_format,
+                                                                        width=width,
+                                                                        height=height,
+                                                                        selector=selector,
+                                                                        waitfor=waitfor)
     capture_url = '{server}/?url={url}{params}'.format(server=server,
                                                        url=quote(url),
                                                        params=params)
