@@ -6,8 +6,6 @@
 # SRID = 2154  # LAMBERT EXTENDED FOR FRANCE, used for geometric columns.
 # Must be a projection in meters Fixed at install, don't change it after
 #
-# DEFAULT_STRUCTURE_NAME = 'My structure' # -> Name for your default structure. Can be changed in geotrek admin interface
-#
 # SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 # spatial bbox in your own projection (example here with 2154)
 # this spatial_extent will limit map exploration, and will cut your raster imports

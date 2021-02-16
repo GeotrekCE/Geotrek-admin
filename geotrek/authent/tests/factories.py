@@ -50,7 +50,7 @@ class StructureRelatedDefaultFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = core_models.StructureRelated
 
-    structure = factory.LazyAttribute(lambda _: core_models.default_structure())
+    structure = factory.LazyAttribute(lambda _: core_models.Structure.objects.first())
 
 
 class UserProfileFactory(StructureRelatedDefaultFactory):

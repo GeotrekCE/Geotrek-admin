@@ -159,7 +159,7 @@ class Migration(migrations.Migration):
                 ('approved', models.BooleanField(default=False, verbose_name='Approved', db_column='labellise')),
                 ('portal', models.ManyToManyField(related_name='touristicevents', db_table='t_r_evenement_touristique_portal', verbose_name='Portal', to='common.TargetPortal', blank=True)),
                 ('source', models.ManyToManyField(related_name='touristicevents', db_table='t_r_evenement_touristique_source', verbose_name='Source', to='common.RecordSource', blank=True)),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
                 ('themes', models.ManyToManyField(related_name='touristic_events', to='common.Theme', db_table='t_r_evenement_touristique_theme', blank=True, help_text='Main theme(s)', verbose_name='Themes')),
             ],
             options={
@@ -213,7 +213,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='touristiccontent',
             name='structure',
-            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure'),
         ),
         migrations.AddField(
             model_name='touristiccontent',

@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='blade',
             name='structure',
-            field=models.ForeignKey(default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='blade',
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='line',
             name='structure',
-            field=models.ForeignKey(default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='line',
@@ -166,7 +166,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='signage',
             name='structure',
-            field=models.ForeignKey(default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='signage',

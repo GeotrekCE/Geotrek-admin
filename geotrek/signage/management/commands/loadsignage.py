@@ -6,7 +6,6 @@ from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
 from geotrek.core.models import Topology
 from geotrek.signage.models import Signage, SignageType
@@ -67,6 +66,7 @@ class Command(BaseCommand):
 
         try:
             for layer in data_source:
+                structure = None
                 if verbosity >= 2:
                     self.stdout.write("- Layer '{}' with {} objects found".format(layer.name, layer.num_feat))
                 available_fields = layer.fields
@@ -96,8 +96,6 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         "Change your --structure-field option"))
                     break
-                elif not field_structure_type and not structure_default:
-                    structure = default_structure()
                 elif not field_structure_type and structure_default:
                     try:
                         structure = Structure.objects.get(name=structure_default)
@@ -195,11 +193,12 @@ class Command(BaseCommand):
                 'type': infra_type,
                 'name': name,
                 'condition': condition_type,
-                'structure': structure,
                 'description': description,
                 'implantation_year': year,
                 'code': code,
             }
+            if structure:
+                fields_without_eid['structure'] = structure
             if eid:
                 infra, created = Signage.objects.update_or_create(
                     eid=eid,

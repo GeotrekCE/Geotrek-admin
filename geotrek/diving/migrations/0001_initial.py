@@ -118,7 +118,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dive',
             name='structure',
-            field=models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(db_column='structure', default=1, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AddField(
             model_name='dive',

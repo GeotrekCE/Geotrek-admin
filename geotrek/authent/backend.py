@@ -56,7 +56,10 @@ class DatabaseBackend(ModelBackend):
 
         # Update structure and lang
         profile = user.profile
-        profile.structure, created = authent_models.Structure.objects.get_or_create(name=credentials.structure)
+        if credentials.structure:
+            profile.structure, created = authent_models.Structure.objects.get_or_create(name=credentials.structure)
+        else:
+            profile.structure = authent_models.Structure.objects.get(pk=1)
         profile.save()
 
     def _update_groups(self, user, credentials):

@@ -6,7 +6,6 @@ from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
 from geotrek.core.models import Topology
 from geotrek.infrastructure.models import (InfrastructureType,
@@ -69,9 +68,9 @@ class Command(BaseCommand):
 
         sid = transaction.savepoint()
         structure_default = options.get('structure_default')
-
         try:
             for layer in data_source:
+                structure = None
                 if verbosity >= 2:
                     self.stdout.write("- Layer '{}' with {} objects found".format(layer.name, layer.num_feat))
                 available_fields = layer.fields
@@ -108,8 +107,6 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         "Change your --structure-field option"))
                     break
-                elif not field_structure_type and not structure_default:
-                    structure = default_structure()
                 elif not field_structure_type and structure_default:
                     try:
                         structure = Structure.objects.get(name=structure_default)
@@ -202,10 +199,11 @@ class Command(BaseCommand):
                 'type': infra_type,
                 'name': name,
                 'condition': condition_type,
-                'structure': structure,
                 'description': description,
                 'implantation_year': year
             }
+            if structure:
+                fields_without_eid['structure'] = structure
             if eid:
                 infra, created = Infrastructure.objects.update_or_create(
                     eid=eid,
@@ -215,6 +213,7 @@ class Command(BaseCommand):
                     self.stdout.write("Update : %s with eid %s" % (name, eid))
             else:
                 infra = Infrastructure.objects.create(**fields_without_eid)
+
         if settings.TREKKING_TOPOLOGY_ENABLED:
             try:
                 geometry.coord_dim = 2

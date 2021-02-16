@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('comfort', models.CharField(max_length=50, verbose_name='Comfort', db_column='confort')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['comfort'],
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('network', models.CharField(max_length=50, verbose_name='Network', db_column='reseau')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['network'],
@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('source', models.CharField(max_length=50, verbose_name='Source')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['source'],
@@ -109,7 +109,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('stake', models.CharField(max_length=50, verbose_name='Stake', db_column='enjeu')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['id'],
@@ -148,7 +148,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('usage', models.CharField(max_length=50, verbose_name='Usage', db_column='usage')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['usage'],
@@ -165,7 +165,7 @@ class Migration(migrations.Migration):
                 ('departure', models.CharField(max_length=64, verbose_name='Departure', db_column='depart')),
                 ('arrival', models.CharField(max_length=64, verbose_name='Arrival', db_column='arrivee')),
                 ('comments', models.TextField(default='', verbose_name='Comments', db_column='commentaire', blank=True)),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['name'],
@@ -198,7 +198,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='path',
             name='structure',
-            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure'),
         ),
         migrations.AddField(
             model_name='path',

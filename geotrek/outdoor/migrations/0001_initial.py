@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=128, verbose_name='Name')),
                 ('description', models.TextField(blank=True, verbose_name='Description')),
                 ('eid', models.CharField(blank=True, max_length=1024, null=True, verbose_name='External id')),
-                ('structure', models.ForeignKey(default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.structure', verbose_name='Related structure')),
+                ('structure', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='authent.structure', verbose_name='Related structure')),
             ],
             options={
                 'verbose_name': 'Site',

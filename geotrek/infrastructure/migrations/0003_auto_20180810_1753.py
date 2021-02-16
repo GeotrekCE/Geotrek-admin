@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='infrastructurecondition',
             name='structure',
-            field=models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(blank=True, db_column='structure', default=1, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
     ]

@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
                 ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
                 ('description', models.TextField(help_text='History, details,  ...', verbose_name='Description', db_column='description')),
                 ('eid', models.CharField(max_length=128, null=True, verbose_name='External id', db_column='id_externe', blank=True)),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'db_table': 'o_t_poi',
@@ -131,7 +131,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
                 ('eid', models.CharField(max_length=128, null=True, verbose_name='External id', db_column='id_externe', blank=True)),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'db_table': 'o_t_service',
@@ -290,7 +290,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='trek',
             name='structure',
-            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure'),
         ),
         migrations.AddField(
             model_name='trek',

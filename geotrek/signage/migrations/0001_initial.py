@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(db_column='etat', max_length=250, verbose_name='Name')),
-                ('structure', models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure')),
+                ('structure', models.ForeignKey(blank=True, db_column='structure', default=1, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure')),
             ],
             options={
                 'db_table': 's_b_scellement',
@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('pictogram', models.FileField(blank=True, db_column='picto', max_length=512, null=True, upload_to='upload', verbose_name='Pictogram')),
                 ('label', models.CharField(db_column='nom', max_length=128)),
-                ('structure', models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure')),
+                ('structure', models.ForeignKey(blank=True, db_column='structure', default=1, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure')),
             ],
             options={
                 'db_table': 's_b_signaletique',
@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(db_column='nom', max_length=128)),
                 ('structure', models.ForeignKey(blank=True, db_column='structure',
-                                                default=geotrek.authent.models.default_structure_pk, null=True,
+                                                default=1, null=True,
                                                 on_delete=django.db.models.deletion.CASCADE, to='authent.Structure',
                                                 verbose_name='Related structure')),
             ],
@@ -111,7 +111,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='signage',
             name='structure',
-            field=models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(db_column='structure', default=1, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AddField(
             model_name='signage',
@@ -165,7 +165,7 @@ class Migration(migrations.Migration):
                 ('blade', models.ForeignKey(db_column='lame', related_name='lines', on_delete=django.db.models.deletion.PROTECT, to='signage.Blade',
                                             verbose_name='Blade')),
                 ('structure',
-                 models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk,
+                 models.ForeignKey(db_column='structure', default=1,
                                    on_delete=django.db.models.deletion.CASCADE, to='authent.Structure',
                                    verbose_name='Related structure')),
             ],
@@ -215,7 +215,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='blade',
             name='structure',
-            field=models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk,
+            field=models.ForeignKey(db_column='structure', default=1,
                                     on_delete=django.db.models.deletion.CASCADE, to='authent.Structure',
                                     verbose_name='Related structure'),
         ),

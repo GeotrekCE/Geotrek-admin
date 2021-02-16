@@ -16,7 +16,7 @@ from django.utils.translation import gettext_lazy as _
 
 from mapentity.forms import MapEntityForm
 
-from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.models import AccessibilityAttachment
 from geotrek.common.mixins.models import PublishableMixin
 from geotrek.common.utils.translation import get_translated_fields
@@ -254,8 +254,6 @@ class CommonForm(MapEntityForm):
             pass  # The form contains the structure field. Let django use its value.
         elif self.user:
             self.instance.structure = self.user.profile.structure
-        else:
-            self.instance.structure = default_structure()
         return super().save(commit)
 
     @classmethod
