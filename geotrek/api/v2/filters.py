@@ -11,6 +11,7 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
+from geotrek.tourism.models import TouristicContentType
 from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
 
@@ -212,7 +213,11 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
             qs = qs.filter(category__in=categories.split(','))
         types = request.GET.get('types')
         if types:
-            qs = qs.filter(Q(type1__in=types.split(',')) | Q(type2__in=types.split(',')))
+            types_id = types.split(',')
+            if TouristicContentType.objects.filter(id__in=types_id, in_list=1).exists():
+                qs = qs.filter(Q(type1__in=types_id))
+            if TouristicContentType.objects.filter(id__in=types_id, in_list=2).exists():
+                qs = qs.filter(Q(type2__in=types_id))
         cities = request.GET.get('cities')
         if cities:
             cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
@@ -252,7 +257,7 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
             ), Field(
                 name='types', required=False, location='query', schema=coreschema.Integer(
                     title=_("Types"),
-                    description=_("Filter by one or more types id, comma-separated.")
+                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
                 )
             ), Field(
                 name='cities', required=False, location='query', schema=coreschema.String(

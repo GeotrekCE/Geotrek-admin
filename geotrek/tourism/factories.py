@@ -105,6 +105,12 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
             assert not extracted, "Not implemented"
             obj.type1.add(TouristicContentType1Factory.create())
 
+    @factory.post_generation
+    def type2(obj, create, extracted=None, **kwargs):
+        if create:
+            assert not extracted, "Not implemented"
+            obj.type2.add(TouristicContentType2Factory.create())
+
 
 class TouristicEventTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
