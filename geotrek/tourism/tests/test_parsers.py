@@ -293,6 +293,57 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.first().content_object, content)
 
     @mock.patch('geotrek.common.parsers.requests.get')
+    def test_create_content_apidae_2(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent2.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        category = TouristicContentCategoryFactory(label="Eau vive")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 1)
+        content = TouristicContent.objects.get()
+        self.assertEqual(content.eid, "479743")
+        self.assertEqual(content.name_en, "Test EN")
+        self.assertEqual(content.name_es, "Test ES")
+        self.assertEqual(content.name_fr, "Quey' Raft")
+        self.assertEqual(content.description_fr[:27], "Au pied du château médiéval")
+        self.assertEqual(content.description_en, "Descriptif Détaillé EN")
+        self.assertEqual(content.description_teaser_fr[:24], "Des descentes familiales")
+        self.assertEqual(content.description_teaser_es, "Descriptif Court ES")
+        self.assertEqual(content.description_teaser_en, "Descriptif Court EN")
+        self.assertEqual(content.description_teaser_it, "Descriptif Court IT")
+        self.assertEqual(content.contact[:24], "Château Queyras<br>05350")
+        self.assertEqual(content.email, "info@queyraft.com")
+        self.assertEqual(content.website, "http://www.queyraft.com")
+        self.assertEqual(round(content.geom.x), 1000157)
+        self.assertEqual(round(content.geom.y), 6413576)
+        self.assertEqual(content.practical_info_fr[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")
+        self.assertTrue("<br><b>Capacité totale:</b><br>10<br>" in content.practical_info_fr)
+        print(content.practical_info_fr)
+        self.assertIn("<b>Tarifs:</b><br>A partir de 30 € par personne<br>", content.practical_info_fr)
+        self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info_fr)
+        self.assertIn("<b>Tarifs:</b><br>A partir de 30 € par personne<br>", content.practical_info_fr)
+        self.assertIn("<b>Prices:</b><br>From 30 € per person<br>", content.practical_info_en)
+        self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info_fr)
+        self.assertIn("<b>Access:</b><br>TestEn<br>", content.practical_info_en)
+        self.assertTrue(content.published)
+        self.assertEqual(content.category, category)
+        self.assertQuerysetEqual(
+            content.type1.all(),
+            ['<TouristicContentType1: Type A>', '<TouristicContentType1: Type B>']
+        )
+        self.assertQuerysetEqual(content.type2.all(), [])
+        self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(Attachment.objects.first().content_object, content)
+
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_filetype_structure_none(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
