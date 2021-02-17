@@ -19,6 +19,9 @@ from geotrek.common.parsers import (AttachmentParserMixin, Parser,
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.translator import translator
+
 
 class TouristicContentMixin:
     # Mixin which handle multiple type1/2 with the same name in different categories
@@ -140,21 +143,21 @@ class ApidaeParser(AttachmentParserMixin, Parser):
 
     def get_different_languages(self):
         self.translated_fields = []
-        fields_model = [f.name for f in self.model._meta.get_fields()]
+        fields_model = [f for f in translator.get_options_for_model(self.model).fields.keys()]
         fields = self.fields.copy()
         for key, value in fields.items():
             if 'libelle' in value:
-                key_without_tra = key[:-3]
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    new_key = '%s_%s' % (key_without_tra, lang)
-                    if new_key in fields_model:
+                    new_key = '%s_%s' % (key, lang)
+                    if key in fields_model:
                         self.fields[new_key] = value[:-2].replace('libelle', 'libelle%s' % lang.title())
                         self.translated_fields.append(new_key)
+                        if self.fields.get(key):
+                            del self.fields[key]
             if not isinstance(value, str):
-                key_without_tra = key[:-3]
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    new_key = '%s_%s' % (key_without_tra, lang)
-                    if new_key in fields_model:
+                    new_key = '%s_%s' % (key, lang)
+                    if key in fields_model:
                         new_value = [value_list if 'libelle' not in value_list
                                      else value_list[:-2].replace('libelle', 'libelle%s' % lang.title())
                                      for value_list in value]
@@ -290,8 +293,8 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
     portal = None
     model = TouristicEvent
     fields = {
-        'description_teaser_fr': 'presentation.descriptifCourt.libelleFr',
-        'description_fr': 'presentation.descriptifDetaille.libelleFr',
+        'description_teaser': 'presentation.descriptifCourt.libelleFr',
+        'description': 'presentation.descriptifDetaille.libelleFr',
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
         'begin_date': 'ouverture.periodesOuvertures.0.dateDebut',
         'end_date': 'ouverture.periodesOuvertures.0.dateFin',
@@ -311,7 +314,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'organizer': 'informations.structureGestion.nom.libelleFr',
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
         'participant_number': 'informationsFeteEtManifestation.nbParticipantsAttendu',
-        'practical_info_fr': (
+        'practical_info': (
             'ouverture.periodeEnClair.libelleFr',
             'informationsFeteEtManifestation.nbParticipantsAttendu',
             'descriptionTarif.tarifsEnClair.libelleFr',
@@ -323,7 +326,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
             'gestion.membreProprietaire.nom',
         ),
         'eid': 'id',
-        'name_fr': 'nom.libelleFr',
+        'name': 'nom.libelleFr',
     }
     responseFields = [
         'id',
@@ -471,9 +474,9 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
     eid = 'eid'
     fields = {
         'eid': 'id',
-        'name_fr': 'nom.libelleFr',
-        'description_fr': 'presentation.descriptifDetaille.libelleFr',
-        'description_teaser_fr': 'presentation.descriptifCourt.libelleFr',
+        'name': 'nom.libelleFr',
+        'description': 'presentation.descriptifDetaille.libelleFr',
+        'description_teaser': 'presentation.descriptifCourt.libelleFr',
         'contact': (
             'localisation.adresse.adresse1',
             'localisation.adresse.adresse2',
@@ -485,7 +488,7 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
         'email': 'informations.moyensCommunication',
         'website': 'informations.moyensCommunication',
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
-        'practical_info_fr': (
+        'practical_info': (
             'ouverture.periodeEnClair.libelleFr',
             'informationsHebergementCollectif.capacite.capaciteTotale',
             'descriptionTarif.tarifsEnClair.libelleFr',

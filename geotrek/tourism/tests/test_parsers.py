@@ -326,7 +326,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(round(content.geom.y), 6413576)
         self.assertEqual(content.practical_info_fr[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")
         self.assertTrue("<br><b>Capacité totale:</b><br>10<br>" in content.practical_info_fr)
-        print(content.practical_info_fr)
         self.assertIn("<b>Tarifs:</b><br>A partir de 30 € par personne<br>", content.practical_info_fr)
         self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info_fr)
         self.assertIn("<b>Tarifs:</b><br>A partir de 30 € par personne<br>", content.practical_info_fr)
