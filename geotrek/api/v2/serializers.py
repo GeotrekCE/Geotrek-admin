@@ -351,6 +351,17 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
             )
 
 
+class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField(read_only=True)
+
+    def get_label(self, obj):
+        return get_translation_or_dict('label', self, obj)
+
+    class Meta:
+        model = common_models.Theme
+        fields = ('id', 'label', 'pictogram')
+
+
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
@@ -556,16 +567,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'geometry', 'name', 'attachments', 'published', 'type',
                 'update_datetime', 'url'
             )
-
-    class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.SerializerMethodField(read_only=True)
-
-        def get_label(self, obj):
-            return get_translation_or_dict('label', self, obj)
-
-        class Meta:
-            model = trekking_models.Theme
-            fields = ('id', 'label', 'pictogram')
 
     class AccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)

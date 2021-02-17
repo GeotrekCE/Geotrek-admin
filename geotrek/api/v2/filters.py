@@ -10,9 +10,7 @@ from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
-from geotrek.core.models import Topology
-from geotrek.tourism.models import TouristicContentType
-from geotrek.trekking.models import Trek
+
 from geotrek.zoning.models import City, District
 
 
@@ -174,123 +172,129 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         )
 
 
-class GeotrekPOIFilter(BaseFilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        qs = queryset
-        types = request.GET.get('types', None)
-        if types is not None:
-            qs = qs.filter(type__in=types.split(','))
-        trek = request.GET.get('trek', None)
-        if trek is not None:
-            qs = Topology.overlapping(Trek.objects.get(pk=trek), qs)
-        return qs
+if 'geotrek.core' in settings.INSTALLED_APPS and 'geotrek.trekking' in settings.INSTALLED_APPS:
+    from geotrek.core.models import Topology
+    from geotrek.trekking.models import Trek
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name='types', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_("Filter by one or more type id, comma-separated.")
-                )
-            ), Field(
-                name='trek', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Trek"),
-                    description=_("Filter by a trek id. It will show only the POIs related to this trek.")
-                )
-            ),
-        )
+    class GeotrekPOIFilter(BaseFilterBackend):
+        def filter_queryset(self, request, queryset, view):
+            qs = queryset
+            types = request.GET.get('types', None)
+            if types is not None:
+                qs = qs.filter(type__in=types.split(','))
+            trek = request.GET.get('trek', None)
+            if trek is not None:
+                qs = Topology.overlapping(Trek.objects.get(pk=trek), qs)
+            return qs
 
-
-class GeotrekTouristicContentFilter(BaseFilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        qs = queryset
-        near_trek = request.GET.get('near_trek')
-        if near_trek:
-            contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
-            qs = contents_intersecting.order_by('id')
-        categories = request.GET.get('categories')
-        if categories:
-            qs = qs.filter(category__in=categories.split(','))
-        types = request.GET.get('types')
-        if types:
-            types_id = types.split(',')
-            if TouristicContentType.objects.filter(id__in=types_id, in_list=1).exists():
-                qs = qs.filter(Q(type1__in=types_id))
-            if TouristicContentType.objects.filter(id__in=types_id, in_list=2).exists():
-                qs = qs.filter(Q(type2__in=types_id))
-        cities = request.GET.get('cities')
-        if cities:
-            cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=cities_geom) if cities_geom else qs.none()
-        districts = request.GET.get('districts')
-        if districts:
-            districts_geom = District.objects.filter(id__in=districts.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=districts_geom) if districts_geom else qs.none()
-        structures = request.GET.get('structures')
-        if structures:
-            qs = qs.filter(structure__in=structures.split(','))
-        themes = request.GET.get('themes')
-        if themes:
-            qs = qs.filter(themes__in=themes.split(','))
-        portals = request.GET.get('portals')
-        if portals:
-            qs = qs.filter(portal__in=portals.split(','))
-        q = request.GET.get('q')
-        if q:
-            qs = qs.filter(
-                Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
+        def get_schema_fields(self, view):
+            return (
+                Field(
+                    name='types', required=False, location='query', schema=coreschema.Integer(
+                        title=_("Types"),
+                        description=_("Filter by one or more type id, comma-separated.")
+                    )
+                ), Field(
+                    name='trek', required=False, location='query', schema=coreschema.Integer(
+                        title=_("Trek"),
+                        description=_("Filter by a trek id. It will show only the POIs related to this trek.")
+                    )
+                ),
             )
-        return qs
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name='near_trek', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Near trek"),
-                    description=_("Filter by a trek id. It will show only the touristics contents related to this trek.")
+if 'geotrek.tourism' in settings.INSTALLED_APPS:
+    from geotrek.tourism.models import TouristicContentType
+
+    class GeotrekTouristicContentFilter(BaseFilterBackend):
+        def filter_queryset(self, request, queryset, view):
+            qs = queryset
+            near_trek = request.GET.get('near_trek')
+            if near_trek:
+                contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
+                qs = contents_intersecting.order_by('id')
+            categories = request.GET.get('categories')
+            if categories:
+                qs = qs.filter(category__in=categories.split(','))
+            types = request.GET.get('types')
+            if types:
+                types_id = types.split(',')
+                if TouristicContentType.objects.filter(id__in=types_id, in_list=1).exists():
+                    qs = qs.filter(Q(type1__in=types_id))
+                if TouristicContentType.objects.filter(id__in=types_id, in_list=2).exists():
+                    qs = qs.filter(Q(type2__in=types_id))
+            cities = request.GET.get('cities')
+            if cities:
+                cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
+                qs = qs.filter(geom__intersects=cities_geom) if cities_geom else qs.none()
+            districts = request.GET.get('districts')
+            if districts:
+                districts_geom = District.objects.filter(id__in=districts.split(',')).aggregate(Collect('geom'))['geom__collect']
+                qs = qs.filter(geom__intersects=districts_geom) if districts_geom else qs.none()
+            structures = request.GET.get('structures')
+            if structures:
+                qs = qs.filter(structure__in=structures.split(','))
+            themes = request.GET.get('themes')
+            if themes:
+                qs = qs.filter(themes__in=themes.split(','))
+            portals = request.GET.get('portals')
+            if portals:
+                qs = qs.filter(portal__in=portals.split(','))
+            q = request.GET.get('q')
+            if q:
+                qs = qs.filter(
+                    Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
                 )
-            ), Field(
-                name='categories', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Categories"),
-                    description=_("Filter by one or more category id, comma-separated.")
-                )
-            ), Field(
-                name='types', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
-                )
-            ), Field(
-                name='cities', required=False, location='query', schema=coreschema.String(
-                    title=_("Cities"),
-                    description=_('Filter by one or more city id, comma-separated.')
-                )
-            ), Field(
-                name='districts', required=False, location='query', schema=coreschema.String(
-                    title=_("Districts"),
-                    description=_('Filter by one or more district id, comma-separated.')
-                )
-            ), Field(
-                name='structures', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Structures"),
-                    description=_('Filter by one or more structure id, comma-separated.')
-                )
-            ), Field(
-                name='themes', required=False, location='query', schema=coreschema.String(
-                    title=_("Themes"),
-                    description=_('Filter by one or more themes id, comma-separated.')
-                )
-            ), Field(
-                name='portals', required=False, location='query', schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_('Filter by one or more portal id, comma-separated.')
-                )
-            ), Field(
-                name='q', required=False, location='query', schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_('Filter by some case-insensitive text contained in name, description teaser or description.')
+            return qs
+
+        def get_schema_fields(self, view):
+            return (
+                Field(
+                    name='near_trek', required=False, location='query', schema=coreschema.Integer(
+                        title=_("Near trek"),
+                        description=_("Filter by a trek id. It will show only the touristics contents related to this trek.")
+                    )
+                ), Field(
+                    name='categories', required=False, location='query', schema=coreschema.Integer(
+                        title=_("Categories"),
+                        description=_("Filter by one or more category id, comma-separated.")
+                    )
+                ), Field(
+                    name='types', required=False, location='query', schema=coreschema.Integer(
+                        title=_("Types"),
+                        description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
+                    )
+                ), Field(
+                    name='cities', required=False, location='query', schema=coreschema.String(
+                        title=_("Cities"),
+                        description=_('Filter by one or more city id, comma-separated.')
+                    )
+                ), Field(
+                    name='districts', required=False, location='query', schema=coreschema.String(
+                        title=_("Districts"),
+                        description=_('Filter by one or more district id, comma-separated.')
+                    )
+                ), Field(
+                    name='structures', required=False, location='query', schema=coreschema.Integer(
+                        title=_("Structures"),
+                        description=_('Filter by one or more structure id, comma-separated.')
+                    )
+                ), Field(
+                    name='themes', required=False, location='query', schema=coreschema.String(
+                        title=_("Themes"),
+                        description=_('Filter by one or more themes id, comma-separated.')
+                    )
+                ), Field(
+                    name='portals', required=False, location='query', schema=coreschema.String(
+                        title=_("Portals"),
+                        description=_('Filter by one or more portal id, comma-separated.')
+                    )
+                ), Field(
+                    name='q', required=False, location='query', schema=coreschema.String(
+                        title=_("Query string"),
+                        description=_('Filter by some case-insensitive text contained in name, description teaser or description.')
+                    )
                 )
             )
-        )
 
 
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):

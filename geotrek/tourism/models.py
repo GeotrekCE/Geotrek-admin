@@ -14,7 +14,8 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Topology
+if 'geotrek.core' in settings.INSTALLED_APPS:
+    from geotrek.core.models import Topology
 from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
                                    PictogramMixin, OptionalPictogramMixin,
                                    PublishableMixin, PicturesMixin,
@@ -297,8 +298,9 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
         return plain_text(self.description_teaser or self.description)[:500]
 
 
-Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
-Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
+if 'geotrek.core' in settings.INSTALLED_APPS:
+    Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
+    Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
 TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
 TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
 
@@ -413,8 +415,9 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
 TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _("Published touristic contents"))
-Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
-Topology.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
+if 'geotrek.core' in settings.INSTALLED_APPS:
+    Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+    Topology.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
 TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
 TouristicContent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
 TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))

@@ -1,0 +1,5 @@
+{% load i18n %}
+
+{% if user.is_superuser %}
+    <li><a href="{% url 'apimobile:sync_mobiles_view' %}">{% trans "Sync mobile" %}</a></li>
+{% endif %}
