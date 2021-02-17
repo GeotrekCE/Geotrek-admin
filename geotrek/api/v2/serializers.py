@@ -18,7 +18,7 @@ from geotrek.api.v2.functions import Length, Length3D, Transform
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
-from geotrek.core.models import simplify_coords
+from geotrek.common.utils import simplify_coords
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models

@@ -16,8 +16,8 @@ from mapentity.serializers import plain_text
 
 from geotrek.api.v2.functions import LineLocatePoint, Transform
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology, simplify_coords
-from geotrek.common.utils import intersecting, classproperty
+from geotrek.core.models import Path, Topology
+from geotrek.common.utils import intersecting, classproperty, simplify_coords
 from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
                                    PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
 from geotrek.common.models import Theme, ReservationSystem

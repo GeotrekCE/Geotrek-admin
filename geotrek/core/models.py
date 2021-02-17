@@ -19,7 +19,7 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
                                    AddPropertyMixin)
-from geotrek.common.utils import classproperty, sqlfunction, uniquify
+from geotrek.common.utils import classproperty, sqlfunction, uniquify, simplify_coords
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.zoning.mixins import ZoningPropertiesMixin
@@ -30,14 +30,6 @@ from django.db.models.query import QuerySet
 from django.contrib.gis.geos import Point
 
 logger = logging.getLogger(__name__)
-
-
-def simplify_coords(coords):
-    if isinstance(coords, (list, tuple)):
-        return [simplify_coords(coord) for coord in coords]
-    elif isinstance(coords, float):
-        return round(coords, 7)
-    raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
 
 
 class PathManager(models.Manager):
