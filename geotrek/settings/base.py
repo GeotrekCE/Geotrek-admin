@@ -410,6 +410,8 @@ MAPENTITY_CONFIG = {
 }
 
 MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
+DEFAULT_STRUCTURE_PK = 1  # Never change without knowing what you are doing
+
 VIEWPORT_MARGIN = 0.1  # On list page, around SPATIAL_EXTENT
 
 PATHS_LINE_MARKER = 'dotL'

@@ -45,7 +45,7 @@ class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
-    structure = models.ForeignKey(Structure, default=1, on_delete=models.CASCADE,
+    structure = models.ForeignKey(Structure, default=settings.DEFAULT_STRUCTURE_PK, on_delete=models.CASCADE,
                                   verbose_name=_("Related structure"))
 
     check_structure_in_forms = True

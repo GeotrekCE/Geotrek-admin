@@ -82,6 +82,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sensitivearea',
             name='structure',
-            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=settings.DEFAULT_STRUCTURE_PK, verbose_name='Related structure', to='authent.Structure'),
         ),
     ]

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import migrations, models
 
 
@@ -11,7 +12,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sensitivearea',
             name='category',
-            field=models.IntegerField(default=1, verbose_name='Regulatory area', db_column='categorie',
+            field=models.IntegerField(default=settings.DEFAULT_STRUCTURE_PK, verbose_name='Regulatory area', db_column='categorie',
                                       choices=[(1, 'Species'), (2, 'Regulatory')]),
             preserve_default=False,
         ),

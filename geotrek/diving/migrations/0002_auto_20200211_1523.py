@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import colorfield.fields
+from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 
@@ -105,7 +106,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='dive',
             name='structure',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(default=settings.DEFAULT_STRUCTURE_PK, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='dive',

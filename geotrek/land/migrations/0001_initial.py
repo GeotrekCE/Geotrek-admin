@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import migrations, models
 import mapentity.models
 import django.db.models.deletion
@@ -45,7 +46,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=128, verbose_name='Name', db_column='foncier')),
                 ('right_of_way', models.BooleanField(default=False, verbose_name='Right of way', db_column='droit_de_passage')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=settings.DEFAULT_STRUCTURE_PK, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['name'],
@@ -71,7 +72,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=128, verbose_name='Name', db_column='nom')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=1, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=settings.DEFAULT_STRUCTURE_PK, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['name'],
