@@ -9,11 +9,11 @@ from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAre
 class ZoningPropertiesMixinTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        super(ZoningPropertiesMixinTest, cls).setUpClass()
         cls.geom_1_wkt = 'SRID=2154;MULTIPOLYGON(((200000 300000, 900000 300000, 900000 1200000, 200000 1200000, ' \
                          '200000 300000)))'
         cls.geom_2_wkt = 'SRID=2154;MULTIPOLYGON(((900000 300000, 1100000 300000, 1100000 1200000, 900000 1200000, ' \
                          '900000 300000)))'
-        super(ZoningPropertiesMixinTest, cls).setUpClass()
         cls.city = CityFactory.create(geom=cls.geom_1_wkt)
         cls.district = DistrictFactory.create(geom=cls.geom_1_wkt)
         cls.area = RestrictedAreaFactory.create(geom=cls.geom_1_wkt)
