@@ -4,7 +4,7 @@ from django.test import TestCase
 from geotrek.core.factories import PathFactory
 from geotrek.core.filters import PathFilterSet
 from geotrek.trekking.factories import TrekFactory
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
+from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 
 class ZoningFilterTest(TestCase):
@@ -21,6 +21,7 @@ class ZoningFilterTest(TestCase):
         cls.district_2 = DistrictFactory.create(name='district_out', geom=cls.geom_2_wkt)
         cls.area = RestrictedAreaFactory.create(name='area_in', geom=cls.geom_1_wkt)
         cls.area_2 = RestrictedAreaFactory.create(name='area_out', geom=cls.geom_2_wkt)
+        cls.area_type_3 = RestrictedAreaTypeFactory.create()
 
     def setUp(self):
         self.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
@@ -49,12 +50,16 @@ class ZoningFilterTest(TestCase):
 
         self.assertEqual(len(filter.qs), 0)
 
-    def test_filter_zoning_area(self):
-        filter = PathFilterSet(data={'area': self.area.pk})
+    def test_filter_zoning_area_type(self):
+        filter = PathFilterSet(data={'area_type': self.area.area_type.pk})
 
         self.assertIn(self.path, filter.qs)
         self.assertEqual(len(filter.qs), 1)
 
-        filter = PathFilterSet(data={'area': self.area_2.pk})
+        filter = PathFilterSet(data={'area_type': self.area_2.area_type.pk})
+
+        self.assertEqual(len(filter.qs), 0)
+
+        filter = PathFilterSet(data={'area_type': self.area_type_3.pk})
 
         self.assertEqual(len(filter.qs), 0)
