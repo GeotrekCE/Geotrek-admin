@@ -119,7 +119,7 @@ class InterventionForm(CommonForm):
                 self.helper.form_action += '?target_type={}&target_id={}'.format(target_type, target_id)
             else:
                 # Point target to a new topology
-                self.instance.target = Topology()
+                self.instance.target = Topology(kind='INTERVENTION')
         # Else: existing intervention. Target is already set
 
         self.fields['topology'].initial = self.instance.target
