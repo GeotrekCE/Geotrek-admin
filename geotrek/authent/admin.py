@@ -30,7 +30,7 @@ class StructureAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "name"
 
     def has_delete_permission(self, request, obj=None):
-        if obj.pk == settings.DEFAULT_STRUCTURE_PK:
+        if obj and obj.pk == settings.DEFAULT_STRUCTURE_PK:
             return False
         return super(StructureAdmin, self).has_delete_permission(request, obj)
 
