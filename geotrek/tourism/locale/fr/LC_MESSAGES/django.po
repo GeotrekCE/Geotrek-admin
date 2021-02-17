@@ -368,3 +368,30 @@ msgstr "Date"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
+
+msgid "Openning"
+msgstr "Ouverture"
+
+msgid "Total Capacity"
+msgstr "Capacité totale"
+
+msgid "Payment method"
+msgstr "Modes de paiement"
+
+msgid "Prices"
+msgstr "Tarifs"
+
+msgid "Services"
+msgstr "Services"
+
+msgid "Spoken languages"
+msgstr "Langues Parlées"
+
+msgid "Access:"
+msgstr "Accès:"
+
+msgid "Update sheet by "
+msgstr "Fiche mise à jour par"
+
+msgid " the "
+msgstr " le "

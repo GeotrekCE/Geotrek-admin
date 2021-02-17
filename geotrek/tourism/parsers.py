@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.files.base import ContentFile
 from django.db import models
+from django.utils import translation
 from django.utils.translation import gettext as _
 from django.core.files.uploadedfile import UploadedFile
 
@@ -138,6 +139,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         return geom
 
     def get_different_languages(self):
+        self.translated_fields = []
         fields_model = [f.name for f in self.model._meta.get_fields()]
         fields = self.fields.copy()
         for key, value in fields.items():
@@ -147,6 +149,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
                     new_key = '%s_%s' % (key_without_tra, lang)
                     if new_key in fields_model:
                         self.fields[new_key] = value[:-2].replace('libelle', 'libelle%s' % lang.title())
+                        self.translated_fields.append(new_key)
             if not isinstance(value, str):
                 key_without_tra = key[:-3]
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
@@ -156,6 +159,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
                                      else value_list[:-2].replace('libelle', 'libelle%s' % lang.title())
                                      for value_list in value]
                         self.fields[new_key] = new_value
+                        self.translated_fields.append(new_key)
 
     def _filter_comm(self, val, code, multiple=True):
         """
@@ -402,66 +406,31 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
     def filter_website(self, src, val):
         return self._filter_comm(val, 205, multiple=False)
 
-    def filter_practical_info_fr(self, src, val):
+    def filter_practical_info(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, langues, localisation, datemodif, proprio) = val
+        language = translation.get_language().capitalize()
         if ouverture:
-            ouverture = "<b>Ouverture:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
+            ouverture = "<b>" + _("Openning") + ":</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
         if capacite:
-            capacite = "<b>Capacité totale:</b><br>" + str(capacite) + "<br>"
+            capacite = "<b>" + _("Total Capacity") + ":</b><br>" + str(capacite) + "<br>"
         if tarifs:
-            tarifs = "<b>Tarifs:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
-        if paiement and any(values.get('libelleFr') for values in paiement):
-            paiement = "<b>Modes de paiement:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + "<br>"
+            tarifs = "<b>" + _("Prices") + ":</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
+        if paiement and any(values.get(f'libelle{language}') for values in paiement):
+            paiement = "<b>" + _("Payment method") + ":</b><br>" + ", ".join([i[f'libelle{language}'] for i in paiement]) + "<br>"
         else:
             paiement = None
-        if services and any(values.get('libelleFr') for values in services):
-            services = "<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + "<br>"
+        if services and any(values.get(f'libelle{language}') for values in services):
+            services = "<b>" + _("Services") + ":</b><br>" + ", ".join([i[f'libelle{language}'] for i in services]) + "<br>"
         else:
             services = None
-        if langues and any(values.get('libelleFr') for values in langues):
-            langues = "<b>Langues Parlées:</b><br>" + ", ".join([i['libelleFr'] for i in langues]) + "<br>"
+        if langues and any(values.get(f'libelle{language}') for values in langues):
+            langues = "<b>" + _("Spoken languages") + ":</b><br>" + ", ".join([i[f'libelle{language}'] for i in langues]) + "<br>"
         else:
             langues = None
         if localisation:
-            localisation = "<b>Accès:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
+            localisation = "<b>" + _("Access:") + "</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = "<i>Fiche mise à jour par " + proprio + " le " + datemodif + "</i>"
-        lines = [line for line in [
-            ouverture,
-            capacite,
-            tarifs,
-            paiement,
-            services,
-            langues,
-            localisation,
-            modif,
-        ] if line]
-        return '<br>'.join(lines)
-
-    def filter_practical_info_en(self, src, val):
-        (ouverture, capacite, tarifs, paiement, services, langues, localisation, datemodif, proprio) = val
-        if ouverture:
-            ouverture = "<b>Openning:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
-        if capacite:
-            capacite = "<b>Total Capacity:</b><br>" + str(capacite) + "<br>"
-        if tarifs:
-            tarifs = "<b>Prices:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
-        if paiement and any(values.get('libelleEn') for values in paiement):
-            paiement = "<b>Payment method:</b><br>" + ", ".join([i['libelleEn'] for i in paiement]) + "<br>"
-        else:
-            paiement = None
-        if services and any(values.get('libelleEn') for values in services):
-            services = "<b>Services:</b><br>" + ", ".join([i['libelleEn'] for i in services]) + "<br>"
-        else:
-            services = None
-        if langues and any(values.get('libelleEn') for values in langues):
-            langues = "<b>Spoken languages:</b><br>" + ", ".join([i['libelleEn'] for i in langues]) + "<br>"
-        else:
-            langues = None
-        if localisation:
-            localisation = "<b>Access:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
-        datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = "<i>Update sheet by " + proprio + " the " + datemodif + "</i>"
+        modif = "<i>" + _("Update sheet by ") + proprio + _(" the ") + datemodif + "</i>"
         lines = [line for line in [
             ouverture,
             capacite,
@@ -573,26 +542,28 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
         ] if line]
         return '<br>'.join(lines)
 
-    def filter_practical_info_fr(self, src, val):
+    def filter_practical_info(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, localisation, datemodif, proprio) = val
+        language = translation.get_language().capitalize()
         if ouverture:
-            ouverture = "<b>Ouverture:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
+            ouverture = "<b>" + _("Openning") + ":</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
         if capacite:
-            capacite = "<b>Capacité totale:</b><br>" + str(capacite) + "<br>"
+            capacite = "<b>" + _("Total Capacity") + ":</b><br>" + str(capacite) + "<br>"
         if tarifs:
-            tarifs = "<b>Tarifs:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
-        if paiement and any(values.get('libelleFr') for values in paiement):
-            paiement = "<b>Modes de paiement:</b><br>" + ", ".join(i.get('libelleFr') for i in paiement) + "<br>"
+            tarifs = "<b>" + _("Prices") + ":</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
+        if paiement and any(values.get(f'libelle{language}') for values in paiement):
+            paiement = "<b>" + _("Payment method") + ":</b><br>" + ", ".join(
+                [i[f'libelle{language}'] for i in paiement]) + "<br>"
         else:
-            paiement = ""
-        if services and any(values.get('libelleFr') for values in services):
-            services = "<b>Services:</b><br>" + ", ".join(i.get('libelleFr') for i in services) + "<br>"
+            paiement = None
+        if services and any(values.get(f'libelle{language}') for values in services):
+            services = "<b>" + _("Services") + ":</b><br>" + ", ".join([i[f'libelle{language}'] for i in services]) + "<br>"
         else:
-            services = ""
+            services = None
         if localisation:
-            localisation = "<b>Accès:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
+            localisation = "<b>" + _("Access:") + "</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = "<i>Fiche mise à jour par " + proprio + " le " + datemodif + "</i>"
+        modif = "<i>" + _("Update sheet by ") + proprio + _(" the ") + datemodif + "</i>"
         lines = [line for line in [
             ouverture,
             capacite,
@@ -604,48 +575,10 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
         ] if line]
         return '<br>'.join(lines)
 
-    def filter_practical_info_en(self, src, val):
-        (ouverture, capacite, tarifs, paiement, services, localisation, datemodif, proprio) = val
-        if ouverture:
-            ouverture = "<b>Openning:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
-        if capacite:
-            capacite = "<b>Total Capacity:</b><br>" + str(capacite) + "<br>"
-        if tarifs:
-            tarifs = "<b>Prices:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
-
-        if paiement and any(values.get('libelleEn') for values in paiement):
-            paiement = "<b>Payment method:</b><br>" + ", ".join([i.get('libelleEn') for i in paiement]) + "<br>"
-        else:
-            paiement = ""
-        if services and any(values.get('libelleEn') for values in services):
-            services = "<b>Services:</b><br>" + ", ".join([i.get('libelleEn') for i in services]) + "<br>"
-        else:
-            services = ""
-        if localisation:
-            localisation = "<b>Access:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
-        datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = "<i>Update sheet by " + proprio + " the " + datemodif + "</i>"
-        lines = [line for line in [
-            ouverture,
-            capacite,
-            tarifs,
-            paiement,
-            services,
-            localisation,
-            modif,
-        ] if line]
-        return '<br>'.join(lines)
-
-    def filter_description_fr(self, src, val):
+    def filter_description(self, src, val):
         return '<br>'.join(val.splitlines())
 
-    def filter_description_teaser_fr(self, src, val):
-        return '<br>'.join(val.splitlines())
-
-    def filter_description_en(self, src, val):
-        return '<br>'.join(val.splitlines())
-
-    def filter_description_teaser_en(self, src, val):
+    def filter_description_teaser(self, src, val):
         return '<br>'.join(val.splitlines())
 
 

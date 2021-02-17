@@ -90,7 +90,13 @@ class Parser:
         self.user = user
         self.structure = user and user.profile.structure or default_structure()
         self.encoding = encoding
-        self.translated_fields = get_translated_fields(self.model)
+        self.translated_fields = []
+        try:
+            mto = translator.get_options_for_model(self.model)
+        except NotRegistered:
+            self.fields_with_translation = []
+        else:
+            self.fields_with_translation = mto.fields.keys()
 
         if self.fields is None:
             self.fields = {
@@ -191,10 +197,17 @@ class Parser:
 
     def parse_real_field(self, dst, src, val):
         """Returns True if modified"""
-        if hasattr(self, 'filter_{0}'.format(dst)):
-            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
+        if dst in self.translated_fields:
+            dst_filter = dst[:-3]
+            trad = dst[-2:]
+            translation.activate(trad)
         else:
-            val = self.apply_filter(dst, src, val)
+            dst_filter = dst
+        if hasattr(self, 'filter_{0}'.format(dst_filter)):
+            val = getattr(self, 'filter_{0}'.format(dst_filter))(src, val)
+        else:
+            val = self.apply_filter(dst_filter, src, val)
+        translation.deactivate()
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 old = set(getattr(self.obj, dst).all())
@@ -231,9 +244,11 @@ class Parser:
             modified = self.parse_real_field(dst, src, val)
         if modified:
             updated.append(dst)
-            if dst in self.translated_fields:
+            if dst in self.fields_with_translation and dst not in updated:
                 lang = translation.get_language()
-                updated.append('{field}_{lang}'.format(field=dst, lang=lang))
+                translated_fields = '{field}_{lang}'.format(field=dst, lang=lang)
+                self.translated_fields.append(translated_fields)
+                updated.append(translated_fields)
 
     def parse_fields(self, row, fields, non_field=False):
         updated = []
