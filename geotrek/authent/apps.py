@@ -6,7 +6,10 @@ from django.db.models.signals import post_migrate
 
 def create_default_structure(sender, **kwargs):
     from geotrek.authent.models import Structure
-    Structure.objects.get_or_create(pk=1, defaults={'name': _('My structure')})
+    structure, created = Structure.objects.get_or_create(name=_('My structure'))
+    if created and not Structure.objects.filter(pk=1).exists():
+        structure.pk = 1
+        structure.save()
 
 
 class AuthentConfig(AppConfig):

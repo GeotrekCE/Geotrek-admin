@@ -3,8 +3,6 @@ from . import factories
 from django.test import TestCase
 from django.urls import reverse
 
-from geotrek.authent.models import Structure
-
 from .base import AuthentFixturesTest
 
 
@@ -18,16 +16,19 @@ class AuthentAdminTest(TestCase):
 
     def test_cant_delete_last_structure(self):
         self.login(self.admin)
-        delete_url = reverse('admin:authent_structure_delete', args=[Structure.objects.first().pk])
+        delete_url = reverse('admin:authent_structure_delete', args=[1])
         response = self.client.post(delete_url, {'post': 'yes'})
         self.assertEqual(response.status_code, 403)
 
     def test_can_delete_structure(self):
         self.login(self.admin)
-        factories.StructureFactory.create()
-        delete_url = reverse('admin:authent_structure_delete', args=[Structure.objects.first().pk])
+        structure = factories.StructureFactory.create()
+        delete_url = reverse('admin:authent_structure_delete', args=[1])
         response = self.client.post(delete_url, {'post': 'yes'})
         self.assertEqual(response.status_code, 403)
+        delete_url = reverse('admin:authent_structure_delete', args=[structure.pk])
+        response = self.client.post(delete_url, {'post': 'yes'})
+        self.assertEqual(response.status_code, 302)
 
 
 class AdminSiteTest(AuthentFixturesTest):
