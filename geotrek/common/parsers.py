@@ -244,11 +244,12 @@ class Parser:
             modified = self.parse_real_field(dst, src, val)
         if modified:
             updated.append(dst)
-            if dst in self.fields_with_translation and dst not in updated:
+            if dst in self.fields_with_translation:
                 lang = translation.get_language()
                 translated_fields = '{field}_{lang}'.format(field=dst, lang=lang)
-                self.translated_fields.append(translated_fields)
-                updated.append(translated_fields)
+                if translated_fields not in self.translated_fields:
+                    self.translated_fields.append(translated_fields)
+                    updated.append(translated_fields)
 
     def parse_fields(self, row, fields, non_field=False):
         updated = []
