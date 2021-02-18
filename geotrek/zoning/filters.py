@@ -36,7 +36,7 @@ class IntersectionFilterRestrictedArea(RightFilter):
         if not value:
             return qs
 
-        areas_geom = RestrictedArea.objects.filter(area_type=value).values_list('geom', flat=True)
+        areas_geom = RestrictedArea.objects.filter(area_type__in=value).values_list('geom', flat=True)
         if areas_geom:
             geom = GeometryCollection(*areas_geom, srid=settings.SRID)
             return qs.filter(geom__intersects=geom)

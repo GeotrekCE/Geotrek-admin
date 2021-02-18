@@ -31,35 +31,35 @@ class ZoningFilterTest(TestCase):
             self.trek = TrekFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)', published=False)
 
     def test_filter_zoning_city(self):
-        filter = PathFilterSet(data={'city': self.city.pk})
+        filter = PathFilterSet(data={'city': [self.city, ]})
 
         self.assertIn(self.path, filter.qs)
         self.assertEqual(len(filter.qs), 1)
 
-        filter = PathFilterSet(data={'city': self.city_2.pk})
+        filter = PathFilterSet(data={'city': [self.city_2, ]})
 
         self.assertEqual(len(filter.qs), 0)
 
     def test_filter_zoning_district(self):
-        filter = PathFilterSet(data={'district': self.district.pk})
+        filter = PathFilterSet(data={'district': [self.district, ]})
 
         self.assertIn(self.path, filter.qs)
         self.assertEqual(len(filter.qs), 1)
 
-        filter = PathFilterSet(data={'district': self.district_2.pk})
+        filter = PathFilterSet(data={'district': [self.district_2, ]})
 
         self.assertEqual(len(filter.qs), 0)
 
     def test_filter_zoning_area_type(self):
-        filter = PathFilterSet(data={'area_type': self.area.area_type.pk})
+        filter = PathFilterSet(data={'area_type': [self.area.area_type, ]})
 
         self.assertIn(self.path, filter.qs)
         self.assertEqual(len(filter.qs), 1)
 
-        filter = PathFilterSet(data={'area_type': self.area_2.area_type.pk})
+        filter = PathFilterSet(data={'area_type': [self.area_2.area_type, ]})
 
         self.assertEqual(len(filter.qs), 0)
 
-        filter = PathFilterSet(data={'area_type': self.area_type_3.pk})
+        filter = PathFilterSet(data={'area_type': [self.area_type_3, ]})
 
         self.assertEqual(len(filter.qs), 0)
