@@ -51,3 +51,4 @@ Credits
 * *Box Office* designed by Alessio Damiano from the Noun Project
 * *Steep Descent* designed by Sergey Patutin from the Noun Project
 * *Landscape* by Adrien Coquet from the Noun Project
+* *Ski course* by Sahua D from the Noun Project

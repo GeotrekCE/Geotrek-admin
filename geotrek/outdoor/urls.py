@@ -14,5 +14,12 @@ class SiteEntityOptions(PublishableEntityOptions):
     markup_public_view = outdoor_views.SiteMarkupPublic
 
 
+class CourseEntityOptions(PublishableEntityOptions):
+    document_public_view = outdoor_views.CourseDocumentPublic
+    markup_public_view = outdoor_views.CourseMarkupPublic
+
+
 urlpatterns += registry.register(outdoor_models.Site, SiteEntityOptions,
                                  menu=settings.SITE_MODEL_ENABLED)
+urlpatterns += registry.register(outdoor_models.Course, CourseEntityOptions,
+                                 menu=settings.COURSE_MODEL_ENABLED)

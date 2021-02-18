@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-22 15:36+0000\n"
+"POT-Creation-Date: 2021-02-18 07:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,11 +23,11 @@ msgstr "Couleur"
 msgid "Outdoor"
 msgstr "Outdoor"
 
-msgid "Name"
-msgstr "Nom"
-
 msgid "Sector"
 msgstr "Filière"
+
+msgid "Name"
+msgstr "Nom"
 
 msgid "Sectors"
 msgstr "Filières"
@@ -197,35 +197,26 @@ msgstr "Contenus touristiques"
 msgid "Touristic events"
 msgstr "Événements touristiques"
 
-msgid "Cities"
-msgstr "Communes"
+msgid "Site"
+msgstr "Site"
 
-msgid "Published cities"
-msgstr "Communes publiées"
+msgid "Outdoor course"
+msgstr "Parcours outdoor"
 
-msgid "Districts"
-msgstr "Secteurs"
+msgid "Outdoor courses"
+msgstr "Parcours outdoor"
 
-msgid "Published districts"
-msgstr "Secteurs publiés"
+msgid "Add a new outdoor course"
+msgstr "Ajouter un nouveau parcours outdoor"
 
-msgid "Restricted areas"
-msgstr "Zonages réglementaires"
-
-msgid "Published areas"
-msgstr "Zonages réglementaires publiés"
+msgid "Courses"
+msgstr "Parcours"
 
 msgid "Attributes"
 msgstr "Informations"
 
-msgid "Parents"
-msgstr "Parents"
-
 msgid "None"
 msgstr "Aucun(e)"
-
-msgid "Children"
-msgstr "Enfants"
 
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
@@ -241,6 +232,12 @@ msgstr "Situation géographique"
 
 msgid "All useful information"
 msgstr "Toutes les infos pratiques"
+
+msgid "Parents"
+msgstr "Parents"
+
+msgid "Children"
+msgstr "Enfants"
 
 msgid "Practical info"
 msgstr "Informations pratiques"

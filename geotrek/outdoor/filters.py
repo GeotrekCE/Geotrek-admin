@@ -1,7 +1,7 @@
 from django.utils.translation import gettext as _
 from django_filters.filters import MultipleChoiceFilter, ModelMultipleChoiceFilter
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.outdoor.models import Site, Practice, Sector
+from geotrek.outdoor.models import Site, Practice, Sector, Course
 from geotrek.zoning.filters import ZoningFilterSet
 
 
@@ -27,3 +27,12 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         if not values:
             return qs
         return qs.filter(practice__sector__in=values).get_ancestors(include_self=True)
+
+
+class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+    class Meta(StructureRelatedFilterSet.Meta):
+        model = Course
+        fields = StructureRelatedFilterSet.Meta.fields + [
+            'site', 'site__practice__sector', 'site__practice', 'site__labels', 'site__themes',
+            'site__portal', 'site__source', 'site__type', 'site__orientation', 'site__wind',
+        ]

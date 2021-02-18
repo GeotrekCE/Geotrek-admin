@@ -192,7 +192,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
             for practice in practices
         ]
         return ", ".join(verbose)
-    super_practices_verbose_name = _('Pratiques')
+    super_practices_verbose_name = _('Practices')
 
     @property
     def super_sectors(self):
@@ -228,3 +228,46 @@ Site.add_property('infrastructures', lambda self: intersecting(Infrastructure, s
 Site.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
 Site.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
 Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+
+
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+             TimeStampedModelMixin):
+    geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
+    site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
+    description = models.TextField(verbose_name=_("Description"), blank=True,
+                                   help_text=_("Complete description"))
+    advice = models.TextField(verbose_name=_("Advice"), blank=True,
+                              help_text=_("Risks, danger, best period, ..."))
+    ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Outdoor course")
+        verbose_name_plural = _("Outdoor courses")
+        ordering = ('name', )
+
+    def __str__(self):
+        return self.name
+
+    def distance(self, to_cls):
+        """Distance to associate this site to another class"""
+        return None
+
+    @classmethod
+    def get_create_label(cls):
+        return _("Add a new outdoor course")
+
+
+Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+Topology.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+TouristicContent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+TouristicEvent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+
+Course.add_property('sites', lambda self: intersecting(Course, self), _("Sites"))
+Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
+Course.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
+Course.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
+Course.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
+Course.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
+Course.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
