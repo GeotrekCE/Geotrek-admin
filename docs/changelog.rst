@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.49.0+dev
+2.50.0 (2021-02-19)
 -------------------
 
 **BREAKING CHANGES**
@@ -14,10 +14,20 @@ CHANGELOG
 **Bug fixes**
 
 - Fix API v2 crash when trek geom is a multilinestring
+- Fix touristic content filtering in API v2 when both type1 and type2 are specified
+- Synchronize pictogram for service types in mobile app
 
 **New features**
 
 - Cover image for static pages
+
+**Performances**
+
+- Automatically remove temporary topologies created before version 2.48.0.
+
+**Security**
+
+- Upgrade cryptography from 3.2 to 3.3.2
 
 
 2.49.0 (2021-02-09)
