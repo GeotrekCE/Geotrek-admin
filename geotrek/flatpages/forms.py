@@ -61,7 +61,7 @@ class FlatPageForm(CommonForm):
 
     def save(self, commit=True):
         page = super().save(commit=commit)
-        if commit:
+        if commit and self.cleaned_data['cover_image']:
             Attachment.objects.update_or_create(
                 content_type=ContentType.objects.get_for_model(FlatPage),
                 object_id=page.id,
@@ -73,4 +73,9 @@ class FlatPageForm(CommonForm):
                     'starred': True,
                 }
             )
+        if commit and not self.cleaned_data['cover_image']:
+            Attachment.objects.filter(
+                content_type=ContentType.objects.get_for_model(FlatPage),
+                object_id=page.id,
+            ).delete()
         return page

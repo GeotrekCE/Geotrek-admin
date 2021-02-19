@@ -452,6 +452,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_detail(self.treks[0].id)
         self.assertEqual(response.status_code, 200)
 
+    def test_trek_detail_with_lang(self):
+        response = self.get_trek_list({'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['pdf'],
+                         f'http://testserver/api/en/treks/{self.treks[0].pk}/trek.pdf')
+
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
         self.assertEqual(response.status_code, 200)
@@ -694,6 +700,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_touristiccontent_q(self):
         response = self.get_touristiccontent_list({'q': 'Blah CT'})
         self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_detail_with_lang(self):
+        response = self.get_touristiccontent_list({'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['pdf'],
+                         f'http://testserver/api/en/touristiccontents/{self.content.pk}/touristic-content.pdf')
 
     def test_labels_list(self):
         self.check_number_elems_response(
