@@ -15,6 +15,10 @@ CHANGELOG
 
 - Fix API v2 crash when trek geom is a multilinestring
 
+**New features**
+
+- Cover image for static pages
+
 
 2.49.0 (2021-02-09)
 -------------------

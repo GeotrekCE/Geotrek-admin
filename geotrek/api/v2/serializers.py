@@ -753,11 +753,13 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
         title = serializers.SerializerMethodField(read_only=True)
         content = serializers.SerializerMethodField(read_only=True)
         published = serializers.SerializerMethodField(read_only=True)
+        attachments = AttachmentSerializer(many=True)
 
         class Meta:
             model = flatpages_models.FlatPage
             fields = (
-                'id', 'title', 'external_url', 'content', 'target', 'source', 'portal', 'order', 'published'
+                'id', 'title', 'external_url', 'content', 'target', 'source', 'portal', 'order',
+                'published', 'attachments',
             )
 
         def get_title(self, obj):
