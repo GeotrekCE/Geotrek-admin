@@ -180,7 +180,7 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     def get_thumbnail(self, obj):
         thumbnailer = get_thumbnailer(obj.attachment_file)
         try:
-            thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
+            thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
         except (IOError, InvalidImageFormatError, DecompressionBombError):
             return ""
         thumbnail.author = obj.author
