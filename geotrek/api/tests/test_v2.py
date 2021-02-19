@@ -1015,6 +1015,7 @@ class FlatPageTestCase(TestCase):
                 'published': {'en': True, 'es': False, 'fr': False, 'it': False},
                 'source': [],
                 'target': 'mobile',
+                'attachments': [],
             }, {
                 'id': self.page1.pk,
                 'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
@@ -1025,6 +1026,7 @@ class FlatPageTestCase(TestCase):
                 'published': {'en': True, 'es': False, 'fr': False, 'it': False},
                 'source': [self.source.pk],
                 'target': 'web',
+                'attachments': [],
             }]
         })
 
@@ -1041,6 +1043,7 @@ class FlatPageTestCase(TestCase):
             'published': {'en': True, 'es': False, 'fr': False, 'it': False},
             'source': [self.source.pk],
             'target': 'web',
+            'attachments': [],
         })
 
     def test_filter_q(self):
