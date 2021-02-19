@@ -235,10 +235,17 @@ $(window).on('entity:map:list', function (e, data) {
                                           .replace('0', properties.pk);
     }
     if (typeof window.SETTINGS.map.styles.others === "function"){
-        var style = window.SETTINGS.map.styles.others;
+        var settings_style = window.SETTINGS.map.styles[data.modelname];
+        if (settings_style === undefined) {
+            var style = window.SETTINGS.map.styles.others;
+        }
     }
     else{
-        var style = L.Util.extend({}, window.SETTINGS.map.styles.others);
+        var settings_style = window.SETTINGS.map.styles[data.modelname];
+        if (settings_style === undefined) {
+            settings_style = window.SETTINGS.map.styles.others;
+        }
+        var style = L.Util.extend({}, style);
     }
     var objectsLayer = new L.ObjectsLayer(null, {
         objectUrl: getUrl,
