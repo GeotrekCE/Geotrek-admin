@@ -8,6 +8,8 @@ CHANGELOG
 **BREAKING CHANGES**
 
 - Change URL of some API v2 enpoints. See Swagger online doc.
+- API v2 thumbnails are now 400px large
+- Split PDF urls by language in API v2
 
 
 2.49.0 (2021-02-09)
