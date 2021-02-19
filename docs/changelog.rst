@@ -5,9 +5,19 @@ CHANGELOG
 2.49.0+dev
 -------------------
 
+**BREAKING CHANGES**
+
+- Change URL of some API v2 enpoints. See Swagger online doc.
+- API v2 thumbnails are now 400px large
+- Split PDF urls by language in API v2
+
 **Bug fixes**
 
--
+- Fix API v2 crash when trek geom is a multilinestring
+
+**New features**
+
+- Cover image for static pages
 
 
 2.49.0 (2021-02-09)

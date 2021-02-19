@@ -4,6 +4,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
+from django.contrib.gis.geos import MultiLineString
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -180,7 +181,7 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     def get_thumbnail(self, obj):
         thumbnailer = get_thumbnailer(obj.attachment_file)
         try:
-            thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
+            thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
         except (IOError, InvalidImageFormatError, DecompressionBombError):
             return ""
         thumbnail.author = obj.author
@@ -283,17 +284,27 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
 
-        def get_pdf_url(self, obj):
+        def _get_pdf_url_lang(self, obj, lang):
             if settings.ONLY_EXTERNAL_PUBLIC_PDF:
                 file_type = get_object_or_404(common_models.FileType, type="Topoguide")
                 if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
                     return None
             urlname = 'tourism:touristiccontent_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else '')
-            url = reverse(urlname, kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+            url = reverse(urlname, kwargs={'lang': lang, 'pk': obj.pk, 'slug': obj.slug})
             request = self.context.get('request')
             if request:
                 url = request.build_absolute_uri(url)
             return url
+
+        def get_pdf_url(self, obj):
+            lang = self.context.get('request').GET.get('language', 'all') if self.context.get('request') else 'all'
+            if lang != 'all':
+                data = self._get_pdf_url_lang(obj, lang)
+            else:
+                data = {}
+                for language in settings.MODELTRANSLATION_LANGUAGES:
+                    data[language] = self._get_pdf_url_lang(obj, language)
+            return data
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
@@ -405,7 +416,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('departure', self, obj)
 
         def get_departure_geom(self, obj):
-            return obj.geom_3d.array[0]
+            return obj.geom_3d[0][0] if isinstance(obj, MultiLineString) else obj.geom_3d[0]
 
         def get_arrival(self, obj):
             return get_translation_or_dict('arrival', self, obj)
@@ -425,17 +436,27 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_kml_url(self, obj):
             return build_url(self, reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug}))
 
-        def get_pdf_url(self, obj):
+        def _get_pdf_url_lang(self, obj, lang):
             if settings.ONLY_EXTERNAL_PUBLIC_PDF:
                 file_type = get_object_or_404(common_models.FileType, type="Topoguide")
                 if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
                     return None
-            url = reverse('trekking:trek_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else ''),
-                          kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+            urlname = 'trekking:trek_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else '')
+            url = reverse(urlname, kwargs={'lang': lang, 'pk': obj.pk, 'slug': obj.slug})
             request = self.context.get('request')
             if request:
                 url = request.build_absolute_uri(url)
             return url
+
+        def get_pdf_url(self, obj):
+            lang = self.context.get('request').GET.get('language', 'all') if self.context.get('request') else 'all'
+            if lang != 'all':
+                data = self._get_pdf_url_lang(obj, lang)
+            else:
+                data = {}
+                for language in settings.MODELTRANSLATION_LANGUAGES:
+                    data[language] = self._get_pdf_url_lang(obj, language)
+            return data
 
         def get_advice(self, obj):
             return get_translation_or_dict('advice', self, obj)
@@ -732,11 +753,13 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
         title = serializers.SerializerMethodField(read_only=True)
         content = serializers.SerializerMethodField(read_only=True)
         published = serializers.SerializerMethodField(read_only=True)
+        attachments = AttachmentSerializer(many=True)
 
         class Meta:
             model = flatpages_models.FlatPage
             fields = (
-                'id', 'title', 'external_url', 'content', 'target', 'source', 'portal', 'order', 'published'
+                'id', 'title', 'external_url', 'content', 'target', 'source', 'portal', 'order',
+                'published', 'attachments',
             )
 
         def get_title(self, obj):

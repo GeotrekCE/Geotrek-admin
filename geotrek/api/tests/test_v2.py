@@ -452,6 +452,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_detail(self.treks[0].id)
         self.assertEqual(response.status_code, 200)
 
+    def test_trek_detail_with_lang(self):
+        response = self.get_trek_list({'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['pdf'],
+                         f'http://testserver/api/en/treks/{self.treks[0].pk}/trek.pdf')
+
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
         self.assertEqual(response.status_code, 200)
@@ -695,6 +701,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_touristiccontent_list({'q': 'Blah CT'})
         self.assertEqual(len(response.json()['results']), 1)
 
+    def test_touristiccontent_detail_with_lang(self):
+        response = self.get_touristiccontent_list({'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['pdf'],
+                         f'http://testserver/api/en/touristiccontents/{self.content.pk}/touristic-content.pdf')
+
     def test_labels_list(self):
         self.check_number_elems_response(
             self.get_label_list(),
@@ -871,7 +883,7 @@ class RatingScaleTestCase(TestCase):
         cls.scale3 = outdoor_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
 
     def test_list(self):
-        response = self.client.get('/api/v2/ratingscale/')
+        response = self.client.get('/api/v2/outdoor_ratingscale/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             'count': 3,
@@ -893,7 +905,7 @@ class RatingScaleTestCase(TestCase):
         })
 
     def test_detail(self):
-        response = self.client.get('/api/v2/ratingscale/{}/'.format(self.scale1.pk))
+        response = self.client.get('/api/v2/outdoor_ratingscale/{}/'.format(self.scale1.pk))
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             'id': self.scale1.pk,
@@ -902,14 +914,14 @@ class RatingScaleTestCase(TestCase):
         })
 
     def test_filter_q(self):
-        response = self.client.get('/api/v2/ratingscale/?q=A')
+        response = self.client.get('/api/v2/outdoor_ratingscale/?q=A')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for scale in response.json()['results']:
             self.assertEqual(scale['name']['en'], 'AAA')
 
     def test_filter_practice(self):
-        response = self.client.get('/api/v2/ratingscale/?practices={}'.format(self.practice2.pk))
+        response = self.client.get('/api/v2/outdoor_ratingscale/?practices={}'.format(self.practice2.pk))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for scale in response.json()['results']:
@@ -926,7 +938,7 @@ class RatingTestCase(TestCase):
         cls.rating3 = outdoor_factory.RatingFactory(name='BBB', scale=cls.scale2)
 
     def test_list(self):
-        response = self.client.get('/api/v2/rating/')
+        response = self.client.get('/api/v2/outdoor_rating/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             'count': 3,
@@ -957,7 +969,7 @@ class RatingTestCase(TestCase):
         })
 
     def test_detail(self):
-        response = self.client.get('/api/v2/rating/{}/'.format(self.rating1.pk))
+        response = self.client.get('/api/v2/outdoor_rating/{}/'.format(self.rating1.pk))
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             'id': self.rating1.pk,
@@ -969,14 +981,14 @@ class RatingTestCase(TestCase):
         })
 
     def test_filter_q(self):
-        response = self.client.get('/api/v2/rating/?q=BBB')
+        response = self.client.get('/api/v2/outdoor_rating/?q=BBB')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for rating in response.json()['results']:
             self.assertNotEqual(rating['name']['en'] == 'BBB', rating['scale'] == self.scale1.pk)
 
     def test_filter_scale(self):
-        response = self.client.get('/api/v2/rating/?scale={}'.format(self.scale2.pk))
+        response = self.client.get('/api/v2/outdoor_rating/?scale={}'.format(self.scale2.pk))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for rating in response.json()['results']:
@@ -1015,6 +1027,7 @@ class FlatPageTestCase(TestCase):
                 'published': {'en': True, 'es': False, 'fr': False, 'it': False},
                 'source': [],
                 'target': 'mobile',
+                'attachments': [],
             }, {
                 'id': self.page1.pk,
                 'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
@@ -1025,6 +1038,7 @@ class FlatPageTestCase(TestCase):
                 'published': {'en': True, 'es': False, 'fr': False, 'it': False},
                 'source': [self.source.pk],
                 'target': 'web',
+                'attachments': [],
             }]
         })
 
@@ -1041,6 +1055,7 @@ class FlatPageTestCase(TestCase):
             'published': {'en': True, 'es': False, 'fr': False, 'it': False},
             'source': [self.source.pk],
             'target': 'web',
+            'attachments': [],
         })
 
     def test_filter_q(self):

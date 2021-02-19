@@ -206,7 +206,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         self.assertEqual(response.json()['results'][0]['name'], sensitive_area_point.species.name)
 
     def test_list_sportpractice(self):
-        url = '/api/v2/sportpractice/?format=json&language=en'
+        url = '/api/v2/sensitivearea_practice/?format=json&language=en'
         response = self.client.get(url)
         sports_practice = SportPractice.objects.all()
         result_sportpractice = [{'id': sp.id, 'name': sp.name} for sp in sports_practice]
