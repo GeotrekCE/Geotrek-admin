@@ -5,9 +5,9 @@ CHANGELOG
 2.49.0+dev
 -------------------
 
-**Bug fixes**
+**BREAKING CHANGES**
 
--
+- Change URL of some API v2 enpoints. See Swagger online doc.
 
 
 2.49.0 (2021-02-09)
