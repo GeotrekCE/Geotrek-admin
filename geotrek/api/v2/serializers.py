@@ -4,6 +4,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
+from django.contrib.gis.geos import MultiLineString
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -415,7 +416,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('departure', self, obj)
 
         def get_departure_geom(self, obj):
-            return obj.geom_3d.array[0]
+            return obj.geom_3d[0][0] if isinstance(obj, MultiLineString) else obj.geom_3d[0]
 
         def get_arrival(self, obj):
             return get_translation_or_dict('arrival', self, obj)

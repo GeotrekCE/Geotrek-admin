@@ -11,6 +11,10 @@ CHANGELOG
 - API v2 thumbnails are now 400px large
 - Split PDF urls by language in API v2
 
+**Bug fixes**
+
+- Fix API v2 crash when trek geom is a multilinestring
+
 
 2.49.0 (2021-02-09)
 -------------------
