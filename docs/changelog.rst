@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix a backward compatibility to keep MAP_STYLES['xxx'] config working in custom.py. However, we recommend to use new MAPENTITY_CONFIG['MAP_STYLES'] for this.
 
 
 2.50.0 (2021-02-19)

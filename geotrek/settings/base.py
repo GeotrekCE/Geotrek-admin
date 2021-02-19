@@ -408,6 +408,7 @@ MAPENTITY_CONFIG = {
     }
 }
 
+MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
 DEFAULT_STRUCTURE_NAME = os.getenv('DEFAULT_STRUCTURE', 'My structure')
 
 VIEWPORT_MARGIN = 0.1  # On list page, around SPATIAL_EXTENT
