@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('authent', '0006_auto_20210216_1413'),
-        ('maintenance', '0016_auto_20210121_0943'),
+        ('maintenance', '0017_auto_20210211_0825'),
     ]
 
     operations = [
