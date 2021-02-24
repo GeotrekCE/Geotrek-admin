@@ -78,6 +78,7 @@ class Parser:
     non_fields = {}
     natural_keys = {}
     field_options = {}
+    default_language = 'fr'
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -90,7 +91,6 @@ class Parser:
         self.user = user
         self.structure = user and user.profile.structure or default_structure()
         self.encoding = encoding
-        self.translated_fields = []
         try:
             mto = translator.get_options_for_model(self.model)
         except NotRegistered:
@@ -141,7 +141,7 @@ class Parser:
             else:
                 return self.get_part(dst, left, val[part])
 
-    def get_val(self, row, dst, src):
+    def get_val(self, row, dst, src, src_default_lang=None):
         if isinstance(src, Iterable) and not isinstance(src, str):
             val = []
             for subsrc in src:
@@ -156,9 +156,14 @@ class Parser:
             try:
                 return self.get_part(dst, src, row)
             except (KeyError, IndexError):
-                required = "required " if self.field_options.get(dst, {}).get('required', False) else ""
-                raise ValueImportError(_("Missing {required}field '{src}'").format(required=required, src=src))
-
+                if dst not in self.fields_with_translation or src_default_lang == src:
+                    required = "required " if self.field_options.get(dst, {}).get('required', False) else ""
+                    raise ValueImportError(
+                        _("Missing {required}field '{src}'").format(required=required,
+                                                                    src=src_default_lang if src_default_lang else src)
+                    )
+                else:
+                    return None
     def apply_filter(self, dst, src, val):
         field = self.model._meta.get_field(dst)
         if (isinstance(field, models.ForeignKey) or isinstance(field, models.ManyToManyField)):
@@ -195,19 +200,17 @@ class Parser:
         else:
             setattr(self.obj, dst, val)
 
-    def parse_real_field(self, dst, src, val):
+    def parse_real_field(self, dst, src, val, lang=None):
         """Returns True if modified"""
-        if dst in self.translated_fields:
-            dst_filter = dst[:-3]
-            trad = dst[-2:]
-            translation.activate(trad)
+        if lang:
+            translation.activate(lang)
+        if hasattr(self, 'filter_{0}'.format(dst)):
+            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
         else:
-            dst_filter = dst
-        if hasattr(self, 'filter_{0}'.format(dst_filter)):
-            val = getattr(self, 'filter_{0}'.format(dst_filter))(src, val)
-        else:
-            val = self.apply_filter(dst_filter, src, val)
+            val = self.apply_filter(dst, src, val)
         translation.deactivate()
+        if lang:
+            dst = f'{dst}_{lang}'
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 old = set(getattr(self.obj, dst).all())
@@ -230,38 +233,71 @@ class Parser:
             self.set_value(dst, src, val)
             return True
 
-    def parse_field(self, row, dst, src, updated, non_field):
+    def parse_field(self, row, dst, src, updated, non_field, src_default_lang=None, lang=None):
         if dst in self.constant_fields:
             val = self.constant_fields[dst]
         elif dst in self.m2m_constant_fields:
             val = self.m2m_constant_fields[dst]
         else:
             src = self.normalize_src(src)
-            val = self.get_val(row, dst, src)
+            val = self.get_val(row, dst, src, src_default_lang)
+
+        modified = False
+
         if non_field:
             modified = self.parse_non_field(dst, src, val)
+        elif dst in self.fields_with_translation:
+            modified_lang = self.parse_real_field(dst, src, val, lang)
+            if modified_lang:
+                updated.append(dst)
         else:
             modified = self.parse_real_field(dst, src, val)
+
         if modified:
             updated.append(dst)
-            if dst in self.fields_with_translation:
-                lang = translation.get_language()
-                translated_fields = '{field}_{lang}'.format(field=dst, lang=lang)
-                if translated_fields not in self.translated_fields:
-                    self.translated_fields.append(translated_fields)
-                    updated.append(translated_fields)
+
+    def get_language_info(self, lang=None):
+        raise NotImplementedError('You should add get_language_info in your parser if you want to use language_info')
+
+    def parse_field_with_warning(self, row, dst, src, updated, non_field, src_default_lang=None, lang=None):
+        try:
+            self.parse_field(row, dst, src, updated, non_field, src_default_lang, lang)
+        except ValueImportError as warning:
+            if self.field_options.get(dst, {}).get('required', False):
+                raise RowImportError(warning)
+            if self.warn_on_missing_fields:
+                self.add_warning(str(warning))
+
+    def replace_src(self, src, lang):
+        if isinstance(src, list):
+            new_src = []
+            for value_src in src:
+                new_src.append(self.replace_src(value_src, lang))
+            return new_src
+        elif isinstance(src, tuple):
+            new_src = ()
+            for value_src in src:
+                new_src = new_src + (self.replace_src(value_src, lang), )
+            return new_src
+        elif isinstance(src, str):
+            new_src = src
+            if '{language_info}' in src:
+                return new_src.format(language_info=self.get_language_info(lang))
+            else:
+                return new_src
 
     def parse_fields(self, row, fields, non_field=False):
         updated = []
         for dst, src in fields.items():
-            try:
-                self.parse_field(row, dst, src, updated, non_field)
-            except ValueImportError as warning:
-                if self.field_options.get(dst, {}).get('required', False):
-                    raise RowImportError(warning)
-                if self.warn_on_missing_fields:
-                    self.add_warning(str(warning))
-                continue
+            if dst in self.fields_with_translation:
+                src_default_lang = self.replace_src(src, self.default_language)
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    translation.activate(lang)
+                    src_lang = self.replace_src(src, lang)
+                    self.parse_field_with_warning(row, dst, src_lang, updated, non_field, src_default_lang, lang)
+                    translation.deactivate()
+            else:
+                self.parse_field_with_warning(row, dst, src, updated, non_field)
         return updated
 
     def parse_obj(self, row, operation):

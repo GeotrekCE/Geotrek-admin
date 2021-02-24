@@ -100,10 +100,6 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         'illustrations'
     ]
 
-    def __init__(self, *args, **kwargs):
-        super(ApidaeParser, self).__init__(*args, **kwargs)
-        self.get_different_languages()
-
     @property
     def items(self):
         if self.nb == 0:
@@ -141,28 +137,8 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         geom.transform(settings.SRID)
         return geom
 
-    def get_different_languages(self):
-        self.translated_fields = []
-        fields_model = [f for f in translator.get_options_for_model(self.model).fields.keys()]
-        fields = self.fields.copy()
-        for key, value in fields.items():
-            if 'libelle' in value:
-                for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    new_key = '%s_%s' % (key, lang)
-                    if key in fields_model:
-                        self.fields[new_key] = value[:-2].replace('libelle', 'libelle%s' % lang.title())
-                        self.translated_fields.append(new_key)
-                        if self.fields.get(key):
-                            del self.fields[key]
-            if not isinstance(value, str):
-                for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    new_key = '%s_%s' % (key, lang)
-                    if key in fields_model:
-                        new_value = [value_list if 'libelle' not in value_list
-                                     else value_list[:-2].replace('libelle', 'libelle%s' % lang.title())
-                                     for value_list in value]
-                        self.fields[new_key] = new_value
-                        self.translated_fields.append(new_key)
+    def get_language_info(self, lang=''):
+        return lang.title()
 
     def _filter_comm(self, val, code, multiple=True):
         """
@@ -293,8 +269,8 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
     portal = None
     model = TouristicEvent
     fields = {
-        'description_teaser': 'presentation.descriptifCourt.libelleFr',
-        'description': 'presentation.descriptifDetaille.libelleFr',
+        'description_teaser': 'presentation.descriptifCourt.libelle{language_info}',
+        'description': 'presentation.descriptifDetaille.libelle{language_info}',
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
         'begin_date': 'ouverture.periodesOuvertures.0.dateDebut',
         'end_date': 'ouverture.periodesOuvertures.0.dateFin',
@@ -315,18 +291,18 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
         'participant_number': 'informationsFeteEtManifestation.nbParticipantsAttendu',
         'practical_info': (
-            'ouverture.periodeEnClair.libelleFr',
+            'ouverture.periodeEnClair.libelle{language_info}',
             'informationsFeteEtManifestation.nbParticipantsAttendu',
-            'descriptionTarif.tarifsEnClair.libelleFr',
+            'descriptionTarif.tarifsEnClair.libelle{language_info}',
             'descriptionTarif.modesPaiement',
             'prestations.services',
             'prestations.languesParlees',
-            'localisation.geolocalisation.complement.libelleFr',
+            'localisation.geolocalisation.complement.libelle{language_info}',
             'gestion.dateModification',
             'gestion.membreProprietaire.nom',
         ),
         'eid': 'id',
-        'name': 'nom.libelleFr',
+        'name': 'nom.libelle{language_info}',
     }
     responseFields = [
         'id',
@@ -338,9 +314,9 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'presentation.descriptifDetaille',
         'localisation.adresse',
         'localisation.geolocalisation.geoJson.coordinates',
-        'localisation.geolocalisation.complement.libelleFr',
+        'localisation.geolocalisation.complement',
         'informations.moyensCommunication',
-        'informations.structureGestion.nom.libelleFr',
+        'informations.structureGestion.nom',
         'descriptionTarif.tarifsEnClair',
         'descriptionTarif.modesPaiement',
         'prestations',
@@ -375,10 +351,12 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
             self.m2m_constant_fields['portal'] = self.portal
 
     def filter_description_teaser(self, src, val):
-        return '<br>'.join(val.splitlines())
+        if val:
+            return '<br>'.join(val.splitlines())
 
     def filter_description(self, src, val):
-        return '<br>'.join(val.splitlines())
+        if val:
+            return '<br>'.join(val.splitlines())
 
     def filter_duration(self, src, val):
         begin, end = val
@@ -411,7 +389,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
 
     def filter_practical_info(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, langues, localisation, datemodif, proprio) = val
-        language = translation.get_language().capitalize()
+        language = translation.get_language().title()
         if ouverture:
             ouverture = "<b>" + _("Openning") + ":</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
         if capacite:
@@ -474,9 +452,9 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
     eid = 'eid'
     fields = {
         'eid': 'id',
-        'name': 'nom.libelleFr',
-        'description': 'presentation.descriptifDetaille.libelleFr',
-        'description_teaser': 'presentation.descriptifCourt.libelleFr',
+        'name': 'nom.libelle{language_info}',
+        'description': 'presentation.descriptifDetaille.libelle{language_info}',
+        'description_teaser': 'presentation.descriptifCourt.libelle{language_info}',
         'contact': (
             'localisation.adresse.adresse1',
             'localisation.adresse.adresse2',
@@ -489,12 +467,12 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
         'website': 'informations.moyensCommunication',
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
         'practical_info': (
-            'ouverture.periodeEnClair.libelleFr',
+            'ouverture.periodeEnClair.libelle{language_info}',
             'informationsHebergementCollectif.capacite.capaciteTotale',
-            'descriptionTarif.tarifsEnClair.libelleFr',
+            'descriptionTarif.tarifsEnClair.libelle{language_info}',
             'descriptionTarif.modesPaiement',
             'prestations.services',
-            'localisation.geolocalisation.complement.libelleFr',
+            'localisation.geolocalisation.complement.libelle{language_info}',
             'gestion.dateModification',
             'gestion.membreProprietaire.nom',
         ),
@@ -579,10 +557,12 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
         return '<br>'.join(lines)
 
     def filter_description(self, src, val):
-        return '<br>'.join(val.splitlines())
+        if val:
+            return '<br>'.join(val.splitlines())
 
     def filter_description_teaser(self, src, val):
-        return '<br>'.join(val.splitlines())
+        if val:
+            return '<br>'.join(val.splitlines())
 
 
 class HebergementsApidaeParser(TouristicContentApidaeParser):

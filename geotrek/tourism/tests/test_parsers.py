@@ -100,6 +100,10 @@ class FMA28OtherPortal(TouristicEventTourInSoftParser):
     m2m_aggregate_fields = ["portal"]
 
 
+class DifferentDefaultLanguage(TouristicEventApidaeParser):
+    default_language = 'en'
+
+
 class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_apidae_failed(self, mocked):
@@ -428,7 +432,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.count(), 3)
 
     @mock.patch('requests.get')
-    def test_create_event_apidae_empty_languagefr(self, mocked):
+    def test_create_event_apidae_empty_languagefr_default_language(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEventEn.json')
             with open(filename, 'r') as f:
@@ -439,7 +443,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         FileType.objects.create(type="Photographie")
         self.assertEqual(TouristicEvent.objects.count(), 0)
         output = io.StringIO()
-        call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
+        call_command('import', 'geotrek.tourism.tests.test_parsers.DifferentDefaultLanguage', verbosity=2, stdout=output)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "323154")
