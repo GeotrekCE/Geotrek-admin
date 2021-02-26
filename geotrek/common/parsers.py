@@ -164,6 +164,7 @@ class Parser:
                     )
                 else:
                     return None
+
     def apply_filter(self, dst, src, val):
         field = self.model._meta.get_field(dst)
         if (isinstance(field, models.ForeignKey) or isinstance(field, models.ManyToManyField)):
