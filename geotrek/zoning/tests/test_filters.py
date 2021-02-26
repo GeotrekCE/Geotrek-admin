@@ -21,6 +21,8 @@ class ZoningFilterTest(TestCase):
         cls.district_2 = DistrictFactory.create(name='district_out', geom=cls.geom_2_wkt)
         cls.area = RestrictedAreaFactory.create(name='area_in', geom=cls.geom_1_wkt)
         cls.area_2 = RestrictedAreaFactory.create(name='area_out', geom=cls.geom_2_wkt)
+        cls.area_3 = RestrictedAreaFactory.create(name='area_out_same_type', geom=cls.geom_2_wkt,
+                                                  area_type=cls.area.area_type)
         cls.area_type_3 = RestrictedAreaTypeFactory.create()
 
     def setUp(self):

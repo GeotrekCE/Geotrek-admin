@@ -1,7 +1,5 @@
 from django_filters import FilterSet
-from django.conf import settings
 from django.db.models import Q
-from django.contrib.gis.geos import GeometryCollection
 from django.utils.translation import gettext_lazy as _
 
 
@@ -36,12 +34,13 @@ class IntersectionFilterRestrictedArea(RightFilter):
         if not value:
             return qs
 
-        areas_geom = RestrictedArea.objects.filter(area_type__in=value).values_list('geom', flat=True)
-        if areas_geom:
-            geom = GeometryCollection(*areas_geom, srid=settings.SRID)
-            return qs.filter(geom__intersects=geom)
-        else:
+        restricted_areas = RestrictedArea.objects.filter(area_type__in=value)
+        if not restricted_areas:
             return qs.none()
+        q = Q()
+        for subvalue in restricted_areas:
+            q |= Q(geom__intersects=subvalue.geom)
+        return qs.filter(q)
 
 
 class ZoningFilterSet(FilterSet):

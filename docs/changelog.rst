@@ -9,6 +9,10 @@ CHANGELOG
 
 - Fix a backward compatibility to keep MAP_STYLES['xxx'] config working in custom.py. However, we recommend to use new MAPENTITY_CONFIG['MAP_STYLES'] for this.
 
+**New features**
+
+- Add filter restricted area by restricted areas type
+
 
 2.50.0 (2021-02-19)
 -------------------
