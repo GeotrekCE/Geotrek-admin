@@ -100,8 +100,27 @@ class FMA28OtherPortal(TouristicEventTourInSoftParser):
     m2m_aggregate_fields = ["portal"]
 
 
-class DifferentDefaultLanguage(TouristicEventApidaeParser):
+class DifferentDefaultLanguageParser(TouristicEventApidaeParser):
     default_language = 'en'
+
+
+class ListFieldsParser(TouristicEventApidaeParser):
+    fields = {
+        'geom': 'localisation.geolocalisation.geoJson.coordinates',
+        'practical_info': [
+            'ouverture.periodeEnClair.libelle{language_info}',
+            'informationsFeteEtManifestation.nbParticipantsAttendu',
+            'descriptionTarif.tarifsEnClair.libelle{language_info}',
+            'descriptionTarif.modesPaiement',
+            'prestations.services',
+            'prestations.languesParlees',
+            'localisation.geolocalisation.complement.libelle{language_info}',
+            'gestion.dateModification',
+            'gestion.membreProprietaire.nom',
+        ],
+        'eid': 'id',
+        'name': 'nom.libelle{language_info}',
+    }
 
 
 class ParserTests(TranslationResetMixin, TestCase):
@@ -164,10 +183,6 @@ class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('geotrek.common.parsers.requests.get')
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     def test_create_content_espritparc_retry_fail(self, mocked):
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
-            with open(filename, 'r') as f:
-                return json.load(f)
 
         def side_effect(url, allow_redirects, params):
             response = requests.Response()
@@ -432,6 +447,25 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.count(), 3)
 
     @mock.patch('requests.get')
+    def test_create_event_apidae_with_list_fields(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEventFr.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        self.assertEqual(TouristicEvent.objects.count(), 0)
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.tests.test_parsers.ListFieldsParser', verbosity=2,
+                     stdout=output)
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertEqual(event.practical_info_fr[:38], "<b>Ouverture:</b><br>Mardi 6 août 2019")
+
+    @mock.patch('requests.get')
     def test_create_event_apidae_empty_languagefr_default_language(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEventEn.json')
@@ -443,7 +477,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         FileType.objects.create(type="Photographie")
         self.assertEqual(TouristicEvent.objects.count(), 0)
         output = io.StringIO()
-        call_command('import', 'geotrek.tourism.tests.test_parsers.DifferentDefaultLanguage', verbosity=2, stdout=output)
+        call_command('import', 'geotrek.tourism.tests.test_parsers.DifferentDefaultLanguageParser', verbosity=2, stdout=output)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "323154")

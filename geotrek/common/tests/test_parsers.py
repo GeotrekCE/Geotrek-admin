@@ -15,12 +15,18 @@ from django.test.utils import override_settings
 from django.template.exceptions import TemplateDoesNotExist
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.trekking.models import Trek
+from geotrek.trekking.models import POI, Trek
 from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import (
-    ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
+    ShapeParser, ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
     TourismSystemParser, OpenSystemParser,
 )
+
+
+class NoLanguageInformationParser(ShapeParser):
+    model = POI
+    url = "url"
+    fields = {'name': 'name{language_info}'}
 
 
 class OrganismParser(ExcelParser):
@@ -46,6 +52,14 @@ class AttachmentLegendParser(AttachmentParser):
 
 
 class ParserTests(TestCase):
+    def test_get_routing_info_not_implemented(self):
+        FileType.objects.create(type="Photographie")
+        filename = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'trekking', 'tests',
+                                'data', 'poi.shp')
+        with self.assertRaisesRegex(NotImplementedError,
+                                    "You should add get_language_info in your parser if you want to use language_info"):
+            call_command('import', 'geotrek.common.tests.test_parsers.NoLanguageInformationParser', filename, verbosity=0)
+
     def test_bad_parser_class(self):
         with self.assertRaisesRegex(CommandError, "Failed to import parser class 'DoesNotExist'"):
             call_command('import', 'geotrek.common.tests.test_parsers.DoesNotExist', '', verbosity=0)
