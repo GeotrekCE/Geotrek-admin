@@ -66,6 +66,7 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
+      - run: pwd
       - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
