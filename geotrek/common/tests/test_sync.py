@@ -251,7 +251,7 @@ class SyncTest(VarTmpTestCase):
 
     def test_sync_multiple_time(self):
         management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000', skip_tiles=True, languages='en',
-                                skip_pdf=True, verbosity=2, stdout=StringIO())
+                                skip_pdf=True, skip_dem=True, skip_profile_png=True, verbosity=2, stdout=StringIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
 
@@ -261,7 +261,7 @@ class SyncTest(VarTmpTestCase):
         # portal A and B
         output = StringIO()
         management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000', skip_tiles=True, languages='en',
-                                skip_pdf=True, verbosity=2, stdout=output)
+                                skip_pdf=True, skip_dem=True, skip_profile_png=True, verbosity=2, stdout=output)
         self.assertIn("unchanged", output.getvalue())
 
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT='*' * 300)

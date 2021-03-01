@@ -192,11 +192,12 @@ class SyncRandoViewTest(TestCase):
         self.assertRedirects(response, '/login/?next=/commands/statesync/')
 
     @mock.patch('sys.stdout', new_callable=StringIO)
+    @mock.patch('geotrek.common.management.commands.sync_rando.Command.sync', return_value=None)
     @override_settings(CELERY_ALWAYS_EAGER=False,
                        SYNC_RANDO_ROOT='var/tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
                                                                       'skip_tiles': True, 'skip_pdf': True,
                                                                       'skip_dem': True, 'skip_profile_png': True})
-    def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
+    def test_get_sync_rando_states_superuser_with_sync_rando(self, mock_sync, mocked_stdout):
         self.client.login(username='admin', password='super')
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
@@ -224,10 +225,11 @@ class SyncRandoViewTest(TestCase):
     @mock.patch('sys.stdout', new_callable=StringIO)
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
+    @mock.patch('geotrek.common.management.commands.sync_rando.Command.sync', return_value=None)
     @override_settings(SYNC_RANDO_ROOT='var/tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': False,
                                                                       'skip_pdf': False,
                                                                       'skip_dem': False, 'skip_profile_png': False})
-    def test_launch_sync_rando(self, mock_tile, mock_map_image, mocked_stdout):
+    def test_launch_sync_rando(self, mock_sync, mock_tile, mock_map_image, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         task = launch_sync_rando.apply()
