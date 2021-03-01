@@ -219,6 +219,7 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicContentCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         types = serializers.SerializerMethodField(read_only=True)
+        label = serializers.SerializerMethodField(read_only=True)
 
         class Meta:
             model = tourism_models.TouristicContentCategory
@@ -227,13 +228,16 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         def get_types(self, obj):
             return [{
                 'id': obj.id * 100 + i,
-                'label': getattr(obj, 'type{}_label'.format(i)),
+                'label': get_translation_or_dict('type{}_label'.format(i), self, obj),
                 'values': [{
                     'id': t.id,
-                    'label': t.label,
+                    'label': get_translation_or_dict('label', self, t),
                     'pictogram': t.pictogram.url if t.pictogram else None,
                 } for t in obj.types.filter(in_list=i)]
             } for i in (1, 2)]
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
 
     class TouristicContentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
