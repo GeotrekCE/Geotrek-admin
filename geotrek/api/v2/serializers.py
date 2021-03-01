@@ -416,7 +416,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('departure', self, obj)
 
         def get_departure_geom(self, obj):
-            return obj.geom_3d[0][0] if isinstance(obj, MultiLineString) else obj.geom_3d[0]
+            return obj.geom_3d[0][0] if isinstance(obj.geom_3d, MultiLineString) else obj.geom_3d[0]
 
         def get_arrival(self, obj):
             return get_translation_or_dict('arrival', self, obj)
