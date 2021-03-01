@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import MultiLineString
 from django.urls import reverse
 from django.test.client import Client
 from django.test.testcases import TestCase
@@ -159,7 +160,6 @@ class BaseApiTest(TestCase):
         cls.theme = common_factory.ThemeFactory(id=15)
         cls.portal = common_factory.TargetPortalFactory(id=16)
         cls.structure = authent_factory.StructureFactory(id=8)
-        cls.nb_treks += 2  # add parent and 1 child published
         cls.poi_type = trek_factory.POITypeFactory()
         cls.poi = trek_factory.POIFactory()
         cls.source = common_factory.RecordSourceFactory()
@@ -167,6 +167,18 @@ class BaseApiTest(TestCase):
         cls.site = outdoor_factory.SiteFactory()
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         common_factory.FileTypeFactory.create(type='Topoguide')
+        # Create a trek with a multilinestring geom
+        cls.path2 = core_factory.PathFactory.create(geom=LineString((0, 10), (0, 20)))
+        cls.path3 = core_factory.PathFactory.create(geom=LineString((0, 20), (0, 30)))
+        cls.trek_multilinestring = trek_factory.TrekFactory.create(
+            paths=[(cls.path, 0, 1), (cls.path2, 0, 1), (cls.path3, 0, 1)],
+            geom=MultiLineString([cls.path.geom, cls.path3.geom])
+        )
+        cls.path2.delete()
+        cls.trek_multilinestring.reload()
+        cls.trek_multilinestring.published = True
+        cls.trek_multilinestring.save()
+        cls.nb_treks += 3  # add parent, 1 child published and rek with a multilinestring geom
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -344,7 +356,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')[0]),
                          3)
 
-        # regenrate with geojson
+        # regenerate with geojson
         response = self.get_trek_list({'format': 'geojson'})
         json_response = response.json()
 
@@ -403,7 +415,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_trek_city(self):
         response = self.get_trek_list({'cities': self.city.pk})
-        self.assertEqual(len(response.json()['results']), 15)
+        self.assertEqual(len(response.json()['results']), 16)
 
     def test_tour_list(self):
         response = self.get_tour_list()
