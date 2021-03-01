@@ -17,6 +17,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
 from rest_framework import permissions as rest_permissions, viewsets
 
+from geotrek.api.v2.functions import Length
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
@@ -370,6 +371,7 @@ class TrekViewSet(MapEntityViewSet):
             qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        qs = qs.annotate(length_2d_m=Length('geom'))
 
         return qs
 
