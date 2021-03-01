@@ -183,6 +183,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     # Method called to retrieve relevant pictures based on settings
     pictures = rest_serializers.SerializerMethodField()
 
+    length = rest_serializers.ReadOnlyField(source='length_2d_m')
+
     def __init__(self, instance=None, *args, **kwargs):
         # duplicate each trek for each one of its accessibilities
         if instance and hasattr(instance, '__iter__') and settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
