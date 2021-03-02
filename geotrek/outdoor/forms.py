@@ -122,7 +122,7 @@ class CourseForm(CommonForm):
 
         # Save ratings
         if course.site and course.site.practice:
-            to_remove = list(course.ratings.exclude(scale__practice=course.practice).values_list('pk', flat=True))
+            to_remove = list(course.ratings.exclude(scale__practice=course.site.practice).values_list('pk', flat=True))
             to_add = []
             for scale in course.site.practice.rating_scales.all():
                 rating = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))

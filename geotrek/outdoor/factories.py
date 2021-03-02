@@ -69,7 +69,7 @@ class OutdoorManagerFactory(UserFactory):
 
     @factory.post_generation
     def create_outdoor_manager(obj, create, extracted, **kwargs):
-        for model in (Site, ):
+        for model in (Site, Course):
             content_type = ContentType.objects.get_for_model(model)
             for action in ('add', 'change', 'delete', 'read', 'export'):
                 codename = '{}_{}'.format(action, model.__name__.lower())

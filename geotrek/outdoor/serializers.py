@@ -56,7 +56,6 @@ class SiteGeojsonSerializer(GeoFeatureModelSerializer, SiteSerializer):
 
 
 class CourseSerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
-    site = SiteSerializer()
     structure = StructureSerializer()
 
     class Meta:
