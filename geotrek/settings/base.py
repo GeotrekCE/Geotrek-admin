@@ -487,6 +487,7 @@ EXPORT_MAP_IMAGE_SIZE = {
     'touristiccontent': (18.2, 18.2),
     'touristicevent': (18.2, 18.2),
     'site': (18.2, 18.2),
+    'course': (18.2, 18.2),
 }
 
 EXPORT_HEADER_IMAGE_SIZE = {
