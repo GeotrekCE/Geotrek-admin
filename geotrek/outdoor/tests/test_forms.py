@@ -22,16 +22,29 @@ class SiteFormTest(TestCase):
 
 
 class CourseFormTest(TestCase):
-    def test_ratings_save(self):
-        user = UserFactory()
-        rating = RatingFactory()
-        course = CourseFactory(site__practice=rating.scale.practice)
-        form = CourseForm(user=user, instance=course, data={
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.rating = RatingFactory()
+        cls.course = CourseFactory(site__practice=cls.rating.scale.practice)
+
+    def test_rating_save(self):
+        form = CourseForm(user=self.user, instance=self.course, data={
             'name_en': 'Course',
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
-            'site': str(course.site.pk),
-            'rating_scale_{}'.format(rating.scale.pk): str(rating.pk),
+            'site': str(self.course.site.pk),
+            'rating_scale_{}'.format(self.rating.scale.pk): str(self.rating.pk),
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(course.ratings.all(), ['<Rating: Rating>'])
+        self.assertQuerysetEqual(self.course.ratings.all(), ['<Rating: Rating>'])
+
+    def test_no_rating_save(self):
+        form = CourseForm(user=self.user, instance=self.course, data={
+            'name_en': 'Course',
+            'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
+            'site': str(self.course.site.pk),
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.assertQuerysetEqual(self.course.ratings.all(), [])
