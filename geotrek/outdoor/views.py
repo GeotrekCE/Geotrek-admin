@@ -41,6 +41,11 @@ class SiteCreate(MapEntityCreate):
     model = Site
     form_class = SiteForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['site'] = self.request.GET.get('site')
+        return kwargs
+
 
 class SiteUpdate(MapEntityUpdate):
     queryset = Site.objects.all()
@@ -120,6 +125,11 @@ class CourseDetail(MapEntityDetail):
 class CourseCreate(MapEntityCreate):
     model = Course
     form_class = CourseForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['site'] = self.request.GET.get('site')
+        return kwargs
 
 
 class CourseUpdate(MapEntityUpdate):

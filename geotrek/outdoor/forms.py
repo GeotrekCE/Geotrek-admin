@@ -40,8 +40,9 @@ class SiteForm(CommonForm):
                   'orientation', 'wind']
         model = Site
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, site=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['parent'].initial = site
         self.fields['orientation'].widget = forms.SelectMultiple(choices=Site.ORIENTATION_CHOICES)
         self.fields['wind'].widget = forms.SelectMultiple(choices=Site.ORIENTATION_CHOICES)
         if self.instance.pk:
@@ -103,8 +104,9 @@ class CourseForm(CommonForm):
                   'advice', 'eid']
         model = Course
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, site=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['site'].initial = site
         if self.instance.pk and self.instance.site and self.instance.site.practice:
             for scale in self.instance.site.practice.rating_scales.all():
                 ratings = self.instance.ratings.filter(scale=scale)

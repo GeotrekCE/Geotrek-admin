@@ -2,6 +2,32 @@
 {% load i18n mapentity_tags outdoor_tags %}
 
 {% block attributes %}
+    <h3>{% trans "Tree view" %}</h3>
+    {% for ancestor in object.site.get_ancestors %}
+        <ul>
+            <li>
+                <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
+    {% endfor %}
+                <ul>
+                    <li>
+                        <a href="{% url 'outdoor:site_detail' object.site.pk %}">{{ object.site }}</a>
+                        <ul>
+                            <li>
+                                <b>{{ object }}</b>
+                            </li>
+                            <li>
+                                <a href="{% url 'outdoor:course_add' %}?site={{ object.site.pk }}">
+                                    + <i>{% trans "Add a course" %}</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+    {% for ancestor in object.site.get_ancestors %}
+            </li>
+        </ul>
+    {% endfor %}
+
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>

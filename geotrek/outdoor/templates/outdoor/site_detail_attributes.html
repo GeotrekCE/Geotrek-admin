@@ -2,6 +2,49 @@
 {% load i18n mapentity_tags outdoor_tags %}
 
 {% block attributes %}
+    <h3>{% trans "Tree view" %}</h3>
+    {% for ancestor in object.get_ancestors %}
+        <ul>
+            <li>
+                <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
+    {% endfor %}
+                <ul>
+                    <li>
+                        <b>{{ object }}</b>
+                        <ul>
+                            {% for child in object.children.all %}
+                                <li>
+                                    <a href="{% url 'outdoor:site_detail' child.pk %}">{{ child }}</a>
+                                </li>
+                            {% endfor %}
+                            {% for course in object.courses.all %}
+                                <li>
+                                    <a href="{% url 'outdoor:course_detail' course.pk %}">{{ course }}</a>
+                                </li>
+                            {% endfor %}
+                            <li>
+                                <a href="{% url 'outdoor:site_add' %}?site={{ object.pk }}">
+                                    + <i>{% trans "Add a child site" %}</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'outdoor:course_add' %}?site={{ object.pk }}">
+                                    + <i>{% trans "Add a course" %}</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'outdoor:site_add' %}?site={{ object.parent.pk }}">
+                            + <i>{% trans "Add a brother site" %}</i>
+                        </a>
+                    </li>
+                </ul>
+    {% for ancestor in object.get_ancestors %}
+            </li>
+        </ul>
+    {% endfor %}
+
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
