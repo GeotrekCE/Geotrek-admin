@@ -487,6 +487,7 @@ EXPORT_MAP_IMAGE_SIZE = {
     'touristiccontent': (18.2, 18.2),
     'touristicevent': (18.2, 18.2),
     'site': (18.2, 18.2),
+    'course': (18.2, 18.2),
 }
 
 EXPORT_HEADER_IMAGE_SIZE = {
@@ -496,6 +497,7 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'site': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'course': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
 COMPLETENESS_FIELDS = {
@@ -527,6 +529,7 @@ DIVE_MODEL_ENABLED = True
 TOURISTICCONTENT_MODEL_ENABLED = True
 TOURISTICEVENT_MODEL_ENABLED = True
 SITE_MODEL_ENABLED = True
+COURSE_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
 PATH_MODEL_ENABLED = True
 

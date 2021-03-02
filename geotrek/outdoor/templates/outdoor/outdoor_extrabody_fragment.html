@@ -6,8 +6,10 @@
 <script type="text/javascript">
     MapEntity.i18n['Outdoor'] = "{% trans "Outdoor" %}";
     MapEntity.i18n['site'] = "{% trans "Outdoor site" %}";
+    MapEntity.i18n['course'] = "{% trans "Outdoor course" %}";
 
     window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site_layer" %}";
+    window.SETTINGS.urls['course_layer'] = "{% url "outdoor:course_layer" %}";
 </script>
 
 {% if modelname == "site" %}

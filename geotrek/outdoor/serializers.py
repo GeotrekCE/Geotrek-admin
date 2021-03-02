@@ -6,7 +6,7 @@ from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (PublishableSerializerMixin, TranslatedModelSerializer,
                                         LabelSerializer, ThemeSerializer, TargetPortalSerializer,
                                         RecordSourceSerializer)
-from geotrek.outdoor.models import Practice, Site
+from geotrek.outdoor.models import Practice, Site, Course
 from geotrek.tourism.serializers import InformationDeskSerializer
 from geotrek.trekking.serializers import WebLinkSerializer
 from geotrek.zoning.serializers import ZoningSerializerMixin
@@ -53,3 +53,22 @@ class SiteGeojsonSerializer(GeoFeatureModelSerializer, SiteSerializer):
     class Meta(SiteSerializer.Meta):
         geo_field = 'api_geom'
         fields = SiteSerializer.Meta.fields + ('api_geom', )
+
+
+class CourseSerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
+    structure = StructureSerializer()
+
+    class Meta:
+        model = Course
+        fields = ('id', 'structure', 'name', 'site', 'description', 'advice', 'eid', 'ratings') + \
+            ZoningSerializerMixin.Meta.fields + \
+            PublishableSerializerMixin.Meta.fields
+
+
+class CourseGeojsonSerializer(GeoFeatureModelSerializer, CourseSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = GeometryField(read_only=True, precision=7)
+
+    class Meta(CourseSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = CourseSerializer.Meta.fields + ('api_geom', )
