@@ -2,12 +2,23 @@
 CHANGELOG
 =========
 
-2.50.0+dev
+2.51.0 (2021-03-02)
 -------------------
+
+**New features**
+
+- Add filtering by restricted area types
+- Add outdoor course module
+- Add a site/course tree view in outdoor site and course detail pages
 
 **Bug fixes**
 
-- Fix a backward compatibility to keep MAP_STYLES['xxx'] config working in custom.py. However, we recommend to use new MAPENTITY_CONFIG['MAP_STYLES'] for this.
+- Fix a backward compatibility to keep MAP_STYLES['xxx'] config working in custom.py.
+  However, we recommend to use new MAPENTITY_CONFIG['MAP_STYLES'] for this.
+- Use 2D lengths instead of 3D length for Geotrek-rando (to be consistent with Geotrek-mobile)
+- Translate touristiccontent_category endpoint in API v2
+- Fix crash of trek endpoing in API v2 when a geometry is a multilinestring
+  (the previous fix was not working)
 
 
 2.50.0 (2021-02-19)
