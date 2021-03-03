@@ -157,12 +157,6 @@ class InfraFilterTestMixin():
 
         self.assertCountEqual(topo_pk, [good_topo.pk])
 
-    def test_intervention_filter_has_correct_label(self):
-        self.login()
-        model = self.factory._meta.model
-        response = self.client.get(model.get_list_url())
-        self.assertContains(response, '<option value="-1">Intervention year</option>')
-
     def test_duplicate_implantation_year_filter(self):
         self.login()
 
@@ -196,7 +190,6 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         self.assertFalse('option value="" selected>None</option' in str(response))
 
     def test_implantation_year_filter(self):
-        filter = InfrastructureFilterSet(data={'implantation_year': 2015})
         self.login()
         model = self.factory._meta.model
         i = InfrastructureFactory.create(implantation_year=2015)
@@ -206,6 +199,7 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         self.assertContains(response, '<option value="2015">2015</option>')
         self.assertContains(response, '<option value="2016">2016</option>')
 
+        filter = InfrastructureFilterSet(data={'implantation_year': [2015]})
         self.assertTrue(i in filter.qs)
         self.assertFalse(i2 in filter.qs)
 

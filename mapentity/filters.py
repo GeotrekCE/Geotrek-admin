@@ -1,8 +1,8 @@
-from django.db.models.fields.related import ManyToOneRel
+from django.db.models.fields.related import ManyToOneRel, ForeignKey
 from django.conf import settings
 
-from django_filters import FilterSet, Filter
-from django_filters.filterset import get_model_field
+from django_filters import FilterSet, Filter, ModelMultipleChoiceFilter
+from django_filters.filterset import get_model_field, remote_queryset
 from django.contrib.gis import forms
 
 from .settings import app_settings, API_SRID
@@ -56,7 +56,6 @@ class BaseMapEntityFilterSet(FilterSet):
                 for i, widget in enumerate(field.widget.widgets):
                     self.__set_placeholder(field.fields[i], widget)
             elif isinstance(field, forms.ChoiceField):
-                field.empty_label = field.label
                 self.__set_placeholder(field, field.widget)
             elif isinstance(field, forms.NullBooleanField):
                 choices = [(u'1', field.label)] + field.widget.choices[1:]
@@ -94,3 +93,11 @@ class MapEntityFilterSet(BaseMapEntityFilterSet):
 
     class Meta:
         fields = ['bbox']
+        filter_overrides = {
+            ForeignKey: {
+                'filter_class': ModelMultipleChoiceFilter,
+                'extra': lambda f: {
+                    'queryset': remote_queryset(f),
+                }
+            },
+        }

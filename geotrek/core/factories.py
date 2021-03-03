@@ -10,35 +10,35 @@ from geotrek.common.utils import dbnow
 from . import models
 
 
-class PathSourceFactory(factory.DjangoModelFactory):
+class PathSourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.PathSource
 
     source = factory.Sequence(lambda n: "PathSource %s" % n)
 
 
-class StakeFactory(factory.DjangoModelFactory):
+class StakeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Stake
 
     stake = factory.Sequence(lambda n: "Stake %s" % n)
 
 
-class UsageFactory(factory.DjangoModelFactory):
+class UsageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Usage
 
     usage = factory.Sequence(lambda n: "Usage %s" % n)
 
 
-class NetworkFactory(factory.DjangoModelFactory):
+class NetworkFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Network
 
     network = factory.Sequence(lambda n: "Network %s" % n)
 
 
-class ComfortFactory(factory.DjangoModelFactory):
+class ComfortFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Comfort
 
@@ -111,7 +111,7 @@ class PathInBoundsExistingGeomFactory(PathFactory):
     geom = factory.Sequence(getExistingLineStringInBounds)
 
 
-class TopologyFactory(factory.DjangoModelFactory):
+class TopologyFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Topology
 
@@ -158,7 +158,7 @@ class PointTopologyFactory(TopologyFactory):
             obj.add_path(path, 0, 0)
 
 
-class PathAggregationFactory(factory.DjangoModelFactory):
+class PathAggregationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.PathAggregation
 

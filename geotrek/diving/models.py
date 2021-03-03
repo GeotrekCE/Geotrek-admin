@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.utils.translation import get_language, gettext as _
+from django.utils.translation import get_language, gettext_lazy as _
 
 from colorfield.fields import ColorField
 from mapentity.models import MapEntityMixin
@@ -15,6 +15,7 @@ from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting, format_coordinates, spatial_reference
 from geotrek.core.models import Topology
 from geotrek.trekking.models import POI, Service, Trek
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 
 class Practice(PictogramMixin):
@@ -98,7 +99,7 @@ class Level(OptionalPictogramMixin):
         super(Level, self).save(*args, **kwargs)
 
 
-class Dive(NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin, PicturesMixin):
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
                                           help_text=_("A brief summary"))

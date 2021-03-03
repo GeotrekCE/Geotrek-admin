@@ -7,6 +7,8 @@ import os.path
 from subprocess import call, PIPE
 import tempfile
 
+from geotrek.altimetry.models import Dem
+
 
 class Command(BaseCommand):
     help = 'Load DEM data (projecting and clipping it if necessary).\n'
@@ -19,6 +21,7 @@ class Command(BaseCommand):
         parser.add_argument('--replace', action='store_true', default=False, help='Replace existing DEM if any.')
 
     def handle(self, *args, **options):
+
         verbose = options['verbosity'] != 0
 
         try:
@@ -49,22 +52,16 @@ class Command(BaseCommand):
         # Obtain dataset SRS
         if settings.SRID != rst.srs.srid:
             rst = rst.transform(settings.SRID)
-        cur = connection.cursor()
-        sql = 'SELECT * FROM raster_columns WHERE r_table_name = \'mnt\''
-        cur.execute(sql)
-        dem_exists = cur.rowcount != 0
-        cur.close()
+
+        dem_exists = Dem.objects.exists()
 
         # Obtain replace mode
         replace = options['replace']
 
         # What to do with existing DEM (if any)
         if dem_exists and replace:
-            # Drop table
-            cur = connection.cursor()
-            sql = 'DROP TABLE mnt'
-            cur.execute(sql)
-            cur.close()
+            # Drop table content
+            Dem.objects.all().delete()
         elif dem_exists and not replace:
             raise CommandError('DEM file exists, use --replace to overwrite')
 
@@ -72,7 +69,7 @@ class Command(BaseCommand):
             self.stdout.write('Everything looks fine, we can start loading DEM\n')
 
         output = tempfile.NamedTemporaryFile()  # SQL code for raster creation
-        cmd = 'raster2pgsql -c -C -I -M -t 100x100 %s mnt %s' % (
+        cmd = 'raster2pgsql -a -M -t 100x100 %s altimetry_dem %s' % (
             rst.name,
             '' if verbose else '2>/dev/null'
         )
@@ -95,11 +92,11 @@ class Command(BaseCommand):
         # Step 3: Dump SQL code into database
         if verbose:
             self.stdout.write('\n-- Loading DEM into database -----------\n')
-        cur = connection.cursor()
-        output.file.seek(0)
-        for sql_line in output.file:
-            cur.execute(sql_line)
-        cur.close()
+        with connection.cursor() as cur:
+            output.file.seek(0)
+            for sql_line in output.file:
+                cur.execute(sql_line)
+
         output.close()
         if verbose:
             self.stdout.write('DEM successfully loaded.\n')

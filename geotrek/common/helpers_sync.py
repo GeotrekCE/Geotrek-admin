@@ -61,6 +61,6 @@ class SyncRando:
         self.global_sync = sync
 
     def sync(self, lang):
-        models_picto = [models.Theme, models.RecordSource]
+        models_picto = [models.Theme, models.RecordSource, models.Label]
         self.global_sync.sync_pictograms(lang, models_picto, zipfile=self.global_sync.zipfile)
         self.global_sync.sync_metas(lang, views.Meta)

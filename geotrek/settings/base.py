@@ -238,8 +238,7 @@ MIDDLEWARE = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geotrek.authent.middleware.CorsMiddleware',
     'mapentity.middleware.AutoLoginMiddleware',
 )
@@ -289,10 +288,10 @@ PROJECT_APPS += (
     'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
     'rest_framework_gis',
-    'drf_yasg',
     'embed_video',
     'django_celery_results',
     'colorfield',
+    'mptt',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -337,6 +336,7 @@ THUMBNAIL_ALIASES = {
         'thumbnail': {'size': (150, 150)},
         # Thumbnails for public trek website
         'small-square': {'size': (120, 120), 'crop': True},
+        'apiv2': {'size': (400, 0)},
         'medium': {'size': (800, 800)},
         # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
@@ -384,9 +384,31 @@ MAPENTITY_CONFIG = {
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
     'MAP_FIT_MAX_ZOOM': 16,
-    'GPX_FIELD_NAME': 'geom_3d'
+    'GPX_FIELD_NAME': 'geom_3d',
+    'MAP_STYLES': {
+        'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
+        'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+        'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+        'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+        'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+        'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+        'detail': {'color': '#ffff00'},
+        'others': {'color': '#ffff00'},
+
+        'print': {
+            'path': {'weight': 1},
+            'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                     'arrowColor': 'black', 'arrowSize': 10},
+        }
+    }
 }
 
+MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
 DEFAULT_STRUCTURE_NAME = os.getenv('DEFAULT_STRUCTURE', 'My structure')
 
 VIEWPORT_MARGIN = 0.1  # On list page, around SPATIAL_EXTENT
@@ -449,28 +471,6 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
                                   'MediumVioletRed', 'MediumOrchid', 'Magenta',
                                   'LightSalmon', 'HotPink', 'Fuchsia']}
 
-MAP_STYLES = {
-    'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
-    'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-    'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-    'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-    'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-    'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-
-    'detail': {'color': '#ffff00'},
-    'others': {'color': '#ffff00'},
-
-    'print': {
-        'path': {'weight': 1},
-        'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                 'arrowColor': 'black', 'arrowSize': 10},
-    }
-}
-
 LAYER_PRECISION_LAND = 4  # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
@@ -486,6 +486,8 @@ EXPORT_MAP_IMAGE_SIZE = {
     'poi': (18.2, 18.2),
     'touristiccontent': (18.2, 18.2),
     'touristicevent': (18.2, 18.2),
+    'site': (18.2, 18.2),
+    'course': (18.2, 18.2),
 }
 
 EXPORT_HEADER_IMAGE_SIZE = {
@@ -494,6 +496,8 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'dive': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'site': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'course': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
 COMPLETENESS_FIELDS = {
@@ -525,6 +529,7 @@ DIVE_MODEL_ENABLED = True
 TOURISTICCONTENT_MODEL_ENABLED = True
 TOURISTICEVENT_MODEL_ENABLED = True
 SITE_MODEL_ENABLED = True
+COURSE_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
 PATH_MODEL_ENABLED = True
 

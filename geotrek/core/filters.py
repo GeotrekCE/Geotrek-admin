@@ -1,43 +1,31 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from django_filters import CharFilter, ModelChoiceFilter
+from django_filters import CharFilter
 
 from .models import Topology, Path, Trail
 
-from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
+from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.filters import OptionalRangeFilter, RightFilter
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.maintenance import models as maintenance_models
+from geotrek.zoning.filters import ZoningFilterSet
 
 
-class TopologyFilter(ModelChoiceFilter):
-    model = None
-    queryset = None
-
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', self.get_queryset())
-        super(TopologyFilter, self).__init__(*args, **kwargs)
-        self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
-        self.field.widget.renderer = None
-
-    def get_queryset(self, request=None):
-        if self.queryset is not None:
-            return self.queryset
-        return self.model.objects.all()
-
-    def filter(self, qs, value):
+class TopologyFilter(RightFilter):
+    def filter(self, qs, values):
         """Overrides parent filter() method completely.
         """
-        if not value:
+        if not values:
             return qs
-        if issubclass(value.__class__, Topology):
-            edges = Topology.objects.filter(pk=value.pk)
+        if issubclass(values[0].__class__, Topology):
+            edges = Topology.objects.filter(pk__in=[value.pk for value in values])
         else:
-            edges = self.value_to_edges(value)
+            edges = self.values_to_edges(values)
         return self._topology_filter(qs, edges)
 
-    def value_to_edges(self, value):
+    def values_to_edges(self, values):
         """
         For an instance of this filter model, returns a Topology queryset.
         """
@@ -76,7 +64,7 @@ class TopologyFilter(ModelChoiceFilter):
             return qs.filter(pk__in=[topo.pk for topo in overlapping])
 
 
-class PathFilterSet(StructureRelatedFilterSet):
+class PathFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     length = OptionalRangeFilter(label=_('length'))
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
@@ -87,7 +75,7 @@ class PathFilterSet(StructureRelatedFilterSet):
             ['valid', 'length', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
 
 
-class TrailFilterSet(StructureRelatedFilterSet):
+class TrailFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')

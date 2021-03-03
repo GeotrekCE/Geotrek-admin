@@ -12,7 +12,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
 
-from geotrek.common.views import PublicOrReadPermMixin
+from geotrek.common.permissions import PublicOrReadPermMixin
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
 from .models import SensitiveArea, Species

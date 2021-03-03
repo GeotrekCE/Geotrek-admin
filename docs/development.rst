@@ -58,12 +58,12 @@ Release
 On master branch:
 
 * If need be, merge ``translations`` branch managed with https://weblate.makina-corpus.net
-* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ``.dev0`` suffix
-* Run ``dch -r -D RELEASED``, remove ``~dev0`` suffix in version and save
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ``+dev`` suffix and increment version (please use semver rules)
+* Run ``dch -r -D RELEASED``, update version in the same way and save
 * Commit with message 'Release x.y.z' to merge in ``master`` branch before release
 * Add git tag X.Y.Z
-* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to increment version (using semantic versionning) and add ``.dev0`` suffix
-* Run ``dch -v <future version>~dev0 --no-force-save-on-release`` and save
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to add ``+dev`` suffix
+* Run ``dch -v <version>+dev --no-force-save-on-release`` and save
 * Commit with message 'Back to development'
 * Push branch and tag
 * When pushing a release tag 'x.y.z', CircleCI will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)

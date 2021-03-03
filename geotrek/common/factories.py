@@ -5,6 +5,7 @@ from zipfile import ZipFile
 from geotrek.authent.factories import UserFactory
 from geotrek.common.models import Attachment
 from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
+                                           get_dummy_uploaded_image,
                                            get_dummy_uploaded_file)
 
 from . import models
@@ -42,21 +43,21 @@ class FakeSyncCommand(Command):
         self.skip_profile_png = skip_profile_png
 
 
-class OrganismFactory(factory.DjangoModelFactory):
+class OrganismFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Organism
 
     organism = factory.Sequence(lambda n: "Organism %s" % n)
 
 
-class FileTypeFactory(factory.DjangoModelFactory):
+class FileTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.FileType
 
     type = factory.Sequence(lambda n: "FileType %s" % n)
 
 
-class AttachmentFactory(factory.DjangoModelFactory):
+class AttachmentFactory(factory.django.DjangoModelFactory):
     """
     Create an attachment. You must provide an 'obj' keywords,
     the object (saved in db) to which the attachment will be bound.
@@ -73,7 +74,7 @@ class AttachmentFactory(factory.DjangoModelFactory):
     legend = factory.Sequence("Legend {0}".format)
 
 
-class ThemeFactory(factory.DjangoModelFactory):
+class ThemeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Theme
 
@@ -81,7 +82,7 @@ class ThemeFactory(factory.DjangoModelFactory):
     pictogram = dummy_filefield_as_sequence('theme-%s.png')
 
 
-class RecordSourceFactory(factory.DjangoModelFactory):
+class RecordSourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.RecordSource
 
@@ -90,7 +91,7 @@ class RecordSourceFactory(factory.DjangoModelFactory):
     pictogram = dummy_filefield_as_sequence('recordsource-%s.png')
 
 
-class TargetPortalFactory(factory.DjangoModelFactory):
+class TargetPortalFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TargetPortal
 
@@ -98,8 +99,18 @@ class TargetPortalFactory(factory.DjangoModelFactory):
     website = factory.Sequence(lambda n: "http://geotrek-rando-{}.fr".format(n))
 
 
-class ReservationSystemFactory(factory.DjangoModelFactory):
+class ReservationSystemFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ReservationSystem
 
     name = factory.Sequence(lambda n: "Reservation system %s" % n)
+
+
+class LabelFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Label
+
+    name = "Label"
+    pictogram = get_dummy_uploaded_image('label.png')
+    advice = "Advice label"
+    filter = True

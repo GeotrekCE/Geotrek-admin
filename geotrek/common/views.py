@@ -1,21 +1,18 @@
-from django.core.exceptions import ValidationError, PermissionDenied
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.utils import DatabaseError
 from django.utils import translation
 from django.http import JsonResponse, HttpResponse, HttpResponseNotFound
-from django.views.generic import TemplateView
 from django_celery_results.models import TaskResult
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import static
 from django.utils.translation import gettext as _
-from django.views.generic import TemplateView
-from django.views.generic import RedirectView, View
+from django.views.generic import TemplateView, RedirectView, View
 
 from mapentity.helpers import api_bbox
 from mapentity.registry import registry
@@ -38,6 +35,7 @@ from zipfile import ZipFile
 
 from datetime import timedelta
 
+from .permissions import PublicOrReadPermMixin
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
 from .tasks import import_datas, import_datas_from_web
@@ -142,18 +140,6 @@ class FormsetMixin(object):
         return context
 
 
-class PublicOrReadPermMixin(object):
-
-    def get_object(self, queryset=None):
-        obj = super(PublicOrReadPermMixin, self).get_object(queryset)
-        if not obj.is_public():
-            if not self.request.user.is_authenticated:
-                raise PermissionDenied
-            if not self.request.user.has_perm('%s.read_%s' % (obj._meta.app_label, obj._meta.model_name)):
-                raise PermissionDenied
-        return obj
-
-
 class DocumentPublicMixin(object):
     template_name_suffix = "_public"
 
@@ -227,12 +213,6 @@ class JSSettings(mapentity_views.JSSettings):
 
     def get_context_data(self):
         dictsettings = super(JSSettings, self).get_context_data()
-        # Add geotrek map styles
-        base_styles = dictsettings['map']['styles']
-        for name, override in settings.MAP_STYLES.items():
-            merged = base_styles.get(name, {})
-            merged.update(override)
-            base_styles[name] = merged
         # Add extra stuff (edition, labelling)
         dictsettings['map'].update(
             snap_distance=settings.SNAP_DISTANCE,
@@ -257,13 +237,9 @@ def admin_check_extents(request):
     """
     path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM core_path;")
     path_extent = api_bbox(path_extent_native)
-    try:
-        dem_extent_native = sql_extent(
-            "SELECT ST_Extent(rast::geometry) FROM mnt;")
-        dem_extent = api_bbox(dem_extent_native)
-    except DatabaseError:  # mnt table missing
-        dem_extent_native = None
-        dem_extent = None
+    dem_extent_native = sql_extent(
+        "SELECT ST_Extent(rast::geometry) FROM altimetry_dem;")
+    dem_extent = api_bbox(dem_extent_native)
     tiles_extent_native = settings.SPATIAL_EXTENT
     tiles_extent = api_bbox(tiles_extent_native)
     viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']

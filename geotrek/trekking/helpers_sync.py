@@ -25,8 +25,7 @@ class SyncRando:
         self.global_sync.sync_static_file(lang, 'trekking/trek.svg')
         self.global_sync.sync_static_file(lang, 'trekking/itinerancy.svg')
         models_picto = [models.TrekNetwork, models.Practice, models.Accessibility, models.DifficultyLevel,
-                        models.POIType, models.ServiceType, models.Route, models.WebLinkCategory,
-                        models.LabelTrek]
+                        models.POIType, models.ServiceType, models.Route, models.WebLinkCategory]
         self.global_sync.sync_pictograms(lang, models_picto, zipfile=self.global_sync.zipfile)
 
         treks = models.Trek.objects.existing().order_by('pk')

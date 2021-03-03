@@ -6,7 +6,7 @@ from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import Point
 from django.db import transaction
 
-from geotrek.core.helpers import TopologyHelper
+from geotrek.core.models import Topology
 from geotrek.trekking.models import POI, POIType
 
 
@@ -87,7 +87,7 @@ class Command(BaseCommand):
             geometry = geometry.transform(settings.API_SRID, clone=True)
             geometry.coord_dim = 2
             serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-            topology = TopologyHelper.deserialize(serialized)
+            topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
             poi.mutate(topology)
         else:

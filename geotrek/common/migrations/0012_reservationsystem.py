@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                     },
                 ),
             ],
-            # Table already exists. See common/migrations/0012
+            # Table already exists. See tourism/migrations/0012
             database_operations=[],
         ),
     ]

@@ -1,10 +1,13 @@
-from mapentity.filters import MapEntityFilterSet
+from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.zoning.filters import ZoningFilterSet
 
 from .models import Dive
 
 
-class DiveFilterSet(MapEntityFilterSet):
-    class Meta:
+class DiveFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Dive
-        fields = ['published', 'difficulty', 'levels', 'themes',
-                  'practice', 'structure', 'source', 'portal']
+        fields = StructureRelatedFilterSet.Meta.fields + [
+            'published', 'difficulty', 'levels', 'themes',
+            'practice', 'source', 'portal'
+        ]

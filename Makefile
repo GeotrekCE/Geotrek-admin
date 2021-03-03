@@ -7,6 +7,9 @@ build-no-cache:
 serve:
 	docker-compose up
 
+messages:
+	docker-compose run --rm web bash -c 'for d in geotrek/*/locale; do cd $$d; cd ..; ../../manage.py makemessages -a --no-location; cd ../../; done'
+
 test:
 	docker-compose -e ENV=tests run web ./manage.py test
 

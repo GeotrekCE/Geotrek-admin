@@ -4,7 +4,6 @@ from django import forms
 from geotrek.common.forms import CommonForm
 from geotrek.core.widgets import LineTopologyWidget
 from geotrek.core.models import Path, Trail
-from geotrek.core.helpers import PathHelper
 from geotrek.core.fields import TopologyField, SnappedLineStringField
 
 
@@ -82,7 +81,7 @@ class PathForm(CommonForm):
             raise forms.ValidationError(_("Invalid snapped geometry."))
         if not geom.simple:
             raise forms.ValidationError(_("Geometry is not simple."))
-        if not PathHelper.disjoint(geom, pk):
+        if not Path.check_path_not_overlap(geom, pk):
             raise forms.ValidationError(_("Geometry overlaps another."))
         return geom
 

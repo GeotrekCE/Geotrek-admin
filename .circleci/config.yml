@@ -103,7 +103,7 @@ jobs:
     steps:
       - run: apt-get update -q && apt-get install -q -y npm
       - run: mkdir -p var/conf/extra_static
-      - run: ./env/bin/python manage.py collectstatic --noinput
+      - run: /opt/venv/bin/python manage.py collectstatic --noinput
       - run: npm install geotrek/jstests
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
   docker_test_integration:
@@ -133,7 +133,15 @@ jobs:
       - run: sudo rm /etc/nginx/sites-enabled/default
       - run: sudo nginx -s reload
       - run: npm install cypress
-      - run: ./node_modules/.bin/cypress run
+      - run: ./node_modules/.bin/cypress run --record --key 64a5a9b3-9869-4a2f-91e4-e3cd27c2f564
+
+      - store_artifacts:
+          path: /home/circleci/project/cypress/videos/
+          destination: cypress-videos
+      - store_artifacts:
+          path: /home/circleci/project/cypress/screenshots/
+          destination: cypress-screenshots
+
   docker_publish:
     machine: true
     environment:
@@ -153,7 +161,7 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
-      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/~dev0/.ubuntu20.04~dev<< pipeline.number >>/' debian/changelog
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu20.04+dev<< pipeline.number >>/' debian/changelog
       - run: sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu20.04\2) bionic;/' debian/changelog
       - run: apt-get update -q
       - run: DEBIAN_FRONTEND=noninteractive apt-get install -q -y software-properties-common
@@ -170,7 +178,7 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
-      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/~dev0/.ubuntu18.04~dev<< pipeline.number >>/' debian/changelog
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04+dev<< pipeline.number >>/' debian/changelog
       - run: sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) focal;/' debian/changelog
       - run: apt-get update -q && apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libgdal-dev libffi-dev libxml2-dev libxslt1-dev
       - run: dpkg-buildpackage -uc -us -b

@@ -39,7 +39,7 @@ class TouristicContentViewsTests(CommonTest):
             },
             'cities': [],
             'contact': '',
-            'description': '',
+            'description': '<p>Blah CT</p>',
             'description_teaser': '',
             'districts': [],
             'dives': [],
@@ -50,7 +50,10 @@ class TouristicContentViewsTests(CommonTest):
             'name': 'Touristic content',
             'pictures': [],
             'pois': [],
-            'portal': [],
+            'portal': [{
+                'name': self.obj.portal.get().name,
+                'website': self.obj.portal.get().website
+            }],
             'practical_info': '',
             'printable': '/api/en/touristiccontents/{}/touristic-content.pdf'.format(self.obj.pk),
             'publication_date': '2020-03-17',
@@ -65,13 +68,28 @@ class TouristicContentViewsTests(CommonTest):
             'reservation_system': self.obj.reservation_system.name,
             'slug': 'touristic-content',
             'source': [],
-            'themes': [],
+            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
+            'themes': [{
+                'id': self.obj.themes.get().pk,
+                'label': self.obj.themes.get().label,
+                'pictogram': self.obj.themes.get().pictogram.url,
+            }],
             'thumbnail': None,
             'touristic_contents': [],
             'touristic_events': [],
             'treks': [],
-            'type1': [],
-            'type2': [],
+            'type1': [{
+                'id': self.obj.type1.get().pk,
+                'in_list': 1,
+                'name': 'Type1',
+                'pictogram': '/media/upload/touristiccontent-type1.png'
+            }],
+            'type2': [{
+                'id': self.obj.type2.get().pk,
+                'in_list': 2,
+                'name': 'Type2',
+                'pictogram': '/media/upload/touristiccontent-type2.png'
+            }],
             'videos': [],
             'website': None,
         }
@@ -168,8 +186,13 @@ class TouristicEventViewsTests(CommonTest):
             'slug': 'touristic-event',
             'source': [],
             'speaker': '',
+            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
             'target_audience': None,
-            'themes': [],
+            'themes': [{
+                'id': self.obj.themes.get().pk,
+                'label': self.obj.themes.get().label,
+                'pictogram': self.obj.themes.get().pictogram.url,
+            }],
             'thumbnail': None,
             'touristic_contents': [],
             'touristic_events': [],

@@ -4,7 +4,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.forms import FloatField
 from django.utils.translation import gettext_lazy as _
 from django.forms.models import inlineformset_factory
-from django.shortcuts import get_object_or_404
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Layout, Div, HTML
@@ -12,8 +11,6 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
-from geotrek.core.widgets import TopologyReadonlyWidget
-from geotrek.maintenance.widgets import InterventionWidget
 
 from .models import Intervention, Project
 
@@ -53,19 +50,16 @@ class FundingForm(forms.ModelForm):
 FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=FundingForm, extra=1)
 
 
-class InterventionBaseForm(CommonForm):
-    target_id = forms.IntegerField(required=False,
-                                   widget=forms.HiddenInput())
-    target_type = forms.ModelChoiceField(required=False,
-                                         queryset=ContentType.objects.all(),
-                                         widget=forms.HiddenInput())
+class InterventionForm(CommonForm):
+    """ An intervention can be a Point or a Line """
+
+    topology = TopologyField(label="")
     length = FloatField(required=False, label=_("Length"))
     project = forms.ModelChoiceField(required=False, label=_("Project"),
                                      queryset=Project.objects.existing())
+
     geomfields = ['topology']
     leftpanel_scrollable = False
-
-    topology = TopologyField(label="")
 
     fieldslayout = [
         Div(
@@ -89,8 +83,6 @@ class InterventionBaseForm(CommonForm):
                     'stake',
                     'project',
                     'description',
-                    'target_type',
-                    'target_id',
                     css_id="main",
                     css_class="tab-pane active"
                 ),
@@ -112,71 +104,63 @@ class InterventionBaseForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'target_type', 'target_id',
-             'topology']
+             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
 
-
-class InterventionForm(InterventionBaseForm):
-    """ An intervention can be a Point or a Line """
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, target_type=None, target_id=None, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)
 
-        # If we create or edit an intervention on infrastructure or signage, set
-        # topology field as read-only
-        target_id = kwargs.get('initial', {}).get('target_id')
-        target_type = kwargs.get('initial', {}).get('target_type')
-        if self.instance.on_existing_target:
-            target_id = self.instance.target_id
-            target_type = self.instance.target_type.pk
-            self.fields['target_type'].initial = target_type
-            self.fields['target_id'].initial = target_id
-
-        if target_type and target_id:
-            ct = get_object_or_404(ContentType, pk=target_type)
-
-        if target_id:
-            final_object = ct.model_class().objects.get(pk=target_id)
-            icon = final_object._meta.model_name
-            title = '%s' % (_(final_object._meta.model_name).capitalize())
-            self.helper.form_action += '?target_id=%s' % target_id
-            if final_object._meta.model_name != "topology":
-                self.fields['topology'].required = False
-                self.fields['topology'].widget = TopologyReadonlyWidget()
-                self.fields['topology'].label = '%s%s %s' % (
-                    '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
-                                                                   icon,
-                                                                   title),
-                    _("On %s") % _(str(ct)).lower(),
-                    '<a href="%s">%s</a>' % (final_object.get_detail_url(),
-                                             str(final_object))
-                )
+        if not self.instance.pk:
+            # New intervention. We have to set its target.
+            if target_type and target_id:
+                # Point target to an existing topology
+                ct = ContentType.objects.get_for_id(target_type)
+                self.instance.target = ct.get_object_for_this_type(id=target_id)
+                # Set POST URL
+                self.helper.form_action += '?target_type={}&target_id={}'.format(target_type, target_id)
             else:
-                self.fields['topology'].initial = final_object
-                self.fields['topology'].label = '%s%s' % (
-                    '<img src="%simages/path-16.png" title="%s">' % (settings.STATIC_URL,
-                                                                     title),
-                    _("On %s") % _(str(ct)).lower()
-                )
-            self.fields['target_id'].initial = target_id
-            self.fields['target_type'].initial = target_type
-        elif not settings.TREKKING_TOPOLOGY_ENABLED:
-            self.fields['topology'].required = False
-            self.fields['topology'].widget = InterventionWidget(attrs={'geom_type': 'POINT'})
+                # Point target to a new topology
+                self.instance.target = Topology(kind='INTERVENTION')
+        # Else: existing intervention. Target is already set
+
+        self.fields['topology'].initial = self.instance.target
+
+        if self.instance.target.__class__ == Topology:
+            # Intervention has its own topology
+            title = _("On {}".format(_("Paths")))
+            self.fields['topology'].label = \
+                '<img src="{prefix}images/path-16.png" title="{title}">{title}'.format(
+                    prefix=settings.STATIC_URL, title=title
+            )
+        else:
+            # Intervention on an existing topology
+            icon = self.instance.target._meta.model_name
+            title = _("On {}".format(str(self.instance.target)))
+            self.fields['topology'].label = \
+                '<img src="{prefix}images/{icon}-16.png" title="{title}"><a href="{url}">{title}</a>'.format(
+                    prefix=settings.STATIC_URL, icon=icon, title=title,
+                    url=self.instance.target.get_detail_url()
+            )
+            # Topology is readonly
+            del self.fields['topology']
+
         # Length is not editable in AltimetryMixin
         self.fields['length'].initial = self.instance.length
         editable = bool(self.instance.geom and (self.instance.geom.geom_type == 'Point'
                         or self.instance.geom.geom_type == 'LineString'))
         self.fields['length'].widget.attrs['readonly'] = editable
 
-    def clean(self, *args, **kwargs):
-        # If topology was read-only, topology field is empty, get it from infra.
-        cleaned_data = super(InterventionForm, self).clean()
-        if not cleaned_data.get('target_id') and cleaned_data.get('topology'):
-            cleaned_data['target_id'] = cleaned_data['topology'].pk
-            ct = ContentType.objects.get_for_model(Topology)
-            cleaned_data['target_type'] = ct
-        return cleaned_data
+    def save(self, *args, **kwargs):
+        target = self.instance.target
+        if not target.pk:
+            target.save()
+        topology = self.cleaned_data.get('topology')
+        if topology and topology.pk != target.pk:
+            target.mutate(topology)
+        intervention = super().save(*args, **kwargs, commit=False)
+        intervention.target = target
+        intervention.save()
+        self.save_m2m()
+        return intervention
 
 
 class ProjectForm(CommonForm):

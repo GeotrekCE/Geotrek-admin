@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-04 17:16+0000\n"
+"POT-Creation-Date: 2021-02-18 07:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+msgid "Color"
+msgstr "Couleur"
+
 msgid "Outdoor"
 msgstr "Outdoor"
 
+msgid "Sector"
+msgstr "Filière"
+
 msgid "Name"
 msgstr "Nom"
+
+msgid "Sectors"
+msgstr "Filières"
 
 msgid "Practice"
 msgstr "Pratique"
@@ -29,17 +38,140 @@ msgstr "Pratique"
 msgid "Practices"
 msgstr "Pratiques"
 
-msgid "Location"
-msgstr "Emplacement"
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Within a practice. Alphabetical order if blank"
+msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
+
+msgid "Rating scale"
+msgstr "Échelle de cotation"
+
+msgid "Rating scales"
+msgstr "Échelles de cotation"
+
+msgid "Scale"
+msgstr "Échelle"
 
 msgid "Description"
 msgstr "Description"
 
+msgid "Alphabetical order if blank"
+msgstr "Ordre alphabétique si vide"
+
+msgid "Rating"
+msgstr "Cotation"
+
+msgid "Ratings"
+msgstr "Cotations"
+
+msgid "Site type"
+msgstr "Type de site"
+
+msgid "Site types"
+msgstr "Types de site"
+
+msgid "↑ N"
+msgstr "↑ N"
+
+msgid "↗ NE"
+msgstr "↗ NE"
+
+msgid "→ E"
+msgstr "→ E"
+
+msgid "↘ SE"
+msgstr "↘ SE"
+
+msgid "↓ S"
+msgstr "↓ S"
+
+msgid "↙ SW"
+msgstr "↙ SO"
+
+msgid "← W"
+msgstr "← O"
+
+msgid "↖ NW"
+msgstr "↖ NO"
+
+msgid "Location"
+msgstr "Emplacement"
+
+msgid "Parent"
+msgstr "Parent"
+
+msgid "Complete description"
+msgstr "Description complète"
+
+msgid "Description teaser"
+msgstr "Chapeau"
+
+msgid "A brief summary (map pop-ups)"
+msgstr "Bref résumé"
+
+msgid "Ambiance"
+msgstr "Ambiance"
+
+msgid "Main attraction and interest"
+msgstr "Attraction principal et intérêts"
+
+msgid "Advice"
+msgstr "Recommandations"
+
+msgid "Risks, danger, best period, ..."
+msgstr "Risques, danger, meilleure période, ..."
+
+msgid "Period"
+msgstr "Période"
+
+msgid "Orientation"
+msgstr "Orientation"
+
+msgid "Wind"
+msgstr "Vent"
+
+msgid "Labels"
+msgstr "Étiquettes"
+
+msgid "Themes"
+msgstr "Thèmes"
+
+msgid "Main theme(s)"
+msgstr "Thème(s) principal(aux)"
+
+msgid "Information desks"
+msgstr "Lieux de renseignement"
+
+msgid "Where to obtain information"
+msgstr "Où obtenir des informations"
+
+msgid "Portal"
+msgstr "Portail"
+
+msgid "Source"
+msgstr "Source"
+
+msgid "Web links"
+msgstr "Liens web"
+
+msgid "External resources"
+msgstr "Ressources externes"
+
+msgid "Type"
+msgstr "Type"
+
 msgid "External id"
 msgstr "ID externe"
 
-msgid "Site"
-msgstr "Site"
+msgid "Outdoor site"
+msgstr "Site outdoor"
+
+msgid "Outdoor sites"
+msgstr "Sites outdoor"
+
+msgid "Add a new outdoor site"
+msgstr "Ajouter un nouveau site outdoor"
 
 msgid "Sites"
 msgstr "Sites"
@@ -65,53 +197,50 @@ msgstr "Contenus touristiques"
 msgid "Touristic events"
 msgstr "Événements touristiques"
 
-msgid "Cities"
-msgstr "Communes"
+msgid "Site"
+msgstr "Site"
 
-msgid "Districts"
-msgstr "Secteurs"
+msgid "Outdoor course"
+msgstr "Parcours outdoor"
 
-msgid "Restricted areas"
-msgstr "Zonages réglementaires"
+msgid "Outdoor courses"
+msgstr "Parcours outdoor"
 
-msgid "Description teaser"
-msgstr "Chapeau"
+msgid "Add a new outdoor course"
+msgstr "Ajouter un nouveau parcours outdoor"
 
-msgid "A brief summary (map pop-ups)"
-msgstr "Bref résumé"
-
-msgid "Complete description"
-msgstr "Description complète"
-
-msgid "Ambiance"
-msgstr "Ambiance"
-
-msgid "Main attraction and interest"
-msgstr "Attraction principal et intérêts"
-
-msgid "Advice"
-msgstr "Recommandations"
-
-msgid "Risks, danger, best period, ..."
-msgstr "Risques, danger, meilleure période, ..."
-
-msgid "Period"
-msgstr "Période"
-
-msgid "Practice site"
-msgstr "Site de pratique"
-
-msgid "Practice sites"
-msgstr "Sites de pratique"
-
-msgid "Add a new site"
-msgstr "Ajouter un nouveau site"
+msgid "Courses"
+msgstr "Parcours"
 
 msgid "Attributes"
 msgstr "Informations"
 
 msgid "None"
 msgstr "Aucun(e)"
+
+msgid "Powered by geotrek.fr"
+msgstr "Propulsé par geotrek.fr"
+
+msgid "Attribution"
+msgstr "Crédit photo"
+
+msgid "Useful information"
+msgstr "Infos pratiques"
+
+msgid "Geographical location"
+msgstr "Situation géographique"
+
+msgid "All useful information"
+msgstr "Toutes les infos pratiques"
+
+msgid "Parents"
+msgstr "Parents"
+
+msgid "Children"
+msgstr "Enfants"
+
+msgid "Practical info"
+msgstr "Informations pratiques"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"

@@ -2,12 +2,234 @@
 CHANGELOG
 =========
 
-2.42.1.dev0
+2.51.0+dev
 -------------------
 
 **Bug fixes**
 
 -
+
+
+2.51.0 (2021-03-02)
+-------------------
+
+**New features**
+
+- Add filtering by restricted area types
+- Add outdoor course module
+- Add a site/course tree view in outdoor site and course detail pages
+
+**Bug fixes**
+
+- Fix a backward compatibility to keep MAP_STYLES['xxx'] config working in custom.py.
+  However, we recommend to use new MAPENTITY_CONFIG['MAP_STYLES'] for this.
+- Use 2D lengths instead of 3D length for Geotrek-rando (to be consistent with Geotrek-mobile)
+- Translate touristiccontent_category endpoint in API v2
+- Fix crash of trek endpoing in API v2 when a geometry is a multilinestring
+  (the previous fix was not working)
+
+
+2.50.0 (2021-02-19)
+-------------------
+
+**BREAKING CHANGES**
+
+- Change URL of some API v2 enpoints. See Swagger online doc.
+- API v2 thumbnails are now 400px large
+- Split PDF urls by language in API v2
+
+**Bug fixes**
+
+- Fix API v2 crash when trek geom is a multilinestring
+- Fix touristic content filtering in API v2 when both type1 and type2 are specified
+- Synchronize pictogram for service types in mobile app
+
+**New features**
+
+- Cover image for static pages
+
+**Performances**
+
+- Automatically remove temporary topologies created before version 2.48.0.
+
+**Security**
+
+- Upgrade cryptography from 3.2 to 3.3.2
+
+
+2.49.0 (2021-02-09)
+-------------------
+
+**BREAKING CHANGES**
+
+- MAP_STYLES setting should be now set in MAPENTITY_CONFIG['MAP_STYLES'].
+  A fallback exists to keep configuration from MAP_STYLES.
+- The name of several filters in APIv2 are now in plural form. See swagger doc.
+
+**Bug fixes**
+
+- Fix cities filter in API v2 when id begins with a zero
+- Fix cities and districts filter in API v2 when given id is nonexistant
+- Allow to pass more than one id in most API v2 filters (see swagger doc)
+- Allow to filter on several items in most list page filter
+
+**New features**
+
+- Add flatpage endpoint to API v2
+- Add sector filter to outdoor site liste page
+- Compute aggregated fields only from children, not parents for outdoor sites
+- Practice, sector, wind and orientation filters on outdoor sites now take children into account
+
+
+2.48.1 (2021-02-05)
+-------------------
+
+**Bug fixes**
+
+- Fix missing geometry in API v2 touristiccontent endpoint when using near_trek filter
+
+
+2.48.0 (2021-02-03)
+-------------------
+
+**Performances**
+
+- Do not save temporary topologies in database. Sometimes they are not removed and accumulate
+
+**Refactoring**
+
+- Allow to use zoning app independently of others apps
+
+**Minor improvements**
+
+- Add id attribute to source and informationdesk APIv2 endpoints
+- Add structure attribute to touristic contents/events in API v1
+- Add publication, hierarchical level, practices and modification time columns to outdoor site list
+
+
+2.47.2 (2021-01-28)
+-------------------
+
+**Bug fixes**
+
+- Fix crash in API v2 for touristics contents with alphanumeric external id
+
+
+2.47.1 (2021-01-27)
+-------------------
+
+**Bug fixes**
+
+- Remove thumbnail and pictures attribute from API v2
+- Replace them by the attachments attribute on Trek, POI and Touristic content
+- The pdf attribute now returns an absolute URL
+
+**Performances**
+
+- Do not recreate geometry columns indexes at each upgrade
+
+
+2.47.0 (2021-01-26)
+-------------------
+
+**New Feature**
+
+- Add cities and departure_geom fields to API v2 trek endpoint
+- Add practice filter to API v2 trek endpoint
+- Add touristiccontentcategory endpoint to API v2 (with types)
+- Add many fields and filters to touristiccontent API v2 endpoint
+
+**Performances**
+
+- Optimize generation of the list of cities in list pages
+
+
+2.46.0 (2021-01-25)
+-------------------
+
+**Database change**
+
+- "mnt" DEM table is now managed by django. It was renamed with altimetry_dem label.
+  Data coming from mnt will be copied to new table.
+
+**Security fixes**
+
+- Enable XFrameOptionsMiddleware
+- Hide nginx version
+- Disable swagger (API v2 documentation) by default.
+  To enable it, see swagger item in advanced documentation page.
+- Fix XSS in filter popover
+
+**Bug fixes**
+
+- Fix impossibility to add paths on Ubuntu 20.04 (PostGIS 3)
+- Fix doc that explains how to load fixtures
+
+**New Feature**
+
+- Allow to select API v2 fields for all endpoints
+- Optimize development environment
+- Add an order field on rating scales
+- Allow multiple cardinal points for wind and orientation
+- Add sectors for outdoor sites
+- Add pictograms to outdoor practices and ratings
+- Compute outdoor site sector, practice, orientation and wind
+  from childs and parents
+
+
+2.45.0 (2021-01-10)
+-------------------
+
+HAPPY NEW YEAR!
+
+**Security fixes**
+
+- Upgrade cairosvg and lxml libraries
+
+**Bug fixes**
+
+- Fix migrations if some outdoor sites were created before
+- Fix missing placeholders for orientations in filter
+- Fix outdoor fixtures
+- Fix doc to enable outdoor
+- Fix path edition with PostGIS 3 (on Ubuntu 20.04)
+- Allow site type to be blank
+
+**New Feature**
+
+- Add min/max ratings for outdoor sites
+- Reorder outdoor site fields
+
+
+2.44.0 (2020-12-18)
+-------------------
+
+**New Feature**
+
+- Add new fields to outdoor sites
+- Allow geometrycollection for site geometry
+
+
+2.43.1 (2020-12-10)
+-------------------
+
+**Bug fixes**
+
+- Remove a SQL debug
+
+
+2.43.0 (2020-12-10)
+-------------------
+
+**BREAKING CHANGES**
+
+- Old attachments are now deleted by default in parser. Add `delete_attachment = False`
+  attribute to your parsers if you want to keep old behaviour (unlikely).
+
+**Bug fixes**
+
+- Fix creation of interventions with their own topology
+- Fix height of map on detail/create/update pages
 
 
 2.42.0 (2020-12-04)
@@ -291,7 +513,7 @@ CHANGELOG
 
 
 2.33.13 (2020-07-01)
--------------------
+--------------------
 
 **New Feature**
 
@@ -300,7 +522,7 @@ CHANGELOG
 
 
 2.33.12 (2020-06-23)
--------------------
+--------------------
 
 **Bug fixes**
 
@@ -316,7 +538,7 @@ CHANGELOG
 
 
 2.33.11 (2020-06-05)
--------------------
+--------------------
 
 **Bug fixes**
 
@@ -324,7 +546,7 @@ CHANGELOG
 
 
 2.33.10 (2020-06-02)
--------------------
+--------------------
 
 **Bug fixes**
 
@@ -458,9 +680,9 @@ No changes. Just force a new build in CI
 
 **Upgrade notes**
 
-- The installation method has been totally rewritten with an Ubuntu packaging (``apt install geotrek-admin``), only available for Ubuntu 18.04 actually. 
-- If you upgrade from Geotrek-admin <= 2.32, then apply the dedicated migration script. See https://geotrek.readthedocs.io/en/master/installation.html#upgrade-from-geotrek-admin-2-32. 
-- Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``. See advanced configuration documentation for details. 
+- The installation method has been totally rewritten with an Ubuntu packaging (``apt install geotrek-admin``), only available for Ubuntu 18.04 actually.
+- If you upgrade from Geotrek-admin <= 2.32, then apply the dedicated migration script. See https://geotrek.readthedocs.io/en/master/installation.html#upgrade-from-geotrek-admin-2-32.
+- Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``. See advanced configuration documentation for details.
 - The automatic NGINX configuration can be overriden in ``/opt/geotrek-admin/var/conf/nginx.conf.in`` file. See NGINX configuration documentation for details.
 
 

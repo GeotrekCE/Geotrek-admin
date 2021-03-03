@@ -13,7 +13,8 @@ class LandLayerMixin(object):
     precision = settings.LAYER_PRECISION_LAND
     simplify = settings.LAYER_SIMPLIFY_LAND
 
-    @method_decorator(cache_page(settings.CACHE_TIMEOUT_LAND_LAYERS, cache="fat"))
+    @method_decorator(cache_page(settings.CACHE_TIMEOUT_LAND_LAYERS,
+                                 cache=settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']))
     def dispatch(self, request, *args, **kwargs):
         return super(LandLayerMixin, self).dispatch(request, *args, **kwargs)
 

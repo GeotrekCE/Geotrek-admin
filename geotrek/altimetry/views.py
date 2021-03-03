@@ -11,7 +11,7 @@ from django.views import static
 from mapentity.decorators import view_cache_response_content
 from mapentity.views import JSONResponseMixin, LastModifiedMixin
 
-from geotrek.common.views import PublicOrReadPermMixin
+from geotrek.common.permissions import PublicOrReadPermMixin
 
 from .models import AltimetryMixin
 

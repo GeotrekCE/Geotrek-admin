@@ -16,7 +16,7 @@ After any change in ``custom.py``, run:
 ::
 
     sudo service geotrek restart
-    
+
 Sometimes you must also run :
 
 ::
@@ -130,7 +130,7 @@ In order to activate suricate reports:
 
     .. code-block :: python
 
-        geotrek loaddata geotrek/feedback/fixtures/basic.json
+        geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
 3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization-section>`)
 
@@ -195,14 +195,14 @@ add the following code:
     # Enable diving module
     INSTALLED_APPS += ('geotrek.diving', )
 
-Then run ``sudo geotrek migrate; sudo service geotrek restart``.
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
 
 ::
 
-    sudo geotrek loaddata geotrek/diving/fixtures/basic.json
-    cp /opt/geotrek-admin/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
+    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
 Outdoor
 -------
@@ -215,14 +215,32 @@ add the following code:
     # Enable outdoor module
     INSTALLED_APPS += ('geotrek.outdoor', )
 
-Then run ``sudo geotrek migrate; sudo service geotrek restart``.
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert outdoor minimal data:
 
 ::
 
-    sudo geotrek loaddata geotrek/outdoor/fixtures/basic.json
-    cp /opt/geotrek-admin/geotrek/outdoor/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+
+
+Note: outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
+You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
+https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
+
+Swagger
+-------
+
+In order to enable swagger module to auto-document API ``/api/v2/``, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable API v2 documentation
+    INSTALLED_APPS += ('drf_yasg', )
+
+Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
+
 
 WYSIWYG editor configuration
 ----------------------------
@@ -347,13 +365,13 @@ layer style.
 
 .. code-block :: python
 
-    MAP_STYLES['path'] = {'color': 'red', 'weight': 5}
+    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
 
 Or change just one parameter (the opacity for example) :
 
 .. code-block :: python
 
-    MAP_STYLES['city']['opacity'] = 0.8
+    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
 
 Regarding colors that depend from database content, such as land layers
@@ -566,7 +584,7 @@ apparence of objects in public trek PDF exports, use the following setting:
 
 ::
 
-    MAP_STYLES['print']['path'] = {'weight': 3}
+    MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
 
 See *Leaflet* reference documentation for detail about layers apparence.
 
@@ -862,20 +880,21 @@ Minimum distance to merge 2 paths.
 
 ::
 
-    MAP_STYLES = {'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
-                  'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-                  'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-                  'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-                  'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-                  'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-                  'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-                  'print': {'path': {'weight': 1},
-                            'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                                     'arrowColor': 'black', 'arrowSize': 10},}
-                  }
+    MAPENTITY_CONFIG['MAP_STYLES'] = {
+        'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+        'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+        'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+        'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+        'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+        'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+        'print': {'path': {'weight': 1},
+                  'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                           'arrowColor': 'black', 'arrowSize': 10},}
+    }
 
 Color of the different layers on the map
 
@@ -883,8 +902,8 @@ Color of the different layers on the map
 
     ::
 
-        MAP_STYLES['path'] = {'weigth': 2, 'opacity': 2.0, 'color': 'yellow'}*
-        MAP_STYLES['city']['opacity'] = 0.8*
+        MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'weigth': 2, 'opacity': 2.0, 'color': 'yellow'}*
+        MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8*
 
     *For color: use color picker for example*
 
@@ -912,7 +931,7 @@ Color of the different layers on the top right for landing.
     ::
 
         COLORS_POOL['restrictedarea'] = ['plum', 'violet', 'yellow', 'red', '#79a8f3']
-        MAP_STYLES['city']['opacity'] = 0.8*
+        MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8*
 
     *For color: use color picker for example*
 

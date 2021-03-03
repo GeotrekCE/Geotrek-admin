@@ -2,7 +2,7 @@ from rest_framework import serializers as rest_serializers
 from django.urls import reverse
 from django.utils.translation import get_language
 
-from geotrek.core.models import AltimetryMixin
+from geotrek.altimetry.models import AltimetryMixin
 
 
 class AltimetrySerializerMixin(rest_serializers.ModelSerializer):

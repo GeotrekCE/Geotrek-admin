@@ -25,7 +25,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
-from geotrek.common.views import PublicOrReadPermMixin
+from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 
 from .models import Path, Trail, Topology

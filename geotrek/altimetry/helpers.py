@@ -10,7 +10,6 @@ from django.db import connection
 import pygal
 from pygal.style import LightSolarizedStyle
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -139,11 +138,6 @@ class AltimetryHelper(object):
             precision = int(width / max_resolution)
         if height < precision or width < precision:
             precision = min([height, width])
-        cursor = connection.cursor()
-        cursor.execute("SELECT 1 FROM information_schema.tables WHERE table_name='mnt'")
-        if cursor.rowcount == 0:
-            logger.warning("No DEM present")
-            return {}
 
         sql = """
             -- Author: Celian Garcia
@@ -165,9 +159,9 @@ class AltimetryHelper(object):
                     FROM lines, columns
                 ),
                 draped AS (
-                    SELECT id, ST_Value(mnt.rast, p.geom)::int AS altitude
-                    FROM mnt, points2d AS p
-                    WHERE ST_Intersects(mnt.rast, p.geom)
+                    SELECT id, ST_Value(altimetry_dem.rast, p.geom)::int AS altitude
+                    FROM altimetry_dem, points2d AS p
+                    WHERE ST_Intersects(altimetry_dem.rast, p.geom)
                 ),
                 all_draped AS (
                     SELECT geomll, geom, altitude
@@ -192,12 +186,17 @@ class AltimetryHelper(object):
             FROM extent_latlng, resolution, all_draped;
         """.format(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
                    srid=settings.SRID, precision=precision)
+        cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()
         first = result[0]
         envelop_native, envelop, center_z, min_z, max_z, resolution_w, resolution_h, a = first
         envelop = GEOSGeometry(envelop, srid=4326)
         envelop_native = GEOSGeometry(envelop_native, srid=settings.SRID)
+
+        if center_z is None:
+            logger.warning("No DEM present")
+            return {}
 
         altitudes = []
         row = []

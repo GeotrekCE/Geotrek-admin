@@ -9,16 +9,18 @@ from django.contrib.gis import gdal
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
+from mapentity.factories import SuperUserFactory
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
-from geotrek.authent.factories import PathManagerFactory
+from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.core.factories import StakeFactory
-from geotrek.core.helpers import TopologyHelper
+from geotrek.core.models import PathAggregation
 from geotrek.common.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import PathFactory, TopologyFactory
+from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import BladeFactory, SignageFactory
@@ -98,17 +100,15 @@ class InterventionViewsTest(CommonTest):
                                                                        ))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
-        form = response.context['form']
-        self.assertEqual(form.initial['target_id'], str(signa.pk))
         # Should be able to save form successfully
         data = self.get_good_data()
-        data['target_id'] = signa.pk
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                         signa.pk,
                                                                         ContentType.objects.get_for_model(Signage).pk
                                                                         ),
                                     data)
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(signa, Intervention.objects.get().target)
 
     def test_detail_target_objects(self):
         self.login()
@@ -176,10 +176,7 @@ class InterventionViewsTest(CommonTest):
                                                                        ))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
-        form = response.context['form']
-        self.assertEqual(form.initial['target_id'], str(signa.pk))
         data = self.get_good_data()
-        data['target_id'] = signa.pk
 
         # If form invalid, it should not fail
         data.pop('status')
@@ -189,6 +186,7 @@ class InterventionViewsTest(CommonTest):
                                                                         ),
                                     data)
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(Intervention.objects.exists())
 
     def test_update_form_on_signage(self):
         self.login()
@@ -208,7 +206,6 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
-        data['target_id'] = form.fields['target_id'].initial  # because it is set after form init, not form.initial :(
         data.update(**{
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
@@ -252,18 +249,13 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        infra.pk,
                                                                        ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
-        form = response.context['form']
-        self.assertEqual(form.initial['target_id'], str(infra.pk))
         # Should be able to save form successfully
         data = self.get_good_data()
-        data['target_id'] = infra.pk
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                         infra.pk,
                                                                         ContentType.objects.get_for_model(Infrastructure).pk),
@@ -277,17 +269,12 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        infra.pk,
                                                                        ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
-        form = response.context['form']
-        self.assertEqual(form.initial['target_id'], str(infra.pk))
         data = self.get_good_data()
-        data['target_id'] = infra.pk
 
         # If form invalid, it should not fail
         data.pop('status')
@@ -303,18 +290,15 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         intervention = InterventionFactory.create(target=infra)
         response = self.client.get(intervention.get_update_url())
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
         # Should be able to save form successfully
         form = response.context['form']
         data = form.initial
         data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
-        data['target_id'] = form.fields['target_id'].initial  # because it is set after form init, not form.initial :(
         data.update(**{
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
@@ -414,6 +398,21 @@ class InterventionViewsTest(CommonTest):
         i = InterventionFactory.create()
         response = self.client.get(i.get_update_url())
         self.assertEqual(response.status_code, 302)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_creation_form_line(self):
+        path = PathFactory.create(geom=LineString(Point(700000, 6600000), Point(700300, 6600300), srid=settings.SRID))
+        self.super_user = SuperUserFactory.create(username='admin', password='super')
+        self.client.login(username='admin', password='super')
+        data = self.get_good_data()
+        data['structure'] = StructureFactory.create().pk
+        data['topology'] = '{"paths": [%s], "positions":{"0":[0,1]}}' % path.pk,
+        response = self.client.post('%s' % (Intervention.get_add_url()),
+                                    data)
+        self.assertEqual(PathAggregation.objects.count(), 1)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Intervention.objects.first().geom, path.geom)
+        self.assertEqual(Intervention.objects.first().target.kind, 'INTERVENTION')
 
 
 class ProjectViewsTest(CommonTest):
@@ -551,7 +550,8 @@ class ExportTest(TranslationResetMixin, TestCase):
         lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
 
         closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 0), srid=settings.SRID))
-        topo_point = TopologyHelper._topologypoint(lng, lat, None).reload()
+        topo_point = Topology._topologypoint(lng, lat, None)
+        topo_point.save()
 
         self.assertEqual(topo_point.paths.get(), closest_path)
 

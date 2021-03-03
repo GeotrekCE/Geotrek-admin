@@ -16,6 +16,8 @@ from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
 
+from geotrek.zoning.mixins import ZoningPropertiesMixin
+
 
 class Sealing(StructureOrNoneRelated):
     """ A sealing linked with a signage"""
@@ -54,10 +56,11 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
 
 class SignageGISManager(NoDeleteManager):
     """ Overide default typology mixin manager, and filter by type. """
-    def all_implantation_years(self):
-        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
-            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
-        return all_years
+    def implantation_year_choices(self):
+        choices = self.get_queryset().existing().filter(implantation_year__isnull=False)\
+            .order_by('-implantation_year').distinct('implantation_year') \
+            .values_list('implantation_year', 'implantation_year')
+        return choices
 
 
 class Signage(MapEntityMixin, BaseInfrastructure):
@@ -159,7 +162,7 @@ class BladeType(StructureOrNoneRelated):
         return self.label
 
 
-class Blade(AddPropertyMixin, MapEntityMixin):
+class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)
@@ -180,6 +183,10 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     class Meta:
         verbose_name = _("Blade")
         verbose_name_plural = _("Blades")
+
+    @property
+    def zoning_property(self):
+        return self.signage
 
     @classproperty
     def geomfield(cls):

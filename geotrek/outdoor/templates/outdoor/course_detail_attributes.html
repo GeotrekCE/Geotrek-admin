@@ -1,0 +1,76 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n mapentity_tags outdoor_tags %}
+
+{% block attributes %}
+    <h3>{% trans "Tree view" %}</h3>
+    {% for ancestor in object.site.get_ancestors %}
+        <ul>
+            <li>
+                <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
+    {% endfor %}
+                <ul>
+                    <li>
+                        <a href="{% url 'outdoor:site_detail' object.site.pk %}">{{ object.site }}</a>
+                        <ul>
+                            <li>
+                                <b>{{ object }}</b>
+                            </li>
+                            <li>
+                                <a href="{% url 'outdoor:course_add' %}?site={{ object.site.pk }}">
+                                    + <i>{% trans "Add a course" %}</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+    {% for ancestor in object.site.get_ancestors %}
+            </li>
+        </ul>
+    {% endfor %}
+
+    <h3>{% trans "Attributes" %}</h3>
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Site" %}</th>
+            <td>{% if object.site %}{% valuelist object.site.get_ancestors field='name_display' %}{{ object.site.name_display|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Sector" %}</th>
+            <td>{% if object.site.practice.sector %}{{ object.site.practice.sector }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object.site|verbose:"practice" }}</th>
+            <td>{% if object.site.practice %}{{ object.site.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"advice" }}</th>
+            <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        {% for rating in object.ratings.all %}
+            <tr>
+                <th>{{ rating.scale.name }}</th>
+                <td>{{ rating.name }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        {% include "common/publication_info_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+
+    {{ block.super }}
+{% endblock attributes %}

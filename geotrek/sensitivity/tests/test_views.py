@@ -206,7 +206,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         self.assertEqual(response.json()['results'][0]['name'], sensitive_area_point.species.name)
 
     def test_list_sportpractice(self):
-        url = '/api/v2/sportpractice/?format=json&language=en'
+        url = '/api/v2/sensitivearea_practice/?format=json&language=en'
         response = self.client.get(url)
         sports_practice = SportPractice.objects.all()
         result_sportpractice = [{'id': sp.id, 'name': sp.name} for sp in sports_practice]
@@ -220,7 +220,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
     def test_filters_structure(self):
         other_structure = StructureFactory.create(name='other')
         self.sensitivearea_other_structure = SensitiveAreaFactory.create(structure=other_structure)
-        url = '/api/v2/sensitivearea/?format=json&language=en&period=ignore&structure={}'.format(other_structure.pk)
+        url = '/api/v2/sensitivearea/?format=json&language=en&period=ignore&structures={}'.format(other_structure.pk)
         response = self.client.get(url)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['name'], self.sensitivearea_other_structure.species.name)

@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
-from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
@@ -66,28 +65,17 @@ class ManDayFormsetMixin(FormsetMixin):
     formset_class = ManDayFormSet
 
 
-class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
+class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
     model = Intervention
     form_class = InterventionForm
 
-    def on_target(self):
-        target_id = self.request.GET.get('target_id')
-        target_type = self.request.GET.get('target_type')
-        if target_id and target_type:
-            return target_id, target_type
-        return None, None
-
-    def get_initial(self):
-        """
-        Returns the initial data to use for forms on this view.
-        """
-        initial = super(InterventionCreate, self).get_initial()
-        target_id, target_type = self.on_target()
-        if target_id:
-            # Create intervention on an infrastructure
-            initial['target_id'] = target_id
-            initial['target_type'] = target_type
-        return initial
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if 'target_id' in self.request.GET and 'target_type' in self.request.GET:
+            # Create intervention on an existing infrastructure
+            kwargs['target_id'] = self.request.GET['target_id']
+            kwargs['target_type'] = self.request.GET['target_type']
+        return kwargs
 
 
 class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):

@@ -20,3 +20,8 @@ class SourceViewSet(api_viewsets.GeotrekViewSet):
 class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.ReservationSystemSerializer
     queryset = common_models.ReservationSystem.objects.all()
+
+
+class LabelViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.LabelSerializer
+    queryset = common_models.Label.objects.all()
