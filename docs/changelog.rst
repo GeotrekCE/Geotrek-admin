@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.51.0+dev
+2.51.1 (2021-03-05)
 -------------------
 
 **Bug fixes**
 
--
+- Fix departure_geom attribute in API v2 (WGS84 projection, without Z)
 
 
 2.51.0 (2021-03-02)
