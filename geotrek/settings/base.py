@@ -433,6 +433,7 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
+    # 'ANIMATE': False,
     'SRID': 3857,
     'TILES': [
         ('OpenTopoMap', 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 'Données: © Contributeurs OpenStreetMap, SRTM | Affichage: © OpenTopoMap (CC-BY-SA)'),

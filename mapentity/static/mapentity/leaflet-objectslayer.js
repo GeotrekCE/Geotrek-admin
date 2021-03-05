@@ -58,6 +58,7 @@ L.ObjectsLayer = L.GeoJSONTileLayer.extend({
         L.Util.setOptions(this, options);
         this.options.styles = L.Util.extend({}, this.options.styles);
         this.options.styles['default'] = L.Util.extend({}, this.options.style);
+        this.options.updateWhenZooming = false;  // Better perfs
 
         L.GeoJSONTileLayer.prototype.initialize.call(this, url, this.options);
 
