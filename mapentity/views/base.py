@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from io import BytesIO
 import json
 import logging
@@ -115,7 +113,7 @@ class BaseListView(FilterListMixin, ModelViewMixin):
     columns = None
 
     def __init__(self, *args, **kwargs):
-        super(BaseListView, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if self.columns is None:
             # All model fields except geometries
@@ -127,7 +125,7 @@ class BaseListView(FilterListMixin, ModelViewMixin):
 
     @view_permission_required()
     def dispatch(self, *args, **kwargs):
-        return super(BaseListView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 @csrf_exempt

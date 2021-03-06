@@ -38,7 +38,7 @@ class SensitiveAreaViewsTests(CommonTest):
 
     def setUp(self):
         translation.deactivate()
-        super(SensitiveAreaViewsTests, self).setUp()
+        super().setUp()
 
     def get_bad_data(self):
         return {
@@ -84,7 +84,7 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
 
     def setUp(self):
         translation.deactivate()
-        super(RegulatorySensitiveAreaViewsTests, self).setUp()
+        super().setUp()
 
     def get_bad_data(self):
         return {

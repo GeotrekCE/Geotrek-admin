@@ -20,7 +20,7 @@ class TranslatedModelSerializer(rest_serializers.ModelSerializer):
                 kwargs['allow_none'] = True
             kwargs['max_length'] = getattr(model_field, 'max_length')
             return rest_fields.CharField(**kwargs)
-        return super(TranslatedModelSerializer, self).get_field(model_field)
+        return super().get_field(model_field)
 
 
 class PictogramSerializerMixin(rest_serializers.ModelSerializer):

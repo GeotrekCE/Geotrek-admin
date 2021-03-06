@@ -12,7 +12,7 @@ from geotrek.common.parsers import (AttachmentParserMixin, Parser,
 from geotrek.tourism.models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
 
 
-class TouristicContentMixin(object):
+class TouristicContentMixin:
     # Mixin which handle multiple type1/2 with the same name in different categories
     def get_to_delete_kwargs(self):
         # FIXME: use mapping if it exists
@@ -201,7 +201,7 @@ class TouristicEventApidaeParser(ApidaeParser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicEventApidaeParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         self.field_options = self.field_options.copy()
@@ -354,7 +354,7 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicContentApidaeParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         if self.category:
@@ -632,7 +632,7 @@ class TouristicContentTourInSoftParser(TouristicContentMixin, TourInSoftParser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicContentTourInSoftParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         if self.category:
@@ -727,7 +727,7 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicEventTourInSoftParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         if self.type is not None:

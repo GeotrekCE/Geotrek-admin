@@ -51,7 +51,7 @@ class InterventionDetail(MapEntityDetail):
     queryset = Intervention.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(InterventionDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -84,7 +84,7 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
 
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InterventionUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InterventionDelete(MapEntityDelete):
@@ -92,7 +92,7 @@ class InterventionDelete(MapEntityDelete):
 
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InterventionDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InterventionViewSet(MapEntityViewSet):
@@ -113,7 +113,7 @@ class ProjectLayer(MapEntityLayer):
 
     def get_queryset(self):
         nonemptyqs = Intervention.objects.existing().filter(project__isnull=False).values('project')
-        return super(ProjectLayer, self).get_queryset().filter(pk__in=nonemptyqs)
+        return super().get_queryset().filter(pk__in=nonemptyqs)
 
 
 class ProjectList(MapEntityList):
@@ -140,7 +140,7 @@ class ProjectDetail(MapEntityDetail):
     queryset = Project.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProjectDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         context['empty_map_message'] = _("No intervention related.")
         return context
@@ -166,7 +166,7 @@ class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
 
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ProjectUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectDelete(MapEntityDelete):
@@ -174,7 +174,7 @@ class ProjectDelete(MapEntityDelete):
 
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ProjectDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectViewSet(MapEntityViewSet):

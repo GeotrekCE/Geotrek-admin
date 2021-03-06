@@ -13,7 +13,7 @@ from pygal.style import LightSolarizedStyle
 logger = logging.getLogger(__name__)
 
 
-class AltimetryHelper(object):
+class AltimetryHelper:
     @classmethod
     def elevation_profile(cls, geometry3d, precision=None, offset=0):
         """Extract elevation profile from a 3D geometry.

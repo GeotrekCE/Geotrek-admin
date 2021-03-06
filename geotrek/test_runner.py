@@ -7,17 +7,13 @@ from time import time
 class TimedTextTestResult(TextTestResult):
 
     def __init__(self, *args, **kwargs):
-        super(TimedTextTestResult, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.clocks = dict()
         self.sheeps = {}
 
     def startTest(self, test):
         self.clocks[test] = time()
-        super(TextTestResult, self).startTest(test)
-        if self.showAll:
-            self.stream.write(self.getDescription(test))
-            self.stream.write(" ... ")
-            self.stream.flush()
+        super().startTest(test)
 
     def addSuccess(self, test):
         super(TextTestResult, self).addSuccess(test)
@@ -34,7 +30,7 @@ class TimedTextTestRunner(TextTestRunner):
     resultclass = TimedTextTestResult
 
     def run(self, test):
-        result = super(TimedTextTestRunner, self).run(test)
+        result = super().run(test)
         if result.showAll:
             black_sheeps = [[k, v] for k, v in sorted(result.sheeps.items(), key=lambda item: item[1])][-10:]
             self.stream.writeln("Top 10 : \n")

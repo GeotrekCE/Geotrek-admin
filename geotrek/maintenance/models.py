@@ -82,7 +82,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         verbose_name_plural = _("Interventions")
 
     def __init__(self, *args, **kwargs):
-        super(Intervention, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._geom = None
 
     def default_stake(self):
@@ -108,7 +108,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         if self.stake is None:
             self.stake = self.default_stake()
 
-        super(Intervention, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # Invalidate project map
         if self.project:
@@ -394,7 +394,7 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStamp
         ordering = ['-begin_year', 'name']
 
     def __init__(self, *args, **kwargs):
-        super(Project, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._geom = None
 
     @property

@@ -177,12 +177,12 @@ class TouristicContentType(OptionalPictogramMixin):
 
 class TouristicContentType1Manager(MultilingualManager):
     def get_queryset(self):
-        return super(TouristicContentType1Manager, self).get_queryset().filter(in_list=1)
+        return super().get_queryset().filter(in_list=1)
 
 
 class TouristicContentType2Manager(MultilingualManager):
     def get_queryset(self):
-        return super(TouristicContentType2Manager, self).get_queryset().filter(in_list=2)
+        return super().get_queryset().filter(in_list=2)
 
 
 class TouristicContentType1(TouristicContentType):
@@ -190,7 +190,7 @@ class TouristicContentType1(TouristicContentType):
 
     def __init__(self, *args, **kwargs):
         self._meta.get_field('in_list').default = 1
-        super(TouristicContentType1, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     class Meta:
         proxy = True
@@ -203,7 +203,7 @@ class TouristicContentType2(TouristicContentType):
 
     def __init__(self, *args, **kwargs):
         self._meta.get_field('in_list').default = 2
-        super(TouristicContentType2, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     class Meta:
         proxy = True

@@ -43,7 +43,7 @@ from django.db.models.fields import FloatField
 logger = logging.getLogger(__name__)
 
 
-class CreateFromTopologyMixin(object):
+class CreateFromTopologyMixin:
     def on_topology(self):
         pk = self.request.GET.get('topology')
         if pk:
@@ -54,7 +54,7 @@ class CreateFromTopologyMixin(object):
         return None
 
     def get_initial(self):
-        initial = super(CreateFromTopologyMixin, self).get_initial()
+        initial = super().get_initial()
         # Create intervention with an existing topology as initial data
         topology = self.on_topology()
         if topology:
@@ -67,7 +67,7 @@ class PathLayer(MapEntityLayer):
     queryset = Path.objects.all()
 
     def get_queryset(self):
-        qs = super(PathLayer, self).get_queryset()
+        qs = super().get_queryset()
         if self.request.GET.get('no_draft'):
             qs = qs.exclude(draft=True)
         return qs
@@ -99,7 +99,7 @@ class PathList(MapEntityList):
 
 class PathJsonList(MapEntityJsonList, PathList):
     def get_context_data(self, **kwargs):
-        context = super(PathJsonList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["sumPath"] = round((self.object_list.aggregate(
             sumPath=Sum(Length('geom'), output_field=FloatField())
         ).get('sumPath') or 0) / 1000, 1)
@@ -123,7 +123,7 @@ class PathDetail(MapEntityDetail):
     model = Path
 
     def get_context_data(self, *args, **kwargs):
-        context = super(PathDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -155,7 +155,7 @@ class PathDocument(MapEntityDocument):
     def get_context_data(self, *args, **kwargs):
         language = self.request.LANGUAGE_CODE
         self.get_object().prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-        return super(PathDocument, self).get_context_data(*args, **kwargs)
+        return super().get_context_data(*args, **kwargs)
 
 
 class PathCreate(MapEntityCreate):
@@ -165,7 +165,7 @@ class PathCreate(MapEntityCreate):
     def dispatch(self, *args, **kwargs):
         if self.request.user.has_perm('core.add_path') or self.request.user.has_perm('core.add_draft_path'):
             return super(MapEntityCreate, self).dispatch(*args, **kwargs)
-        return super(PathCreate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class PathUpdate(MapEntityUpdate):
@@ -185,10 +185,10 @@ class PathUpdate(MapEntityUpdate):
             return redirect('core:path_detail', **kwargs)
         if path.draft and self.request.user.has_perm('core.change_draft_path'):
             return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
-        return super(PathUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(PathUpdate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         path = self.get_object()
         if path.draft and self.request.user.has_perm('core.delete_draft_path'):
@@ -219,7 +219,7 @@ class MultiplePathDelete(TemplateView):
                 messages.warning(self.request, _('Access to the requested resource is restricted by structure. '
                                                  'You have been redirected.'))
                 return redirect('core:path_list')
-        return super(MultiplePathDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     # Add support for browsers which only accept GET and POST for now.
     def post(self, request, *args, **kwargs):
@@ -231,7 +231,7 @@ class MultiplePathDelete(TemplateView):
         return HttpResponseRedirect(reverse(self.success_url))
 
     def get_context_data(self, **kwargs):
-        context = super(MultiplePathDelete, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         topologies_by_model = defaultdict(list)
         for path in self.paths:
             path.topologies_by_path(topologies_by_model)
@@ -255,10 +255,10 @@ class PathDelete(MapEntityDelete):
             return redirect('core:path_detail', **kwargs)
         if path.draft and self.request.user.has_perm('core.delete_draft_path'):
             return super(MapEntityDelete, self).dispatch(*args, **kwargs)
-        return super(PathDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(PathDelete, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         topologies_by_model = defaultdict(list)
         self.object.topologies_by_path(topologies_by_model)
         context['topologies_by_model'] = dict(topologies_by_model)
@@ -327,7 +327,7 @@ class TrailDetail(MapEntityDetail):
     queryset = Trail.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TrailDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -368,7 +368,7 @@ class TrailUpdate(MapEntityUpdate):
 
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TrailUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TrailDelete(MapEntityDelete):
@@ -376,7 +376,7 @@ class TrailDelete(MapEntityDelete):
 
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TrailDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TrailViewSet(MapEntityViewSet):

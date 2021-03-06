@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import fiona
 from fiona.crs import from_epsg
 from io import BytesIO
@@ -28,7 +27,7 @@ os.environ["SHAPE_ENCODING"] = "UTF-8"
 
 class ZipShapeSerializer(Serializer):
     def __init__(self, *args, **kwargs):
-        super(ZipShapeSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.path_directory = os.path.join(app_settings['TEMP_DIR'], str(uuid.uuid4()))
         os.mkdir(self.path_directory)
 

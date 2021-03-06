@@ -18,7 +18,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
-class PolygonInterventionFilterMixin(object):
+class PolygonInterventionFilterMixin:
     def get_geom(self, value):
         return value
 
@@ -60,7 +60,7 @@ class ProjectIntersectionFilterCity(PolygonInterventionFilterMixin, RightFilter)
     model = City
 
     def __init__(self, *args, **kwargs):
-        super(ProjectIntersectionFilterCity, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.lookup_expr = 'intersects'
         self.lookup_queryset_in = 'interventions__in'
 
@@ -72,7 +72,7 @@ class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFil
     model = District
 
     def __init__(self, *args, **kwargs):
-        super(ProjectIntersectionFilterDistrict, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.lookup_expr = 'intersects'
         self.lookup_queryset_in = 'interventions__in'
 

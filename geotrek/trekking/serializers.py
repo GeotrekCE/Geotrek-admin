@@ -32,7 +32,7 @@ from geotrek.trekking import models as trekking_models
 
 class TrekGPXSerializer(GPXSerializer):
     def end_object(self, trek):
-        super(TrekGPXSerializer, self).end_object(trek)
+        super().end_object(trek)
         for poi in trek.published_pois.all():
             geom_3d = poi.geom_3d.transform(4326, clone=True)  # GPX uses WGS84
             wpt = gpxpy.gpx.GPXWaypoint(latitude=geom_3d.y,
@@ -197,7 +197,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                     treks.append(clone)
             instance = treks
 
-        super(TrekSerializer, self).__init__(instance, *args, **kwargs)
+        super().__init__(instance, *args, **kwargs)
 
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             del self.fields['practice']
@@ -373,7 +373,7 @@ def timestamp(dt):
     return str(int((dt - epoch).total_seconds()))
 
 
-class CirkwiPOISerializer(object):
+class CirkwiPOISerializer:
     def __init__(self, request, stream):
         self.xml = SimplerXMLGenerator(stream, 'utf8')
         self.request = request
@@ -452,7 +452,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                         'advised_parking', 'public_transport', 'advice')
 
     def __init__(self, request, stream, get_params=None):
-        super(CirkwiTrekSerializer, self).__init__(request, stream)
+        super().__init__(request, stream)
         self.request = request
         self.exclude_pois = get_params.get('withoutpois', None)
 

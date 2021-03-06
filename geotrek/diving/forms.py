@@ -40,7 +40,7 @@ class DiveForm(CommonForm):
         model = Dive
 
     def __init__(self, *args, **kwargs):
-        super(DiveForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'levels', 'source', 'portal']:
             self.fields[f].help_text = ''

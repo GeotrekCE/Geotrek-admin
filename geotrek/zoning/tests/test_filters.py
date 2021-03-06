@@ -10,7 +10,7 @@ from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAre
 class ZoningFilterTest(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(ZoningFilterTest, cls).setUpClass()
+        super().setUpClass()
         cls.geom_1_wkt = 'SRID=2154;MULTIPOLYGON(((200000 300000, 900000 300000, 900000 1200000, 200000 1200000, ' \
                          '200000 300000)))'
         cls.geom_2_wkt = 'SRID=2154;MULTIPOLYGON(((1200000 300000, 1300000 300000, 1300000 1200000, 1200000 1200000, ' \

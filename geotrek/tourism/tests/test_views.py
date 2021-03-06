@@ -139,7 +139,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
-        super(BasicJSONAPITest, self).setUp()
+        super().setUp()
         self._build_object()
 
         self.pk = self.content.pk
@@ -303,7 +303,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicContentFactory
 
     def _build_object(self):
-        super(TouristicContentAPITest, self)._build_object()
+        super()._build_object()
         self.category = self.content.category
         self.type1 = TouristicContentType1Factory(category=self.category)
         self.type2 = TouristicContentType2Factory(category=self.category, pictogram=None)

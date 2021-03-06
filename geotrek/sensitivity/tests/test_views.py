@@ -74,7 +74,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
     maxDiff = None
 
     def setUp(self):
-        super(TrekkingManagerTest, self).setUp()
+        super().setUp()
         self.sensitivearea = SensitiveAreaFactory.create()
         self.species = self.sensitivearea.species
         self.pk = self.sensitivearea.pk

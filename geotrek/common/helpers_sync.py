@@ -11,7 +11,7 @@ from geotrek.common import views
 logger = logging.getLogger(__name__)
 
 
-class ZipTilesBuilder(object):
+class ZipTilesBuilder:
     def __init__(self, zipfile, prefix="", **builder_args):
         self.zipfile = zipfile
         self.prefix = prefix
