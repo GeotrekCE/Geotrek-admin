@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db.models import Q
 from django.utils import timezone
 import os
@@ -17,11 +16,9 @@ class SyncRando:
                                       params={'ends_after': timezone.now().strftime('%Y-%m-%d')})
 
         # picto touristic events
-        self.global_sync.sync_file(lang,
-                                   os.path.join('tourism', 'touristicevent.svg'),
-                                   settings.STATIC_ROOT,
-                                   settings.STATIC_URL,
-                                   zipfile=self.global_sync.zipfile)
+        self.global_sync.sync_static_file(lang,
+                                          os.path.join('tourism', 'touristicevent.svg'),
+                                          zipfile=self.global_sync.zipfile)
 
         # json with
         params = {}

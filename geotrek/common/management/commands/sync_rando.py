@@ -8,6 +8,7 @@ from zipfile import ZipFile
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.staticfiles.finders import find
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 from django.http import StreamingHttpResponse
@@ -263,8 +264,10 @@ class Command(BaseCommand):
         if self.verbosity == 2:
             self.stdout.write("{lang} {url}/{name} copied".format(lang=lang, url=url, name=name))
 
-    def sync_static_file(self, lang, name):
-        self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
+    def sync_static_file(self, lang, name, zipfile=None):
+        file_path = find(name)
+        file_dir, file_name = os.path.split(file_path)
+        self.sync_file(lang, file_name, file_dir, settings.STATIC_URL, zipfile=zipfile)
 
     def sync_media_file(self, lang, field, zipfile=None):
         if field and field.name:
