@@ -52,3 +52,7 @@ class FlatPageModelTest(TestCase):
         finally:
             for f in fp:
                 f.clean()
+
+    def test_is_public(self):
+        fp = FlatPageFactory(title="Blabla", published_fr=True)
+        self.assertTrue(fp.is_public())
