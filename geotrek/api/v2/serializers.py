@@ -374,9 +374,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         length_2d = serializers.SerializerMethodField(read_only=True)
         length_3d = serializers.SerializerMethodField(read_only=True)
         name = serializers.SerializerMethodField(read_only=True)
+        access = serializers.SerializerMethodField(read_only=True)
+        ambiance = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
         departure = serializers.SerializerMethodField(read_only=True)
+        disabled_infrastructure = serializers.SerializerMethodField(read_only=True)
         departure_geom = serializers.SerializerMethodField(read_only=True)
         arrival = serializers.SerializerMethodField(read_only=True)
         external_id = serializers.CharField(source='eid')
@@ -415,6 +418,15 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_description(self, obj):
             return get_translation_or_dict('description', self, obj)
+
+        def get_access(self, obj):
+            return get_translation_or_dict('access', self, obj)
+
+        def get_ambiance(self, obj):
+            return get_translation_or_dict('ambiance', self, obj)
+
+        def get_disabled_infrastructure(self, obj):
+            return get_translation_or_dict('disabled_infrastructure', self, obj)
 
         def get_departure(self, obj):
             return get_translation_or_dict('departure', self, obj)
