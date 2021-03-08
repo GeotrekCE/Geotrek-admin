@@ -51,6 +51,10 @@ class MapEntityTest(TestCase):
     api_prefix = '/api/'
     expected_json_geom = {}
     maxDiff = None
+    # 3 requests for session, user, objects list
+    # you should increase by 2 if your are not superuser for user and group permissions queries
+    # you should increase each time you use prefetch_related()
+    formatlist_num_queries = None
 
     def get_expected_json_attrs(self):
         return {}
@@ -149,10 +153,13 @@ class MapEntityTest(TestCase):
     def test_basic_format(self):
         if self.model is None:
             return  # Abstract test should not run
+        if self.formatlist_num_queries is None:
+            return
         self.login()
         self.modelfactory.create()
         for fmt in ('csv', 'shp', 'gpx'):
-            response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
+            with self.assertNumQueries(self.formatlist_num_queries):
+                response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, u"")
 
     def test_gpx_elevation(self):

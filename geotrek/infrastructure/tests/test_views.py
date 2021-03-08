@@ -32,6 +32,7 @@ class InfrastructureViewsTest(CommonTest):
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+    formatlist_num_queries = 11  # 3 + 2 session/user + 2 perms + 4 filters
 
     def get_expected_json_attrs(self):
         return {

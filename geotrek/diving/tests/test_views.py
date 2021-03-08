@@ -18,6 +18,7 @@ class DiveViewsTests(CommonTest):
         'type': 'Point',
         'coordinates': [-1.3630812, -5.9838563],
     }
+    formatlist_num_queries = 9
 
     def get_expected_json_attrs(self):
         return {

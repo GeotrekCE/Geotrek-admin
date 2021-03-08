@@ -50,6 +50,7 @@ class ReportViewsTest(CommonTest):
         'type': 'Point',
         'coordinates': [3.0, 46.5],
     }
+    formatlist_num_queries = 3
 
     def get_expected_json_attrs(self):
         return {

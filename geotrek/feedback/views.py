@@ -43,6 +43,10 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
         'date_insert', 'lastmod',
     ]
 
+    def get_queryset(self):
+        return super().get_queryset() \
+            .select_related('activity', 'category', 'problem_magnitude', 'status')
+
 
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
     model = feedback_models.ReportCategory

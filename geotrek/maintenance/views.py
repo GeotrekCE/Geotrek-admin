@@ -43,8 +43,12 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         'description', 'date_insert', 'date_update',
         'material_cost', 'heliport_cost', 'subcontract_cost',
         'total_cost_mandays', 'total_cost',
-        'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset() \
+            .select_related('type', 'target_type', 'status', 'stake', 'project', 'structure') \
+            .prefetch_related('jobs', 'disorders')
 
 
 class InterventionDetail(MapEntityDetail):
@@ -132,8 +136,11 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
         'interventions', 'interventions_total_cost', 'comments', 'contractors',
         'project_owner', 'project_manager', 'founders',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
     ]
+
+    def get_queryset(self):
+        return super().get_queryset() \
+            .select_related('structure', 'type', 'project_owner', 'project_manager', 'founders')
 
 
 class ProjectDetail(MapEntityDetail):

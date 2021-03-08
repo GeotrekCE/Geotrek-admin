@@ -47,8 +47,13 @@ class DiveFormatList(MapEntityFormat, DiveList):
         'advice', 'difficulty', 'levels',
         'themes', 'practice', 'disabled_sport',
         'published', 'publication_date', 'date_insert', 'date_update',
-        'areas', 'source', 'portal', 'review'
+        'source', 'portal', 'review'
     ]
+
+    def get_queryset(self):
+        return super().get_queryset() \
+            .select_related('structure', 'practice') \
+            .prefetch_related('levels', 'themes', 'source', 'portal')
 
 
 class DiveDetail(MapEntityDetail):

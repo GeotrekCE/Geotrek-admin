@@ -72,6 +72,7 @@ class PhysicalEdgeViewsTest(CommonTest):
     modelfactory = PhysicalEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    formatlist_num_queries = 5
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -87,6 +88,7 @@ class LandEdgeViewsTest(CommonTest):
     modelfactory = LandEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    formatlist_num_queries = 5
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -102,6 +104,7 @@ class CompetenceEdgeViewsTest(CommonTest):
     modelfactory = CompetenceEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    formatlist_num_queries = 5
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -117,6 +120,7 @@ class WorkManagementEdgeViewsTest(CommonTest):
     modelfactory = WorkManagementEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    formatlist_num_queries = 5
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -132,6 +136,7 @@ class SignageManagementEdgeViewsTest(CommonTest):
     modelfactory = SignageManagementEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    formatlist_num_queries = 5
 
     def get_good_data(self):
         path = PathFactory.create()

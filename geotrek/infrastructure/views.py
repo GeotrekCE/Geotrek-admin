@@ -36,8 +36,12 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     columns = [
         'id', 'name', 'type', 'condition', 'description',
         'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
-        'date_update', 'cities', 'districts', 'areas',
+        'date_update',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset() \
+            .select_related('type', 'condition', 'structure')
 
 
 class InfrastructureDetail(MapEntityDetail):

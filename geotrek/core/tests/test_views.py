@@ -96,6 +96,7 @@ class PathViewsTest(CommonTest):
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
     length = 141.42135623731
+    formatlist_num_queries = 7
 
     def get_expected_json_attrs(self):
         return {
@@ -657,6 +658,7 @@ class TrailViewsTest(CommonTest):
         'type': 'LineString',
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
+    formatlist_num_queries = 5
 
     def get_expected_json_attrs(self):
         return {

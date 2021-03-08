@@ -28,8 +28,10 @@ class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
     columns = [
         'id', 'physical_type',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('physical_type')
 
 
 class PhysicalEdgeDetail(MapEntityDetail):
@@ -73,8 +75,10 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     columns = [
         'id', 'land_type', 'owner', 'agreement',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('land_type')
 
 
 class LandEdgeDetail(MapEntityDetail):
@@ -118,8 +122,10 @@ class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
     columns = [
         'id', 'organization',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('organization')
 
 
 class CompetenceEdgeDetail(MapEntityDetail):
@@ -163,8 +169,10 @@ class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
     columns = [
         'id', 'organization',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('organization')
 
 
 class WorkManagementEdgeDetail(MapEntityDetail):
@@ -208,8 +216,10 @@ class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList
     columns = [
         'id', 'organization',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('organization')
 
 
 class SignageManagementEdgeDetail(MapEntityDetail):
