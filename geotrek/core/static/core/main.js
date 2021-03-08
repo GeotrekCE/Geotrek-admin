@@ -73,18 +73,26 @@ $(window).on('detailmap:ready', function (e, data) {
         var imagePath = window.SETTINGS.urls.static + "core/images/";
         L.marker(layer.getLatLngs()[0], {
             clickable: false,
-            icon: new L.Icon.Default({
-                imagePath: imagePath,
-                iconUrl: "marker-source.png",
-                iconRetinaUrl: "marker-source-2x.png"
+            icon: new L.Icon({
+                iconSize:    [25, 41],
+                iconAnchor:  [12, 41],
+                popupAnchor: [1, -34],
+                tooltipAnchor: [16, -28],
+                iconUrl: "/static/core/images/marker-source.png",
+                iconRetinaUrl: "/static/core/images/marker-source-2x.png",
+                shadowUrl: null
             })
         }).addTo(map);
         L.marker(layer.getLatLngs().slice(-1)[0], {
             clickable: false,
-            icon: new L.Icon.Default({
-                imagePath: imagePath,
-                iconUrl: "marker-target.png",
-                iconRetinaUrl: "marker-target-2x.png"
+            icon: new L.Icon({
+                iconSize:    [25, 41],
+                iconAnchor:  [12, 41],
+                popupAnchor: [1, -34],
+                tooltipAnchor: [16, -28],
+                iconUrl: "/static/core/images/marker-target.png",
+                iconRetinaUrl: "/static/core/images/marker-target-2x.png",
+                shadowUrl: null
             })
         }).addTo(map);
 
