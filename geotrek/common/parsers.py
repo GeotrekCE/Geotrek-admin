@@ -20,7 +20,7 @@ from urllib.parse import urlparse
 
 from django.contrib.gis.geos import GEOSGeometry, WKBWriter
 from django.db import models, connection
-from django.db.utils import DatabaseError
+from django.db.utils import DatabaseError, InternalError
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
 from django.contrib.gis.geos import Point, Polygon

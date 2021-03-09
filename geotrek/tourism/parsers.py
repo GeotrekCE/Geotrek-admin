@@ -962,7 +962,7 @@ class LEIEventParser(LEIParser):
         (civilite, nom, prenom) = val
         return "{civ} {pre} {nom}".format(civ=civilite, pre=prenom, nom=nom)
 
-    def filter_begin_date(self,src, val):
+    def filter_begin_date(self, src, val):
         values_tab = val.split('/')
         return '-'.join(values_tab[::-1])
 
