@@ -552,6 +552,33 @@ class Parser:
         raise DownloadImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url, status_code=response.status_code))
 
 
+class XmlParser(Parser):
+    """XML Parser"""
+    ns = {}
+    results_path = ''
+
+    def next_row(self):
+        if self.filename:
+            with open(self.filename) as f:
+                self.root = ET.fromstring(f.read())
+        else:
+            response = requests.get(self.url, params={})
+            if response.status_code != 200:
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(
+                    url=self.url, status_code=response.status_code))
+            self.root = ET.fromstring(response.content)
+        entries = self.root.findall(self.results_path, self.ns)
+        self.nb = len(entries)
+        for row in entries:
+            yield row
+
+    def get_part(self, dst, src, val):
+        return val.findtext(src, None, self.ns)
+
+    def normalize_field_name(self, name):
+        return name
+
+
 class ShapeParser(Parser):
     def next_row(self):
         datasource = DataSource(self.filename, encoding=self.encoding)
@@ -961,6 +988,125 @@ class OpenSystemParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+
+class LEIParser(AttachmentParserMixin, XmlParser):
+    """
+    Parser for LEI tourism SIT
+
+    You can define :
+
+    fields = {
+        'eid': 'PRODUIT',
+        'name': 'NOM',
+        'description': 'COMMENTAIRE',
+        'contact': (
+            'ADRPROD_NUM_VOIE', 'ADRPROD_LIB_VOIE', 'ADRPROD_CP', 'ADRPROD_LIBELLE_COMMUNE',
+            'ADRPROD_TEL', 'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'
+        ),
+        'email': ('ADRPROD_EMAIL'),
+        'website': ('ADRPROD_URL', 'ADRPREST_URL'),
+        'geom': ('LATITUDE', 'LONGITUDE'),
+    }
+
+    non_fields = {
+        'attachments': ('CRITERES/Crit[@CLEF_CRITERE="30000279"]', 'CRITERES/Crit[@CLEF_CRITERE="900003"]'),
+    }
+    """
+    results_path = 'Resultat/sit_liste'
+    eid = 'eid'
+
+    def get_part(self, dst, src, val):
+        """For generic CRITERES return XML Crit element"""
+        if 'CRITERES/Crit' in src:
+            # Return list of Crit elements
+            return val.findall(src)
+        return val.findtext(src, None, self.ns)
+
+    def get_crit_kv(self, crit):
+        """Get Crit key / value according to Nomenclature"""
+        crit_name = self.root.findtext(
+            'NOMENCLATURE/CRIT[@CLEF="{0}"]/NOMCRIT'.format(crit.attrib['CLEF_CRITERE'])
+        )
+        crit_value = self.get_crit_value(crit)
+
+        # If value is available for crit, add it to result
+        if crit.text is not None and crit_value != 'Photos':
+            crit_value = "{0} : {1}".format(crit_value, crit.text)
+        return crit_name, crit_value
+
+    def get_crit_value(self, crit):
+        """Get Crit value only, according to Nomenclature"""
+        return self.root.findtext(
+            'NOMENCLATURE/CRIT[@CLEF="{0}"]/MODAL[@CLEF="{1}"]'.format(
+                crit.attrib['CLEF_CRITERE'],
+                crit.attrib['CLEF_MODA']
+            )
+        )
+
+    def start(self):
+        super(LEIParser, self).start()
+        lei = set(self.model.objects.filter(eid__startswith='LEI').values_list('pk', flat=True))
+        self.to_delete = self.to_delete & lei
+
+    def filter_eid(self, src, val):
+        return 'LEI' + val
+
+    def filter_attachments(self, src, val):
+        """Get Photos url and legend from Crit element list
+
+        Keyword arguments:
+        src --
+        val -- Crit element list
+
+        returns photos list of tuples (url, legend, '')
+        """
+        photos = []
+        for crit in val[0]:
+            (url, legend) = crit.text, self.get_crit_value(crit)
+            if not url:
+                continue
+            if legend:
+                legend = legend[:128]
+            url = url.replace('https://', 'http://')
+            if url[:7] != 'http://':
+                url = 'http://' + url
+            photos.append((url, legend, ''))
+        return photos
+
+    def filter_description(self, src, val):
+        if val is None:
+            return ""
+        val = val.replace('\n', '<br>')
+        return val
+
+    def filter_geom(self, src, val):
+        lat, lng = val
+        if lat is None or lng is None:
+            raise ValueImportError("Missing {required}field '{src}'")
+        lat = lat.replace(',', '.')
+        lng = lng.replace(',', '.')
+        geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        try:
+            geom.transform(settings.SRID)
+        except InternalError as e:
+            raise ValueImportError(e)
+        if self.obj.geom and abs(geom.x - self.obj.geom.x) < 0.001 and abs(geom.y - self.obj.geom.y) < 0.001:
+            return self.obj.geom
+        return geom
+
+    def filter_website(self, src, val):
+        (val1, val2) = val
+        if val1:
+            if val1.startswith('http'):
+                return val1
+            else:
+                return 'http://' + val1
+        if val2:
+            if val2.startswith('http'):
+                return val2
+            else:
+                return 'http://' + val2
 
 
 class GeotrekAggregatorParser:
