@@ -39,7 +39,7 @@ def serve_attachment(request, path):
     original_path = re.sub(r'\.\d+x\d+_q\d+(_crop)?\.(jpg|png|jpeg)$', '', path, count=1, flags=re.IGNORECASE)
     attachment = get_object_or_404(get_attachment_model(), attachment_file=original_path)
     obj = attachment.content_object
-    if not issubclass(obj._meta.model, mapentity_models.MapEntityMixin):
+    if not hasattr(obj._meta.model, 'attachments'):
         raise Http404
     if not obj.is_public():
         if not request.user.is_authenticated:

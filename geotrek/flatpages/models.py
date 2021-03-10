@@ -108,3 +108,6 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     @property
     def meta_description(self):
         return plain_text(self.content)[:500]
+
+    def is_public(self):
+        return self.any_published
