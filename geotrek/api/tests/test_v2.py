@@ -154,6 +154,7 @@ class BaseApiTest(TestCase):
         trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
+        cls.city2 = zoning_factory.CityFactory(code='02000', geom='SRID=2154;MULTIPOLYGON(((199 199, 199 201, 201 201, 201 199, 199 199)))')
         cls.district = zoning_factory.DistrictFactory(id=420, geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.accessibility = trek_factory.AccessibilityFactory(id=4)
         cls.route = trek_factory.RouteFactory(id=680)
@@ -414,7 +415,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')), 0)
 
     def test_trek_city(self):
-        response = self.get_trek_list({'cities': self.city.pk})
+        response = self.get_trek_list({'cities': '{},{}'.format(self.city.pk, self.city2.pk)})
         self.assertEqual(len(response.json()['results']), 16)
 
     def test_tour_list(self):
