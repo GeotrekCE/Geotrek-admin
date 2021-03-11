@@ -35,4 +35,5 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         fields = StructureRelatedFilterSet.Meta.fields + [
             'site', 'site__practice__sector', 'site__practice', 'site__labels', 'site__themes',
             'site__portal', 'site__source', 'site__type', 'site__orientation', 'site__wind',
+            'height',
         ]

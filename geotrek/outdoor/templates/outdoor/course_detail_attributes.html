@@ -58,6 +58,14 @@
             <th>{{ object|verbose:"advice" }}</th>
             <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
+        <tr>
+            <th>{{ object|verbose:"equipment" }}</th>
+            <td>{% if object.equipment %}{{ object.equipment|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"height" }}</th>
+            <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
         {% for rating in object.ratings.all %}
             <tr>
                 <th>{{ rating.scale.name }}</th>

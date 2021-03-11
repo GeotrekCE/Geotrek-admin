@@ -95,13 +95,15 @@ class CourseForm(CommonForm):
             'published',
             'description',
             'advice',
+            'equipment',
+            'height',
             'eid',
         )
     ]
 
     class Meta:
         fields = ['geom', 'structure', 'name', 'site', 'review', 'published', 'description',
-                  'advice', 'eid']
+                  'advice', 'equipment', 'height', 'eid']
         model = Course
 
     def __init__(self, site=None, *args, **kwargs):
