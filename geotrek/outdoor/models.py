@@ -5,6 +5,7 @@ from django.contrib.gis.db import models
 from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
+from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
 from geotrek.common.utils import intersecting
@@ -16,6 +17,14 @@ from geotrek.trekking.models import Trek, POI
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mptt.models import MPTTModel, TreeForeignKey
+
+
+class AltimetryMixin(BaseAltimetryMixin):
+    def ispoint(self):
+        return self.geom.num_geom == 1 and self.geom[0].geom_type == 'Point'
+
+    class Meta:
+        abstract = True
 
 
 class Sector(models.Model):
@@ -93,7 +102,7 @@ class SiteType(models.Model):
 
 
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin, MPTTModel):
+           AltimetryMixin, TimeStampedModelMixin, MPTTModel):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -231,7 +240,7 @@ Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, 
 
 
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-             TimeStampedModelMixin):
+             AltimetryMixin, TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
