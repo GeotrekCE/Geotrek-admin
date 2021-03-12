@@ -28,7 +28,7 @@ def api_bbox(bbox, buffer):
 
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VAR_DIR = '/opt/geotrek-admin/var'
+VAR_DIR = os.getenv('VAR_DIR', '/opt/geotrek-admin/var')
 TMP_DIR = os.path.join(VAR_DIR, 'tmp')
 
 DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
