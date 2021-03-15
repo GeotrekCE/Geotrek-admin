@@ -33,7 +33,6 @@ git+https://github.com/GeotrekCE/django-leaflet.git@0.19+geotrek8#egg=django-lea
 django-modelcluster==5.1
 django-modeltranslation==0.15.2
 django-mptt==0.11.0
-django-multiselectfield==0.1.12
 django-tinymce==2.8.0
 django-weasyprint==0.5.5
 djangorestframework==3.12.2

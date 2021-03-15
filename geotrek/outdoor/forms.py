@@ -5,6 +5,9 @@ from geotrek.outdoor.models import Site, Course
 
 
 class SiteForm(CommonForm):
+    orientation = forms.MultipleChoiceField(choices=Site.ORIENTATION_CHOICES, required=False)
+    wind = forms.MultipleChoiceField(choices=Site.ORIENTATION_CHOICES, required=False)
+
     geomfields = ['geom']
 
     fieldslayout = [
@@ -43,8 +46,6 @@ class SiteForm(CommonForm):
     def __init__(self, site=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['parent'].initial = site
-        self.fields['orientation'].widget = forms.SelectMultiple(choices=Site.ORIENTATION_CHOICES)
-        self.fields['wind'].widget = forms.SelectMultiple(choices=Site.ORIENTATION_CHOICES)
         if self.instance.pk:
             descendants = self.instance.get_descendants(include_self=True).values_list('pk', flat=True)
             self.fields['parent'].queryset = Site.objects.exclude(pk__in=descendants)

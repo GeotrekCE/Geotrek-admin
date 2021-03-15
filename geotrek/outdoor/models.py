@@ -1,5 +1,4 @@
 from colorfield.fields import ColorField
-from multiselectfield import MultiSelectField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models import Q
@@ -130,8 +129,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     ratings_min = models.ManyToManyField(Rating, related_name='sites_min', blank=True)
     ratings_max = models.ManyToManyField(Rating, related_name='sites_max', blank=True)
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
-    orientation = MultiSelectField(verbose_name=_("Orientation"), blank=True, max_length=20, choices=ORIENTATION_CHOICES)
-    wind = MultiSelectField(verbose_name=_("Wind"), blank=True, max_length=20, choices=ORIENTATION_CHOICES)
+    orientation = models.JSONField(verbose_name=_("Orientation"), default=list, blank=True)
+    wind = models.JSONField(verbose_name=_("Wind"), default=list, blank=True)
     labels = models.ManyToManyField('common.Label', related_name='sites', blank=True,
                                     verbose_name=_("Labels"))
     themes = models.ManyToManyField('common.Theme', related_name="sites", blank=True, verbose_name=_("Themes"),

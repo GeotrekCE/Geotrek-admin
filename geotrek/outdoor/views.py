@@ -15,6 +15,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 
 class SiteLayer(MapEntityLayer):
     properties = ['name']
+    filterform = SiteFilterSet
     queryset = Site.objects.all()
 
 
@@ -100,6 +101,7 @@ class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
 
 class CourseLayer(MapEntityLayer):
     properties = ['name']
+    filterform = CourseFilterSet
     queryset = Course.objects.all()
 
 
