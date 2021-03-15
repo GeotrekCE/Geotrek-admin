@@ -151,6 +151,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
+    check_structure_in_forms = False
+
     class Meta:
         verbose_name = _("Outdoor site")
         verbose_name_plural = _("Outdoor sites")
@@ -251,6 +253,8 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    check_structure_in_forms = False
 
     class Meta:
         verbose_name = _("Outdoor course")
