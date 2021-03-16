@@ -110,9 +110,13 @@ class PathFormatList(MapEntityFormat, PathList):
     columns = [
         'id', 'structure', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
         'comfort', 'source', 'stake', 'usages', 'networks',
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'length_2d'
+        'date_insert', 'date_update', 'length_2d',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset() \
+            .select_related('structure', 'comfort', 'source', 'stake') \
+            .prefetch_related('usages', 'networks')
 
 
 class PathDetail(MapEntityDetail):
