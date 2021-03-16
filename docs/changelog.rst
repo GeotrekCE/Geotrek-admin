@@ -2,12 +2,18 @@
 CHANGELOG
 =========
 
-2.51.1+dev
+2.51.2 (2021-03-16)
 -------------------
 
 **Bug fixes**
 
+- Translate all text fields in API v2 trek endpoint
+- Serve attachments for flatpages
+- Fix bbox filtering of interventions
 
+**Performances**
+
+- Add prefetch to Path exports (CSV/Shapefile/GPX)
 
 
 2.51.1 (2021-03-05)
