@@ -31,6 +31,19 @@ class InterventionFilteringByLandTest(TestCase):
         InterventionFactory.create(target=topo_1)
         cls.seek_inter = InterventionFactory.create(target=seek_topo)
 
+    def test_in_bbox(self):
+        xmin, ymin, xmax, ymax = self.seek_inter.geom.transform(settings.API_SRID, clone=True).extent
+        bbox = Polygon([[xmin - 1, ymin - 1], [xmin - 1, ymax + 1], [xmax + 1, ymax + 1], [xmax + 1, ymin - 1], [xmin - 1, ymin - 1]])
+        qs = InterventionFilterSet({'bbox': bbox.wkt}).qs
+        self.assertEqual(len(qs), 1)
+        self.assertEqual(qs[0], self.seek_inter)
+
+    def test_out_bbox(self):
+        xmin, ymin, xmax, ymax = self.seek_inter.geom.transform(settings.API_SRID, clone=True).extent
+        bbox = Polygon([[xmax + 1, ymax + 1], [xmax + 1, ymax + 2], [xmax + 2, ymax + 2], [xmax + 2, ymax + 1], [xmax + 1, ymax + 1]])
+        qs = InterventionFilterSet({'bbox': bbox.wkt}).qs
+        self.assertEqual(len(qs), 0)
+
     def test_filter_by_physical_edge(self):
         edge = PhysicalEdgeFactory(paths=[self.seek_path])
 
