@@ -1,3 +1,9 @@
+geotrek-admin (2.51.2+dev) UNRELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 16 Mar 2021 17:47:15 +0100
+
 geotrek-admin (2.51.2) RELEASED; urgency=medium
 
   * New package release
