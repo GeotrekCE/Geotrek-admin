@@ -25,6 +25,9 @@ class PolygonInterventionFilterMixin(object):
     def filter(self, qs, values):
         if not values:
             return qs
+        if not isinstance(values, list):
+            values = [values]
+
         lookup = self.lookup_expr
 
         blade_content_type = ContentType.objects.get_for_model(Blade)
