@@ -240,6 +240,28 @@ Site.add_property('touristic_contents', lambda self: intersecting(TouristicConte
 Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
 
 
+class CourseOrderedChildManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        # Select treks foreign keys by default
+        return super(CourseOrderedChildManager, self).get_queryset().select_related('parent', 'child')
+
+
+class OrderedCourseChild(models.Model):
+    parent = models.ForeignKey('Course', related_name='course_children', on_delete=models.CASCADE)
+    child = models.ForeignKey('Course', related_name='course_parents', on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0, blank=True, null=True)
+
+    objects = CourseOrderedChildManager()
+
+    class Meta:
+        ordering = ('parent__id', 'order')
+        unique_together = (
+            ('parent', 'child'),
+        )
+
+
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
              AltimetryMixin, TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
@@ -270,6 +292,14 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     @classmethod
     def get_create_label(cls):
         return _("Add a new outdoor course")
+
+    @property
+    def parents(self):
+        return Course.objects.filter(course_children__child=self)
+
+    @property
+    def children(self):
+        return Course.objects.filter(course_parents__parent=self).order_by('course_parents__order')
 
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
