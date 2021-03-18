@@ -2,8 +2,9 @@ $(window).on('entity:map', function (e, data) {
 
     var map = data.map;
     var loaded_site = false;
+    var loaded_course = false;
     // Show outdoor layers in application maps
-    $.each(['site'], function (i, modelname) {
+    $.each(['site', 'course'], function (i, modelname) {
         var layer = new L.ObjectsLayer(null, {
             modelname: modelname,
             style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, {clickable:false}),
@@ -17,6 +18,12 @@ $(window).on('entity:map', function (e, data) {
                 if (options.modelname == 'site' && options.modelname != data.modelname) {
                     e.layer.load(window.SETTINGS.urls.site_layer);
                     loaded_site = true;
+                }
+            }
+            if (! loaded_course) {
+                if (options.modelname == 'course' && options.modelname != data.modelname) {
+                    e.layer.load(window.SETTINGS.urls.course_layer);
+                    loaded_course = true;
                 }
             }
     	});
