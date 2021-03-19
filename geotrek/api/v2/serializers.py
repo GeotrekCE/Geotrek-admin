@@ -4,7 +4,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
-from django.contrib.gis.geos import MultiLineString
+from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -253,12 +253,13 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         description_teaser = serializers.SerializerMethodField(read_only=True)
         practical_info = serializers.SerializerMethodField(read_only=True)
         pdf = serializers.SerializerMethodField('get_pdf_url')
+        departure_city = serializers.SerializerMethodField(read_only=True)
 
         class Meta:
             model = tourism_models.TouristicContent
             fields = (
                 'id', 'attachments', 'approved', 'category', 'description',
-                'description_teaser', 'geometry',
+                'description_teaser', 'departure_city', 'geometry',
                 'practical_info', 'url', 'cities', 'create_datetime',
                 'external_id', 'name', 'pdf', 'portal', 'published',
                 'source', 'structure', 'themes',
@@ -309,6 +310,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 for language in settings.MODELTRANSLATION_LANGUAGES:
                     data[language] = self._get_pdf_url_lang(obj, language)
             return data
+
+        def get_departure_city(self, obj):
+            qs = zoning_models.City.objects.all().filter(geom__contains=obj.geom)
+            return qs[0].code if qs else None
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
@@ -403,6 +408,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         previous = serializers.ReadOnlyField(source='previous_id')
         next = serializers.ReadOnlyField(source='next_id')
         cities = serializers.SerializerMethodField(read_only=True)
+        departure_city = serializers.SerializerMethodField(read_only=True)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -510,22 +516,26 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
 
+        def get_departure_city(self, obj):
+            qs = zoning_models.City.objects.all().filter(geom__contains=Point(obj.geom[0]))
+            return qs[0].code if qs else None
+
         class Meta:
             model = trekking_models.Trek
             fields = (
                 'id', 'access', 'accessibilities', 'advice', 'advised_parking',
                 'altimetric_profile', 'ambiance', 'arrival', 'ascent',
                 'attachments', 'children', 'cities', 'create_datetime',
-                'departure', 'departure_geom', 'descent', 'description',
-                'description_teaser', 'difficulty', 'disabled_infrastructure',
-                'duration', 'elevation_area_url', 'elevation_svg_url',
-                'external_id', 'geometry', 'gpx', 'information_desks', 'kml',
-                'labels', 'length_2d', 'length_3d', 'max_elevation',
-                'min_elevation', 'name', 'networks', 'next', 'parents',
-                'parking_location', 'pdf', 'points_reference', 'portal', 'practice',
-                'previous', 'public_transport', 'published',
-                'reservation_system', 'route', 'second_external_id', 'source',
-                'structure', 'themes', 'update_datetime', 'url'
+                'departure', 'departure_city', 'departure_geom', 'descent',
+                'description', 'description_teaser', 'difficulty',
+                'disabled_infrastructure', 'duration', 'elevation_area_url',
+                'elevation_svg_url', 'external_id', 'geometry', 'gpx',
+                'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
+                'max_elevation', 'min_elevation', 'name', 'networks', 'next',
+                'parents', 'parking_location', 'pdf', 'points_reference',
+                'portal', 'practice', 'previous', 'public_transport',
+                'published', 'reservation_system', 'route', 'second_external_id',
+                'source', 'structure', 'themes', 'update_datetime', 'url'
             )
 
     class TourSerializer(TrekSerializer):
