@@ -8,7 +8,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins import CustomColumnsMixin
-from geotrek.common.views import FormsetMixin
+from mapentity.views import FormsetMixin
 from geotrek.core.models import AltimetryMixin
 
 from geotrek.signage.filters import SignageFilterSet, BladeFilterSet

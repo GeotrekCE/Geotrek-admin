@@ -22,8 +22,9 @@ from geotrek.api.v2.functions import Length
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
-from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
+from geotrek.common.views import (MetaMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
+from mapentity.views.mixins import FormsetMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
