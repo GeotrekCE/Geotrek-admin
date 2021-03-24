@@ -18,17 +18,11 @@ from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
 from geotrek.zoning.factories import CityFactory, DistrictFactory
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-class InterventionFilteringByLandTest(TestCase):
+class InterventionFilteringByBboxTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        p1 = PathFactory()
         cls.seek_path = PathFactory(geom=getRandomLineStringInBounds())
-
-        topo_1 = TopologyFactory.create(paths=[p1])
         seek_topo = TopologyFactory.create(paths=[cls.seek_path])
-
-        InterventionFactory.create(target=topo_1)
         cls.seek_inter = InterventionFactory.create(target=seek_topo)
 
     def test_in_bbox(self):
@@ -43,6 +37,20 @@ class InterventionFilteringByLandTest(TestCase):
         bbox = Polygon([[xmax + 1, ymax + 1], [xmax + 1, ymax + 2], [xmax + 2, ymax + 2], [xmax + 2, ymax + 1], [xmax + 1, ymax + 1]])
         qs = InterventionFilterSet({'bbox': bbox.wkt}).qs
         self.assertEqual(len(qs), 0)
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class InterventionFilteringByLandTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        p1 = PathFactory()
+        cls.seek_path = PathFactory(geom=getRandomLineStringInBounds())
+
+        topo_1 = TopologyFactory.create(paths=[p1])
+        seek_topo = TopologyFactory.create(paths=[cls.seek_path])
+
+        InterventionFactory.create(target=topo_1)
+        cls.seek_inter = InterventionFactory.create(target=seek_topo)
 
     def test_filter_by_physical_edge(self):
         edge = PhysicalEdgeFactory(paths=[self.seek_path])
