@@ -37,7 +37,7 @@ class Command(BaseCommand):
         structure = options.get('structure')
         name_column = options.get('name')
         srid = options.get('srid')
-        do_intersect = options.get('intersect')
+        self.do_intersect = options.get('intersect')
         comments_columns = options.get('comment')
         fail = options.get('fail')
         dry = options.get('dry')
@@ -64,8 +64,8 @@ class Command(BaseCommand):
 
         ds = DataSource(file_path, encoding=encoding)
 
-        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
-        bbox.srid = settings.SRID
+        self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        self.bbox.srid = settings.SRID
 
         sid = transaction.savepoint()
 
@@ -84,7 +84,7 @@ class Command(BaseCommand):
                     break
                 self.check_srid(srid, geom)
                 geom.dim = 2
-                if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
+                if self.should_import(feat, geom):
                     try:
                         with transaction.atomic():
                             comment_final = '</br>'.join(comment_final_tab)
@@ -121,3 +121,9 @@ class Command(BaseCommand):
                 geom.transform(settings.SRID)
             except GDALException:
                 raise CommandError("SRID is not well configurate, change/add option srid")
+
+    def should_import(self, feature, geom):
+        return (
+            self.do_intersect and self.bbox.intersects(geom)
+            or not self.do_intersect and geom.within(self.bbox)
+        )
