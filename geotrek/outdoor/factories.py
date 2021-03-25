@@ -85,6 +85,8 @@ class CourseFactory(StructureRelatedDefaultFactory):
     site = factory.SubFactory(SiteFactory)
     description = "Blah"
     advice = "Warning!"
+    equipment = "Rope"
+    height = 42
     published = True
     eid = "43"
     geom = 'GEOMETRYCOLLECTION(POINT(0 0))'

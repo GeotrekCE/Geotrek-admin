@@ -34,7 +34,7 @@ class Species(OptionalPictogramMixin):
     REGULATORY = 2
 
     name = models.CharField(max_length=250, verbose_name=_("Name"))
-    # TODO: we should replace these 12 fields by a unique MultiSelectField
+    # TODO: we should replace these 12 fields by a unique JSONField
     period01 = models.BooleanField(default=False, verbose_name=_("January"))
     period02 = models.BooleanField(default=False, verbose_name=_("February"))
     period03 = models.BooleanField(default=False, verbose_name=_("March"))

@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         ),
         migrations.SeparateDatabaseAndState(
             database_operations=[
-                migrations.RunSQL('ALTER TABLE "outdoor_site" ALTER COLUMN "geom" TYPE geometry(GeometryCollection,2154) USING ST_ForceCollection(geom);')
+                migrations.RunSQL('ALTER TABLE "outdoor_site" ALTER COLUMN "geom" TYPE geometry(GeometryCollection,{srid}) USING ST_ForceCollection(geom);'.format(srid=settings.SRID))
             ],
             state_operations=[
                 migrations.AlterField(

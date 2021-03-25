@@ -1,10 +1,10 @@
 from colorfield.fields import ColorField
-from multiselectfield import MultiSelectField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
+from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
 from geotrek.common.utils import intersecting
@@ -16,6 +16,14 @@ from geotrek.trekking.models import Trek, POI
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mptt.models import MPTTModel, TreeForeignKey
+
+
+class AltimetryMixin(BaseAltimetryMixin):
+    def ispoint(self):
+        return self.geom.num_geom == 1 and self.geom[0].geom_type == 'Point'
+
+    class Meta:
+        abstract = True
 
 
 class Sector(models.Model):
@@ -93,7 +101,7 @@ class SiteType(models.Model):
 
 
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin, MPTTModel):
+           AltimetryMixin, TimeStampedModelMixin, MPTTModel):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -121,8 +129,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     ratings_min = models.ManyToManyField(Rating, related_name='sites_min', blank=True)
     ratings_max = models.ManyToManyField(Rating, related_name='sites_max', blank=True)
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
-    orientation = MultiSelectField(verbose_name=_("Orientation"), blank=True, max_length=20, choices=ORIENTATION_CHOICES)
-    wind = MultiSelectField(verbose_name=_("Wind"), blank=True, max_length=20, choices=ORIENTATION_CHOICES)
+    orientation = models.JSONField(verbose_name=_("Orientation"), default=list, blank=True)
+    wind = models.JSONField(verbose_name=_("Wind"), default=list, blank=True)
     labels = models.ManyToManyField('common.Label', related_name='sites', blank=True,
                                     verbose_name=_("Labels"))
     themes = models.ManyToManyField('common.Theme', related_name="sites", blank=True, verbose_name=_("Themes"),
@@ -141,6 +149,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    check_structure_in_forms = False
 
     class Meta:
         verbose_name = _("Outdoor site")
@@ -230,16 +240,42 @@ Site.add_property('touristic_contents', lambda self: intersecting(TouristicConte
 Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
 
 
+class CourseOrderedChildManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        # Select treks foreign keys by default
+        return super(CourseOrderedChildManager, self).get_queryset().select_related('parent', 'child')
+
+
+class OrderedCourseChild(models.Model):
+    parent = models.ForeignKey('Course', related_name='course_children', on_delete=models.CASCADE)
+    child = models.ForeignKey('Course', related_name='course_parents', on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0, blank=True, null=True)
+
+    objects = CourseOrderedChildManager()
+
+    class Meta:
+        ordering = ('parent__id', 'order')
+        unique_together = (
+            ('parent', 'child'),
+        )
+
+
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-             TimeStampedModelMixin):
+             AltimetryMixin, TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
+    equipment = models.TextField(verbose_name=_("Equipment"), blank=True)
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
+    height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    check_structure_in_forms = False
 
     class Meta:
         verbose_name = _("Outdoor course")
@@ -256,6 +292,14 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     @classmethod
     def get_create_label(cls):
         return _("Add a new outdoor course")
+
+    @property
+    def parents(self):
+        return Course.objects.filter(course_children__child=self)
+
+    @property
+    def children(self):
+        return Course.objects.filter(course_parents__parent=self).order_by('course_parents__order')
 
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))

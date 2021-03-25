@@ -65,7 +65,6 @@ setup(
         'pygal',
         'django-extended-choices',
         'django-mptt',
-        'django-multiselectfield',
         'geojson',
         'tif2geojson',
         'drf-dynamic-fields',

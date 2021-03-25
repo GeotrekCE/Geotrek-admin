@@ -6,8 +6,8 @@ from geotrek.zoning.filters import ZoningFilterSet
 
 
 class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_super')
-    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_super')
+    orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
+    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
     practice = ModelMultipleChoiceFilter(queryset=Practice.objects.all(), method='filter_super')
     sector = ModelMultipleChoiceFilter(queryset=Sector.objects.all(), method='filter_sector', label=_("Sector"))
 
@@ -17,6 +17,9 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
             'sector', 'practice', 'labels', 'themes', 'portal', 'source', 'information_desks',
             'web_links', 'type', 'orientation', 'wind',
         ]
+
+    def filter_orientation(self, qs, name, values):
+        return qs.filter(**{'{}__contains'.format(name): values}).get_ancestors(include_self=True)
 
     def filter_super(self, qs, name, values):
         if not values:
@@ -30,9 +33,16 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
 
 class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+    orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
+    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
+
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
         fields = StructureRelatedFilterSet.Meta.fields + [
             'site', 'site__practice__sector', 'site__practice', 'site__labels', 'site__themes',
-            'site__portal', 'site__source', 'site__type', 'site__orientation', 'site__wind',
+            'site__portal', 'site__source', 'site__type', 'orientation', 'wind',
+            'height',
         ]
+
+    def filter_orientation(self, qs, name, values):
+        return qs.filter(**{'site__{}__contains'.format(name): values})
