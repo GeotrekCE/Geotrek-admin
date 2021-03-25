@@ -19,8 +19,6 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         ]
 
     def filter_orientation(self, qs, name, values):
-        if not values:
-            return qs
         return qs.filter(**{'{}__contains'.format(name): values}).get_ancestors(include_self=True)
 
     def filter_super(self, qs, name, values):
@@ -47,6 +45,4 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         ]
 
     def filter_orientation(self, qs, name, values):
-        if not values:
-            return qs
         return qs.filter(**{'site__{}__contains'.format(name): values})

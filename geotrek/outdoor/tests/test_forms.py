@@ -63,19 +63,28 @@ class CourseItinerancyTestCase(TestCase):
     def test_two_children(self):
         OrderedCourseChild(child=self.course1, parent=self.course2, order=0).save()
         form = CourseForm(instance=self.course2, user=self.user)
-        form.cleaned_data = {'children_course': [self.course3]}
+        form.cleaned_data = {
+            'children_course': [self.course3],
+            'hidden_ordered_children': str(self.course3.pk),
+        }
         form.clean_children_course()
 
     def test_parent_as_child(self):
         OrderedCourseChild(child=self.course1, parent=self.course2, order=0).save()
         form = CourseForm(instance=self.course3, user=self.user)
-        form.cleaned_data = {'children_course': [self.course2]}
+        form.cleaned_data = {
+            'children_course': [self.course2],
+            'hidden_ordered_children': str(self.course2.pk),
+        }
         with self.assertRaisesRegex(ValidationError, 'Cannot use parent course 2 as a child course.'):
             form.clean_children_course()
 
     def test_child_with_itself_child(self):
         OrderedCourseChild(child=self.course1, parent=self.course2, order=0).save()
         form = CourseForm(instance=self.course1, user=self.user)
-        form.cleaned_data = {'children_course': [self.course3]}
+        form.cleaned_data = {
+            'children_course': [self.course3],
+            'hidden_ordered_children': str(self.course3.pk),
+        }
         with self.assertRaisesRegex(ValidationError, 'Cannot add children because this course is itself a child.'):
             form.clean_children_course()
