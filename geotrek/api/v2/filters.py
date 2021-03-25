@@ -471,76 +471,48 @@ class GeotrekSiteFilter(BaseFilterBackend):
         )
 
 
-class GeotrekRelatedPortalTrekFilter(BaseFilterBackend):
+class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='portals', required=False, location='query', schema=coreschema.String(
+                    title=_("Portals"),
+                    description=_('Filter by one or more portal id, comma-separateds.')
+                )
+            ),
+        )
+
+
+class GeotrekRelatedPortalTrekFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
         if portals:
             qs = qs.filter(treks__portal__in=portals.split(',')).distinct()
         return qs
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name='portals', required=False, location='query', schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_('Filter by one or more portal id, comma-separateds.')
-                )
-            ),
-        )
 
-
-class GeotrekRelatedPortalStructureFilter(BaseFilterBackend):
+class GeotrekRelatedPortalStructureFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
         if portals:
             qs = qs.filter(Q(trek__portal__in=portals.split(',')) | Q(touristiccontent__portal__in=portals.split(','))).distinct()
         return qs
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name='portals', required=False, location='query', schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_('Filter by one or more portal id, comma-separateds.')
-                )
-            ),
-        )
 
-
-class GeotrekRelatedPortalReservationSystemFilter(BaseFilterBackend):
+class GeotrekRelatedPortalReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
         if portals:
             qs = qs.filter(touristiccontent__portal__in=portals.split(',')).distinct()
         return qs
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name='portals', required=False, location='query', schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_('Filter by one or more portal id, comma-separateds.')
-                )
-            ),
-        )
 
-
-class GeotrekRelatedPortalTourismFilter(BaseFilterBackend):
+class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
         if portals:
             qs = qs.filter(contents__portal__in=portals.split(',')).distinct()
         return qs
-
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name='portals', required=False, location='query', schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_('Filter by one or more portal id, comma-separateds.')
-                )
-            ),
-        )
 
 
 class GeotrekRatingScaleFilter(BaseFilterBackend):
