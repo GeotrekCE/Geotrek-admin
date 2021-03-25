@@ -173,14 +173,12 @@ class CourseForm(CommonForm):
         ordering = []
         if self.cleaned_data['hidden_ordered_children']:
             ordering = self.cleaned_data['hidden_ordered_children'].split(',')
-        print(ordering)
         order = 0
         # add and update
         for value in ordering:
             child, created = OrderedCourseChild.objects.get_or_create(parent=self.instance,
                                                                       child=Course.objects.get(pk=value))
             child.order = order
-            print('save', child)
             child.save()
             order += 1
         # delete
