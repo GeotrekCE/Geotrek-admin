@@ -2,12 +2,28 @@
 CHANGELOG
 =========
 
-2.51.2+dev
+2.52.0 (2021-03-25)
 -------------------
 
 **Bug fixes**
 
--
+- Allow to add an outdoor sub-site or a course in a site owned by another structure
+- Fix outdoor site orientation/wind filtering
+- Add missing outdoor module translations
+
+**New Feature**
+
+- Outdoor course itinerancy
+- Add altimetry informations to outdoor sites and courses
+- Add outdoor course fields height and equipment
+- Add course layer to layers control
+- Allow VAR_DIR setting from environment (thanks to Claude Paroz)
+- Allow easier customization of loadpaths command (thanks to Claude Paroz)
+
+**Security**
+
+- Bump pillow from 7.1.2 to 8.1.1
+- Bump jinja2 from 2.11.1 to 2.11.3
 
 
 2.51.2 (2021-03-16)
