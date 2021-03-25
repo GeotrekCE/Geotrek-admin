@@ -33,8 +33,10 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
 
 class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
-    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
+    orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation',
+                                       label=_("Orientation"))
+    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation',
+                                label=_("Wind"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
