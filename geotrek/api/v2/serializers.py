@@ -312,8 +312,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return data
 
         def get_departure_city(self, obj):
-            qs = zoning_models.City.objects.all().filter(geom__contains=obj.geom)
-            return qs[0].code if qs else None
+            city = zoning_models.City.objects.all().filter(geom__contains=obj.geom).first()
+            return city.code if city else None
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
@@ -517,8 +517,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return [city.code for city in obj.published_cities]
 
         def get_departure_city(self, obj):
-            qs = zoning_models.City.objects.all().filter(geom__contains=Point(obj.geom[0]))
-            return qs[0].code if qs else None
+            city = zoning_models.City.objects.all().filter(geom__contains=Point(obj.geom[0])).first()
+            return city.code if city else None
 
         class Meta:
             model = trekking_models.Trek
