@@ -517,7 +517,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return [city.code for city in obj.published_cities]
 
         def get_departure_city(self, obj):
-            city = zoning_models.City.objects.all().filter(geom__contains=Point(obj.geom[0])).first()
+            geom = obj.geom
+            if isinstance(geom, MultiLineString):
+                geom = geom[0]
+            city = zoning_models.City.objects.all().filter(geom__contains=Point(geom[0])).first()
             return city.code if city else None
 
         class Meta:
