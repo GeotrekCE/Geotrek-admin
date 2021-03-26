@@ -146,11 +146,14 @@ class BaseApiTest(TestCase):
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
         cls.treks[3].save()
         cls.parent = trek_factory.TrekFactory.create(published=True, name='Parent')
+        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2')
         cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1')
         cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
+        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3')
         trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.parent2, child=cls.child3, order=1).save()
         trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.content2 = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
@@ -422,6 +425,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_trek_city(self):
         response = self.get_trek_list({'cities': self.city.pk})
         self.assertEqual(len(response.json()['results']), 16)
+
+    def test_trek_child_not_published_detail_view_ok_if_ancestor_published(self):
+        response = self.get_trek_detail(self.child1.pk)
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_child_not_published_detail_view_ko_if_ancestor_not_published(self):
+        response = self.get_trek_detail(self.child3.pk)
+        self.assertEqual(response.status_code, 404)
+
+    def test_trek_child_not_published_not_in_list_view_if_ancestor_published(self):
+        response = self.get_trek_list({'fields': 'id'})
+        self.assertNotContains(response, str(self.child1.pk))
 
     def test_tour_list(self):
         response = self.get_tour_list()
