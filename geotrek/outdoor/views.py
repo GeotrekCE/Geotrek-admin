@@ -33,7 +33,7 @@ class SiteDetail(MapEntityDetail):
     queryset = Site.objects.all()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(SiteDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -54,7 +54,7 @@ class SiteUpdate(MapEntityUpdate):
 
     @same_structure_required('outdoor:site_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SiteUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SiteDelete(MapEntityDelete):
@@ -62,7 +62,7 @@ class SiteDelete(MapEntityDelete):
 
     @same_structure_required('outdoor:site_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SiteDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SiteViewSet(MapEntityViewSet):
@@ -80,7 +80,7 @@ class SiteViewSet(MapEntityViewSet):
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class SiteDocumentPublicMixin(object):
+class SiteDocumentPublicMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         content = self.get_object()
@@ -119,7 +119,7 @@ class CourseDetail(MapEntityDetail):
     queryset = Course.objects.all()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(CourseDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -140,7 +140,7 @@ class CourseUpdate(MapEntityUpdate):
 
     @same_structure_required('outdoor:course_detail')
     def dispatch(self, *args, **kwargs):
-        return super(CourseUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class CourseDelete(MapEntityDelete):
@@ -148,7 +148,7 @@ class CourseDelete(MapEntityDelete):
 
     @same_structure_required('outdoor:course_detail')
     def dispatch(self, *args, **kwargs):
-        return super(CourseDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class CourseViewSet(MapEntityViewSet):
@@ -166,7 +166,7 @@ class CourseViewSet(MapEntityViewSet):
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class CourseDocumentPublicMixin(object):
+class CourseDocumentPublicMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         content = self.get_object()

@@ -46,7 +46,7 @@ class BladeFilterSet(MapEntityFilterSet):
     structure = ModelChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all())
 
     def __init__(self, *args, **kwargs):
-        super(BladeFilterSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     class Meta(MapEntityFilterSet.Meta):
         model = Blade

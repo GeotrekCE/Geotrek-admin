@@ -45,7 +45,7 @@ class CommonForm(MapEntityForm):
             self.deep_remove(self.fieldslayout, 'published')
         if 'review' in self.fields and self.instance and self.instance.any_published:
             self.deep_remove(self.fieldslayout, 'review')
-        super(CommonForm, self).replace_orig_fields()
+        super().replace_orig_fields()
 
     def filter_related_field(self, name, field):
         if not isinstance(field, forms.models.ModelChoiceField):
@@ -68,7 +68,7 @@ class CommonForm(MapEntityForm):
 
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.fieldslayout)
-        super(CommonForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields = self.fields.copy()
         self.update = kwargs.get("instance") is not None
         if 'structure' in self.fields:
@@ -123,7 +123,7 @@ class CommonForm(MapEntityForm):
             self.instance.structure = self.user.profile.structure
         else:
             self.instance.structure = default_structure()
-        return super(CommonForm, self).save(commit)
+        return super().save(commit)
 
 
 class ImportDatasetForm(forms.Form):
@@ -134,7 +134,7 @@ class ImportDatasetForm(forms.Form):
     )
 
     def __init__(self, choices=None, *args, **kwargs):
-        super(ImportDatasetForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['parser'].choices = choices
 
@@ -164,7 +164,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super(ImportDatasetFormWithFile, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['parser'].label = _('Data to import from local file')
         self.helper.layout = Layout(

@@ -115,7 +115,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
             self.publication_date = datetime.date.today()
         if self.publication_date is not None and not self.published:
             self.publication_date = None
-        super(SensitiveArea, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def any_published(self):

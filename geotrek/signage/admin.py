@@ -22,7 +22,7 @@ class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
         """
         filter objects by structure
         """
-        qs = super(SealingAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
             qs = qs.filter(structure=request.user.profile.structure)
         return qs
@@ -58,7 +58,7 @@ class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         """
         filter objects by structure
         """
-        qs = super(BladeTypeAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
             qs = qs.filter(structure=request.user.profile.structure)
         return qs
@@ -94,7 +94,7 @@ class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         """
         filter objects by structure
         """
-        qs = super(SignageTypeAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
             qs = qs.filter(structure=request.user.profile.structure)
         return qs

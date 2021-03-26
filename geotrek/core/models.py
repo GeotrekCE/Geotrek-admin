@@ -47,14 +47,14 @@ class PathManager(models.Manager):
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible.
         """
-        return super(PathManager, self).get_queryset().filter(visible=True)
+        return super().get_queryset().filter(visible=True)
 
 
 class PathInvisibleManager(models.Manager):
     use_for_related_fields = True
 
     def get_queryset(self):
-        return super(PathInvisibleManager, self).get_queryset()
+        return super().get_queryset()
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
@@ -240,14 +240,14 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                 aggr.end_position = 1 - aggr.end_position
                 aggr.save()
             self._is_reversed = False
-        super(Path, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.reload()
 
     def delete(self, *args, **kwargs):
         if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return super(Path, self).delete(*args, **kwargs)
+            return super().delete(*args, **kwargs)
         topologies = list(self.topology_set.filter())
-        r = super(Path, self).delete(*args, **kwargs)
+        r = super().delete(*args, **kwargs)
         if not Path.objects.exists():
             return r
         for topology in topologies:
@@ -394,7 +394,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
         verbose_name_plural = _("Topologies")
 
     def __init__(self, *args, **kwargs):
-        super(Topology, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
 
@@ -585,7 +585,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
         self.offset = settings.TOPOLOGY_STATIC_OFFSETS.get(shortmodelname, self.offset)
 
         # Save into db
-        super(Topology, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.reload()
 
     def serialize(self, with_pk=True):
@@ -799,7 +799,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
 class PathAggregationManager(models.Manager):
     def get_queryset(self):
-        return super(PathAggregationManager, self).get_queryset().order_by('order')
+        return super().get_queryset().order_by('order')
 
 
 class PathAggregation(models.Model):
@@ -840,7 +840,7 @@ class PathAggregation(models.Model):
 
     @debug_pg_notices
     def save(self, *args, **kwargs):
-        return super(PathAggregation, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Path aggregation")

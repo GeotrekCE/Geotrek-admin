@@ -26,7 +26,7 @@ class FakeSyncCommand(Command):
     rando_url = 'localhost:3000'
 
     def __init__(self, portal='', source='', skip_dem=False, skip_pdf=False, skip_profile_png=False):
-        super(FakeSyncCommand, self).__init__(stdout=None, stderr=None, no_color=False, force_color=False)
+        super().__init__(stdout=None, stderr=None, no_color=False, force_color=False)
         self.dst_root = os.path.join('var', 'tmp')
         self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
         zipname = os.path.join('zip', 'tiles', 'global.zip')

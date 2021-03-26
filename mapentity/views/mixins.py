@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 class HttpJSONResponse(HttpResponse):
     def __init__(self, content='', **kwargs):
         kwargs['content_type'] = kwargs.get('content_type', 'application/json')
-        super(HttpJSONResponse, self).__init__(content, **kwargs)
+        super().__init__(content, **kwargs)
 
 
-class JSONResponseMixin(object):
+class JSONResponseMixin:
     """
     A mixin that can be used to render a JSON/JSONP response.
     """
@@ -34,7 +34,7 @@ class JSONResponseMixin(object):
         callback = self.request.GET.get('callback', None)
         if callback:
             response_kwargs['content_type'] = 'application/javascript'
-            json = u"%s(%s);" % (callback, json)
+            json = "%s(%s);" % (callback, json)
         return self.response_class(json, **response_kwargs)
 
     def convert_context_to_json(self, context):
@@ -42,7 +42,7 @@ class JSONResponseMixin(object):
         return json_django_dumps(context)
 
 
-class LastModifiedMixin(object):
+class LastModifiedMixin:
     def dispatch(self, *args, **kwargs):
         qs = self.queryset if self.queryset is not None else self.model.objects
         model = self.model if self.model is not None else self.queryset.model
@@ -57,7 +57,7 @@ class LastModifiedMixin(object):
         return _dispatch(*args, **kwargs)
 
 
-class ModelViewMixin(object):
+class ModelViewMixin:
     """
     Add model meta information in context data
     """
@@ -75,7 +75,7 @@ class ModelViewMixin(object):
         return registry.registry[self.get_model()]
 
     def get_context_data(self, **kwargs):
-        context = super(ModelViewMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['viewname'] = self.get_entity_kind()
         context['title'] = self.get_title()
 
@@ -89,7 +89,7 @@ class ModelViewMixin(object):
         return context
 
 
-class FormViewMixin(object):
+class FormViewMixin:
     """
     Dynamically create form if not specified
     """
@@ -106,7 +106,7 @@ class FormViewMixin(object):
         return self.form_class
 
 
-class FilterListMixin(object):
+class FilterListMixin:
 
     filterform = None
 
@@ -126,7 +126,7 @@ class FilterListMixin(object):
         self._filterform = self.filterform(None, self.queryset)
 
     def get_queryset(self):
-        queryset = super(FilterListMixin, self).get_queryset()
+        queryset = super().get_queryset()
         # Filter queryset from possible serialized form
         self._filterform = self.filterform(self.request.GET or None,
                                            queryset=queryset)

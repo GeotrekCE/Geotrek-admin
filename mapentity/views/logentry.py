@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import django_filters
 from django import forms
 from .generic import MapEntityList
@@ -22,5 +21,5 @@ class LogEntryList(MapEntityList):
     columns = ('id', 'action_time', 'user', 'object', 'action_flag')
 
     def get_queryset(self):
-        queryset = super(LogEntryList, self).get_queryset()
+        queryset = super().get_queryset()
         return queryset.filter(content_type_id__in=registry.content_type_ids)

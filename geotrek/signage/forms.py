@@ -20,7 +20,7 @@ from geotrek.signage.models import Signage, Blade, Line
 class LineForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(LineForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'number', 'text', 'distance', 'pictogram_name', 'time')
@@ -29,9 +29,6 @@ class LineForm(forms.ModelForm):
         self.fields['distance'].widget.attrs['class'] = 'input-mini'
         self.fields['pictogram_name'].widget.attrs['class'] = 'input-mini'
         self.fields['time'].widget.attrs['class'] = 'input-mini'
-
-    def save(self, *args, **kwargs):
-        return super(LineForm, self).save(*args, **kwargs)
 
     class Meta:
         fields = ('id', 'blade', 'number', 'text', 'distance', 'pictogram_name', 'time')
@@ -56,7 +53,7 @@ class BaseBladeForm(CommonForm):
     ]
 
     def __init__(self, *args, **kwargs):
-        super(BaseBladeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper.form_tag = False
         if not self.instance.pk:
             self.signage = kwargs.get('initial', {}).get('signage')
@@ -111,7 +108,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         ]
 
         def __init__(self, *args, **kwargs):
-            super(BladeForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.helper.form_tag = False
             if not self.instance.pk:
                 self.signage = kwargs.get('initial', {}).get('signage')
@@ -161,7 +158,7 @@ else:
 
         def __init__(self, *args, **kwargs):
 
-            super(BladeForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.fields['topology'].initial = self.signage.geom
             self.fields['topology'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
             self.fields['topology'].widget.modifiable = False
@@ -177,7 +174,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         geomfields = ['topology']
 
         def __init__(self, *args, **kwargs):
-            super(BaseSignageForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
 
             if not settings.SIGNAGE_LINE_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED:
                 modifiable = self.fields['topology'].widget.modifiable

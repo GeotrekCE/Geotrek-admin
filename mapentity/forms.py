@@ -28,7 +28,7 @@ class TranslatedModelForm(forms.ModelForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(TranslatedModelForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Track translated fields
         self._translated = {}
         self.replace_orig_fields()
@@ -56,7 +56,7 @@ class TranslatedModelForm(forms.ModelForm):
                 # Add to form.fields{}
                 translated = copy.deepcopy(native)
                 translated.required = native.required and (lang == settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
-                translated.label = u"%s [%s]" % (translated.label, lang)
+                translated.label = "%s [%s]" % (translated.label, lang)
                 self.fields[name] = translated
                 # Keep track of replacements
                 self._translated.setdefault(modelfield, []).append(name)
@@ -69,7 +69,7 @@ class TranslatedModelForm(forms.ModelForm):
             for field in fields:
                 value = self.cleaned_data.get(field)
                 setattr(self.instance, field, value)
-        return super(TranslatedModelForm, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def populate_fields(self):
         """ Manually loads translated fields from instance.
@@ -88,7 +88,7 @@ class SubmitButton(HTML):
                onclick="javascript:$(this).parents('form').submit();">
                 <i class="icon-white icon-ok-sign"></i> %s
             </a>""" % (divid, label))
-        super(SubmitButton, self).__init__(content)
+        super().__init__(content)
 
 
 class MapEntityForm(TranslatedModelForm):
@@ -101,7 +101,7 @@ class MapEntityForm(TranslatedModelForm):
         self.user = kwargs.pop('user', None)
         self.can_delete = kwargs.pop('can_delete', True)
 
-        super(MapEntityForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = True
 
@@ -153,7 +153,7 @@ class MapEntityForm(TranslatedModelForm):
             actions.insert(0, HTML('<a class="btn %s delete" href="%s"><i class="icon-white icon-trash"></i> %s</a>' % (
                 'btn-danger' if self.can_delete else 'disabled',
                 self.instance.get_delete_url() if self.can_delete else '#',
-                _(u"Delete"))))
+                _("Delete"))))
         else:
             self.helper.form_action = self.instance.get_add_url()
 
@@ -241,7 +241,7 @@ class MapEntityForm(TranslatedModelForm):
 
 class AttachmentForm(BaseAttachmentForm):
     def __init__(self, *args, **kwargs):
-        super(AttachmentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.helper = FormHelper(form=self)
         self.helper.form_tag = True

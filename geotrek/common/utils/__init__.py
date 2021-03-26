@@ -12,7 +12,7 @@ from django.contrib.gis.gdal import SpatialReference
 logger = logging.getLogger(__name__)
 
 
-class classproperty(object):
+class classproperty:
     def __init__(self, getter):
         self.getter = getter
 
@@ -22,7 +22,7 @@ class classproperty(object):
 
 # This one come from pyramid
 # https://github.com/Pylons/pyramid/blob/master/pyramid/decorator.py
-class reify(object):
+class reify:
 
     """ Put the result of a method which uses this (non-data)
     descriptor decorator in the instance dict after the first call,

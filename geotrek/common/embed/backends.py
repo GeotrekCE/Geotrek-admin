@@ -22,7 +22,7 @@ class DailymotionBackend(VideoBackend):
     pattern_thumbnail_url = '{protocol}://dailymotion.com/thumbnail/embed/video/{code}'
 
     def get_code(self):
-        code = super(DailymotionBackend, self).get_code()
+        code = super().get_code()
         if not code:
             raise UnknownIdException('Cannot get ID from `{0}`'.format(self._url))
 

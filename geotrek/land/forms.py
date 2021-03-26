@@ -6,7 +6,7 @@ from .models import (PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge,
 
 class EdgeForm(TopologyForm):
     def __init__(self, *args, **kwargs):
-        super(EdgeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         modifiable = self.fields['topology'].widget.modifiable
         self.fields['topology'].widget = LineTopologyWidget()
         self.fields['topology'].widget.modifiable = modifiable

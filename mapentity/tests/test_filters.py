@@ -10,7 +10,7 @@ from geotrek.diving.factories import DiveFactory
 from geotrek.diving.models import Dive
 
 
-class PolygonTest(object):
+class PolygonTest:
 
     def test_should_return_all_if_filter_empty(self):
         result = self.filter.filter(self.model.objects.all(), None)

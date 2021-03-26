@@ -19,4 +19,4 @@ class StandardResultsSetPagination(PageNumberPagination):
                 ('features', data['features'])
             ]))
         else:
-            return super(StandardResultsSetPagination, self).get_paginated_response(data)
+            return super().get_paginated_response(data)

@@ -49,7 +49,7 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        response = super(SensitiveAreaViewSet, self).list(request, *args, **kwargs)
+        response = super().list(request, *args, **kwargs)
         response['Access-Control-Allow-Origin'] = '*'
         return response
 
@@ -63,6 +63,6 @@ class SportPracticeViewSet(api_viewsets.GeotrekViewSet):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        response = super(SportPracticeViewSet, self).list(request, *args, **kwargs)
+        response = super().list(request, *args, **kwargs)
         response['Access-Control-Allow-Origin'] = '*'
         return response

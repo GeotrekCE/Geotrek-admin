@@ -17,7 +17,7 @@ class PolygonFilter(Filter):
         kwargs.setdefault('field_name', app_settings['GEOM_FIELD_NAME'])
         kwargs.setdefault('widget', HiddenGeometryWidget)
         kwargs.setdefault('lookup_expr', 'intersects')
-        super(PolygonFilter, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class PythonPolygonFilter(PolygonFilter):
@@ -41,7 +41,7 @@ class PythonPolygonFilter(PolygonFilter):
 
 class BaseMapEntityFilterSet(FilterSet):
     def __init__(self, *args, **kwargs):
-        super(BaseMapEntityFilterSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.__bypass_labels()
 
     def __bypass_labels(self):

@@ -32,13 +32,13 @@ class FlatPageViewSet(viewsets.ModelViewSet):
         return qs
 
 
-class FlatPageEditMixin(object):
+class FlatPageEditMixin:
     model = flatpages_models.FlatPage
     form_class = FlatPageForm
     success_url = reverse_lazy('admin:flatpages_flatpage_changelist')
 
     def get_form_kwargs(self):
-        kwargs = super(FlatPageEditMixin, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 

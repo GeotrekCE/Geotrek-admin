@@ -347,7 +347,7 @@ class TrekViewsTest(CommonTest):
 
     def test_status(self):
         TrekFactory.create(duration=float('nan'))
-        super(TrekViewsTest, self).test_status()
+        super().test_status()
 
     def test_badfield_goodgeom(self):
         self.login()
@@ -362,7 +362,7 @@ class TrekViewsTest(CommonTest):
         self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
 
     def test_basic_format(self):
-        super(TrekViewsTest, self).test_basic_format()
+        super().test_basic_format()
         self.modelfactory.create(name="ukélélé")  # trek with utf8
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
