@@ -59,7 +59,7 @@ itypes==1.1.0
 Jinja2==2.11.3
 kombu==4.6.8
 landez==2.5.0
-lxml==4.6.2
+lxml==4.6.3
 MarkupSafe==1.1.1
 mbutil==0.3.0
 mccabe==0.6.1
