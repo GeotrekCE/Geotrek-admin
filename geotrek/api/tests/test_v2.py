@@ -158,13 +158,13 @@ class BaseApiTest(TestCase):
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.content2 = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
-        cls.district = zoning_factory.DistrictFactory(id=420, geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
-        cls.accessibility = trek_factory.AccessibilityFactory(id=4)
-        cls.route = trek_factory.RouteFactory(id=680)
-        cls.theme = common_factory.ThemeFactory(id=15)
-        cls.portal = common_factory.TargetPortalFactory(id=16)
+        cls.district = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
+        cls.accessibility = trek_factory.AccessibilityFactory()
+        cls.route = trek_factory.RouteFactory()
+        cls.theme = common_factory.ThemeFactory()
+        cls.portal = common_factory.TargetPortalFactory()
         cls.treks[0].portal.add(cls.portal)
-        cls.structure = authent_factory.StructureFactory(id=8)
+        cls.structure = authent_factory.StructureFactory()
         cls.treks[0].structure = cls.structure
         cls.poi_type = trek_factory.POITypeFactory()
         cls.poi = trek_factory.POIFactory()
@@ -393,11 +393,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'ascent_min': '150',
             'ascent_max': '1000',
             'cities': '31000',
-            'districts': '420',
-            'structures': '8',
-            'accessibilities': '4',
-            'themes': '15',
-            'portals': '16',
+            'districts': self.district.pk,
+            'structures': self.structure.pk,
+            'accessibilities': self.accessibility.pk,
+            'themes': self.theme.pk,
+            'portals': self.portal.pk,
             'labels': '23',
             'routes': '68',
             'practices': '1',
@@ -500,7 +500,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
     def test_network_list(self):
-        response = self.get_networks_list({'portals': '16'})
+        response = self.get_networks_list({'portals': self.portal.pk})
         self.assertContains(response, self.network.network)
 
     def test_theme_list(self):
@@ -580,7 +580,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_structure_filter_list(self):
-        response = self.get_structure_list({'portals': '16'})
+        response = self.get_structure_list({'portals': self.portal.pk})
         self.assertEquals(len(response.json()['results']), 1)
 
     def test_structure_detail(self):
@@ -658,7 +658,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_touristiccontentcategory_list_filter(self):
-        response = self.get_touristiccontentcategory_list({'portals': '16'})
+        response = self.get_touristiccontentcategory_list({'portals': self.portal.pk})
         self.assertEquals(len(response.json()['results']), 1)
 
     def test_touristiccontent_detail(self):
@@ -791,7 +791,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_reservationsystem_list_filter(self):
-        response = self.get_reservationsystem_list({'portals': '16'})
+        response = self.get_reservationsystem_list({'portals': self.portal.pk})
         self.assertEquals(len(response.json()['results']), 1)
 
     def test_reservationsystem_detail(self):
