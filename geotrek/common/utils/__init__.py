@@ -44,9 +44,9 @@ class reify:
 
 
 def dbnow():
-    cursor = connection.cursor()
-    cursor.execute("SELECT statement_timestamp() AT TIME ZONE 'UTC';")
-    row = cursor.fetchone()
+    with connection._nodb_cursor() as cursor:
+        cursor.execute("SELECT statement_timestamp() AT TIME ZONE 'UTC';")
+        row = cursor.fetchone()
     return row[0].replace(tzinfo=utc)
 
 
