@@ -1,11 +1,9 @@
 from django.conf import settings
-from django.db.models import F
+from django.db.models import F, Q
 from django.db.models.aggregates import Count
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
-from functools import reduce
 
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets, filters as api_filters
@@ -26,22 +24,9 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def retrieve(self, request, pk=None):
         # Return detail view even for unpublished treks that are childrens of other published treks
-        qs = self.queryset
-        trek = get_object_or_404(qs, pk=pk)
-        list_status = self.parents_status([trek])
-        if not reduce(lambda a, b: a or b, list_status, False):
-            # return 404 if no ancestor is published
-            raise Http404('No %s matches the given query.' % qs.model._meta.object_name)
+        trek = get_object_or_404(self.queryset, (Q(published=True) | Q(trek_parents__parent__published=True)) & Q(pk=pk))
         serializer = api_serializers.TrekSerializer(trek, many=False, context={'request': request})
         return Response(serializer.data)
-
-    def parents_status(self, parents):
-        """ Recursive function to check if ancestors of trek are published or not """
-        status = []
-        for trek in parents:
-            status.append(trek.published)
-            status = status + self.parents_status(trek.parents)
-        return status
 
 
 class TourViewSet(TrekViewSet):
