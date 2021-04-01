@@ -2,12 +2,27 @@
 CHANGELOG
 =========
 
-2.25.0+dev
+2.53.0 (2021-04-01)
 -------------------
+
+**New Feature**
+
+- Add departure_city attribute to treks and touristiccontents in API v2
+- Allow to filter nomenclatures by portal in API v2
+- Allow to retrieve a single unpublished trek if its parent is published in API v2
+
+**Maintenance**
+
+- Simplify code thanks to Python 3 (thanks to Claude Paroz)
+- Add new sentry-sdk dependency
 
 **Bug fixes**
 
--
+- Avoid a db connection when requesting time from database (thanks to Claude Paroz)
+
+**Security**
+
+- Bump lxml from 4.6.2 to 4.6.3
 
 
 2.52.0 (2021-03-25)
