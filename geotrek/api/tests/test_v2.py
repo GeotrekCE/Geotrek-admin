@@ -36,7 +36,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'access', 'accessibilities', 'advice', 'advised_parking',
     'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
     'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
-    'descent', 'description', 'description_teaser', 'difficulty',
+    'descent', 'description', 'description_teaser', 'difficulty', 'departure_city',
     'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url',
     'external_id', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
@@ -61,7 +61,7 @@ TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
 
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
     'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
-    'description_teaser', 'email', 'external_id', 'geometry', 'id', 'name', 'pdf',
+    'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'name', 'pdf',
     'portal', 'practical_info', 'published', 'reservation_id', 'reservation_system',
     'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'website',
 ])
@@ -146,26 +146,35 @@ class BaseApiTest(TestCase):
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
         cls.treks[3].save()
         cls.parent = trek_factory.TrekFactory.create(published=True, name='Parent')
+        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2')
         cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1')
         cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
+        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3')
         trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.parent2, child=cls.child3, order=1).save()
         trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
+        cls.content2 = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
-        cls.district = zoning_factory.DistrictFactory(id=420, geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
-        cls.accessibility = trek_factory.AccessibilityFactory(id=4)
-        cls.route = trek_factory.RouteFactory(id=680)
-        cls.theme = common_factory.ThemeFactory(id=15)
-        cls.portal = common_factory.TargetPortalFactory(id=16)
-        cls.structure = authent_factory.StructureFactory(id=8)
+        cls.district = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
+        cls.accessibility = trek_factory.AccessibilityFactory()
+        cls.route = trek_factory.RouteFactory()
+        cls.theme = common_factory.ThemeFactory()
+        cls.portal = common_factory.TargetPortalFactory()
+        cls.treks[0].portal.add(cls.portal)
+        cls.structure = authent_factory.StructureFactory()
+        cls.treks[0].structure = cls.structure
         cls.poi_type = trek_factory.POITypeFactory()
         cls.poi = trek_factory.POIFactory()
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
+        cls.treks[0].reservation_system = cls.reservation_system
         cls.site = outdoor_factory.SiteFactory()
         cls.category = tourism_factory.TouristicContentCategoryFactory()
+        cls.content2.category = cls.category
+        cls.content2.portal.add(cls.portal)
         common_factory.FileTypeFactory.create(type='Topoguide')
         # Create a trek with a multilinestring geom
         cls.path2 = core_factory.PathFactory.create(geom=LineString((0, 10), (0, 20)))
@@ -384,11 +393,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'ascent_min': '150',
             'ascent_max': '1000',
             'cities': '31000',
-            'districts': '420',
-            'structures': '8',
-            'accessibilities': '4',
-            'themes': '15',
-            'portals': '16',
+            'districts': self.district.pk,
+            'structures': self.structure.pk,
+            'accessibilities': self.accessibility.pk,
+            'themes': self.theme.pk,
+            'portals': self.portal.pk,
             'labels': '23',
             'routes': '68',
             'practices': '1',
@@ -416,6 +425,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_trek_city(self):
         response = self.get_trek_list({'cities': self.city.pk})
         self.assertEqual(len(response.json()['results']), 16)
+
+    def test_trek_child_not_published_detail_view_ok_if_ancestor_published(self):
+        response = self.get_trek_detail(self.child1.pk)
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_child_not_published_detail_view_ko_if_ancestor_not_published(self):
+        response = self.get_trek_detail(self.child3.pk)
+        self.assertEqual(response.status_code, 404)
+
+    def test_trek_child_not_published_not_in_list_view_if_ancestor_published(self):
+        response = self.get_trek_list({'fields': 'id'})
+        self.assertNotContains(response, str(self.child1.pk))
 
     def test_tour_list(self):
         response = self.get_tour_list()
@@ -479,7 +500,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
     def test_network_list(self):
-        response = self.get_networks_list()
+        response = self.get_networks_list({'portals': self.portal.pk})
         self.assertContains(response, self.network.network)
 
     def test_theme_list(self):
@@ -558,6 +579,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             authent_models.Structure
         )
 
+    def test_structure_filter_list(self):
+        response = self.get_structure_list({'portals': self.portal.pk})
+        self.assertEquals(len(response.json()['results']), 1)
+
     def test_structure_detail(self):
         self.check_structure_response(
             self.get_structure_detail(self.structure.pk),
@@ -632,6 +657,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             tourism_models.TouristicContentCategory
         )
 
+    def test_touristiccontentcategory_list_filter(self):
+        response = self.get_touristiccontentcategory_list({'portals': self.portal.pk})
+        self.assertEquals(len(response.json()['results']), 1)
+
     def test_touristiccontent_detail(self):
         self.check_structure_response(
             self.get_touristiccontent_detail(self.content.pk),
@@ -660,7 +689,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_touristiccontent_near_trek(self):
         response = self.get_touristiccontent_list({'near_trek': self.treks[0].pk})
-        self.assertEqual(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 2)
 
     def test_touristiccontent_categories(self):
         response = self.get_touristiccontent_list({'categories': self.content.category.pk})
@@ -683,7 +712,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_touristiccontent_city(self):
         response = self.get_touristiccontent_list({'cities': self.city.pk})
-        self.assertEqual(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 2)
 
     def test_touristiccontent_inexistant_city(self):
         response = self.get_touristiccontent_list({'cities': '99999'})
@@ -691,7 +720,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_touristiccontent_district(self):
         response = self.get_touristiccontent_list({'districts': self.district.pk})
-        self.assertEqual(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 2)
 
     def test_touristiccontent_inexistant_district(self):
         response = self.get_touristiccontent_list({'districts': 99999})
@@ -699,7 +728,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_touristiccontent_structure(self):
         response = self.get_touristiccontent_list({'structures': self.content.structure.pk})
-        self.assertEqual(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 2)
 
     def test_touristiccontent_theme(self):
         response = self.get_touristiccontent_list({'themes': self.content.themes.all()[0].pk})
@@ -711,7 +740,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_touristiccontent_q(self):
         response = self.get_touristiccontent_list({'q': 'Blah CT'})
-        self.assertEqual(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 2)
 
     def test_touristiccontent_detail_with_lang(self):
         response = self.get_touristiccontent_list({'language': 'en'})
@@ -760,6 +789,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             self.get_reservationsystem_list(),
             common_models.ReservationSystem
         )
+
+    def test_reservationsystem_list_filter(self):
+        response = self.get_reservationsystem_list({'portals': self.portal.pk})
+        self.assertEquals(len(response.json()['results']), 1)
 
     def test_reservationsystem_detail(self):
         self.check_structure_response(
