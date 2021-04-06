@@ -24,11 +24,34 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def retrieve(self, request, pk=None):
         # Return detail view even for unpublished treks that are childrens of other published treks
-        trek = self.queryset.filter((Q(published=True) | Q(trek_parents__parent__published=True)) & Q(pk=pk)).distinct().first()
+        qs_filtered = self.filter_published_lang_retrieve(request, self.queryset)
+        trek = qs_filtered.get(pk=pk)
         if not trek:
             raise Http404('No %s matches the given query.' % self.queryset.model._meta.object_name)
         serializer = api_serializers.TrekSerializer(trek, many=False, context={'request': request})
         return Response(serializer.data)
+
+    def filter_published_lang_retrieve(self, request, queryset):
+        # filter trek by publication language (including parents publication language)
+        qs = queryset
+        language = request.GET.get('language', 'all')
+        associated_published_fields = [f.name for f in qs.model._meta.get_fields() if f.name.startswith('published')]
+
+        if language == 'all':
+            # no language specified. Check for all.
+            q = Q()
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                field_name = 'published_{}'.format(lang)
+                if field_name in associated_published_fields:
+                    field_name_parent = 'trek_parents__parent__published_{}'.format(lang)
+                    q |= Q(**{field_name: True}) | Q(**{field_name_parent: True})
+            qs = qs.filter(q)
+        else:
+            # one language is specified
+            field_name = 'published_{}'.format(language)
+            field_name_parent = 'trek_parents__parent__published_{}'.format(language)
+            qs = qs.filter(Q(**{field_name: True}) | Q(**{field_name_parent: True}))
+        return qs.distinct()
 
 
 class TourViewSet(TrekViewSet):
