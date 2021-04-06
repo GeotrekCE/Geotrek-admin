@@ -482,37 +482,69 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
             ),
         )
 
+    def filter_queryset_related_objects_published(self, queryset, request, prefix, optional_query=None):
+        """
+        Return a queryset filtered by publication status or related objects.
+        For example for a queryset of DifficultyLevels it will check the publication status of related treks and return the queryset of difficulties that are used by published treks.
+        :param queryset: the queryset to filter
+        :param request: the request object to get to the potential language to filter by
+        :param prefix: the prefix used to fetch the related object in the filter method
+        :param optional_query: optional query Q to add to the filter method (used by portal filter)
+        """
+        qs = queryset
+        language = request.GET.get('language', 'all')
+        q = Q()
+        if language == 'all':
+            # no language specified. Check for all.
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                related_field_name = '{}__published_{}'.format(prefix, lang)
+                q |= Q(**{related_field_name: True})
+        else:
+            # one language is specified
+            related_field_name = '{}__published_{}'.format(prefix, language)
+            q |= Q(**{related_field_name: True})
+        q &= optional_query
+        qs = qs.filter(q)
+        return qs.distinct()
+
 
 class GeotrekRelatedPortalTrekFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
+        query = Q()
         if portals:
-            qs = qs.filter(treks__portal__in=portals.split(',')).distinct()
-        return qs
+            query = Q(treks__portal__in=portals.split(','))
+        return self.filter_queryset_related_objects_published(qs, request, 'treks', query)
 
 
 class GeotrekRelatedPortalStructureFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
+        query = Q()
         if portals:
-            qs = qs.filter(Q(trek__portal__in=portals.split(',')) | Q(touristiccontent__portal__in=portals.split(','))).distinct()
-        return qs
+            query = Q(Q(trek__portal__in=portals.split(',')) | Q(touristiccontent__portal__in=portals.split(',')))
+        set_1 = self.filter_queryset_related_objects_published(qs, request, 'trek', query)
+        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontent', query)
+        return (set_1 | set_2).distinct()
 
 
 class GeotrekRelatedPortalReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
+        query = Q()
         if portals:
-            qs = qs.filter(touristiccontent__portal__in=portals.split(',')).distinct()
-        return qs
+            query = Q(touristiccontent__portal__in=portals.split(','))
+
+        return self.filter_queryset_related_objects_published(qs, request, 'touristiccontent', query)
 
 
 class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
+        query = Q()
         if portals:
-            qs = qs.filter(contents__portal__in=portals.split(',')).distinct()
-        return qs
+            query = Q(contents__portal__in=portals.split(','))
+        return self.filter_queryset_related_objects_published(qs, request, 'contents', query)
 
 
 class GeotrekRatingScaleFilter(BaseFilterBackend):

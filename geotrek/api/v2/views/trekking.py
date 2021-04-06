@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets, filters as api_filters
 from geotrek.api.v2.functions import Transform, Length, Length3D
-from geotrek.api.v2.utils import filter_queryset_related_objects_published
 from geotrek.trekking import models as trekking_models
 
 
@@ -65,28 +64,19 @@ class TourViewSet(TrekViewSet):
 class PracticeViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.PracticeSerializer
-
-    def get_queryset(self):
-        qs = trekking_models.Practice.objects.all()
-        return filter_queryset_related_objects_published(qs, self.request, 'treks')
+    queryset = trekking_models.Practice.objects.all()
 
 
 class NetworksViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.NetworkSerializer
-
-    def get_queryset(self):
-        qs = trekking_models.TrekNetwork.objects.all()
-        return filter_queryset_related_objects_published(qs, self.request, 'treks')
+    queryset = trekking_models.TrekNetwork.objects.all()
 
 
 class DifficultyViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.TrekDifficultySerializer
-
-    def get_queryset(self):
-        qs = trekking_models.DifficultyLevel.objects.all()
-        return filter_queryset_related_objects_published(qs, self.request, 'treks')
+    queryset = trekking_models.DifficultyLevel.objects.all()
 
 
 class POIViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -107,16 +97,10 @@ class POITypeViewSet(api_viewsets.GeotrekViewSet):
 class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.AccessibilitySerializer
-
-    def get_queryset(self):
-        qs = trekking_models.Accessibility.objects.all()
-        return filter_queryset_related_objects_published(qs, self.request, 'treks')
+    queryset = trekking_models.Accessibility.objects.all()
 
 
 class RouteViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.RouteSerializer
-
-    def get_queryset(self):
-        qs = trekking_models.Route.objects.all()
-        return filter_queryset_related_objects_published(qs, self.request, 'treks')
+    queryset = trekking_models.Route.objects.all()
