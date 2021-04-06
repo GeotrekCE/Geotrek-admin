@@ -23,13 +23,14 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                   length_3d_m=Length3D('geom_3d')) \
         .order_by('pk')  # Required for reliable pagination
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None, format=None):
         # Return detail view even for unpublished treks that are childrens of other published treks
         qs_filtered = self.filter_published_lang_retrieve(request, self.queryset)
         trek = qs_filtered.get(pk=pk)
         if not trek:
             raise Http404('No %s matches the given query.' % self.queryset.model._meta.object_name)
-        serializer = api_serializers.TrekSerializer(trek, many=False, context={'request': request})
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(trek, many=False, context={'request': request})
         return Response(serializer.data)
 
     def filter_published_lang_retrieve(self, request, queryset):
