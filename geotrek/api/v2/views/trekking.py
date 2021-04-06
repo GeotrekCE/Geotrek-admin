@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db.models import F, Q
 from django.db.models.aggregates import Count
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 from rest_framework.response import Response
 
@@ -24,7 +24,9 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def retrieve(self, request, pk=None):
         # Return detail view even for unpublished treks that are childrens of other published treks
-        trek = get_object_or_404(self.queryset, (Q(published=True) | Q(trek_parents__parent__published=True)) & Q(pk=pk))
+        trek = self.queryset.filter((Q(published=True) | Q(trek_parents__parent__published=True)) & Q(pk=pk)).distinct().first()
+        if not trek:
+            raise Http404('No %s matches the given query.' % self.queryset.model._meta.object_name)
         serializer = api_serializers.TrekSerializer(trek, many=False, context={'request': request})
         return Response(serializer.data)
 
