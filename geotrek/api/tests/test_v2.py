@@ -157,6 +157,9 @@ class BaseApiTest(TestCase):
         cls.structure = authent_factory.StructureFactory()
         cls.treks[0].structure = cls.structure
         cls.poi_type = trek_factory.POITypeFactory()
+        cls.practice = trek_factory.PracticeFactory()
+        cls.difficulty = trek_factory.DifficultyLevelFactory()
+        cls.network = trek_factory.TrekNetworkFactory()
         cls.poi = trek_factory.POIFactory()
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
@@ -172,10 +175,13 @@ class BaseApiTest(TestCase):
             route=cls.route,
             structure=cls.structure,
             reservation_system=cls.reservation_system,
+            practice=cls.practice,
+            difficulty=cls.difficulty,
         )
         cls.parent.accessibilities.add(cls.accessibility)
         cls.parent.source.add(cls.source)
         cls.parent.themes.add(cls.theme)
+        cls.parent.networks.add(cls.network)
         cls.parent.save()
         # For unpublished treks we avoid to create new reservation system and routes
         cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2', reservation_system=cls.reservation_system, route=cls.route)
@@ -225,11 +231,20 @@ class BaseApiTest(TestCase):
     def get_difficulties_list(self, params=None):
         return self.client.get(reverse('apiv2:difficulty-list'), params)
 
+    def get_difficulty_detail(self, id_difficulty, params=None):
+        return self.client.get(reverse('apiv2:difficulty-detail', args=(id_difficulty,)), params)
+
     def get_practices_list(self, params=None):
         return self.client.get(reverse('apiv2:practice-list'), params)
 
+    def get_practices_detail(self, id_practice, params=None):
+        return self.client.get(reverse('apiv2:practice-detail', args=(id_practice,)), params)
+
     def get_networks_list(self, params=None):
         return self.client.get(reverse('apiv2:network-list'), params)
+
+    def get_network_detail(self, id_network, params=None):
+        return self.client.get(reverse('apiv2:network-detail', args=(id_network,)), params)
 
     def get_themes_list(self, params=None):
         return self.client.get(reverse('apiv2:theme-list'), params)
@@ -441,6 +456,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_detail(self.child1.pk)
         self.assertEqual(response.status_code, 200)
 
+    def test_trek_child_not_published_detail_view_ko_if_ancestor_published_not_in_requested_language(self):
+        response = self.get_trek_detail(self.child1.pk, {'language': 'fr'})
+        self.assertEqual(response.status_code, 404)
+
     def test_trek_child_not_published_detail_view_ko_if_ancestor_not_published(self):
         response = self.get_trek_detail(self.child3.pk)
         self.assertEqual(response.status_code, 404)
@@ -506,13 +525,25 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_difficulties_list()
         self.assertEqual(response.status_code, 200)
 
+    def test_difficulty_detail(self):
+        response = self.get_difficulty_detail(self.difficulty.pk)
+        self.assertEqual(response.status_code, 200)
+
     def test_practice_list(self):
         response = self.get_practices_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_practice_detail(self):
+        response = self.get_practices_detail(self.practice.pk)
         self.assertEqual(response.status_code, 200)
 
     def test_network_list(self):
         response = self.get_networks_list({'portals': self.portal.pk})
         self.assertContains(response, self.network.network)
+
+    def test_network_detail(self):
+        response = self.get_network_detail(self.network.pk)
+        self.assertEqual(response.status_code, 200)
 
     def test_theme_list(self):
         response = self.get_themes_list()
@@ -591,7 +622,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_structure_filter_list(self):
-        response = self.get_structure_list({'portals': self.portal.pk})
+        response = self.get_structure_list({'portals': self.portal.pk, 'language': 'en'})
         self.assertEquals(len(response.json()['results']), 1)
 
     def test_structure_detail(self):
