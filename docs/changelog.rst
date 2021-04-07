@@ -2,12 +2,15 @@
 CHANGELOG
 =========
 
-2.53.0+dev
+2.53.1 (2021-04-07)
 -------------------
 
 **Bug fixes**
 
--
+- Fix geojson display in API V2 /trek/ endpoint
+- Add publication filter by language on /trek/ detail view endpoint
+- Fixed the fact that the detail view of /trek/ endpoint crash when a trek has more than one parent
+- Do not display elements linked to content not published or not used at all in multiple endpoints on API V2
 
 
 2.53.0 (2021-04-01)
