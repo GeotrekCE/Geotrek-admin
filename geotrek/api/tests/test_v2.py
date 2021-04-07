@@ -145,16 +145,6 @@ class BaseApiTest(TestCase):
         cls.treks[3].parking_location = None
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
         cls.treks[3].save()
-        cls.parent = trek_factory.TrekFactory.create(published=True, name='Parent')
-        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2')
-        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1')
-        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
-        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3')
-        trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
-        trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
-        trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
-        trek_models.OrderedTrekChild(parent=cls.parent2, child=cls.child3, order=1).save()
-        trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.content2 = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
@@ -167,6 +157,9 @@ class BaseApiTest(TestCase):
         cls.structure = authent_factory.StructureFactory()
         cls.treks[0].structure = cls.structure
         cls.poi_type = trek_factory.POITypeFactory()
+        cls.practice = trek_factory.PracticeFactory()
+        cls.difficulty = trek_factory.DifficultyLevelFactory()
+        cls.network = trek_factory.TrekNetworkFactory()
         cls.poi = trek_factory.POIFactory()
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
@@ -176,6 +169,30 @@ class BaseApiTest(TestCase):
         cls.content2.category = cls.category
         cls.content2.portal.add(cls.portal)
         common_factory.FileTypeFactory.create(type='Topoguide')
+        cls.parent = trek_factory.TrekFactory.create(
+            published=True,
+            name='Parent',
+            route=cls.route,
+            structure=cls.structure,
+            reservation_system=cls.reservation_system,
+            practice=cls.practice,
+            difficulty=cls.difficulty,
+        )
+        cls.parent.accessibilities.add(cls.accessibility)
+        cls.parent.source.add(cls.source)
+        cls.parent.themes.add(cls.theme)
+        cls.parent.networks.add(cls.network)
+        cls.parent.save()
+        # For unpublished treks we avoid to create new reservation system and routes
+        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2', reservation_system=cls.reservation_system, route=cls.route)
+        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1', reservation_system=cls.reservation_system, route=cls.route)
+        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
+        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3', reservation_system=cls.reservation_system, route=cls.route)
+        trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
+        trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
+        trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.parent2, child=cls.child3, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
         # Create a trek with a multilinestring geom
         cls.path2 = core_factory.PathFactory.create(geom=LineString((0, 10), (0, 20)))
         cls.path3 = core_factory.PathFactory.create(geom=LineString((0, 20), (0, 30)))
@@ -214,11 +231,20 @@ class BaseApiTest(TestCase):
     def get_difficulties_list(self, params=None):
         return self.client.get(reverse('apiv2:difficulty-list'), params)
 
+    def get_difficulty_detail(self, id_difficulty, params=None):
+        return self.client.get(reverse('apiv2:difficulty-detail', args=(id_difficulty,)), params)
+
     def get_practices_list(self, params=None):
         return self.client.get(reverse('apiv2:practice-list'), params)
 
+    def get_practices_detail(self, id_practice, params=None):
+        return self.client.get(reverse('apiv2:practice-detail', args=(id_practice,)), params)
+
     def get_networks_list(self, params=None):
         return self.client.get(reverse('apiv2:network-list'), params)
+
+    def get_network_detail(self, id_network, params=None):
+        return self.client.get(reverse('apiv2:network-detail', args=(id_network,)), params)
 
     def get_themes_list(self, params=None):
         return self.client.get(reverse('apiv2:theme-list'), params)
@@ -430,6 +456,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_detail(self.child1.pk)
         self.assertEqual(response.status_code, 200)
 
+    def test_trek_child_not_published_detail_view_ko_if_ancestor_published_not_in_requested_language(self):
+        response = self.get_trek_detail(self.child1.pk, {'language': 'fr'})
+        self.assertEqual(response.status_code, 404)
+
     def test_trek_child_not_published_detail_view_ko_if_ancestor_not_published(self):
         response = self.get_trek_detail(self.child3.pk)
         self.assertEqual(response.status_code, 404)
@@ -495,13 +525,25 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_difficulties_list()
         self.assertEqual(response.status_code, 200)
 
+    def test_difficulty_detail(self):
+        response = self.get_difficulty_detail(self.difficulty.pk)
+        self.assertEqual(response.status_code, 200)
+
     def test_practice_list(self):
         response = self.get_practices_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_practice_detail(self):
+        response = self.get_practices_detail(self.practice.pk)
         self.assertEqual(response.status_code, 200)
 
     def test_network_list(self):
         response = self.get_networks_list({'portals': self.portal.pk})
         self.assertContains(response, self.network.network)
+
+    def test_network_detail(self):
+        response = self.get_network_detail(self.network.pk)
+        self.assertEqual(response.status_code, 200)
 
     def test_theme_list(self):
         response = self.get_themes_list()
@@ -580,7 +622,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_structure_filter_list(self):
-        response = self.get_structure_list({'portals': self.portal.pk})
+        response = self.get_structure_list({'portals': self.portal.pk, 'language': 'en'})
         self.assertEquals(len(response.json()['results']), 1)
 
     def test_structure_detail(self):
@@ -652,10 +694,9 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_touristiccontentcategory_list(self):
-        self.check_number_elems_response(
-            self.get_touristiccontentcategory_list(),
-            tourism_models.TouristicContentCategory
-        )
+        json_response = self.get_touristiccontentcategory_list().json()
+        # Get two objects for the two published touristic contents
+        self.assertEquals(len(json_response['results']), 2)
 
     def test_touristiccontentcategory_list_filter(self):
         response = self.get_touristiccontentcategory_list({'portals': self.portal.pk})
@@ -792,7 +833,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_reservationsystem_list_filter(self):
         response = self.get_reservationsystem_list({'portals': self.portal.pk})
-        self.assertEquals(len(response.json()['results']), 1)
+        # Two results : one reservationsystem associated with content2 and the other with trek[0]
+        self.assertEquals(len(response.json()['results']), 2)
 
     def test_reservationsystem_detail(self):
         self.check_structure_response(
