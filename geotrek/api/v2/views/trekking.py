@@ -26,8 +26,9 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     def retrieve(self, request, pk=None, format=None):
         # Return detail view even for unpublished treks that are childrens of other published treks
         qs_filtered = self.filter_published_lang_retrieve(request, self.queryset)
-        trek = qs_filtered.get(pk=pk)
-        if not trek:
+        try:
+            trek = qs_filtered.get(pk=pk)
+        except self.queryset.model.DoesNotExist:
             raise Http404('No %s matches the given query.' % self.queryset.model._meta.object_name)
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(trek, many=False, context={'request': request})

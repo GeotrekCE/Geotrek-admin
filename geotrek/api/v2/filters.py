@@ -517,7 +517,7 @@ class GeotrekRelatedPortalTrekFilter(GeotrekRelatedPortalGenericFilter):
         return self.filter_queryset_related_objects_published(qs, request, 'treks', query)
 
 
-class GeotrekRelatedPortalStructureFilter(GeotrekRelatedPortalGenericFilter):
+class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
         query = Q()
@@ -526,16 +526,6 @@ class GeotrekRelatedPortalStructureFilter(GeotrekRelatedPortalGenericFilter):
         set_1 = self.filter_queryset_related_objects_published(qs, request, 'trek', query)
         set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontent', query)
         return (set_1 | set_2).distinct()
-
-
-class GeotrekRelatedPortalReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
-    def filter_queryset(self, request, qs, view):
-        portals = request.GET.get('portals')
-        query = Q()
-        if portals:
-            query = Q(touristiccontent__portal__in=portals.split(','))
-
-        return self.filter_queryset_related_objects_published(qs, request, 'touristiccontent', query)
 
 
 class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):

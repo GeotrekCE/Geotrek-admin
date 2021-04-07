@@ -145,16 +145,6 @@ class BaseApiTest(TestCase):
         cls.treks[3].parking_location = None
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
         cls.treks[3].save()
-        cls.parent = trek_factory.TrekFactory.create(published=True, name='Parent')
-        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2')
-        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1')
-        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
-        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3')
-        trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
-        trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
-        trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
-        trek_models.OrderedTrekChild(parent=cls.parent2, child=cls.child3, order=1).save()
-        trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.content2 = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
@@ -176,6 +166,27 @@ class BaseApiTest(TestCase):
         cls.content2.category = cls.category
         cls.content2.portal.add(cls.portal)
         common_factory.FileTypeFactory.create(type='Topoguide')
+        cls.parent = trek_factory.TrekFactory.create(
+            published=True,
+            name='Parent',
+            route=cls.route,
+            structure=cls.structure,
+            reservation_system=cls.reservation_system,
+        )
+        cls.parent.accessibilities.add(cls.accessibility)
+        cls.parent.source.add(cls.source)
+        cls.parent.themes.add(cls.theme)
+        cls.parent.save()
+        # For unpublished treks we avoid to create new reservation system and routes
+        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2', reservation_system=cls.reservation_system, route=cls.route)
+        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1', reservation_system=cls.reservation_system, route=cls.route)
+        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
+        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3', reservation_system=cls.reservation_system, route=cls.route)
+        trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
+        trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
+        trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.parent2, child=cls.child3, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
         # Create a trek with a multilinestring geom
         cls.path2 = core_factory.PathFactory.create(geom=LineString((0, 10), (0, 20)))
         cls.path3 = core_factory.PathFactory.create(geom=LineString((0, 20), (0, 30)))
@@ -652,10 +663,9 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_touristiccontentcategory_list(self):
-        self.check_number_elems_response(
-            self.get_touristiccontentcategory_list(),
-            tourism_models.TouristicContentCategory
-        )
+        json_response = self.get_touristiccontentcategory_list().json()
+        # Get two objects for the two published touristic contents
+        self.assertEquals(len(json_response['results']), 2)
 
     def test_touristiccontentcategory_list_filter(self):
         response = self.get_touristiccontentcategory_list({'portals': self.portal.pk})
@@ -792,7 +802,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_reservationsystem_list_filter(self):
         response = self.get_reservationsystem_list({'portals': self.portal.pk})
-        self.assertEquals(len(response.json()['results']), 1)
+        # Two results : one reservationsystem associated with content2 and the other with trek[0]
+        self.assertEquals(len(response.json()['results']), 2)
 
     def test_reservationsystem_detail(self):
         self.check_structure_response(
