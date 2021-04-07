@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db.models import F, Q
 from django.db.models.aggregates import Count
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 
@@ -66,17 +67,35 @@ class PracticeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.PracticeSerializer
     queryset = trekking_models.Practice.objects.all()
 
+    def retrieve(self, request, pk=None, format=None):
+        # Allow to retrieve objects even if not visible in list view
+        elem = get_object_or_404(trekking_models.Practice, pk=pk)
+        serializer = api_serializers.PracticeSerializer(elem, many=False, context={'request': request})
+        return Response(serializer.data)
+
 
 class NetworksViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.NetworkSerializer
     queryset = trekking_models.TrekNetwork.objects.all()
 
+    def retrieve(self, request, pk=None, format=None):
+        # Allow to retrieve objects even if not visible in list view
+        elem = get_object_or_404(trekking_models.TrekNetwork, pk=pk)
+        serializer = api_serializers.NetworkSerializer(elem, many=False, context={'request': request})
+        return Response(serializer.data)
+
 
 class DifficultyViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.TrekDifficultySerializer
     queryset = trekking_models.DifficultyLevel.objects.all()
+
+    def retrieve(self, request, pk=None, format=None):
+        # Allow to retrieve objects even if not visible in list view
+        elem = get_object_or_404(trekking_models.DifficultyLevel, pk=pk)
+        serializer = api_serializers.TrekDifficultySerializer(elem, many=False, context={'request': request})
+        return Response(serializer.data)
 
 
 class POIViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -99,8 +118,20 @@ class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.AccessibilitySerializer
     queryset = trekking_models.Accessibility.objects.all()
 
+    def retrieve(self, request, pk=None, format=None):
+        # Allow to retrieve objects even if not visible in list view
+        elem = get_object_or_404(trekking_models.Accessibility, pk=pk)
+        serializer = api_serializers.AccessibilitySerializer(elem, many=False, context={'request': request})
+        return Response(serializer.data)
+
 
 class RouteViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.RouteSerializer
     queryset = trekking_models.Route.objects.all()
+
+    def retrieve(self, request, pk=None, format=None):
+        # Allow to retrieve objects even if not visible in list view
+        elem = get_object_or_404(trekking_models.Route, pk=pk)
+        serializer = api_serializers.RouteSerializer(elem, many=False, context={'request': request})
+        return Response(serializer.data)
