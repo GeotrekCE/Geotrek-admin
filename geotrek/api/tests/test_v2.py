@@ -11,11 +11,12 @@ from geotrek.authent import factories as authent_factory, models as authent_mode
 from geotrek.core import factories as core_factory, models as path_models
 from geotrek.common import factories as common_factory, models as common_models
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file, get_dummy_uploaded_document
+from geotrek.flatpages import factories as flatpages_factory
+from geotrek.outdoor import factories as outdoor_factory, models as outdoor_models
+from geotrek.sensitivity import factories as sensitivity_factory, models as sensitivity_models
 from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
 from geotrek.zoning import factories as zoning_factory, models as zoning_models
-from geotrek.outdoor import factories as outdoor_factory, models as outdoor_models
-from geotrek.flatpages import factories as flatpages_factory
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -114,6 +115,12 @@ OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 SITETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 
+SENSITIVE_AREA_PROPERTIES_JSON_STRUCTURE = sorted([
+    'id', 'contact', 'create_datetime', 'description', 'elevation', 'geometry',
+    'info_url', 'kml_url', 'name', 'period', 'practices', 'published', 'species_id',
+    'structure', 'update_datetime', 'url'
+])
+
 
 class BaseApiTest(TestCase):
     """
@@ -169,6 +176,8 @@ class BaseApiTest(TestCase):
         cls.content2.category = cls.category
         cls.content2.portal.add(cls.portal)
         common_factory.FileTypeFactory.create(type='Topoguide')
+        cls.sensitivearea = sensitivity_factory.SensitiveAreaFactory()
+        cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.parent = trek_factory.TrekFactory.create(
             published=True,
             name='Parent',
@@ -356,6 +365,18 @@ class BaseApiTest(TestCase):
 
     def get_sitetype_detail(self, id_type, params=None):
         return self.client.get(reverse('apiv2:sitetype-detail', args=(id_type,)), params)
+
+    def get_sensitivearea_list(self, params=None):
+        return self.client.get(reverse('apiv2:sensitivearea-list'), params)
+
+    def get_sensitivearea_detail(self, id_sensitivearea, params=None):
+        return self.client.get(reverse('apiv2:sensitivearea-detail', args=(id_sensitivearea,)), params)
+
+    def get_sensitiveareapractice_list(self, params=None):
+        return self.client.get(reverse('apiv2:sportpractice-list'), params)
+
+    def get_sensitiveareapractice_detail(self, id_sensitivearea_practice, params=None):
+        return self.client.get(reverse('apiv2:sportpractice-detail', args=(id_sensitivearea_practice,)), params)
 
     def get_config(self, params=None):
         return self.client.get(reverse('apiv2:config', params))
@@ -883,6 +904,38 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_sitetype_detail(self.site.type.pk),
             SITETYPE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_sensitivearea_list(self):
+        self.check_number_elems_response(
+            self.get_sensitivearea_list(params={'period': 'any'}),
+            sensitivity_models.SensitiveArea
+        )
+        # Test filters coverage
+        response = self.get_sensitivearea_list({
+            'trek': self.parent.id,
+            'period': "1,2,3,10,11,12",
+            'structure': self.structure.id,
+            'practice': self.sensitivearea_practice.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_sensitivearea_detail(self):
+        self.check_structure_response(
+            self.get_sensitivearea_detail(self.sensitivearea.pk, params={'period': 'any'}),
+            SENSITIVE_AREA_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_sensitivearea_practice_list(self):
+        self.check_number_elems_response(
+            self.get_sensitiveareapractice_list(),
+            sensitivity_models.SportPractice
+        )
+
+    def test_sensitivearea_practice_detail(self):
+        self.check_structure_response(
+            self.get_sensitiveareapractice_detail(self.sensitivearea_practice.pk),
+            sorted(['name', 'id'])
         )
 
     def test_config(self):

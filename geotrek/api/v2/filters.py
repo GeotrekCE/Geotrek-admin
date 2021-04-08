@@ -149,6 +149,10 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             for m in [int(m) for m in period.split(',')]:
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
+        trek = request.GET.get('trek')
+        if trek:
+            contents_intersecting = intersecting(qs, Trek.objects.get(pk=trek))
+            qs = contents_intersecting.order_by('id')
         return qs.distinct()
 
     def get_schema_fields(self, view):
@@ -166,9 +170,14 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                     description=_('Filter by one or more practice id, comma-separated.')
                 )
             ), Field(
-                name='structures', required=False, location='query', schema=coreschema.Integer(
+                name='structures', required=False, location='query', schema=coreschema.String(
                     title=_("Structures"),
                     description=_('Filter by one or more structure id, comma-separated.')
+                )
+            ), Field(
+                name='trek', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Trek"),
+                    description=_('Filter by a trek id. It will show only the sensitive areas related to this trek.')
                 )
             ),
         )
@@ -484,6 +493,7 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
 
     def filter_queryset_related_objects_published(self, queryset, request, prefix, optional_query=None):
         """
+        TODO : this method is not optimal. the API should have a route /object returning all objects and /object/used returning only used objects.
         Return a queryset filtered by publication status or related objects.
         For example for a queryset of DifficultyLevels it will check the publication status of related treks and return the queryset of difficulties that are used by published treks.
         :param queryset: the queryset to filter
