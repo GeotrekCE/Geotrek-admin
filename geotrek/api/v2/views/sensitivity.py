@@ -62,7 +62,11 @@ class SportPracticeViewSet(api_viewsets.GeotrekViewSet):
         queryset = queryset.order_by('pk')  # Required for reliable pagination
         return queryset
 
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        response['Access-Control-Allow-Origin'] = '*'
-        return response
+
+class SpeciesViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.SpeciesSerializer
+
+    def get_queryset(self):
+        queryset = sensitivity_models.Species.objects.all()
+        queryset = queryset.order_by('pk')  # Required for reliable pagination
+        return queryset

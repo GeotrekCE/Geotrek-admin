@@ -705,6 +705,40 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
                 'id', 'name'
             )
 
+    class SpeciesSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+        period01 = serializers.BooleanField(read_only=True)
+        period02 = serializers.BooleanField(read_only=True)
+        period03 = serializers.BooleanField(read_only=True)
+        period04 = serializers.BooleanField(read_only=True)
+        period05 = serializers.BooleanField(read_only=True)
+        period06 = serializers.BooleanField(read_only=True)
+        period07 = serializers.BooleanField(read_only=True)
+        period08 = serializers.BooleanField(read_only=True)
+        period09 = serializers.BooleanField(read_only=True)
+        period10 = serializers.BooleanField(read_only=True)
+        period11 = serializers.BooleanField(read_only=True)
+        period12 = serializers.BooleanField(read_only=True)
+        url = serializers.URLField(read_only=True)
+        radius = serializers.IntegerField(read_only=True)
+        practices = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_practices(self, obj):
+            return obj.practices.values_list('id', flat=True)
+
+        class Meta:
+            model = sensitivity_models.Species
+            fields = (
+                'id', 'name', 'period01', 'period02', 'period03',
+                'period04', 'period05', 'period06', 'period07',
+                'period08', 'period09', 'period10', 'period11',
+                'period12', 'practices', 'radius', 'url'
+            )
+
+
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     class CitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom", precision=7)
