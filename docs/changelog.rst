@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.54.0+dev
+2.55.0
 -------------------
 
-**Bug fixes**
+**New Feature**
 
-- 
+- Add /sensitivearea_species endpoint on api v2
 
 
 2.54.0 (2021-04-09)
