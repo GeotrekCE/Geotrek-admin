@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.53.1+dev
+2.54.0 (2021-04-09)
 -------------------
 
-**Bug fixes**
+**New Feature**
 
--
+- Add 'trek' filter on endpoint /sensitivearea in api v2
 
 
 2.53.1 (2021-04-07)
