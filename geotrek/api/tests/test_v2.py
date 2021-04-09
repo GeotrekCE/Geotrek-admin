@@ -121,6 +121,13 @@ SENSITIVE_AREA_PROPERTIES_JSON_STRUCTURE = sorted([
     'structure', 'update_datetime', 'url'
 ])
 
+SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
+    'id', 'name', 'period01', 'period02', 'period03',
+    'period04', 'period05', 'period06', 'period07',
+    'period08', 'period09', 'period10', 'period11',
+    'period12', 'practices', 'radius', 'url'
+])
+
 
 class BaseApiTest(TestCase):
     """
@@ -178,6 +185,7 @@ class BaseApiTest(TestCase):
         common_factory.FileTypeFactory.create(type='Topoguide')
         cls.sensitivearea = sensitivity_factory.SensitiveAreaFactory()
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
+        cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
         cls.parent = trek_factory.TrekFactory.create(
             published=True,
             name='Parent',
@@ -377,6 +385,12 @@ class BaseApiTest(TestCase):
 
     def get_sensitiveareapractice_detail(self, id_sensitivearea_practice, params=None):
         return self.client.get(reverse('apiv2:sportpractice-detail', args=(id_sensitivearea_practice,)), params)
+
+    def get_sensitiveareaspecies_list(self, params=None):
+        return self.client.get(reverse('apiv2:species-list'), params)
+
+    def get_sensitiveareaspecies_detail(self, id_sensitivearea_species, params=None):
+        return self.client.get(reverse('apiv2:species-detail', args=(id_sensitivearea_species,)), params)
 
     def get_config(self, params=None):
         return self.client.get(reverse('apiv2:config', params))
@@ -936,6 +950,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_sensitiveareapractice_detail(self.sensitivearea_practice.pk),
             sorted(['name', 'id'])
+        )
+
+    def test_sensitivearea_species_list(self):
+        self.check_number_elems_response(
+            self.get_sensitiveareaspecies_list(),
+            sensitivity_models.Species
+        )
+
+    def test_sensitivearea_species_detail(self):
+        self.check_structure_response(
+            self.get_sensitiveareaspecies_detail(self.sensitivearea_species.pk),
+            SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE
         )
 
     def test_config(self):

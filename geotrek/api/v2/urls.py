@@ -33,6 +33,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     router.register('sensitivearea', api_views.SensitiveAreaViewSet, basename='sensitivearea')
     router.register('sensitivearea_practice', api_views.SportPracticeViewSet, basename='sportpractice')
+    router.register('sensitivearea_species', api_views.SpeciesViewSet, basename='species')
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     router.register('city', api_views.CityViewSet, basename='city')
     router.register('district', api_views.DistrictViewSet, basename='district')
