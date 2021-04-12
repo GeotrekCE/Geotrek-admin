@@ -165,7 +165,7 @@ class BaseApiTest(TestCase):
         cls.district = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.accessibility = trek_factory.AccessibilityFactory()
         cls.route = trek_factory.RouteFactory()
-        cls.theme = common_factory.ThemeFactory()
+        cls.theme2 = common_factory.ThemeFactory()
         cls.portal = common_factory.TargetPortalFactory()
         cls.treks[0].portal.add(cls.portal)
         cls.structure = authent_factory.StructureFactory()
@@ -197,7 +197,7 @@ class BaseApiTest(TestCase):
         )
         cls.parent.accessibilities.add(cls.accessibility)
         cls.parent.source.add(cls.source)
-        cls.parent.themes.add(cls.theme)
+        cls.parent.themes.add(cls.theme2)
         cls.parent.networks.add(cls.network)
         cls.parent.save()
         # For unpublished treks we avoid to create new reservation system and routes
@@ -457,7 +457,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'districts': self.district.pk,
             'structures': self.structure.pk,
             'accessibilities': self.accessibility.pk,
-            'themes': self.theme.pk,
+            'themes': self.theme2.pk,
             'portals': self.portal.pk,
             'labels': '23',
             'routes': '68',
@@ -581,7 +581,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
     def test_theme_list(self):
-        response = self.get_themes_list()
+        response = self.get_themes_list({'portals': self.portal.pk})
         self.assertContains(response, self.theme.label)
 
     def test_city_list(self):
@@ -634,7 +634,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_theme_detail(self):
         self.check_structure_response(
-            self.get_themes_detail(self.theme.pk),
+            self.get_themes_detail(self.theme2.pk),
             THEME_PROPERTIES_JSON_STRUCTURE
         )
 

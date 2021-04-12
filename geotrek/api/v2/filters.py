@@ -547,6 +547,20 @@ class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):
         return self.filter_queryset_related_objects_published(qs, request, 'contents', query)
 
 
+class GeotrekRelatedPortalThemeFilter(GeotrekRelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        portals = request.GET.get('portals')
+        query = Q()
+        if portals:
+            query = Q(treks__portal__in=portals.split(',')) \
+                | Q(touristiccontents__portal__in=portals.split(',')) \
+                | Q(touristic_events__portal__in=portals.split(','))
+        set_1 = self.filter_queryset_related_objects_published(qs, request, 'treks', query)
+        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontents', query)
+        set_3 = self.filter_queryset_related_objects_published(qs, request, 'touristic_events', query)
+        return (set_1 | set_2 | set_3).distinct()
+
+
 class GeotrekRatingScaleFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         practices = request.GET.get('practices')
