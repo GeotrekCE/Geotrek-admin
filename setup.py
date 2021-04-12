@@ -39,7 +39,6 @@ setup(
         'BeautifulSoup4',
         'gpxpy',
         'django-appypod',
-        'appy-python-3',
         'django-compressor',
         'django-crispy-forms',
         'django-embed-video',
