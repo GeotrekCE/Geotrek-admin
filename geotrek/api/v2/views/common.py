@@ -12,7 +12,7 @@ class TargetPortalViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ThemeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalThemeFilter,)
     serializer_class = api_serializers.ThemeSerializer
     queryset = common_models.Theme.objects.all()
 
