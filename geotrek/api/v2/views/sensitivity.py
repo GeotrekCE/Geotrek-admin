@@ -48,11 +48,6 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
         queryset = queryset.annotate(area=Area('geom_transformed')).order_by('-area', 'pk')
         return queryset
 
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        response['Access-Control-Allow-Origin'] = '*'
-        return response
-
 
 class SportPracticeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.SportPracticeSerializer
