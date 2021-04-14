@@ -8,7 +8,7 @@ from geotrek.zoning.filters import ZoningFilterSet
 
 class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
-    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
+    wind = MultipleChoiceFilter(choices=Site.WIND_CHOICES, method='filter_orientation')
     practice = ModelMultipleChoiceFilter(queryset=Practice.objects.all(), method='filter_super')
     sector = ModelMultipleChoiceFilter(queryset=Sector.objects.all(), method='filter_sector', label=_("Sector"))
 
@@ -39,7 +39,7 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation',
                                        label=_("Orientation"))
-    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation',
+    wind = MultipleChoiceFilter(choices=Site.WIND_CHOICES, method='filter_orientation',
                                 label=_("Wind"))
 
     class Meta(StructureRelatedFilterSet.Meta):

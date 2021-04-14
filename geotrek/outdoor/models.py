@@ -112,6 +112,16 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         ('W', _("← W")),
         ('NW', _("↖ NW")),
     )
+    WIND_CHOICES = (
+        ('N', _("↓ N")),
+        ('NE', _("↙ NE")),
+        ('E', _("← E")),
+        ('SE', _("↖ SE")),
+        ('S', _("↑ S")),
+        ('SW', _("↗ SW")),
+        ('W', _("→ W")),
+        ('NW', _("↘ NW")),
+    )
 
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     parent = TreeForeignKey('Site', related_name="children", on_delete=models.PROTECT,
@@ -222,7 +232,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     def super_wind(self):
         "Return wind of itself and its descendants"
         wind = set(sum(self.get_descendants(include_self=True).values_list('wind', flat=True), []))
-        return [o for o, _o in self.ORIENTATION_CHOICES if o in wind]  # Sorting
+        return [o for o, _o in self.WIND_CHOICES if o in wind]  # Sorting
 
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
