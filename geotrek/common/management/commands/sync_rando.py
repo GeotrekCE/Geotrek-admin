@@ -131,11 +131,16 @@ class Command(BaseCommand):
         tiles = common_sync.ZipTilesBuilder(zipfile, **self.builder_args)
 
         geom = trek.geom
-        if geom.geom_type == 'MultiLineString':
-            geom = geom[0]  # FIXME
         geom.transform(4326)
 
-        for (lng, lat) in geom.coords:
+        if geom.geom_type == 'LineString':
+            coords = geom.coords
+        elif geom.geom_type == 'MultiLineString':
+            coords = geom[0].coords
+        elif geom.geom_type == 'Point':
+            coords = [geom.coords]
+
+        for (lng, lat) in coords:
             large = _radius2bbox(lng, lat, settings.MOBILE_TILES_RADIUS_LARGE)
             small = _radius2bbox(lng, lat, settings.MOBILE_TILES_RADIUS_SMALL)
             tiles.add_coverage(bbox=large, zoomlevels=settings.MOBILE_TILES_LOW_ZOOMS)
