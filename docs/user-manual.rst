@@ -55,6 +55,8 @@ Geotrek est composé de différents modules.
 
 **Valorisation de l'offre touristique** :
 
+* Sites outdoor (sites d'escalade, rivières, aires de vol libre…)
+* Parcours outdoor (voie d'escalade, parcours d'eau vive…)
 * Itinéraires (randonnées)
 * POI (points d'intérêt patrimoniaux)
 * Services (informations pratiques comme les points d'eau, passages délicats... selon la typologie que vous souhaitez)
@@ -127,6 +129,71 @@ Pour cela il faut créer un itinéraire parent (séjour itinérant complet) puis
 Le séjour complet ainsi que chaque sont donc chacunes des randonnées comme les autres. La seule différence est que les étapes (itinéraires enfants) sont rattachées à l'itinéraire parent.
 
 Si vous ne souhaitez pas que les étapes soient affichées dans la page de Recherche de Geotrek-rando, il ne faut pas les publier. Il suffit alors de publier l'itinéraire parent, pour que toutes les étapes qui y sont rattachées apparaissent uniquement dans sa fiche détail de Geotrek-rando. 
+
+Valorisation des activités outdoor
+----------------------------------
+
+**Sites et parcours**
+
+Geotrek dédie 2 modules aux activités outdoor: les sites et les parcours. Un site correspond à une zone ou à un réseau hydrographique
+à gérer et/ou à valoriser d'un seul tenant : site d'escalade, cours d'eau, zone de vol libre…
+Les sites peuvent être subdivisés en sous-sites (dits enfants), qui peuvent eux-même être subdivisés en sous-sites :
+secteurs d'escalade (groupe de blocs ou falaise), aires de décollage ou d'atterrissage…
+Chaque site (ou sous-site) peut contenir différents parcours : voie d'escalade, parcours d'eau vive…
+Il est possible de regrouper un enchainement de parcours sous forme d'un parcours particulier appelle itinérance :
+grande voie d'escalade, enchainement entre différentes pratiques…
+
+**Arborescence**
+
+La fiche détail des sites et des parcours présente les liens entre eux sous forme d'une arborescence. Pour ne pas surcharger,
+tous les éléments ne sont pas reprise, mais uniquement :
+- le site/parcours courant,
+- le site auquel il appartient (parent), ainsi que le grand-parent, etc. jusqu'à remonter au plus haut niveau,
+- les différents sous-sites et/ou parcours (enfants) le cas échéant.
+Des liens permettent d'ajouter des sites ou parcours en les positionnant directement dans l'arborescence.
+
+**Nomenclatures**
+
+En déroulant le menun en haut à droite de l'écran et en cliquant sur « Admin » il est possible de modifier les nomenclatures.
+* Filières : elles servent à regrouper les pratiques pour pouvoir filtrer rapidement les sites ou parcours.
+  Par exemple la filière « eau vive » peut regrouper « kayak » et « canyoning ».
+* Pratiques : les pratiques sportives. Vous pouvez préciser à quelle filière elle appartient.
+* Types de sites : ces catégories permettent d'étiquetter et de filtrer les sites. Elles sont spécifiques à chaque pratique.
+  Par exemple « Site école » pour l'escalade.
+* Échelle de cotation : permet de regrouper les cotations faisant partie de la même échelle. Par exemple, 
+
+**Escalade** :
+
+La notion de site est naturelle. Elle peut être définie géographiquement par un polygone.
+Il est possible mais pas obligatoire de créer des sous-site pour des secteurs.
+Ou pour des falaises, elles mêmes divisées en sous-sous sites pour les différents secteurs.
+Chaque voie correspond à un parcours. La voie étant verticale et la carte horizontale,
+le plus pertinent est de définir géographiquement la voie par un simple point.
+Une grande voie peut être décrite simplement par un parcours mais, pour plus de détails,
+il est également possible de créer autant de parcours que de longueurs dans la grande voie.
+Lors de la saisie de la grande voie, il faudra préciser les différentes longueurs dans le champ « Enfants », dans le bon ordre.
+Le nom de chaque longueur pourra reprendre le nom de la voie suffixé par « longueur 1 », « longueur 2 », etc.
+
+**Vol libre**
+
+La zone de vol n'est pas définie géographiquement de manière précise mais fait quand même l'objet d'un site avec un nom
+(ex: « massif de … ») et un polygone approximatif ou bien un point (de préférence celui de départ). Cela n'a pas une importance
+déterminante. Ce qui compte c'est 1) de rendre cela lisible sur une carte et 2) d'être cohérent entre les différents sites.
+Pour chaque zone de vol, les différentes aires de décollage et d'atterrissage sont définies à l'aide de sous-sites.
+Afin de les identifier, il faut créer les types de site « Aire de décollage » et « Aire d'atterrissage » pour la catégorie
+« Vol libre » dans la nomenclature et associer ces types aux aires.
+Comme le vol est libre, il n'est pas nécessaire de définir des parcours. Cependant, il est possible d'en définir pour donner
+des exemples de trajectoires.
+
+**Eau vive**
+
+Le site est généralement constitué par une rivière ou une portion de rivière. Il est possible d'y adjoindre des affluents.
+La géométrie du site est donc un linéraire correspondant à un réseau hydrographique.
+Les aires d'embarquement/débarquement sont définies par des sous-sites. Leur géométrie peut être définie sous forme d'un point
+ou d'un polygone.
+Les parcours sont automatiquement attachés à une aire d'embarquement et une aire de débarquement qui sont les aires les plus
+proches respectivement du début et de la fin du parcours.
+
 
 Gestion des sentiers
 --------------------
