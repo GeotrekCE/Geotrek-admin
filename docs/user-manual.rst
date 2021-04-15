@@ -155,6 +155,7 @@ Des liens permettent d'ajouter des sites ou parcours en les positionnant directe
 **Nomenclatures**
 
 En déroulant le menun en haut à droite de l'écran et en cliquant sur « Admin » il est possible de modifier les nomenclatures.
+
 * Filières : elles servent à regrouper les pratiques pour pouvoir filtrer rapidement les sites ou parcours.
   Par exemple la filière « eau vive » peut regrouper « kayak » et « canyoning ».
 * Pratiques : les pratiques sportives. Vous pouvez préciser à quelle filière elle appartient.
