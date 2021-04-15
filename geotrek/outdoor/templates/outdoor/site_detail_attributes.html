@@ -34,11 +34,13 @@
                             </li>
                         </ul>
                     </li>
+                    {% if object.parent %}
                     <li>
                         <a href="{% url 'outdoor:site_add' %}?site={{ object.parent.pk }}">
                             + <i>{% trans "Add a brother site" %}</i>
                         </a>
                     </li>
+                    {% endif %}
                 </ul>
     {% for ancestor in object.get_ancestors %}
             </li>
@@ -137,7 +139,7 @@
             <th>{{ object|verbose:"wind" }}</th>
             <td>
                 {% for wind in object.super_wind %}
-                    <span{% if wind not in object.wind %} style="font-style: italic;"{% endif %}>{{ wind|orientation_display }}{% if not forloop.last %}</span>,{% endif %}
+                    <span{% if wind not in object.wind %} style="font-style: italic;"{% endif %}>{{ wind|wind_display }}{% if not forloop.last %}</span>,{% endif %}
                 {% empty %}
                     <span class="none">{% trans "None" %}</span>
                 {% endfor %}

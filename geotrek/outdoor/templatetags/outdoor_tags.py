@@ -39,3 +39,8 @@ def site_practices():
 @register.filter
 def orientation_display(orientation):
     return dict(Site.ORIENTATION_CHOICES)[orientation]
+
+
+@register.filter
+def wind_display(orientation):
+    return dict(Site.WIND_CHOICES)[orientation]

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils.translation import gettext as _
 from django_filters.filters import MultipleChoiceFilter, ModelMultipleChoiceFilter
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -7,7 +8,7 @@ from geotrek.zoning.filters import ZoningFilterSet
 
 class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
-    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
+    wind = MultipleChoiceFilter(choices=Site.WIND_CHOICES, method='filter_orientation')
     practice = ModelMultipleChoiceFilter(queryset=Practice.objects.all(), method='filter_super')
     sector = ModelMultipleChoiceFilter(queryset=Sector.objects.all(), method='filter_sector', label=_("Sector"))
 
@@ -19,7 +20,10 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         ]
 
     def filter_orientation(self, qs, name, values):
-        return qs.filter(**{'{}__contains'.format(name): values}).get_ancestors(include_self=True)
+        q = Q()
+        for value in values:
+            q |= Q(**{'{}__contains'.format(name): value})
+        return qs.filter(q).get_ancestors(include_self=True)
 
     def filter_super(self, qs, name, values):
         if not values:
@@ -33,8 +37,10 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
 
 class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
-    wind = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation')
+    orientation = MultipleChoiceFilter(choices=Site.ORIENTATION_CHOICES, method='filter_orientation',
+                                       label=_("Orientation"))
+    wind = MultipleChoiceFilter(choices=Site.WIND_CHOICES, method='filter_orientation',
+                                label=_("Wind"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
@@ -45,4 +51,7 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         ]
 
     def filter_orientation(self, qs, name, values):
-        return qs.filter(**{'site__{}__contains'.format(name): values})
+        q = Q()
+        for value in values:
+            q |= Q(**{'site__{}__contains'.format(name): value})
+        return qs.filter(q)
