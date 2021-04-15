@@ -1,8 +1,8 @@
-geotrek-admin (2.55.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.55.1) RELEASED; urgency=medium
 
   * New package release
 
- -- Bastien POTIRON <bastien.potiron@makina-corpus.com>  Thu, 09 Apr 2021 18:31:46 +0200
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Thu, 15 Apr 2021 09:17:34 +0200
 
 geotrek-admin (2.55.0) RELEASED; urgency=medium
 

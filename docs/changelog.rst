@@ -2,16 +2,28 @@
 CHANGELOG
 =========
 
-2.55.0+dev
+2.55.1 (2021-04-15)
 -------------------
+
+**Documentation**
+
+- Add outdoor section to user manual
 
 **Bug fixes**
 
-- 
+- Fix themes not including published touristic contents/events in API v2
+- Fix duplicate Access-Control-Allow-Origin header in sensitive areas API endpoint
+- Fix orientation/wind labels in outdoor course filter
+- Hide "Add a brother site" link if no parent site
+- Filter outdoor site/course orientations with a OR instead of a AND
+- Reverse wind arrows
+
+**Maintenance**
+
+- Use upstream appy dependency
 
 
-
-2.55.0
+2.55.0 (2021-04-09)
 -------------------
 
 **New Feature**
