@@ -221,7 +221,9 @@ class BaseApiTest(TestCase):
         cls.trek_multilinestring.reload()
         cls.trek_multilinestring.published = True
         cls.trek_multilinestring.save()
-        cls.nb_treks += 3  # add parent, 1 child published and rek with a multilinestring geom
+        # Create a trek with a point geom
+        cls.trek_point = trek_factory.TrekFactory.create(paths=[(cls.path, 0, 0)], geom=Point(cls.path.geom.coords[0]))
+        cls.nb_treks += 4  # add parent, 1 child published and treks with a multilinestring/point geom
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -485,7 +487,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_trek_city(self):
         response = self.get_trek_list({'cities': self.city.pk})
-        self.assertEqual(len(response.json()['results']), 16)
+        self.assertEqual(len(response.json()['results']), 17)
 
     def test_trek_child_not_published_detail_view_ok_if_ancestor_published(self):
         response = self.get_trek_detail(self.child1.pk)
