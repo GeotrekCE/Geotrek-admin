@@ -558,18 +558,18 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     def filter_type1(self, src, val):
         dst = []
         if val:
-            type1, _ = TouristicContentType1.objects.get_or_create(
+            type1 = TouristicContentType1.objects.get_or_create(
                 category=self.obj.category, label=val
-            )
+            )[0]
             dst.append(type1)
         return dst
 
     def filter_type2(self, src, val):
         dst = []
         if val:
-            type2, _ = TouristicContentType2.objects.get_or_create(
+            type2 = TouristicContentType2.objects.get_or_create(
                 category=self.obj.category, label=val
-            )
+            )[0]
             dst.append(type2)
         return dst
 
