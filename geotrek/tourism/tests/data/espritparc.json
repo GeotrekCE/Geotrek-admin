@@ -108,16 +108,14 @@
                 "code": "API",
                 "label": "Miels et produits de la ruche"
             },
-            "sousType": [
-                {
-                    "code": "API.GEL",
-                    "label": "Gel\u00e9e royale, propolis et pollen",
-                    "type": {
-                        "code": "API",
-                        "label": "Miels et produits de la ruche"
-                    }
+            "sousType": {
+                "code": "API.GEL",
+                "label": "Gel\u00e9e royale, propolis et pollen",
+                "type": {
+                    "code": "API",
+                    "label": "Miels et produits de la ruche"
                 }
-            ],
+            },
             "classement": null,
             "nomCommercial": "Gel\u00e9e royale de montagne",
             "descriptionDetaillee": "<p>Mathieu Picavet est un jeune entrepreneur passionn\u00e9 d'apiculture qui a   implant\u00e9 sa miellerie dans un hameau d'Embrun. Il r\u00e9colte son miel sur   les versants montagneux des hauteurs de Serre-Pon\u00e7on. C'est avec la   volont\u00e9 de valoriser les produits locaux de l\u2019Embrunais et d'apporter   une garantie de \"consommer localement\" que Mathieu Picavet s'est engag\u00e9 \u00e0   faire marquer sa production Esprit parc national. Retrouvez son mon   miel de printemps d\u2019Embrun, son miel de montagne, ses flacons de   pollens ou encore de la Gel\u00e9e royale en vente directe ou sur les  march\u00e9s.<\/p><p> \"Nos visiteurs sont heureux d'avoir la garantie de consommer local. Ils aiment ces produits qu'on emporte comme un souvenir\".<\/p>",
@@ -166,16 +164,14 @@
                 "code": "API",
                 "label": "Miels et produits de la ruche"
             },
-            "sousType": [
-                {
-                    "code": "API.GEL",
-                    "label": "Gel\u00e9e royale, propolis et pollen",
-                    "type": {
-                        "code": "API",
-                        "label": "Miels et produits de la ruche"
-                    }
+            "sousType": {
+                "code": "API.GEL",
+                "label": "Gel\u00e9e royale, propolis et pollen",
+                "type": {
+                    "code": "API",
+                    "label": "Miels et produits de la ruche"
                 }
-            ],
+            },
             "classement": null,
             "nomCommercial": "Pollen de montagne",
             "descriptionDetaillee": "<p>Mathieu Picavet est un jeune entrepreneur passionn\u00e9 d'apiculture qui a   implant\u00e9 sa miellerie dans un hameau d'Embrun. Il r\u00e9colte son miel sur   les versants montagneux des hauteurs de Serre-Pon\u00e7on. C'est avec la   volont\u00e9 de valoriser les produits locaux de l\u2019Embrunais et d'apporter   une garantie de \"consommer localement\" que Mathieu Picavet s'est engag\u00e9 \u00e0   faire marquer sa production Esprit parc national. Retrouvez son mon   miel de printemps d\u2019Embrun, son miel de montagne, ses flacons de   pollens ou encore de la Gel\u00e9e royale en vente directe ou sur les  march\u00e9s.<\/p><p> \"Nos visiteurs sont heureux d'avoir la garantie de consommer local. Ils aiment ces produits qu'on emporte comme un souvenir\".<\/p>",
@@ -740,16 +736,14 @@
                 "code": "API",
                 "label": "Miels et produits de la ruche"
             },
-            "sousType": [
-                {
-                    "code": "API.POL",
-                    "label": "Pollen",
-                    "type": {
-                        "code": "API",
-                        "label": "Miels et produits de la ruche"
-                    }
+            "sousType": {
+                "code": "API.POL",
+                "label": "Pollen",
+                "type": {
+                    "code": "API",
+                    "label": "Miels et produits de la ruche"
                 }
-            ],
+            },
             "classement": null,
             "nomCommercial": "Pollen frais de montagne",
             "descriptionDetaillee": "",
@@ -1002,16 +996,14 @@
                 "code": "API",
                 "label": "Miels et produits de la ruche"
             },
-            "sousType": [
-                {
-                    "code": "API.GEL",
-                    "label": "Gel\u00e9e royale, propolis et pollen",
-                    "type": {
-                        "code": "API",
-                        "label": "Miels et produits de la ruche"
-                    }
+            "sousType": {
+                "code": "API.GEL",
+                "label": "Gel\u00e9e royale, propolis et pollen",
+                "type": {
+                    "code": "API",
+                    "label": "Miels et produits de la ruche"
                 }
-            ],
+            },
             "classement": null,
             "nomCommercial": "Pollen de fleurs de montagne",
             "descriptionDetaillee": "<p>Install\u00e9 \u00e0 la Roche de Rame, Franck Violin vous propose un  miel et un pollen de montagne r\u00e9colt\u00e9s dans le vallon du Fournel, la  Vallouise et le Lautaret.<\/p>",
@@ -1055,16 +1047,14 @@
                 "code": "API",
                 "label": "Miels et produits de la ruche"
             },
-            "sousType": [
-                {
-                    "code": "API.CIR",
-                    "label": "Cire",
-                    "type": {
-                        "code": "API",
-                        "label": "Miels et produits de la ruche"
-                    }
+            "sousType": {
+                "code": "API.CIR",
+                "label": "Cire",
+                "type": {
+                    "code": "API",
+                    "label": "Miels et produits de la ruche"
                 }
-            ],
+            },
             "classement": [
                 {
                     "labelType": "Bienvenue \u00e0 la ferme",
