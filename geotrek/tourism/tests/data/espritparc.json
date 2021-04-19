@@ -223,12 +223,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Agriculture biologique",
-                    "label": null
-                }
-            ],
+            "classement": "Agriculture biologique",
             "nomCommercial": "Miel de haute montagne Bio",
             "descriptionDetaillee": "<p>La miellerie de Florence Gartambois se situe au Mon\u00e9tier les Bains sur les hauteurs du massif des Ecrins. Engag\u00e9e dans l'Agriculture Biologique, elle porte une attention particuli\u00e8re au respect de nos \"ch\u00e8res butineuses\" et \u00e0 leur r\u00f4le dans la pollinisation de la flore sauvage. Florence Garambois produit du miel de haute montagne dans les alpages, forets et prairies fleuries du brian\u00e7onnais que vous pourrez retrouver en vente directe, sur les march\u00e9s ou en magasins.<\/p>",
             "informationsPratiques": "<p>   Points de vente : <br>   Vente directe \u00e0 la ferme, horaires d'ouverture de la boutique variables selon la saison. T\u00e9l\u00e9phoner pour plus d'informations.<br>   Vente dans les magasins Bios de la r\u00e9gion.<br> <br>   Autres productions non marqu\u00e9es :<br>   Miels de lavande, toutes fleurs du Luberon, de romarin et de garrigue.<br>   Pollen et propolis.<br>   P\u00e2tisseries au miel : pain d'\u00e9pices, moelleux au miel, sabl\u00e9s au miel, ChocoMiel, CaraMiel.<\/p>",
@@ -401,16 +396,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Bienvenue \u00e0 la ferme",
-                    "label": null
-                },
-                {
-                    "labelType": "Hautes Alpes Naturellement",
-                    "label": null
-                }
-            ],
+            "classement": "Bienvenue \u00e0 la ferme",
             "nomCommercial": "Miel de Montagne",
             "descriptionDetaillee": "<p> Apiculteurs dans la vall\u00e9e du Champsaur, Geoffrey et Patrick Challet proposent des miels de montagne, haute montagne et de pissenlit, valoris\u00e9s sous la marque Esprit parc national. Leurs ruchers se situent dans les espaces pr\u00e9serv\u00e9s du sud du massif des Ecrins. Cette entreprise familiale vous propose de retrouver leur produits directement \u00e0 la miellerie au hameau de Chabottonnes sur la commune de Pont du Foss\u00e9 ou sur les march\u00e9s du Champsaur \u00e0 la belle saison. Vous pourrez partager avec eux leur m\u00e9tier et leur passion pour l'apiculture et le monde des abeilles.<\/p>",
             "informationsPratiques": "<p> Autres produits vendus :<br> Miel de montagne et de pissenlit marqu\u00e9s \"Esprit parc national\", Pain d'\u00e9pice, bougies, bonbons au miel, nougat au miel, et autres produits d\u00e9riv\u00e9s de la ruche.<br> <br> Autres activit\u00e9s : <br> Interventions aupr\u00e8s de groupes scolaires, participation \u00e0 diverses manifestations faisant la promotion de l'apiculture et des produits locaux (f\u00eate du miel \u00e0 Champol\u00e9on, rencontres paysannes, Gap Foire expo, March\u00e9s des producteurs de Pays...).<\/p>",
@@ -461,16 +447,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Bienvenue \u00e0 la ferme",
-                    "label": null
-                },
-                {
-                    "labelType": "Hautes Alpes Naturellement",
-                    "label": null
-                }
-            ],
+            "classement": "Bienvenue \u00e0 la ferme",
             "nomCommercial": "Miel de Haute Montagne",
             "descriptionDetaillee": "<p> Apiculteurs dans la vall\u00e9e du Champsaur, Geoffrey et Patrick Challet ont install\u00e9 leurs ruchers dans les espaces pr\u00e9serv\u00e9s du sud du massif des Ecrins. Vous pourrez partager avec eux leur m\u00e9tier et leur passion pour l'apiculture et le monde des abeilles directement \u00e0 la miellerie, ou sur les march\u00e9s du Champsaur \u00e0 la belle saison.<\/p>",
             "informationsPratiques": "<p> Vente \u00e0 la miellerie, et sur les march\u00e9s du Champsaur<\/p><p> Autres produits vendus :<br> Miel de haute montagne et de pissenlit marqu\u00e9s \"Esprit parc national\", Pain d'\u00e9pice, bougies, bonbons au miel, nougat au miel, et autres produits d\u00e9riv\u00e9s de la ruche.<br> <br> Autres activit\u00e9s : <br> Interventions aupr\u00e8s de groupes scolaires, participation \u00e0 diverses manifestations faisant la promotion de l'apiculture et des produits locaux (f\u00eate du miel \u00e0 Champol\u00e9on, rencontres paysannes, Gap Foire expo, March\u00e9s des producteurs de Pays...).<\/p>",
@@ -521,16 +498,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Bienvenue \u00e0 la ferme",
-                    "label": null
-                },
-                {
-                    "labelType": "Hautes Alpes Naturellement",
-                    "label": null
-                }
-            ],
+            "classement": "Bienvenue \u00e0 la ferme",
             "nomCommercial": "Miel de Pissenlit",
             "descriptionDetaillee": "<p> Apiculteurs dans la vall\u00e9e du Champsaur, Geoffrey et Patrick Challet proposent des miels de montagne, haute montagne et de pissenlit, valoris\u00e9s sous la marque Esprit parc national. Leurs ruchers se situent dans les espaces pr\u00e9serv\u00e9s du sud du massif des Ecrins. Cette entreprise familiale vous propose de retrouver leur produits directement \u00e0 la miellerie au hameau de Chabottonnes sur la commune de Pont du Foss\u00e9 ou sur les march\u00e9s du Champsaur \u00e0 la belle saison. Vous pourrez partager avec eux leur m\u00e9tier et leur passion pour l'apiculture et le monde des abeilles.<\/p>",
             "informationsPratiques": "<p> Autres produits vendus :<br> Miel de montagne et de haute montagne marqu\u00e9s  \"Esprit parc national\", Pain d'\u00e9pice, bougies, bonbons au miel, nougat  au miel, et autres produits d\u00e9riv\u00e9s de la ruche.<br> <br> Autres activit\u00e9s : <br> Interventions  aupr\u00e8s de groupes scolaires, participation \u00e0 diverses manifestations  faisant la promotion de l'apiculture et des produits locaux (f\u00eate du  miel \u00e0 Champol\u00e9on, rencontres paysannes, Gap Foire expo, March\u00e9s des  producteurs de Pays...).<\/p>",
@@ -581,12 +549,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Agriculture biologique",
-                    "label": null
-                }
-            ],
+            "classement": "Agriculture biologique",
             "nomCommercial": "Miel de haute montagne du Valgaudemar",
             "descriptionDetaillee": "<p><span style=\"line-height: 1.45em; background-color: initial;\">La miellerie de G\u00e9rald Tiron est install\u00e9e \u00e0 Saint Firmin, aux portes de la majestueuse et alpine vall\u00e9e du Valgaudemar. Il produit des miels de montagne dans trois vall\u00e9es du massif des Ecrins, ce qui permettra aux amateurs de miels d'appr\u00e9cier la singularit\u00e9 et la diversit\u00e9 des fleurs sauvages du Champsaur, du Valbonnais et du Valgaudemar.<\/span><\/p>",
             "informationsPratiques": "<p><span style=\"line-height: 1.45em; background-color: initial;\">Point(s) de vente :<\/span><\/p><p>Vente \u00e0 la ferme, sur les march\u00e9s et \u00e0 la Maison de Pays du Valgaudemar \u00e0 St Firmin<\/p><p>Autre(s) production(s) \/ produit(s) vendu(s) :<\/p><p>Miels de haute montagne du Valbonnais et du Champsaur marqu\u00e9s, ...<\/p><p>Autre(s) activit\u00e9(s) (visites, ...) :<\/p><p>Pr\u00e9sent sur des salons et autres manifestations faisant la promotion de produits locaux.<\/p><p>Animations et d\u00e9gustations sur demande dans les \u00e9coles.<\/p>",
@@ -1055,12 +1018,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Bienvenue \u00e0 la ferme",
-                    "label": null
-                }
-            ],
+            "classement": "Bienvenue \u00e0 la ferme",
             "nomCommercial": "Pain de cire",
             "descriptionDetaillee": "<p> La cire produite sur le territoire du Parc des Ecrins,                     conditionn\u00e9e en pain de 200 g, permet de fabriquer                     l\u2019encaustique de nos grands-m\u00e8res, de faire des bougies                     et \u00e9galement, une fois liqu\u00e9fier et jeter dans l\u2019eau                     froide\u2026\u2026\u2026..de pr\u00e9dire l\u2019avenir !!!<\/p>",
             "informationsPratiques": "<p>    Exploitation familiale d'apiculteurs depuis 3 g\u00e9n\u00e9rations, nos ruches se situent principalement sur Mon\u00e9tier.<\/p><p>    R\u00e9colte et fabrication r\u00e9alis\u00e9s sur place \u00e0 la Miellerie des Guibertes.<\/p><p>    Le magasin se situe au Hameau des Guibertes \u00e0 Mon\u00e9tier.<\/p><p>   Visite des ruches en juin\/juillet<\/p><p>    Autre produit marqu\u00e9 : Miel de montagne toutes fleurs<\/p>",
@@ -1116,12 +1074,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Bienvenue \u00e0 la ferme",
-                    "label": null
-                }
-            ],
+            "classement": "Bienvenue \u00e0 la ferme",
             "nomCommercial": "Miel de montagne toutes fleurs",
             "descriptionDetaillee": "<p>Miel de montagne toutes fleurs produit sur le territoire du Parc national des Ecrins<\/p>",
             "informationsPratiques": "<p>Exploitation familiale d'apiculteurs depuis 3 g\u00e9n\u00e9rations, nos ruches se situent principalement sur Mon\u00e9tier.<\/p><p>R\u00e9colte et mis en pots r\u00e9alis\u00e9s sur place \u00e0 la Mieillerie des Guibertes.<\/p><p>Visite du rucher en juin\/juillet<\/p><p>Le magasin se situe au Hameau des Guibertes \u00e0 Mon\u00e9tier.<\/p><p>Autre produit marqu\u00e9 : Pain de cire<\/p>",
@@ -1177,12 +1130,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Hautes Alpes Naturellement",
-                    "label": null
-                }
-            ],
+            "classement": "Hautes Alpes Naturellement",
             "nomCommercial": "Miel Cuv\u00e9e sp\u00e9ciale d'Ancelle",
             "descriptionDetaillee": "<p>Le Rucher K est une petite exploitation Apicole Haute Alpine suivie en agriculture biologique. Les ruches passent l\u2019ann\u00e9e dans les Hautes Alpes, les ruchers sont quasi s\u00e9dentaire.<\/p><p>Les transhumances suivent les printemps de nos montagnes<\/p><p>Produits :<\/p><ul><li>Cuv\u00e9e sp\u00e9ciale d'Ancelle<\/li><li> Miel de Montagne Biologique<\/li><\/ul>",
             "informationsPratiques": "<p> Points de vente :<\/p><ul><li>magasins sur Gap et Ancelle<\/li><li>vente au si\u00e8ge de l'exploitation<br> <\/li><\/ul><p>Miel cr\u00e9meux en pot de 500g et kilo<\/p>",
@@ -1238,12 +1186,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Hautes Alpes Naturellement",
-                    "label": null
-                }
-            ],
+            "classement": "labelType": "Hautes Alpes Naturellement",
             "nomCommercial": "Miel de Montagne",
             "descriptionDetaillee": "<p>Miel de Montagne, Biologique.<\/p><p>Petite exploitation apicole, Taille de rucher raisonn\u00e9e.<\/p><p>Ruches restants \u00e0 l'ann\u00e9e dans le d\u00e9partement.<\/p>",
             "informationsPratiques": "<p>Vente sur commande ou en Miellerie \u00e0 Fouillouse<\/p>",
@@ -1299,12 +1242,7 @@
                     "label": "Miels et produits de la ruche"
                 }
             },
-            "classement": [
-                {
-                    "labelType": "Hautes Alpes Naturellement",
-                    "label": null
-                }
-            ],
+            "classement": "labelType": "Hautes Alpes Naturellement",
             "nomCommercial": "Miel des Ecrins",
             "descriptionDetaillee": "<p>Situ\u00e9s aux portes du parc des Ecrins, nous disposons d\u2019une dizaine de ruches que nous d\u00e9pla\u00e7ons en fonction de la fleuraison dans la vall\u00e9e du Rabioux.<\/p>",
             "informationsPratiques": "<p>Miel \u00e0 destination uniquement des clients du g\u00eete<\/p>",
