@@ -558,19 +558,22 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     def filter_type1(self, src, val):
         dst = []
         if val:
-            type1 = TouristicContentType1.objects.get_or_create(
-                category=self.obj.category, label=val
-            )[0]
-            dst.append(type1)
+            try:
+                dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=val))
+            except TouristicContentType1.DoesNotExist:
+                self.add_warning(
+                    _("Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                        subval=val, cat=self.obj.category.label))
         return dst
 
     def filter_type2(self, src, val):
         dst = []
         if val:
-            type2 = TouristicContentType2.objects.get_or_create(
-                category=self.obj.category, label=val
-            )[0]
-            dst.append(type2)
+            try:
+                dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=val))
+            except TouristicContentType2.DoesNotExist:
+                self.add_warning(_("Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                    subval=val, cat=self.obj.category.label))
         return dst
 
 
