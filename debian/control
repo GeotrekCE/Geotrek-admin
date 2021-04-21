@@ -31,6 +31,7 @@ Depends:
  fonts-liberation,
  shared-mime-info,
  redis-server,
- screamshotter (>= 2.0.9 < 3.0.0),
+ screamshotter (>= 2.0.9),
+ screamshotter (<< 3.0.0),
  convertit
 Description: Manage and promote your tourist trails and activites
