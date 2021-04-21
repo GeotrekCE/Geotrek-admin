@@ -64,7 +64,7 @@ resulting in overlapping geometries. Geotrek-admin will associate them all to yo
 objects.
 
 
-Why does Makina Corpus Geotrek, released under an Open-Source license ?
+Why does Makina Corpus sell Geotrek, released under an Open-Source license ?
 ------------------------------------------------------------------------
 
 In the early years of the Free Software movement, it was quite common to pay
