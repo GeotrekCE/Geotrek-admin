@@ -20,7 +20,7 @@ services:
     image: makinacorpus/convertit:latest
 
   screamshotter:
-    image: makinacorpus/screamshotter:latest
+    image: makinacorpus/screamshotter:v2
 
   celery:
     image: geotrek
