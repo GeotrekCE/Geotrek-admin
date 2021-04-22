@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Maintenance**
+
+- Update parser for Esprit Parc National data streams
+
 
 2.55.1 (2021-04-15)
 -------------------
