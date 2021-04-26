@@ -179,7 +179,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
 
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
-        return None
+        return settings.OUTDOOR_INTERSECTION_MARGIN
 
     @classmethod
     def get_create_label(cls):
@@ -297,7 +297,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
 
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
-        return None
+        return settings.OUTDOOR_INTERSECTION_MARGIN
 
     @classmethod
     def get_create_label(cls):
