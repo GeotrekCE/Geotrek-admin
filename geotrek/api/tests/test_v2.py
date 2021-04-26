@@ -128,6 +128,11 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
     'period12', 'practices', 'radius', 'url'
 ])
 
+COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
+    'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
+    'length', 'name', 'ratings', 'site', 'structure', 'url',
+])
+
 
 class BaseApiTest(TestCase):
     """
@@ -224,6 +229,7 @@ class BaseApiTest(TestCase):
         # Create a trek with a point geom
         cls.trek_point = trek_factory.TrekFactory.create(paths=[(cls.path, 0, 0)], geom=Point(cls.path.geom.coords[0]))
         cls.nb_treks += 4  # add parent, 1 child published and treks with a multilinestring/point geom
+        cls.course = outdoor_factory.CourseFactory(site=cls.site)
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -363,6 +369,12 @@ class BaseApiTest(TestCase):
 
     def get_site_detail(self, id_site, params=None):
         return self.client.get(reverse('apiv2:site-detail', args=(id_site,)), params)
+
+    def get_course_list(self, params=None):
+        return self.client.get(reverse('apiv2:course-list'), params)
+
+    def get_course_detail(self, id_course, params=None):
+        return self.client.get(reverse('apiv2:course-detail', args=(id_course,)), params)
 
     def get_outdoorpractice_list(self, params=None):
         return self.client.get(reverse('apiv2:outdoor-practice-list'), params)
@@ -893,6 +905,25 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_site_list_filters(self):
         response = self.get_site_list({
+            'q': 'test string'
+        })
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+    def test_course_list(self):
+        self.check_number_elems_response(
+            self.get_course_list(),
+            outdoor_models.Course
+        )
+
+    def test_course_detail(self):
+        self.check_structure_response(
+            self.get_course_detail(self.course.pk),
+            COURSE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_course_list_filters(self):
+        response = self.get_course_list({
             'q': 'test string'
         })
         #  test response code

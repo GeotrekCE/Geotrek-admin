@@ -39,3 +39,11 @@ class RatingViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.RatingSerializer
     queryset = outdoor_models.Rating.objects \
         .order_by('order', 'name', 'pk')  # Required for reliable pagination
+
+
+class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekCourseFilter,)
+    serializer_class = api_serializers.CourseSerializer
+    queryset = outdoor_models.Course.objects \
+        .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+        .order_by('pk')  # Required for reliable pagination
