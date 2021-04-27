@@ -10,7 +10,7 @@ from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.serializers import SiteSerializer, SiteGeojsonSerializer, CourseSerializer, CourseGeojsonSerializer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityViewSet)
+                             MapEntityDelete, MapEntityViewSet, MapEntityFormat)
 
 
 class SiteLayer(MapEntityLayer):
@@ -99,6 +99,15 @@ class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
     pass
 
 
+class SiteFormatList(MapEntityFormat, SiteList):
+    columns = [
+        'id', 'structure', 'name', 'practice', 'description',
+        'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
+        'portal', 'source', 'information_desks', 'web_links', 'eid',
+        'orientation', 'wind', 'ratings_min', 'ratings_max',
+    ]
+
+
 class CourseLayer(MapEntityLayer):
     properties = ['name']
     filterform = CourseFilterSet
@@ -183,3 +192,10 @@ class CourseDocumentPublic(CourseDocumentPublicMixin, DocumentPublic):
 
 class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
     pass
+
+
+class CourseFormatList(MapEntityFormat, CourseList):
+    columns = [
+        'id', 'structure', 'name', 'site', 'description',
+        'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
+    ]
