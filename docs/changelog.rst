@@ -2,16 +2,35 @@
 CHANGELOG
 =========
 
-2.55.1+dev
+2.56.0 (2021-04-27)
 -------------------
 
 **Bug fixes**
 
--
+- Fix API v2 crash when trek geom is a point
+
+**New features**
+
+- Add outdoor course endpoint to API v2
+- Add all fields to outdoor site/course exports (csv/gpx/shp)
+- Link outdoor sites and courses to other objects, especially
+  POIs, infrastructures and interventions
+
+**Documentation**
+
+- Update database ULM schemas (with outdoor)
+- Update faq.rst
+- Proofreading
 
 **Maintenance**
 
 - Update parser for Esprit Parc National data streams
+- Upgrade Weasyprint to 52.5
+- Use screamshotter >= 2.0.9 by default
+
+**Security**
+
+- Bump django-debug-toolbar from 3.1.1 to 3.2.1 
 
 
 2.55.1 (2021-04-15)
