@@ -1,6 +1,8 @@
 from colorfield.fields import ColorField
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
+from django.contrib.gis.measure import D
 from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
@@ -10,9 +12,10 @@ from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, Publi
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
+from geotrek.maintenance.models import Intervention
+from geotrek.signage.models import Signage, Blade
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.trekking.models import Trek, POI
+from geotrek.trekking.models import Trek, POI, Service
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mptt.models import MPTTModel, TreeForeignKey
@@ -234,20 +237,40 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         wind = set(sum(self.get_descendants(include_self=True).values_list('wind', flat=True), []))
         return [o for o, _o in self.WIND_CHOICES if o in wind]  # Sorting
 
+    def site_interventions(self):
+        # Interventions on sites
+        site_content_type = ContentType.objects.get_for_model(Site)
+        qs = Q(target_type=site_content_type, target_id=self.id)
+        # Interventions on topologies
+        topologies = Topology.objects.existing() \
+            .filter(geom__dwithin=(self.geom, D(m=settings.OUTDOOR_INTERSECTION_MARGIN))) \
+            .values_list('pk', flat=True)
+        not_topology_content_types = [
+            site_content_type,
+            ContentType.objects.get_for_model(Course),
+            ContentType.objects.get_for_model(Blade),
+        ]
+        qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
+        return Intervention.objects.existing().filter(qs).distinct('pk')
+
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Topology.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 TouristicContent.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 TouristicEvent.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Blade.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Intervention.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 
 Site.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Site.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Site.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+Site.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Site.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
 Site.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
 Site.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
 Site.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
 Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Site.add_property('interventions', lambda self: Site.site_interventions(self), _("Interventions"))
 
 
 class CourseOrderedChildManager(models.Manager):
@@ -296,7 +319,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         return self.name
 
     def distance(self, to_cls):
-        """Distance to associate this site to another class"""
+        """Distance to associate this course to another class"""
         return settings.OUTDOOR_INTERSECTION_MARGIN
 
     @classmethod
@@ -311,17 +334,37 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     def children(self):
         return Course.objects.filter(course_parents__parent=self).order_by('course_parents__order')
 
+    def course_interventions(self):
+        # Interventions on courses
+        course_content_type = ContentType.objects.get_for_model(Course)
+        qs = Q(target_type=course_content_type, target_id=self.id)
+        # Interventions on topologies
+        topologies = Topology.objects.existing() \
+            .filter(geom__dwithin=(self.geom, D(m=settings.OUTDOOR_INTERSECTION_MARGIN))) \
+            .values_list('pk', flat=True)
+        not_topology_content_types = [
+            ContentType.objects.get_for_model(Site),
+            course_content_type,
+            ContentType.objects.get_for_model(Blade),
+        ]
+        qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
+        return Intervention.objects.existing().filter(qs).distinct('pk')
+
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 Topology.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 TouristicContent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 TouristicEvent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+Blade.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
 Course.add_property('sites', lambda self: intersecting(Course, self), _("Sites"))
 Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Course.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+Course.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
 Course.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
 Course.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
 Course.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
 Course.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Course.add_property('interventions', lambda self: Course.course_interventions(self), _("Interventions"))
