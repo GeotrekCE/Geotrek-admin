@@ -3,17 +3,16 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from geotrek.common.mixins import PicturesMixin
+from django.utils.translation import gettext_lazy as _
+
+from geotrek.common.mixins import PicturesMixin, TimeStampedModelMixin
+from geotrek.trekking.models import Trek
 from mapentity.models import MapEntityMixin
 
-from geotrek.common.mixins import TimeStampedModelMixin
-from geotrek.trekking.models import Trek
-
-from .helpers import send_report_managers, post_report_to_suricate
-
+#from .helpers import send_report_managers, post_report_to_suricate
+from .helpers import SuricateMessenger
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +119,7 @@ def on_report_saved(sender, instance, created, **kwargs):
 
     if settings.SURICATE_REPORT_ENABLED:
         try:
-            post_report_to_suricate(instance)
+            SuricateMessenger().post_report(instance)
         except Exception as e:
             logger.error('Report could not be sent to Suricate API.')
             logger.exception(e)
@@ -162,6 +161,8 @@ class ReportCategory(models.Model):
 class ReportStatus(models.Model):
     label = models.CharField(verbose_name=_("Status"),
                              max_length=128)
+    id = models.CharField(primary_key=True,
+                          max_length=100)
 
     class Meta:
         verbose_name = _("Status")

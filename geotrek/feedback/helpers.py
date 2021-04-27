@@ -1,6 +1,7 @@
+import json
 import logging
+import urllib.parse
 from hashlib import md5
-from urllib import urlencode
 
 import requests
 from django.conf import settings
@@ -11,14 +12,8 @@ from django.utils.translation import gettext_lazy as _
 logger = logging.getLogger(__name__)
 
 
-def send_report_managers(report, template_name="feedback/report_email.html"):
-    subject = _("Feedback from {email}").format(email=report.email)
-    message = render_to_string(template_name, {"report": report})
-    mail_managers(subject, message, fail_silently=False)
-
-
-class SuricateManager:
-
+class SuricateRequestManager:
+  
     URL = settings.SURICATE_REPORT_SETTINGS["URL"]
     ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
     PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
@@ -28,13 +23,13 @@ class SuricateManager:
         f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
     )
     USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
-    AUTH = (None, settings.SURICATE_REPORT_SETTINGS)[USE_AUTH]
+    AUTH = (None, settings.SURICATE_REPORT_SETTINGS["AUTH"])[USE_AUTH]
 
     def get_from_suricate(self, endpoint, web_service="wsgestion/", url_params={}):
         # Build ever-present URL parameter
         origin_param = f"?id_origin={self.ID_ORIGIN}"
         # Add specific URL parameters
-        extra_url_params = urlencode(url_params)
+        extra_url_params = urllib.parse.urlencode(url_params)
         # Include alert ID in check when needed
         if "uid_alerte" in url_params:
             id_alert = url_params["uid_alerte"]
@@ -43,23 +38,23 @@ class SuricateManager:
             check = self.CHECK_ORIGIN
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
-            print(self.URL + web_service + endpoint + self.CHECK_ORIGIN)
             response = requests.get(
                 f"{self.URL}{web_service}{endpoint}{origin_param}{extra_url_params}{check}",
                 auth=self.AUTH,
             )
-            print(response)
         else:
             response = requests.get(
                 f"{self.URL}{web_service}{endpoint}{origin_param}{extra_url_params}{check}",
             )
-            print(response)
+
         # Handle response
         # todo
         if response.status_code not in [200, 201]:
             print(response.status_code)
             raise Exception("Failed to get Suricate API")
-        return response
+
+        print(json.loads(response.content.decode()))
+        return json.loads(response.content.decode())
 
     def post_to_suricate(self, endpoint, params, web_service="wsgestion/"):
         # If HTTP Auth required, add to request
@@ -77,6 +72,14 @@ class SuricateManager:
             raise Exception("Failed to post on Suricate API")
         return response
 
+
+def send_report_managers(report, template_name="feedback/report_email.html"):
+    subject = _("Feedback from {email}").format(email=report.email)
+    message = render_to_string(template_name, {"report": report})
+    mail_managers(subject, message, fail_silently=False)
+
+
+class SuricateMessenger(SuricateRequestManager):
     def post_report(self, report):
         CHECK = md5(
             (self.PRIVATE_KEY_CLIENT_SERVER + report.email).encode()
@@ -97,18 +100,6 @@ class SuricateManager:
         }
 
         self.post_to_suricate("wsSendReport", params, "wsstandard")
-
-    def get_activities(self):
-        """Get activities list from Suricate Rest API"""
-        return self.get_from_suricate("wsGetActivities")
-
-    def get_statuses(self):
-        """Get statuses list from Suricate Rest API"""
-        return self.get_from_suricate("wsGetStatusList")
-
-    def get_alerts(self):
-        """Get reports list from Suricate Rest API"""
-        return self.get_from_suricate("wsGetAlerts")
 
     def lock_alert(self, id_alert):
         """Lock report on Suricate Rest API"""
@@ -161,8 +152,3 @@ class SuricateManager:
                 "gpslongitude": gps_long,
             },
         )
-
-
-def post_report_to_suricate(report):
-    """ For retrocompatibility """
-    SuricateManager().post_report(report)
