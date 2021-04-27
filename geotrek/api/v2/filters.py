@@ -480,6 +480,24 @@ class GeotrekSiteFilter(BaseFilterBackend):
         )
 
 
+class GeotrekCourseFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        q = request.GET.get('q')
+        if q:
+            queryset = queryset.filter(name__icontains=q)
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Filter by some case-insensitive text contained in name.')
+                )
+            ),
+        )
+
+
 class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         return (

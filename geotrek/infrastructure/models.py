@@ -105,6 +105,10 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     def cities_verbose_name(cls):
         return _("Cities")
 
+    def distance(self, to_cls):
+        """Distance to associate this site to another class"""
+        return settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN
+
 
 class InfrastructureGISManager(NoDeleteManager):
     """ Overide default typology mixin manager"""

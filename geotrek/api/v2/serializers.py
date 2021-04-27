@@ -816,6 +816,17 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'orientation', 'wind', 'ratings_min', 'ratings_max',
             )
 
+    class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        url = HyperlinkedIdentityField(view_name='apiv2:course-detail')
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+
+        class Meta:
+            model = outdoor_models.Course
+            fields = (
+                'id', 'geometry', 'url', 'structure', 'name', 'site', 'description',
+                'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
+            )
+
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     class FlatPageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         title = serializers.SerializerMethodField(read_only=True)

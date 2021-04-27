@@ -119,6 +119,10 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     def lng_value(self):
         return self.geomtransform.y
 
+    def distance(self, to_cls):
+        """Distance to associate this signage to another class"""
+        return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
+
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
 Topology.add_property('signages', Signage.topology_signages, _("Signages"))
@@ -270,6 +274,10 @@ class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     @property
     def coordinates(self):
         return format_coordinates(self.geom)
+
+    def distance(self, to_cls):
+        """Distance to associate this blade to another class"""
+        return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
 
 
 class Line(models.Model):

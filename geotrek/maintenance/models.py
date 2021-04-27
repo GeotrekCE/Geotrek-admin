@@ -87,7 +87,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     def default_stake(self):
         stake = None
-        if self.target:
+        if self.target and isinstance(self.target, Topology):
             for path in self.target.paths.exclude(stake=None):
                 if path.stake > stake:
                     stake = path.stake
@@ -225,12 +225,18 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     @classmethod
     def get_interventions(cls, obj):
         blade_content_type = ContentType.objects.get_for_model(Blade)
+        non_topology_content_types = [blade_content_type]
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            non_topology_content_types += [
+                ContentType.objects.get_by_natural_key('outdoor', 'site'),
+                ContentType.objects.get_by_natural_key('outdoor', 'course'),
+            ]
         if settings.TREKKING_TOPOLOGY_ENABLED:
             topologies = list(Topology.overlapping(obj).values_list('pk', flat=True))
         else:
             area = obj.geom.buffer(settings.INTERVENTION_INTERSECTION_MARGIN)
             topologies = list(Topology.objects.existing().filter(geom__intersects=area).values_list('pk', flat=True))
-        qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
+        qs = Q(target_id__in=topologies) & ~Q(target_type__in=non_topology_content_types)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
             qs |= Q(target_id__in=blades, target_type=blade_content_type)
@@ -239,8 +245,14 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     @classmethod
     def path_interventions(cls, path):
         blade_content_type = ContentType.objects.get_for_model(Blade)
+        non_topology_content_types = [blade_content_type]
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            non_topology_content_types += [
+                ContentType.objects.get_by_natural_key('outdoor', 'site'),
+                ContentType.objects.get_by_natural_key('outdoor', 'course'),
+            ]
         topologies = list(Topology.objects.filter(aggregations__path=path).values_list('pk', flat=True))
-        qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
+        qs = Q(target_id__in=topologies) & ~Q(target_type__in=non_topology_content_types)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
             qs |= Q(target_id__in=blades, target_type=blade_content_type)
@@ -265,6 +277,10 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         if self.target_type == ContentType.objects.get_for_model(Infrastructure):
             return [self.target]
         return []
+
+    def distance(self, to_cls):
+        """Distance to associate this intervention to another class"""
+        return settings.MAINTENANCE_INTERSECTION_MARGIN
 
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))
