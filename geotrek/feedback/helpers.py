@@ -13,17 +13,43 @@ logger = logging.getLogger(__name__)
 
 
 class SuricateRequestManager:
-  
+
     URL = settings.SURICATE_REPORT_SETTINGS["URL"]
     ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
     PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
         "PRIVATE_KEY_CLIENT_SERVER"
     ]
-    CHECK_ORIGIN = (
+    PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_REPORT_SETTINGS[
+        "PRIVATE_KEY_SERVER_CLIENT"
+    ]
+    CHECK_CLIENT = (
         f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
     )
+    CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
+
     USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
     AUTH = (None, settings.SURICATE_REPORT_SETTINGS["AUTH"])[USE_AUTH]
+
+    def check_response_integrity(self, response, id_alert=""):
+        if response.status_code not in [200, 201]:
+            raise Exception(
+                f"Failed to access Suricate API - Status code: {response.status_code}"
+            )
+        else:
+            data = json.loads(response.content.decode())
+            if "code_ok" in data and not data["code_ok"]:
+                raise Exception(
+                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']}] \n   └──  {data['message']}"
+                )
+            return data
+        #  THIS SHOULD BE A THING but the documentation is at war with the API
+        #         else:
+        #         if id_alert:
+        #             check = self.PRIVATE_KEY_SERVER_CLIENT
+        #         else:
+        #             check = md5((self.PRIVATE_KEY_CLIENT_SERVER + id_alert + self.ID_ORIGIN).encode()).hexdigest()
+        #         if check != data["check"]:
+        #             raise Exception(f"Integrity of Suricate response compromised: expected checksum {check}, got checksum {data['check']}")
 
     def get_from_suricate(self, endpoint, web_service="wsgestion/", url_params={}):
         # Build ever-present URL parameter
@@ -35,7 +61,7 @@ class SuricateRequestManager:
             id_alert = url_params["uid_alerte"]
             check = f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + id_alert + self.ID_ORIGIN).encode()).hexdigest()}"
         else:
-            check = self.CHECK_ORIGIN
+            check = self.CHECK_CLIENT
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.get(
@@ -46,15 +72,7 @@ class SuricateRequestManager:
             response = requests.get(
                 f"{self.URL}{web_service}{endpoint}{origin_param}{extra_url_params}{check}",
             )
-
-        # Handle response
-        # todo
-        if response.status_code not in [200, 201]:
-            print(response.status_code)
-            raise Exception("Failed to get Suricate API")
-
-        print(json.loads(response.content.decode()))
-        return json.loads(response.content.decode())
+        return self.check_response_integrity(response)
 
     def post_to_suricate(self, endpoint, params, web_service="wsgestion/"):
         # If HTTP Auth required, add to request
@@ -66,11 +84,8 @@ class SuricateRequestManager:
             )
         else:
             response = requests.post(f"{self.URL}{web_service}{endpoint}", params)
-        # Handle response
-        # todo
-        if response.status_code not in [200, 201]:
-            raise Exception("Failed to post on Suricate API")
-        return response
+
+        return self.check_response_integrity(response)
 
 
 def send_report_managers(report, template_name="feedback/report_email.html"):
