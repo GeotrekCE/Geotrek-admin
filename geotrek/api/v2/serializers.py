@@ -447,15 +447,15 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_departure(self, obj):
             return get_translation_or_dict('departure', self, obj)
 
-        def get_first_point(self, obj):
-            if isinstance(obj.geom, Point):
-                return obj.geom
-            if isinstance(obj.geom, MultiLineString):
-                return Point(obj.geom[0][0])
-            return Point(obj.geom[0])
+        def get_first_point(self, geom):
+            if isinstance(geom, Point):
+                return geom
+            if isinstance(geom, MultiLineString):
+                return Point(geom[0][0])
+            return Point(geom[0])
 
         def get_departure_geom(self, obj):
-            return self.get_first_point(obj)[:2]
+            return self.get_first_point(obj.geom3d_transformed)[:2]
 
         def get_arrival(self, obj):
             return get_translation_or_dict('arrival', self, obj)
@@ -531,7 +531,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return [city.code for city in obj.published_cities]
 
         def get_departure_city(self, obj):
-            geom = self.get_first_point(obj)
+            geom = self.get_first_point(obj.geom)
             city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
             return city.code if city else None
 
