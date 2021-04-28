@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
+from geotrek.common.models import Organism
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
@@ -162,6 +163,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
 
     check_structure_in_forms = False
 
@@ -236,6 +238,12 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         "Return wind of itself and its descendants"
         wind = set(sum(self.get_descendants(include_self=True).values_list('wind', flat=True), []))
         return [o for o, _o in self.WIND_CHOICES if o in wind]  # Sorting
+
+    @property
+    def super_managers(self):
+        "Return managers of itself and its descendants"
+        sites = self.get_descendants(include_self=True)
+        return Organism.objects.filter(site__in=sites)  # Sorted and unique
 
     def site_interventions(self):
         # Interventions on sites

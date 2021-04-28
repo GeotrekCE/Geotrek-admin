@@ -104,7 +104,7 @@ class SiteFormatList(MapEntityFormat, SiteList):
         'id', 'structure', 'name', 'practice', 'description',
         'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
         'portal', 'source', 'information_desks', 'web_links', 'eid',
-        'orientation', 'wind', 'ratings_min', 'ratings_max',
+        'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
     ]
 
 

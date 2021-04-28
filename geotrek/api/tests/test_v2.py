@@ -107,7 +107,7 @@ RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'ambiance', 'description', 'description_teaser', 'eid', 'geometry', 'id',
-    'information_desks', 'labels', 'name', 'period', 'portal', 'practice', 'source',
+    'information_desks', 'labels', 'name', 'period', 'portal', 'practice', 'source', 'managers',
     'structure', 'themes', 'url', 'web_links', 'orientation', 'wind', 'ratings_min', 'ratings_max',
 ])
 
@@ -133,6 +133,8 @@ COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
     'length', 'name', 'ratings', 'site', 'structure', 'url',
 ])
 
+ORGANISM_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
+
 
 class BaseApiTest(TestCase):
     """
@@ -143,6 +145,7 @@ class BaseApiTest(TestCase):
     def setUpTestData(cls):
         cls.client = Client()
         cls.nb_treks = 15
+        cls.organism = common_factory.OrganismFactory.create()
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
         cls.label = common_factory.LabelFactory(id=23)
@@ -183,7 +186,7 @@ class BaseApiTest(TestCase):
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
-        cls.site = outdoor_factory.SiteFactory()
+        cls.site = outdoor_factory.SiteFactory(managers=[cls.organism])
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         cls.content2.category = cls.category
         cls.content2.portal.add(cls.portal)
@@ -408,6 +411,12 @@ class BaseApiTest(TestCase):
 
     def get_config(self, params=None):
         return self.client.get(reverse('apiv2:config', params))
+
+    def get_organism_list(self, params=None):
+        return self.client.get(reverse('apiv2:organism-list'), params)
+
+    def get_organism_detail(self, id_organism, params=None):
+        return self.client.get(reverse('apiv2:organism-detail', args=(id_organism,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -1003,6 +1012,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
         json_response = response.json()
         self.assertEqual(sorted(json_response.keys()), ['bbox'])
+
+    def test_organism_list(self):
+        self.check_number_elems_response(
+            self.get_organism_list(),
+            common_models.Organism
+        )
+
+    def test_organism_detail(self):
+        self.check_structure_response(
+            self.get_organism_detail(self.organism.pk),
+            ORGANISM_PROPERTIES_JSON_STRUCTURE
+        )
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):

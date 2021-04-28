@@ -57,3 +57,8 @@ class LabelViewSet(api_viewsets.GeotrekViewSet):
         elem = get_object_or_404(common_models.Label, pk=pk)
         serializer = api_serializers.LabelSerializer(elem, many=False, context={'request': request})
         return Response(serializer.data)
+
+
+class OrganismViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.OrganismSerializer
+    queryset = common_models.Organism.objects.all()

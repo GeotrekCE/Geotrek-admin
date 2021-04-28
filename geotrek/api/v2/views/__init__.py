@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from .authent import StructureViewSet  # noqa
-from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet, LabelViewSet  # noqa
+from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet, LabelViewSet, OrganismViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:

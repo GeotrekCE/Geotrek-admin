@@ -13,6 +13,7 @@ router.register('theme', api_views.ThemeViewSet, basename='theme')
 router.register('source', api_views.SourceViewSet, basename='source')
 router.register('reservationsystem', api_views.ReservationSystemViewSet, basename='reservationsystem')
 router.register('label', api_views.LabelViewSet, basename='label')
+router.register('organism', api_views.OrganismViewSet, basename='organism')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
