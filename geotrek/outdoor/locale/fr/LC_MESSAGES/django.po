@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-18 07:45+0000\n"
+"POT-Creation-Date: 2021-04-28 06:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,15 @@ msgstr "Outdoor"
 msgid "Sector"
 msgstr "Filière"
 
+msgid "Manager"
+msgstr "Gestionnaire"
+
+msgid "Orientation"
+msgstr "Orientation"
+
+msgid "Wind"
+msgstr "Vent"
+
 msgid "Children"
 msgstr "Enfants"
 
@@ -36,11 +45,13 @@ msgid "Hidden ordered children"
 msgstr "Enfants ordonnés cachés"
 
 msgid "Cannot add children because this course is itself a child."
-msgstr "Impossible d'ajouter des enfants car ce parcours est lui-même un enfant."
+msgstr ""
+"Impossible d'ajouter des enfants car ce parcours est lui-même un enfant."
 
 #, python-brace-format
 msgid "Cannot use parent course {name} as a child course."
-msgstr "Impossible d'utiliser le parcours parent {name} comme itinéraire enfant."
+msgstr ""
+"Impossible d'utiliser le parcours parent {name} comme itinéraire enfant."
 
 msgid "Name"
 msgstr "Nom"
@@ -111,6 +122,30 @@ msgstr "← O"
 msgid "↖ NW"
 msgstr "↖ NO"
 
+msgid "↓ N"
+msgstr "↓ N"
+
+msgid "↙ NE"
+msgstr "↙ NE"
+
+msgid "← E"
+msgstr "← E"
+
+msgid "↖ SE"
+msgstr "↖ SE"
+
+msgid "↑ S"
+msgstr "↑ S"
+
+msgid "↗ SW"
+msgstr "↗ SO"
+
+msgid "→ W"
+msgstr "→ O"
+
+msgid "↘ NW"
+msgstr "↘ NO"
+
 msgid "Location"
 msgstr "Emplacement"
 
@@ -140,12 +175,6 @@ msgstr "Risques, danger, meilleure période, ..."
 
 msgid "Period"
 msgstr "Période"
-
-msgid "Orientation"
-msgstr "Orientation"
-
-msgid "Wind"
-msgstr "Vent"
 
 msgid "Labels"
 msgstr "Étiquettes"
@@ -180,6 +209,9 @@ msgstr "Type"
 msgid "External id"
 msgstr "ID externe"
 
+msgid "Managers"
+msgstr "Gestionnaires"
+
 msgid "Outdoor site"
 msgstr "Site outdoor"
 
@@ -198,6 +230,9 @@ msgstr "Itinéraires"
 msgid "POIs"
 msgstr "POI"
 
+msgid "Services"
+msgstr "Services"
+
 msgid "Trails"
 msgstr "Sentiers"
 
@@ -212,6 +247,9 @@ msgstr "Contenus touristiques"
 
 msgid "Touristic events"
 msgstr "Événements touristiques"
+
+msgid "Interventions"
+msgstr "Interventions"
 
 msgid "Site"
 msgstr "Site"
@@ -250,7 +288,7 @@ msgid "Itinerancy"
 msgstr "Itinérance"
 
 msgid "Child of:"
-msgstr ""
+msgstr "Enfant de :"
 
 msgid "Parent of:"
 msgstr "Parent de :"

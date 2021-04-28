@@ -182,6 +182,18 @@
             </td>
         </tr>
         <tr>
+            <th>{% trans "Managers" %}</th>
+            <td>
+                {% for manager in object.super_managers %}
+                    {% if forloop.first %}<ul>{% endif %}
+                        <li{% if manager not in object.managers.all %} style="font-style: italic;"{% endif %}>{{ manager }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "External id" %}</th>
             <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>

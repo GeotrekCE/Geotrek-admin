@@ -150,6 +150,16 @@ class TargetPortalSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
+class OrganismSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.CharField(source='organism')
+
+    class Meta:
+        model = common_models.Organism
+        fields = (
+            'id', 'name'
+        )
+
+
 class RecordSourceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.RecordSource
@@ -813,7 +823,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'id', 'geometry', 'url', 'structure', 'name', 'practice', 'description',
                 'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
                 'portal', 'source', 'information_desks', 'web_links', 'eid',
-                'orientation', 'wind', 'ratings_min', 'ratings_max',
+                'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
             )
 
     class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

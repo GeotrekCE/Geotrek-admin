@@ -34,6 +34,7 @@ class SiteForm(CommonForm):
             'web_links',
             'portal',
             'source',
+            'managers',
             'eid',
         )
     ]
@@ -42,7 +43,7 @@ class SiteForm(CommonForm):
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
                   'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
                   'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'eid',
-                  'orientation', 'wind']
+                  'orientation', 'wind', 'managers']
         model = Site
 
     def __init__(self, site=None, *args, **kwargs):
