@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.56.0+dev
+2.57.0 (2021-04-28)
 -------------------
+
+**New features**
+
+- Add managers field to outdoor sites
 
 **Bug fixes**
 
--
+- Fix projection of departure_geom in API v2
 
 
 2.56.0 (2021-04-27)
