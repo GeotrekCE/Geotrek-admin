@@ -48,9 +48,6 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
     model = feedback_models.ReportCategory
 
-    def dispatch(self, *args, **kwargs):
-        return super(CategoryList, self).dispatch(*args, **kwargs)
-
     def get_context_data(self, **kwargs):
         return [{'id': c.id,
                  'label': c.label} for c in self.object_list]
@@ -88,7 +85,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
 
     @action(detail=False, methods=['post'])
     def report(self, request, lang=None):
-        response = super(ReportViewSet, self).create(request)
+        response = super().create(request)
         creator, created = get_user_model().objects.get_or_create(username='feedback', defaults={'is_active': False})
         for file in request._request.FILES.values():
             Attachment.objects.create(

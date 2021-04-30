@@ -2,12 +2,172 @@
 CHANGELOG
 =========
 
-2.51.0+dev
+2.57.0+dev
 -------------------
 
 **Bug fixes**
 
 -
+
+
+2.57.0 (2021-04-28)
+-------------------
+
+**New features**
+
+- Add managers field to outdoor sites
+
+**Bug fixes**
+
+- Fix projection of departure_geom in API v2
+
+
+2.56.0 (2021-04-27)
+-------------------
+
+**Bug fixes**
+
+- Fix API v2 crash when trek geom is a point
+
+**New features**
+
+- Add outdoor course endpoint to API v2
+- Add all fields to outdoor site/course exports (csv/gpx/shp)
+- Link outdoor sites and courses to other objects, especially
+  POIs, infrastructures and interventions
+
+**Documentation**
+
+- Update database ULM schemas (with outdoor)
+- Update faq.rst
+- Proofreading
+
+**Maintenance**
+
+- Update parser for Esprit Parc National data streams
+- Upgrade Weasyprint to 52.5
+- Use screamshotter >= 2.0.9 by default
+
+**Security**
+
+- Bump django-debug-toolbar from 3.1.1 to 3.2.1 
+
+
+2.55.1 (2021-04-15)
+-------------------
+
+**Documentation**
+
+- Add outdoor section to user manual
+
+**Bug fixes**
+
+- Fix themes not including published touristic contents/events in API v2
+- Fix duplicate Access-Control-Allow-Origin header in sensitive areas API endpoint
+- Fix orientation/wind labels in outdoor course filter
+- Hide "Add a brother site" link if no parent site
+- Filter outdoor site/course orientations with a OR instead of a AND
+- Reverse wind arrows
+
+**Maintenance**
+
+- Use upstream appy dependency
+
+
+2.55.0 (2021-04-09)
+-------------------
+
+**New Feature**
+
+- Add /sensitivearea_species endpoint on api v2
+
+
+2.54.0 (2021-04-09)
+-------------------
+
+**New Feature**
+
+- Add 'trek' filter on endpoint /sensitivearea in api v2
+
+
+2.53.1 (2021-04-07)
+-------------------
+
+**Bug fixes**
+
+- Fix geojson display in API V2 /trek/ endpoint
+- Add publication filter by language on /trek/ detail view endpoint
+- Fixed the fact that the detail view of /trek/ endpoint crash when a trek has more than one parent
+- Do not display elements linked to content not published or not used at all in multiple endpoints on API V2
+
+
+2.53.0 (2021-04-01)
+-------------------
+
+**New Feature**
+
+- Add departure_city attribute to treks and touristiccontents in API v2
+- Allow to filter nomenclatures by portal in API v2
+- Allow to retrieve a single unpublished trek if its parent is published in API v2
+
+**Maintenance**
+
+- Simplify code thanks to Python 3 (thanks to Claude Paroz)
+- Add new sentry-sdk dependency
+
+**Bug fixes**
+
+- Avoid a db connection when requesting time from database (thanks to Claude Paroz)
+
+**Security**
+
+- Bump lxml from 4.6.2 to 4.6.3
+
+
+2.52.0 (2021-03-25)
+-------------------
+
+**Bug fixes**
+
+- Allow to add an outdoor sub-site or a course in a site owned by another structure
+- Fix outdoor site orientation/wind filtering
+- Add missing outdoor module translations
+
+**New Feature**
+
+- Outdoor course itinerancy
+- Add altimetry informations to outdoor sites and courses
+- Add outdoor course fields height and equipment
+- Add course layer to layers control
+- Allow VAR_DIR setting from environment (thanks to Claude Paroz)
+- Allow easier customization of loadpaths command (thanks to Claude Paroz)
+
+**Security**
+
+- Bump pillow from 7.1.2 to 8.1.1
+- Bump jinja2 from 2.11.1 to 2.11.3
+
+
+2.51.2 (2021-03-16)
+-------------------
+
+**Bug fixes**
+
+- Translate all text fields in API v2 trek endpoint
+- Serve attachments for flatpages
+- Fix bbox filtering of interventions
+
+**Performances**
+
+- Add prefetch to Path exports (CSV/Shapefile/GPX)
+
+
+2.51.1 (2021-03-05)
+-------------------
+
+**Bug fixes**
+
+- Fix departure_geom attribute in API v2 (WGS84 projection, without Z)
 
 
 2.51.0 (2021-03-02)

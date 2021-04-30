@@ -10,7 +10,7 @@ from geotrek.zoning.models import City, District, RestrictedArea
 class ZoningAdminTest(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(ZoningAdminTest, cls).setUpClass()
+        super().setUpClass()
         cls.user = SuperUserFactory.create(password='booh')
 
     def login(self):

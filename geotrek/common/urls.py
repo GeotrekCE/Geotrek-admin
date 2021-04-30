@@ -33,7 +33,7 @@ class PublishableEntityOptions(MapEntityOptions):
     def scan_views(self, *args, **kwargs):
         """ Adds the URLs of all views provided by ``PublishableMixin`` models.
         """
-        views = super(PublishableEntityOptions, self).scan_views(*args, **kwargs)
+        views = super().scan_views(*args, **kwargs)
         publishable_views = [
             path('api/<lang:lang>/{name}s/<int:pk>/<slug:slug>_booklet.pdf'.format(name=self.modelname),
                  self.document_public_booklet_view.as_view(model=self.model),

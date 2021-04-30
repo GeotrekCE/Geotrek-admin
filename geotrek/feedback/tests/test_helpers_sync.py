@@ -13,7 +13,7 @@ from geotrek.feedback.helpers_sync import SyncRando
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.report_category = ReportCategoryFactory.create()
 
     @patch('sys.stdout', new_callable=StringIO)

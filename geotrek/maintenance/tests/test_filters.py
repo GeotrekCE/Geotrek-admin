@@ -18,6 +18,27 @@ from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
 from geotrek.zoning.factories import CityFactory, DistrictFactory
 
 
+class InterventionFilteringByBboxTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.seek_path = PathFactory(geom=getRandomLineStringInBounds())
+        seek_topo = TopologyFactory.create(paths=[cls.seek_path])
+        cls.seek_inter = InterventionFactory.create(target=seek_topo)
+
+    def test_in_bbox(self):
+        xmin, ymin, xmax, ymax = self.seek_inter.geom.transform(settings.API_SRID, clone=True).extent
+        bbox = Polygon([[xmin - 1, ymin - 1], [xmin - 1, ymax + 1], [xmax + 1, ymax + 1], [xmax + 1, ymin - 1], [xmin - 1, ymin - 1]])
+        qs = InterventionFilterSet({'bbox': bbox.wkt}).qs
+        self.assertEqual(len(qs), 1)
+        self.assertEqual(qs[0], self.seek_inter)
+
+    def test_out_bbox(self):
+        xmin, ymin, xmax, ymax = self.seek_inter.geom.transform(settings.API_SRID, clone=True).extent
+        bbox = Polygon([[xmax + 1, ymax + 1], [xmax + 1, ymax + 2], [xmax + 2, ymax + 2], [xmax + 2, ymax + 1], [xmax + 1, ymax + 1]])
+        qs = InterventionFilterSet({'bbox': bbox.wkt}).qs
+        self.assertEqual(len(qs), 0)
+
+
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionFilteringByLandTest(TestCase):
     @classmethod

@@ -1,10 +1,15 @@
 from crispy_forms.layout import Div
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 from geotrek.common.forms import CommonForm
-from geotrek.outdoor.models import Site, Course
+from geotrek.outdoor.models import Site, Course, OrderedCourseChild
 
 
 class SiteForm(CommonForm):
+    orientation = forms.MultipleChoiceField(choices=Site.ORIENTATION_CHOICES, required=False)
+    wind = forms.MultipleChoiceField(choices=Site.ORIENTATION_CHOICES, required=False)
+
     geomfields = ['geom']
 
     fieldslayout = [
@@ -29,6 +34,7 @@ class SiteForm(CommonForm):
             'web_links',
             'portal',
             'source',
+            'managers',
             'eid',
         )
     ]
@@ -37,14 +43,12 @@ class SiteForm(CommonForm):
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
                   'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
                   'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'eid',
-                  'orientation', 'wind']
+                  'orientation', 'wind', 'managers']
         model = Site
 
     def __init__(self, site=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['parent'].initial = site
-        self.fields['orientation'].widget = forms.SelectMultiple(choices=Site.ORIENTATION_CHOICES)
-        self.fields['wind'].widget = forms.SelectMultiple(choices=Site.ORIENTATION_CHOICES)
         if self.instance.pk:
             descendants = self.instance.get_descendants(include_self=True).values_list('pk', flat=True)
             self.fields['parent'].queryset = Site.objects.exclude(pk__in=descendants)
@@ -84,6 +88,13 @@ class SiteForm(CommonForm):
 
 
 class CourseForm(CommonForm):
+    children_course = forms.ModelMultipleChoiceField(label=_("Children"),
+                                                     queryset=Course.objects.all(), required=False,
+                                                     help_text=_("Select children in order"))
+    hidden_ordered_children = forms.CharField(label=_("Hidden ordered children"),
+                                              widget=forms.widgets.HiddenInput(),
+                                              required=False)
+
     geomfields = ['geom']
 
     fieldslayout = [
@@ -95,13 +106,17 @@ class CourseForm(CommonForm):
             'published',
             'description',
             'advice',
+            'equipment',
+            'height',
+            'children_course',
             'eid',
+            'hidden_ordered_children',
         )
     ]
 
     class Meta:
         fields = ['geom', 'structure', 'name', 'site', 'review', 'published', 'description',
-                  'advice', 'eid']
+                  'advice', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
         model = Course
 
     def __init__(self, site=None, *args, **kwargs):
@@ -118,6 +133,25 @@ class CourseForm(CommonForm):
                     initial=ratings[0] if ratings else None
                 )
                 self.fieldslayout[0].insert(5, fieldname)
+        if self.instance:
+            queryset_children = OrderedCourseChild.objects.filter(parent__id=self.instance.pk).order_by('order')
+            # init multiple children field with data
+            self.fields['children_course'].queryset = Course.objects.exclude(pk=self.instance.pk)
+            self.fields['children_course'].initial = [c.child.pk for c in self.instance.course_children.all()]
+            # init hidden field with children order
+            self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+
+    def clean_children_course(self):
+        """
+        Check the course is not parent and child at the same time
+        """
+        children = self.cleaned_data['children_course']
+        if children and self.instance and self.instance.course_parents.exists():
+            raise ValidationError(_("Cannot add children because this course is itself a child."))
+        for child in children:
+            if child.course_children.exists():
+                raise ValidationError(_("Cannot use parent course {name} as a child course.".format(name=child.name)))
+        return children
 
     def save(self, *args, **kwargs):
         course = super().save(self, *args, **kwargs)
@@ -135,5 +169,24 @@ class CourseForm(CommonForm):
                     to_remove += list(course.ratings.filter(scale=scale).values_list('pk', flat=True))
             course.ratings.remove(*to_remove)
             course.ratings.add(*to_add)
+
+        # Save children
+        ordering = []
+        if self.cleaned_data['hidden_ordered_children']:
+            ordering = self.cleaned_data['hidden_ordered_children'].split(',')
+        order = 0
+        # add and update
+        for value in ordering:
+            child, created = OrderedCourseChild.objects.get_or_create(parent=self.instance,
+                                                                      child=Course.objects.get(pk=value))
+            child.order = order
+            child.save()
+            order += 1
+        # delete
+        new_list_children = self.cleaned_data['children_course'].values_list('pk', flat=True)
+        for child_relation in self.instance.course_children.all():
+            # if existant child not in selection, deletion
+            if child_relation.child_id not in new_list_children:
+                child_relation.delete()
 
         return course

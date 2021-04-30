@@ -24,7 +24,7 @@ else:
         geomfields = ['geom']
 
         def __init__(self, *args, **kwargs):
-            super(BaseInfrastructureForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
             self.fields['geom'].widget.modifiable = modifiable

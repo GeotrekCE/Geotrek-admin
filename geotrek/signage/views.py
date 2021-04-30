@@ -57,7 +57,7 @@ class SignageDetail(MapEntityDetail):
     queryset = Signage.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(SignageDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -77,7 +77,7 @@ class SignageUpdate(MapEntityUpdate):
 
     @same_structure_required('signage:signage_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SignageUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SignageDelete(MapEntityDelete):
@@ -85,7 +85,7 @@ class SignageDelete(MapEntityDelete):
 
     @same_structure_required('signage:signage_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SignageDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SignageViewSet(MapEntityViewSet):
@@ -102,7 +102,7 @@ class BladeDetail(MapEntityDetail):
     queryset = Blade.objects.all()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(BladeDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().signage.same_structure(self.request.user)
         return context
 
@@ -128,7 +128,7 @@ class BladeCreate(LineMixin, MapEntityCreate):
         """
         Returns the initial data to use for forms on this view.
         """
-        initial = super(BladeCreate, self).get_initial()
+        initial = super().get_initial()
         signage = self.get_signage()
         initial['signage'] = signage
         return initial
@@ -143,7 +143,7 @@ class BladeUpdate(LineMixin, MapEntityUpdate):
 
     @same_structure_required('signage:blade_detail')
     def dispatch(self, *args, **kwargs):
-        return super(BladeUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class BladeDelete(MapEntityDelete):
@@ -151,11 +151,11 @@ class BladeDelete(MapEntityDelete):
 
     @same_structure_required('signage:blade_detail')
     def dispatch(self, *args, **kwargs):
-        return super(BladeDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         self.signage = self.get_object().signage
-        return super(BladeDelete, self).delete(request, args, kwargs)
+        return super().delete(request, args, kwargs)
 
     def get_success_url(self):
         return self.signage.get_detail_url()

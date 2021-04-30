@@ -39,7 +39,6 @@ setup(
         'BeautifulSoup4',
         'gpxpy',
         'django-appypod',
-        'appy-python-3',
         'django-compressor',
         'django-crispy-forms',
         'django-embed-video',
@@ -65,7 +64,6 @@ setup(
         'pygal',
         'django-extended-choices',
         'django-mptt',
-        'django-multiselectfield',
         'geojson',
         'tif2geojson',
         'drf-dynamic-fields',
@@ -88,5 +86,5 @@ setup(
                  'Environment :: Web Environment',
                  'Framework :: Django',
                  'Development Status :: 5 - Production/Stable',
-                 'Programming Language :: Python :: 2.7'],
+                 'Programming Language :: Python :: 3'],
 )

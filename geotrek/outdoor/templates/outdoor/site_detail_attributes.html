@@ -34,11 +34,13 @@
                             </li>
                         </ul>
                     </li>
+                    {% if object.parent %}
                     <li>
                         <a href="{% url 'outdoor:site_add' %}?site={{ object.parent.pk }}">
                             + <i>{% trans "Add a brother site" %}</i>
                         </a>
                     </li>
+                    {% endif %}
                 </ul>
     {% for ancestor in object.get_ancestors %}
             </li>
@@ -137,7 +139,7 @@
             <th>{{ object|verbose:"wind" }}</th>
             <td>
                 {% for wind in object.super_wind %}
-                    <span{% if wind not in object.wind %} style="font-style: italic;"{% endif %}>{{ wind|orientation_display }}{% if not forloop.last %}</span>,{% endif %}
+                    <span{% if wind not in object.wind %} style="font-style: italic;"{% endif %}>{{ wind|wind_display }}{% if not forloop.last %}</span>,{% endif %}
                 {% empty %}
                     <span class="none">{% trans "None" %}</span>
                 {% endfor %}
@@ -180,10 +182,23 @@
             </td>
         </tr>
         <tr>
+            <th>{% trans "Managers" %}</th>
+            <td>
+                {% for manager in object.super_managers %}
+                    {% if forloop.first %}<ul>{% endif %}
+                        <li{% if manager not in object.managers.all %} style="font-style: italic;"{% endif %}>{{ manager }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "External id" %}</th>
             <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         {% include "common/publication_info_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 

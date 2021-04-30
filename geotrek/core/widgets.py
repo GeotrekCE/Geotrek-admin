@@ -19,7 +19,7 @@ class SnappedLineStringWidget(MapWidget):
     geometry_field_class = 'MapEntity.GeometryField.GeometryFieldSnap'
 
     def serialize(self, value):
-        geojson = super(SnappedLineStringWidget, self).serialize(value)
+        geojson = super().serialize(value)
         snaplist = []
         if value:
             snaplist = [None for c in range(len(value.coords))]
@@ -30,7 +30,7 @@ class SnappedLineStringWidget(MapWidget):
         if isinstance(value, str) and value:
             value = json.loads(value)
             value = value['geom']
-        return super(SnappedLineStringWidget, self).deserialize(value)
+        return super().deserialize(value)
 
 
 class BaseTopologyWidget(MapWidget):
@@ -60,7 +60,7 @@ class BaseTopologyWidget(MapWidget):
         attrs = attrs or {}
         attrs.update(is_line_topology=self.is_line_topology,
                      is_point_topology=self.is_point_topology)
-        return super(BaseTopologyWidget, self).render(name, value, attrs, renderer)
+        return super().render(name, value, attrs, renderer)
 
 
 class LineTopologyWidget(BaseTopologyWidget):

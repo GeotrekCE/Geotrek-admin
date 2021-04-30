@@ -61,10 +61,10 @@ class DiveDetail(MapEntityDetail):
         if lang:
             translation.activate(lang)
             self.request.LANGUAGE_CODE = lang
-        return super(DiveDetail, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(DiveDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -77,18 +77,18 @@ class DiveMapImage(MapEntityMapImage):
         if lang:
             translation.activate(lang)
             self.request.LANGUAGE_CODE = lang
-        return super(DiveMapImage, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class DiveDocument(MapEntityDocument):
     queryset = Dive.objects.existing()
 
 
-class DiveDocumentPublicMixin(object):
+class DiveDocumentPublicMixin:
     queryset = Dive.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(DiveDocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         dive = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['dive']
@@ -128,7 +128,7 @@ class DiveUpdate(MapEntityUpdate):
 
     @same_structure_required('diving:dive_detail')
     def dispatch(self, *args, **kwargs):
-        return super(DiveUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class DiveDelete(MapEntityDelete):
@@ -136,7 +136,7 @@ class DiveDelete(MapEntityDelete):
 
     @same_structure_required('diving:dive_detail')
     def dispatch(self, *args, **kwargs):
-        return super(DiveDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class DiveMeta(MetaMixin, DetailView):

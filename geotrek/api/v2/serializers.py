@@ -4,7 +4,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
-from django.contrib.gis.geos import MultiLineString
+from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -150,6 +150,16 @@ class TargetPortalSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
+class OrganismSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.CharField(source='organism')
+
+    class Meta:
+        model = common_models.Organism
+        fields = (
+            'id', 'name'
+        )
+
+
 class RecordSourceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.RecordSource
@@ -253,12 +263,13 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         description_teaser = serializers.SerializerMethodField(read_only=True)
         practical_info = serializers.SerializerMethodField(read_only=True)
         pdf = serializers.SerializerMethodField('get_pdf_url')
+        departure_city = serializers.SerializerMethodField(read_only=True)
 
         class Meta:
             model = tourism_models.TouristicContent
             fields = (
                 'id', 'attachments', 'approved', 'category', 'description',
-                'description_teaser', 'geometry',
+                'description_teaser', 'departure_city', 'geometry',
                 'practical_info', 'url', 'cities', 'create_datetime',
                 'external_id', 'name', 'pdf', 'portal', 'published',
                 'source', 'structure', 'themes',
@@ -309,6 +320,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 for language in settings.MODELTRANSLATION_LANGUAGES:
                     data[language] = self._get_pdf_url_lang(obj, language)
             return data
+
+        def get_departure_city(self, obj):
+            city = zoning_models.City.objects.all().filter(geom__contains=obj.geom).first()
+            return city.code if city else None
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
@@ -374,9 +389,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         length_2d = serializers.SerializerMethodField(read_only=True)
         length_3d = serializers.SerializerMethodField(read_only=True)
         name = serializers.SerializerMethodField(read_only=True)
+        access = serializers.SerializerMethodField(read_only=True)
+        ambiance = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
         departure = serializers.SerializerMethodField(read_only=True)
+        disabled_infrastructure = serializers.SerializerMethodField(read_only=True)
         departure_geom = serializers.SerializerMethodField(read_only=True)
         arrival = serializers.SerializerMethodField(read_only=True)
         external_id = serializers.CharField(source='eid')
@@ -400,6 +418,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         previous = serializers.ReadOnlyField(source='previous_id')
         next = serializers.ReadOnlyField(source='next_id')
         cities = serializers.SerializerMethodField(read_only=True)
+        departure_city = serializers.SerializerMethodField(read_only=True)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -416,11 +435,27 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_description(self, obj):
             return get_translation_or_dict('description', self, obj)
 
+        def get_access(self, obj):
+            return get_translation_or_dict('access', self, obj)
+
+        def get_ambiance(self, obj):
+            return get_translation_or_dict('ambiance', self, obj)
+
+        def get_disabled_infrastructure(self, obj):
+            return get_translation_or_dict('disabled_infrastructure', self, obj)
+
         def get_departure(self, obj):
             return get_translation_or_dict('departure', self, obj)
 
+        def get_first_point(self, geom):
+            if isinstance(geom, Point):
+                return geom
+            if isinstance(geom, MultiLineString):
+                return Point(geom[0][0])
+            return Point(geom[0])
+
         def get_departure_geom(self, obj):
-            return obj.geom_3d[0][0] if isinstance(obj.geom_3d, MultiLineString) else obj.geom_3d[0]
+            return self.get_first_point(obj.geom3d_transformed)[:2]
 
         def get_arrival(self, obj):
             return get_translation_or_dict('arrival', self, obj)
@@ -495,22 +530,27 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
 
+        def get_departure_city(self, obj):
+            geom = self.get_first_point(obj.geom)
+            city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
+            return city.code if city else None
+
         class Meta:
             model = trekking_models.Trek
             fields = (
                 'id', 'access', 'accessibilities', 'advice', 'advised_parking',
                 'altimetric_profile', 'ambiance', 'arrival', 'ascent',
                 'attachments', 'children', 'cities', 'create_datetime',
-                'departure', 'departure_geom', 'descent', 'description',
-                'description_teaser', 'difficulty', 'disabled_infrastructure',
-                'duration', 'elevation_area_url', 'elevation_svg_url',
-                'external_id', 'geometry', 'gpx', 'information_desks', 'kml',
-                'labels', 'length_2d', 'length_3d', 'max_elevation',
-                'min_elevation', 'name', 'networks', 'next', 'parents',
-                'parking_location', 'pdf', 'points_reference', 'portal', 'practice',
-                'previous', 'public_transport', 'published',
-                'reservation_system', 'route', 'second_external_id', 'source',
-                'structure', 'themes', 'update_datetime', 'url'
+                'departure', 'departure_city', 'departure_geom', 'descent',
+                'description', 'description_teaser', 'difficulty',
+                'disabled_infrastructure', 'duration', 'elevation_area_url',
+                'elevation_svg_url', 'external_id', 'geometry', 'gpx',
+                'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
+                'max_elevation', 'min_elevation', 'name', 'networks', 'next',
+                'parents', 'parking_location', 'pdf', 'points_reference',
+                'portal', 'practice', 'previous', 'public_transport',
+                'published', 'reservation_system', 'route', 'second_external_id',
+                'source', 'structure', 'themes', 'update_datetime', 'url'
             )
 
     class TourSerializer(TrekSerializer):
@@ -677,6 +717,40 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
                 'id', 'name'
             )
 
+    class SpeciesSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+        period01 = serializers.BooleanField(read_only=True)
+        period02 = serializers.BooleanField(read_only=True)
+        period03 = serializers.BooleanField(read_only=True)
+        period04 = serializers.BooleanField(read_only=True)
+        period05 = serializers.BooleanField(read_only=True)
+        period06 = serializers.BooleanField(read_only=True)
+        period07 = serializers.BooleanField(read_only=True)
+        period08 = serializers.BooleanField(read_only=True)
+        period09 = serializers.BooleanField(read_only=True)
+        period10 = serializers.BooleanField(read_only=True)
+        period11 = serializers.BooleanField(read_only=True)
+        period12 = serializers.BooleanField(read_only=True)
+        url = serializers.URLField(read_only=True)
+        radius = serializers.IntegerField(read_only=True)
+        practices = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_practices(self, obj):
+            return obj.practices.values_list('id', flat=True)
+
+        class Meta:
+            model = sensitivity_models.Species
+            fields = (
+                'id', 'name', 'period01', 'period02', 'period03',
+                'period04', 'period05', 'period06', 'period07',
+                'period08', 'period09', 'period10', 'period11',
+                'period12', 'practices', 'radius', 'url'
+            )
+
+
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     class CitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom", precision=7)
@@ -749,7 +823,18 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'id', 'geometry', 'url', 'structure', 'name', 'practice', 'description',
                 'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
                 'portal', 'source', 'information_desks', 'web_links', 'eid',
-                'orientation', 'wind', 'ratings_min', 'ratings_max',
+                'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
+            )
+
+    class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        url = HyperlinkedIdentityField(view_name='apiv2:course-detail')
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+
+        class Meta:
+            model = outdoor_models.Course
+            fields = (
+                'id', 'geometry', 'url', 'structure', 'name', 'site', 'description',
+                'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
             )
 
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:

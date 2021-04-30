@@ -73,7 +73,7 @@ class NoDeleteMixin(models.Model):
 
     def delete(self, force=False, using=None, **kwargs):
         if force:
-            super(NoDeleteMixin, self).delete(using, **kwargs)
+            super().delete(using, **kwargs)
         else:
             self.deleted = True
             self.save(using=using)
@@ -88,7 +88,7 @@ class NoDeleteMixin(models.Model):
         return self
 
 
-class PicturesMixin(object):
+class PicturesMixin:
     """A common class to share code between Trek and POI regarding
     attached pictures"""
 
@@ -271,7 +271,7 @@ class BasePublishableMixin(models.Model):
             self.publication_date = datetime.date.today()
         if self.publication_date is not None and not self.any_published:
             self.publication_date = None
-        super(BasePublishableMixin, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def any_published(self):
@@ -382,7 +382,7 @@ class PublishableMixin(BasePublishableMixin):
             dst = self.get_map_image_path()
             shutil.copyfile(src, dst)
         else:
-            super(PublishableMixin, self).prepare_map_image(rooturl)
+            super().prepare_map_image(rooturl)
 
     def is_public(self):
         return self.any_published
@@ -414,7 +414,7 @@ class OptionalPictogramMixin(PictogramMixin):
 OptionalPictogramMixin._meta.get_field('pictogram').blank = True
 
 
-class AddPropertyMixin(object):
+class AddPropertyMixin:
     @classmethod
     def add_property(cls, name, func, verbose_name):
         if hasattr(cls, name):
@@ -469,5 +469,5 @@ def apply_merge(modeladmin, request, queryset):
 apply_merge.short_description = _('Merge')
 
 
-class MergeActionMixin(object):
-    actions = [apply_merge, ]
+class MergeActionMixin:
+    actions = [apply_merge]

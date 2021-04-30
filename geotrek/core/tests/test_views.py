@@ -134,7 +134,7 @@ class PathViewsTest(CommonTest):
         # Avoid overlap, delete all !
         for p in Path.objects.all():
             p.delete()
-        super(PathViewsTest, self)._post_add_form()
+        super()._post_add_form()
 
     def test_draft_permission_detail(self):
         path = PathFactory(name="DRAFT_PATH", draft=True)
@@ -223,7 +223,7 @@ class PathViewsTest(CommonTest):
     def test_basic_format(self):
         self.modelfactory.create()
         self.modelfactory.create(name="ãéè")
-        super(CommonTest, self).test_basic_format()
+        super().test_basic_format()
 
     def test_path_form_is_not_valid_if_no_geometry_provided(self):
         self.login()
@@ -599,7 +599,7 @@ class PathViewsTest(CommonTest):
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
     def setUp(self):
-        super(PathKmlGPXTest, self).setUp()
+        super().setUp()
         self.user = UserFactory.create(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 
@@ -725,7 +725,7 @@ class TrailViewsTest(CommonTest):
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):
     def setUp(self):
-        super(TrailKmlGPXTest, self).setUp()
+        super().setUp()
         self.user = UserFactory.create(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 

@@ -36,6 +36,7 @@ Others
 * Michaël Viadere
 * Guillaume Boitel
 * Jean Lenormand
+* Claude Paroz
 
 Credits
 -------

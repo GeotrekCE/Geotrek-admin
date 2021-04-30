@@ -28,7 +28,7 @@ def api_bbox(bbox, buffer):
 
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VAR_DIR = '/opt/geotrek-admin/var'
+VAR_DIR = os.getenv('VAR_DIR', '/opt/geotrek-admin/var')
 TMP_DIR = os.path.join(VAR_DIR, 'tmp')
 
 DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
@@ -545,6 +545,8 @@ TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENA
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
+MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)
 
 SIGNAGE_LINE_ENABLED = False
 

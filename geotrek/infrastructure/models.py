@@ -35,7 +35,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         return self.label
 
     def get_pictogram_url(self):
-        pictogram_url = super(InfrastructureType, self).get_pictogram_url()
+        pictogram_url = super().get_pictogram_url()
         if pictogram_url:
             return pictogram_url
         return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
@@ -104,6 +104,10 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     @classproperty
     def cities_verbose_name(cls):
         return _("Cities")
+
+    def distance(self, to_cls):
+        """Distance to associate this site to another class"""
+        return settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN
 
 
 class InfrastructureGISManager(NoDeleteManager):

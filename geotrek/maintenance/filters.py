@@ -17,17 +17,28 @@ from .models import Intervention, Project
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from geotrek.outdoor.models import Site, Course
 
-class PolygonInterventionFilterMixin(object):
+
+class PolygonInterventionFilterMixin:
     def get_geom(self, value):
         return value
 
     def filter(self, qs, values):
         if not values:
             return qs
+        if not isinstance(values, list):
+            values = [values]
+
         lookup = self.lookup_expr
 
-        blade_content_type = ContentType.objects.get_for_model(Blade)
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
+            blade_content_type = ContentType.objects.get_for_model(Blade)
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            site_content_type = ContentType.objects.get_for_model(Site)
+            course_content_type = ContentType.objects.get_for_model(Course)
+
         topologies = []
         for value in values:
             topologies += Topology.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True)
@@ -41,6 +52,17 @@ class PolygonInterventionFilterMixin(object):
                                                                          target_type=blade_content_type).values_list('id',
                                                                                                                      flat=True)
             interventions.extend(blades_intervention)
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            sites = list(Site.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True))
+            sites_intervention = Intervention.objects.existing() \
+                .filter(target_id__in=sites, target_type=site_content_type) \
+                .values_list('id', flat=True)
+            interventions.extend(sites_intervention)
+            courses = list(Course.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True))
+            courses_intervention = Intervention.objects.existing() \
+                .filter(target_id__in=courses, target_type=course_content_type) \
+                .values_list('id', flat=True)
+            interventions.extend(courses_intervention)
         if hasattr(self, 'lookup_queryset_in'):
             lookup_queryset = self.lookup_queryset_in
         else:
@@ -57,7 +79,7 @@ class ProjectIntersectionFilterCity(PolygonInterventionFilterMixin, RightFilter)
     model = City
 
     def __init__(self, *args, **kwargs):
-        super(ProjectIntersectionFilterCity, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.lookup_expr = 'intersects'
         self.lookup_queryset_in = 'interventions__in'
 
@@ -69,7 +91,7 @@ class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFil
     model = District
 
     def __init__(self, *args, **kwargs):
-        super(ProjectIntersectionFilterDistrict, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.lookup_expr = 'intersects'
         self.lookup_queryset_in = 'interventions__in'
 

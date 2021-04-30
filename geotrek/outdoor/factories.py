@@ -63,6 +63,13 @@ class SiteFactory(StructureRelatedDefaultFactory):
     eid = "42"
     geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
 
+    @factory.post_generation
+    def managers(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                for organism in extracted:
+                    obj.managers.add(organism)
+
 
 class OutdoorManagerFactory(UserFactory):
     is_staff = True
@@ -85,6 +92,8 @@ class CourseFactory(StructureRelatedDefaultFactory):
     site = factory.SubFactory(SiteFactory)
     description = "Blah"
     advice = "Warning!"
+    equipment = "Rope"
+    height = 42
     published = True
     eid = "43"
     geom = 'GEOMETRYCOLLECTION(POINT(0 0))'

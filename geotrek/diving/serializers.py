@@ -59,7 +59,7 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
     pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
 
     def __init__(self, instance=None, *args, **kwargs):
-        super(DiveSerializer, self).__init__(instance, *args, **kwargs)
+        super().__init__(instance, *args, **kwargs)
         if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
             from geotrek.tourism import serializers as tourism_serializers

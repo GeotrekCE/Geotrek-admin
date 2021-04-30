@@ -76,9 +76,6 @@ class DiveViewsTests(CommonTest):
             'videos': [],
         }
 
-    def setUp(self):
-        super(DiveViewsTests, self).setUp()
-
     def get_bad_data(self):
         return {
             'geom': 'doh!'

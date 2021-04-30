@@ -58,6 +58,14 @@
             <th>{{ object|verbose:"advice" }}</th>
             <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
+        <tr>
+            <th>{{ object|verbose:"equipment" }}</th>
+            <td>{% if object.equipment %}{{ object.equipment|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"height" }}</th>
+            <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
         {% for rating in object.ratings.all %}
             <tr>
                 <th>{{ rating.scale.name }}</th>
@@ -65,10 +73,24 @@
             </tr>
         {% endfor %}
         <tr>
+            <th>{% trans "Itinerancy" %}</th>
+            <td>
+                {% if object.parents %}
+                    {% trans "Child of:" %}<br/>
+                    {% valuelist object.parents field='name_display' %}
+                {% endif %}
+                {% if object.children %}
+                    {% trans "Parent of:" %}<br/>
+                    {% valuelist object.children field='name_display' %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "External id" %}</th>
             <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         {% include "common/publication_info_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 

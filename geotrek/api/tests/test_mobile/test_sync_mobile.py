@@ -51,7 +51,7 @@ class VarTmpTestCase(TestCase):
 class SyncMobileTilesTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileTilesTest, cls).setUpClass()
+        super().setUpClass()
         translation.deactivate()
 
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
@@ -131,7 +131,7 @@ class SyncMobileTilesTest(VarTmpTestCase):
 class SyncMobileFailTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileFailTest, cls).setUpClass()
+        super().setUpClass()
         translation.deactivate()
 
     def test_fail_directory_not_empty(self):
@@ -209,7 +209,7 @@ class SyncMobileFailTest(VarTmpTestCase):
 class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileSpecificOptionsTest, cls).setUpClass()
+        super().setUpClass()
         FlatPageFactory.create(published_fr=True)
         FlatPageFactory.create(published_en=True)
 
@@ -233,7 +233,7 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
 class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileFlatpageTest, cls).setUpClass()
+        super().setUpClass()
         translation.deactivate()
 
         cls.portals = []
@@ -309,7 +309,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
 class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileSettingsTest, cls).setUpClass()
+        super().setUpClass()
         translation.deactivate()
 
     def test_sync_settings(self):
@@ -353,7 +353,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
 class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileTreksTest, cls).setUpClass()
+        super().setUpClass()
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
         picto_desk = get_dummy_uploaded_image()

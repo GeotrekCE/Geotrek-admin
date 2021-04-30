@@ -40,7 +40,7 @@ from geotrek.infrastructure.serializers import InfrastructureGeojsonSerializer
 from geotrek.signage.serializers import SignageGeojsonSerializer
 
 
-class FlattenPicturesMixin(object):
+class FlattenPicturesMixin:
     def get_queryset(self):
         """ Override queryset to avoid attachment lookup while serializing.
         It will fetch attachments, and force ``pictures`` attribute of instances.
@@ -130,10 +130,10 @@ class TrekDetail(MapEntityDetail):
         if lang:
             translation.activate(lang)
             self.request.LANGUAGE_CODE = lang
-        return super(TrekDetail, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TrekDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         context['labels'] = Label.objects.all()
         return context
@@ -147,18 +147,18 @@ class TrekMapImage(MapEntityMapImage):
         if lang:
             translation.activate(lang)
             self.request.LANGUAGE_CODE = lang
-        return super(TrekMapImage, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TrekDocument(MapEntityDocument):
     queryset = Trek.objects.existing()
 
 
-class TrekDocumentPublicMixin(object):
+class TrekDocumentPublicMixin:
     queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TrekDocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         trek = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['trek']
@@ -199,7 +199,7 @@ class TrekDocumentPublicMixin(object):
         trek = self.get_object()
         language = self.request.LANGUAGE_CODE
         trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-        return super(TrekDocumentPublicMixin, self).render_to_response(context, **response_kwargs)
+        return super().render_to_response(context, **response_kwargs)
 
 
 class TrekDocumentPublic(TrekDocumentPublicMixin, DocumentPublic):
@@ -230,7 +230,7 @@ class TrekUpdate(TrekRelationshipFormsetMixin, MapEntityUpdate):
 
     @same_structure_required('trekking:trek_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TrekUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TrekDelete(MapEntityDelete):
@@ -238,7 +238,7 @@ class TrekDelete(MapEntityDelete):
 
     @same_structure_required('trekking:trek_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TrekDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TrekMeta(MetaMixin, DetailView):
@@ -308,7 +308,7 @@ class POIDetail(MapEntityDetail):
     queryset = POI.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(POIDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -328,7 +328,7 @@ class POIUpdate(MapEntityUpdate):
 
     @same_structure_required('trekking:poi_detail')
     def dispatch(self, *args, **kwargs):
-        return super(POIUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class POIDelete(MapEntityDelete):
@@ -336,7 +336,7 @@ class POIDelete(MapEntityDelete):
 
     @same_structure_required('trekking:poi_detail')
     def dispatch(self, *args, **kwargs):
-        return super(POIDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class WebLinkCreatePopup(CreateView):
@@ -345,7 +345,7 @@ class WebLinkCreatePopup(CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(WebLinkCreatePopup, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save()
@@ -460,7 +460,7 @@ class ServiceDetail(MapEntityDetail):
     queryset = Service.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ServiceDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -476,7 +476,7 @@ class ServiceUpdate(MapEntityUpdate):
 
     @same_structure_required('trekking:service_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ServiceUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ServiceDelete(MapEntityDelete):
@@ -484,7 +484,7 @@ class ServiceDelete(MapEntityDelete):
 
     @same_structure_required('trekking:service_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ServiceDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ServiceViewSet(MapEntityViewSet):

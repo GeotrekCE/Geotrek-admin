@@ -226,7 +226,7 @@ class BladeTypeAdminNoBypassTest(AuthentFixturesTest):
 
 class BladeTypeAdminTest(BladeTypeAdminNoBypassTest):
     def setUp(self):
-        super(BladeTypeAdminTest, self).setUp()
+        super().setUp()
         perm_bypass = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm_bypass)
 
@@ -242,7 +242,7 @@ class BladeTypeAdminTest(BladeTypeAdminNoBypassTest):
 
 class SealingAdminTest(SealingAdminNoBypassTest):
     def setUp(self):
-        super(SealingAdminTest, self).setUp()
+        super().setUp()
         perm_bypass = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm_bypass)
 
@@ -258,7 +258,7 @@ class SealingAdminTest(SealingAdminNoBypassTest):
 
 class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
     def setUp(self):
-        super(SignageTypeAdminTest, self).setUp()
+        super().setUp()
         perm_bypass = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm_bypass)
 

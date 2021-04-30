@@ -1,3 +1,4 @@
+from geotrek.common.factories import OrganismFactory
 from geotrek.outdoor.factories import SiteFactory, RatingScaleFactory, SectorFactory
 from django.test import TestCase, override_settings
 
@@ -21,12 +22,16 @@ class SiteTest(TestCase):
 class SiteSuperTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        org_a = OrganismFactory(organism='a')
+        org_b = OrganismFactory(organism='b')
+        org_c = OrganismFactory(organism='c')
         cls.alone = SiteFactory(
             practice=None
         )
         cls.parent = SiteFactory(
             practice__name='Bbb',
             practice__sector__name='Bxx',
+            managers=[org_a, org_b],
             orientation=['N', 'S'],
             wind=['N', 'S']
         )
@@ -34,6 +39,7 @@ class SiteSuperTest(TestCase):
             parent=cls.parent,
             practice__name='Aaa',
             practice__sector__name='Axx',
+            managers=[org_b, org_c],
             orientation=['E', 'S'],
             wind=['E', 'S']
         )
@@ -73,6 +79,13 @@ class SiteSuperTest(TestCase):
 
     def test_super_wind_ascendants(self):
         self.assertEqual(self.grandchild2.super_wind, [])
+
+    def test_super_managers_descendants(self):
+        self.assertQuerysetEqual(self.parent.super_managers,
+                                 ['<Organism: a>', '<Organism: b>', '<Organism: b>', '<Organism: c>'])
+
+    def test_super_managers_ascendants(self):
+        self.assertQuerysetEqual(self.grandchild2.super_managers, [])
 
     def test_super_practices_display(self):
         self.assertEqual(self.alone.super_practices_display, "")

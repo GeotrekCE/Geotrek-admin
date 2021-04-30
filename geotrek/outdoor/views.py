@@ -10,11 +10,12 @@ from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.serializers import SiteSerializer, SiteGeojsonSerializer, CourseSerializer, CourseGeojsonSerializer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityViewSet)
+                             MapEntityDelete, MapEntityViewSet, MapEntityFormat)
 
 
 class SiteLayer(MapEntityLayer):
     properties = ['name']
+    filterform = SiteFilterSet
     queryset = Site.objects.all()
 
 
@@ -32,7 +33,7 @@ class SiteDetail(MapEntityDetail):
     queryset = Site.objects.all()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(SiteDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -53,7 +54,7 @@ class SiteUpdate(MapEntityUpdate):
 
     @same_structure_required('outdoor:site_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SiteUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SiteDelete(MapEntityDelete):
@@ -61,7 +62,7 @@ class SiteDelete(MapEntityDelete):
 
     @same_structure_required('outdoor:site_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SiteDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SiteViewSet(MapEntityViewSet):
@@ -79,7 +80,7 @@ class SiteViewSet(MapEntityViewSet):
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class SiteDocumentPublicMixin(object):
+class SiteDocumentPublicMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         content = self.get_object()
@@ -98,8 +99,18 @@ class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
     pass
 
 
+class SiteFormatList(MapEntityFormat, SiteList):
+    columns = [
+        'id', 'structure', 'name', 'practice', 'description',
+        'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
+        'portal', 'source', 'information_desks', 'web_links', 'eid',
+        'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
+    ]
+
+
 class CourseLayer(MapEntityLayer):
     properties = ['name']
+    filterform = CourseFilterSet
     queryset = Course.objects.all()
 
 
@@ -117,7 +128,7 @@ class CourseDetail(MapEntityDetail):
     queryset = Course.objects.all()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(CourseDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -138,7 +149,7 @@ class CourseUpdate(MapEntityUpdate):
 
     @same_structure_required('outdoor:course_detail')
     def dispatch(self, *args, **kwargs):
-        return super(CourseUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class CourseDelete(MapEntityDelete):
@@ -146,7 +157,7 @@ class CourseDelete(MapEntityDelete):
 
     @same_structure_required('outdoor:course_detail')
     def dispatch(self, *args, **kwargs):
-        return super(CourseDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class CourseViewSet(MapEntityViewSet):
@@ -164,7 +175,7 @@ class CourseViewSet(MapEntityViewSet):
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class CourseDocumentPublicMixin(object):
+class CourseDocumentPublicMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         content = self.get_object()
@@ -181,3 +192,10 @@ class CourseDocumentPublic(CourseDocumentPublicMixin, DocumentPublic):
 
 class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
     pass
+
+
+class CourseFormatList(MapEntityFormat, CourseList):
+    columns = [
+        'id', 'structure', 'name', 'site', 'description',
+        'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
+    ]

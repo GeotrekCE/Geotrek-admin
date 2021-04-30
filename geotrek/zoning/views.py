@@ -8,7 +8,7 @@ from mapentity.filters import MapEntityFilterSet
 from .models import City, RestrictedArea, RestrictedAreaType, District
 
 
-class LandLayerMixin(object):
+class LandLayerMixin:
     srid = settings.API_SRID
     precision = settings.LAYER_PRECISION_LAND
     simplify = settings.LAYER_SIMPLIFY_LAND
@@ -16,7 +16,7 @@ class LandLayerMixin(object):
     @method_decorator(cache_page(settings.CACHE_TIMEOUT_LAND_LAYERS,
                                  cache=settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']))
     def dispatch(self, request, *args, **kwargs):
-        return super(LandLayerMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         # ensure mapentity filters are working for non Mapentity view
@@ -38,7 +38,7 @@ class RestrictedAreaTypeGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
 
     def get_queryset(self):
         type_pk = self.kwargs['type_pk']
-        qs = super(RestrictedAreaTypeGeoJSONLayer, self).get_queryset()
+        qs = super().get_queryset()
         get_object_or_404(RestrictedAreaType, pk=type_pk)
         return qs.filter(area_type=type_pk)
 

@@ -149,6 +149,10 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             for m in [int(m) for m in period.split(',')]:
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
+        trek = request.GET.get('trek')
+        if trek:
+            contents_intersecting = intersecting(qs, Trek.objects.get(pk=trek))
+            qs = contents_intersecting.order_by('id')
         return qs.distinct()
 
     def get_schema_fields(self, view):
@@ -166,9 +170,14 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                     description=_('Filter by one or more practice id, comma-separated.')
                 )
             ), Field(
-                name='structures', required=False, location='query', schema=coreschema.Integer(
+                name='structures', required=False, location='query', schema=coreschema.String(
                     title=_("Structures"),
                     description=_('Filter by one or more structure id, comma-separated.')
+                )
+            ), Field(
+                name='trek', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Trek"),
+                    description=_('Filter by a trek id. It will show only the sensitive areas related to this trek.')
                 )
             ),
         )
@@ -469,6 +478,105 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 )
             ),
         )
+
+
+class GeotrekCourseFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        q = request.GET.get('q')
+        if q:
+            queryset = queryset.filter(name__icontains=q)
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Filter by some case-insensitive text contained in name.')
+                )
+            ),
+        )
+
+
+class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='portals', required=False, location='query', schema=coreschema.String(
+                    title=_("Portals"),
+                    description=_('Filter by one or more portal id, comma-separateds.')
+                )
+            ),
+        )
+
+    def filter_queryset_related_objects_published(self, queryset, request, prefix, optional_query=None):
+        """
+        TODO : this method is not optimal. the API should have a route /object returning all objects and /object/used returning only used objects.
+        Return a queryset filtered by publication status or related objects.
+        For example for a queryset of DifficultyLevels it will check the publication status of related treks and return the queryset of difficulties that are used by published treks.
+        :param queryset: the queryset to filter
+        :param request: the request object to get to the potential language to filter by
+        :param prefix: the prefix used to fetch the related object in the filter method
+        :param optional_query: optional query Q to add to the filter method (used by portal filter)
+        """
+        qs = queryset
+        language = request.GET.get('language', 'all')
+        q = Q()
+        if language == 'all':
+            # no language specified. Check for all.
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                related_field_name = '{}__published_{}'.format(prefix, lang)
+                q |= Q(**{related_field_name: True})
+        else:
+            # one language is specified
+            related_field_name = '{}__published_{}'.format(prefix, language)
+            q |= Q(**{related_field_name: True})
+        q &= optional_query
+        qs = qs.filter(q)
+        return qs.distinct()
+
+
+class GeotrekRelatedPortalTrekFilter(GeotrekRelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        portals = request.GET.get('portals')
+        query = Q()
+        if portals:
+            query = Q(treks__portal__in=portals.split(','))
+        return self.filter_queryset_related_objects_published(qs, request, 'treks', query)
+
+
+class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        portals = request.GET.get('portals')
+        query = Q()
+        if portals:
+            query = Q(Q(trek__portal__in=portals.split(',')) | Q(touristiccontent__portal__in=portals.split(',')))
+        set_1 = self.filter_queryset_related_objects_published(qs, request, 'trek', query)
+        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontent', query)
+        return (set_1 | set_2).distinct()
+
+
+class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        portals = request.GET.get('portals')
+        query = Q()
+        if portals:
+            query = Q(contents__portal__in=portals.split(','))
+        return self.filter_queryset_related_objects_published(qs, request, 'contents', query)
+
+
+class GeotrekRelatedPortalThemeFilter(GeotrekRelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        portals = request.GET.get('portals')
+        query = Q()
+        if portals:
+            query = Q(treks__portal__in=portals.split(',')) \
+                | Q(touristiccontents__portal__in=portals.split(',')) \
+                | Q(touristic_events__portal__in=portals.split(','))
+        set_1 = self.filter_queryset_related_objects_published(qs, request, 'treks', query)
+        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontents', query)
+        set_3 = self.filter_queryset_related_objects_published(qs, request, 'touristic_events', query)
+        return (set_1 | set_2 | set_3).distinct()
 
 
 class GeotrekRatingScaleFilter(BaseFilterBackend):

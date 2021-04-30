@@ -21,7 +21,7 @@ class ManDayForm(forms.ModelForm):
         fields = ('id', 'nb_days', 'job')
 
     def __init__(self, *args, **kwargs):
-        super(ManDayForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'nb_days', 'job')
@@ -40,7 +40,7 @@ class FundingForm(forms.ModelForm):
         fields = ('id', 'amount', 'organism')
 
     def __init__(self, *args, **kwargs):
-        super(FundingForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'amount', 'organism')
@@ -107,7 +107,7 @@ class InterventionForm(CommonForm):
              'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
-        super(InterventionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not self.instance.pk:
             # New intervention. We have to set its target.
@@ -196,5 +196,5 @@ class ProjectForm(CommonForm):
              'global_cost', 'comments', 'project_owner', 'project_manager', 'contractors']
 
     def __init__(self, *args, **kwargs):
-        super(ProjectForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper.form_tag = False

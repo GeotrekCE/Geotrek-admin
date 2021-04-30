@@ -13,6 +13,7 @@ router.register('theme', api_views.ThemeViewSet, basename='theme')
 router.register('source', api_views.SourceViewSet, basename='source')
 router.register('reservationsystem', api_views.ReservationSystemViewSet, basename='reservationsystem')
 router.register('label', api_views.LabelViewSet, basename='label')
+router.register('organism', api_views.OrganismViewSet, basename='organism')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -33,6 +34,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     router.register('sensitivearea', api_views.SensitiveAreaViewSet, basename='sensitivearea')
     router.register('sensitivearea_practice', api_views.SportPracticeViewSet, basename='sportpractice')
+    router.register('sensitivearea_species', api_views.SpeciesViewSet, basename='species')
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     router.register('city', api_views.CityViewSet, basename='city')
     router.register('district', api_views.DistrictViewSet, basename='district')
@@ -42,6 +44,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('outdoor_sitetype', api_views.SiteTypeViewSet, basename='sitetype')
     router.register('outdoor_ratingscale', api_views.RatingScaleViewSet, basename='ratingscale')
     router.register('outdoor_rating', api_views.RatingViewSet, basename='rating')
+    router.register('outdoor_course', api_views.CourseViewSet, basename='course')
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     router.register('flatpage', api_views.FlatPageViewSet, basename='flatpage')
 

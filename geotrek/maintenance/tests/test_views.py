@@ -380,14 +380,14 @@ class InterventionViewsTest(CommonTest):
             InfrastructureInterventionFactory.create()
         else:
             InfrastructureInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        super(InterventionViewsTest, self).test_no_html_in_csv()
+        super().test_no_html_in_csv()
 
     def test_no_html_in_csv_signage(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             SignageInterventionFactory.create()
         else:
             SignageInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        super(InterventionViewsTest, self).test_no_html_in_csv()
+        super().test_no_html_in_csv()
 
     def test_structurerelated_not_loggedin(self):
         # Test that it does not fail on update if not logged in

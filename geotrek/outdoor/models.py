@@ -1,21 +1,33 @@
 from colorfield.fields import ColorField
-from multiselectfield import MultiSelectField
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
+from django.contrib.gis.measure import D
 from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
+from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
+from geotrek.common.models import Organism
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
+from geotrek.maintenance.models import Intervention
+from geotrek.signage.models import Signage, Blade
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.trekking.models import Trek, POI
+from geotrek.trekking.models import Trek, POI, Service
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mptt.models import MPTTModel, TreeForeignKey
+
+
+class AltimetryMixin(BaseAltimetryMixin):
+    def ispoint(self):
+        return self.geom.num_geom == 1 and self.geom[0].geom_type == 'Point'
+
+    class Meta:
+        abstract = True
 
 
 class Sector(models.Model):
@@ -93,7 +105,7 @@ class SiteType(models.Model):
 
 
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin, MPTTModel):
+           AltimetryMixin, TimeStampedModelMixin, MPTTModel):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -103,6 +115,16 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         ('SW', _("↙ SW")),
         ('W', _("← W")),
         ('NW', _("↖ NW")),
+    )
+    WIND_CHOICES = (
+        ('N', _("↓ N")),
+        ('NE', _("↙ NE")),
+        ('E', _("← E")),
+        ('SE', _("↖ SE")),
+        ('S', _("↑ S")),
+        ('SW', _("↗ SW")),
+        ('W', _("→ W")),
+        ('NW', _("↘ NW")),
     )
 
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
@@ -121,8 +143,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     ratings_min = models.ManyToManyField(Rating, related_name='sites_min', blank=True)
     ratings_max = models.ManyToManyField(Rating, related_name='sites_max', blank=True)
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
-    orientation = MultiSelectField(verbose_name=_("Orientation"), blank=True, max_length=20, choices=ORIENTATION_CHOICES)
-    wind = MultiSelectField(verbose_name=_("Wind"), blank=True, max_length=20, choices=ORIENTATION_CHOICES)
+    orientation = models.JSONField(verbose_name=_("Orientation"), default=list, blank=True)
+    wind = models.JSONField(verbose_name=_("Wind"), default=list, blank=True)
     labels = models.ManyToManyField('common.Label', related_name='sites', blank=True,
                                     verbose_name=_("Labels"))
     themes = models.ManyToManyField('common.Theme', related_name="sites", blank=True, verbose_name=_("Themes"),
@@ -141,6 +163,9 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
+
+    check_structure_in_forms = False
 
     class Meta:
         verbose_name = _("Outdoor site")
@@ -159,7 +184,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
 
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
-        return None
+        return settings.OUTDOOR_INTERSECTION_MARGIN
 
     @classmethod
     def get_create_label(cls):
@@ -212,34 +237,86 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     def super_wind(self):
         "Return wind of itself and its descendants"
         wind = set(sum(self.get_descendants(include_self=True).values_list('wind', flat=True), []))
-        return [o for o, _o in self.ORIENTATION_CHOICES if o in wind]  # Sorting
+        return [o for o, _o in self.WIND_CHOICES if o in wind]  # Sorting
+
+    @property
+    def super_managers(self):
+        "Return managers of itself and its descendants"
+        sites = self.get_descendants(include_self=True)
+        return Organism.objects.filter(site__in=sites)  # Sorted and unique
+
+    def site_interventions(self):
+        # Interventions on sites
+        site_content_type = ContentType.objects.get_for_model(Site)
+        qs = Q(target_type=site_content_type, target_id=self.id)
+        # Interventions on topologies
+        topologies = Topology.objects.existing() \
+            .filter(geom__dwithin=(self.geom, D(m=settings.OUTDOOR_INTERSECTION_MARGIN))) \
+            .values_list('pk', flat=True)
+        not_topology_content_types = [
+            site_content_type,
+            ContentType.objects.get_for_model(Course),
+            ContentType.objects.get_for_model(Blade),
+        ]
+        qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
+        return Intervention.objects.existing().filter(qs).distinct('pk')
 
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Topology.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 TouristicContent.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 TouristicEvent.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Blade.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Intervention.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 
 Site.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Site.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Site.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+Site.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Site.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
 Site.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
 Site.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
 Site.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
 Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Site.add_property('interventions', lambda self: Site.site_interventions(self), _("Interventions"))
+
+
+class CourseOrderedChildManager(models.Manager):
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        # Select treks foreign keys by default
+        return super(CourseOrderedChildManager, self).get_queryset().select_related('parent', 'child')
+
+
+class OrderedCourseChild(models.Model):
+    parent = models.ForeignKey('Course', related_name='course_children', on_delete=models.CASCADE)
+    child = models.ForeignKey('Course', related_name='course_parents', on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0, blank=True, null=True)
+
+    objects = CourseOrderedChildManager()
+
+    class Meta:
+        ordering = ('parent__id', 'order')
+        unique_together = (
+            ('parent', 'child'),
+        )
 
 
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-             TimeStampedModelMixin):
+             AltimetryMixin, TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
+    equipment = models.TextField(verbose_name=_("Equipment"), blank=True)
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
+    height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    check_structure_in_forms = False
 
     class Meta:
         verbose_name = _("Outdoor course")
@@ -250,24 +327,52 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         return self.name
 
     def distance(self, to_cls):
-        """Distance to associate this site to another class"""
-        return None
+        """Distance to associate this course to another class"""
+        return settings.OUTDOOR_INTERSECTION_MARGIN
 
     @classmethod
     def get_create_label(cls):
         return _("Add a new outdoor course")
+
+    @property
+    def parents(self):
+        return Course.objects.filter(course_children__child=self)
+
+    @property
+    def children(self):
+        return Course.objects.filter(course_parents__parent=self).order_by('course_parents__order')
+
+    def course_interventions(self):
+        # Interventions on courses
+        course_content_type = ContentType.objects.get_for_model(Course)
+        qs = Q(target_type=course_content_type, target_id=self.id)
+        # Interventions on topologies
+        topologies = Topology.objects.existing() \
+            .filter(geom__dwithin=(self.geom, D(m=settings.OUTDOOR_INTERSECTION_MARGIN))) \
+            .values_list('pk', flat=True)
+        not_topology_content_types = [
+            ContentType.objects.get_for_model(Site),
+            course_content_type,
+            ContentType.objects.get_for_model(Blade),
+        ]
+        qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
+        return Intervention.objects.existing().filter(qs).distinct('pk')
 
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 Topology.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 TouristicContent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 TouristicEvent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+Blade.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
 Course.add_property('sites', lambda self: intersecting(Course, self), _("Sites"))
 Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Course.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+Course.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
 Course.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
 Course.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
 Course.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
 Course.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Course.add_property('interventions', lambda self: Course.course_interventions(self), _("Interventions"))

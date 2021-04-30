@@ -19,7 +19,7 @@ from geotrek.diving.helpers_sync import SyncRando
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.practice_dive = PracticeFactory.create(order=0)
         cls.dive = DiveFactory.create(practice=cls.practice_dive, published=True,
                                       geom='SRID=2154;POINT(700001 6600001)')

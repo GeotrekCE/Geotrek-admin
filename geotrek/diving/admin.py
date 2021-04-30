@@ -78,7 +78,7 @@ class DifficultyAdmin(MergeActionMixin, TranslationAdmin):
                 old=self.oldid, new=obj.pk)
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
-        return super(DifficultyAdmin, self).response_change(request, obj)
+        return super().response_change(request, obj)
 
 
 class LevelForm(forms.ModelForm):
@@ -138,7 +138,7 @@ class LevelAdmin(MergeActionMixin, TranslationAdmin):
                 old=self.oldid, new=obj.pk)
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
-        return super(LevelAdmin, self).response_change(request, obj)
+        return super().response_change(request, obj)
 
 
 # Register previously defined modeladmins

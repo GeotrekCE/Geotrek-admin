@@ -48,7 +48,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
         return self.label
 
     def get_pictogram_url(self):
-        pictogram_url = super(SignageType, self).get_pictogram_url()
+        pictogram_url = super().get_pictogram_url()
         if pictogram_url:
             return pictogram_url
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
@@ -118,6 +118,10 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     @property
     def lng_value(self):
         return self.geomtransform.y
+
+    def distance(self, to_cls):
+        """Distance to associate this signage to another class"""
+        return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
 
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
@@ -270,6 +274,10 @@ class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     @property
     def coordinates(self):
         return format_coordinates(self.geom)
+
+    def distance(self, to_cls):
+        """Distance to associate this blade to another class"""
+        return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
 
 
 class Line(models.Model):

@@ -8,7 +8,7 @@ from geotrek.diving.factories import DiveFactory
 from geotrek.diving.models import Dive
 
 
-class PolygonTest(object):
+class PolygonTest:
 
     def setUp(self):
         self.model = Dive
