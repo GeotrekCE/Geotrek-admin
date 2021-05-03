@@ -1,5 +1,6 @@
 import mimetypes
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import slugify
@@ -44,6 +45,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     order = models.IntegerField(default=None, null=True, blank=True,
                                 help_text=_("ID order if blank", ),
                                 verbose_name=_("Order"))
+    attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
 
     @property
     def slug(self):
@@ -106,3 +108,6 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     @property
     def meta_description(self):
         return plain_text(self.content)[:500]
+
+    def is_public(self):
+        return self.any_published

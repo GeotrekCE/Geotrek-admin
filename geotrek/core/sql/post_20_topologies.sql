@@ -1,9 +1,3 @@
--------------------------------------------------------------------------------
--- Add spatial index (will boost spatial filters)
--------------------------------------------------------------------------------
-
-CREATE INDEX core_topology_geom_idx ON core_topology USING gist(geom);
-
 ALTER TABLE core_topology ALTER COLUMN "length" SET DEFAULT 0.0;
 ALTER TABLE core_topology ALTER COLUMN slope SET DEFAULT 0.0;
 ALTER TABLE core_topology ALTER COLUMN min_elevation SET DEFAULT 0;
@@ -14,7 +8,6 @@ ALTER TABLE core_topology ALTER COLUMN geom_need_update SET DEFAULT FALSE;
 
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS e_t_evenement_geom_not_empty;
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS core_topology_geom_not_empty;
-ALTER TABLE core_topology ADD CONSTRAINT core_topology_geom_not_empty CHECK (deleted OR (geom IS NOT NULL));
 
 
 -------------------------------------------------------------------------------

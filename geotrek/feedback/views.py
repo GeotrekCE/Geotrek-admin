@@ -28,7 +28,7 @@ class ReportList(mapentity_views.MapEntityList):
     filterform = ReportFilterSet
     columns = [
         'id', 'email', 'activity', 'category',
-        'status', 'date_update',
+        'status', 'lastmod',
     ]
 
 
@@ -40,15 +40,12 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     columns = [
         'id', 'email', 'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'date_update',
+        'date_insert', 'lastmod',
     ]
 
 
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
     model = feedback_models.ReportCategory
-
-    def dispatch(self, *args, **kwargs):
-        return super(CategoryList, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         return [{'id': c.id,
@@ -87,7 +84,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
 
     @action(detail=False, methods=['post'])
     def report(self, request, lang=None):
-        response = super(ReportViewSet, self).create(request)
+        response = super().create(request)
         creator, created = get_user_model().objects.get_or_create(username='feedback', defaults={'is_active': False})
         for file in request._request.FILES.values():
             Attachment.objects.create(

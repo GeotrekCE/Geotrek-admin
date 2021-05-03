@@ -32,7 +32,7 @@ class BiodivParser(Parser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(BiodivParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             self.fields['description_' + lang] = 'description.' + lang
 
@@ -41,7 +41,7 @@ class BiodivParser(Parser):
         return self.root['results']
 
     def get_to_delete_kwargs(self):
-        kwargs = super(BiodivParser, self).get_to_delete_kwargs()
+        kwargs = super().get_to_delete_kwargs()
         kwargs['eid__isnull'] = False
         return kwargs
 

@@ -20,7 +20,7 @@ from geotrek.common.serializers import (
     PictogramSerializerMixin, ThemeSerializer,
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin, RecordSourceSerializer,
-    TargetPortalSerializer
+    TargetPortalSerializer, LabelSerializer,
 )
 from geotrek.authent.serializers import StructureSerializer
 
@@ -32,7 +32,7 @@ from geotrek.trekking import models as trekking_models
 
 class TrekGPXSerializer(GPXSerializer):
     def end_object(self, trek):
-        super(TrekGPXSerializer, self).end_object(trek)
+        super().end_object(trek)
         for poi in trek.published_pois.all():
             geom_3d = poi.geom_3d.transform(4326, clone=True)  # GPX uses WGS84
             wpt = gpxpy.gpx.GPXWaypoint(latitude=geom_3d.y,
@@ -103,12 +103,6 @@ class WebLinkSerializer(TranslatedModelSerializer):
         fields = ('id', 'name', 'category', 'url')
 
 
-class LabelTrekSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    class Meta:
-        model = trekking_models.LabelTrek
-        fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')
-
-
 class CloseTrekSerializer(TranslatedModelSerializer):
     category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
 
@@ -163,7 +157,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     usages = PracticeSerializer(many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
-    labels = LabelTrekSerializer(many=True)
+    labels = LabelSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer(many=True)
@@ -189,6 +183,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     # Method called to retrieve relevant pictures based on settings
     pictures = rest_serializers.SerializerMethodField()
 
+    length = rest_serializers.ReadOnlyField(source='length_2d_m')
+
     def __init__(self, instance=None, *args, **kwargs):
         # duplicate each trek for each one of its accessibilities
         if instance and hasattr(instance, '__iter__') and settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
@@ -201,7 +197,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                     treks.append(clone)
             instance = treks
 
-        super(TrekSerializer, self).__init__(instance, *args, **kwargs)
+        super().__init__(instance, *args, **kwargs)
 
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             del self.fields['practice']
@@ -377,7 +373,7 @@ def timestamp(dt):
     return str(int((dt - epoch).total_seconds()))
 
 
-class CirkwiPOISerializer(object):
+class CirkwiPOISerializer:
     def __init__(self, request, stream):
         self.xml = SimplerXMLGenerator(stream, 'utf8')
         self.request = request
@@ -456,7 +452,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                         'advised_parking', 'public_transport', 'advice')
 
     def __init__(self, request, stream, get_params=None):
-        super(CirkwiTrekSerializer, self).__init__(request, stream)
+        super().__init__(request, stream)
         self.request = request
         self.exclude_pois = get_params.get('withoutpois', None)
 

@@ -11,7 +11,7 @@ from geotrek.common import views
 logger = logging.getLogger(__name__)
 
 
-class ZipTilesBuilder(object):
+class ZipTilesBuilder:
     def __init__(self, zipfile, prefix="", **builder_args):
         self.zipfile = zipfile
         self.prefix = prefix
@@ -61,6 +61,6 @@ class SyncRando:
         self.global_sync = sync
 
     def sync(self, lang):
-        models_picto = [models.Theme, models.RecordSource]
+        models_picto = [models.Theme, models.RecordSource, models.Label]
         self.global_sync.sync_pictograms(lang, models_picto, zipfile=self.global_sync.zipfile)
         self.global_sync.sync_metas(lang, views.Meta)

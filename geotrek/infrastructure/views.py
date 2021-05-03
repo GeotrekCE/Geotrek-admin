@@ -44,7 +44,7 @@ class InfrastructureDetail(MapEntityDetail):
     queryset = Infrastructure.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(InfrastructureDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -64,7 +64,7 @@ class InfrastructureUpdate(MapEntityUpdate):
 
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InfrastructureUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InfrastructureDelete(MapEntityDelete):
@@ -72,7 +72,7 @@ class InfrastructureDelete(MapEntityDelete):
 
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InfrastructureDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InfrastructureViewSet(MapEntityViewSet):

@@ -2,7 +2,7 @@ from django.conf import settings
 from django.utils.translation import LANGUAGE_SESSION_KEY
 
 
-class LocaleForcedMiddleware(object):
+class LocaleForcedMiddleware:
     """
     This will force session language for authenticated API calls.
 
@@ -22,7 +22,7 @@ class LocaleForcedMiddleware(object):
         return self.get_response(request)
 
 
-class CorsMiddleware(object):
+class CorsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 

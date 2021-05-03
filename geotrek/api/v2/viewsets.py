@@ -16,7 +16,7 @@ class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = api_pagination.StandardResultsSetPagination
     permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
-    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer]
+    renderer_classes = [renderers.JSONRenderer]
 
     def get_serializer_context(self):
         return {
@@ -30,11 +30,10 @@ class GeotrekGeometricViewset(GeotrekViewSet):
         (api_filters.GeotrekQueryParamsDimensionFilter,
             api_filters.GeotrekInBBoxFilter,
             api_filters.GeotrekDistanceToPointFilter)
-    distance_filter_field = 'geometry'
-    distance_filter_convert_meters = True
+    distance_filter_field = 'geom'
     renderer_classes = viewsets.ReadOnlyModelViewSet.renderer_classes
 
     def get_serializer_class(self):
-        base_serializer_class = super(GeotrekGeometricViewset, self).get_serializer_class()
+        base_serializer_class = super().get_serializer_class()
         format_output = self.request.query_params.get('format', 'json')
         return override_serializer(format_output, base_serializer_class)

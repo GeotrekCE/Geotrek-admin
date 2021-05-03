@@ -11,7 +11,6 @@ from geotrek.common.utils import dbnow
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
                                     TopologyFactory)
 from geotrek.core.models import Path, Topology, PathAggregation
-from geotrek.core.helpers import TopologyHelper
 
 
 def dictfetchall(cursor):
@@ -98,7 +97,8 @@ class TopologyTest(TestCase):
         self.assertEqual(Path.include_invisible.count(), 2)
 
         # create topo on visible path
-        topology = TopologyHelper._topologypoint(0, 0, None).reload()
+        topology = Topology._topologypoint(0, 0, None)
+        topology.save()
 
         # because FK and M2M are used with default manager only, others tests are in SQL
         conn = connections[DEFAULT_DB_ALIAS]
@@ -121,7 +121,8 @@ class TopologyTest(TestCase):
         self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], "{}".format(datas))
 
         # new topo on invible path
-        topology = TopologyHelper._topologypoint(0, 3, None).reload()
+        topology = Topology._topologypoint(0, 3, None)
+        topology.save()
 
         cur.execute(
             """
@@ -161,6 +162,40 @@ class TopologyTest(TestCase):
         pks = [p.pk for p in [p1, p2, p3]]
         Topology.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}' % pks)
         self.assertEqual(Path.objects.count(), 3)
+
+    def test_topology_deserialize_point(self):
+        PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        topology = Topology.deserialize('{"lat": 46.5, "lng": 3}')
+        self.assertEqual(topology.offset, -1)
+        self.assertEqual(topology.aggregations.count(), 1)
+        self.assertEqual(topology.aggregations.get().start_position, .5)
+        self.assertEqual(topology.aggregations.get().end_position, .5)
+
+    def test_topology_deserialize_point_with_snap(self):
+        path = PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        topology = Topology.deserialize('{"lat": 46.5, "lng": 3, "snap": %s}' % path.pk)
+        self.assertEqual(topology.offset, 0)
+        self.assertEqual(topology.aggregations.count(), 1)
+        self.assertEqual(topology.aggregations.get().start_position, .5)
+        self.assertEqual(topology.aggregations.get().end_position, .5)
+
+    def test_topology_deserialize_inexistant(self):
+        with self.assertRaises(Topology.DoesNotExist):
+            Topology.deserialize('4012999999')
+
+    def test_topology_deserialize_inexistant_point(self):
+        PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        Topology.deserialize('{"lat": 46.5, "lng": 3, "pk": 4012999999}')
+
+    def test_topology_deserialize_inexistant_line(self):
+        path = PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        Topology.deserialize(
+            '[{"pk": 4012999999, "paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % path.pk
+        )
+
+    def test_topology_deserialize_invalid(self):
+        with self.assertRaises(ValueError):
+            Topology.deserialize('[{"paths": [4012999999], "positions": {}, "offset": 1}]')
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -207,13 +242,6 @@ class TopologyMutateTest(TestCase):
         topology1.mutate(topology2)
         self.assertEqual(topology1.offset, 14.5)
         self.assertEqual(len(topology1.paths.all()), 1)
-        # topology2 does not exist anymore
-        self.assertEqual(len(Topology.objects.filter(pk=topology2.pk)), 0)
-        # Without deletion
-        topology3 = TopologyFactory.create()
-        topology1.mutate(topology3, delete=False)
-        # topology3 still exists
-        self.assertEqual(len(Topology.objects.filter(pk=topology3.pk)), 1)
 
     def test_mutate_intersection(self):
         # Mutate a Point topology at an intersection, and make sure its aggregations
@@ -334,6 +362,7 @@ class TopologyPointTest(TestCase):
         poi = Point(10, 10, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        poitopo.save()
         self.assertAlmostEqual(0.5, poitopo.aggregations.all()[0].start_position, places=6)
         self.assertAlmostEqual(10, poitopo.offset, places=6)
 
@@ -351,6 +380,7 @@ class TopologyPointTest(TestCase):
         poi = Point(0, 2.5, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        poitopo.save()
         self.assertAlmostEqual(0.5, poitopo.aggregations.all()[0].start_position, places=6)
         self.assertAlmostEqual(0, poitopo.offset, places=6)
         self.assertAlmostEqual(0, poitopo.geom.x, places=6)
@@ -394,6 +424,7 @@ class TopologyPointTest(TestCase):
         self.assertEqual(1, len(Path.objects.all()))
 
         father = Topology.deserialize({'lat': -1, 'lng': -1})
+        father.save()
 
         poi = Point(500, 600, srid=settings.SRID)
         poi.transform(settings.API_SRID)

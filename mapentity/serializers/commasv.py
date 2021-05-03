@@ -35,9 +35,9 @@ class CSVSerializer(Serializer):
                 try:
                     f = model._meta.get_field(field)
                     if f.one_to_many:
-                        c = _(f.field.model._meta.verbose_name_plural)
+                        c = f.field.model._meta.verbose_name_plural
                     else:
-                        c = _(f.verbose_name)
+                        c = f.verbose_name
                 except FieldDoesNotExist:
                     c = _(field.title())
             headers.append(smart_str(c))

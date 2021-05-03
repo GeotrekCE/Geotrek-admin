@@ -1,9 +1,18 @@
 from collections import OrderedDict
+from copy import deepcopy
 
 from django.conf import settings
 
 
 API_SRID = 4326
+
+_DEFAULT_MAP_STYLES = {
+    'detail': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
+    'others': {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
+    'filelayer': {'color': 'red', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 2, 'radius': 5},
+    'draw': {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
+    'print': {},
+}
 
 app_settings = dict({
     'TITLE': "",
@@ -33,8 +42,13 @@ app_settings = dict({
     'SENDFILE_HTTP_HEADER': None,
     'DRF_API_URL_PREFIX': r'^api/',
     'MAPENTITY_WEASYPRINT': False,
+    'MAP_STYLES': _DEFAULT_MAP_STYLES,
 }, **getattr(settings, 'MAPENTITY_CONFIG', {}))
 
+# default MAP_STYLES should not be replaced but updated by MAPENTITY_CONFIG
+_MAP_STYLES = deepcopy(_DEFAULT_MAP_STYLES)
+_MAP_STYLES.update(app_settings['MAP_STYLES'])
+app_settings['MAP_STYLES'] = _MAP_STYLES
 
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
@@ -71,21 +85,16 @@ REST_FRAMEWORK_DEFAULT_CONFIG = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'mapentity.renderers.GeoJSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
 REST_FRAMEWORK_DEFAULT_CONFIG.update(getattr(settings, 'REST_FRAMEWORK', {}))
 setattr(settings, 'REST_FRAMEWORK', REST_FRAMEWORK_DEFAULT_CONFIG)
 
-
-_MAP_STYLES = {
-    'detail': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
-    'others': {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
-    'filelayer': {'color': 'red', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 2, 'radius': 5},
-    'draw': {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
-    'print': {},
-}
-
+for name, override in getattr(settings, 'MAP_STYLES', {}).items():
+    # fallback old settings MAP_STYLES
+    merged = app_settings['MAP_STYLES'].get(name, {})
+    merged.update(override)
+    app_settings['MAP_STYLES'][name] = merged
 
 _LEAFLET_PLUGINS = OrderedDict([
     ('leaflet.overintent', {

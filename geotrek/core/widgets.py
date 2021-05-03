@@ -10,8 +10,6 @@
 """
 import json
 
-from django.template import loader
-from django.conf import settings
 from mapentity.widgets import MapWidget
 
 from .models import Topology
@@ -21,7 +19,7 @@ class SnappedLineStringWidget(MapWidget):
     geometry_field_class = 'MapEntity.GeometryField.GeometryFieldSnap'
 
     def serialize(self, value):
-        geojson = super(SnappedLineStringWidget, self).serialize(value)
+        geojson = super().serialize(value)
         snaplist = []
         if value:
             snaplist = [None for c in range(len(value.coords))]
@@ -32,7 +30,7 @@ class SnappedLineStringWidget(MapWidget):
         if isinstance(value, str) and value:
             value = json.loads(value)
             value = value['geom']
-        return super(SnappedLineStringWidget, self).deserialize(value)
+        return super().deserialize(value)
 
 
 class BaseTopologyWidget(MapWidget):
@@ -62,7 +60,7 @@ class BaseTopologyWidget(MapWidget):
         attrs = attrs or {}
         attrs.update(is_line_topology=self.is_line_topology,
                      is_point_topology=self.is_point_topology)
-        return super(BaseTopologyWidget, self).render(name, value, attrs, renderer)
+        return super().render(name, value, attrs, renderer)
 
 
 class LineTopologyWidget(BaseTopologyWidget):
@@ -81,22 +79,3 @@ class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
     """ A widget allowing to point a position with a marker or a list of paths.
     """
     pass
-
-
-class TopologyReadonlyWidget(BaseTopologyWidget):
-    template_name = "mapentity/mapgeometry_fragment.html"
-
-    def render(self, name, value, attrs=None, renderer=None):
-        """
-        Completely bypass widget rendering, and just render a geometry.
-        """
-        topology = value
-        if isinstance(topology, (str, int)):
-            topology = self.deserialize(topology)
-        if topology:
-            geom = topology.geom
-            geom.transform(settings.API_SRID)
-        else:  # if form invalid
-            geom = None
-        context = {'object': geom, 'mapname': name}
-        return loader.render_to_string(self.template_name, context)

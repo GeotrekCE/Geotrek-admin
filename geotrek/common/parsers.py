@@ -57,7 +57,7 @@ class DownloadImportError(ImportError):
     pass
 
 
-class Parser(object):
+class Parser:
     label = None
     model = None
     filename = None
@@ -516,7 +516,7 @@ class ShapeParser(Parser):
 
     def normalize_field_name(self, name):
         """Shapefile field names length is 10 char max"""
-        name = super(ShapeParser, self).normalize_field_name(name)
+        name = super().normalize_field_name(name)
         return name[:10]
 
 
@@ -553,7 +553,7 @@ class AtomParser(Parser):
             yield row
 
 
-class AttachmentParserMixin(object):
+class AttachmentParserMixin:
     download_attachments = True
     base_url = ''
     delete_attachments = True
@@ -563,7 +563,7 @@ class AttachmentParserMixin(object):
     }
 
     def start(self):
-        super(AttachmentParserMixin, self).start()
+        super().start()
         if settings.PAPERCLIP_ENABLE_LINK is False and self.download_attachments is False:
             raise Exception('You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:

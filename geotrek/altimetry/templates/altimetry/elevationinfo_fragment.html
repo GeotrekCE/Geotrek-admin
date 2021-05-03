@@ -1,24 +1,22 @@
 {% load i18n mapentity_tags %}
-{% if object.ispoint %}
-    <tr>
-        <th>{% trans "Elevation" %}</th>
-        <td>{{ object.min_elevation|floatformat }}m</td>
-    </tr>
-{% else %}
+{% if object.length %}
 <tr>
     <th>{% trans "Length" %}</th>
     <td>
     {# ``length`` attribute comes from AltimetryMixin and triggers #}
-    <span title="{% trans "3D" %}">&#8605; {{ object.length|floatformat }}m</span>
+    <span title="{% trans "3D" %}">&#8605; {{ object.length|floatformat }} m</span>
     {# ``geom.length`` is 2D and is computed by GEOS #}
-    <span title="{% trans "2D" %}">(&#8594; {{ object.geom.length|floatformat }}m)</span></td>
+    <span title="{% trans "2D" %}">(&#8594; {{ object.geom.length|floatformat }} m)</span></td>
 </tr>
+{% endif %}
+{% if object.slope %}
 <tr>
     <th>{% trans "Slope" %}</th>
     <td>{{ object.descent|floatformat }}m  +{{ object.ascent|floatformat }}m ({{ object.slope|floatformat }})</td>
 </tr>
+{% endif %}
 <tr>
     <th>{% trans "Elevation" %}</th>
-    <td>Min: {{ object.min_elevation|floatformat }}m, Max: {{ object.max_elevation|floatformat }}m</td>
+    <td>
+        Min: {{ object.min_elevation|floatformat }} m{% if not object.ispoint %}, Max: {{ object.max_elevation|floatformat }} m{% endif %}</td>
 </tr>
-{% endif %}

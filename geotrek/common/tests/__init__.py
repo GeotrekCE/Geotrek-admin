@@ -20,10 +20,10 @@ from geotrek.authent.factories import StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
 
-class TranslationResetMixin(object):
+class TranslationResetMixin:
     def setUp(self):
         translation.deactivate()
-        super(TranslationResetMixin, self).setUp()
+        super().setUp()
 
 
 class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):

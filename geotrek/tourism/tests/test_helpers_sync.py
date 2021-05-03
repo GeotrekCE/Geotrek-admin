@@ -18,7 +18,7 @@ from geotrek.tourism.helpers_sync import SyncRando
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.source = RecordSourceFactory()
         cls.portal = TargetPortalFactory()
 

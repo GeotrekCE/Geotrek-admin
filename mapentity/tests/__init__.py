@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import csv
 import hashlib
 import logging
@@ -153,7 +152,7 @@ class MapEntityTest(TestCase):
         self.modelfactory.create()
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
-            self.assertEqual(response.status_code, 200, u"")
+            self.assertEqual(response.status_code, 200, "")
 
     def test_gpx_elevation(self):
         if self.model is None:
@@ -215,8 +214,8 @@ class MapEntityTest(TestCase):
         fields_errors = form.errors[list(bad_data.keys())[0]]
         form_errors = to_list(form_error)
         for err in form_errors:
-            self.assertTrue(u"{}".format(err) in fields_errors,
-                            u"'%s' not in %s" % (err, fields_errors))
+            self.assertTrue(str(err) in fields_errors,
+                            "'%s' not in %s" % (err, fields_errors))
 
         response = self.client.post(url, self.get_good_data())
         if response.status_code != 302:
@@ -401,7 +400,7 @@ class MapEntityLiveTest(LiveServerTestCase):
     def _pre_setup(self):
         # Workaround https://code.djangoproject.com/ticket/10827
         ContentType.objects.clear_cache()
-        return super(MapEntityLiveTest, self)._pre_setup()
+        return super()._pre_setup()
 
     def url_for(self, path):
         return smart_urljoin(self.live_server_url, path)

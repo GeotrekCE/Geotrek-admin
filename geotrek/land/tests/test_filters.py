@@ -36,9 +36,17 @@ class LandFiltersTest(TestCase):
         qs = self.filterclass().qs
         self.assertEqual(len(qs), 2)
 
-        data = {key: getvalue(seek_edge)}
+        data = {key: []}
+        qs = self.filterclass(data=data).qs
+        self.assertEqual(len(qs), 2)
+
+        data = {key: [getvalue(seek_edge)]}
         qs = self.filterclass(data=data).qs
         self.assertEqual(len(qs), 1)
+
+        data = {key: [getvalue(seek_edge), getvalue(useless_edge)]}
+        qs = self.filterclass(data=data).qs
+        self.assertEqual(len(qs), 2)
 
     def test_filter_by_physical_edge(self):
         self._filter_by_edge(PhysicalEdgeFactory, 'physical_type', lambda edge: edge.physical_type.pk)

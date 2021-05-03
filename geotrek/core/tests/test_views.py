@@ -134,7 +134,7 @@ class PathViewsTest(CommonTest):
         # Avoid overlap, delete all !
         for p in Path.objects.all():
             p.delete()
-        super(PathViewsTest, self)._post_add_form()
+        super()._post_add_form()
 
     def test_draft_permission_detail(self):
         path = PathFactory(name="DRAFT_PATH", draft=True)
@@ -223,7 +223,7 @@ class PathViewsTest(CommonTest):
     def test_basic_format(self):
         self.modelfactory.create()
         self.modelfactory.create(name="ãéè")
-        super(CommonTest, self).test_basic_format()
+        super().test_basic_format()
 
     def test_path_form_is_not_valid_if_no_geometry_provided(self):
         self.login()
@@ -292,7 +292,7 @@ class PathViewsTest(CommonTest):
         city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
         city2 = CityFactory(code='09001', geom=MultiPolygon(
             Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
-        self.assertEqual(p1.aggregations.count(), 1)
+        self.assertEqual(len(p1.cities), 1)
         response = self.client.get('/api/path/paths.json?city=%s' % city.code)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['sumPath'], 0.0)
@@ -306,7 +306,7 @@ class PathViewsTest(CommonTest):
         district = DistrictFactory(geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
         district2 = DistrictFactory(geom=MultiPolygon(
             Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
-        self.assertEqual(p1.aggregations.count(), 1)
+        self.assertEqual(len(p1.districts), 1)
         response = self.client.get('/api/path/paths.json?district=%s' % district.pk)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['sumPath'], 0.0)
@@ -599,7 +599,7 @@ class PathViewsTest(CommonTest):
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
     def setUp(self):
-        super(PathKmlGPXTest, self).setUp()
+        super().setUp()
         self.user = UserFactory.create(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 
@@ -725,7 +725,7 @@ class TrailViewsTest(CommonTest):
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):
     def setUp(self):
-        super(TrailKmlGPXTest, self).setUp()
+        super().setUp()
         self.user = UserFactory.create(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 

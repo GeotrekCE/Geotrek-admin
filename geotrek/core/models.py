@@ -1,12 +1,17 @@
+import json
 import logging
 import functools
 
 import simplekml
+
+from modelcluster.models import ClusterableModel
+from modelcluster.fields import ParentalKey
+
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from django.contrib.gis.geos import fromstr, LineString
+from django.contrib.gis.geos import fromstr, LineString, GEOSGeometry
 
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
@@ -14,12 +19,13 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
                                    AddPropertyMixin)
-from geotrek.common.utils import classproperty
+from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
-from .helpers import PathHelper, TopologyHelper
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db.models.query import QuerySet
 
 from django.contrib.gis.geos import Point
 
@@ -41,14 +47,14 @@ class PathManager(models.Manager):
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible.
         """
-        return super(PathManager, self).get_queryset().filter(visible=True)
+        return super().get_queryset().filter(visible=True)
 
 
 class PathInvisibleManager(models.Manager):
     use_for_related_fields = True
 
     def get_queryset(self):
-        return super(PathInvisibleManager, self).get_queryset()
+        return super().get_queryset()
 
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
@@ -56,10 +62,10 @@ class PathInvisibleManager(models.Manager):
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
 
-class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
-           TimeStampedModelMixin, StructureRelated):
-    geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
-    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
+class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+           TimeStampedModelMixin, StructureRelated, ClusterableModel):
+    geom = models.LineStringField(srid=settings.SRID, spatial_index=True)
+    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=True,
                                            editable=False)
     valid = models.BooleanField(default=True, verbose_name=_("Validity"),
                                 help_text=_("Approved by manager"))
@@ -97,6 +103,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     include_invisible = PathInvisibleManager()
 
     is_reversed = False
+
+    @property
+    def topology_set(self):
+        return Topology.objects.filter(aggregations__path=self)
 
     @property
     def length_2d(self):
@@ -150,8 +160,16 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             qs = qs.exclude(pk=exclude.pk)
         return qs.exclude(visible=False).annotate(distance=Distance('geom', point)).order_by('distance')[0]
 
-    def is_overlap(self):
-        return not PathHelper.disjoint(self.geom, self.pk)
+    @classmethod
+    def check_path_not_overlap(cls, geom, pk):
+        """
+        Returns True if this path does not overlap another.
+        TODO: this could be a constraint at DB-level. But this would mean that
+        path never ever overlap, even during trigger computation, like path splitting...
+        """
+        wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
+        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
+        return disjoint[0]
 
     def reverse(self):
         """
@@ -168,13 +186,41 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         Returns position ([0.0-1.0]) and offset (distance) of the point
         along this path.
         """
-        return PathHelper.interpolate(self, point)
+        if not self.pk:
+            raise ValueError("Cannot compute interpolation on unsaved path")
+        if point.srid != self.geom.srid:
+            point.transform(self.geom.srid)
+        cursor = connection.cursor()
+        sql = """
+        SELECT position, distance
+        FROM ft_path_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
+             AS (position FLOAT, distance FLOAT)
+        """ % {'pk': self.pk,
+               'x': point.x,
+               'y': point.y,
+               'srid': self.geom.srid}
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result[0]
 
     def snap(self, point):
         """
         Returns the point snapped (i.e closest) to the path line geometry.
         """
-        return PathHelper.snap(self, point)
+        if not self.pk:
+            raise ValueError("Cannot compute snap on unsaved path")
+        if point.srid != self.geom.srid:
+            point.transform(self.geom.srid)
+        cursor = connection.cursor()
+        sql = """
+        WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
+                   FROM %(table)s
+                   WHERE id = '%(pk)s')
+        SELECT ST_X(p.geom), ST_Y(p.geom) FROM p
+        """ % {'ewkt': point.ewkt, 'table': self._meta.db_table, 'pk': self.pk}
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return Point(*result[0], srid=self.geom.srid)
 
     def reload(self):
         # Update object's computed values (reload from database)
@@ -194,14 +240,14 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                 aggr.end_position = 1 - aggr.end_position
                 aggr.save()
             self._is_reversed = False
-        super(Path, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.reload()
 
     def delete(self, *args, **kwargs):
         if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return super(Path, self).delete(*args, **kwargs)
+            return super().delete(*args, **kwargs)
         topologies = list(self.topology_set.filter())
-        r = super(Path, self).delete(*args, **kwargs)
+        r = super().delete(*args, **kwargs)
         if not Path.objects.exists():
             return r
         for topology in topologies:
@@ -329,7 +375,8 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return None
 
 
-class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
+class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
+               TimeStampedModelMixin, NoDeleteMixin, ClusterableModel):
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
@@ -337,7 +384,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
 
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
-                                default=None, spatial_index=False)
+                                default=None, spatial_index=True)
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
@@ -347,9 +394,13 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         verbose_name_plural = _("Topologies")
 
     def __init__(self, *args, **kwargs):
-        super(Topology, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
+
+    @property
+    def paths(self):
+        return Path.objects.filter(aggregations__topo_object=self)
 
     @property
     def length_2d(self):
@@ -383,12 +434,11 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         """
         Shortcut function to add paths into this topology.
         """
-        from .factories import PathAggregationFactory
-        aggr = PathAggregationFactory.create(topo_object=self,
-                                             path=path,
-                                             start_position=start,
-                                             end_position=end,
-                                             order=order)
+        aggr = PathAggregation.objects.create(topo_object=self,
+                                              path=path,
+                                              start_position=start,
+                                              end_position=end,
+                                              order=order)
 
         if self.deleted:
             self.deleted = False
@@ -400,12 +450,62 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         return aggr
 
     @classmethod
-    def overlapping(cls, topologies):
+    def overlapping(cls, queryset, all_objects=None):
         """ Return a Topology queryset overlapping specified topologies.
         """
-        return TopologyHelper.overlapping(cls, topologies)
+        if all_objects is None:
+            all_objects = cls.objects.existing()
+        is_generic = all_objects.model.KIND == Topology.KIND
+        single_input = isinstance(queryset, QuerySet)
 
-    def mutate(self, other, delete=True):
+        if single_input:
+            topology_pks = [str(pk) for pk in queryset.values_list('pk', flat=True)]
+        else:
+            topology_pks = [str(queryset.pk)]
+
+        if len(topology_pks) == 0:
+            return all_objects.filter(pk__in=[])
+
+        sql = """
+        WITH topologies AS (SELECT id FROM %(topology_table)s WHERE id IN (%(topology_list)s)),
+        -- Concerned aggregations
+             aggregations AS (SELECT * FROM %(aggregations_table)s a, topologies t
+                              WHERE a.topo_object_id = t.id),
+        -- Concerned paths along with (start, end)
+             paths_aggr AS (SELECT a.start_position AS start, a.end_position AS end, p.id, a.order AS order
+                            FROM %(paths_table)s p, aggregations a
+                            WHERE a.path_id = p.id
+                            ORDER BY a.order)
+        -- Retrieve primary keys
+        SELECT t.id
+        FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
+        WHERE a.path_id = pa.id AND a.topo_object_id = t.id
+          AND least(a.start_position, a.end_position) <= greatest(pa.start, pa.end)
+          AND greatest(a.start_position, a.end_position) >= least(pa.start, pa.end)
+          AND %(extra_condition)s
+        ORDER BY (pa.order + CASE WHEN pa.start > pa.end THEN (1 - a.start_position) ELSE a.start_position END);
+        """ % {
+            'topology_table': Topology._meta.db_table,
+            'aggregations_table': PathAggregation._meta.db_table,
+            'paths_table': Path._meta.db_table,
+            'topology_list': ','.join(topology_pks),
+            'extra_condition': 'true' if is_generic else "kind = '%s'" % all_objects.model.KIND
+        }
+
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        pk_list = uniquify([row[0] for row in result])
+
+        # Return a QuerySet and preserve pk list order
+        # http://stackoverflow.com/a/1310188/141895
+        ordering = 'CASE %s END' % ' '.join(['WHEN %s.id=%s THEN %s' % (Topology._meta.db_table, id_, i)
+                                             for i, id_ in enumerate(pk_list)])
+        queryset = all_objects.filter(pk__in=pk_list).extra(
+            select={'ordering': ordering}, order_by=('ordering',))
+        return queryset
+
+    def mutate(self, other):
         """
         Take alls attributes of the other topology specified and
         save them into this one. Optionnally deletes the other.
@@ -436,8 +536,6 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
             for aggr in aggrs
         ])
         self.reload()
-        if delete:
-            other.delete(force=True)  # Really delete it from database
         return self
 
     def reload(self):
@@ -487,15 +585,212 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         self.offset = settings.TOPOLOGY_STATIC_OFFSETS.get(shortmodelname, self.offset)
 
         # Save into db
-        super(Topology, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.reload()
 
-    def serialize(self, **kwargs):
-        return TopologyHelper.serialize(self, **kwargs)
+    def serialize(self, with_pk=True):
+        if not self.aggregations.exists():
+            # Empty topology
+            return ''
+        elif self.ispoint():
+            # Point topology
+            point = self.geom.transform(settings.API_SRID, clone=True)
+            objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
+            if with_pk:
+                objdict['pk'] = self.pk
+            if settings.TREKKING_TOPOLOGY_ENABLED and self.offset == 0:
+                objdict['snap'] = self.aggregations.all()[0].path.pk
+        else:
+            # Line topology
+            # Fetch properly ordered aggregations
+            aggregations = self.aggregations.select_related('path').all()
+            objdict = []
+            current = {}
+            ipath = 0
+            for i, aggr in enumerate(aggregations):
+                last = i == len(aggregations) - 1
+                intermediary = aggr.start_position == aggr.end_position
+
+                if with_pk:
+                    current.setdefault('pk', self.pk)
+                current.setdefault('kind', self.kind)
+                current.setdefault('offset', self.offset)
+                if not intermediary:
+                    current.setdefault('paths', []).append(aggr.path.pk)
+                    current.setdefault('positions', {})[ipath] = (aggr.start_position, aggr.end_position)
+                ipath = ipath + 1
+
+                subtopology_done = 'paths' in current and (intermediary or last)
+                if subtopology_done:
+                    objdict.append(current)
+                    current = {}
+                    ipath = 0
+        return json.dumps(objdict)
+
+    @classmethod
+    def _topologypoint(cls, lng, lat, kind=None, snap=None):
+        """
+        Receives a point (lng, lat) with API_SRID, and returns
+        a topology objects with a computed path aggregation.
+        """
+        # Find closest path
+        point = Point(lng, lat, srid=settings.API_SRID)
+        point.transform(settings.SRID)
+        if snap is None:
+            closest = Path.closest(point)
+            position, offset = closest.interpolate(point)
+        else:
+            closest = Path.objects.get(pk=snap)
+            position, offset = closest.interpolate(point)
+            offset = 0
+        # We can now instantiante a Topology object
+        topology = Topology(kind=kind, offset=offset)
+        aggr = PathAggregation(
+            topo_object=topology,
+            path=closest,
+            start_position=position,
+            end_position=position
+        )
+        topology.aggregations = [aggr]
+        closest.aggregations.add(aggr)
+        point = Point(point.x, point.y, srid=settings.SRID)
+        topology.geom = point
+        return topology
 
     @classmethod
     def deserialize(cls, serialized):
-        return TopologyHelper.deserialize(serialized)
+        """
+        Topologies can be points or lines. Serialized topologies come from Javascript
+        module ``topology_helper.js``.
+
+        Example of linear point topology (snapped with path 1245):
+
+            {"lat":5.0, "lng":10.2, "snap":1245}
+
+        Example of linear serialized topology :
+
+        [
+            {"offset":0,"positions":{"0":[0,0.3],"1":[0.2,1]},"paths":[1264,1208]},
+            {"offset":0,"positions":{"0":[0.2,1],"5":[0,0.2]},"paths":[1208,1263,678,1265,1266,686]}
+        ]
+
+        * Each sub-topology represents a way between markers.
+        * Start point is first position of sub-topology.
+        * End point is last position of sub-topology.
+        * All last positions represents intermediary markers.
+
+        Global strategy is :
+        * If has lat/lng return point topology
+        * Otherwise, create path aggregations from serialized data.
+        ____________________________________________________________________________________________
+        Without Dynamic Segmentation :
+
+        Deserialize normally and create a topology from the geojson
+        """
+        try:
+            return Topology.objects.get(pk=int(serialized))
+        except Topology.DoesNotExist:
+            raise
+        except (TypeError, ValueError):
+            pass  # value is not integer, thus should be deserialized
+        if not settings.TREKKING_TOPOLOGY_ENABLED:
+            return Topology(kind='TMP', geom=GEOSGeometry(serialized, srid=settings.API_SRID))
+        objdict = serialized
+        if isinstance(serialized, str):
+            try:
+                objdict = json.loads(serialized)
+            except ValueError as e:
+                raise ValueError("Invalid serialization: %s" % e)
+
+        if objdict and not isinstance(objdict, list):
+            lat = objdict.get('lat')
+            lng = objdict.get('lng')
+            pk = objdict.get('pk')
+            kind = objdict.get('kind')
+            # Point topology ?
+            if lat is not None and lng is not None:
+                if pk:
+                    try:
+                        return Topology.objects.get(pk=int(pk))
+                    except (Topology.DoesNotExist, ValueError):
+                        pass
+
+                return Topology._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
+            else:
+                objdict = [objdict]
+
+        if not objdict:
+            raise ValueError("Invalid serialized topology : empty list found")
+
+        # If pk is still here, the user did not edit it.
+        # Return existing topology instead
+        pk = objdict[0].get('pk')
+        if pk:
+            try:
+                return Topology.objects.get(pk=int(pk))
+            except (Topology.DoesNotExist, ValueError):
+                pass
+
+        offset = objdict[0].get('offset', 0.0)
+        topology = Topology(kind='TMP', offset=offset)
+        try:
+            counter = 0
+            for j, subtopology in enumerate(objdict):
+                last_topo = j == len(objdict) - 1
+                positions = subtopology.get('positions', {})
+                paths = subtopology['paths']
+                # Create path aggregations
+                aggrs = []
+                for i, path in enumerate(paths):
+                    last_path = i == len(paths) - 1
+                    # Javascript hash keys are parsed as a string
+                    idx = str(i)
+                    start_position, end_position = positions.get(idx, (0.0, 1.0))
+                    path = Path.objects.get(pk=path)
+                    aggr = PathAggregation(
+                        path=path,
+                        topo_object=topology,
+                        start_position=start_position,
+                        end_position=end_position,
+                        order=counter
+                    )
+                    aggrs.append(aggr)
+                    path.aggregations.add(aggr)
+                    if not last_topo and last_path:
+                        counter += 1
+                        # Intermediary marker.
+                        # make sure pos will be [X, X]
+                        # [0, X] or [X, 1] or [X, 0] or [1, X] --> X
+                        # [0.0, 0.0] --> 0.0  : marker at beginning of path
+                        # [1.0, 1.0] --> 1.0  : marker at end of path
+                        pos = -1
+                        if start_position == end_position:
+                            pos = start_position
+                        if start_position == 0.0:
+                            pos = end_position
+                        elif start_position == 1.0:
+                            pos = end_position
+                        elif end_position == 0.0:
+                            pos = start_position
+                        elif end_position == 1.0:
+                            pos = start_position
+                        elif len(paths) == 1:
+                            pos = end_position
+                        assert pos >= 0, "Invalid position (%s, %s)." % (start_position, end_position)
+                        aggr = PathAggregation(
+                            path=path,
+                            topo_object=topology,
+                            start_position=pos,
+                            end_position=pos,
+                            order=counter
+                        )
+                        aggrs.append(aggr)
+                        path.aggregations.add(aggr)
+                    counter += 1
+                topology.aggregations.add(*aggrs)
+        except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
+            raise ValueError("Invalid serialized topology : %s" % e)
+        return topology
 
     def distance(self, to_cls):
         """Distance to associate this topology to another topology class"""
@@ -504,16 +799,16 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
 
 class PathAggregationManager(models.Manager):
     def get_queryset(self):
-        return super(PathAggregationManager, self).get_queryset().order_by('order')
+        return super().get_queryset().order_by('order')
 
 
 class PathAggregation(models.Model):
-    path = models.ForeignKey(Path, null=False,
-                             verbose_name=_("Path"),
-                             related_name="aggregations",
-                             on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/30_topologies_paths.sql)
-    topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations", on_delete=models.CASCADE,
-                                    verbose_name=_("Topology"))
+    path = ParentalKey(Path, null=False,
+                       verbose_name=_("Path"),
+                       related_name="aggregations",
+                       on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/30_topologies_paths.sql)
+    topo_object = ParentalKey(Topology, null=False, related_name="aggregations", on_delete=models.CASCADE,
+                              verbose_name=_("Topology"))
     start_position = models.FloatField(verbose_name=_("Start position"), db_index=True)
     end_position = models.FloatField(verbose_name=_("End position"), db_index=True)
     order = models.IntegerField(default=0, blank=True, null=True, verbose_name=_("Order"))
@@ -545,7 +840,7 @@ class PathAggregation(models.Model):
 
     @debug_pg_notices
     def save(self, *args, **kwargs):
-        return super(PathAggregation, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Path aggregation")

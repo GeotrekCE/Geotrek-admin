@@ -17,3 +17,13 @@ def is_topology_model(model):
 @register.simple_tag
 def is_blade_model(model):
     return model._meta.model_name == 'blade'
+
+
+@register.simple_tag
+def is_site_model(model):
+    return model._meta.model_name == 'site'
+
+
+@register.simple_tag
+def is_course_model(model):
+    return model._meta.model_name == 'course'

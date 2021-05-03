@@ -6,7 +6,8 @@ import django.contrib.gis.db.models.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0001_initial'),
+        # ('core', '0001_initial'),
+        # Commented in the goal of make the squash : 0100_initial work
     ]
 
     operations = [

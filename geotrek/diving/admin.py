@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from .models import (
     Practice, Difficulty, Level, Dive
 )
@@ -78,7 +78,7 @@ class DifficultyAdmin(MergeActionMixin, TranslationAdmin):
                 old=self.oldid, new=obj.pk)
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
-        return super(DifficultyAdmin, self).response_change(request, obj)
+        return super().response_change(request, obj)
 
 
 class LevelForm(forms.ModelForm):
@@ -138,7 +138,7 @@ class LevelAdmin(MergeActionMixin, TranslationAdmin):
                 old=self.oldid, new=obj.pk)
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
-        return super(LevelAdmin, self).response_change(request, obj)
+        return super().response_change(request, obj)
 
 
 # Register previously defined modeladmins

@@ -2,17 +2,22 @@
 
 .. image:: http://geotrek.fr/assets/img/logo.svg
 
-:master: |master-status| |master-coverage|
+:master: |master-status| |master-coverage| |master-e2e|
 
 .. |master-status| image::
-    https://api.travis-ci.org/GeotrekCE/Geotrek-admin.png?branch=master
+    https://circleci.com/gh/GeotrekCE/Geotrek-admin.svg?style=shield
     :alt: Build Status
-    :target: https://travis-ci.org/GeotrekCE/Geotrek-admin
+    :target: https://circleci.com/gh/GeotrekCE/Geotrek-admin
 
 .. |master-coverage| image::
     https://codecov.io/gh/GeotrekCE/Geotrek-admin/branch/master/graph/badge.svg
     :alt: Coverage
     :target: https://codecov.io/gh/GeotrekCE/Geotrek-admin
+
+.. |master-e2e| image::
+    https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/ktpy7v/master&style=flat&logo=cypress
+    :alt: End to End
+    :target: https://dashboard.cypress.io/projects/ktpy7v/runs
 
 
 In brief
@@ -81,8 +86,8 @@ Status of sub-projects
 .. |django-geojson| image:: https://travis-ci.org/makinacorpus/django-geojson.png?branch=master
     :target: https://travis-ci.org/makinacorpus/django-geojson?branch=master
 
-.. |convertit| image:: https://travis-ci.org/makinacorpus/convertit.png?branch=master
-    :target: https://travis-ci.org/makinacorpus/convertit?branch=master
+.. |convertit| image:: https://circleci.com/gh/makinacorpus/convertit.svg?style=shield
+    :target: https://circleci.com/gh/makinacorpus/convertit
 
 .. |Leaflet.GeometryUtil| image:: https://travis-ci.org/makinacorpus/Leaflet.GeometryUtil.png?branch=master
     :target: https://travis-ci.org/makinacorpus/Leaflet.GeometryUtil?branch=master

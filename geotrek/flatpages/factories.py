@@ -3,7 +3,7 @@ import factory
 from geotrek.flatpages import models as flatpages_models
 
 
-class FlatPageFactory(factory.DjangoModelFactory):
+class FlatPageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = flatpages_models.FlatPage
 

@@ -8,14 +8,14 @@ from django.core.management import call_command
 from mapentity.registry import registry
 
 
-class AuthentFixturesMixin(object):
+class AuthentFixturesMixin:
     fixtures = [os.path.join(settings.PROJECT_DIR, 'authent', 'fixtures', 'minimal.json'),
                 os.path.join(settings.PROJECT_DIR, 'authent', 'fixtures', 'basic.json')]
 
     def _pre_setup(self):
         if not isinstance(self, TestCase):
             call_command('update_geotrek_permissions', verbosity=0)
-        super(AuthentFixturesMixin, self)._pre_setup()
+        super()._pre_setup()
 
     @classmethod
     def setUpClass(cls):
@@ -42,7 +42,7 @@ class AuthentFixturesMixin(object):
 
         call_command('update_geotrek_permissions', verbosity=0)
 
-        return super(AuthentFixturesMixin, cls).setUpClass()
+        return super().setUpClass()
 
 
 class AuthentFixturesTest(AuthentFixturesMixin, TestCase):

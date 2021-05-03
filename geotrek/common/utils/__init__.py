@@ -2,6 +2,7 @@ import logging
 
 from django.db import connection
 from django.db.models import Func
+from django.db.models.base import ModelBase
 from django.utils.timezone import utc
 from django.utils.translation import pgettext
 from django.conf import settings
@@ -11,7 +12,7 @@ from django.contrib.gis.gdal import SpatialReference
 logger = logging.getLogger(__name__)
 
 
-class classproperty(object):
+class classproperty:
     def __init__(self, getter):
         self.getter = getter
 
@@ -21,7 +22,7 @@ class classproperty(object):
 
 # This one come from pyramid
 # https://github.com/Pylons/pyramid/blob/master/pyramid/decorator.py
-class reify(object):
+class reify:
 
     """ Put the result of a method which uses this (non-data)
     descriptor decorator in the instance dict after the first call,
@@ -43,9 +44,9 @@ class reify(object):
 
 
 def dbnow():
-    cursor = connection.cursor()
-    cursor.execute("SELECT statement_timestamp() AT TIME ZONE 'UTC';")
-    row = cursor.fetchone()
+    with connection._nodb_cursor() as cursor:
+        cursor.execute("SELECT statement_timestamp() AT TIME ZONE 'UTC';")
+        row = cursor.fetchone()
     return row[0].replace(tzinfo=utc)
 
 
@@ -85,17 +86,18 @@ def uniquify(values):
     return unique
 
 
-def intersecting(cls, obj, distance=None, ordering=True, field='geom'):
+def intersecting(qs, obj, distance=None, ordering=True, field='geom'):
     """
     Small helper to filter all model instances by geometry intersection
     """
-    qs = cls.objects
+    if isinstance(qs, ModelBase):
+        qs = qs.objects
+        if hasattr(qs, 'existing'):
+            qs = qs.existing()
     if not obj.geom:
         return qs.none()
-    if hasattr(qs, 'existing'):
-        qs = qs.existing()
     if distance is None:
-        distance = obj.distance(cls)
+        distance = obj.distance(qs.model)
     if distance:
         qs = qs.filter(**{'{}__dwithin'.format(field): (obj.geom, Distance(m=distance))})
     else:
@@ -106,7 +108,7 @@ def intersecting(cls, obj, distance=None, ordering=True, field='geom'):
             qs = qs.extra(select={'ordering': 'ST_LineLocatePoint(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
             qs = qs.extra(order_by=['ordering'])
 
-    if obj.__class__ == cls:
+    if obj.__class__ == qs.model:
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
     return qs

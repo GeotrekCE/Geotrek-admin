@@ -11,7 +11,7 @@ from django.views import static
 from mapentity.decorators import view_cache_response_content
 from mapentity.views import JSONResponseMixin, LastModifiedMixin
 
-from geotrek.common.views import PublicOrReadPermMixin
+from geotrek.common.permissions import PublicOrReadPermMixin
 
 from .models import AltimetryMixin
 
@@ -21,7 +21,7 @@ class HttpSVGResponse(HttpResponse):
 
     def __init__(self, content='', **kwargs):
         kwargs['content_type'] = self.content_type
-        super(HttpSVGResponse, self).__init__(content, **kwargs)
+        super().__init__(content, **kwargs)
 
 
 class ElevationChart(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
@@ -61,7 +61,7 @@ class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,
 
     @view_cache_response_content()
     def dispatch(self, *args, **kwargs):
-        return super(ElevationArea, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         return self.object.get_elevation_area()

@@ -1,8 +1,134 @@
-geotrek-admin (2.43.2~dev0) UNRELEASED; urgency=medium
+geotrek-admin (2.57.0+dev) UNRELEASED; urgency=medium
 
   * New package release
 
- -- Gaël UTARD <gael.utard@makina-corpus.com>  Thu, 10 Dec 2020 08:37:24 +0100
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Wed, 28 Apr 2021 12:24:17 +0200
+
+geotrek-admin (2.57.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Wed, 28 Apr 2021 12:23:11 +0200
+
+geotrek-admin (2.56.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 27 Apr 2021 16:11:58 +0200
+
+geotrek-admin (2.55.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Thu, 15 Apr 2021 09:17:34 +0200
+
+geotrek-admin (2.55.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Bastien POTIRON <bastien.potiron@makina-corpus.com>  Thu, 09 Apr 2021 18:08:37 +0200
+
+geotrek-admin (2.54.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Bastien POTIRON <bastien.potiron@makina-corpus.com>  Thu, 09 Apr 2021 08:51:22 +0200
+
+geotrek-admin (2.53.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Bastien POTIRON <bastien.potiron@makina-corpus.com>  Thu, 07 Apr 2021 16:45:44 +0200
+
+geotrek-admin (2.53.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Thu, 01 Apr 2021 10:07:45 +0200
+
+geotrek-admin (2.52.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Thu, 25 Mar 2021 13:14:24 +0100
+
+geotrek-admin (2.51.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 16 Mar 2021 17:46:07 +0100
+
+geotrek-admin (2.51.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Fri, 05 Mar 2021 11:57:46 +0100
+
+geotrek-admin (2.51.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 02 Mar 2021 18:34:38 +0100
+
+geotrek-admin (2.50.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Fri, 19 Feb 2021 17:44:47 +0100
+
+geotrek-admin (2.49.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 09 Feb 2021 18:31:20 +0100
+
+geotrek-admin (2.48.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Fri, 05 Feb 2021 11:05:38 +0100
+
+geotrek-admin (2.48.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Wed, 03 Feb 2021 14:39:51 +0100
+
+geotrek-admin (2.47.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Thu, 28 Jan 2021 11:07:30 +0100
+
+geotrek-admin (2.47.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Wed, 27 Jan 2021 17:58:00 +0100
+
+geotrek-admin (2.47.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 26 Jan 2021 17:53:57 +0100
+
+geotrek-admin (2.46.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Mon, 25 Jan 2021 11:40:25 +0100
+
+geotrek-admin (2.45.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Sun, 10 Jan 2021 22:05:56 +0100
+
+geotrek-admin (2.44.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Fri, 18 Dec 2020 17:00:21 +0100
 
 geotrek-admin (2.43.1) RELEASED; urgency=medium
 

@@ -11,7 +11,6 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
-from geotrek.core.widgets import TopologyReadonlyWidget
 
 from .models import Intervention, Project
 
@@ -22,7 +21,7 @@ class ManDayForm(forms.ModelForm):
         fields = ('id', 'nb_days', 'job')
 
     def __init__(self, *args, **kwargs):
-        super(ManDayForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'nb_days', 'job')
@@ -41,7 +40,7 @@ class FundingForm(forms.ModelForm):
         fields = ('id', 'amount', 'organism')
 
     def __init__(self, *args, **kwargs):
-        super(FundingForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'amount', 'organism')
@@ -108,7 +107,7 @@ class InterventionForm(CommonForm):
              'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
-        super(InterventionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not self.instance.pk:
             # New intervention. We have to set its target.
@@ -120,7 +119,7 @@ class InterventionForm(CommonForm):
                 self.helper.form_action += '?target_type={}&target_id={}'.format(target_type, target_id)
             else:
                 # Point target to a new topology
-                self.instance.target = Topology()
+                self.instance.target = Topology(kind='INTERVENTION')
         # Else: existing intervention. Target is already set
 
         self.fields['topology'].initial = self.instance.target
@@ -142,8 +141,7 @@ class InterventionForm(CommonForm):
                     url=self.instance.target.get_detail_url()
             )
             # Topology is readonly
-            self.fields['topology'].required = False
-            self.fields['topology'].widget = TopologyReadonlyWidget()
+            del self.fields['topology']
 
         # Length is not editable in AltimetryMixin
         self.fields['length'].initial = self.instance.length
@@ -155,7 +153,7 @@ class InterventionForm(CommonForm):
         target = self.instance.target
         if not target.pk:
             target.save()
-        topology = self.cleaned_data.pop('topology')
+        topology = self.cleaned_data.get('topology')
         if topology and topology.pk != target.pk:
             target.mutate(topology)
         intervention = super().save(*args, **kwargs, commit=False)
@@ -198,5 +196,5 @@ class ProjectForm(CommonForm):
              'global_cost', 'comments', 'project_owner', 'project_manager', 'contractors']
 
     def __init__(self, *args, **kwargs):
-        super(ProjectForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper.form_tag = False

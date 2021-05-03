@@ -1,19 +1,44 @@
+from django.conf import settings
+from geotrek.outdoor.models import Site, Practice, SiteType, RatingScale, Rating, Sector, Course
 from modeltranslation.translator import translator, TranslationOptions
-from geotrek.outdoor.models import Site, Practice, SitePractice
 
 
 class SiteTO(TranslationOptions):
+    fields = ('name', 'description', 'description_teaser', 'ambiance', 'advice', 'period') + (
+        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {'published': None}
+
+
+class SectorTO(TranslationOptions):
     fields = ('name', )
-
-
-class SitePracticeTO(TranslationOptions):
-    fields = ('description_teaser', 'description', 'ambiance', 'advice', 'period')
 
 
 class PracticeTO(TranslationOptions):
     fields = ('name', )
 
 
+class SiteTypeTO(TranslationOptions):
+    fields = ('name', )
+
+
+class RatingScaleTO(TranslationOptions):
+    fields = ('name', )
+
+
+class RatingTO(TranslationOptions):
+    fields = ('name', 'description')
+
+
+class CourseTO(TranslationOptions):
+    fields = ('name', 'description', 'advice') + (
+        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {'published': None}
+
+
 translator.register(Site, SiteTO)
+translator.register(Sector, SectorTO)
 translator.register(Practice, PracticeTO)
-translator.register(SitePractice, SitePracticeTO)
+translator.register(SiteType, SiteTypeTO)
+translator.register(RatingScale, RatingScaleTO)
+translator.register(Rating, RatingTO)
+translator.register(Course, CourseTO)

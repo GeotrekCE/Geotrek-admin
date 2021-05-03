@@ -110,4 +110,4 @@ class CSVBladeSerializer(CSVSerializer):
 class ZipBladeShapeSerializer(ZipShapeSerializer):
     def split_bygeom(self, iterable, geom_getter=lambda x: x.geom):
         lines = [blade for blade in iterable]
-        return super(ZipBladeShapeSerializer, self).split_bygeom(lines, geom_getter)
+        return super().split_bygeom(lines, geom_getter)

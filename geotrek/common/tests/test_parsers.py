@@ -256,7 +256,7 @@ class TourInSoftParserTests(TestCase):
 
             def __init__(self):
                 self.model = Trek
-                super(TestTourParser, self).__init__()
+                super().__init__()
 
         parser = TestTourParser()
         result = parser.filter_attachments('', 'a||b||c##||||##d||e||f')
@@ -266,7 +266,7 @@ class TourInSoftParserTests(TestCase):
         class TestTourParser(TourInSoftParser):
             def __init__(self):
                 self.model = Trek
-                super(TestTourParser, self).__init__()
+                super().__init__()
 
         parser = TestTourParser()
         with self.assertRaises(ValueImportError):
@@ -288,7 +288,7 @@ class TourismSystemParserTest(TestCase):
                 self.filetype = FileType.objects.create(type="Photographie")
                 self.login = "test"
                 self.password = "test"
-                super(TourismSystemParser, self).__init__()
+                super().__init__()
 
         def side_effect():
             response = Response()
@@ -315,7 +315,7 @@ class OpenSystemParserTest(TestCase):
                 self.filetype = FileType.objects.create(type="Photographie")
                 self.login = "test"
                 self.password = "test"
-                super(OpenSystemParser, self).__init__()
+                super().__init__()
 
         def side_effect():
             response = Response()

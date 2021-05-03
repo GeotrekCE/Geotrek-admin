@@ -1,9 +1,9 @@
 amqp==2.5.2
-appy-python-3==2020.11.24
+appy==1.0.7
 beautifulsoup4==4.9.0
 billiard==3.6.3.0
 cairocffi==0.9.0
-CairoSVG==2.4.2
+CairoSVG==2.5.1
 celery==4.4.2
 certifi==2019.11.28
 cffi==1.14.3
@@ -11,26 +11,28 @@ chardet==3.0.4
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==4.5.3
-cryptography==3.2
+cryptography==3.3.2
 cssselect2==0.2.2
 defusedxml==0.6.0
 Django==3.1.*
 django-appconf==1.0.3
-django-appypod==2.0.6
+django-appypod==2.0.7
 django-celery-results==1.0.1
 django-colorfield==0.3.0
 django-compressor==2.4
 django-crispy-forms==1.9.0
-django-debug-toolbar==3.1.1
+django-debug-toolbar==3.2.1
 django-embed-video==1.3.1
 django-extended-choices==1.3
 django-extensions==2.2.9
 django-filter==2.4.0
 django-geojson==3.1.0
-git+https://github.com/chibisov/drf-extensions.git@19efac2ede0eef82aac4785d47a405454fb48225#egg=rest_framework_extensions
+django-js-asset==1.2.2
+git+https://github.com/chibisov/drf-extensions.git@19efac2ede0eef82aac4785d47a405454fb48225#egg=drf-extensions
 git+https://github.com/GeotrekCE/django-leaflet.git@0.19+geotrek8#egg=django-leaflet
+django-modelcluster==5.1
 django-modeltranslation==0.15.2
-django-multiselectfield==0.1.5
+django-mptt==0.11.0
 django-tinymce==2.8.0
 django-weasyprint==0.5.5
 djangorestframework==3.12.2
@@ -41,12 +43,11 @@ drf-yasg==1.20.0
 easy-thumbnails==2.7
 entrypoints==0.3
 env-file==2019.4.13
-factory-boy==2.8.1
-Faker==4.0.1
+factory-boy==3.2.0
+Faker==6.0.0
 Fiona==1.8.17
 flake8==3.7.9
 freezegun==0.3.15
-future==0.18.2
 geojson==2.3.0
 gpxpy==1.4.0
 gunicorn==20.0.4
@@ -54,18 +55,17 @@ html5lib==1.0.1
 idna==2.8
 importlib-metadata==1.5.0
 itypes==1.1.0
-Jinja2==2.11.1
+Jinja2==2.11.3
 kombu==4.6.8
 landez==2.5.0
-lxml==4.2.1
+lxml==4.6.3
 MarkupSafe==1.1.1
 mbutil==0.3.0
 mccabe==0.6.1
 netifaces==0.10.9
 openapi-codec==1.3.2
 paperclip==2.2.6
-Pillow==7.1.2  --no-binary Pillow
-pkg-resources==0.0.0
+Pillow==8.1.1  --no-binary Pillow
 psycopg2==2.8.5 --no-binary psycopg2
 public==2019.4.13
 pycodestyle==2.5.0
@@ -79,6 +79,7 @@ python-dateutil==2.8.1
 python-memcached==1.59
 pytz==2019.3
 raven==6.10.0
+sentry-sdk==1.0.0
 rcssmin==1.0.6
 redis==3.4.1
 requests[security]==2.23.0
@@ -87,7 +88,6 @@ ruamel.yaml==0.16.12
 ruamel.yaml.clib==0.2.2
 simplejson==3.17.0
 simplekml==1.3.5
-six==1.14.0
 sqlparse==0.3.0
 text-unidecode==1.3
 tif2geojson==0.1.3
@@ -97,7 +97,7 @@ urllib3==1.25.8
 values==2019.4.13
 venusian==1.2.0
 vine==1.3.0
-WeasyPrint==52.1
+WeasyPrint==52.5
 webencodings==0.5.1
 xlrd==1.2.0
 xmltodict==0.12.0

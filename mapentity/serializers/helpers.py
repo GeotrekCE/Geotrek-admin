@@ -37,7 +37,7 @@ def smart_plain_text(s, ascii=False):
         return ''
     try:
         # Converts to unicode, remove HTML tags, convert HTML entities
-        us = plain_text(u"{}".format(s))
+        us = plain_text(str(s))
         if ascii:
             return smart_str(us)
         return us

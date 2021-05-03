@@ -35,7 +35,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         return self.label
 
     def get_pictogram_url(self):
-        pictogram_url = super(InfrastructureType, self).get_pictogram_url()
+        pictogram_url = super().get_pictogram_url()
         if pictogram_url:
             return pictogram_url
         return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
@@ -105,12 +105,17 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     def cities_verbose_name(cls):
         return _("Cities")
 
+    def distance(self, to_cls):
+        """Distance to associate this site to another class"""
+        return settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN
+
 
 class InfrastructureGISManager(NoDeleteManager):
     """ Overide default typology mixin manager"""
-    def all_implantation_years(self):
-        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
-            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
+    def implantation_year_choices(self):
+        all_years = self.get_queryset().existing().filter(implantation_year__isnull=False) \
+            .order_by('-implantation_year').distinct('implantation_year') \
+            .values_list('implantation_year', 'implantation_year')
         return all_years
 
 

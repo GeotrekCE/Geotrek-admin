@@ -11,18 +11,6 @@ ALTER TABLE core_path ALTER COLUMN arrival SET DEFAULT '';
 ALTER TABLE core_path ALTER COLUMN valid SET DEFAULT false;
 ALTER TABLE core_path ALTER COLUMN visible SET DEFAULT true;
 
-
--------------------------------------------------------------------------------
--- Add spatial index (will boost spatial filters)
--------------------------------------------------------------------------------
-
-CREATE INDEX core_path_geom_idx ON core_path USING gist(geom);
-CREATE INDEX core_path_start_point_idx ON core_path USING gist(ST_StartPoint(geom));
-CREATE INDEX core_path_end_point_idx ON core_path USING gist(ST_EndPoint(geom));
-CREATE INDEX core_path_geom_cadastre_idx ON core_path USING gist(geom_cadastre);
-CREATE INDEX core_path_geom_3d_idx ON core_path USING gist(geom_3d);
-
-
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
 -------------------------------------------------------------------------------
@@ -45,23 +33,10 @@ DECLARE
     t_count integer;
     tolerance float;
 BEGIN
-    -- Note: I gave up with the idea of checking almost overlap/touch.
-
-    -- tolerance := 1.0;
-    -- Crossing and extremity touching is OK.
-    -- Overlapping and --almost overlapping-- is KO.
     SELECT COUNT(*) INTO t_count
     FROM core_path
     WHERE pid != id
-      AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString');
-      -- not extremity touching
-      -- AND ST_Touches(geom, line) = false
-      -- not crossing
-      -- AND ST_GeometryType(ST_intersection(geom, line)) NOT IN ('ST_Point', 'ST_MultiPoint')
-      -- overlap is a line
-      -- AND ST_GeometryType(ST_intersection(geom, ST_buffer(line, tolerance))) IN ('ST_LineString', 'ST_MultiLineString')
-      -- not almost touching, at most twice
-      -- AND       ST_Length(ST_intersection(geom, ST_buffer(line, tolerance))) > (4 * tolerance);
+    AND NOT ST_IsEmpty(ST_CollectionExtract(ST_intersection(geom, line), 2));
     RETURN t_count = 0;
 END;
 $$ LANGUAGE plpgsql;

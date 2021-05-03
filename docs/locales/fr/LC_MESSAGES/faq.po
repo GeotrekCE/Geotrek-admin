@@ -22,7 +22,7 @@ msgid "FREQUENTLY ASKED QUESTIONS"
 msgstr ""
 
 #: ../../faq.rst:6
-msgid "How 3D informations are obtained ?"
+msgid "How are 3D informations obtained ?"
 msgstr ""
 
 #: ../../faq.rst:8
@@ -39,7 +39,7 @@ msgid ""
 msgstr ""
 
 #: ../../faq.rst:16
-msgid "How the ascent is computed on treks ?"
+msgid "How is the ascent computed on treks ?"
 msgstr ""
 
 #: ../../faq.rst:18
@@ -80,7 +80,7 @@ msgid ""
 msgstr ""
 
 #: ../../faq.rst:33
-msgid "How POIs are related to treks ?"
+msgid "How are POIs related to treks ?"
 msgstr ""
 
 #: ../../faq.rst:35
@@ -137,7 +137,7 @@ msgid ""
 msgstr ""
 
 #: ../../faq.rst:68
-msgid "Why Makina Corpus sells Geotrek, released under an Open-Source license ?"
+msgid "Why does Makina Corpus sell Geotrek, released under an Open-Source license ?"
 msgstr ""
 
 #: ../../faq.rst:70

@@ -106,7 +106,7 @@ class BaseAPITest(TestCase):
 
 class CreateReportsAPITest(BaseAPITest):
     def setUp(self):
-        super(CreateReportsAPITest, self).setUp()
+        super().setUp()
         self.add_url = '/api/en/reports/report'
         self.data = {
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
@@ -145,7 +145,7 @@ class CreateReportsAPITest(BaseAPITest):
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
     def setUp(self):
-        super(ListCategoriesTest, self).setUp()
+        super().setUp()
         self.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
 
     def test_categories_can_be_obtained_as_json(self):
@@ -164,7 +164,7 @@ class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
 
 class ListOptionsTest(TranslationResetMixin, BaseAPITest):
     def setUp(self):
-        super(ListOptionsTest, self).setUp()
+        super().setUp()
         self.activity = feedback_factories.ReportActivityFactory(label_it='Hiking')
         self.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
         self.pb_magnitude = feedback_factories.ReportProblemMagnitudeFactory(label_it='Possible')

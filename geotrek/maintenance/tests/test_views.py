@@ -14,13 +14,13 @@ from mapentity.serializers.shapefile import ZipShapeSerializer
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.core.factories import StakeFactory
-from geotrek.core.helpers import TopologyHelper
 from geotrek.core.models import PathAggregation
 from geotrek.common.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import PathFactory, TopologyFactory
+from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import BladeFactory, SignageFactory
@@ -249,13 +249,11 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        infra.pk,
                                                                        ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
         # Should be able to save form successfully
         data = self.get_good_data()
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
@@ -271,13 +269,11 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        infra.pk,
                                                                        ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
         data = self.get_good_data()
 
         # If form invalid, it should not fail
@@ -294,12 +290,10 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         intervention = InterventionFactory.create(target=infra)
         response = self.client.get(intervention.get_update_url())
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
         # Should be able to save form successfully
         form = response.context['form']
         data = form.initial
@@ -386,14 +380,14 @@ class InterventionViewsTest(CommonTest):
             InfrastructureInterventionFactory.create()
         else:
             InfrastructureInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        super(InterventionViewsTest, self).test_no_html_in_csv()
+        super().test_no_html_in_csv()
 
     def test_no_html_in_csv_signage(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             SignageInterventionFactory.create()
         else:
             SignageInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        super(InterventionViewsTest, self).test_no_html_in_csv()
+        super().test_no_html_in_csv()
 
     def test_structurerelated_not_loggedin(self):
         # Test that it does not fail on update if not logged in
@@ -418,6 +412,7 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(PathAggregation.objects.count(), 1)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Intervention.objects.first().geom, path.geom)
+        self.assertEqual(Intervention.objects.first().target.kind, 'INTERVENTION')
 
 
 class ProjectViewsTest(CommonTest):
@@ -555,7 +550,8 @@ class ExportTest(TranslationResetMixin, TestCase):
         lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
 
         closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 0), srid=settings.SRID))
-        topo_point = TopologyHelper._topologypoint(lng, lat, None).reload()
+        topo_point = Topology._topologypoint(lng, lat, None)
+        topo_point.save()
 
         self.assertEqual(topo_point.paths.get(), closest_path)
 
