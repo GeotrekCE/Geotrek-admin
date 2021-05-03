@@ -1,25 +1,24 @@
-from io import StringIO
-from unittest.mock import patch
 import os
 import shutil
+from io import StringIO
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.contrib.auth.models import User
 from django.urls import reverse
 
-from mapentity.factories import SuperUserFactory
-
 from geotrek.api.mobile.tasks import launch_sync_mobile
+from mapentity.factories import SuperUserFactory, UserFactory
 
 
 class SyncMobileViewTest(TestCase):
-    def setUp(self):
-        self.super_user = SuperUserFactory.create(username='admin', password='super')
-        self.simple_user = User.objects.create_user(username='homer', password='doooh')
+    @classmethod
+    def setUpTestData(cls):
+        cls.super_user = SuperUserFactory()
+        cls.simple_user = UserFactory()
 
     def test_get_sync_mobile_superuser(self):
-        self.client.login(username='admin', password='super')
+        self.client.force_login(self.super_user)
         response = self.client.get(reverse('apimobile:sync_mobiles_view'))
         self.assertEqual(response.status_code, 200)
 
@@ -32,7 +31,7 @@ class SyncMobileViewTest(TestCase):
         """
         test if sync can be launched by superuser post
         """
-        self.client.login(username='admin', password='super')
+        self.client.force_login(self.super_user)
         response = self.client.post(reverse('apimobile:sync_mobiles'), data={})
         self.assertRedirects(response, '/api/mobile/commands/syncview')
 
@@ -45,7 +44,7 @@ class SyncMobileViewTest(TestCase):
         self.assertRedirects(response, '/login/?next=/api/mobile/commands/sync')
 
     def test_get_sync_mobile_states_superuser(self):
-        self.client.login(username='admin', password='super')
+        self.client.force_login(self.super_user)
         response = self.client.post(reverse('apimobile:sync_mobiles_state'), data={})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b'[]')
@@ -60,7 +59,7 @@ class SyncMobileViewTest(TestCase):
                        SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
                                                                     'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile(self, mocked_stdout):
-        self.client.login(username='admin', password='super')
+        self.client.force_login(self.super_user)
         if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         launch_sync_mobile.apply()
@@ -74,7 +73,7 @@ class SyncMobileViewTest(TestCase):
     @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
                                                                     'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
-        self.client.login(username='admin', password='super')
+        self.client.force_login(self.super_user)
         if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         launch_sync_mobile.apply()
