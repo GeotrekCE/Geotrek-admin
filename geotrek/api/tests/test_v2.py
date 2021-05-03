@@ -781,7 +781,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
     def test_poi_list_filter_distance(self):
-        """ Test if distance to point filter works with POI """
+        """ Test POI list is filtered by reference point distance """
         geom_path = LineString([(1.4464187622070312, 43.65147866566022),
                                 (1.435432434082031, 43.63682057801007)], srid=4326)
         geom_path.transform(2154)
@@ -872,6 +872,20 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             self.get_touristiccontent_detail(self.content.pk),
             TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE
         )
+
+    def test_touristiccontent_list(self):
+        """ Test Touristic content list access and structure """
+        response = self.get_touristiccontent_list()
+        self.assertEqual(response.status_code, 200)
+
+        # json collection structure is ok
+        json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()),
+                         PAGINATED_JSON_STRUCTURE)
+
+        # touristiccontent count is ok
+        self.assertEqual(len(json_response.get('results')),
+                         tourism_models.TouristicContent.objects.all().count())
 
     def test_touristiccontent_list_filter_distance(self):
         geom_point_1 = Point(x=1.4464187622070312,
