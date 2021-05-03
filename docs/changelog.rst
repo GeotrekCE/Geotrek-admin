@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix DistanceToPointFilter usage in API v2
 
 
 2.57.0 (2021-04-28)
@@ -50,7 +50,7 @@ CHANGELOG
 
 **Security**
 
-- Bump django-debug-toolbar from 3.1.1 to 3.2.1 
+- Bump django-debug-toolbar from 3.1.1 to 3.2.1
 
 
 2.55.1 (2021-04-15)

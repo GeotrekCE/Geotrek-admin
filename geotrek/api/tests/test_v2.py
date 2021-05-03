@@ -1,7 +1,5 @@
-from django.contrib.auth.models import User
 from django.contrib.gis.geos import MultiLineString
 from django.urls import reverse
-from django.test.client import Client
 from django.test.testcases import TestCase
 from django.contrib.gis.geos import MultiPoint, Point, LineString
 from django.conf import settings
@@ -17,6 +15,8 @@ from geotrek.sensitivity import factories as sensitivity_factory, models as sens
 from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
 from geotrek.zoning import factories as zoning_factory, models as zoning_models
+from mapentity.factories import SuperUserFactory
+
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -143,7 +143,6 @@ class BaseApiTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.client = Client()
         cls.nb_treks = 15
         cls.organism = common_factory.OrganismFactory.create()
         cls.theme = common_factory.ThemeFactory.create()
@@ -233,6 +232,9 @@ class BaseApiTest(TestCase):
         cls.trek_point = trek_factory.TrekFactory.create(paths=[(cls.path, 0, 0)], geom=Point(cls.path.geom.coords[0]))
         cls.nb_treks += 4  # add parent, 1 child published and treks with a multilinestring/point geom
         cls.course = outdoor_factory.CourseFactory(site=cls.site)
+        # create a reference point for distance filter (in 4326, Cahors city)
+        cls.reference_point = Point(x=1.4388656616210938,
+                                    y=44.448487178796235, srid=4326)
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -494,6 +496,59 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
+    def test_trek_list_filter_distance(self):
+        """ Test Trek list is filtered by reference point distance """
+        toulouse_trek_geom = LineString([
+            [
+                1.4464187622070312,
+                43.65147866566022
+            ],
+            [
+                1.435432434082031,
+                43.63682057801007
+            ],
+            [
+                1.4574050903320312,
+                43.62439567002734
+            ],
+            [
+                1.4426422119140625,
+                43.601775746067986
+            ],
+            [
+                1.473541259765625,
+                43.58810023846608
+            ]], srid=4326)
+        toulouse_trek_geom.transform(2154)
+        path_trek = core_factory.PathFactory(geom=toulouse_trek_geom)
+        trek_toulouse = trek_factory.TrekFactory(paths=[(path_trek, 0, 1)], geom=toulouse_trek_geom)
+        # trek is in non filtered list
+        response = self.get_trek_list()
+        # json collection structure is ok
+        json_response = response.json()
+        ids_treks = [element['id'] for element in json_response['results']]
+        self.assertIn(trek_toulouse.pk, ids_treks, ids_treks)
+
+        # test trek is in distance filter (< 110 km)
+        response = self.get_trek_list({
+            'dist': '110000',
+            'point': f"{self.reference_point.x},{self.reference_point.y}",
+        })
+        # json collection structure is ok
+        json_response = response.json()
+        ids_treks = [element['id'] for element in json_response['results']]
+        self.assertIn(trek_toulouse.pk, ids_treks)
+
+        # test trek is not in distance filter (< 50km)
+        response = self.get_trek_list({
+            'dist': '50000',
+            'point': f"{self.reference_point.x},{self.reference_point.x}",
+        })
+        # json collection structure is ok
+        json_response = response.json()
+        ids_treks = [element['id'] for element in json_response['results']]
+        self.assertNotIn(trek_toulouse.pk, ids_treks)
+
     def test_trek_list_filters_inexistant_zones(self):
         response = self.get_trek_list({
             'cities': '99999',
@@ -726,6 +781,52 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_poi_list({'types': self.poi_type.pk, 'trek': self.treks[0].pk})
         self.assertEqual(response.status_code, 200)
 
+    def test_poi_list_filter_distance(self):
+        """ Test POI list is filtered by reference point distance """
+        geom_path = LineString([(1.4464187622070312, 43.65147866566022),
+                                (1.435432434082031, 43.63682057801007)], srid=4326)
+        geom_path.transform(2154)
+        pois_path = core_factory.PathFactory(geom=geom_path)
+        geom_point_1 = Point(x=1.4464187622070312,
+                             y=43.65147866566022, srid=4326)
+        geom_point_1.transform(2154)
+        poi_1 = trek_factory.POIFactory(paths=[(pois_path, 0, 0)],
+                                        geom=geom_point_1)
+        geom_point_2 = Point(x=1.435432434082031,
+                             y=43.63682057801007, srid=4326)
+        geom_point_2.transform(2154)
+        poi_2 = trek_factory.POIFactory(paths=[(pois_path, 0, 0)],
+                                        geom=geom_point_2)
+        # pois are in list is in non filtered list
+        response = self.get_poi_list()
+        # json collection structure is ok
+        json_response = response.json()
+        ids_pois = [element['id'] for element in json_response['results']]
+        self.assertIn(poi_1.pk, ids_pois)
+        self.assertIn(poi_2.pk, ids_pois)
+
+        # test pois is in distance filter (< 110000 km)
+        response = self.get_poi_list({
+            'dist': '110000',
+            'point': f"{self.reference_point.x},{self.reference_point.y}",
+        })
+        # json collection structure is ok
+        json_response = response.json()
+        ids_pois = [element['id'] for element in json_response['results']]
+        self.assertIn(poi_1.pk, ids_pois)
+        self.assertIn(poi_2.pk, ids_pois)
+
+        # test trek is not in distance filter (< 50km)
+        response = self.get_poi_list({
+            'dist': '50000',
+            'point': f"{self.reference_point.x},{self.reference_point.x}",
+        })
+        # json collection structure is ok
+        json_response = response.json()
+        ids_pois = [element['id'] for element in json_response['results']]
+        self.assertNotIn(poi_1.pk, ids_pois)
+        self.assertNotIn(poi_2.pk, ids_pois)
+
     def test_poi_type(self):
         response = self.get_poi_type()
         self.assertEqual(response.status_code, 200)
@@ -774,6 +875,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_touristiccontent_list(self):
+        """ Test Touristic content list access and structure """
         response = self.get_touristiccontent_list()
         self.assertEqual(response.status_code, 200)
 
@@ -785,6 +887,47 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         # touristiccontent count is ok
         self.assertEqual(len(json_response.get('results')),
                          tourism_models.TouristicContent.objects.all().count())
+
+    def test_touristiccontent_list_filter_distance(self):
+        """ Test Touristic content list is filtered by reference point distance """
+        geom_point_1 = Point(x=1.4464187622070312,
+                             y=43.65147866566022, srid=4326)
+        geom_point_1.transform(2154)
+        tc_1 = tourism_factory.TouristicContentFactory(geom=geom_point_1)
+        geom_point_2 = Point(x=1.435432434082031,
+                             y=43.63682057801007, srid=4326)
+        geom_point_2.transform(2154)
+        tc_2 = tourism_factory.TouristicContentFactory(geom=geom_point_2)
+
+        # test present if no filtering
+        response = self.get_touristiccontent_list()
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        ids = [element['id'] for element in json_response['results']]
+        self.assertIn(tc_1.pk, ids)
+        self.assertIn(tc_2.pk, ids)
+
+        # test present filtering < 110km
+        response = self.get_touristiccontent_list({
+            'dist': '110000',
+            'point': f"{self.reference_point.x},{self.reference_point.y}",
+        })
+
+        json_response = response.json()
+        ids = [element['id'] for element in json_response['results']]
+        self.assertIn(tc_1.pk, ids)
+        self.assertIn(tc_2.pk, ids)
+
+        # test present filtering < 50km
+        response = self.get_touristiccontent_list({
+            'dist': '50000',
+            'point': f"{self.reference_point.x},{self.reference_point.y}",
+        })
+
+        json_response = response.json()
+        ids = [element['id'] for element in json_response['results']]
+        self.assertNotIn(tc_1.pk, ids)
+        self.assertNotIn(tc_2.pk, ids)
 
     def test_touristiccontent_near_trek(self):
         response = self.get_touristiccontent_list({'near_trek': self.treks[0].pk})
@@ -1033,19 +1176,14 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     @classmethod
     def setUpTestData(cls):
         #  created user
-        cls.administrator = User.objects.create(username="administrator", is_superuser=True,
-                                                is_staff=True, is_active=True)
-        cls.administrator.set_password('administrator')
-        cls.administrator.save()
-        cls.administrator.refresh_from_db()
-
+        cls.administrator = SuperUserFactory()
         BaseApiTest.setUpTestData()
 
     def login(self):
         """
         Override base class login method, used before all function request 'get_api_element'
         """
-        self.client.login(username="administrator", password="administrator")
+        self.client.force_login(self.administrator)
 
     def test_path_list(self):
         self.login()

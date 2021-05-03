@@ -30,8 +30,7 @@ class GeotrekGeometricViewset(GeotrekViewSet):
         (api_filters.GeotrekQueryParamsDimensionFilter,
             api_filters.GeotrekInBBoxFilter,
             api_filters.GeotrekDistanceToPointFilter)
-    distance_filter_field = 'geometry'
-    distance_filter_convert_meters = True
+    distance_filter_field = 'geom'
     renderer_classes = viewsets.ReadOnlyModelViewSet.renderer_classes
 
     def get_serializer_class(self):

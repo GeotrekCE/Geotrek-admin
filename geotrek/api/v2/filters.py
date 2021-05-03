@@ -78,6 +78,13 @@ class GeotrekDistanceToPointFilter(DistanceToPointFilter):
     Override DRF gis DistanceToPointFilter with coreapi field descriptors
     """
 
+    def get_filter_point(self, request, **kwargs):
+        point = super().get_filter_point(request, **kwargs)
+        if point:
+            point.srid = 4326
+            point.transform(settings.SRID)
+        return point
+
     def get_schema_fields(self, view):
         return (
             Field(
