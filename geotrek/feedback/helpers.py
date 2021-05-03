@@ -96,7 +96,7 @@ def send_report_managers(report, template_name="feedback/report_email.html"):
 
 class SuricateMessenger(SuricateRequestManager):
     def post_report(self, report):
-        CHECK = md5(
+        check = md5(
             (self.PRIVATE_KEY_CLIENT_SERVER + report.email).encode()
         ).hexdigest()
         """Send report to Suricate Rest API"""
@@ -109,7 +109,7 @@ class SuricateMessenger(SuricateRequestManager):
             "activite": report.activity.suricate_id,
             "nature_prb": report.category.suricate_id,
             "ampleur_prb": report.problem_magnitude.suricate_id,
-            "check": CHECK,
+            "check": check,
             "os": "linux",
             "version": settings.VERSION,
         }
@@ -167,3 +167,17 @@ class SuricateMessenger(SuricateRequestManager):
                 "gpslongitude": gps_long,
             },
         )
+
+    def message_sentinel(self, id_alert, message):
+        check = md5(
+            (self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()
+        ).hexdigest()
+        """Send report to Suricate Rest API"""
+        params = {
+            "id_origin": self.ID_ORIGIN,
+            "uid_alerte": id_alert,
+            "message": message,
+            "check": check,
+        }
+
+        self.post_to_suricate("wsSendMessageSentinelle", params)
