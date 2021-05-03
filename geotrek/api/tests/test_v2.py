@@ -497,6 +497,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')), 0)
 
     def test_trek_list_filter_distance(self):
+        """ Test Trek list is filtered by reference point distance """
         toulouse_trek_geom = LineString([
             [
                 1.4464187622070312,
@@ -888,6 +889,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                          tourism_models.TouristicContent.objects.all().count())
 
     def test_touristiccontent_list_filter_distance(self):
+        """ Test Touristic content list is filtered by reference point distance """
         geom_point_1 = Point(x=1.4464187622070312,
                              y=43.65147866566022, srid=4326)
         geom_point_1.transform(2154)
