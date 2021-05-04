@@ -1,9 +1,8 @@
-import html
+#import html
 import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
 # from django.db.models.signals import post_save
 # from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
@@ -124,6 +123,9 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     def geom_wgs84(self):
         return self.geom.transform(4326, clone=True)
 
+    @property
+    def comment_text(self):
+        return html.unescape(self.comment)
 
 # @receiver(post_save, sender=Report, dispatch_uid="on_report_created")
 # def on_report_saved(sender, instance, created, **kwargs):
