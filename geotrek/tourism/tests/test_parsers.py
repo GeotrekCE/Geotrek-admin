@@ -87,6 +87,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type B")
         with self.assertRaises(CommandError):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
+        self.assertTrue(mocked.called)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_espritparc_failed(self, mocked):
@@ -102,6 +103,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType2Factory(label="Agriculture biologique", category=category)
         with self.assertRaises(CommandError):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
+        self.assertTrue(mocked.called)
+
 
     @mock.patch('geotrek.common.parsers.requests.get')
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
@@ -129,6 +132,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser')
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
 
     @mock.patch('geotrek.common.parsers.requests.get')
@@ -153,6 +157,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type B")
         with self.assertRaisesRegex(CommandError, "Failed to download %s. HTTP status code 503" % EauViveParser.url):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser')
+            self.assertTrue(mocked.called)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     @mock.patch('geotrek.common.parsers.requests.head')
@@ -177,6 +182,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType2Factory(label="Agriculture biologique", category=category)
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=2, stdout=output)
+        self.assertTrue(mocked_get.called)
+        self.assertTrue(mocked_head.called)
         self.assertIn("Type 1 'Miel' does not exist for category 'Miels et produits de la ruche'. Please add it,",
                       output.getvalue())
 
@@ -204,6 +211,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Cire", category=category)
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=2, stdout=output)
+        self.assertTrue(mocked_get.called)
+        self.assertTrue(mocked_head.called)
         self.assertIn("Type 2 'Bienvenue à la ferme' does not exist for category 'Miels et produits de la ruche'. Please add it",
                       output.getvalue())
 
@@ -221,6 +230,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(content.eid, "479743")
@@ -262,6 +272,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
 
     @mock.patch('geotrek.common.parsers.requests.get')
@@ -276,6 +287,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         FileType.objects.create(type="Photographie")
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 0)
 
     @mock.patch('geotrek.common.parsers.requests.get')
@@ -291,6 +303,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicEvent.objects.count(), 0)
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "323154")
@@ -336,6 +349,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.tests.test_parsers.ApidaeConstantFieldEventParser', verbosity=2,
                      stdout=output)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(str(event.type), "Constant Event")
@@ -361,6 +375,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.tests.test_parsers.ApidaeConstantFieldContentParser', verbosity=2,
                      stdout=output)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(str(content.category), "Constant Content")
@@ -396,6 +411,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType2Factory(label="Bienvenue à la ferme", category=category)
         TouristicContentType2Factory(label="Agriculture biologique", category=category)
         call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=0)
+        self.assertTrue(mocked_get.called)
+        self.assertTrue(mocked_head.called)
         self.assertEqual(TouristicContent.objects.count(), 24)
         content = TouristicContent.objects.all()
         eid = [
@@ -430,6 +447,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(content.eid, "HOTCEN0280010001")
@@ -467,6 +485,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28v3', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(content.eid, "HOTCEN0280010001")
@@ -504,6 +523,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "FMACEN0280060359")
