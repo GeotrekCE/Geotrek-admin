@@ -169,8 +169,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked_get.return_value.content = b'Fake image'
         # Mock HEAD
         mocked_head.return_value.status_code = 200
-        mocked_head.return_value.json = mocked_json
-        mocked_head.return_value.content = b'Fake image'
+        mocked_head.return_value.headers = {'content-length': 666}
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType2Factory(label="Hautes Alpes Naturellement", category=category)
@@ -196,8 +195,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked_get.return_value.content = b'Fake image'
         # Mock HEAD
         mocked_head.return_value.status_code = 200
-        mocked_head.return_value.json = mocked_json
-        mocked_head.return_value.content = b'Fake image'
+        mocked_head.return_value.headers = {'content-length': 666}
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
@@ -387,8 +385,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked_get.return_value.content = b'Fake image'
         # Mock HEAD
         mocked_head.return_value.status_code = 200
-        mocked_head.return_value.json = mocked_json
-        mocked_head.return_value.content = b'Fake image'
+        mocked_head.return_value.headers = {'content-length': 666}
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
