@@ -512,7 +512,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         for subval in val or []:
             if 'url' in subval:
                 result.append((subval['url'],
-                               subval.get('legend', None),
+                               subval.get('legende', None),
                                subval.get('credits', None)))
         return result
 
