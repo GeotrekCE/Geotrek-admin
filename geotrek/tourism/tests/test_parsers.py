@@ -155,16 +155,22 @@ class ParserTests(TranslationResetMixin, TestCase):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser')
 
     @mock.patch('requests.get')
-    def test_create_content_espritparc_not_fail_type1_does_not_exist(self, mocked):
+    @mock.patch('requests.head')
+    def test_create_content_espritparc_not_fail_type1_does_not_exist(self, mocked_head, mocked_get):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
             with open(filename, 'r') as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-        mocked.return_value.content = b'Fake image'
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b'Fake image'
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.json = mocked_json
+        mocked_head.return_value.content = b'Fake image'
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType2Factory(label="Hautes Alpes Naturellement", category=category)
@@ -176,16 +182,22 @@ class ParserTests(TranslationResetMixin, TestCase):
                       output.getvalue())
 
     @mock.patch('requests.get')
-    def test_create_content_espritparc_not_fail_type2_does_not_exist(self, mocked):
+    @mock.patch('requests.head')
+    def test_create_content_espritparc_not_fail_type2_does_not_exist(self, mocked_head, mocked_get):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
             with open(filename, 'r') as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-        mocked.return_value.content = b'Fake image'
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b'Fake image'
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.json = mocked_json
+        mocked_head.return_value.content = b'Fake image'
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
@@ -361,16 +373,22 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertQuerysetEqual(content.portal.all(), ["Portal 1", "Portal 2"], transform=str)
 
     @mock.patch('requests.get')
-    def test_create_esprit(self, mocked):
+    @mock.patch('requests.head')
+    def test_create_esprit(self, mocked_head, mocked_get):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
             with open(filename, 'r') as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-        mocked.return_value.content = b'Fake image'
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b'Fake image'
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.json = mocked_json
+        mocked_head.return_value.content = b'Fake image'
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
