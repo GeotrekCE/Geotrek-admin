@@ -28,7 +28,7 @@ class SuricateRequestManager:
     CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
 
     USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
-    AUTH = (None, settings.SURICATE_REPORT_SETTINGS["AUTH"])[USE_AUTH]
+    AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if USE_AUTH else None
 
     def check_response_integrity(self, response, id_alert=""):
         if response.status_code not in [200, 201]:
