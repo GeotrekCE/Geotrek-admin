@@ -295,7 +295,7 @@ En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin 
 * Filières : elles servent à regrouper les pratiques pour pouvoir filtrer rapidement les sites ou parcours.
   Par exemple la filière « eau vive » peut regrouper « kayak » et « canyoning ».
 * Pratiques : les pratiques sportives. Vous pouvez préciser à quelle filière elle appartient.
-* Types de sites : ces catégories permettent d'étiquetter et de filtrer les sites. Elles sont spécifiques à chaque pratique.
+* Types de sites : ces catégories permettent d'étiqueter et de filtrer les sites. Elles sont spécifiques à chaque pratique.
   Par exemple « Site école » pour l'escalade.
 * Échelle de cotation : permet de regrouper les cotations faisant partie de la même échelle. Elles sont spécifiques à chaque pratique.
 
