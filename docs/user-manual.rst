@@ -302,7 +302,7 @@ En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin 
 **Escalade** :
 
 La notion de site est naturelle. Elle peut être définie géographiquement par un polygone.
-Il est possible mais pas obligatoire de créer des sous-site pour des secteurs.
+Il est possible (mais pas obligatoire) de créer des sous-sites pour représenter des secteurs.
 Ou pour des falaises, elles-mêmes divisées en sous-sous sites pour les différents secteurs.
 
 Chaque voie correspond à un parcours. La voie étant verticale et la carte horizontale,
