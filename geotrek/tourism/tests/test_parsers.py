@@ -105,7 +105,6 @@ class ParserTests(TranslationResetMixin, TestCase):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
         self.assertTrue(mocked.called)
 
-
     @mock.patch('geotrek.common.parsers.requests.get')
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachments', False)
