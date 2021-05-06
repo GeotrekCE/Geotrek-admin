@@ -8,7 +8,15 @@ from django.test.utils import override_settings
 
 from geotrek.feedback.factories import ReportFactory
 from geotrek.feedback.helpers import post_report_to_suricate
-from geotrek.feedback.models import ReportActivity, ReportStatus
+from geotrek.feedback.models import (
+    AttachedMessage,
+    MessageAttachedDocument,
+    Report,
+    ReportActivity,
+    ReportAttachedDocument,
+    ReportProblemMagnitude,
+    ReportStatus,
+)
 
 SURICATE_REPORT_SETTINGS = {
     "URL": "http://suricate.example.com",
@@ -33,28 +41,39 @@ class SuricateAPITest(TestCase):
             if "GetActivities" in url:
                 mock_response.status_code = 200
                 mock_response.content = mocked_json("suricate_activities.json")
-                return mock_response
             elif "GetStatusList" in url:
                 mock_response.status_code = 200
                 mock_response.content = mocked_json("suricate_statuses.json")
-                return mock_response
+            elif "GetAlerts" in url:
+                mock_response.status_code = 200
+                mock_response.content = mocked_json("suricate_alerts.json")
             else:
                 mock_response.status_code = 404
-                return mock_response
+            return mock_response
 
         mocked.side_effect = build_response_patch
 
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_statuses(self, mocked):
         self.build_request_patch(mocked)
-        call_command("sync_suricate", activities=False)
+        call_command("sync_suricate", statuses_only=True)
         self.assertEqual(ReportStatus.objects.count(), 5)
 
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_activities(self, mocked):
         self.build_request_patch(mocked)
-        call_command("sync_suricate", statuses=False)
+        call_command("sync_suricate", activities_only=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
+
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_alerts(self, mocked):
+        self.build_request_patch(mocked)
+        call_command("sync_suricate")
+        self.assertEqual(Report.objects.count(), 82)
+        self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
+        self.assertEqual(AttachedMessage.objects.count(), 198)
+        self.assertEqual(ReportAttachedDocument.objects.count(), 100)
+        self.assertEqual(MessageAttachedDocument.objects.count(), 4)
 
 
 class OldSuricateTests(TestCase):
