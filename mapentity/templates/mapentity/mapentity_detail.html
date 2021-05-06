@@ -88,7 +88,7 @@
           {% endif %}
           </tbody>
         </table>
-        <a href="{% url 'mapentity:logentry_list' %}?content_type={{ object.get_content_type_id }}&object_id={{ object.pk }}" class="btn btn-default">{% trans "Full history" %}</a>
+        <a href="{% url 'mapentity:logentry_list' %}?content_type={{ object.get_content_type_id }}&object_id={{ object.pk }}" class="btn btn-light">{% trans "Full history" %}</a>
       </div>
       {% endif %}
     </div>

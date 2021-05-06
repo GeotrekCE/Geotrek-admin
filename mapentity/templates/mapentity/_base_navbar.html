@@ -54,7 +54,7 @@
                 </li>
             {% else %}
                 <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} nav-item history mr-1">
-                    <a class="nav-link" href="{{ item.path }}" title="{{ item.title }}">
+                    <a class="nav-link bg-light" href="{{ item.path }}" title="{{ item.title }}">
                         <span class="content">{{ item.title|truncatechars:12 }}</span>
                         <button class="close d-none">&times;</button>
                     </a>
@@ -68,7 +68,7 @@
       {% if request.user.is_authenticated %}
       <li class="divider-vertical"></li>
       <li class="dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
+        <a href="#" class="nav-link dropdown-toggle bg-light"
           id="navbarDropdownUsermenuLink" role="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
           <i class="bi bi-person-fill"></i>

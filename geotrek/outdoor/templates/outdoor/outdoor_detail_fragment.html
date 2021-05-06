@@ -21,8 +21,8 @@
         <th>{% trans "Courses" %}</th>
         <td>
             {% if perms.outdoor.add_course %}
-            <p class="autohide"><a href="{% url 'outdoor:course_add' %}" class="btn btn-mini btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new outdoor course" %}</a>
+            <p class="autohide"><a href="{% url 'outdoor:course_add' %}" class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new outdoor course" %}</a>
             </p>
             {% endif %}
 
