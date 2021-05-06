@@ -10,15 +10,23 @@ class Command(BaseCommand):
         # parser.add_argument('-l', dest='limit', type=int, help='Limit number of lines to import')
         # todo
         parser.add_argument(
-            "--activities", dest="activities", help="Import activities", default=True
+            "--activities_only", dest="activities_only", help="Import activities but no statuses nor alerts", default=False
         )
         parser.add_argument(
-            "--statuses", dest="statuses", help="Import statuses", default=True
+            "--statuses_only", dest="statuses_only", help="Import statuses but no activities nor alerts", default=False
         )
+        #todo documents
 
     def handle(self, *args, **options):
         parser = SuricateParser()
-        if options["statuses"]:
+        if options["statuses_only"]:
             parser.get_statuses()
-        if options["activities"]:
+        elif options["activities_only"]:
             parser.get_activities()
+        elif options["activities_only"] and options["statuses_only"]:
+            parser.get_statuses()
+            parser.get_activities()
+        else:
+            parser.get_statuses()
+            parser.get_activities()
+            parser.get_alerts()
