@@ -158,7 +158,7 @@ class SuricateParser(SuricateRequestManager):
                 )
                 if updated:
                     logger.info(
-                        f"New or updated Message document - id: {document['id']}, parent: {parent.uid}"
+                        f"New or updated Message document - id: {document['id']}, parent: {parent.suricate_id}"
                     )
 
     def create_messages(self, messages, parent):
