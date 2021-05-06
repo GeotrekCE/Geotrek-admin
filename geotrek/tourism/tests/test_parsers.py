@@ -78,7 +78,7 @@ class FMA28(TouristicEventTourInSoftParser):
 
 
 class ParserTests(TranslationResetMixin, TestCase):
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_apidae_failed(self, mocked):
         mocked.return_value.status_code = 404
         FileType.objects.create(type="Photographie")
@@ -87,8 +87,9 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type B")
         with self.assertRaises(CommandError):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
+        self.assertTrue(mocked.called)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_espritparc_failed(self, mocked):
         mocked.return_value.status_code = 404
         FileType.objects.create(type="Photographie")
@@ -102,8 +103,9 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType2Factory(label="Agriculture biologique", category=category)
         with self.assertRaises(CommandError):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
+        self.assertTrue(mocked.called)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachments', False)
     def test_create_content_espritparc_retry(self, mocked):
@@ -129,9 +131,10 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser')
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     def test_create_content_espritparc_retry_fail(self, mocked):
         def mocked_json():
@@ -153,18 +156,24 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type B")
         with self.assertRaisesRegex(CommandError, "Failed to download %s. HTTP status code 503" % EauViveParser.url):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser')
+            self.assertTrue(mocked.called)
 
-    @mock.patch('requests.get')
-    def test_create_content_espritparc_not_fail_type1_does_not_exist(self, mocked):
+    @mock.patch('geotrek.common.parsers.requests.get')
+    @mock.patch('geotrek.common.parsers.requests.head')
+    def test_create_content_espritparc_not_fail_type1_does_not_exist(self, mocked_head, mocked_get):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
             with open(filename, 'r') as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-        mocked.return_value.content = b'Fake image'
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b'Fake image'
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 666}
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType2Factory(label="Hautes Alpes Naturellement", category=category)
@@ -172,20 +181,27 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType2Factory(label="Agriculture biologique", category=category)
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=2, stdout=output)
+        self.assertTrue(mocked_get.called)
+        self.assertTrue(mocked_head.called)
         self.assertIn("Type 1 'Miel' does not exist for category 'Miels et produits de la ruche'. Please add it,",
                       output.getvalue())
 
-    @mock.patch('requests.get')
-    def test_create_content_espritparc_not_fail_type2_does_not_exist(self, mocked):
+    @mock.patch('geotrek.common.parsers.requests.get')
+    @mock.patch('geotrek.common.parsers.requests.head')
+    def test_create_content_espritparc_not_fail_type2_does_not_exist(self, mocked_head, mocked_get):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
             with open(filename, 'r') as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-        mocked.return_value.content = b'Fake image'
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b'Fake image'
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 666}
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
@@ -194,10 +210,12 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Cire", category=category)
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=2, stdout=output)
+        self.assertTrue(mocked_get.called)
+        self.assertTrue(mocked_head.called)
         self.assertIn("Type 2 'Bienvenue à la ferme' does not exist for category 'Miels et produits de la ruche'. Please add it",
                       output.getvalue())
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
@@ -211,6 +229,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(content.eid, "479743")
@@ -237,7 +256,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(Attachment.objects.first().content_object, content)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_filetype_structure_none(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
@@ -252,9 +271,10 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_no_event_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeNoEvent.json')
@@ -266,9 +286,10 @@ class ParserTests(TranslationResetMixin, TestCase):
         FileType.objects.create(type="Photographie")
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 0)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
@@ -281,6 +302,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicEvent.objects.count(), 0)
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "323154")
@@ -308,7 +330,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         )
         self.assertEqual(Attachment.objects.count(), 3)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_apidae_constant_fields(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
@@ -326,6 +348,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.tests.test_parsers.ApidaeConstantFieldEventParser', verbosity=2,
                      stdout=output)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(str(event.type), "Constant Event")
@@ -333,7 +356,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertQuerysetEqual(event.source.all(), ["Source 1", "Source 2"], transform=str)
         self.assertQuerysetEqual(event.portal.all(), ["Portal 1", "Portal 2"], transform=str)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_apidae_constant_fields(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
@@ -351,6 +374,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.tests.test_parsers.ApidaeConstantFieldContentParser', verbosity=2,
                      stdout=output)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(str(content.category), "Constant Content")
@@ -360,17 +384,22 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertQuerysetEqual(content.source.all(), ["Source 1", "Source 2"], transform=str)
         self.assertQuerysetEqual(content.portal.all(), ["Portal 1", "Portal 2"], transform=str)
 
-    @mock.patch('requests.get')
-    def test_create_esprit(self, mocked):
+    @mock.patch('geotrek.common.parsers.requests.get')
+    @mock.patch('geotrek.common.parsers.requests.head')
+    def test_create_esprit(self, mocked_head, mocked_get):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
             with open(filename, 'r') as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-        mocked.return_value.content = b'Fake image'
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b'Fake image'
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 666}
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
@@ -381,6 +410,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType2Factory(label="Bienvenue à la ferme", category=category)
         TouristicContentType2Factory(label="Agriculture biologique", category=category)
         call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=0)
+        self.assertTrue(mocked_get.called)
+        self.assertTrue(mocked_head.called)
         self.assertEqual(TouristicContent.objects.count(), 24)
         content = TouristicContent.objects.all()
         eid = [
@@ -401,7 +432,7 @@ class ParserTests(TranslationResetMixin, TestCase):
             self.assertIn(one.name.lower(), name)
             self.assertEqual(one.category, category)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_tourinsoft_v2(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftContent.json')
@@ -415,6 +446,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(content.eid, "HOTCEN0280010001")
@@ -438,7 +470,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(Attachment.objects.first().content_object, content)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_tourinsoft_v3(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftContentV3.json')
@@ -452,6 +484,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28v3', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(content.eid, "HOTCEN0280010001")
@@ -475,7 +508,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(Attachment.objects.first().content_object, content)
 
-    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_tourinsoft(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftEvent.json')
@@ -489,6 +522,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28', verbosity=0)
+        self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "FMACEN0280060359")
