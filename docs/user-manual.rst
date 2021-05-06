@@ -261,7 +261,7 @@ secteurs d'escalade (groupe de blocs ou falaise), aires de décollage ou d'atter
 
 Chaque site (ou sous-site) peut contenir différents parcours : voie d'escalade, parcours d'eau vive…
 
-Il est possible de regrouper un enchainement de parcours sous forme d'un parcours particulier appelle itinérance :
+Il est possible de regrouper un enchaînement de parcours sous forme d'un parcours particulier appellé itinérance :
 grande voie d'escalade, enchainement entre différentes pratiques…
 
 Les 2 modules outdoor permettent de :
