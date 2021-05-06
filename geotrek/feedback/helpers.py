@@ -181,3 +181,6 @@ class SuricateMessenger(SuricateRequestManager):
         }
 
         self.post_to_suricate("wsSendMessageSentinelle", params)
+
+
+post_report_to_suricate = SuricateMessenger.post_report
