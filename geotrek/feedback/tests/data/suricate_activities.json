@@ -1,0 +1,133 @@
+{
+    "code_ok": "true",
+    "activites": [
+        {
+            "libelle": "Canoë-kayak",
+            "id": 1
+        },
+        {
+            "libelle": "Baignade, natation en eau libre",
+            "id": 2
+        },
+        {
+            "libelle": "Plongée",
+            "id": 4
+        },
+        {
+            "libelle": "Vol libre (parapente, deltaplane)",
+            "id": 6
+        },
+        {
+            "libelle": "Via ferrata / via corda",
+            "id": 7
+        },
+        {
+            "libelle": "Aviron",
+            "id": 10
+        },
+        {
+            "libelle": "Canyonisme",
+            "id": 12
+        },
+        {
+            "libelle": "Char à voile",
+            "id": 13
+        },
+        {
+            "libelle": "Course d'orientation",
+            "id": 14
+        },
+        {
+            "libelle": "Trail / Running",
+            "id": 15
+        },
+        {
+            "libelle": "Cyclisme sur pistes cyclables, véloroutes",
+            "id": 16
+        },
+        {
+            "libelle": "Escalade",
+            "id": 17
+        },
+        {
+            "libelle": "Motocyclisme",
+            "id": 19
+        },
+        {
+            "libelle": "Motonautisme",
+            "id": 20
+        },
+        {
+            "libelle": "Pêche",
+            "id": 24
+        },
+        {
+            "libelle": "Équitation",
+            "id": 30
+        },
+        {
+            "libelle": "Randonnée pédestre",
+            "id": 31
+        },
+        {
+            "libelle": "Raquette à neige",
+            "id": 32
+        },
+        {
+            "libelle": "Raid multisport",
+            "id": 33
+        },
+        {
+            "libelle": "Ski alpin",
+            "id": 34
+        },
+        {
+            "libelle": "Ski nautique",
+            "id": 37
+        },
+        {
+            "libelle": "Ski nordique",
+            "id": 38
+        },
+        {
+            "libelle": "Spéléologie",
+            "id": 40
+        },
+        {
+            "libelle": "Sports de traîneau",
+            "id": 41
+        },
+        {
+            "libelle": "Surf / Stand up paddle",
+            "id": 42
+        },
+        {
+            "libelle": "Tir à l'arc",
+            "id": 44
+        },
+        {
+            "libelle": "Triathlon",
+            "id": 45
+        },
+        {
+            "libelle": "Nage en eaux vives",
+            "id": 46
+        },
+        {
+            "libelle": "Kite surf, snowkite (Glisses aérotractées)",
+            "id": 48
+        },
+        {
+            "libelle": "VTT",
+            "id": 49
+        },
+        {
+            "libelle": "Voile",
+            "id": 50
+        },
+        {
+            "libelle": "Roller, Skateboard",
+            "id": 51
+        }
+    ]
+}
