@@ -12,16 +12,16 @@
 
   {% compress css %}
     {% if DEBUG %}
-        <link rel="stylesheet" href="{% static 'vendor/bootstrap-4.6.0/css/bootstrap.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/DataTables-1.10.23/css/dataTables.bootstrap4.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap-datepicker-1.9.0/css/bootstrap-datepicker.css' %}">
+        <link rel="stylesheet" href="{% static 'mapentity/vendor/bootstrap-4.6.0/css/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'mapentity/vendor/DataTables-1.10.23/css/dataTables.bootstrap4.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'mapentity/vendor/bootstrap-datepicker-1.9.0/css/bootstrap-datepicker.css' %}">
     {% else %}
-    <link rel="stylesheet" href="{% static 'vendor/bootstrap-4.6.0/css/bootstrap.min.css' %}" />>
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/DataTables-1.10.23/css/dataTables.bootstrap4.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap-datepicker-1.9.0/css/bootstrap-datepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'mapentity/vendor/bootstrap-4.6.0/css/bootstrap.min.css' %}" />>
+    <link rel="stylesheet" type="text/css" href="{% static 'mapentity/vendor/DataTables-1.10.23/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'mapentity/vendor/bootstrap-datepicker-1.9.0/css/bootstrap-datepicker.min.css' %}">
     {% endif %}
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap-icons-1.2.2/font/bootstrap-icons.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/chosen-1.8.7/chosen.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'mapentity/vendor/bootstrap-icons-1.2.2/font/bootstrap-icons.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'mapentity/vendor/chosen-1.8.7/chosen.css' %}">
     {% leaflet_css plugins="ALL" %}
 
     <style>
@@ -51,9 +51,9 @@
   {% endcompress %}
 
   {% if DEBUG %}
-      <script type="text/javascript" src="{% static 'vendor/jquery/jquery-1.9.1.js' %}"></script>
+      <script type="text/javascript" src="{% static 'mapentity/vendor/jquery/jquery-1.9.1.js' %}"></script>
   {% else %}
-      <script type="text/javascript" src="{% static 'vendor/jquery/jquery-1.9.1.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'mapentity/vendor/jquery/jquery-1.9.1.min.js' %}"></script>
   {% endif %}
 {% endblock head %}
 
@@ -104,11 +104,11 @@
     {% compress js %}
 
         {% if DEBUG %}
-          <script type="text/javascript" src="{% static 'vendor/bootstrap-4.6.0/js/bootstrap.bundle.js' %}"></script>
-          <script type="text/javascript" src="{% static 'vendor/bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.js' %}"></script>
+          <script type="text/javascript" src="{% static 'mapentity/vendor/bootstrap-4.6.0/js/bootstrap.bundle.js' %}"></script>
+          <script type="text/javascript" src="{% static 'mapentity/vendor/bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.js' %}"></script>
         {% else %}
-          <script type="text/javascript" src="{% static 'vendor/bootstrap-4.6.0/js/bootstrap.bundle.min.js' %}"></script>
-          <script type="text/javascript" src="{% static 'vendor/bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.min.js' %}"></script>
+          <script type="text/javascript" src="{% static 'mapentity/vendor/bootstrap-4.6.0/js/bootstrap.bundle.min.js' %}"></script>
+          <script type="text/javascript" src="{% static 'mapentity/vendor/bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.min.js' %}"></script>
         {% endif %}
         <script src="{% static 'mapentity/jquery.hoverIntent.js' %}"></script>
         <script src="{% static 'paperclip/bootstrap-confirm.js' %}"></script>
@@ -143,7 +143,7 @@
         </script>
 
         <script type="text/javascript" src="{% static 'mapentity/jquery.deserialize.js' %}"></script>
-        <script type="text/javascript" src="{% static 'vendor/chosen-1.8.7/chosen.jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'mapentity/vendor/chosen-1.8.7/chosen.jquery.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'mapentity/dataTables/js/jquery.dataTables.js' %}"></script>
         <script type="text/javascript" src="{% static 'mapentity/dataTables/js/dataTables.ajax_list.js' %}"></script>
         <script type="text/javascript" src="{% static 'mapentity/dataTables/js/dataTables.plugins.js' %}"></script>
