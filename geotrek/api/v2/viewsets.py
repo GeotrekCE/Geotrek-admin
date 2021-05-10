@@ -16,7 +16,7 @@ class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = api_pagination.StandardResultsSetPagination
     permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
-    renderer_classes = [renderers.JSONRenderer]
+    renderer_classes = [renderers.JSONRenderer,  renderers.BrowsableAPIRenderer]
 
     def get_serializer_context(self):
         return {
@@ -31,7 +31,6 @@ class GeotrekGeometricViewset(GeotrekViewSet):
             api_filters.GeotrekInBBoxFilter,
             api_filters.GeotrekDistanceToPointFilter)
     distance_filter_field = 'geom'
-    renderer_classes = viewsets.ReadOnlyModelViewSet.renderer_classes
 
     def get_serializer_class(self):
         base_serializer_class = super().get_serializer_class()
