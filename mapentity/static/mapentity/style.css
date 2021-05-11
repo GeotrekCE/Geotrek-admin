@@ -658,8 +658,11 @@ body.screamshot .leaflet-control-scale-line {
     height: calc(100vh - 140px - 1rem);
     padding-bottom: 20px;
 }
-
 .form-actions {
+    padding: .5rem 0;
+}
+
+.form-panel .form-actions {
     background-color: var(--light);
     padding: .5rem 15px;
     display: flex;
@@ -690,28 +693,25 @@ label.requiredField .asteriskField {
 .form-horizontal .controls span {
     font-size: .75rem;
 }
-.form-horizontal .form-actions .control-label {
-    display: none;
-}
 
 @media (min-width: 768px) {
 
-    .form-horizontal .control-label {
+    .form-panel .form-horizontal .col-form-label {
         width: 95px;
         flex-shrink: 0;
         text-align: right;
     }
-    .form-horizontal .form-group .controls:first-child {
+    .form-panel .form-horizontal .form-group .controls:first-child {
         margin-left: 95px;
     }
 }
 
 @media (min-width: 1280px) {
 
-    .form-horizontal .control-label {
+    .form-panel .form-horizontal .col-form-label {
         width: 140px;
     }
-    .form-horizontal .form-group .controls:first-child {
+    .form-panel .form-horizontal .form-group .controls:first-child {
         margin-left: 140px;
     }
 }
@@ -799,7 +799,7 @@ fieldset.formset .form-row:last-of-type a.delete-row {
 TODO: please help;
  */
 
-#geomfield label.control-label {
+#geomfield label.col-form-label {
     position: absolute;
     z-index: 2000;
     background-color: rgba(255,255,255,0.7);
@@ -822,6 +822,10 @@ TODO: please help;
 
 .file-attachment-form form {
     margin-bottom: 0px;
+}
+.file-attachment-form .form-actions {
+    text-align: right;
+    display: flex;
 }
 
 /* Form for mobile */

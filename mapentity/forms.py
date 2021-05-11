@@ -20,8 +20,6 @@ from .models import ENTITY_PERMISSION_UPDATE_GEOM
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.translator import translator, NotRegistered
 
-FormActions.template = 'crispy_forms/layout/formactions.html'
-
 
 class TranslatedModelForm(forms.ModelForm):
     """
@@ -84,12 +82,12 @@ class TranslatedModelForm(forms.ModelForm):
 
 class SubmitButton(HTML):
 
-    def __init__(self, divid, label):
+    def __init__(self, div_id, label):
         content = ("""
             <a id="{0}" class="btn btn-success"
                onclick="javascript:$(this).parents('form').submit();">
                 <i class="bi bi-check-circle-fill"></i> {1}
-            </a>""".format(divid, label))
+            </a>""".format(div_id, label))
         super().__init__(content)
 
 
@@ -190,16 +188,20 @@ class MapEntityForm(TranslatedModelForm):
                 css_id="geomfield"
             ),)
 
+        # Create form actions
+        # crispy_form bootstrap4 template is overriden
+        # because of label and field classes added but not wanted here
         formactions = FormActions(
             *actions,
-            css_class="form-actions"
+            css_class="form-actions",
+            template='mapentity/crispy_forms/bootstrap4/layout/formactions.html'
         )
 
         # Main form layout
         self.helper.help_text_inline = True
         self.helper.form_class = 'form-horizontal'
         self.helper.form_style = "default"
-        self.helper.label_class = 'control-label col-md-auto'
+        self.helper.label_class = 'col-md-auto'
         self.helper.field_class = 'controls col-md-auto'
         self.helper.layout = Layout(
             Div(
@@ -265,8 +267,8 @@ class AttachmentForm(BaseAttachmentForm):
         self.helper.form_class = 'attachment form-horizontal'
         self.helper.help_text_inline = True
         self.helper.form_style = "default"
-        self.helper.label_class = 'control-label col-md-3'
-        self.helper.field_class = 'controls col-md-9'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
 
         if self.is_creation:
             form_actions = [
