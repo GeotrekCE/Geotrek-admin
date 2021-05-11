@@ -92,15 +92,11 @@ REST_FRAMEWORK_DEFAULT_CONFIG = {
 REST_FRAMEWORK_DEFAULT_CONFIG.update(getattr(settings, 'REST_FRAMEWORK', {}))
 setattr(settings, 'REST_FRAMEWORK', REST_FRAMEWORK_DEFAULT_CONFIG)
 
-
-_MAP_STYLES = {
-    'detail': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
-    'others': {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
-    'filelayer': {'color': 'red', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 2, 'radius': 5},
-    'draw': {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
-    'print': {},
-}
-
+for name, override in getattr(settings, 'MAP_STYLES', {}).items():
+    # fallback old settings MAP_STYLES
+    merged = app_settings['MAP_STYLES'].get(name, {})
+    merged.update(override)
+    app_settings['MAP_STYLES'][name] = merged
 
 _LEAFLET_PLUGINS = OrderedDict([
     ('leaflet.overintent', {
