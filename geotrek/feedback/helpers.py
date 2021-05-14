@@ -31,7 +31,7 @@ class SuricateRequestManager:
     AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if USE_AUTH else None
 
     def check_response_integrity(self, response, id_alert=""):
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 400, 401, 402]:
             raise Exception(
                 f"Failed to access Suricate API - Status code: {response.status_code}"
             )
@@ -39,7 +39,7 @@ class SuricateRequestManager:
             data = json.loads(response.content.decode())
             if "code_ok" in data and not data["code_ok"]:
                 raise Exception(
-                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']}] \n   └──  {data['message']}"
+                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']}]"
                 )
             return data
         #  THIS SHOULD BE A THING but the documentation is at war with the API
@@ -181,6 +181,3 @@ class SuricateMessenger(SuricateRequestManager):
         }
 
         self.post_to_suricate("wsSendMessageSentinelle", params)
-
-
-post_report_to_suricate = SuricateMessenger.post_report
