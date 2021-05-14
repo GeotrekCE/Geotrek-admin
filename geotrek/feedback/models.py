@@ -1,18 +1,16 @@
-#import html
+import html
 import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-# from django.db.models.signals import post_save
-# from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-from mapentity.models import MapEntityMixin
-
 from geotrek.common.mixins import PicturesMixin, TimeStampedModelMixin
 from geotrek.trekking.models import Trek
+from mapentity.models import MapEntityMixin
 
-# from .helpers import send_report_managers, post_report_to_suricate
-# from .helpers import SuricateMessenger
+from .helpers import SuricateMessenger, send_report_managers
 
 logger = logging.getLogger(__name__)
 
@@ -127,23 +125,24 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     def comment_text(self):
         return html.unescape(self.comment)
 
-# @receiver(post_save, sender=Report, dispatch_uid="on_report_created")
-# def on_report_saved(sender, instance, created, **kwargs):
-#     """Send an email to managers when a report is created."""
-#     if not created:
-#         return
-#     try:
-#         send_report_managers(instance)
-#     except Exception as e:
-#         logger.error("Email could not be sent to managers.")
-#         logger.exception(e)  # This sends an email to admins :)
 
-#     if settings.SURICATE_REPORT_ENABLED:
-#         try:
-#             SuricateMessenger().post_report(instance)
-#         except Exception as e:
-#             logger.error("Report could not be sent to Suricate API.")
-#             logger.exception(e)
+@receiver(post_save, sender=Report, dispatch_uid="on_report_created")
+def on_report_saved(sender, instance, created, **kwargs):
+    """Send an email to managers when a report is created."""
+    if not created:
+        return
+    try:
+        send_report_managers(instance)
+    except Exception as e:
+        logger.error("Email could not be sent to managers.")
+        logger.exception(e)  # This sends an email to admins :)
+
+    if settings.SURICATE_REPORT_ENABLED:
+        try:
+            SuricateMessenger().post_report(instance)
+        except Exception as e:
+            logger.error("Report could not be sent to Suricate API.")
+            logger.exception(e)
 
 
 class ReportActivity(models.Model):
