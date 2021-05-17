@@ -28,6 +28,24 @@ Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update ``nginx.
     sudo dpkg-reconfigure geotrek-admin
 
 
+Activate SSL / HTTPS
+--------------------
+
+To activate https, you need firstly to change custom.py and add :
+
+::
+
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+After this, edit `nginx.conf.in` to add your certificate.
+
+If you generate it with letsencrypt :
+You can use certbot to add the certificate in your configuration.
+But you will have to move the configuration automatically added into `nginx.conf`, to the file `nginx.conf.in`
+in `/opt/geotrek-admin/var/conf/` directory
+
+
 Users management
 ----------------
 
@@ -79,23 +97,6 @@ And give them permissions by schema :
 
 
 You can also create groups, etc. See PostgreSQL documentation.
-
-Activate SSL / HTTPS
---------------------
-
-To activate https, you need firstly to change custom.py and add :
-
-::
-
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-
-After this, edit `nginx.conf.in` to add your certificate.
-
-If you generate it with letsencrypt :
-You can use certbot to add the certificate in your configuration.
-But you will have to move the configuration automatically added into `nginx.conf`, to the file `nginx.conf.in`
-in `/opt/geotrek-admin/var/conf/` directory
 
 
 Advanced Configuration
