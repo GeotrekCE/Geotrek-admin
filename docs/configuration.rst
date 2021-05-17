@@ -95,7 +95,7 @@ After this, modify the configuration of nginx.conf.in, add your certificate.
 If you generate it with letsencrypt :
 You can use certbot to add the certificate in your configuration.
 But, you need to move the configuration added automatically to nginx.conf in the file nginx.conf.in
-inside the directory /opt/geotrek-admin/var/conf/
+in `/opt/geotrek-admin/var/conf/` directory
 
 
 Advanced Configuration
