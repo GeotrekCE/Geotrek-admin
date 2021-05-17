@@ -90,7 +90,7 @@ If you want to activate https, you need firstly to change custom.py and add :
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-After this, modify the configuration of nginx.conf.in, add your certificate.
+After this, edit `nginx.conf.in` to add your certificate.
 
 If you generate it with letsencrypt :
 You can use certbot to add the certificate in your configuration.
