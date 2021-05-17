@@ -32,6 +32,7 @@ class Command(BaseCommand):
         elif options["activities_only"]:
             parser.get_activities()
         else:
+            parser.initialize_internal_statuses()
             parser.get_statuses()
             parser.get_activities()
             parser.get_alerts()

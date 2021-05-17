@@ -4,7 +4,6 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.utils.timezone import make_aware
-
 from geotrek.feedback.models import (
     AttachedMessage,
     MessageAttachedDocument,
@@ -189,3 +188,17 @@ class SuricateParser(SuricateRequestManager):
 
             # Parse documents attached to message
             self.create_documents(message["documents"], message_obj, "Message")
+
+    def initialize_internal_statuses(self):
+        """Create extra statuses that Suricate does not have to know about"""
+        ReportStatus.objects.create(suricate_id="to_transmit", label="A transmettre")
+        ReportStatus.objects.create(
+            suricate_id="intervention_late", label="Intervention en retard"
+        )
+        ReportStatus.objects.create(
+            suricate_id="planned_late", label="Programmation en retard"
+        )
+        ReportStatus.objects.create(suricate_id="programmed", label="Programmé")
+        ReportStatus.objects.create(
+            suricate_id="intervention_over", label="Intervention terminée"
+        )
