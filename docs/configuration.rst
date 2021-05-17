@@ -83,7 +83,7 @@ You can also create groups, etc. See PostgreSQL documentation.
 Activate SSL / HTTPS
 --------------------
 
-If you want to activate https, you need firstly to change custom.py and add :
+To activate https, you need firstly to change custom.py and add :
 
 ::
 
