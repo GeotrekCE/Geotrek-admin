@@ -1,12 +1,12 @@
 from django.utils.translation import gettext_lazy as _
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.core.filters import TopologyFilter
+from geotrek.core.filters import TopologyFilter, ValidTopologyFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
 
 from .models import Trek, POI, Service
 
 
-class TrekFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+class TrekFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trek
@@ -21,7 +21,7 @@ class POITrekFilter(TopologyFilter):
     queryset = Trek.objects.existing()
 
 
-class POIFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+class POIFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     trek = POITrekFilter(label=_("Trek"), required=False)
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -31,7 +31,7 @@ class POIFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         ]
 
 
-class ServiceFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+class ServiceFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = Service
         fields = StructureRelatedFilterSet.Meta.fields + ['type']

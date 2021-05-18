@@ -1,16 +1,29 @@
 from django.conf import settings
+from django.db.models import Count, F, Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import CharFilter
+from django_filters import BooleanFilter, CharFilter, FilterSet
 
 from .models import Topology, Path, Trail
 
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import OptionalRangeFilter, RightFilter
-from geotrek.infrastructure.filters import InfrastructureFilterSet
-from geotrek.signage.filters import SignageFilterSet
-from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.maintenance import models as maintenance_models
+from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
+
+
+class ValidTopologyFilterSet(FilterSet):
+    is_valid = BooleanFilter(label=_("Valid topology"),  method='filter_valid_topology')
+
+    def filter_valid_topology(self, qs, name, value):
+        if value is not None:
+            qs = qs.annotate(distinct_same_order=Count('aggregations__order', distinct=True),
+                             same_order=Count('aggregations__order'))
+            if value is True:
+                qs = qs.filter(geom__isvalid=True).exclude(geom__isnull=True).exclude(geom__isempty=True).filter(same_order=F('distinct_same_order'))
+            elif value is False:
+                qs = qs.filter(Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True) | Q(distinct_same_order__lt=F('same_order')))
+        return qs
 
 
 class TopologyFilter(RightFilter):
@@ -75,7 +88,7 @@ class PathFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
             ['valid', 'length', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
 
 
-class TrailFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+class TrailFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')
@@ -92,8 +105,7 @@ class TopologyFilterTrail(TopologyFilter):
 
 
 if settings.TRAIL_MODEL_ENABLED:
-    for filterset in (PathFilterSet, InfrastructureFilterSet, SignageFilterSet,
-                      InterventionFilterSet, ProjectFilterSet):
+    for filterset in (PathFilterSet, InterventionFilterSet, ProjectFilterSet):
         filterset.add_filters({
             'trail': TopologyFilterTrail(label=_('Trail'), required=False)
         })
