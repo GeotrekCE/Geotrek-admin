@@ -7,6 +7,7 @@ from django.conf import settings
 
 from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
 from geotrek.api.v2.serializers import override_serializer
+from mapentity.renderers import GeoJSONRenderer
 
 
 class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
@@ -16,7 +17,7 @@ class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = api_pagination.StandardResultsSetPagination
     permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
-    renderer_classes = [renderers.JSONRenderer]
+    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [renderers.JSONRenderer, ]
 
     def get_serializer_context(self):
         return {
@@ -31,7 +32,7 @@ class GeotrekGeometricViewset(GeotrekViewSet):
             api_filters.GeotrekInBBoxFilter,
             api_filters.GeotrekDistanceToPointFilter)
     distance_filter_field = 'geom'
-    renderer_classes = viewsets.ReadOnlyModelViewSet.renderer_classes
+    renderer_classes = GeotrekViewSet.renderer_classes + [GeoJSONRenderer, ]
 
     def get_serializer_class(self):
         base_serializer_class = super().get_serializer_class()
