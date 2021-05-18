@@ -298,6 +298,7 @@ tr.selected-row td {
     #list-panel {
         width: calc(100% - 44px);
         height: auto;
+        min-height: 350px;
     }
 }
 
