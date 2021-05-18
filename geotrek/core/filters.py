@@ -13,7 +13,7 @@ from geotrek.zoning.filters import ZoningFilterSet
 
 
 class ValidTopologyFilterSet(FilterSet):
-    is_valid = BooleanFilter(label=_("Valid topology"),  method='filter_valid_topology')
+    is_valid = BooleanFilter(label=_("Valid topology"), method='filter_valid_topology')
 
     def filter_valid_topology(self, qs, name, value):
         if value is not None:
