@@ -5,6 +5,20 @@ CHANGELOG
 2.58.0+dev
 -------------------
 
+**User Interface**
+
+- Important visual changes due to CSS framework upgrade
+- Improve responsive
+
+**Maintenance**
+
+- Upgrade Bootstrap to 4.6
+- Upgrade JQuery to 1.9.1
+- Upgrade DataTables to 1.10.23
+- Upgrade Chosen to 1.2.0
+- Move to vendor folder updated JS Libraries used by Mapentity
+- Update HTML markup in many templates, and update tests too
+
 **Bug fixes**
 
 -
