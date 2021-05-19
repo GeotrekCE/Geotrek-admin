@@ -5,6 +5,10 @@ CHANGELOG
 2.57.0+dev
 -------------------
 
+**Documentation**
+
+- Add documentation ssl
+
 **Bug fixes**
 
 - Fix DistanceToPointFilter usage in API v2
