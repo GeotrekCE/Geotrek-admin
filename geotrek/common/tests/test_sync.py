@@ -313,6 +313,10 @@ class SyncTest(VarTmpTestCase):
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), '%s.pdf' % trek.slug)))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek.pk), 'it.pdf')))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'fr.pdf')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek.pk), 'it.gpx')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'fr.gpx')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek.pk), 'it.kml')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'fr.kml')))
 
 
 class SyncComplexTest(VarTmpTestCase):
