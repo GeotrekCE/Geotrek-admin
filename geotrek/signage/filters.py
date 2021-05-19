@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Topology
+from geotrek.core.filters import TopologyFilterTrail, ValidTopologyFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.maintenance.models import Intervention
 from geotrek.signage.models import Signage, Blade
@@ -21,12 +22,13 @@ class PolygonTopologyFilter(PolygonFilter):
         return qs.filter(**{'%s__in' % self.field_name: inner_qs})
 
 
-class SignageFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+class SignageFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = MultipleChoiceFilter(choices=Signage.objects.implantation_year_choices())
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
                                              choices=Intervention.objects.year_choices())
+    trail = TopologyFilterTrail(label=_('Trail'), required=False)
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage

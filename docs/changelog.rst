@@ -9,6 +9,10 @@ CHANGELOG
 
 - Add documentation ssl
 
+**New features**
+
+- Add filter bad topologies and geoms
+
 **Bug fixes**
 
 - Fix DistanceToPointFilter usage in API v2
