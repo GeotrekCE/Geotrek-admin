@@ -45,6 +45,9 @@ You can use certbot to add the certificate in your configuration.
 But you will have to move the configuration automatically added into `nginx.conf`, to the file `nginx.conf.in`
 in `/opt/geotrek-admin/var/conf/` directory
 
+You have to move the configuration to the file `nginx.conf.in` in order to keep the information between <> automatically
+changed during command `dpkg-reconfigure geotrek-admin`.
+
 
 Users management
 ----------------
