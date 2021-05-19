@@ -288,19 +288,23 @@ class Command(BaseCommand):
 
         for poi in trek.published_pois:
             if poi.resized_pictures:
-                self.sync_media_file(poi.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+                for picture, thdetail in poi.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
         for touristic_content in trek.published_touristic_contents:
             if touristic_content.resized_pictures:
-                self.sync_media_file(touristic_content.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+                for picture, thdetail in touristic_content.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
         for touristic_event in trek.published_touristic_events:
             if touristic_event.resized_pictures:
-                self.sync_media_file(touristic_event.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+                for picture, thdetail in touristic_event.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
         if trek.resized_pictures:
-            self.sync_media_file(trek.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                 zipfile=trekid_zipfile)
+            for picture, thdetail in trek.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                     zipfile=trekid_zipfile)
         for desk in trek.information_desks.all():
             if desk.resized_picture:
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,

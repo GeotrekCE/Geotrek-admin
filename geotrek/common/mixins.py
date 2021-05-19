@@ -122,14 +122,13 @@ class PicturesMixin:
     def serializable_pictures_mobile(self, root_pk):
         serialized = []
         if self.resized_pictures:
-            first_picture = self.resized_pictures[0][0]
-            thdetail_first = self.resized_pictures[0][1]
-            serialized.append({
-                'author': first_picture.author,
-                'title': first_picture.title,
-                'legend': first_picture.legend,
-                'url': os.path.join('/', str(root_pk), settings.MEDIA_URL[1:], thdetail_first.name),
-            })
+            for picture, thdetail in self.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                serialized.append({
+                    'author': picture.author,
+                    'title': picture.title,
+                    'legend': picture.legend,
+                    'url': os.path.join('/', str(root_pk), settings.MEDIA_URL[1:], thdetail.name),
+                })
         return serialized
 
     @property
