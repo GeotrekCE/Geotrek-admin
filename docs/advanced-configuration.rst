@@ -743,6 +743,7 @@ Boundingbox of your project : x minimum , y minimum , x max, y max
 **API**
 
 ::
+
     API_IS_PUBLIC = True
 
 Choose if you want the API V2 to be available for everyone without authentication. This API provides access to promotion content (Treks, POIs, Touristic Contents ...). Set to False if Geotrek is intended to be used only for managing content and not promoting them.
@@ -1229,7 +1230,7 @@ Order of all the objects without practices on Geotrek-rando website
 
     SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 
-Path on your server wehre the datas for mobile
+Path on your server where the datas for mobile will be saved
 
     *If you want to modify it, do not forget to import os at the top of the file.*
     *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
@@ -1241,6 +1242,14 @@ Path on your server wehre the datas for mobile
     SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
 Options of the sync_mobile command
+
+|
+
+::
+
+    MOBILE_NUMBER_PICTURES_SYNC = 3
+
+Number max of pictures that will be displayed and synchronized for each object (trek, poi, etc.) in the mobile app.
 
 |
 
