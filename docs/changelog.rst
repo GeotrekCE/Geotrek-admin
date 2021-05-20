@@ -2,12 +2,8 @@
 CHANGELOG
 =========
 
-2.57.0+dev
+2.58.0 (2021-05-20)
 -------------------
-
-**New features**
-
-- Mobile API returns multiple pictures for objects like Treks and POIs. Can be configurated with MOBILE_NUMBER_PICTURES_SYNC setting.
 
 **Documentation**
 
@@ -15,6 +11,7 @@ CHANGELOG
 
 **New features**
 
+- Mobile API returns multiple pictures for objects like Treks and POIs. Can be configurated with MOBILE_NUMBER_PICTURES_SYNC setting.
 - Add filter bad topologies and geoms
 
 **Bug fixes**
