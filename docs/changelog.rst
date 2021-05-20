@@ -5,6 +5,10 @@ CHANGELOG
 2.57.0+dev
 -------------------
 
+**New features**
+
+- Mobile API returns multiple pictures for objects like Treks and POIs. Can be configurated with MOBILE_NUMBER_PICTURES_SYNC setting.
+
 **Documentation**
 
 - Add documentation ssl
