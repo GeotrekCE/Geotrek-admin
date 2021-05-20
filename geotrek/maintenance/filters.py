@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 from django_filters import ChoiceFilter, MultipleChoiceFilter
 
-from mapentity.filters import PolygonFilter, PythonPolygonFilter
+from mapentity.filters import PolygonFilter
 
 from geotrek.core.models import Topology
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -116,7 +116,6 @@ class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
 
 class ProjectFilterSet(StructureRelatedFilterSet):
-    bbox = PythonPolygonFilter(field_name='geom')
     year = MultipleChoiceFilter(
         label=_("Year of activity"), method='filter_year',
         choices=lambda: Project.objects.year_choices()  # Could change over time

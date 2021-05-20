@@ -52,7 +52,7 @@ MapEntity.GeometryField = L.GeometryField.extend({
             },
             onEachFeature = function (feature, layer) {
                 if (feature.properties.name) {
-                    layer.bindLabel(feature.properties.name);
+                    layer.bindTooltip(feature.properties.name);
                 }
             },
             filecontrol = L.Control.fileLayerLoad({
@@ -67,7 +67,8 @@ MapEntity.GeometryField = L.GeometryField.extend({
 
     _addExtraLayers: function (map) {
         // Layer with objects of same type
-        var objectsLayer = this.buildObjectsLayer();
+        var url = this.modelTileUrl();
+        var objectsLayer = this.buildObjectsLayer(url);
 
         // TODO remember state
         // see https://github.com/makinacorpus/Geotrek/issues/1108
@@ -77,18 +78,15 @@ MapEntity.GeometryField = L.GeometryField.extend({
         var objectsname = $('body').data('objectsname');
         var nameHTML = '<span style="color: '+ style['color'] + ';">&#x25A3;</span>&nbsp;' + objectsname;
         map.layerscontrol.addOverlay(objectsLayer, nameHTML, tr("Objects"))
-
-        var url = this.modelLayerUrl();
-        objectsLayer.load(url);
     },
 
-    modelLayerUrl: function (modelname) {
+    modelTileUrl: function (modelname) {
         modelname = modelname || this.getModelName();
-        return window.SETTINGS.urls.layer
+        return window.SETTINGS.urls.tile
                      .replace(new RegExp('modelname', 'g'), modelname);
     },
 
-    buildObjectsLayer: function () {
+    buildObjectsLayer: function (url) {
         var object_pk = this.getInstancePk();
         var exclude_current_object = null;
         if (object_pk) {
@@ -101,12 +99,12 @@ MapEntity.GeometryField = L.GeometryField.extend({
         // Start loading all objects, readonly
         var style = L.Util.extend({weight: 4, clickable: true},
                                   window.SETTINGS.map.styles.others);
-        var objectsLayer = new L.ObjectsLayer(null, {
+        var objectsLayer = new L.ObjectsLayer(url, {
             style: style,
             modelname: this.getModelName(),
             filter: exclude_current_object,
             onEachFeature: function (geojson, layer) {
-                if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+                if (geojson.properties.name) layer.bindTooltip(geojson.properties.name);
             }
         });
         objectsLayer.on('loaded', function() {

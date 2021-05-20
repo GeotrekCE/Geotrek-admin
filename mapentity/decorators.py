@@ -68,7 +68,7 @@ def view_cache_latest():
         def _wrapped_view(self, request, *args, **kwargs):
             view_model = self.get_model()
 
-            cache_latest = cache_last_modified(lambda x: view_model.latest_updated())
+            cache_latest = cache_last_modified(lambda request, *args, **kwargs: view_model.latest_updated())
             cbv_cache_latest = method_decorator(cache_latest)
 
             @method_decorator(cache_control(max_age=0, must_revalidate=True))

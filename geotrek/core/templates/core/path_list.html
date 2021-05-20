@@ -23,8 +23,10 @@
         $(function(){
             $('span#nbresults').replaceWith(' <span class="badge"><span id="nbresults">?</span><span id="sumPath"></span></span>')
             $('#objects-list').on( 'xhr', function(e,o) {
-                obj = JSON.parse(o.jqXHR.responseText);
-                $( "#sumPath" ).html(' ('+ obj.sumPath + ' km)')
+                if (o.jqXHR.responseText !== undefined) {
+					obj = JSON.parse(o.jqXHR.responseText);
+                    $( "#sumPath" ).html(' ('+ obj.sumPath + ' km)')
+                }
             });
 
    	        $('#btn-merge').click(function() {

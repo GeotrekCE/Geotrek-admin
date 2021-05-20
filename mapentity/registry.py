@@ -65,12 +65,13 @@ class MapEntityOptions:
         # Filter to views inherited from MapEntity base views
         picked = []
         rest_viewset = None
+        tile_view = None
         list_view = None
 
         for name, view in inspect.getmembers(views_module):
             if inspect.isclass(view) and issubclass(view, View):
                 # Pick-up views
-                if hasattr(view, 'get_entity_kind') or issubclass(view, mapentity_views.MapEntityViewSet):
+                if hasattr(view, 'get_entity_kind') or issubclass(view, mapentity_views.MapEntityViewSet) or issubclass(view, mapentity_views.MapEntityTileLayer):
                     try:
                         view_model = view.model or view.queryset.model
                     except AttributeError:
@@ -79,6 +80,8 @@ class MapEntityOptions:
                         if view_model is self.model:
                             if issubclass(view, mapentity_views.MapEntityViewSet):
                                 rest_viewset = view
+                            elif issubclass(view, mapentity_views.MapEntityTileLayer):
+                                tile_view = view
                             elif issubclass(view, mapentity_views.MapEntityList):
                                 picked.append(view)
                                 list_view = view
@@ -123,6 +126,19 @@ class MapEntityOptions:
 
         self.rest_router.register(self.modelname + 's', rest_viewset, basename=self.modelname)
 
+        # Dynamically define tile view
+        if tile_view is None:
+            class dynamic_tile_view(mapentity_views.MapEntityTileLayer):
+                pass
+            tile_view = dynamic_tile_view
+
+        if tile_view.queryset is None:
+            tile_view.queryset = self.get_queryset()
+        if tile_view.serializer_class is None:
+            tile_view.serializer_class = self.get_tile_serializer()
+
+        picked.append(tile_view)
+
         # Returns Django URL patterns
         return self.__view_classes_to_url(*picked)
 
@@ -151,12 +167,27 @@ class MapEntityOptions:
 
         return Serializer
 
+    def get_tile_serializer(self):
+        _model = self.model
+
+        class Serializer(GeoFeatureModelSerializer):
+            api_geom = GeometryField(read_only=True, precision=7)
+
+            class Meta:
+                model = _model
+                geo_field = "api_geom"
+                id_field = 'id'
+                fields = ('id', )
+
+        return Serializer
+
     def get_queryset(self):
         return self.model.objects.all()
 
     def _url_path(self, view_kind):
         kind_to_urlpath = {
             mapentity_models.ENTITY_LAYER: r'^api/{modelname}/{modelname}.geojson$',
+            mapentity_models.ENTITY_TILE_LAYER: r'^api/{modelname}/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+).geojson$',
             mapentity_models.ENTITY_LIST: r'^{modelname}/list/$',
             mapentity_models.ENTITY_JSON_LIST: r'^api/{modelname}/{modelname}s.json$',
             mapentity_models.ENTITY_FORMAT_LIST: r'^{modelname}/list/export/$',

@@ -10,8 +10,8 @@ JQDataTable.init = function($elem, url, options) {
             "oLanguage": {
               "sLengthMenu": "_MENU_ records per page"
             },
-            "bProcessing": false,
-            "bServerSide": false,
+            "bProcessing": true,
+            "bServerSide": true,
             "sAjaxSource": url
     };
 

@@ -118,12 +118,12 @@
 
 
             function showInterventionLabel (geojson, layer) {
-                if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+                if (geojson.properties.name) layer.bindTooltip(geojson.properties.name);
             }
 
-            function interventionUrl(properties, layer) {
+            function interventionUrl(id) {
                 return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), 'intervention')
-                                      .replace('0', properties.pk);
+                                      .replace('0', id);
             };
         });
     </script>

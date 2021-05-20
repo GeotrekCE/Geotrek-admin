@@ -24,6 +24,7 @@ from .helpers import smart_urljoin, is_file_uptodate, capture_map_image, extract
 
 # Used to create the matching url name
 ENTITY_LAYER = "layer"
+ENTITY_TILE_LAYER = "tile_layer"
 ENTITY_LIST = "list"
 ENTITY_JSON_LIST = "json_list"
 ENTITY_FORMAT_LIST = "format_list"
@@ -37,7 +38,7 @@ ENTITY_DELETE = "delete"
 ENTITY_UPDATE_GEOM = "update_geom"
 
 ENTITY_KINDS = (
-    ENTITY_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
+    ENTITY_LAYER, ENTITY_TILE_LAYER, ENTITY_LIST, ENTITY_JSON_LIST,
     ENTITY_FORMAT_LIST, ENTITY_DETAIL, ENTITY_MAPIMAGE, ENTITY_DOCUMENT, ENTITY_MARKUP, ENTITY_CREATE,
     ENTITY_UPDATE, ENTITY_DELETE, ENTITY_UPDATE_GEOM
 )
@@ -95,6 +96,7 @@ class BaseMapEntityMixin(models.Model):
             ENTITY_DELETE: ENTITY_PERMISSION_DELETE,
             ENTITY_DETAIL: ENTITY_PERMISSION_READ,
             ENTITY_LAYER: ENTITY_PERMISSION_READ,
+            ENTITY_TILE_LAYER: ENTITY_PERMISSION_READ,
             ENTITY_LIST: ENTITY_PERMISSION_READ,
             ENTITY_JSON_LIST: ENTITY_PERMISSION_READ,
             ENTITY_MARKUP: ENTITY_PERMISSION_READ,
@@ -147,6 +149,10 @@ class BaseMapEntityMixin(models.Model):
     @classmethod
     def get_layer_url(cls):
         return reverse(cls._entity.url_name(ENTITY_LAYER))
+
+    @classmethod
+    def get_tile_layer_url(cls):
+        return reverse(cls._entity.url_name(ENTITY_TILE_LAYER))
 
     @classmethod
     def get_list_url(cls):

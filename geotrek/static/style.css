@@ -159,6 +159,7 @@ span.aggregation {
     border: 1px solid #d4d4d4;
     padding: 5px;
     width: 30%;
+    z-index: 1000;
 }
 
 #altitudegraph h4 {
@@ -237,7 +238,7 @@ body.screamshot #altitudegraph {
 
 
 .poi-marker-icon img {
-    max-width: 100% !important;
+    width: 100%;
 }
 
 .leaflet-marker-icon.point-reference {

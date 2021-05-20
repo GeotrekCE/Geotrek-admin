@@ -100,10 +100,6 @@ _LEAFLET_PLUGINS = OrderedDict([
     ('leaflet.overintent', {
         'js': 'mapentity/Leaflet.OverIntent/leaflet.overintent.js',
     }),
-    ('leaflet.label', {
-        'css': 'mapentity/Leaflet.label/dist/leaflet.label.css',
-        'js': 'mapentity/Leaflet.label/dist/leaflet.label.js'
-    }),
     ('leaflet.spin', {
         'js': ['paperclip/spin.min.js',
                'mapentity/Leaflet.Spin/leaflet.spin.js']
@@ -134,6 +130,9 @@ _LEAFLET_PLUGINS = OrderedDict([
     ('leaflet.groupedlayercontrol', {
         'css': 'mapentity/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.css',
         'js': 'mapentity/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.js'
+    }),
+    ('leaflet.geojson.grid', {
+        'js': 'mapentity/leaflet.geojson.grid.js',
     }),
     ('mapentity', {
         'js': ['mapentity/mapentity.js',

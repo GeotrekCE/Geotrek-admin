@@ -11,7 +11,7 @@ from django.utils.html import escape
 from django.views.generic import CreateView, ListView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
+from mapentity.views import (MapEntityLayer, MapEntityTileLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
@@ -57,16 +57,23 @@ class FlattenPicturesMixin:
 class TrekLayer(MapEntityLayer):
     properties = ['name', 'published']
     queryset = Trek.objects.existing()
+    geometry_field_db = 'geom'
+
+
+class TrekTileLayer(MapEntityTileLayer):
+    queryset = Trek.objects.existing()
 
 
 class TrekList(FlattenPicturesMixin, MapEntityList):
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
     queryset = Trek.objects.existing()
+    template_name = 'trekking/trek_list.html'
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
-    pass
+    def get_context_data(self, **kwargs):
+        return super(TrekJsonList, self).get_context_data(queryset=self.filterform(self.request.GET).qs, **kwargs)
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
@@ -242,13 +249,15 @@ class TrekMeta(MetaMixin, DetailView):
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
     properties = ['name', 'published']
+    geometry_field_db = 'geom'
 
 
 class POIList(FlattenPicturesMixin, MapEntityList):
     model = POI
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
-    queryset = model.objects.existing()
+    queryset = POI.objects.existing()
+    template_name = 'trekking/poi_list.html'
 
 
 class POIJsonList(MapEntityJsonList, POIList):
@@ -428,6 +437,7 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
 class ServiceLayer(MapEntityLayer):
     properties = ['label', 'published']
     queryset = Service.objects.existing()
+    geometry_field_db = 'geom'
 
 
 class ServiceList(MapEntityList):

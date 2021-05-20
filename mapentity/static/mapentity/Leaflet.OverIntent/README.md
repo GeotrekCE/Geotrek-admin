@@ -14,7 +14,7 @@ Usage
 
 ```javascript
 
-    var marker = L.marker([]).addTo(map);
+    var marker = L.marker([lat, lng]).addTo(map);
 
     marker.on('mouseintent', function (e) {
         // User meant it !
@@ -22,6 +22,11 @@ Usage
 ```
 
 ( *works with markers and vectorial layers* )
+
+**Options**
+
+* ``intentDuration`` : default is 300ms (See demo.)
+
 
 Authors
 -------

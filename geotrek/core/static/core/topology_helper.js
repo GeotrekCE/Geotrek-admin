@@ -237,7 +237,7 @@ Geotrek.TopologyHelper = (function() {
     /**
      * @param topology {Object} with ``offset``, ``positions`` and ``paths`` as returned by buildSubTopology()
      * @param idToLayer {function} callback to obtain layer from id
-     * @returns L.multiPolyline
+     * @returns L.polyline
      */
     function buildGeometryFromTopology(topology, idToLayer) {
         var latlngs = [];
@@ -252,7 +252,7 @@ Geotrek.TopologyHelper = (function() {
                 console.warn('Topology problem: ' + i + ' not in ' + JSON.stringify(topology.positions));
             }
         }
-        return L.multiPolyline(latlngs);
+        return L.polyline(latlngs);
     }
 
     /**

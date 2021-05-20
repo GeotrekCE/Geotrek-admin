@@ -1,5 +1,5 @@
 L.Control.Screenshot = L.Control.extend({
-    includes: L.Mixin.Events,
+    includes: L.Evented.prototype,
     options: {
         position: 'topleft',
     },
@@ -51,7 +51,7 @@ MapEntity.showLineLabel = function (layer, options) {
 
     var rgb = parseColor(options.color);
 
-    layer.bindLabel(options.text, {noHide: true, className: options.className});
+    layer.bindTooltip(options.text, {permanent: true, className: options.className});
 
     var __layerOnAdd = layer.onAdd;
     layer.onAdd = function (map) {
@@ -98,7 +98,7 @@ $(window).on('entity:map', function (e, data) {
 
     // Replace default layer switcher with Leaflet.GroupedLayerSwitcher
     if (map.layerscontrol) {
-        map.layerscontrol.removeFrom(map);
+        map.layerscontrol.remove(map);
     }
     var baseLayers = {};
     var overlaysLayers = {};
@@ -187,7 +187,7 @@ $(window).on('entity:map:detail', function (e, data) {
         }
 
         // Add layers
-        var objectLayer = new L.ObjectsLayer(geojson, {
+        var objectLayer = new L.SingleObjectLayer(geojson, {
             style: DETAIL_STYLE,
             indexing: false,
             modelname: data.modelname
@@ -230,9 +230,9 @@ $(window).on('entity:map:list', function (e, data) {
      * Objects Layer
      * .......................
      */
-    function getUrl(properties, layer) {
+    function getUrl(id) {
         return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), data.modelname)
-                                          .replace('0', properties.pk);
+                                          .replace('0', id);
     }
     if (typeof window.SETTINGS.map.styles.others === "function"){
         var style = window.SETTINGS.map.styles.others;
@@ -240,19 +240,18 @@ $(window).on('entity:map:list', function (e, data) {
     else{
         var style = L.Util.extend({}, window.SETTINGS.map.styles.others);
     }
-    var objectsLayer = new L.ObjectsLayer(null, {
+    var objectsLayer = new L.ObjectsLayer(window.SETTINGS.urls.tile.replace(new RegExp('modelname', 'g'), data.modelname), {
         objectUrl: getUrl,
         style: style,
         modelname: data.modelname,
         onEachFeature: function (geojson, layer) {
-            if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+            if (geojson.properties.name) layer.bindTooltip(geojson.properties.name);
         }
     });
     objectsLayer.on('highlight select', function (e) {
         if (e.layer._map !== null) e.layer.bringToFront();
     });
     map.addLayer(objectsLayer);
-    objectsLayer.load(window.SETTINGS.urls.layer.replace(new RegExp('modelname', 'g'), data.modelname));
 
     var nameHTML = '<span style="color: '+ style['color'] + ';">&#x25A3;</span>&nbsp;' + data.objectsname;
     map.layerscontrol.addOverlay(objectsLayer, nameHTML, tr("Objects"));
@@ -307,7 +306,7 @@ $(window).on('entity:map:list', function (e, data) {
         },
         onEachFeature = function (feature, layer) {
             if (feature.properties.name) {
-                layer.bindLabel(feature.properties.name);
+                layer.bindTooltip(feature.properties.name);
             }
         },
         filecontrol = L.Control.fileLayerLoad({

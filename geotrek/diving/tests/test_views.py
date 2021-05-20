@@ -113,6 +113,13 @@ class DiveViewsTests(CommonTest):
         response = self.client.get(reverse('diving:dive_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': dive.pk}))
         self.assertEqual(response.status_code, 404)
 
+    def test_bbox_filter(self):
+        class DiveGoodGeomFactory(DiveFactory):
+            geom = 'Point(700000 6600000)'
+
+        self.modelfactory = DiveGoodGeomFactory
+        super(DiveViewsTests, self).test_bbox_filter()
+
 
 class DiveViewsLiveTests(CommonLiveTest):
     model = Dive

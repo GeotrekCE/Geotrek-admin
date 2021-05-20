@@ -40,11 +40,10 @@ MapEntity.GeometryField.GeometryFieldPathMixin = {
      * (At least for the fix to propagate events)
      */
     buildPathsLayer: function (objectsLayer) {
-        var url_path = window.SETTINGS.urls.path_layer
-        var pathsLayer = MapEntity.pathsLayer({style: {clickable: true}, no_draft: objectsLayer.modelname != 'path'});
+        var url_path = window.SETTINGS.urls.tile.replace(new RegExp('modelname', 'g'), 'path');
         if (objectsLayer.modelname != 'path')
             url_path += '?no_draft=true';
-        pathsLayer.load(url_path, true);
+        var pathsLayer = MapEntity.pathsLayer(url_path, {style: {clickable: true}, no_draft: objectsLayer.modelname != 'path'});
 
         this._map.addLayer(pathsLayer);
 
@@ -94,8 +93,8 @@ MapEntity.GeometryField.GeometryFieldSnap = MapEntity.GeometryField.extend({
         this._objectsLayer = null;
     },
 
-    buildObjectsLayer: function () {
-        this._objectsLayer = MapEntity.GeometryField.prototype.buildObjectsLayer(arguments);
+    buildObjectsLayer: function (url) {
+        this._objectsLayer = MapEntity.GeometryField.prototype.buildObjectsLayer(url);
         this._guidesLayers.push(this._objectsLayer);
 
         if (this.getModelName() != 'path') {
@@ -147,19 +146,20 @@ MapEntity.GeometryField.GeometryFieldSnap = MapEntity.GeometryField.extend({
         }, this);
 
         // On edition, show start and end markers as snapped
-        this._map.on('draw:editstart', function (e) {
-            setTimeout(function () {
-                if (!layer.editing) {
-                    console.warn('Layer has no snap editing');
-                    return;  // should never happen ;)
-                }
-                var markers = layer.editing._markers;
-                var first = markers[0],
-                    last = markers[markers.length - 1];
-                first.fire('move');
-                last.fire('move');
-            }, 0);
-        });
+        // FIXME: disabled temporarily
+        // this._map.on('draw:editstart', function (e) {
+        //     setTimeout(function () {
+        //         if (!layer.editing) {
+        //             console.warn('Layer has no snap editing');
+        //             return;  // should never happen ;)
+        //         }
+        //         var markers = layer.editing._markers;
+        //         var first = markers[0],
+        //             last = markers[markers.length - 1];
+        //         first.fire('move');
+        //         last.fire('move');
+        //     }, 0);
+        // });
 
     },
 

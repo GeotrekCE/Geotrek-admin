@@ -1,5 +1,5 @@
 L.MapListSync = L.Class.extend({
-    includes: L.Mixin.Events,
+    includes: L.Evented.prototype,
     options: {
         filter: null,
         /* { form: $('#mainfilter'),

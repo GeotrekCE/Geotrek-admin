@@ -1,5 +1,5 @@
 MapEntity.TogglableFilter = L.Class.extend({
-    includes: L.Mixin.Events,
+    includes: L.Evented.prototype,
     options: {},
 
     initialize: function () {

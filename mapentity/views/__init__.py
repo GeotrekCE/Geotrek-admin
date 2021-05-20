@@ -16,6 +16,7 @@ from .generic import (
 )
 from .api import (
     MapEntityLayer,
+    MapEntityTileLayer,
     MapEntityJsonList,
     MapEntityViewSet
 )
@@ -65,6 +66,7 @@ __all__ = [
     'MapEntityDelete',
 
     'MapEntityLayer',
+    'MapEntityTileLayer',
     'MapEntityJsonList',
     'MapEntityViewSet',
 

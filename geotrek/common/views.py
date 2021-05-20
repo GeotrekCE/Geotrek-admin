@@ -12,8 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import static
 from django.utils.translation import gettext as _
-from django.views.generic import TemplateView
-from django.views.generic import RedirectView, View
+from django.views.generic import TemplateView, RedirectView, View
 
 from mapentity.helpers import api_bbox
 from mapentity.registry import registry
@@ -479,3 +478,7 @@ class SyncRandoRedirect(RedirectView):
 
 
 home = last_list
+
+
+class LeafletTestView(TemplateView):
+    template_name = "common/leaflet_test.html"
