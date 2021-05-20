@@ -20,6 +20,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix DistanceToPointFilter usage in API v2
+- Fix pdf/gpx/kml are not generated on all languages
 
 
 2.57.0 (2021-04-28)

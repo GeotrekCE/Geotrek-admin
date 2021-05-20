@@ -301,6 +301,23 @@ class SyncTest(VarTmpTestCase):
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek.pk), '%s.pdf' % self.trek.slug)))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(trek.pk), '%s.pdf' % trek.slug)))
 
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+    def test_sync_pdf_all_languages(self, trek):
+        output = StringIO()
+        trek = TrekFactory.create(published_it=True, published_en=True, published_fr=True, name_fr='FR', name_en='EN',
+                                  name_it="IT")
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                skip_pdf=False, skip_tiles=True, stdout=output)
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(trek.pk), '%s.pdf' % trek.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek.pk), '%s.pdf' % trek.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), '%s.pdf' % trek.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek.pk), 'it.pdf')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'fr.pdf')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek.pk), 'it.gpx')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'fr.gpx')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek.pk), 'it.kml')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'fr.kml')))
+
 
 class SyncComplexTest(VarTmpTestCase):
     def setUp(self):
