@@ -3,7 +3,7 @@
   "features": [
     {
       "type": "Feature",
-      "properties": {"NOM": 'coucou', 'Insee': '0', 'id': 52},
+      "properties": {"NOM": "coucou", "Insee": "0", "id": 52},
       "geometry": {
         "type": "Polygon",
         "coordinates": [[[0, -2], [1, -2], [1, 0], [0, 0], [0, -2]]]
@@ -11,7 +11,7 @@
     },
     {
       "type": "Feature",
-      "properties": {"NOM": "lulu", "Insee": "1", 'id': 53},
+      "properties": {"NOM": "lulu", "Insee": "1", "id": 53},
       "geometry": {
         "type": "Polygon",
         "coordinates": [[[0, 1], [0, 3], [-2, 3], [-2, 1], [0, 1]]]

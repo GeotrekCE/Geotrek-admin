@@ -1,0 +1,22 @@
+{% load i18n outdoor_tags %}
+
+{% is_outdoor_enabled as enabled %}
+{% if enabled %}
+
+<script type="text/javascript">
+    MapEntity.i18n['Outdoor'] = "{% trans "Outdoor" %}";
+    MapEntity.i18n['site'] = "{% trans "Outdoor site" %}";
+    MapEntity.i18n['course'] = "{% trans "Outdoor course" %}";
+
+    window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site_layer" %}";
+    window.SETTINGS.urls['course_layer'] = "{% url "outdoor:course_layer" %}";
+</script>
+
+{% if modelname == "site" %}
+    <script type="application/json" id="practices-types">
+        {% site_practices as practices %}
+        {{ practices|safe }}
+    </script>
+{% endif %}
+
+{% endif %}

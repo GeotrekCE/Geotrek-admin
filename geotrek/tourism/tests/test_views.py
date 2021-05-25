@@ -139,7 +139,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
-        super(BasicJSONAPITest, self).setUp()
+        super().setUp()
         self._build_object()
 
         self.pk = self.content.pk
@@ -151,20 +151,21 @@ class BasicJSONAPITest(TranslationResetMixin):
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
         self.city = zoning_factories.CityFactory(geom=polygon)
         self.district = zoning_factories.DistrictFactory(geom=polygon)
+        self.portal = common_factories.TargetPortalFactory()
+        self.theme = common_factories.ThemeFactory()
 
-        self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                    portals=[self.portal], themes=[self.theme])
 
         self.picture = common_factories.AttachmentFactory(content_object=self.content,
                                                           attachment_file=get_dummy_uploaded_image())
         self.document = common_factories.AttachmentFactory(content_object=self.content,
                                                            attachment_file=get_dummy_uploaded_document())
 
-        self.theme = common_factories.ThemeFactory()
         self.content.themes.add(self.theme)
         self.source = common_factories.RecordSourceFactory()
         self.content.source.add(self.source)
 
-        self.portal = common_factories.TargetPortalFactory()
         self.content.portal.add(self.portal)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
@@ -302,12 +303,12 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicContentFactory
 
     def _build_object(self):
-        super(TouristicContentAPITest, self)._build_object()
+        super()._build_object()
         self.category = self.content.category
         self.type1 = TouristicContentType1Factory(category=self.category)
         self.type2 = TouristicContentType2Factory(category=self.category, pictogram=None)
-        self.content.type1.add(self.type1)
-        self.content.type2.add(self.type2)
+        self.content.type1.set([self.type1])
+        self.content.type2.set([self.type2])
 
     def test_expected_properties(self):
         self.assertEqual(sorted([
@@ -316,7 +317,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
             'pois', 'practical_info', 'printable', 'publication_date',
             'published', 'published_status', 'reservation_id', 'reservation_system',
-            'slug', 'source', 'portal', 'themes', 'thumbnail', 'touristic_contents',
+            'slug', 'source', 'structure', 'portal', 'themes', 'thumbnail', 'touristic_contents',
             'touristic_events', 'treks', 'type1', 'type2', 'videos', 'website', 'dives']),
             sorted(self.result.keys()))
 
@@ -356,7 +357,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
             'organizer', 'participant_number', 'pictures', 'pois', 'portal', 'practical_info',
             'printable', 'publication_date', 'published', 'published_status',
-            'slug', 'source', 'speaker', 'target_audience', 'themes',
+            'slug', 'source', 'speaker', 'structure', 'target_audience', 'themes',
             'thumbnail', 'touristic_contents', 'touristic_events', 'treks', 'type',
             'type1', 'videos', 'website', 'dives']),
             sorted(self.result.keys()))

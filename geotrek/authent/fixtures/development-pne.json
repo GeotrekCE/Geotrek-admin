@@ -15,18 +15,17 @@
             "email": "admin@yopmail.com", 
             "date_joined": "2012-07-20T23:19:16.306Z"
         }
-    }, 
+    },
     {
-        "pk": 1, 
-        "model": "authent.userprofile", 
+        "pk": 1,
+        "model": "authent.userprofile",
         "fields": {
-            "language": "en",
             "user": [
                 "admin"
-            ], 
+            ],
             "structure": 1
         }
-    }, 
+    },
     {
         "model": "auth.user", 
         "fields": {
@@ -45,13 +44,12 @@
         }
     },
     {
-        "pk": 2, 
-        "model": "authent.userprofile", 
+        "pk": 2,
+        "model": "authent.userprofile",
         "fields": {
-            "language": "fr", 
             "user": [
                 "sheldon"
-            ], 
+            ],
             "structure": 1
         }
     },

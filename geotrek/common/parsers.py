@@ -3,6 +3,7 @@ import re
 import requests
 import logging
 from requests.auth import HTTPBasicAuth
+import textwrap
 import xlrd
 import xml.etree.ElementTree as ET
 from functools import reduce
@@ -21,8 +22,8 @@ from django.contrib.gis.geos import Point
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
-from django.utils.translation import ugettext as _
-from django.utils.encoding import force_text
+from django.utils.translation import gettext as _
+from django.utils.encoding import force_str
 from django.conf import settings
 from paperclip.models import attachment_upload
 
@@ -56,7 +57,7 @@ class DownloadImportError(ImportError):
     pass
 
 
-class Parser(object):
+class Parser:
     label = None
     model = None
     filename = None
@@ -98,12 +99,12 @@ class Parser(object):
 
         if self.fields is None:
             self.fields = {
-                f.name: force_text(f.verbose_name)
+                f.name: force_str(f.verbose_name)
                 for f in self.model._meta.fields
                 if not isinstance(f, TranslationField)
             }
             self.m2m_fields = {
-                f.name: force_text(f.verbose_name)
+                f.name: force_str(f.verbose_name)
                 for f in self.model._meta.many_to_many
             }
 
@@ -515,7 +516,7 @@ class ShapeParser(Parser):
 
     def normalize_field_name(self, name):
         """Shapefile field names length is 10 char max"""
-        name = super(ShapeParser, self).normalize_field_name(name)
+        name = super().normalize_field_name(name)
         return name[:10]
 
 
@@ -552,17 +553,17 @@ class AtomParser(Parser):
             yield row
 
 
-class AttachmentParserMixin(object):
+class AttachmentParserMixin:
     download_attachments = True
     base_url = ''
-    delete_attachments = False
+    delete_attachments = True
     filetype_name = "Photographie"
     non_fields = {
         'attachments': _("Attachments"),
     }
 
     def start(self):
-        super(AttachmentParserMixin, self).start()
+        super().start()
         if settings.PAPERCLIP_ENABLE_LINK is False and self.download_attachments is False:
             raise Exception('You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:
@@ -641,7 +642,7 @@ class AttachmentParserMixin(object):
                     attachments_to_delete.remove(attachment)
                     if author != attachment.author or legend != attachment.legend:
                         attachment.author = author
-                        attachment.legend = legend
+                        attachment.legend = textwrap.shorten(legend, width=127)
                         attachment.save()
                         updated = True
                     break
@@ -655,7 +656,7 @@ class AttachmentParserMixin(object):
             attachment.filetype = self.filetype
             attachment.creator = self.creator
             attachment.author = author
-            attachment.legend = legend
+            attachment.legend = textwrap.shorten(legend, width=127)
 
             if (parsed_url.scheme in ('http', 'https') and self.download_attachments) or parsed_url.scheme == 'ftp':
                 content = self.download_attachment(url)

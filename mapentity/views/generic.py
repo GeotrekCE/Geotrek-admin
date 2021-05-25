@@ -5,9 +5,9 @@ from datetime import datetime
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.decorators import method_decorator
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.views import static
 from django.views.generic.detail import DetailView
 from django.views.generic import View
@@ -45,7 +45,7 @@ def log_action(request, object, action_flag):
         user_id=request.user.pk,
         content_type_id=object.get_content_type_id(),
         object_id=object.pk,
-        object_repr=force_text(object),
+        object_repr=force_str(object),
         action_flag=action_flag
     )
 
@@ -58,8 +58,7 @@ class MapEntityList(BaseListView, ListView):
     """
 
     def get_template_names(self):
-        default = super(MapEntityList, self).get_template_names()
-        return default + ['mapentity/mapentity_list.html']
+        return super().get_template_names() + ['mapentity/mapentity_list.html']
 
     @classmethod
     def get_entity_kind(cls):
@@ -71,10 +70,10 @@ class MapEntityList(BaseListView, ListView):
         # (only if viewing a true list, not an inherited ENTITY_JSON_LIST for ex.)
         if self.__class__.get_entity_kind() == mapentity_models.ENTITY_LIST:
             request.session['last_list'] = request.path
-        return super(MapEntityList, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(MapEntityList, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['filterform'] = self._filterform  # From FilterListMixin
         context['columns'] = self.columns  # From BaseListView
 
@@ -121,7 +120,7 @@ class MapEntityFormat(BaseListView, ListView):
             return HttpResponseBadRequest()
 
         filename = '%s-%s-list' % (datetime.now().strftime('%Y%m%d-%H%M'),
-                                   str(slugify(u"{}".format(self.get_model()._meta.verbose_name))))
+                                   str(slugify(str(self.get_model()._meta.verbose_name))))
         filename += '.%s' % extensions.get(fmt_str, fmt_str)
         response = formatter(request=self.request, context=context, **response_kwargs)
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
@@ -179,7 +178,7 @@ class MapEntityMapImage(ModelViewMixin, DetailView):
 class MapEntityDocumentBase(ModelViewMixin, DetailView):
 
     def __init__(self, *args, **kwargs):
-        super(MapEntityDocumentBase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.model = self.get_model()
 
     @classmethod
@@ -188,14 +187,14 @@ class MapEntityDocumentBase(ModelViewMixin, DetailView):
 
     @view_permission_required()
     def dispatch(self, *args, **kwargs):
-        return super(MapEntityDocumentBase, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         rooturl = self.request.build_absolute_uri('/')
 
         # Screenshot of object map is required, since present in document
         self.get_object().prepare_map_image(rooturl)
-        context = super(MapEntityDocumentBase, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['datetime'] = datetime.now()
         context['objecticon'] = os.path.join(settings.STATIC_ROOT, self.get_entity().icon_big)
         context['logo_path'] = os.path.join(settings.MEDIA_ROOT, 'upload/logo-header.png')
@@ -211,7 +210,7 @@ class MapEntityDocumentBase(ModelViewMixin, DetailView):
 class MapEntityWeasyprint(MapEntityDocumentBase):
 
     def __init__(self, *args, **kwargs):
-        super(MapEntityWeasyprint, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         suffix = suffix_for(self.template_name_suffix, "_pdf", "html")
         self.template_name = smart_get_template(self.model, suffix)
@@ -223,7 +222,7 @@ class MapEntityWeasyprint(MapEntityDocumentBase):
         self.template_css = smart_get_template(self.model, suffix_for(self.template_name_suffix, "_pdf", "css"))
 
     def get_context_data(self, **kwargs):
-        context = super(MapEntityWeasyprint, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['map_path'] = self.get_object().get_map_image_path()
         context['template_attributes'] = self.template_attributes
         context['template_css'] = self.template_css
@@ -246,7 +245,7 @@ class MapEntityDocumentOdt(MapEntityDocumentBase):
     with_html_attributes = True
 
     def __init__(self, *args, **kwargs):
-        super(MapEntityDocumentOdt, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         suffix = suffix_for(self.template_name_suffix, "", "odt")
         self.template_name = smart_get_template(self.model, suffix)
@@ -255,7 +254,7 @@ class MapEntityDocumentOdt(MapEntityDocumentBase):
                                                 self.model._meta.object_name.lower(), suffix))
 
     def get_context_data(self, **kwargs):
-        context = super(MapEntityDocumentOdt, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if self.with_html_attributes:
             context['attributeshtml'] = self.get_object().get_attributes_html(self.request)
         context['_'] = _
@@ -280,7 +279,7 @@ class Convert(View):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(Convert, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         source = self.source_url()
@@ -336,8 +335,7 @@ class MapEntityCreate(ModelViewMixin, FormViewMixin, CreateView):
         return mapentity_models.ENTITY_CREATE
 
     def get_template_names(self):
-        default = super(MapEntityCreate, self).get_template_names()
-        return default + ['mapentity/mapentity_form.html']
+        return super().get_template_names() + ['mapentity/mapentity_form.html']
 
     @classmethod
     def get_title(cls):
@@ -345,32 +343,28 @@ class MapEntityCreate(ModelViewMixin, FormViewMixin, CreateView):
 
     @view_permission_required(login_url=mapentity_models.ENTITY_LIST)
     def dispatch(self, *args, **kwargs):
-        return super(MapEntityCreate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(MapEntityCreate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
     def form_valid(self, form):
-        response = super(MapEntityCreate, self).form_valid(form)
+        response = super().form_valid(form)
         messages.success(self.request, _("Created"))
         log_action(self.request, self.object, ADDITION)
         return response
 
     def form_invalid(self, form):
         messages.error(self.request, _("Your form contains errors"))
-        return super(MapEntityCreate, self).form_invalid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super(MapEntityCreate, self).get_context_data(**kwargs)
-        return context
+        return super().form_invalid(form)
 
 
 class MapEntityDetail(ModelViewMixin, DetailView):
 
     def __init__(self, *args, **kwargs):
-        super(MapEntityDetail, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Try to load template for each lang and object detail
         model = self.get_model()
         suffix = suffix_for(self.template_name_suffix, "_attributes", "html")
@@ -381,19 +375,19 @@ class MapEntityDetail(ModelViewMixin, DetailView):
         return mapentity_models.ENTITY_DETAIL
 
     def get_template_names(self):
-        default = super(MapEntityDetail, self).get_template_names()
+        default = super().get_template_names()
         return default + ['mapentity/mapentity_detail.html']
 
     def get_title(self):
-        return u"{}".format(self.get_object())
+        return str(self.get_object())
 
     @view_permission_required(login_url=mapentity_models.ENTITY_LIST)
     @save_history()
     def dispatch(self, *args, **kwargs):
-        return super(MapEntityDetail, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(MapEntityDetail, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         logentries_max = app_settings['ACTION_HISTORY_LENGTH']
         logentries = LogEntry.objects.filter(
             content_type_id=self.object.get_content_type_id(),
@@ -426,18 +420,17 @@ class MapEntityUpdate(ModelViewMixin, FormViewMixin, UpdateView):
         return mapentity_models.ENTITY_UPDATE
 
     def get_template_names(self):
-        default = super(MapEntityUpdate, self).get_template_names()
-        return default + ['mapentity/mapentity_form.html']
+        return super().get_template_names() + ['mapentity/mapentity_form.html']
 
     def get_title(self):
         return _("Edit %s") % self.get_object()
 
     @view_permission_required(login_url=mapentity_models.ENTITY_DETAIL)
     def dispatch(self, *args, **kwargs):
-        return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(MapEntityUpdate, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
 
         perm_delete = self.get_model().get_permission_codename(mapentity_models.ENTITY_DELETE)
@@ -446,14 +439,14 @@ class MapEntityUpdate(ModelViewMixin, FormViewMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        response = super(MapEntityUpdate, self).form_valid(form)
+        response = super().form_valid(form)
         messages.success(self.request, _("Saved"))
         log_action(self.request, self.object, CHANGE)
         return response
 
     def form_invalid(self, form):
         messages.error(self.request, _("Your form contains errors"))
-        return super(MapEntityUpdate, self).form_invalid(form)
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return self.get_object().get_detail_url()
@@ -466,19 +459,18 @@ class MapEntityDelete(ModelViewMixin, DeleteView):
         return mapentity_models.ENTITY_DELETE
 
     def get_template_names(self):
-        default = super(MapEntityDelete, self).get_template_names()
-        return default + ['mapentity/mapentity_confirm_delete.html']
+        return super().get_template_names() + ['mapentity/mapentity_confirm_delete.html']
 
     @view_permission_required(login_url=mapentity_models.ENTITY_DETAIL)
     def dispatch(self, *args, **kwargs):
-        return super(MapEntityDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         log_action(self.request, self.object, DELETION)
         # Remove entry from history
         history_delete(request, path=self.object.get_detail_url())
-        return super(MapEntityDelete, self).delete(request, *args, **kwargs)
+        return super().delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return self.get_model().get_list_url()

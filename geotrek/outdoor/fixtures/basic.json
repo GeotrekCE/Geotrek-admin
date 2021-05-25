@@ -1,0 +1,1486 @@
+[
+{
+    "model": "auth.group",
+    "pk": 8,
+    "fields": {
+        "name": "Outdoor",
+        "permissions": [
+            ["add_site", "outdoor", "site"],
+            ["change_site", "outdoor", "site"],
+            ["delete_site", "outdoor", "site"],
+            ["read_site", "outdoor", "site"],
+            ["export_site", "outdoor", "site"]
+        ]
+    }
+},
+{
+    "model": "outdoor.sector",
+    "pk": 1,
+    "fields": {
+        "name": "Eau vive",
+        "name_fr": "Eau vive",
+        "name_en": "White water"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 1,
+    "fields": {
+        "name": "Escalade",
+        "name_fr": "Escalade",
+        "name_en": "Climbing"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 2,
+    "fields": {
+        "sector": 1,
+        "name": "Canoë-kayak",
+        "name_fr": "Canoë-kayak",
+        "name_en": "Canoe-kayak"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 3,
+    "fields": {
+        "name": "Alpinisme",
+        "name_fr": "Alpinisme",
+        "name_en": "Mountaineering"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 4,
+    "fields": {
+        "name": "Via ferrata",
+        "name_fr": "Via ferrata",
+        "name_en": "Via ferrata"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 5,
+    "fields": {
+        "name": "Vol libre",
+        "name_fr": "Vol libre",
+        "name_en": "Hang-gliding"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 6,
+    "fields": {
+        "sector": 1,
+        "name": "Canyoning",
+        "name_fr": "Canyoning",
+        "name_en": "Canyoning"
+    }
+},
+{
+    "model": "outdoor.ratingscale",
+    "pk": 1,
+    "fields": {
+        "name": "Classe",
+        "name_fr": "Classe",
+        "name_en": "Class",
+        "practice": 2
+    }
+},
+{
+    "model": "outdoor.ratingscale",
+    "pk": 2,
+    "fields": {
+        "name": "Caractère vertical",
+        "name_fr": "Caractère vertical",
+        "name_en": null,
+        "order": 1,
+        "practice": 6
+    }
+},
+{
+    "model": "outdoor.ratingscale",
+    "pk": 3,
+    "fields": {
+        "name": "Caractère aquatique",
+        "name_fr": "Caractère aquatique",
+        "name_en": null,
+        "order": 2,
+        "practice": 6
+    }
+},
+{
+    "model": "outdoor.ratingscale",
+    "pk": 4,
+    "fields": {
+        "name": "Engagement / envergure",
+        "name_fr": "Engagement / envergure",
+        "name_en": null,
+        "order": 3,
+        "practice": 6
+    }
+},
+{
+    "model": "outdoor.ratingscale",
+    "pk": 5,
+    "fields": {
+        "name": "Niveau",
+        "name_fr": "Niveau",
+        "name_en": null,
+        "practice": 4
+    }
+},
+{
+    "model": "outdoor.ratingscale",
+    "pk": 6,
+    "fields": {
+        "name": "Cotation",
+        "name_fr": "Cotation",
+        "name_en": null,
+        "practice": 1
+    }
+},
+{
+    "model": "outdoor.ratingscale",
+    "pk": 7,
+    "fields": {
+        "name": "Cotation globale",
+        "name_fr": "Cotation globale",
+        "name_en": null,
+        "order": 1,
+        "practice": 3
+    }
+},
+{
+    "model": "outdoor.ratingscale",
+    "pk": 8,
+    "fields": {
+        "name": "Engagement / éloignement",
+        "name_fr": "Engagement / éloignement",
+        "name_en": null,
+        "order": 2,
+        "practice": 3
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 3,
+    "fields": {
+        "name": "I - Facile",
+        "name_fr": "I - Facile",
+        "name_en": null,
+        "scale": 1,
+        "description": "Facile (Passage libre). Cours régulier, vagues régulières, petits remous. Obstacles simples.",
+        "description_fr": "Facile (Passage libre). Cours régulier, vagues régulières, petits remous. Obstacles simples.",
+        "description_en": "",
+        "order": 1,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 4,
+    "fields": {
+        "name": "II - Moyennement difficile",
+        "name_fr": "II - Moyennement difficile",
+        "name_en": null,
+        "scale": 1,
+        "description": "Moyennement difficile (Passage libre). Cours irrégulier, vagues irrégulières, remous moyens, faibles tourbillons et rapides. Obstacles simples dans le courant, petits seuils.",
+        "description_fr": "Moyennement difficile (Passage libre). Cours irrégulier, vagues irrégulières, remous moyens, faibles tourbillons et rapides. Obstacles simples dans le courant, petits seuils.",
+        "description_en": "",
+        "order": 2,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 5,
+    "fields": {
+        "name": "III - Difficile",
+        "name_fr": "III - Difficile",
+        "name_en": null,
+        "scale": 1,
+        "description": "Difficile (Passage libre). Vagues hautes irrégulières, gros remous, tourbillons et rapides. Blocs de roche, petites chutes, obstacles divers dans le courant.",
+        "description_fr": "Difficile (Passage libre). Vagues hautes irrégulières, gros remous, tourbillons et rapides. Blocs de roche, petites chutes, obstacles divers dans le courant.",
+        "description_en": "",
+        "order": 3,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 6,
+    "fields": {
+        "name": "IV - Très difficile",
+        "name_fr": "IV - Très difficile",
+        "name_en": null,
+        "scale": 1,
+        "description": "Très difficile (Passage non visible d’avance, reconnaissance généralement nécessaire). Grosses vagues continuelles, rouleaux puissants et rapides. Roches obstruant le courant, chutes plus élevées avec appels (Considérés comme environnement spécifique).",
+        "description_fr": "Très difficile (Passage non visible d’avance, reconnaissance généralement nécessaire). Grosses vagues continuelles, rouleaux puissants et rapides. Roches obstruant le courant, chutes plus élevées avec appels (Considérés comme environnement spécifique).",
+        "description_en": "",
+        "order": 4,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 7,
+    "fields": {
+        "name": "V - Extrêmement difficile",
+        "name_fr": "V - Extrêmement difficile",
+        "name_en": null,
+        "scale": 1,
+        "description": "Extrêmement difficile (Reconnaissance inévitable). Vagues, tourbillons, rapides à l’extrême. Passages étroits, chutes très élevées avec entrées et sorties difficiles (Considérés comme environnement spécifique).",
+        "description_fr": "Extrêmement difficile (Reconnaissance inévitable). Vagues, tourbillons, rapides à l’extrême. Passages étroits, chutes très élevées avec entrées et sorties difficiles (Considérés comme environnement spécifique).",
+        "description_en": "",
+        "order": 5,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 8,
+    "fields": {
+        "name": "VI - Limite de navigabilité",
+        "name_fr": "VI - Limite de navigabilité",
+        "name_en": null,
+        "scale": 1,
+        "description": "Limite de navigabilité (Généralement impossible). Éventuellement navigable selon le niveau des eaux. Grands risques (Considérés comme environnement spécifique).",
+        "description_fr": "Limite de navigabilité (Généralement impossible). Éventuellement navigable selon le niveau des eaux. Grands risques (Considérés comme environnement spécifique).",
+        "description_en": "",
+        "order": 6,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 9,
+    "fields": {
+        "name": "1 - Très facile",
+        "name_fr": "1 - Très facile",
+        "name_en": null,
+        "scale": 2,
+        "description": "Absence d’obstacle vertical obligatoire. Absence de rappe et de main courante, corde et baudrier inutiles pour la progression normale en sécurité. Absence de passage d’escalade/désescalade.",
+        "description_fr": "Absence d’obstacle vertical obligatoire. Absence de rappe et de main courante, corde et baudrier inutiles pour la progression normale en sécurité. Absence de passage d’escalade/désescalade.",
+        "description_en": "",
+        "order": 1,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 10,
+    "fields": {
+        "name": "2 - Facile",
+        "name_fr": "2 - Facile",
+        "name_en": null,
+        "scale": 2,
+        "description": "Rappel(s) d’accès et d’exécution facile, inf. ou égal à 10 m. Main courante de sécurité. Passage d'escalade/désescalade facile et peu exposé.",
+        "description_fr": "Rappel(s) d’accès et d’exécution facile, inf. ou égal à 10 m. Main courante de sécurité. Passage d'escalade/désescalade facile et peu exposé.",
+        "description_en": "",
+        "order": 2,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 11,
+    "fields": {
+        "name": "3 - Peu difficile",
+        "name_fr": "3 - Peu difficile",
+        "name_en": null,
+        "scale": 2,
+        "description": "Verticales à faible débit. Réception en vasque avec nage en eau calme. Rappels d’accès et d’exécution simple, inf. ou égal à 30 m, séparés, au minimum, par des paliers permettant le regroupement. Main courante de progression facile. « Marche » technique qui nécessite une attention particulière (pose des appuis précis) et une recherche d’itinéraire sur terrain pouvant être glissant ou instable ou accidenté ou encombré ou dans l’eau. Passages d'escalade/désescalade (jusqu’au 3c), peu exposés, pouvant nécessiter l'usage d'une corde.",
+        "description_fr": "Verticales à faible débit. Réception en vasque avec nage en eau calme. Rappels d’accès et d’exécution simple, inf. ou égal à 30 m, séparés, au minimum, par des paliers permettant le regroupement. Main courante de progression facile. « Marche » technique qui nécessite une attention particulière (pose des appuis précis) et une recherche d’itinéraire sur terrain pouvant être glissant ou instable ou accidenté ou encombré ou dans l’eau. Passages d'escalade/désescalade (jusqu’au 3c), peu exposés, pouvant nécessiter l'usage d'une corde.",
+        "description_en": "",
+        "order": 3,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 12,
+    "fields": {
+        "name": "4 - Assez difficile",
+        "name_fr": "4 - Assez difficile",
+        "name_en": null,
+        "scale": 2,
+        "description": "Verticales de débit faible à moyen pouvant commencer à poser des problèmes de déséquilibre ou de blocage. Rappel (s) d’accès difficile et/ou sup. à 30 m. Enchaînement de rappels en paroi avec relais confortables. Présence de frottements de corde. Main courante de progression complexe, rappel ou bas du rappel non visible du départ, réception en vasque avec mouvements d'eau. Passages d'escalade / désescalade jusqu’au 4c ou A0, exposés et/ou nécessitant l’usage des techniques d’assurage et de progression.",
+        "description_fr": "Verticales de débit faible à moyen pouvant commencer à poser des problèmes de déséquilibre ou de blocage. Rappel (s) d’accès difficile et/ou sup. à 30 m. Enchaînement de rappels en paroi avec relais confortables. Présence de frottements de corde. Main courante de progression complexe, rappel ou bas du rappel non visible du départ, réception en vasque avec mouvements d'eau. Passages d'escalade / désescalade jusqu’au 4c ou A0, exposés et/ou nécessitant l’usage des techniques d’assurage et de progression.",
+        "description_en": "",
+        "order": 4,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 13,
+    "fields": {
+        "name": "5 - Difficile",
+        "name_fr": "5 - Difficile",
+        "name_en": null,
+        "scale": 2,
+        "description": "Verticales de débit moyen à fort, franchissement difficile nécessitant une gestion de la trajectoire et/ou de l’équilibre. Enchaînement de rappels en paroi avec relais aériens. Franchissement de vasque suspendue déversante durant la descente. Support glissant ou présence d’obstacle. Désinstallation de la corde difficile (en position de nage, etc.) Passages d'escalade / désescalade exposés, jusqu’au 5c ou A1.",
+        "description_fr": "Verticales de débit moyen à fort, franchissement difficile nécessitant une gestion de la trajectoire et/ou de l’équilibre. Enchaînement de rappels en paroi avec relais aériens. Franchissement de vasque suspendue déversante durant la descente. Support glissant ou présence d’obstacle. Désinstallation de la corde difficile (en position de nage, etc.) Passages d'escalade / désescalade exposés, jusqu’au 5c ou A1.",
+        "description_en": "",
+        "order": 5,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 14,
+    "fields": {
+        "name": "7 - Extrêmement difficile / très exposé",
+        "name_fr": "7 - Extrêmement difficile / très exposé",
+        "name_en": null,
+        "scale": 2,
+        "description": "Verticales de débit très fort à extrêmement fort. Cascade très consistante. Franchissement extrêmement difficile nécessitant l’anticipation et la gestion spécifique de la corde, de la trajectoire, de l’équilibre, des appuis et du rythme. Passages d'escalade / désescalade exposés, au-­dessus de 6a ou A2. Visibilité limitée et obstacles fréquents. Passage possible en fin de rappel ou en cours de rappel dans une (des) vasque(s) avec mouvements d’eau puissants. Contrôle de la respiration : passage(s) en apnée.",
+        "description_fr": "Verticales de débit très fort à extrêmement fort. Cascade très consistante. Franchissement extrêmement difficile nécessitant l’anticipation et la gestion spécifique de la corde, de la trajectoire, de l’équilibre, des appuis et du rythme. Passages d'escalade / désescalade exposés, au-­dessus de 6a ou A2. Visibilité limitée et obstacles fréquents. Passage possible en fin de rappel ou en cours de rappel dans une (des) vasque(s) avec mouvements d’eau puissants. Contrôle de la respiration : passage(s) en apnée.",
+        "description_en": "",
+        "order": 7,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 15,
+    "fields": {
+        "name": "6 - Très difficile / exposé",
+        "name_fr": "6 - Très difficile / exposé",
+        "name_en": null,
+        "scale": 2,
+        "description": "Verticales de débit fort à très fort. Cascade consistante. Franchissement très difficile, nécessitant la gestion efficace de la trajectoire et/ou de l’équilibre. Installation de relais difficile : mise en place délicate d’amarrage naturel (bloc coincé, ...) Accès au départ du rappel difficile (installation de main courante très délicate...) Passage d'escalade / désescalade exposé, jusqu’au 6a ou A2. Support très glissant ou instable. Vasque d’arrivée fortement émulsionnée.",
+        "description_fr": "Verticales de débit fort à très fort. Cascade consistante. Franchissement très difficile, nécessitant la gestion efficace de la trajectoire et/ou de l’équilibre. Installation de relais difficile : mise en place délicate d’amarrage naturel (bloc coincé, ...) Accès au départ du rappel difficile (installation de main courante très délicate...) Passage d'escalade / désescalade exposé, jusqu’au 6a ou A2. Support très glissant ou instable. Vasque d’arrivée fortement émulsionnée.",
+        "description_en": "",
+        "order": 6,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 16,
+    "fields": {
+        "name": "1 - Très facile",
+        "name_fr": "1 - Très facile",
+        "name_en": null,
+        "scale": 3,
+        "description": "Absence d’eau ou marche en eau calme. Nage facultative. Absence de saut. Absence de toboggan.",
+        "description_fr": "Absence d’eau ou marche en eau calme. Nage facultative. Absence de saut. Absence de toboggan.",
+        "description_en": "",
+        "order": 1,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 17,
+    "fields": {
+        "name": "2 - Facile",
+        "name_fr": "2 - Facile",
+        "name_en": null,
+        "scale": 3,
+        "description": "Nage ne dépassant pas 10 m de longueur en eau calme. Saut d’exécution simple inf. à 3 m. Toboggan court ou à faible pente.",
+        "description_fr": "Nage ne dépassant pas 10 m de longueur en eau calme. Saut d’exécution simple inf. à 3 m. Toboggan court ou à faible pente.",
+        "description_en": "",
+        "order": 2,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 18,
+    "fields": {
+        "name": "3 - Peu difficile",
+        "name_fr": "3 - Peu difficile",
+        "name_en": null,
+        "scale": 3,
+        "description": "Nage ne dépassant pas 30 m en eau calme. Progression en courant faible. Saut d’exécution simple de 3 à 5 m. Toboggan long ou à pente moyenne.",
+        "description_fr": "Nage ne dépassant pas 30 m en eau calme. Progression en courant faible. Saut d’exécution simple de 3 à 5 m. Toboggan long ou à pente moyenne.",
+        "description_en": "",
+        "order": 3,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 19,
+    "fields": {
+        "name": "4 - Assez difficile",
+        "name_fr": "4 - Assez difficile",
+        "name_en": null,
+        "scale": 3,
+        "description": "Immersion prolongée entraînant une perte calorifique assez importante. Courant moyen. Siphon large de moins d’1m de longueur et/ou de profondeur. Saut d’exécution simple de 5 à 8 m. Saut avec difficulté d'appel, de trajectoire ou de réception inf. à 5 m. Grand toboggan ou à forte pente.",
+        "description_fr": "Immersion prolongée entraînant une perte calorifique assez importante. Courant moyen. Siphon large de moins d’1m de longueur et/ou de profondeur. Saut d’exécution simple de 5 à 8 m. Saut avec difficulté d'appel, de trajectoire ou de réception inf. à 5 m. Grand toboggan ou à forte pente.",
+        "description_en": "",
+        "order": 4,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 20,
+    "fields": {
+        "name": "5 - Difficile",
+        "name_fr": "5 - Difficile",
+        "name_en": null,
+        "scale": 3,
+        "description": "Immersion prolongée en eau froide entraînant une perte calorifique importante. Progression en courant assez fort, pouvant perturber les trajectoires de nage, les bacs, les arrêts ou les reprises de courant. Difficultés obligatoires liées à des phénomènes d'eau vive ponctuels (tourbillons, rappels, marmites, drossages ...) pouvant entraîner un blocage ponctuel du canyoniste. Siphon large et jusqu’à 2 m de longueur et/ou de profondeur. Saut d’exécution simple de 8 à 10 m. Saut avec difficulté d’appel, de trajectoire ou de réception de 5 à 8 m.",
+        "description_fr": "Immersion prolongée en eau froide entraînant une perte calorifique importante. Progression en courant assez fort, pouvant perturber les trajectoires de nage, les bacs, les arrêts ou les reprises de courant. Difficultés obligatoires liées à des phénomènes d'eau vive ponctuels (tourbillons, rappels, marmites, drossages ...) pouvant entraîner un blocage ponctuel du canyoniste. Siphon large et jusqu’à 2 m de longueur et/ou de profondeur. Saut d’exécution simple de 8 à 10 m. Saut avec difficulté d’appel, de trajectoire ou de réception de 5 à 8 m.",
+        "description_en": "",
+        "order": 5,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 21,
+    "fields": {
+        "name": "6 - Très difficile / exposé",
+        "name_fr": "6 - Très difficile / exposé",
+        "name_en": null,
+        "scale": 3,
+        "description": "Progression en courant fort rendant les trajectoires de nage, les bacs, les arrêts ou les reprises de courant difficiles à exécuter. Mouvements d’eau bien marqués (drossages, contre-­‐courant, rappels, vagues, tourbillons ...) pouvant entraîner un blocage assez prolongé du canyoniste. Siphon technique jusqu’à 1 m maxi avec courant éventuel ou cheminement. Siphon large jusqu’à 3 m de profondeur et/ou de longueur.",
+        "description_fr": "Progression en courant fort rendant les trajectoires de nage, les bacs, les arrêts ou les reprises de courant difficiles à exécuter. Mouvements d’eau bien marqués (drossages, contre-­‐courant, rappels, vagues, tourbillons ...) pouvant entraîner un blocage assez prolongé du canyoniste. Siphon technique jusqu’à 1 m maxi avec courant éventuel ou cheminement. Siphon large jusqu’à 3 m de profondeur et/ou de longueur.",
+        "description_en": "",
+        "order": 6,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 22,
+    "fields": {
+        "name": "7 - Extrêmement difficile / très exposé",
+        "name_fr": "7 - Extrêmement difficile / très exposé",
+        "name_en": null,
+        "scale": 3,
+        "description": "Progression en courant très fort rendant les trajectoires de nage, les bacs, les arrêts ou les reprises de courant extrêmement difficiles à exécuter. Mouvements d’eau violents (drossages, contre-­‐courant, rappels, vagues, tourbillons ...) pouvant entraîner un blocage prolongé du canyoniste. Siphon de plus de 3m de longueur et/ou de profondeur. Siphon technique et engagé de plus de 1m avec courant ou cheminement ou sans visibilité.",
+        "description_fr": "Progression en courant très fort rendant les trajectoires de nage, les bacs, les arrêts ou les reprises de courant extrêmement difficiles à exécuter. Mouvements d’eau violents (drossages, contre-­‐courant, rappels, vagues, tourbillons ...) pouvant entraîner un blocage prolongé du canyoniste. Siphon de plus de 3m de longueur et/ou de profondeur. Siphon technique et engagé de plus de 1m avec courant ou cheminement ou sans visibilité.",
+        "description_en": "",
+        "order": 7,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 23,
+    "fields": {
+        "name": "I",
+        "name_fr": "I",
+        "name_en": null,
+        "scale": 4,
+        "description": "Engagement : possibilité de se mettre hors crue facilement et rapidement. Échappatoires faciles présentes sur toutes les portions du parcours. Envergure : temps de parcours du canyon (approche, descente, retour) inférieur à 2 heures.",
+        "description_fr": "Engagement : possibilité de se mettre hors crue facilement et rapidement. Échappatoires faciles présentes sur toutes les portions du parcours. Envergure : temps de parcours du canyon (approche, descente, retour) inférieur à 2 heures.",
+        "description_en": "",
+        "order": 1,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 24,
+    "fields": {
+        "name": "II",
+        "name_fr": "II",
+        "name_en": null,
+        "scale": 4,
+        "description": "Engagement : possibilité de se mettre hors crue en ¼ heure de progression maxi. Échappatoire(s) en ½ heure de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 2 et 4 heures.",
+        "description_fr": "Engagement : possibilité de se mettre hors crue en ¼ heure de progression maxi. Échappatoire(s) en ½ heure de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 2 et 4 heures.",
+        "description_en": "",
+        "order": 2,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 25,
+    "fields": {
+        "name": "III",
+        "name_fr": "III",
+        "name_en": null,
+        "scale": 4,
+        "description": "Engagement : possibilité de se mettre hors crue en ½ heure de progression maxi. Échappatoire(s) en 1 heure de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 4 et 8 heures.",
+        "description_fr": "Engagement : possibilité de se mettre hors crue en ½ heure de progression maxi. Échappatoire(s) en 1 heure de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 4 et 8 heures.",
+        "description_en": "",
+        "order": 3,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 26,
+    "fields": {
+        "name": "IV",
+        "name_fr": "IV",
+        "name_en": null,
+        "scale": 4,
+        "description": "Engagement : possibilité de se mettre hors crue en 1 heure de progression maxi. Échappatoire(s) en 2 heures de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 8 heures et 1 jour.",
+        "description_fr": "Engagement : possibilité de se mettre hors crue en 1 heure de progression maxi. Échappatoire(s) en 2 heures de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 8 heures et 1 jour.",
+        "description_en": "",
+        "order": 4,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 27,
+    "fields": {
+        "name": "V",
+        "name_fr": "V",
+        "name_en": null,
+        "scale": 4,
+        "description": "Engagement : possibilité de se mettre hors crue en 2 heures de progression maxi. Échappatoire(s) en 4 heures de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 1 et 2 jours.",
+        "description_fr": "Engagement : possibilité de se mettre hors crue en 2 heures de progression maxi. Échappatoire(s) en 4 heures de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 1 et 2 jours.",
+        "description_en": "",
+        "order": 5,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 28,
+    "fields": {
+        "name": "VI",
+        "name_fr": "VI",
+        "name_en": null,
+        "scale": 4,
+        "description": "Engagement : la possibilité de se mettre hors crue peut demander plus de 2 heures de progression. Échappatoire(s) le temps nécessaire pour s’échapper est supérieur à 4 heures de progression. Envergure : temps de parcours du canyon (approche, descente, retour) supérieur à 2 jours.",
+        "description_fr": "Engagement : la possibilité de se mettre hors crue peut demander plus de 2 heures de progression. Échappatoire(s) le temps nécessaire pour s’échapper est supérieur à 4 heures de progression. Envergure : temps de parcours du canyon (approche, descente, retour) supérieur à 2 jours.",
+        "description_en": "",
+        "order": 6,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 29,
+    "fields": {
+        "name": "Très facile",
+        "name_fr": "Très facile",
+        "name_en": null,
+        "scale": 5,
+        "description": "- Niveau d’itinéraire le plus facile, souvent conçu pour les enfants, mais peut être tout aussi amusant pour les débutants.\r\n- Il n’y a pas de mouvements difficiles et ce ne sera pas très physique.",
+        "description_fr": "- Niveau d’itinéraire le plus facile, souvent conçu pour les enfants, mais peut être tout aussi amusant pour les débutants.\r\n- Il n’y a pas de mouvements difficiles et ce ne sera pas très physique.",
+        "description_en": "",
+        "order": 1,
+        "color": "#FFFF00"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 30,
+    "fields": {
+        "name": "F (Facile) & PD (Peu Difficile) (Initiation)",
+        "name_fr": "F (Facile) & PD (Peu Difficile) (Initiation)",
+        "name_en": null,
+        "scale": 5,
+        "description": "- Généralement courtes et n'exigent pas d'engagement important.\r\n- En règle générale leur durée totale (accès, parcours et retour) ne dépasse pas 3 heures.\r\n- Accès et d'un retour facile et relativement court.\r\n- Nécessitent une bonne coordination des mouvements de jambes et de bras.\r\n- Ne présentent pas de passages vraiment athlétiques.\r\n- Bien que ne présentant pas de passages vraiment vertigineux, ils exigent une certaine insensibilité au vide.",
+        "description_fr": "- Généralement courtes et n'exigent pas d'engagement important.\r\n- En règle générale leur durée totale (accès, parcours et retour) ne dépasse pas 3 heures.\r\n- Accès et d'un retour facile et relativement court.\r\n- Nécessitent une bonne coordination des mouvements de jambes et de bras.\r\n- Ne présentent pas de passages vraiment athlétiques.\r\n- Bien que ne présentant pas de passages vraiment vertigineux, ils exigent une certaine insensibilité au vide.",
+        "description_en": "",
+        "order": 2,
+        "color": "#00B050"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 31,
+    "fields": {
+        "name": "AD (Assez Difficile)(Intermédiaire)",
+        "name_fr": "AD (Assez Difficile)(Intermédiaire)",
+        "name_en": null,
+        "scale": 5,
+        "description": "- Capacité de fournir un effort modéré, marche d'approche, parcours de la Via Ferrata et retour, durant 4 heures (hors pauses).\r\n- Être complètement indifférent au vide vertigineux.\r\n- Être en mesure de franchir :\r\n - Quelques passages athlétiques verticaux.\r\n - Quelques rares passages surplombants.",
+        "description_fr": "- Capacité de fournir un effort modéré, marche d'approche, parcours de la Via Ferrata et retour, durant 4 heures (hors pauses).\r\n- Être complètement indifférent au vide vertigineux.\r\n- Être en mesure de franchir :\r\n - Quelques passages athlétiques verticaux.\r\n - Quelques rares passages surplombants.",
+        "description_en": "",
+        "order": 3,
+        "color": "#0070C0"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 32,
+    "fields": {
+        "name": "D (Difficile)",
+        "name_fr": "D (Difficile)",
+        "name_en": null,
+        "scale": 5,
+        "description": "- Avoir des capacités physiques définissant les niveaux précédents.\r\n- Être en mesure de fournir un effort important et soutenu (marche d'approche, parcours de la Via Ferrata et retour, durant plusieurs heures (hors pauses).\r\n- Être en mesure de franchir plusieurs passages :\r\n - Très aériens\r\n - Athlétiques et verticaux\r\n - Surplombants",
+        "description_fr": "- Avoir des capacités physiques définissant les niveaux précédents.\r\n- Être en mesure de fournir un effort important et soutenu (marche d'approche, parcours de la Via Ferrata et retour, durant plusieurs heures (hors pauses).\r\n- Être en mesure de franchir plusieurs passages :\r\n - Très aériens\r\n - Athlétiques et verticaux\r\n - Surplombants",
+        "description_en": "",
+        "order": 4,
+        "color": "#FF0000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 33,
+    "fields": {
+        "name": "TD (Très difficile)",
+        "name_fr": "TD (Très difficile)",
+        "name_en": null,
+        "scale": 5,
+        "description": "- Avoir les capacités physiques définissant les niveaux précédents\r\n- Avoir en plus, la capacité de franchir des passages exceptionnels (physique et émotionnel).",
+        "description_fr": "- Avoir les capacités physiques définissant les niveaux précédents\r\n- Avoir en plus, la capacité de franchir des passages exceptionnels (physique et émotionnel).",
+        "description_en": "",
+        "order": 5,
+        "color": "#000000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 34,
+    "fields": {
+        "name": "3",
+        "name_fr": "3",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 301,
+        "color": "#D9D9D9"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 35,
+    "fields": {
+        "name": "3+",
+        "name_fr": "3+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 302,
+        "color": "#D9D9D9"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 36,
+    "fields": {
+        "name": "4a",
+        "name_fr": "4a",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 411,
+        "color": "#D9D9D9"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 37,
+    "fields": {
+        "name": "4b",
+        "name_fr": "4b",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 421,
+        "color": "#D9D9D9"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 38,
+    "fields": {
+        "name": "4c",
+        "name_fr": "4c",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 431,
+        "color": "#D9D9D9"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 39,
+    "fields": {
+        "name": "5a",
+        "name_fr": "5a",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 511,
+        "color": "#00B050"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 40,
+    "fields": {
+        "name": "5b",
+        "name_fr": "5b",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 521,
+        "color": "#00B050"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 41,
+    "fields": {
+        "name": "5c",
+        "name_fr": "5c",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 531,
+        "color": "#00B050"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 42,
+    "fields": {
+        "name": "6a",
+        "name_fr": "6a",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 611,
+        "color": "#0070C0"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 43,
+    "fields": {
+        "name": "6a+",
+        "name_fr": "6a+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 612,
+        "color": "#0070C0"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 44,
+    "fields": {
+        "name": "6b",
+        "name_fr": "6b",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 621,
+        "color": "#0070C0"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 45,
+    "fields": {
+        "name": "6b+",
+        "name_fr": "6b+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 622,
+        "color": "#0070C0"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 46,
+    "fields": {
+        "name": "6c",
+        "name_fr": "6c",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 631,
+        "color": "#0070C0"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 47,
+    "fields": {
+        "name": "6c+",
+        "name_fr": "6c+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 632,
+        "color": "#0070C0"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 48,
+    "fields": {
+        "name": "7a",
+        "name_fr": "7a",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 711,
+        "color": "#FFFF00"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 49,
+    "fields": {
+        "name": "7a+",
+        "name_fr": "7a+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 712,
+        "color": "#FFFF00"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 50,
+    "fields": {
+        "name": "7b",
+        "name_fr": "7b",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 721,
+        "color": "#FFFF00"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 51,
+    "fields": {
+        "name": "7b+",
+        "name_fr": "7b+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 722,
+        "color": "#FFFF00"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 52,
+    "fields": {
+        "name": "7c",
+        "name_fr": "7c",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 731,
+        "color": "#FFFF00"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 53,
+    "fields": {
+        "name": "7c+",
+        "name_fr": "7c+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 732,
+        "color": "#FFFF00"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 54,
+    "fields": {
+        "name": "8a",
+        "name_fr": "8a",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 811,
+        "color": "#FFC000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 55,
+    "fields": {
+        "name": "8a+",
+        "name_fr": "8a+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 812,
+        "color": "#FFC000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 56,
+    "fields": {
+        "name": "8b",
+        "name_fr": "8b",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 821,
+        "color": "#FFC000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 57,
+    "fields": {
+        "name": "8b+",
+        "name_fr": "8b+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 822,
+        "color": "#FFC000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 58,
+    "fields": {
+        "name": "8c",
+        "name_fr": "8c",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 831,
+        "color": "#FFC000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 59,
+    "fields": {
+        "name": "8c+",
+        "name_fr": "8c+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 832,
+        "color": "#FFC000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 60,
+    "fields": {
+        "name": "9a",
+        "name_fr": "9a",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 911,
+        "color": "#FF0000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 61,
+    "fields": {
+        "name": "9a+",
+        "name_fr": "9a+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 912,
+        "color": "#FF0000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 62,
+    "fields": {
+        "name": "9b",
+        "name_fr": "9b",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 921,
+        "color": "#FF0000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 63,
+    "fields": {
+        "name": "9b+",
+        "name_fr": "9b+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 922,
+        "color": "#FF0000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 64,
+    "fields": {
+        "name": "9c",
+        "name_fr": "9c",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 931,
+        "color": "#FF0000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 65,
+    "fields": {
+        "name": "9c+",
+        "name_fr": "9c+",
+        "name_en": null,
+        "scale": 6,
+        "description": "",
+        "description_fr": null,
+        "description_en": null,
+        "order": 932,
+        "color": "#FF0000"
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 66,
+    "fields": {
+        "name": "F",
+        "name_fr": "F",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 10,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 67,
+    "fields": {
+        "name": "PD-",
+        "name_fr": "PD-",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 20,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 68,
+    "fields": {
+        "name": "PD",
+        "name_fr": "PD",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 21,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 69,
+    "fields": {
+        "name": "PD+",
+        "name_fr": "PD+",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 22,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 70,
+    "fields": {
+        "name": "AD-",
+        "name_fr": "AD-",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 30,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 71,
+    "fields": {
+        "name": "AD",
+        "name_fr": "AD",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 31,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 72,
+    "fields": {
+        "name": "AD+",
+        "name_fr": "AD+",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 32,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 73,
+    "fields": {
+        "name": "D-",
+        "name_fr": "D-",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 40,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 74,
+    "fields": {
+        "name": "D",
+        "name_fr": "D",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 41,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 75,
+    "fields": {
+        "name": "D+",
+        "name_fr": "D+",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 42,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 76,
+    "fields": {
+        "name": "TD-",
+        "name_fr": "TD-",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 50,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 77,
+    "fields": {
+        "name": "TD",
+        "name_fr": "TD",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 51,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 78,
+    "fields": {
+        "name": "TD+",
+        "name_fr": "TD+",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 52,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 79,
+    "fields": {
+        "name": "ED-",
+        "name_fr": "ED-",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 60,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 80,
+    "fields": {
+        "name": "ED",
+        "name_fr": "ED",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 61,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 81,
+    "fields": {
+        "name": "ED+",
+        "name_fr": "ED+",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 62,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 82,
+    "fields": {
+        "name": "ABO-",
+        "name_fr": "ABO-",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 70,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 83,
+    "fields": {
+        "name": "ABO",
+        "name_fr": "ABO",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 71,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 84,
+    "fields": {
+        "name": "ABO+",
+        "name_fr": "ABO+",
+        "name_en": null,
+        "scale": 7,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 72,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 85,
+    "fields": {
+        "name": "I",
+        "name_fr": "I",
+        "name_en": null,
+        "scale": 8,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 1,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 86,
+    "fields": {
+        "name": "II",
+        "name_fr": "II",
+        "name_en": null,
+        "scale": 8,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 2,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 87,
+    "fields": {
+        "name": "III",
+        "name_fr": "III",
+        "name_en": null,
+        "scale": 8,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 3,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 88,
+    "fields": {
+        "name": "IV",
+        "name_fr": "IV",
+        "name_en": null,
+        "scale": 8,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 4,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 89,
+    "fields": {
+        "name": "V",
+        "name_fr": "V",
+        "name_en": null,
+        "scale": 8,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 5,
+        "color": ""
+    }
+},
+{
+    "model": "outdoor.rating",
+    "pk": 90,
+    "fields": {
+        "name": "VI",
+        "name_fr": "VI",
+        "name_en": null,
+        "scale": 8,
+        "description": "",
+        "description_fr": "",
+        "description_en": "",
+        "order": 6,
+        "color": ""
+    }
+}
+]

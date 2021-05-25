@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from leaflet.admin import LeafletGeoAdmin
 
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from geotrek.zoning import models as zoning_models
 
 
@@ -23,7 +23,6 @@ class RestrictedAreaTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('name',)
     merge_field = 'name'
-    actions = (publish, unpublish)
 
 
 class CityAdmin(LeafletGeoAdmin):
@@ -44,6 +43,7 @@ class DistrictAdmin(LeafletGeoAdmin):
     search_fields = ('name',)
     list_display = ('name', 'published')
     list_filter = ('published', )
+    actions = (publish, unpublish)
 
 
 admin.site.register(zoning_models.RestrictedAreaType, RestrictedAreaTypeAdmin)

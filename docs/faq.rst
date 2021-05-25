@@ -2,7 +2,7 @@
 FREQUENTLY ASKED QUESTIONS
 ==========================
 
-How 3D informations are obtained ?
+How are 3D informations obtained ?
 ----------------------------------
 
 All paths geometries are *"draped"* on a Digital Elevation Model, when created
@@ -12,7 +12,7 @@ All linear objects that defined using topologies (*treks, ...*) take their 3D in
 from their related paths, instead of reading the DEM.
 
 
-How the ascent is computed on treks ?
+How is the ascent computed on treks ?
 -------------------------------------
 
 We compute the `cumulative elevation gain <http://en.wikipedia.org/wiki/Cumulative_elevation_gain>`_.
@@ -29,7 +29,7 @@ For more details :
 
 
 
-How POIs are related to treks ?
+How are POIs related to treks ?
 -------------------------------
 
 POIs are considered as an *editorial* information, and are created carefully
@@ -64,7 +64,7 @@ resulting in overlapping geometries. Geotrek-admin will associate them all to yo
 objects.
 
 
-Why Makina Corpus sells Geotrek, released under an Open-Source license ?
+Why does Makina Corpus sell Geotrek, released under an Open-Source license ?
 ------------------------------------------------------------------------
 
 In the early years of the Free Software movement, it was quite common to pay

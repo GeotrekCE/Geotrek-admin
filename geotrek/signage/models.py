@@ -1,7 +1,7 @@
 import os
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, pgettext_lazy
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from django.conf import settings
 
@@ -15,6 +15,8 @@ from geotrek.common.utils import classproperty, format_coordinates, collate_c, s
 from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
+
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 
 class Sealing(StructureOrNoneRelated):
@@ -46,7 +48,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
         return self.label
 
     def get_pictogram_url(self):
-        pictogram_url = super(SignageType, self).get_pictogram_url()
+        pictogram_url = super().get_pictogram_url()
         if pictogram_url:
             return pictogram_url
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
@@ -54,10 +56,11 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
 
 class SignageGISManager(NoDeleteManager):
     """ Overide default typology mixin manager, and filter by type. """
-    def all_implantation_years(self):
-        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
-            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
-        return all_years
+    def implantation_year_choices(self):
+        choices = self.get_queryset().existing().filter(implantation_year__isnull=False)\
+            .order_by('-implantation_year').distinct('implantation_year') \
+            .values_list('implantation_year', 'implantation_year')
+        return choices
 
 
 class Signage(MapEntityMixin, BaseInfrastructure):
@@ -116,6 +119,10 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     def lng_value(self):
         return self.geomtransform.y
 
+    def distance(self, to_cls):
+        """Distance to associate this signage to another class"""
+        return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
+
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
 Topology.add_property('signages', Signage.topology_signages, _("Signages"))
@@ -159,7 +166,7 @@ class BladeType(StructureOrNoneRelated):
         return self.label
 
 
-class Blade(AddPropertyMixin, MapEntityMixin):
+class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)
@@ -180,6 +187,10 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     class Meta:
         verbose_name = _("Blade")
         verbose_name_plural = _("Blades")
+
+    @property
+    def zoning_property(self):
+        return self.signage
 
     @classproperty
     def geomfield(cls):
@@ -263,6 +274,10 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     @property
     def coordinates(self):
         return format_coordinates(self.geom)
+
+    def distance(self, to_cls):
+        """Distance to associate this blade to another class"""
+        return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
 
 
 class Line(models.Model):

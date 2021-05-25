@@ -1,14 +1,15 @@
 describe('Login from home page / admin page', () => {
+
   it('Redirects to login page.', () => {
-    cy.visit('http://localhost:8000')
+    cy.visit('/')
     cy.url().should('include', '/login/?next=/')
     cy.get('form')
-    cy.contains("Nom d'utilisateur :")
+    cy.contains("Username")
     cy.get('[name="username"]')
     })
 
   it('Fail to login', () => {
-    cy.visit('http://localhost:8000/login/?next=/')
+    cy.visit('/login/?next=/')
     cy.get('[name="username"]')
       .type('fake')
       .should('have.value', 'fake')
@@ -20,7 +21,7 @@ describe('Login from home page / admin page', () => {
   })
 
   it('Login', () => {
-    cy.visit('http://localhost:8000/login/?next=/')
+    cy.visit('/login/?next=/')
     cy.get('[name="username"]')
       .type('admin')
       .should('have.value', 'admin')
@@ -33,15 +34,15 @@ describe('Login from home page / admin page', () => {
   })
 
   it('Redirects to admin login page.', () => {
-    cy.visit('http://localhost:8000/admin')
+    cy.visit('/admin')
     cy.url().should('include', '/login/?next=/')
     cy.get('form')
-    cy.contains("Nom d'utilisateur :")
+    cy.contains("Username")
     cy.get('[name="username"]')
   })
 
   it('Login admin', () => {
-    cy.visit('http://localhost:8000/admin/')
+    cy.visit('/admin/')
     cy.get('[name="username"]')
       .type('admin')
       .should('have.value', 'admin')
@@ -75,7 +76,7 @@ describe('Logout', () => {
   })
 
   it('Logout', () => {
-    cy.visit('http://localhost:8000/')
+    cy.visit('/')
     cy.url().should('include', '/path/list/')
     cy.get("a.dropdown-toggle").contains('admin').click()
     cy.get("a[href='/logout/']").click()
@@ -84,7 +85,7 @@ describe('Logout', () => {
 
 
   it('Logout admin', () => {
-    cy.visit('http://localhost:8000/admin/')
+    cy.visit('/admin/')
     cy.get("a[href='/admin/logout/']").click()
     cy.url().should('include', '/admin/logout/')
   })

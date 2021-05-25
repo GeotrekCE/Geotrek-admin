@@ -16,6 +16,8 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.views import PublicOrReadPermMixin
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
+
+from geotrek.common.permissions import PublicOrReadPermMixin
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
 from .models import SensitiveArea, Species, SportPractice
@@ -51,14 +53,14 @@ class SensitiveAreaDetail(MapEntityDetail):
     queryset = SensitiveArea.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(SensitiveAreaDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
 
-class SensitiveAreaRadiiMixin(object):
+class SensitiveAreaRadiiMixin:
     def get_context_data(self, *args, **kwargs):
-        context = super(SensitiveAreaRadiiMixin, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         species = Species.objects.filter(category=Species.SPECIES)
         context['radii'] = json.dumps({
             str(s.id): settings.SENSITIVITY_DEFAULT_RADIUS if s.radius is None else s.radius for s in species
@@ -85,7 +87,7 @@ class SensitiveAreaUpdate(SensitiveAreaRadiiMixin, MapEntityUpdate):
 
     @same_structure_required('sensitivity:sensitivearea_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SensitiveAreaUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SensitiveAreaDelete(MapEntityDelete):
@@ -93,7 +95,7 @@ class SensitiveAreaDelete(MapEntityDelete):
 
     @same_structure_required('sensitivity:sensitivearea_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SensitiveAreaDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SensitiveAreaViewSet(MapEntityViewSet):

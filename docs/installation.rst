@@ -93,8 +93,15 @@ To upgrade the whole server, including Geotrek-admin, run:
 
 ::
 
-   apt-get update
-   apt-get upgrade
+   sudo apt-get update
+   sudo apt-get upgrade
+
+If your current version is <= 2.40.1 you should run instead:
+
+::
+
+   sudo apt-get update  --allow-releaseinfo-change
+   sudo apt-get upgrade
 
 To prevent upgrading Geotrek-admin with the whole distribution, you can run:
 
@@ -106,7 +113,7 @@ To upgrade only Geotrek-admin and its dependencies, run:
 
 ::
 
-   apt-get install geotrek-admin
+   sudo apt-get install geotrek-admin
 
 
 From Geotrek-admin <= 2.32
@@ -138,6 +145,22 @@ Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.
 
     Update your imports, synchronization and backup commands and directories.
 
+Server migration
+----------------
+It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration). These commands apply to versions >= 2.33. If your version is below 2.33, please check the doc of your version. 
+
+Backup settings, media files and database on the old server:
+
+::
+
+	sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
+	tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/ 
+	
+Restore files on the new server:
+::
+
+	scp old_server_ip:path/to/data.tgz .
+	tar xvzf data.tgz
 
 Troubleshooting
 ---------------

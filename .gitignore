@@ -43,6 +43,9 @@ docs/_build/
 /docker-compose.yml
 /build/
 
+/cypress/videos/
+/cypress/screenshots/
+
 # Packaging
 /debian/.debhelper/
 /debian/debhelper-build-stamp

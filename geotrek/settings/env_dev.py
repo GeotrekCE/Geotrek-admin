@@ -13,6 +13,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 INSTALLED_APPS = (
     'django_extensions',
     'debug_toolbar',
+    'drf_yasg',
 ) + INSTALLED_APPS
 
 INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()

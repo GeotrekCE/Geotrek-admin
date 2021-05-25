@@ -5,14 +5,14 @@ import datetime
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
                                     TourInSoftParser)
 from geotrek.tourism.models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
 
 
-class TouristicContentMixin(object):
+class TouristicContentMixin:
     # Mixin which handle multiple type1/2 with the same name in different categories
     def get_to_delete_kwargs(self):
         # FIXME: use mapping if it exists
@@ -201,7 +201,7 @@ class TouristicEventApidaeParser(ApidaeParser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicEventApidaeParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         self.field_options = self.field_options.copy()
@@ -354,7 +354,7 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicContentApidaeParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         if self.category:
@@ -464,7 +464,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         'name': 'nomCommercial',
         'description': 'descriptionDetaillee',
         'practical_info': 'informationsPratiques',
-        'category': 'type.0.label',
+        'category': 'type.label',
         'contact': (
             'contact.adresse',
             'contact.codePostal',
@@ -499,8 +499,8 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     }
 
     m2m_fields = {
-        'type1': 'sousType.*.label',
-        'type2': 'classement.*.labelType',
+        'type1': 'sousType.label',
+        'type2': 'classement',
     }
 
     non_fields = {
@@ -512,7 +512,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         for subval in val or []:
             if 'url' in subval:
                 result.append((subval['url'],
-                               subval.get('legend', None),
+                               subval.get('legende', None),
                                subval.get('credits', None)))
         return result
 
@@ -557,23 +557,23 @@ class EspritParcParser(AttachmentParserMixin, Parser):
 
     def filter_type1(self, src, val):
         dst = []
-        for subval in val or []:
+        if val:
             try:
-                dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=subval))
+                dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=val))
             except TouristicContentType1.DoesNotExist:
                 self.add_warning(
                     _("Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
-                        subval=subval, cat=self.obj.category.label))
+                        subval=val, cat=self.obj.category.label))
         return dst
 
     def filter_type2(self, src, val):
         dst = []
-        for subval in val or []:
+        if val:
             try:
-                dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=subval))
+                dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=val))
             except TouristicContentType2.DoesNotExist:
                 self.add_warning(_("Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
-                    subval=subval, cat=self.obj.category.label))
+                    subval=val, cat=self.obj.category.label))
         return dst
 
 
@@ -632,7 +632,7 @@ class TouristicContentTourInSoftParser(TouristicContentMixin, TourInSoftParser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicContentTourInSoftParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         if self.category:
@@ -727,7 +727,7 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicEventTourInSoftParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         if self.type is not None:

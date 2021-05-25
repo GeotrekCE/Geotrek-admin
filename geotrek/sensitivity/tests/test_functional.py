@@ -1,5 +1,5 @@
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.tests import CommonTest
 from geotrek.sensitivity.models import SensitiveArea
@@ -38,7 +38,7 @@ class SensitiveAreaViewsTests(CommonTest):
 
     def setUp(self):
         translation.deactivate()
-        super(SensitiveAreaViewsTests, self).setUp()
+        super().setUp()
 
     def get_bad_data(self):
         return {
@@ -84,7 +84,7 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
 
     def setUp(self):
         translation.deactivate()
-        super(RegulatorySensitiveAreaViewsTests, self).setUp()
+        super().setUp()
 
     def get_bad_data(self):
         return {

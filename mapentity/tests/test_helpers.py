@@ -62,11 +62,15 @@ class GeomHelpersTest(TestCase):
 
     def test_api_bbox(self):
         bbox = api_bbox(self.bbox, srid=2154, buffer=0.5)
-        self.assertEqual(bbox,
-                         (-3.541720187208087, -7.128188339796316, 8.85446791766016, 5.0971257963327625))
+        self.assertAlmostEqual(bbox[0], -3.54172018720)
+        self.assertAlmostEqual(bbox[1], -7.12818833979)
+        self.assertAlmostEqual(bbox[2], 8.85446791766)
+        self.assertAlmostEqual(bbox[3], 5.09712579633)
         bbox_no_buffer = api_bbox(self.bbox, srid=2154, buffer=0.0)
-        self.assertEqual(bbox_no_buffer,
-                         (-0.4442674114234903, -4.028058663629689, 5.756043049259614, 1.9970003967648557))
+        self.assertAlmostEqual(bbox_no_buffer[0], -0.44426741142)
+        self.assertAlmostEqual(bbox_no_buffer[1], -4.02805866362)
+        self.assertAlmostEqual(bbox_no_buffer[2], 5.75604304925)
+        self.assertAlmostEqual(bbox_no_buffer[3], 1.99700039676)
 
     def test_wkt_to_geom(self):
         geom_wkt = "POINT (650000 750000)"

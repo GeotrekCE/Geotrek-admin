@@ -13,7 +13,7 @@ from geotrek.common.factories import FakeSyncCommand
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.signage = InfrastructureFactory.create(published=True)
 
     @patch('sys.stdout', new_callable=StringIO)

@@ -7,14 +7,15 @@ from djgeojson.views import GeoJSONLayerView
 from .models import City, RestrictedArea, RestrictedAreaType, District
 
 
-class LandLayerMixin(object):
+class LandLayerMixin:
     srid = settings.API_SRID
     precision = settings.LAYER_PRECISION_LAND
     simplify = settings.LAYER_SIMPLIFY_LAND
 
-    @method_decorator(cache_page(settings.CACHE_TIMEOUT_LAND_LAYERS, cache="fat"))
+    @method_decorator(cache_page(settings.CACHE_TIMEOUT_LAND_LAYERS,
+                                 cache=settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']))
     def dispatch(self, request, *args, **kwargs):
-        return super(LandLayerMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class CityGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
@@ -30,7 +31,7 @@ class RestrictedAreaTypeGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
 
     def get_queryset(self):
         type_pk = self.kwargs['type_pk']
-        qs = super(RestrictedAreaTypeGeoJSONLayer, self).get_queryset()
+        qs = super().get_queryset()
         get_object_or_404(RestrictedAreaType, pk=type_pk)
         return qs.filter(area_type=type_pk)
 

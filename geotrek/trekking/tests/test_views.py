@@ -26,7 +26,7 @@ from unittest import util as testutil
 
 from mapentity.factories import SuperUserFactory
 
-from geotrek.common.factories import (AttachmentFactory, ThemeFactory,
+from geotrek.common.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
                                       RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -39,7 +39,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
-from geotrek.trekking.factories import (LabelTrekFactory, POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
+from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
@@ -174,6 +174,7 @@ class TrekViewsTest(CommonTest):
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+    length = 141.42135623731
 
     def get_expected_json_attrs(self):
         return {
@@ -218,7 +219,6 @@ class TrekViewsTest(CommonTest):
             'information_desks': [],
             'labels': [],
             'kml': '/api/en/treks/{}/trek.kml'.format(self.obj.pk),
-            'length': 141.42135623731,
             'map_image_url': '/image/trek-{}-en.png'.format(self.obj.pk),
             'max_elevation': 0,
             'min_elevation': 0,
@@ -347,7 +347,7 @@ class TrekViewsTest(CommonTest):
 
     def test_status(self):
         TrekFactory.create(duration=float('nan'))
-        super(TrekViewsTest, self).test_status()
+        super().test_status()
 
     def test_badfield_goodgeom(self):
         self.login()
@@ -362,7 +362,7 @@ class TrekViewsTest(CommonTest):
         self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
 
     def test_basic_format(self):
-        super(TrekViewsTest, self).test_basic_format()
+        super().test_basic_format()
         self.modelfactory.create(name="ukélélé")  # trek with utf8
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
@@ -722,7 +722,7 @@ class TrekJSONSetUp(TrekkingManagerTest):
         self.weblink = WebLinkFactory.create()
         self.trek.web_links.add(self.weblink)
 
-        self.label = LabelTrekFactory.create()
+        self.label = LabelFactory.create()
         self.trek.labels.add(self.label)
 
         self.source = RecordSourceFactory.create()
@@ -872,7 +872,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               "pictogram": os.path.join(settings.MEDIA_URL, self.label.pictogram.name),
                               "name": self.label.name,
                               "advice": self.label.advice,
-                              "filter_rando": self.label.filter_rando})
+                              "filter_rando": self.label.filter})
 
     def test_weblinks(self):
         self.assertDictEqual(self.result['web_links'][0],
@@ -1038,13 +1038,12 @@ class TrekGPXTest(TrekkingManagerTest):
         # Create a simple fake DEM
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))',
+        cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))',
                     [settings.SRID])
-        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
         for y in range(0, 1):
             for x in range(0, 1):
-                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, 42])
+                cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, 42])
 
         self.login()
 
@@ -1196,8 +1195,7 @@ class TemplateTagsTest(TestCase):
 class TrekViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh',
-                                            language='en')
+                                            user__password='dooh')
         self.user = profile.user
         self.user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.login(username='homer', password='dooh')
@@ -1213,27 +1211,30 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         url = "/trek/{pk}/".format(pk=self.content1.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<a class="btn btn-primary pull-right" '
+                            '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
-                            'Update</a>'.format(pk=self.content1.pk))
+                            '<i class="bi bi-pencil-square"></i> '
+                            'Update</a>'.format(pk=self.content1.pk),
+                            html=True)
 
     def test_edit_button_other_structure(self):
         url = "/trek/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<span class="btn disabled pull-right" href="#">'
-                            '<i class="icon-pencil"></i> Update</span>')
+                            '<span class="btn ml-auto disabled" href="#">'
+                            '<i class="bi bi-pencil-square"></i> Update</span>',
+                            html=True)
 
     def test_edit_button_bypass_structure(self):
         self.add_bypass_perm()
         url = "/trek/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<a class="btn btn-primary pull-right" '
+                            '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
-                            'Update</a>'.format(pk=self.content2.pk))
+                            '<i class="bi bi-pencil-square"></i> '
+                            'Update</a>'.format(pk=self.content2.pk),
+                            html=True)
 
     def test_can_edit_same_structure(self):
         url = "/trek/edit/{pk}/".format(pk=self.content1.pk)

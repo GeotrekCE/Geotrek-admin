@@ -1,8 +1,10 @@
-# -*- coding: utf-8 -*-
-
-from collections import OrderedDict
+import fiona
+from fiona.crs import from_epsg
+from io import BytesIO
+import json
 import os
-import tempfile
+import shutil
+import uuid
 import unicodedata
 import zipfile
 
@@ -10,27 +12,24 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.contrib.gis.db.models.fields import (GeometryField, GeometryCollectionField,
                                                  PointField, LineStringField, PolygonField,
                                                  MultiPointField, MultiLineStringField, MultiPolygonField)
-from django.contrib.gis.gdal import check_err, OGRGeomType
 from django.contrib.gis.geos import Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
 from django.contrib.gis.geos.collections import GeometryCollection
 from django.core.serializers.base import Serializer
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.encoding import smart_str
-from django.utils.translation import ugettext as _
-
-from osgeo import ogr, osr
+from django.utils.translation import gettext as _
 
 from ..settings import app_settings
 from .helpers import smart_plain_text, field_as_string
-from io import BytesIO
 
 os.environ["SHAPE_ENCODING"] = "UTF-8"
 
 
 class ZipShapeSerializer(Serializer):
     def __init__(self, *args, **kwargs):
-        super(ZipShapeSerializer, self).__init__(*args, **kwargs)
-        self.layers = OrderedDict()
+        super().__init__(*args, **kwargs)
+        self.path_directory = os.path.join(app_settings['TEMP_DIR'], str(uuid.uuid4()))
+        os.mkdir(self.path_directory)
 
     def serialize(self, queryset, **options):
         columns = options.pop('fields')
@@ -39,33 +38,36 @@ class ZipShapeSerializer(Serializer):
         delete = options.pop('delete', True)
         filename = options.pop('filename', 'shp_download')
         # Zip all shapefiles created temporarily
-        self._create_shape(queryset, model, columns, filename)
-        self.zip_shapefiles(stream, delete=delete)
+        self._create_shape(self.path_directory, queryset, model, columns)
+        self.zip_shapefiles(self.path_directory, stream, filename)
+        if delete:
+            shutil.rmtree(self.path_directory)
 
-    def zip_shapefiles(self, stream, delete=True):
-        # Can't use stream, because HttpResponse is not seekable
+    def zip_shapefiles(self, shape_directory, stream, filename):
         buffr = BytesIO()
-        zipf = zipfile.ZipFile(buffr, 'w', zipfile.ZIP_DEFLATED)
-
-        for filename, shp_filepath in self.layers.items():
-            shapefiles = shapefile_files(shp_filepath)
-            archivefiles = shapefile_files(filename)
-            for source, dest in zip(shapefiles, archivefiles):
-                zipf.write(source, arcname=dest)
-                if delete:
-                    os.remove(source)
+        zipf = zipfile.ZipFile(buffr, "w", compression=zipfile.ZIP_DEFLATED)
+        path = os.path.normpath(shape_directory)
+        if path != os.curdir and path != shape_directory:
+            zipf.write(path, os.path.relpath(path, shape_directory))
+        for dirpath, dirnames, filenames in os.walk(shape_directory):
+            for name in sorted(dirnames):
+                path = os.path.normpath(os.path.join(dirpath, name))
+                zipf.write(path, os.path.relpath(path, shape_directory))
+            for name in filenames:
+                path = os.path.normpath(os.path.join(dirpath, name))
+                if os.path.isfile(path):
+                    zipf.write(path, os.path.relpath(path, shape_directory))
 
         zipf.close()
         buffr.flush()  # zip.close() writes stuff.
         stream.write(buffr.getvalue())
         buffr.close()
 
-    def _create_shape(self, queryset, model, columns, filename):
+    def _create_shape(self, shape_directory, queryset, model, columns):
         """Split a shapes into one or more shapes (one for point and one for linestring)
         """
         geo_field = geo_field_from_model(model, app_settings['GEOM_FIELD_NAME'])
         get_geom, geom_type, srid = info_from_geo_field(geo_field)
-
         if geom_type.upper() in (GeometryField.geom_type, GeometryCollectionField.geom_type):
 
             by_points, by_linestrings, by_polygons, multipoints, multilinestrings, multipolygons = \
@@ -79,14 +81,12 @@ class ZipShapeSerializer(Serializer):
                                                (multipolygons, MultiPolygonField)):
                 if len(split_qs) == 0:
                     continue
-                split_geom_type = split_geom_field.geom_type
-                shp_filepath = shape_write(split_qs, model, columns, get_geom, split_geom_type, srid)
-                subfilename = '%s_%s' % (filename, split_geom_type.lower())
-                self.layers[subfilename] = shp_filepath
+                split_geom_type = split_geom_field.geom_class().geom_type
+                shape_write(shape_directory, split_qs, model, columns, get_geom, split_geom_type, srid)
 
         else:
-            shp_filepath = shape_write(queryset, model, columns, get_geom, geom_type, srid)
-            self.layers[filename] = shp_filepath
+            geom_type = geo_field.geom_class().geom_type
+            shape_write(shape_directory, queryset, model, columns, get_geom, geom_type, srid)
 
     def split_bygeom(self, iterable, geom_getter=lambda x: x.geom):
         """Split an iterable in two list (points, linestring)"""
@@ -122,12 +122,7 @@ class ZipShapeSerializer(Serializer):
         return points, linestrings, polygons, multipoints, multilinestrings, multipolygons
 
 
-def shapefile_files(shapefile_path):
-    basename = shapefile_path.replace('.shp', '')
-    return ['%s.%s' % (basename, item) for item in ['shp', 'shx', 'prj', 'dbf']]
-
-
-def shape_write(iterable, model, columns, get_geom, geom_type, srid, srid_out=None):
+def shape_write(shape_directory, iterable, model, columns, get_geom, geom_type, srid, srid_out=None):
     """
     Write tempfile with shape layer.
     """
@@ -140,9 +135,9 @@ def shape_write(iterable, model, columns, get_geom, geom_type, srid, srid_out=No
             try:
                 f = model._meta.get_field(field)
                 if f.one_to_many:
-                    c = f.field.model._meta.verbose_name_plural
+                    c = _(f.field.model._meta.verbose_name_plural)
                 else:
-                    c = f.verbose_name
+                    c = _(f.verbose_name)
             except FieldDoesNotExist:
                 c = _(field.title())
 
@@ -152,54 +147,43 @@ def shape_write(iterable, model, columns, get_geom, geom_type, srid, srid_out=No
 
         headers.append(reponse)
         columns_headers[field] = reponse
-
-    tmp_file, layer, ds, native_srs, output_srs, column_map = create_shape_format_layer(headers, geom_type,
-                                                                                        srid, srid_out)
-
-    feature_def = layer.GetLayerDefn()
-
-    if native_srs != output_srs:
-        ct = osr.CoordinateTransformation(native_srs, output_srs)
+    shape, headers = create_shape_format_layer(shape_directory, headers, geom_type, srid, srid_out)
+    if srid != srid_out and srid_out:
 
         def transform(ogr_geom):
-            ogr_geom.Transform(ct)
+            ogr_geom.transform(srid_out)
             return ogr_geom
     else:
         def transform(ogr_geom):
             return ogr_geom
 
     for item in iterable:
-        feat = ogr.Feature(feature_def)
-
-        for fieldname in columns:
-            try:
-                modelfield = model._meta.get_field(fieldname)
-            except FieldDoesNotExist:
-                modelfield = None
-            if isinstance(modelfield, ForeignKey):
-                value = smart_plain_text(getattr(item, fieldname))
-            elif isinstance(modelfield, ManyToManyField):
-                value = ','.join([smart_plain_text(o)
-                                  for o in getattr(item, fieldname).all()] or '')
-            else:
-                value = field_as_string(item, fieldname)
-
-            feat.SetField(column_map.get(columns_headers.get(fieldname)),
-                          value[:254])
-
         geom = get_geom(item)
         if geom:
-            ogr_geom = transform(ogr.CreateGeometryFromWkt(geom.wkt))
-            check_err(feat.SetGeometry(ogr_geom))
-
-        check_err(layer.CreateFeature(feat))
-
-    ds.Destroy()
-
-    return tmp_file.name
+            geom = transform(geom)
+        shape.write({'geometry': json.loads(geom.json),
+                     'properties': get_serialized_properties(model, item, columns, columns_headers)})
+    shape.close()
 
 
-def create_shape_format_layer(headers, geom_type, srid, srid_out=None):
+def get_serialized_properties(model, item, columns, columns_headers):
+    properties = {}
+    for fieldname in columns:
+        try:
+            modelfield = model._meta.get_field(fieldname)
+        except FieldDoesNotExist:
+            modelfield = None
+        if isinstance(modelfield, ForeignKey):
+            properties[columns_headers[fieldname][:10]] = smart_plain_text(getattr(item, fieldname))
+        elif isinstance(modelfield, ManyToManyField):
+            properties[columns_headers[fieldname][:10]] = ','.join([smart_plain_text(o)
+                                                                    for o in getattr(item, fieldname).all()] or '')
+        else:
+            properties[columns_headers[fieldname][:10]] = field_as_string(item, fieldname)
+    return properties
+
+
+def create_shape_format_layer(directory, headers, geom_type, srid, srid_out=None):
     """Creates a Shapefile layer definition, that will later be filled with data.
 
     :note:
@@ -207,48 +191,17 @@ def create_shape_format_layer(headers, geom_type, srid, srid_out=None):
         All attributes fields have type `String`.
 
     """
-    column_map = {}
-
     # Create temp file
-    tmp = tempfile.NamedTemporaryFile(suffix='.shp', mode='w+b', dir=app_settings['TEMP_DIR'])
-    # we must close the file for GDAL to be able to open and write to it
-    tmp.close()
-    # create shape format
-
-    dr = ogr.GetDriverByName('ESRI Shapefile')
-    ds = dr.CreateDataSource(tmp.name)
-    if ds is None:
-        raise Exception('Could not create file!')
-
-    ogr_type = OGRGeomType(geom_type).num
-
-    native_srs = osr.SpatialReference()
-    native_srs.ImportFromEPSG(srid)
-
     if srid_out:
-        output_srs = osr.SpatialReference()
-        output_srs.ImportFromEPSG(srid_out)
-    else:
-        output_srs = native_srs
-
-    layer = ds.CreateLayer('lyr', srs=output_srs, geom_type=ogr_type)
-    if layer is None:
-        raise ValueError('Could not create layer (type=%s, srs=%s)' % (geom_type, output_srs))
-
-    # Create other fields
-    for fieldname in headers:
-        field_defn = ogr.FieldDefn(fieldname[:10], ogr.OFTString)
-        field_defn.SetWidth(254)
-
-        if layer.CreateField(field_defn) != 0:
-            raise Exception('Failed to create field')
-
-        else:
-            # get name created for each field
-            layerDefinition = layer.GetLayerDefn()
-            column_map[fieldname] = layerDefinition.GetFieldDefn(layerDefinition.GetFieldCount() - 1).GetName()
-
-    return tmp, layer, ds, native_srs, output_srs, column_map
+        srid = srid_out
+    properties_schema = {k[:10]: 'str' for k in headers}
+    schema = {
+        'geometry': geom_type,
+        'properties': properties_schema,
+    }
+    shape = fiona.open(directory, layer=geom_type, mode='w', driver='ESRI Shapefile', schema=schema, encoding='UTF-8',
+                       crs=from_epsg(srid))
+    return shape, headers
 
 
 def geo_field_from_model(model, default_geo_field_name=None):

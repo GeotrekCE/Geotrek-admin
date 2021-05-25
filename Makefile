@@ -1,11 +1,14 @@
 build:
-	docker build -t geotrek .
+	docker build -t geotrek . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
 
 build-no-cache:
 	docker build -t geotrek --no-cache .
 
 serve:
 	docker-compose up
+
+messages:
+	docker-compose run --rm web bash -c 'for d in geotrek/*/locale; do cd $$d; cd ..; ../../manage.py makemessages -a --no-location; cd ../../; done'
 
 test:
 	docker-compose -e ENV=tests run web ./manage.py test
@@ -56,4 +59,4 @@ global.pdf:
 	dot geotrekdb.dot -T pdf -o docs/data-model/global.pdf
 	rm geotrekdb.dot
 
-uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf
+uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf outdoor.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf

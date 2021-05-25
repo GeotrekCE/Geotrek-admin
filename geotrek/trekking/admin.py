@@ -2,13 +2,13 @@ from django import forms
 from django.conf import settings
 from django.db import transaction
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
-    WebLink, WebLinkCategory, Trek, ServiceType, LabelTrek
+    WebLink, WebLinkCategory, Trek, ServiceType
 )
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -105,13 +105,7 @@ class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
                 old=self.oldid, new=obj.pk)
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
-        return super(DifficultyLevelAdmin, self).response_change(request, obj)
-
-
-class LabelTrekAdmin(TranslationAdmin):
-    list_display = ('pictogram_img', 'name', 'filter_rando')
-    list_display_links = ('name',)
-    search_fields = ('name', )
+        return super().response_change(request, obj)
 
 
 class WebLinkAdmin(MergeActionMixin, TranslationAdmin):
@@ -147,7 +141,6 @@ trek_admin_to_register = [
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
     (ServiceType, ServiceTypeAdmin),
-    (LabelTrek, LabelTrekAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

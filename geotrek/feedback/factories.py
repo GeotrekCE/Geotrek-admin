@@ -6,35 +6,35 @@ import factory
 from geotrek.feedback import models as feedback_models
 
 
-class ReportActivityFactory(factory.DjangoModelFactory):
+class ReportActivityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportActivity
 
     label = factory.Sequence(lambda n: "Activity %s" % n)
 
 
-class ReportCategoryFactory(factory.DjangoModelFactory):
+class ReportCategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportCategory
 
     label = factory.Sequence(lambda n: "Category %s" % n)
 
 
-class ReportStatusFactory(factory.DjangoModelFactory):
+class ReportStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportStatus
 
     label = factory.Sequence(lambda n: "Status %s" % n)
 
 
-class ReportProblemMagnitudeFactory(factory.DjangoModelFactory):
+class ReportProblemMagnitudeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportProblemMagnitude
 
     label = factory.Sequence(lambda n: "Utilisation %s" % n)
 
 
-class ReportFactory(factory.DjangoModelFactory):
+class ReportFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.Report
 

@@ -1,15 +1,16 @@
+from functools import partial
 import html
 import json
 
 from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.query import QuerySet
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.encoding import smart_str
 from django.utils.formats import number_format
-from django.utils.functional import Promise, curry
+from django.utils.functional import Promise
 from django.utils.html import strip_tags
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def field_as_string(obj, field, ascii=False):
@@ -36,7 +37,7 @@ def smart_plain_text(s, ascii=False):
         return ''
     try:
         # Converts to unicode, remove HTML tags, convert HTML entities
-        us = plain_text(u"{}".format(s))
+        us = plain_text(str(s))
         if ascii:
             return smart_str(us)
         return us
@@ -52,16 +53,16 @@ class DjangoJSONEncoder(DjangoJSONEncoder):
     def default(self, obj):
         # https://docs.djangoproject.com/en/dev/topics/serialization/#id2
         if isinstance(obj, Promise):
-            return force_text(obj)
+            return force_str(obj)
         if isinstance(obj, QuerySet):
             # `default` must return a python serializable
             # structure, the easiest way is to load the JSON
             # string produced by `serialize` and return it
 
             return json.loads(serialize('json', obj))
-        return force_text(obj)
+        return force_str(obj)
 
 
 # partial function, we can now use dumps(my_dict) instead
 # of dumps(my_dict, cls=DjangoJSONEncoder)
-json_django_dumps = curry(json.dumps, cls=DjangoJSONEncoder)
+json_django_dumps = partial(json.dumps, cls=DjangoJSONEncoder)

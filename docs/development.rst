@@ -56,19 +56,17 @@ Release
 -------
 
 On master branch:
-* If need be, merge ``translations`` branch managed with https://weblate.makina-corpus.net,
-* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ``~dev0`` suffix
-* Run ``dch -r -D bionic``, remove ``~dev0`` suffix in version and save
-* Commit with message 'Release x.y.z'
-to merge in ``master`` branch before release
+
+* If need be, merge ``translations`` branch managed with https://weblate.makina-corpus.net
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ``+dev`` suffix and increment version (please use semver rules)
+* Run ``dch -r -D RELEASED``, update version in the same way and save
+* Commit with message 'Release x.y.z' to merge in ``master`` branch before release
 * Add git tag X.Y.Z
-* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to increment version (using semantic versionning) 
-and add ``.dev0v suffix
-* Run ``dch -v <future version>~dev0 --no-force-save-on-release`` and save
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to add ``+dev`` suffix
+* Run ``dch -v <version>+dev --no-force-save-on-release`` and save
 * Commit with message 'Back to development'
 * Push branch and tag
-* When pushing a release tag 'x.y.z', CircleCI will generate the .deb package file, 
-and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
+* When pushing a release tag 'x.y.z', CircleCI will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 * Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
 
 
@@ -138,3 +136,27 @@ UML diagrams of data model
 UML diagrams of Geotrek-admin data models are available in ``docs/data-model`` directory.
 To regenerate them from PostgreSQL, install postgresql-autodoc and graphviz Ubuntu packages
 and run ``make uml``.
+
+Documentation
+=============
+
+A container based on sphinx image is created using docker-compose-dev.yml,
+documentation is built in watch mode thanks to sphinx-autobuild.
+
+Access to documentation built in html : http://0.0.0.0:8800
+
+
+Translate documentation
+-----------------------
+
+- Generate .pot if needed
+
+.. code-block :: python
+
+    docker-compose run --rm sphinx make gettext
+
+- Generate .po files
+
+.. code-block :: python
+
+    docker-compose run --rm sphinx sphinx-intl update -p _build/locale -l fr

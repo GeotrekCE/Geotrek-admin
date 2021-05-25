@@ -29,7 +29,7 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     precision = app_settings.get('GEOJSON_PRECISION')
 
     def __init__(self, *args, **kwargs):
-        super(MapEntityLayer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Backward compatibility with django-geojson 1.X
         # for JS ObjectsLayer and rando-trekking application
         # TODO: remove when migrated
@@ -45,11 +45,11 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     @view_permission_required()
     @view_cache_latest()
     def dispatch(self, *args, **kwargs):
-        return super(MapEntityLayer, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     @view_cache_response_content()
     def render_to_response(self, context, **response_kwargs):
-        return super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
+        return super().render_to_response(context, **response_kwargs)
 
 
 class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):
@@ -73,7 +73,7 @@ class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):
     @view_permission_required()
     @view_cache_latest()
     def dispatch(self, *args, **kwargs):
-        return super(BaseListView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class MapEntityViewSet(viewsets.ModelViewSet):

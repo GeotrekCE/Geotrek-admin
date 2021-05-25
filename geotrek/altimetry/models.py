@@ -2,7 +2,7 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 from django.urls import reverse
 
 from mapentity.helpers import is_file_uptodate, convertit_download, smart_urljoin
@@ -99,3 +99,8 @@ class AltimetryMixin(models.Model):
                            to_type='image/png',
                            headers={'Accept-Language': language})
         return True
+
+
+class Dem(models.Model):
+    id = models.AutoField(primary_key=True, db_column='rid')  # rid is id column name used by raster2pgsql
+    rast = models.RasterField(srid=settings.SRID)

@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import F, Value
 from django.template.defaultfilters import slugify
-from django.utils.translation import get_language, ugettext, ugettext_lazy as _
+from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
 
 import simplekml
@@ -40,7 +40,7 @@ class TrekOrderedChildManager(models.Manager):
 
     def get_queryset(self):
         # Select treks foreign keys by default
-        qs = super(TrekOrderedChildManager, self).get_queryset().select_related('parent', 'child')
+        qs = super().get_queryset().select_related('parent', 'child')
         # Exclude deleted treks
         return qs.exclude(parent__deleted=True).exclude(child__deleted=True)
 
@@ -115,7 +115,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='treks',
                                     verbose_name=_("Portal"))
-    labels = models.ManyToManyField('LabelTrek', related_name='labels',
+    labels = models.ManyToManyField('common.Label', related_name='treks',
                                     verbose_name=_("Labels"),
                                     blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -147,7 +147,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
         return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, get_language()))
 
     def get_map_image_extent(self, srid=settings.API_SRID):
-        extent = list(super(Trek, self).get_map_image_extent(srid))
+        extent = list(super().get_map_image_extent(srid))
         if self.parking_location:
             self.parking_location.transform(srid)
             extent[0] = min(extent[0], self.parking_location.x)
@@ -252,7 +252,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     def has_geom_valid(self):
         """A trek should be a LineString, even if it's a loop.
         """
-        return super(Trek, self).has_geom_valid() and self.geom.geom_type.lower() == 'linestring'
+        return super().has_geom_valid() and self.geom.geom_type.lower() == 'linestring'
 
     @property
     def duration_pretty(self):
@@ -372,7 +372,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     @property
     def picture_print(self):
-        picture = super(Trek, self).picture_print
+        picture = super().picture_print
         if picture:
             return picture
         for poi in self.published_pois:
@@ -391,8 +391,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                 field_names.remove('geom')
             if self.geom_3d is not None and old_trek.geom_3d.equals_exact(self.geom_3d, tolerance=0.00001):
                 field_names.remove('geom_3d')
-            return super(Trek, self).save(update_fields=field_names, *args, **kwargs)
-        super(Trek, self).save(*args, **kwargs)
+            return super().save(update_fields=field_names, *args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def portal_display(self):
@@ -423,15 +423,15 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
             settings.LEAFLET_CONFIG['TILES'][0][0],
         ]
         if settings.SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("Sensitive area"))
+            maplayers.append(gettext("Sensitive area"))
         if settings.SHOW_POIS_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("POIs"))
+            maplayers.append(gettext("POIs"))
         if settings.SHOW_SERVICES_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("Services"))
+            maplayers.append(gettext("Services"))
         if settings.SHOW_SIGNAGES_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("Signages"))
+            maplayers.append(gettext("Signages"))
         if settings.SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("Infrastructures"))
+            maplayers.append(gettext("Infrastructures"))
         return {"maplayers": maplayers}
 
 
@@ -457,7 +457,7 @@ class TrekRelationshipManager(models.Manager):
 
     def get_queryset(self):
         # Select treks foreign keys by default
-        qs = super(TrekRelationshipManager, self).get_queryset().select_related('trek_a', 'trek_b')
+        qs = super().get_queryset().select_related('trek_a', 'trek_b')
         # Exclude deleted treks
         return qs.exclude(trek_a__deleted=True).exclude(trek_b__deleted=True)
 
@@ -605,29 +605,12 @@ class DifficultyLevel(OptionalPictogramMixin):
                 self.id = last.id + 1
             except IndexError:
                 self.id = 1
-        super(DifficultyLevel, self).save(*args, **kwargs)
-
-
-class LabelTrek(OptionalPictogramMixin):
-
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
-    advice = models.TextField(verbose_name=_("Advices"), blank=True,
-                              help_text=_("Advice linked to the label"), default='')
-    filter_rando = models.BooleanField(verbose_name=_("Filter rando"), help_text=_("Show filters portal"),
-                                       default=False)
-
-    class Meta:
-        verbose_name = _("Trekking Label")
-        verbose_name_plural = _("Trekking Labels")
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
+        super().save(*args, **kwargs)
 
 
 class WebLinkManager(models.Manager):
     def get_queryset(self):
-        return super(WebLinkManager, self).get_queryset().select_related('category')
+        return super().get_queryset().select_related('category')
 
 
 class WebLink(models.Model):
@@ -655,7 +638,7 @@ class WebLink(models.Model):
 
 class WebLinkCategory(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128)
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
         verbose_name = _("Web link category")
@@ -692,7 +675,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         return "%s (%s)" % (self.name, self.type)
 
     def save(self, *args, **kwargs):
-        super(POI, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         # Invalidate treks map
         for trek in self.treks.all():
             try:
@@ -764,7 +747,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 class POIType(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128)
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:

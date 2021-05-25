@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
                 'ordering': ['order', 'name'],
                 'db_table': 'g_b_pratique',
                 'verbose_name': 'Pratique',
-                'verbose_name_plural': 'Pratiques',
+                'verbose_name_plural': 'Practices',
             },
         ),
         migrations.AddField(

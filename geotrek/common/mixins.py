@@ -9,10 +9,12 @@ from pdfimpose import PageList
 
 from django.conf import settings
 from django.db.models import Manager as DefaultManager
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
+from django.db.models.fields.related import ForeignKey, ManyToManyField
+
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import slugify
 
 from easy_thumbnails.exceptions import InvalidImageFormatError
@@ -41,10 +43,24 @@ class TimeStampedModelMixin(models.Model):
         self.date_update = fromdb.date_update
         return self
 
+    @property
+    def lastmod_display(self):
+        return self.date_update.strftime("%Y-%m-%y %H:%M")
+
+    lastmod_verbose_name = _("Modification")
+
+
+class NoDeleteQuerySet(models.QuerySet):
+    def existing(self):
+        return self.filter(deleted=False)
+
 
 class NoDeleteManager(DefaultManager):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
+
+    def get_queryset(self):
+        return NoDeleteQuerySet(self.model, using=self._db)
 
     # Filter out deleted objects
     def existing(self):
@@ -57,7 +73,7 @@ class NoDeleteMixin(models.Model):
 
     def delete(self, force=False, using=None, **kwargs):
         if force:
-            super(NoDeleteMixin, self).delete(using, **kwargs)
+            super().delete(using, **kwargs)
         else:
             self.deleted = True
             self.save(using=using)
@@ -72,7 +88,7 @@ class NoDeleteMixin(models.Model):
         return self
 
 
-class PicturesMixin(object):
+class PicturesMixin:
     """A common class to share code between Trek and POI regarding
     attached pictures"""
 
@@ -106,14 +122,13 @@ class PicturesMixin(object):
     def serializable_pictures_mobile(self, root_pk):
         serialized = []
         if self.resized_pictures:
-            first_picture = self.resized_pictures[0][0]
-            thdetail_first = self.resized_pictures[0][1]
-            serialized.append({
-                'author': first_picture.author,
-                'title': first_picture.title,
-                'legend': first_picture.legend,
-                'url': os.path.join('/', str(root_pk), settings.MEDIA_URL[1:], thdetail_first.name),
-            })
+            for picture, thdetail in self.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                serialized.append({
+                    'author': picture.author,
+                    'title': picture.title,
+                    'legend': picture.legend,
+                    'url': os.path.join('/', str(root_pk), settings.MEDIA_URL[1:], thdetail.name),
+                })
         return serialized
 
     @property
@@ -255,7 +270,7 @@ class BasePublishableMixin(models.Model):
             self.publication_date = datetime.date.today()
         if self.publication_date is not None and not self.any_published:
             self.publication_date = None
-        super(BasePublishableMixin, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def any_published(self):
@@ -366,7 +381,7 @@ class PublishableMixin(BasePublishableMixin):
             dst = self.get_map_image_path()
             shutil.copyfile(src, dst)
         else:
-            super(PublishableMixin, self).prepare_map_image(rooturl)
+            super().prepare_map_image(rooturl)
 
     def is_public(self):
         return self.any_published
@@ -398,7 +413,7 @@ class OptionalPictogramMixin(PictogramMixin):
 OptionalPictogramMixin._meta.get_field('pictogram').blank = True
 
 
-class AddPropertyMixin(object):
+class AddPropertyMixin:
     @classmethod
     def add_property(cls, name, func, verbose_name):
         if hasattr(cls, name):
@@ -423,3 +438,35 @@ def transform_pdf_booklet_callback(response):
     result = BytesIO()
     new_pdf.write(result)
     response.content = result.getvalue()
+
+
+@transaction.atomic
+def apply_merge(modeladmin, request, queryset):
+    main = queryset[0]
+    tail = queryset[1:]
+    if not tail:
+        return
+    name = ' + '.join(queryset.values_list(modeladmin.merge_field, flat=True))
+    fields = main._meta.get_fields()
+
+    for field in fields:
+        if field.remote_field:
+            remote_field = field.remote_field.name
+            if isinstance(field.remote_field, ForeignKey):
+                field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}).update(**{remote_field: main})
+            elif isinstance(field.remote_field, ManyToManyField):
+                for element in field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}):
+                    getattr(element, remote_field).add(main)
+    max_length = main._meta.get_field(modeladmin.merge_field).max_length
+    name = name if not len(name) > max_length - 4 else '%s ...' % name[:max_length - 4]
+    setattr(main, modeladmin.merge_field, name)
+    main.save()
+    for element_to_delete in tail:
+        element_to_delete.delete()
+
+
+apply_merge.short_description = _('Merge')
+
+
+class MergeActionMixin:
+    actions = [apply_merge]

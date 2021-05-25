@@ -28,6 +28,7 @@ urlpatterns = [
     path('paperclip/', include('paperclip.urls')),
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
@@ -42,6 +43,8 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.signage.urls')))
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.maintenance.urls')))
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    urlpatterns.append(path('', include('geotrek.outdoor.urls')))
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.trekking.urls')))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
@@ -55,9 +58,9 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.sensitivity.urls')))
 if 'geotrek.api' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('api/v2/', include('geotrek.api.v2.urls')))
+    urlpatterns.append(path('', include('geotrek.api.v2.urls')))
     if 'geotrek.flatpages' in settings.INSTALLED_APPS and 'geotrek.trekking' in settings.INSTALLED_APPS and 'geotrek.tourism' in settings.INSTALLED_APPS:
-        urlpatterns.append(path('api/mobile/', include('geotrek.api.mobile.urls')))
+        urlpatterns.append(path('', include('geotrek.api.mobile.urls')))
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

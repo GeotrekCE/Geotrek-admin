@@ -16,7 +16,7 @@ from django.db.models import Q
 from django.http import StreamingHttpResponse
 from django.test.client import RequestFactory
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from geotrek.common.models import FileType  # NOQA
 from geotrek.common import models as common_models
 from geotrek.flatpages.models import FlatPage
@@ -288,19 +288,23 @@ class Command(BaseCommand):
 
         for poi in trek.published_pois:
             if poi.resized_pictures:
-                self.sync_media_file(poi.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+                for picture, thdetail in poi.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
         for touristic_content in trek.published_touristic_contents:
             if touristic_content.resized_pictures:
-                self.sync_media_file(touristic_content.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+                for picture, thdetail in touristic_content.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
         for touristic_event in trek.published_touristic_events:
             if touristic_event.resized_pictures:
-                self.sync_media_file(touristic_event.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+                for picture, thdetail in touristic_event.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
         if trek.resized_pictures:
-            self.sync_media_file(trek.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                 zipfile=trekid_zipfile)
+            for picture, thdetail in trek.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                     zipfile=trekid_zipfile)
         for desk in trek.information_desks.all():
             if desk.resized_picture:
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
@@ -351,6 +355,7 @@ class Command(BaseCommand):
         self.sync_pictograms(trekking_models.POIType, directory=url_media_nolang, zipfile=self.zipfile_settings,
                              size=settings.MOBILE_POI_PICTO_SIZE)
         self.sync_pictograms(trekking_models.Route, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.ServiceType, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(tourism_models.InformationDeskType, directory=url_media_nolang,
                              zipfile=self.zipfile_settings, size=settings.MOBILE_INFORMATIONDESKTYPE_PICTO_SIZE)
         self.sync_pictograms(tourism_models.TouristicContentCategory, directory=url_media_nolang,

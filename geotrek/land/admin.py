@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from .models import PhysicalType, LandType
 
 

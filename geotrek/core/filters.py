@@ -1,43 +1,44 @@
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-from django_filters import CharFilter, ModelChoiceFilter
+from django.db.models import Count, F, Q
+from django.utils.translation import gettext_lazy as _
+from django_filters import BooleanFilter, CharFilter, FilterSet
 
 from .models import Topology, Path, Trail
 
-from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
-from geotrek.infrastructure.filters import InfrastructureFilterSet
-from geotrek.signage.filters import SignageFilterSet
-from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
+from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.filters import OptionalRangeFilter, RightFilter
 from geotrek.maintenance import models as maintenance_models
+from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
+from geotrek.zoning.filters import ZoningFilterSet
 
 
-class TopologyFilter(ModelChoiceFilter):
-    model = None
-    queryset = None
+class ValidTopologyFilterSet(FilterSet):
+    is_valid = BooleanFilter(label=_("Valid topology"), method='filter_valid_topology')
 
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', self.get_queryset())
-        super(TopologyFilter, self).__init__(*args, **kwargs)
-        self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
-        self.field.widget.renderer = None
+    def filter_valid_topology(self, qs, name, value):
+        if value is not None:
+            qs = qs.annotate(distinct_same_order=Count('aggregations__order', distinct=True),
+                             same_order=Count('aggregations__order'))
+            if value is True:
+                qs = qs.filter(geom__isvalid=True).exclude(geom__isnull=True).exclude(geom__isempty=True).filter(same_order=F('distinct_same_order'))
+            elif value is False:
+                qs = qs.filter(Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True) | Q(distinct_same_order__lt=F('same_order')))
+        return qs
 
-    def get_queryset(self, request=None):
-        if self.queryset is not None:
-            return self.queryset
-        return self.model.objects.all()
 
-    def filter(self, qs, value):
+class TopologyFilter(RightFilter):
+    def filter(self, qs, values):
         """Overrides parent filter() method completely.
         """
-        if not value:
+        if not values:
             return qs
-        if issubclass(value.__class__, Topology):
-            edges = Topology.objects.filter(pk=value.pk)
+        if issubclass(values[0].__class__, Topology):
+            edges = Topology.objects.filter(pk__in=[value.pk for value in values])
         else:
-            edges = self.value_to_edges(value)
+            edges = self.values_to_edges(values)
         return self._topology_filter(qs, edges)
 
-    def value_to_edges(self, value):
+    def values_to_edges(self, values):
         """
         For an instance of this filter model, returns a Topology queryset.
         """
@@ -76,7 +77,7 @@ class TopologyFilter(ModelChoiceFilter):
             return qs.filter(pk__in=[topo.pk for topo in overlapping])
 
 
-class PathFilterSet(StructureRelatedFilterSet):
+class PathFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     length = OptionalRangeFilter(label=_('length'))
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
@@ -87,7 +88,7 @@ class PathFilterSet(StructureRelatedFilterSet):
             ['valid', 'length', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
 
 
-class TrailFilterSet(StructureRelatedFilterSet):
+class TrailFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')
@@ -104,8 +105,7 @@ class TopologyFilterTrail(TopologyFilter):
 
 
 if settings.TRAIL_MODEL_ENABLED:
-    for filterset in (PathFilterSet, InfrastructureFilterSet, SignageFilterSet,
-                      InterventionFilterSet, ProjectFilterSet):
+    for filterset in (PathFilterSet, InterventionFilterSet, ProjectFilterSet):
         filterset.add_filters({
             'trail': TopologyFilterTrail(label=_('Trail'), required=False)
         })

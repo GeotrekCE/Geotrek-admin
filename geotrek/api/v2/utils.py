@@ -21,3 +21,18 @@ def get_translation_or_dict(model_field_name, serializer, instance):
             data.update({language: getattr(instance, '{}_{}'.format(model_field_name, language), )})
 
     return data
+
+
+def build_url(serializer, url):
+    """
+    Return the full url for a file or picture
+    :param serializer: serializer object
+    :param url: the ending url locating the file
+    :return: full url
+    """
+    request = serializer.context.get('request', None)
+    if request is not None and url[0] == '/':
+        url = request.build_absolute_uri(url)
+    else:
+        raise Exception('Bad context. No server variable found in the request !')
+    return url

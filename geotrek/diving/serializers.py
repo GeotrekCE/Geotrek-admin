@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
@@ -59,7 +59,7 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
     pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
 
     def __init__(self, instance=None, *args, **kwargs):
-        super(DiveSerializer, self).__init__(instance, *args, **kwargs)
+        super().__init__(instance, *args, **kwargs)
         if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
             from geotrek.tourism import serializers as tourism_serializers

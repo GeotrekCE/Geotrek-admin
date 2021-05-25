@@ -13,7 +13,7 @@ from django.db.models import Q
 from django.http import StreamingHttpResponse
 from django.test.client import RequestFactory
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from geotrek.common.models import FileType  # NOQA
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
@@ -349,6 +349,7 @@ class Command(BaseCommand):
                 )
 
     def sync_pdf(self, lang, obj, view):
+        translation.activate(lang)
         if self.skip_pdf:
             return
         try:
@@ -373,6 +374,7 @@ class Command(BaseCommand):
                 params['source'] = self.source[0]
             self.get_params_portal(params)
             self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params, slug=obj.slug)
+        translation.deactivate()
 
     def sync(self):
         step_value = int(50 / len(settings.MODELTRANSLATION_LANGUAGES))

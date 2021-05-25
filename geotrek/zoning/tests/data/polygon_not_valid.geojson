@@ -3,7 +3,7 @@
   "features": [
     {
       "type": "Feature",
-      "properties": {"NOM": 'wrong_polygon', 'Insee': '0'},
+      "properties": {"NOM": "wrong_polygon", "Insee": "0"},
       "geometry": {
         "type": "Polygon",
         "coordinates": [[[0, 0], [0, 3], [3, 3], [3, 0], [2, 0],

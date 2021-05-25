@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2020-12-16 11:07+0000\n"
 "PO-Revision-Date: 2020-04-22 06:45+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/diving/fr/>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
+"admin/diving/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -102,7 +102,7 @@ msgid "meters"
 msgstr "mètres"
 
 msgid "Advice"
-msgstr "Recommandation"
+msgstr "Recommandations"
 
 msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
@@ -135,21 +135,8 @@ msgstr "Plongées"
 msgid "dive"
 msgstr "plongee"
 
-msgctxt "North"
-msgid "N"
-msgstr "N"
-
-msgctxt "South"
-msgid "S"
-msgstr "S"
-
-msgctxt "East"
-msgid "E"
-msgstr "E"
-
-msgctxt "West"
-msgid "W"
-msgstr "O"
+msgid "Add a new dive"
+msgstr "Ajouter une plongée"
 
 msgid "Published dives"
 msgstr "Plongées publiées"
@@ -159,6 +146,30 @@ msgstr "Itinéraires"
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
+
+msgid "POIs"
+msgstr "POI"
+
+msgid "Published POIs"
+msgstr "POI publiées"
+
+msgid "Services"
+msgstr "Services"
+
+msgid "Published Services"
+msgstr "Services publiés"
+
+msgid "Touristic contents"
+msgstr "Contenus touristiques"
+
+msgid "Published touristic contents"
+msgstr "Contenus touristiques publiés"
+
+msgid "Touristic events"
+msgstr "Événements touristiques"
+
+msgid "Published touristic events"
+msgstr "Événements touristiques publiés"
 
 msgid "Public print"
 msgstr "Impression grand public"
@@ -171,9 +182,6 @@ msgstr "Informations"
 
 msgid "Thumbnail"
 msgstr "Miniature"
-
-msgid "Geotrek Rando"
-msgstr "Geotrek Rando"
 
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
@@ -201,8 +209,8 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"            Au cour de votre itinéraire, vous allez traverser des zones sensibles en rapport avec "
-"la présence d'une espèce ou d'un envrionnement\n"
+"            Au cour de votre itinéraire, vous allez traverser des zones "
+"sensibles en rapport avec la présence d'une espèce ou d'un envrionnement\n"
 "            spécifique. Dans ces zones, un comportement approprié permet de "
 "contribuer à leurs préservation. Pour\n"
 "            plus d'information, des fiches sont disponibles pour chaque "
@@ -214,9 +222,6 @@ msgstr "Période de sensibilité :"
 
 msgid "Contact:"
 msgstr "Contact :"
-
-msgid "Add a new dive"
-msgstr "Ajouter une plongée"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"

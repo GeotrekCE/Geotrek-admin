@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms.models import inlineformset_factory
@@ -33,7 +33,7 @@ class TrekRelationshipForm(forms.ModelForm):
                   'is_circuit_step')
 
     def __init__(self, *args, **kwargs):
-        super(TrekRelationshipForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id',
@@ -53,7 +53,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
     class BaseTrekForm(TopologyForm):
         def __init__(self, *args, **kwargs):
-            super(BaseTrekForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             modifiable = self.fields['topology'].widget.modifiable
             # TODO: We should change LeafletWidget to keep modifiable.
             # Init of TopologyForm -> commonForm -> mapentityForm
@@ -73,7 +73,7 @@ else:
         geomfields = ['geom']
 
         def __init__(self, *args, **kwargs):
-            super(BaseTrekForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
             self.fields['geom'].widget.modifiable = modifiable
@@ -99,11 +99,15 @@ class TrekForm(BaseTrekForm):
 
     base_fieldslayout = [
         Div(
-            HTML("""
-            <ul class="nav nav-tabs">
-                <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
-                <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-            </ul>""" % (_("Main"), _("Advanced"))),
+            HTML(
+                """<ul class="nav nav-tabs">
+    <li id="tab-main" class="nav-item">
+        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {0}</a>
+    </li>
+    <li id="tab-advanced" class="nav-item">
+        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
+    </li>
+</ul>""".format(_("Main"), _("Advanced"))),
             Div(
                 Div(
                     'name',
@@ -163,7 +167,7 @@ class TrekForm(BaseTrekForm):
                     url=t.pictogram.url, name=t.name)
                     for t in ServiceType.objects.all()])))
         )
-        super(TrekForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.fields.get('structure'):
             self.fieldslayout[0][1][0].insert(0, 'structure')
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
@@ -218,7 +222,7 @@ class TrekForm(BaseTrekForm):
         sid = transaction.savepoint()
 
         try:
-            return_value = super(TrekForm, self).save(self, *args, **kwargs)
+            return_value = super().save(self, *args, **kwargs)
             ordering = []
 
             if self.cleaned_data['hidden_ordered_children']:
@@ -265,7 +269,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
     class BasePOIForm(TopologyForm):
         def __init__(self, *args, **kwargs):
-            super(BasePOIForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
             self.fields['topology'].widget.modifiable = modifiable
@@ -279,7 +283,7 @@ else:
         geomfields = ['geom']
 
         def __init__(self, *args, **kwargs):
-            super(BasePOIForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
             self.fields['geom'].widget.modifiable = modifiable
@@ -310,7 +314,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
     class BaseServiceForm(TopologyForm):
         def __init__(self, *args, **kwargs):
-            super(BaseServiceForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
             self.fields['topology'].widget.modifiable = modifiable
@@ -324,7 +328,7 @@ else:
         geomfields = ['geom']
 
         def __init__(self, *args, **kwargs):
-            super(BaseServiceForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
             self.fields['geom'].widget.modifiable = modifiable
@@ -350,7 +354,7 @@ class ServiceForm(BaseServiceForm):
 class WebLinkCreateFormPopup(TranslatedModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(WebLinkCreateFormPopup, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_action = self.instance.get_add_url()
         # Main form layout

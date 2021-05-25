@@ -4,7 +4,7 @@ from PIL import Image
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
 
@@ -53,7 +53,7 @@ class Attachment(BaseAttachment):
 
 class Theme(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128)
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
@@ -140,3 +140,18 @@ class ReservationSystem(models.Model):
         verbose_name = _("Reservation system")
         verbose_name_plural = _("Reservation systems")
         ordering = ('name',)
+
+
+class Label(OptionalPictogramMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    advice = models.TextField(verbose_name=_("Advice"), blank=True)
+    filter = models.BooleanField(verbose_name=_("Filter"), default=False,
+                                 help_text=_("Show this label as a filter in public portal"))
+
+    class Meta:
+        verbose_name = _("Label")
+        verbose_name_plural = _("Labels")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name

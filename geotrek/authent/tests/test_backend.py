@@ -97,7 +97,6 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
         self.assertEqual(user.first_name, 'Ala')
         self.assertEqual(user.last_name, 'Deen')
         self.assertEqual(user.profile.structure, Structure.objects.get(name='Walydia'))
-        self.assertEqual(user.profile.language, 'ar')
         self.assertEqual(str(user.profile), 'Profile for aladeen')
 
     def test_usergroups(self):

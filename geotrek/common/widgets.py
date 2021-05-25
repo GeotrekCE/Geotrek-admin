@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.forms.widgets import Select
 
 
@@ -8,7 +8,7 @@ class YearSelect(Select):
 
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = self._get_choices()
-        super(YearSelect, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _get_choices(self):
         years_range = [(-1, self.label)]
@@ -24,7 +24,7 @@ class YearSelect(Select):
          to see current year for example)
         """
         self.choices = self._get_choices()
-        return super(YearSelect, self).render_options(*args, **kwargs)
+        return super().render_options(*args, **kwargs)
 
 
 class ValueSelect(Select):
@@ -32,7 +32,7 @@ class ValueSelect(Select):
 
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = self._get_choices()
-        super(ValueSelect, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _get_choices(self):
         values_range = [(-1, self.label)]
@@ -51,4 +51,4 @@ class ValueSelect(Select):
          to see current year for example)
         """
         self.choices = self._get_choices()
-        return super(ValueSelect, self).render_options(*args, **kwargs)
+        return super().render_options(*args, **kwargs)

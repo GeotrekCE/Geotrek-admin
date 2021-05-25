@@ -9,10 +9,6 @@ DROP FUNCTION IF EXISTS ft_Smart_MakeLine(geometry[]) CASCADE;
 
 -- 20
 
-DROP INDEX IF EXISTS evenements_geom_idx;
-DROP INDEX IF EXISTS e_t_evenement_geom_idx;
-DROP INDEX IF EXISTS core_topology_geom_idx;
-
 DROP FUNCTION IF EXISTS evenement_latest_updated_d() CASCADE;
 DROP FUNCTION IF EXISTS topology_latest_updated_d() CASCADE;
 
@@ -37,25 +33,6 @@ DROP FUNCTION IF EXISTS ft_evenements_troncons_junction_point_iu() CASCADE;
 DROP FUNCTION IF EXISTS ft_topologies_paths_junction_point_iu() CASCADE;
 
 -- 40
-
-DROP INDEX IF EXISTS troncons_geom_idx;
-DROP INDEX IF EXISTS l_t_troncon_geom_idx;
-DROP INDEX IF EXISTS core_path_geom_idx;
-
-DROP INDEX IF EXISTS troncons_start_point_idx;
-DROP INDEX IF EXISTS l_t_troncon_start_point_idx;
-DROP INDEX IF EXISTS core_path_start_point_idx;
-
-DROP INDEX IF EXISTS troncons_end_point_idx;
-DROP INDEX IF EXISTS l_t_troncon_end_point_idx;
-DROP INDEX IF EXISTS core_path_end_point_idx;
-
-DROP INDEX IF EXISTS troncons_geom_cadastre_idx;
-DROP INDEX IF EXISTS l_t_troncon_geom_cadastre_idx;
-DROP INDEX IF EXISTS core_path_geom_cadastre_idx;
-
-DROP INDEX IF EXISTS l_t_troncon_geom_3d_idx;
-DROP INDEX IF EXISTS core_path_geom_3d_idx;
 
 DROP FUNCTION IF EXISTS check_path_not_overlap(integer, geometry) CASCADE;
 

@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.list import ListView
 from django.core.mail import send_mail
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -28,7 +28,7 @@ class ReportList(mapentity_views.MapEntityList):
     filterform = ReportFilterSet
     columns = [
         'id', 'email', 'activity', 'category',
-        'status', 'date_update',
+        'status', 'lastmod',
     ]
 
 
@@ -40,15 +40,12 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     columns = [
         'id', 'email', 'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'date_update',
+        'date_insert', 'lastmod',
     ]
 
 
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
     model = feedback_models.ReportCategory
-
-    def dispatch(self, *args, **kwargs):
-        return super(CategoryList, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         return [{'id': c.id,
@@ -87,7 +84,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
 
     @action(detail=False, methods=['post'])
     def report(self, request, lang=None):
-        response = super(ReportViewSet, self).create(request)
+        response = super().create(request)
         creator, created = get_user_model().objects.get_or_create(username='feedback', defaults={'is_active': False})
         for file in request._request.FILES.values():
             Attachment.objects.create(

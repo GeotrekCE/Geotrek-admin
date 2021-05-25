@@ -3,8 +3,7 @@ from functools import wraps
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
-from django.utils.decorators import available_attrs
+from django.utils.translation import gettext_lazy as _
 
 
 def same_structure_required(redirect_to):
@@ -14,7 +13,7 @@ def same_structure_required(redirect_to):
     objects.
     """
     def decorator(view_func):
-        @wraps(view_func, assigned=available_attrs(view_func))
+        @wraps(view_func)
         def _wrapped_view(self, request, *args, **kwargs):
             result = view_func(self, request, *args, **kwargs)
 

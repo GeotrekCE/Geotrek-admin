@@ -4,10 +4,10 @@
 
 {% block mainactions %}
     {% if can_add %}
-        <a class="btn btn-success" href="{{ model.get_add_url }}?category=1"><i class="icon-plus icon-white"></i> {% trans "Add a sensitive area (Species)" %}</a>
-        <a class="btn btn-success" href="{{ model.get_add_url }}?category=2"><i class="icon-plus icon-white"></i> {% trans "Add a sensitive area (Regulatory)" %}</a>
+        <a class="btn btn-success" href="{{ model.get_add_url }}?category=1"><i class="bi bi-plus"></i> {% trans "Add a sensitive area (Species)" %}</a>
+        <a class="btn btn-success" href="{{ model.get_add_url }}?category=2"><i class="bi bi-plus"></i> {% trans "Add a sensitive area (Regulatory)" %}</a>
     {% else %}
-        <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% trans "Add a sensitive area (Species)" %}</span>
-        <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% trans "Add a sensitive area (Regulatory)" %}</span>
+        <span class="btn disabled" href="#"><i class="bi bi-plus"></i> {% trans "Add a sensitive area (Species)" %}</span>
+        <span class="btn disabled" href="#"><i class="bi bi-plus"></i> {% trans "Add a sensitive area (Regulatory)" %}</span>
     {% endif %}
 {% endblock mainactions %}

@@ -1,10 +1,9 @@
 import logging
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
-from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
@@ -52,7 +51,7 @@ class InterventionDetail(MapEntityDetail):
     queryset = Intervention.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(InterventionDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -66,28 +65,17 @@ class ManDayFormsetMixin(FormsetMixin):
     formset_class = ManDayFormSet
 
 
-class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
+class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
     model = Intervention
     form_class = InterventionForm
 
-    def on_target(self):
-        target_id = self.request.GET.get('target_id')
-        target_type = self.request.GET.get('target_type')
-        if target_id and target_type:
-            return target_id, target_type
-        return None, None
-
-    def get_initial(self):
-        """
-        Returns the initial data to use for forms on this view.
-        """
-        initial = super(InterventionCreate, self).get_initial()
-        target_id, target_type = self.on_target()
-        if target_id:
-            # Create intervention on an infrastructure
-            initial['target_id'] = target_id
-            initial['target_type'] = target_type
-        return initial
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if 'target_id' in self.request.GET and 'target_type' in self.request.GET:
+            # Create intervention on an existing infrastructure
+            kwargs['target_id'] = self.request.GET['target_id']
+            kwargs['target_type'] = self.request.GET['target_type']
+        return kwargs
 
 
 class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
@@ -96,7 +84,7 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
 
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InterventionUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InterventionDelete(MapEntityDelete):
@@ -104,7 +92,7 @@ class InterventionDelete(MapEntityDelete):
 
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InterventionDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InterventionViewSet(MapEntityViewSet):
@@ -125,7 +113,7 @@ class ProjectLayer(MapEntityLayer):
 
     def get_queryset(self):
         nonemptyqs = Intervention.objects.existing().filter(project__isnull=False).values('project')
-        return super(ProjectLayer, self).get_queryset().filter(pk__in=nonemptyqs)
+        return super().get_queryset().filter(pk__in=nonemptyqs)
 
 
 class ProjectList(MapEntityList):
@@ -152,7 +140,7 @@ class ProjectDetail(MapEntityDetail):
     queryset = Project.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProjectDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         context['empty_map_message'] = _("No intervention related.")
         return context
@@ -178,7 +166,7 @@ class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
 
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ProjectUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectDelete(MapEntityDelete):
@@ -186,7 +174,7 @@ class ProjectDelete(MapEntityDelete):
 
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ProjectDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectViewSet(MapEntityViewSet):

@@ -20,7 +20,7 @@ services:
     image: makinacorpus/convertit:latest
 
   screamshotter:
-    image: makinacorpus/screamshotter:latest
+    image: makinacorpus/screamshotter:v2
 
   celery:
     image: geotrek
@@ -55,6 +55,13 @@ services:
       default:
         aliases:
           - ${SERVER_NAME}
+
+  sphinx:
+    build: docs
+    volumes:
+      - ./docs:/docs
+    ports:
+      - 8800:8800
 
 volumes:
   postgres:

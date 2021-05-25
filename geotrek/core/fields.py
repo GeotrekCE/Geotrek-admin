@@ -3,7 +3,7 @@ import json
 
 from django.core import validators
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.conf import settings
 from django.contrib.gis.forms.fields import LineStringField
@@ -58,7 +58,7 @@ class SnappedLineStringField(LineStringField):
         We use ``snaplist`` to snap geometry vertices.
         """
         if value in validators.EMPTY_VALUES:
-            return super(SnappedLineStringField, self).clean(value)
+            return super().clean(value)
         try:
             value = json.loads(value)
             geom = value.get('geom')
@@ -66,7 +66,7 @@ class SnappedLineStringField(LineStringField):
                 raise ValueError("No geom found in JSON")
 
             if geom in validators.EMPTY_VALUES:
-                return super(SnappedLineStringField, self).clean(value)
+                return super().clean(value)
 
             # Geometry is like usual
             geom = fromstr(geom)

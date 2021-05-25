@@ -20,7 +20,7 @@ from geotrek.trekking.helpers_sync import SyncRando
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.trek = TrekWithPublishedPOIsFactory.create(published=True)
         cls.information_desks = InformationDeskFactory.create()
         cls.trek.information_desks.add(cls.information_desks)

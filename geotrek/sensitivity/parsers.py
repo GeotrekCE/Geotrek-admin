@@ -8,7 +8,7 @@ from .models import SensitiveArea, Species, SportPractice
 class BiodivParser(Parser):
     model = SensitiveArea
     label = "Biodiv'Sports"
-    url = 'https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore'
+    url = 'https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore&page_size=10000'
     eid = 'eid'
     separator = None
     delete = True
@@ -32,7 +32,8 @@ class BiodivParser(Parser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(BiodivParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        print('URL', self.url)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             self.fields['description_' + lang] = 'description.' + lang
 
@@ -41,7 +42,7 @@ class BiodivParser(Parser):
         return self.root['results']
 
     def get_to_delete_kwargs(self):
-        kwargs = super(BiodivParser, self).get_to_delete_kwargs()
+        kwargs = super().get_to_delete_kwargs()
         kwargs['eid__isnull'] = False
         return kwargs
 

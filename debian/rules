@@ -6,8 +6,6 @@ export DH_VIRTUALENV_INSTALL_ROOT=/opt
 	dh $@ --with python-virtualenv
 
 override_dh_virtualenv:
-	CPLUS_INCLUDE_PATH=/usr/include/gdal \
-	C_INCLUDE_PATH=/usr/include/gdal \
 	dh_virtualenv \
 	--python /usr/bin/python3 \
 	--builtin-venv \
@@ -31,3 +29,11 @@ override_dh_systemd_enable:
 
 override_dh_systemd_start:
 	dh_systemd_start --name=geotrek debian/geotrek.service
+
+.PHONY: override_dh_strip override_dh_shlibdeps
+
+override_dh_strip:
+	dh_strip --exclude=/Fiona.libs/
+
+override_dh_shlibdeps:
+	dh_shlibdeps -X/Fiona.libs/

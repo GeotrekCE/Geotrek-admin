@@ -1,4 +1,5 @@
-FROM makinacorpus/geodjango:bionic-3.6
+ARG BASE_IMAGE_TAG=focal-3.8
+FROM makinacorpus/geodjango:${BASE_IMAGE_TAG}
 
 ENV ENV=prod
 ENV SERVER_NAME="localhost"
@@ -13,13 +14,10 @@ ENV CONVERSION_HOST="convertit"
 ENV CAPTURE_HOST="screamshotter"
 ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
 
-ARG CPLUS_INCLUDE_PATH=/usr/include/gdal
-ARG C_INCLUDE_PATH=/usr/include/gdal
-
 WORKDIR /opt/geotrek-admin
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -qq && apt-get install -y -qq  \
     unzip \
     sudo \
     less \
@@ -36,15 +34,16 @@ RUN apt-get update && apt-get install -y \
     libxslt-dev \
     libcairo2 \
     libpango1.0-0 \
+    libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-dev \
     libffi-dev && \
     apt-get install -y --no-install-recommends postgis && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 COPY requirements.txt requirements.txt
-RUN python3 -m venv env
-RUN env/bin/pip install -U setuptools==45.2.0
-RUN env/bin/pip install --no-cache-dir -r requirements.txt
+RUN python3 -m venv /opt/venv
+RUN /opt/venv/bin/pip install -U pip setuptools wheel
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 
 COPY geotrek/ geotrek/
 COPY mapentity/ mapentity/
@@ -53,8 +52,8 @@ COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
-RUN cd geotrek; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ../env/bin/python ../manage.py compilemessages; cd ..
-RUN cd mapentity; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ../env/bin/python ../manage.py compilemessages; cd ..
+RUN cd geotrek; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ../manage.py compilemessages; cd ..
+RUN cd mapentity; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ../manage.py compilemessages; cd ..
 
 EXPOSE 8000
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from geotrek.core.models import (PathSource, Stake, Usage, Network, Comfort)
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 
 
 class PathSourceAdmin(MergeActionMixin, admin.ModelAdmin):

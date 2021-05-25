@@ -1,17 +1,4 @@
 -- 10
-
-DROP INDEX IF EXISTS couche_communes_geom_idx;
-DROP INDEX IF EXISTS l_commune_geom_idx;
-DROP INDEX IF EXISTS zoning_city_geom_idx;
-
-DROP INDEX IF EXISTS couche_secteurs_geom_idx;
-DROP INDEX IF EXISTS l_secteur_geom_idx;
-DROP INDEX IF EXISTS zoning_district_geom_idx;
-
-DROP INDEX IF EXISTS couche_zonage_reglementaire_geom_idx;
-DROP INDEX IF EXISTS l_zonage_reglementaire_geom_idx;
-DROP INDEX IF EXISTS zoning_restrictedarea_geom_idx;
-
 DROP FUNCTION IF EXISTS lien_auto_troncon_couches_sig_d() CASCADE;
 DROP FUNCTION IF EXISTS auto_link_path_topologies_d() CASCADE;
 

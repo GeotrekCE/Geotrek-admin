@@ -15,7 +15,7 @@ class Command(BaseCommand):
         attachments = set(Attachment.objects.values_list('attachment_file', flat=True))
         thumbnails = set(Thumbnail.objects.values_list('name', flat=True))
         if options['verbosity'] >= 1:
-            self.stdout.write(u"Attachments: {} / Thumbnails: {}".format(len(attachments), len(thumbnails)))
+            self.stdout.write("Attachments: {} / Thumbnails: {}".format(len(attachments), len(thumbnails)))
         total = 0
         deleted = 0
         for path in paperclip_dir.glob('**/*'):
@@ -25,15 +25,15 @@ class Command(BaseCommand):
             relative = str(path.relative_to(settings.MEDIA_ROOT))
             if relative in attachments:
                 if options['verbosity'] >= 2:
-                    self.stdout.write(u"{}... Found".format(relative))
+                    self.stdout.write("{}... Found".format(relative))
                 continue
             if relative in thumbnails:
                 if options['verbosity'] >= 2:
-                    self.stdout.write(u"{}... Thumbnail".format(relative))
+                    self.stdout.write("{}... Thumbnail".format(relative))
                 continue
             deleted += 1
             path.unlink()
             if options['verbosity'] >= 1:
-                self.stdout.write(u"{}... DELETED".format(relative))
+                self.stdout.write("{}... DELETED".format(relative))
         if options['verbosity'] >= 1:
-            self.stdout.write(u"Files: {} / Deleted: {}".format(total, deleted))
+            self.stdout.write("Files: {} / Deleted: {}".format(total, deleted))

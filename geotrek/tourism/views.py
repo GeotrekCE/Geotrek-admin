@@ -1,7 +1,7 @@
 import logging
 import os
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from django.conf import settings
 from django.db.models import Q
@@ -72,7 +72,7 @@ class TouristicContentDetail(MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TouristicContentDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -85,7 +85,7 @@ class TouristicContentCreate(MapEntityCreate):
         """
         Returns the initial data to use for forms on this view.
         """
-        initial = super(TouristicContentCreate, self).get_initial()
+        initial = super().get_initial()
         try:
             category = int(self.request.GET.get('category'))
             initial['category'] = category
@@ -100,7 +100,7 @@ class TouristicContentUpdate(MapEntityUpdate):
 
     @same_structure_required('tourism:touristiccontent_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TouristicContentUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TouristicContentDelete(MapEntityDelete):
@@ -108,18 +108,18 @@ class TouristicContentDelete(MapEntityDelete):
 
     @same_structure_required('tourism:touristiccontent_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TouristicContentDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TouristicContentDocument(MapEntityDocument):
     queryset = TouristicContent.objects.existing()
 
 
-class TouristicContentDocumentPublicMixin(object):
+class TouristicContentDocumentPublicMixin:
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TouristicContentDocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         content = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
@@ -186,7 +186,7 @@ class TouristicEventDetail(MapEntityDetail):
     queryset = TouristicEvent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TouristicEventDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -202,7 +202,7 @@ class TouristicEventUpdate(MapEntityUpdate):
 
     @same_structure_required('tourism:touristicevent_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TouristicEventUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TouristicEventDelete(MapEntityDelete):
@@ -210,18 +210,18 @@ class TouristicEventDelete(MapEntityDelete):
 
     @same_structure_required('tourism:touristicevent_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TouristicEventDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TouristicEventDocument(MapEntityDocument):
     queryset = TouristicEvent.objects.existing()
 
 
-class TouristicEventDocumentPublicMixin(object):
+class TouristicEventDocumentPublicMixin:
     queryset = TouristicEvent.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TouristicEventDocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         event = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristicevent']
@@ -305,7 +305,7 @@ class InformationDeskViewSet(viewsets.ModelViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        qs = super(InformationDeskViewSet, self).get_queryset()
+        qs = super().get_queryset()
         if self.kwargs.get('type'):
             qs = qs.filter(type_id=self.kwargs['type'])
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))

@@ -570,8 +570,11 @@ class SplitPathLineTopologyTest(TestCase):
         # Topology position became proportional
         aggr_ab = ab.aggregations.all()[0]
         aggr_cb = cb.aggregations.all()[0]
-        self.assertEqual((1.0, 0.5), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.5, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
+        self.assertAlmostEqual(1, aggr_ab.start_position)
+        self.assertAlmostEqual(0.5, aggr_ab.end_position)
+        self.assertAlmostEqual(0.5, aggr_cb.start_position)
+        self.assertAlmostEqual(0, aggr_cb.end_position)
+
         topology.reload()
         self.assertEqual(topology.geom, LineString((3.0, 0.0, 0.0), (2.0, 0.0, 0.0), (1.0, 0.0, 0.0), srid=settings.SRID))
 
@@ -659,7 +662,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(ab.aggregations.all()), 1)
         # But start/end have changed
         aggr_ab = ab.aggregations.all()[0]
-        self.assertEqual((0.4, 0.8), (aggr_ab.start_position, aggr_ab.end_position))
+        self.assertAlmostEqual(0.4, aggr_ab.start_position)
+        self.assertAlmostEqual(0.8, aggr_ab.end_position)
         topology.reload()
         self.assertEqual(topology.geom, topogeom)
 
@@ -689,7 +693,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(ab.aggregations.all()), 1)
         # But start/end have changed
         aggr_ab = ab.aggregations.all()[0]
-        self.assertEqual((0.6, 0.2), (aggr_ab.start_position, aggr_ab.end_position))
+        self.assertAlmostEqual(0.6, aggr_ab.start_position)
+        self.assertAlmostEqual(0.2, aggr_ab.end_position)
         topology.reload()
         self.assertEqual(topology.geom, LineString((1.7999999999999998, 0.0, 0.0), (0.5999999999999996, 0.0, 0.0), srid=settings.SRID))
 
@@ -763,10 +768,14 @@ class SplitPathLineTopologyTest(TestCase):
         aggr_bc = bc.aggregations.all()[0]
         aggr_ce = ce.aggregations.all()[0]
         aggr_ef = ef.aggregations.all()[0]
-        self.assertEqual((0.5, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((1.0, 0.0), (aggr_bc.start_position, aggr_bc.end_position))
-        self.assertEqual((1.0, 0.0), (aggr_ce.start_position, aggr_ce.end_position))
-        self.assertEqual((0.0, 0.5), (aggr_ef.start_position, aggr_ef.end_position))
+        self.assertAlmostEqual(0.5, aggr_ab.start_position)
+        self.assertAlmostEqual(1, aggr_ab.end_position)
+        self.assertAlmostEqual(1, aggr_bc.start_position)
+        self.assertAlmostEqual(0, aggr_bc.end_position)
+        self.assertAlmostEqual(1, aggr_ce.start_position)
+        self.assertAlmostEqual(0, aggr_ce.end_position)
+        self.assertAlmostEqual(0, aggr_ef.start_position)
+        self.assertAlmostEqual(0.5, aggr_ef.end_position)
         topology.reload()
         self.assertEqual(len(topology.aggregations.all()), 4)
         # Geometry has changed
@@ -801,8 +810,10 @@ class SplitPathLineTopologyTest(TestCase):
             ab2, ab3 = ab3, ab2
         aggr_ab2 = ab2.aggregations.all()[0]
         aggr_ab3 = ab3.aggregations.all()[0]
-        self.assertEqual((0.0, 1.0), (aggr_ab2.start_position, aggr_ab2.end_position))
-        self.assertEqual((0.0, 0.6), (aggr_ab3.start_position, aggr_ab3.end_position))
+        self.assertAlmostEqual(0, aggr_ab2.start_position)
+        self.assertAlmostEqual(1, aggr_ab2.end_position)
+        self.assertAlmostEqual(0, aggr_ab3.start_position)
+        self.assertAlmostEqual(0.6, aggr_ab3.end_position)
         topology.reload()
         self.assertNotEqual(topology.geom, topogeom)
         self.assertEqual(topology.geom.coords[0], topogeom.coords[0])
@@ -834,12 +845,16 @@ class SplitPathLineTopologyTest(TestCase):
         aggr_ab2 = ab2.aggregations.all()[0]
         aggr_ab3 = ab3.aggregations.all()[0]
         if aggr_ab2.start_position == 1.0:
-            self.assertEqual((1.0, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
-            self.assertEqual((0.6, 0.0), (aggr_ab3.start_position, aggr_ab3.end_position))
+            self.assertAlmostEqual(1, aggr_ab2.start_position)
+            self.assertAlmostEqual(0, aggr_ab2.end_position)
+            self.assertAlmostEqual(0.6, aggr_ab3.start_position)
+            self.assertAlmostEqual(0, aggr_ab3.end_position)
         else:
             # Depended on postgresql fetch order, `ab2` was actually `ab3`
-            self.assertEqual((1.0, 0.0), (aggr_ab3.start_position, aggr_ab3.end_position))
-            self.assertEqual((0.6, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
+            self.assertAlmostEqual(1, aggr_ab3.start_position)
+            self.assertAlmostEqual(0, aggr_ab3.end_position)
+            self.assertAlmostEqual(0.6, aggr_ab2.start_position)
+            self.assertAlmostEqual(0, aggr_ab2.end_position)
         topology.reload()
         self.assertEqual(topology.geom, LineString((3.6000000000000001, 0), (3, 0),
                                                    (1.0, 0.0), (0.4, 0.0), srid=settings.SRID))
@@ -867,8 +882,10 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(cd2.aggregations.all()), 1)
         aggr_cd = cd.aggregations.all()[0]
         aggr_cd2 = cd2.aggregations.all()[0]
-        self.assertEqual((0.5, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
-        self.assertEqual((0.0, 0.75), (aggr_cd2.start_position, aggr_cd2.end_position))
+        self.assertAlmostEqual(0.5, aggr_cd.start_position)
+        self.assertAlmostEqual(1, aggr_cd.end_position)
+        self.assertAlmostEqual(0, aggr_cd2.start_position)
+        self.assertAlmostEqual(0.75, aggr_cd2.end_position)
 
     def test_split_on_update_2(self):
         """
@@ -892,7 +909,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 0)
         aggr_cd = cd.aggregations.all()[0]
-        self.assertEqual((0.25, 0.5), (aggr_cd.start_position, aggr_cd.end_position))
+        self.assertAlmostEqual(0.25, aggr_cd.start_position)
+        self.assertAlmostEqual(0.5, aggr_cd.end_position)
 
     def test_split_on_update_3(self):
         """
@@ -916,7 +934,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(cd.aggregations.all()), 0)
         self.assertEqual(len(cd2.aggregations.all()), 1)
         aggr_cd2 = cd2.aggregations.all()[0]
-        self.assertEqual((0.25, 0.625), (aggr_cd2.start_position, aggr_cd2.end_position))
+        self.assertAlmostEqual(0.25, aggr_cd2.start_position)
+        self.assertAlmostEqual(0.625, aggr_cd2.end_position)
 
     def test_split_on_return_topology(self):
         """
@@ -1099,6 +1118,7 @@ class SplitPathPointTopologyTest(TestCase):
         poi = Point(1, 3, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         topology = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        topology.save()
         aggr = topology.aggregations.all()[0]
         position = topology.geom.coords
 
@@ -1134,6 +1154,7 @@ class SplitPathPointTopologyTest(TestCase):
         poi = Point(7, 3, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         topology = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        topology.save()
         aggr = topology.aggregations.all()[0]
         position = topology.geom.coords
 
@@ -1388,10 +1409,14 @@ class SplitPathGenericTopologyTest(TestCase):
         aggr_ab2 = ab_2.aggregations.all()[0]
         aggr_bc = bc.aggregations.all()[0]
         aggr_bc2 = bc_2.aggregations.all()[0]
-        self.assertEqual((0.551776695296637, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.0, 1.0), (aggr_ab2.start_position, aggr_ab2.end_position))
-        self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
-        self.assertEqual((0.0, 0.146446609406726), (aggr_bc2.start_position, aggr_bc2.end_position))
+        self.assertAlmostEqual(0.551776695296637, aggr_ab.start_position)
+        self.assertAlmostEqual(1, aggr_ab.end_position)
+        self.assertAlmostEqual(0, aggr_ab2.start_position)
+        self.assertAlmostEqual(1, aggr_ab2.end_position)
+        self.assertAlmostEqual(0, aggr_bc.start_position)
+        self.assertAlmostEqual(1, aggr_bc.end_position)
+        self.assertAlmostEqual(0, aggr_bc2.start_position)
+        self.assertAlmostEqual(0.146446609406726, aggr_bc2.end_position)
 
         # But topology resulting geometry did not change
         self.assertEqual(topology.geom, originalgeom)
@@ -1439,10 +1464,14 @@ class SplitPathGenericTopologyTest(TestCase):
         aggr_ab2 = ab_2.aggregations.all()[0]
         aggr_cb = cb.aggregations.all()[0]
         aggr_cb2 = cb_2.aggregations.all()[0]
-        self.assertEqual((0.551776695296637, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.0, 1.0), (aggr_ab2.start_position, aggr_ab2.end_position))
-        self.assertEqual((1.0, 0.0), (aggr_cb2.start_position, aggr_cb2.end_position))
-        self.assertEqual((1.0, 0.853553390593274), (aggr_cb.start_position, aggr_cb.end_position))
+        self.assertAlmostEqual(0.551776695296637, aggr_ab.start_position)
+        self.assertAlmostEqual(1, aggr_ab.end_position)
+        self.assertAlmostEqual(0, aggr_ab2.start_position)
+        self.assertAlmostEqual(1, aggr_ab2.end_position)
+        self.assertAlmostEqual(1, aggr_cb2.start_position)
+        self.assertAlmostEqual(0, aggr_cb2.end_position)
+        self.assertAlmostEqual(1, aggr_cb.start_position)
+        self.assertAlmostEqual(0.853553390593274, aggr_cb.end_position)
 
         # But topology resulting geometry did not change
         self.assertEqual(topology.geom, originalgeom)
@@ -1490,10 +1519,14 @@ class SplitPathGenericTopologyTest(TestCase):
         aggr_ba2 = ba_2.aggregations.all()[0]
         aggr_bc = bc.aggregations.all()[0]
         aggr_bc2 = bc_2.aggregations.all()[0]
-        self.assertEqual((0.448223304703363, 0.0), (aggr_ba2.start_position, aggr_ba2.end_position))
-        self.assertEqual((1.0, 0.0), (aggr_ba.start_position, aggr_ba.end_position))
-        self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
-        self.assertEqual((0.0, 0.146446609406726), (aggr_bc2.start_position, aggr_bc2.end_position))
+        self.assertAlmostEqual(0.448223304703363, aggr_ba2.start_position)
+        self.assertAlmostEqual(0, aggr_ba2.end_position)
+        self.assertAlmostEqual(1, aggr_ba.start_position)
+        self.assertAlmostEqual(0, aggr_ba.end_position)
+        self.assertAlmostEqual(0, aggr_bc.start_position)
+        self.assertAlmostEqual(1, aggr_bc.end_position)
+        self.assertAlmostEqual(0, aggr_bc2.start_position)
+        self.assertAlmostEqual(0.146446609406726, aggr_bc2.end_position)
 
         # But topology resulting geometry did not change
         originalgeom = LineString((2.2071067811865470, 0), *originalgeom[1:], srid=settings.SRID)

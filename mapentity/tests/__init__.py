@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import csv
 import hashlib
 import logging
@@ -19,10 +18,10 @@ from django.test import TestCase, LiveServerTestCase
 from django.test.testcases import to_list
 from django.test.utils import override_settings
 from django.utils import html
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.http import http_date
 from django.utils.timezone import utc
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from ..factories import SuperUserFactory
 from ..forms import MapEntityForm
@@ -153,7 +152,7 @@ class MapEntityTest(TestCase):
         self.modelfactory.create()
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
-            self.assertEqual(response.status_code, 200, u"")
+            self.assertEqual(response.status_code, 200, "")
 
     def test_gpx_elevation(self):
         if self.model is None:
@@ -198,7 +197,7 @@ class MapEntityTest(TestCase):
         for line in lines:
             for col in line:
                 # the col should not contains any html tags
-                self.assertEqual(force_text(col), html.strip_tags(force_text(col)))
+                self.assertEqual(force_str(col), html.strip_tags(force_str(col)))
 
     def _post_form(self, url):
         # no data
@@ -215,8 +214,8 @@ class MapEntityTest(TestCase):
         fields_errors = form.errors[list(bad_data.keys())[0]]
         form_errors = to_list(form_error)
         for err in form_errors:
-            self.assertTrue(u"{}".format(err) in fields_errors,
-                            u"'%s' not in %s" % (err, fields_errors))
+            self.assertTrue(str(err) in fields_errors,
+                            "'%s' not in %s" % (err, fields_errors))
 
         response = self.client.post(url, self.get_good_data())
         if response.status_code != 302:
@@ -310,7 +309,11 @@ class MapEntityTest(TestCase):
                                                           modelname=self.model._meta.model_name)
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, [{'id': self.obj.pk, **self.get_expected_json_attrs()}])
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json[0].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, [{'id': self.obj.pk, **self.get_expected_json_attrs()}])
 
     @freeze_time("2020-03-17")
     def test_api_geojson_list_for_model(self):
@@ -325,7 +328,11 @@ class MapEntityTest(TestCase):
                                                              modelname=self.model._meta.model_name)
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json['features'][0]['properties'].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {
             'type': 'FeatureCollection',
             'features': [{
                 'id': self.obj.pk,
@@ -349,7 +356,12 @@ class MapEntityTest(TestCase):
                                                             id=self.obj.pk)
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {'id': self.obj.pk, **self.get_expected_json_attrs()})
+
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json.pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {'id': self.obj.pk, **self.get_expected_json_attrs()})
 
     @freeze_time("2020-03-17")
     def test_api_geojson_detail_for_model(self):
@@ -365,7 +377,11 @@ class MapEntityTest(TestCase):
                                                                     id=self.obj.pk)
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json['properties'].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {
             'id': self.obj.pk,
             'type': 'Feature',
             'geometry': self.expected_json_geom,
@@ -384,7 +400,7 @@ class MapEntityLiveTest(LiveServerTestCase):
     def _pre_setup(self):
         # Workaround https://code.djangoproject.com/ticket/10827
         ContentType.objects.clear_cache()
-        return super(MapEntityLiveTest, self)._pre_setup()
+        return super()._pre_setup()
 
     def url_for(self, path):
         return smart_urljoin(self.live_server_url, path)

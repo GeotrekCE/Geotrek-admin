@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 from geotrek.authent.models import Structure
 from geotrek.authent.models import UserProfile
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 
 
 admin.site.unregister(User)

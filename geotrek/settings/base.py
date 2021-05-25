@@ -28,7 +28,7 @@ def api_bbox(bbox, buffer):
 
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VAR_DIR = '/opt/geotrek-admin/var'
+VAR_DIR = os.getenv('VAR_DIR', '/opt/geotrek-admin/var')
 TMP_DIR = os.path.join(VAR_DIR, 'tmp')
 
 DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
@@ -122,7 +122,7 @@ LANGUAGES = (
     ('it', _('Italian')),
     ('es', _('Spanish')),
 )
-LANGUAGE_CODE = 'fr'
+LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'fr')
 
 MODELTRANSLATION_LANGUAGES = os.getenv('LANGUAGES', 'fr en').split(' ')
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
@@ -238,8 +238,7 @@ MIDDLEWARE = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geotrek.authent.middleware.CorsMiddleware',
     'mapentity.middleware.AutoLoginMiddleware',
 )
@@ -289,10 +288,10 @@ PROJECT_APPS += (
     'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
     'rest_framework_gis',
-    'rest_framework_swagger',
     'embed_video',
     'django_celery_results',
     'colorfield',
+    'mptt',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -337,6 +336,7 @@ THUMBNAIL_ALIASES = {
         'thumbnail': {'size': (150, 150)},
         # Thumbnails for public trek website
         'small-square': {'size': (120, 120), 'crop': True},
+        'apiv2': {'size': (400, 0)},
         'medium': {'size': (800, 800)},
         # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
@@ -384,9 +384,31 @@ MAPENTITY_CONFIG = {
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
     'MAP_FIT_MAX_ZOOM': 16,
-    'GPX_FIELD_NAME': 'geom_3d'
+    'GPX_FIELD_NAME': 'geom_3d',
+    'MAP_STYLES': {
+        'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
+        'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+        'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+        'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+        'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+        'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+        'detail': {'color': '#ffff00'},
+        'others': {'color': '#ffff00'},
+
+        'print': {
+            'path': {'weight': 1},
+            'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                     'arrowColor': 'black', 'arrowSize': 10},
+        }
+    }
 }
 
+MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
 DEFAULT_STRUCTURE_NAME = os.getenv('DEFAULT_STRUCTURE', 'My structure')
 
 VIEWPORT_MARGIN = 0.1  # On list page, around SPATIAL_EXTENT
@@ -449,28 +471,6 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
                                   'MediumVioletRed', 'MediumOrchid', 'Magenta',
                                   'LightSalmon', 'HotPink', 'Fuchsia']}
 
-MAP_STYLES = {
-    'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
-    'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-    'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-    'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-    'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-    'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-
-    'detail': {'color': '#ffff00'},
-    'others': {'color': '#ffff00'},
-
-    'print': {
-        'path': {'weight': 1},
-        'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                 'arrowColor': 'black', 'arrowSize': 10},
-    }
-}
-
 LAYER_PRECISION_LAND = 4  # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
@@ -486,6 +486,8 @@ EXPORT_MAP_IMAGE_SIZE = {
     'poi': (18.2, 18.2),
     'touristiccontent': (18.2, 18.2),
     'touristicevent': (18.2, 18.2),
+    'site': (18.2, 18.2),
+    'course': (18.2, 18.2),
 }
 
 EXPORT_HEADER_IMAGE_SIZE = {
@@ -494,6 +496,8 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'dive': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'site': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'course': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
 COMPLETENESS_FIELDS = {
@@ -524,6 +528,8 @@ REPORT_MODEL_ENABLED = True
 DIVE_MODEL_ENABLED = True
 TOURISTICCONTENT_MODEL_ENABLED = True
 TOURISTICEVENT_MODEL_ENABLED = True
+SITE_MODEL_ENABLED = True
+COURSE_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
 PATH_MODEL_ENABLED = True
 
@@ -538,6 +544,8 @@ TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENA
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
+MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)
 
 SIGNAGE_LINE_ENABLED = False
 
@@ -586,8 +594,8 @@ HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
 TOURISTIC_CONTENTS_API_ORDER = ()
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3')
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3', 'bootstrap4')
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Mobile app_directories
 MOBILE_TILES_URL = [
@@ -602,6 +610,7 @@ MOBILE_TILES_HIGH_ZOOMS = list(range(15, 17))
 MOBILE_CATEGORY_PICTO_SIZE = 32
 MOBILE_POI_PICTO_SIZE = 32
 MOBILE_INFORMATIONDESKTYPE_PICTO_SIZE = 32
+MOBILE_NUMBER_PICTURES_SYNC = 3
 MOBILE_LENGTH_INTERVALS = [
     {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
     {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
@@ -642,6 +651,8 @@ SWAGGER_SETTINGS = {
     'APIS_SORTER': 'alpha',
     'JSON_EDITOR': True
 }
+
+API_IS_PUBLIC = True
 
 SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters (always used)
@@ -741,12 +752,6 @@ THUMBNAIL_COPYRIGHT_FORMAT = ""
 
 THUMBNAIL_COPYRIGHT_SIZE = 15
 
-REST_FRAMEWORK = {
-    'UNICODE_JSON': False,
-    # ensure autoschema compatibility while using deprecated django-rest-swagger
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-}
-
 ENABLED_MOBILE_FILTERS = [
     'practice',
     'difficulty',
@@ -793,7 +798,7 @@ with open(env_settings_file, 'r') as f:
 
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
-if custom_settings_file:
+if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
         exec(f.read())
 

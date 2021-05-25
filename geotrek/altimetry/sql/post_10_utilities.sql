@@ -71,7 +71,7 @@ BEGIN
 
         current_values := 0.0;
 		count_values := 0;
-		
+
 		FOREACH val in ARRAY points[i-step:i+step] LOOP
 			-- val is null when out of array
 			IF val IS NOT NULL
@@ -82,11 +82,11 @@ BEGIN
 		END LOOP;
 
 		points_output := array_append(points_output, ST_MakePoint(ST_X(points[i]), ST_Y(points[i]), (current_values / count_values)::integer));
-		
+
 
     END LOOP;
     --RAISE EXCEPTION 'Nonexistent ID --> %', ST_AsEWKT(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)));
-    
+
     RETURN QUERY SELECT (ST_DumpPoints(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)))).geom as geom;
 
 END;
@@ -142,15 +142,11 @@ BEGIN
         RETURN geom;
     END IF;
 
-    -- Ensure we have a DEM
-    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
-    IF FOUND THEN
-        SELECT ST_Value(rast, 1, geom)::integer INTO ele
-        FROM mnt
-        WHERE ST_Intersects(rast, geom);
-        IF NOT FOUND OR ele IS NULL THEN
-            ele := 0;
-        END IF;
+    SELECT ST_Value(rast, 1, geom)::integer INTO ele
+    FROM altimetry_dem
+    WHERE ST_Intersects(rast, geom);
+    IF NOT FOUND OR ele IS NULL THEN
+        ele := 0;
     END IF;
 
     geom3d := ST_MakePoint(ST_X(geom), ST_Y(geom), ele);
@@ -170,8 +166,7 @@ DECLARE
     result elevation_infos;
 BEGIN
     -- Skip if no DEM (speed-up tests)
-    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
-    IF NOT FOUND THEN
+    IF NOT EXISTS (SELECT 1 FROM altimetry_dem) THEN
         SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
@@ -236,8 +231,7 @@ DECLARE
     previous_geom geometry;
 BEGIN
     -- Skip if no DEM (speed-up tests)
-    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
-    IF NOT FOUND THEN
+    IF NOT EXISTS (SELECT 1 FROM altimetry_dem) THEN
         SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;

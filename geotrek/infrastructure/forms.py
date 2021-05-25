@@ -6,7 +6,7 @@ from geotrek.core.forms import TopologyForm
 from leaflet.forms.widgets import LeafletWidget
 
 from .models import Infrastructure
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from crispy_forms.layout import Div
 
@@ -24,7 +24,7 @@ else:
         geomfields = ['geom']
 
         def __init__(self, *args, **kwargs):
-            super(BaseInfrastructureForm, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
             self.fields['geom'].widget.modifiable = modifiable

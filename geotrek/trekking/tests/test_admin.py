@@ -36,7 +36,7 @@ class DifficultyLevelTest(AuthentFixturesTest):
                      'csrfmiddlewaretoken': csrf}
 
         response = self.client.post(reverse('admin:trekking_difficultylevel_add'), post_data)
-        error_msg = "Difficulty with id &#39;%s&#39; already exists" % self.difficulty.pk
+        error_msg = "Difficulty with id &#x27;%s&#x27; already exists" % self.difficulty.pk
         self.assertContains(response, error_msg)
 
     def test_migrate_trek_difficulty(self):

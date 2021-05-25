@@ -1,7 +1,10 @@
 import json
 
 from django import template
+from django.contrib.gis.db.models import Extent
+from django.contrib.gis.db.models.functions import Envelope, Transform
 from django.conf import settings
+from django.db.models.functions import Coalesce
 from django.urls import reverse
 
 from geotrek.zoning.models import District, City, RestrictedArea, RestrictedAreaType
@@ -11,24 +14,18 @@ register = template.Library()
 
 
 def get_bbox_cities():
-    return [
-        (str(city) or city.pk, city.geom.transform(settings.API_SRID, clone=True).extent)
-        for city in City.objects.all()
-    ]
+    return City.objects.annotate(label=Coalesce("name", "code"), extent=Extent(Transform(Envelope('geom'), settings.API_SRID))).\
+        values_list('label', 'extent').order_by('label')
 
 
 def get_bbox_districts():
-    return [
-        (str(district) or district.pk, district.geom.transform(settings.API_SRID, clone=True).extent)
-        for district in District.objects.all()
-    ]
+    return District.objects.annotate(extent=Extent(Transform(Envelope('geom'), settings.API_SRID))).\
+        values_list('name', 'extent').order_by('name')
 
 
 def get_bbox_areas():
-    return [
-        (str(area) or area.pk, area.geom.transform(settings.API_SRID, clone=True).extent)
-        for area in RestrictedArea.objects.all()
-    ]
+    return RestrictedArea.objects.annotate(extent=Extent(Transform(Envelope('geom'), settings.API_SRID))).\
+        values_list('name', 'extent').order_by('name')
 
 
 @register.inclusion_tag('zoning/_bbox_fragment.html')

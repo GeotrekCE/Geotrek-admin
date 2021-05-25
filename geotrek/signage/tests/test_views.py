@@ -277,7 +277,6 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         self.assertNotContains(response, 'option value="" selected>None</option')
 
     def test_implantation_year_filter(self):
-        filter = SignageFilterSet(data={'implantation_year': 2015})
         self.login()
         model = self.factory._meta.model
         i = SignageFactory.create(implantation_year=2015)
@@ -287,6 +286,7 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         self.assertContains(response, '<option value="2015">2015</option>')
         self.assertContains(response, '<option value="2016">2016</option>')
 
+        filter = SignageFilterSet(data={'implantation_year': [2015]})
         self.assertTrue(i in filter.qs)
         self.assertFalse(i2 in filter.qs)
 

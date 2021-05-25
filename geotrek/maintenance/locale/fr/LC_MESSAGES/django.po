@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2020-12-16 11:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,24 @@ msgstr "Aménagement"
 
 msgid "Signage"
 msgstr "Signalétique"
+
+msgid "Blade"
+msgstr "Lame"
+
+msgid "Path"
+msgstr "Tronçon"
+
+msgid "Trek"
+msgstr "Itinéraire"
+
+msgid "POI"
+msgstr "POI"
+
+msgid "Service"
+msgstr "Service"
+
+msgid "Trail"
+msgstr "Sentier"
 
 msgid "On"
 msgstr "Sur"
@@ -53,9 +71,11 @@ msgstr "Avancé"
 msgid "Mandays"
 msgstr "Jours-Hommes"
 
-#, python-format
-msgid "On %s"
-msgstr "Sur %s"
+msgid "Paths"
+msgstr "Tronçons"
+
+msgid "On {}"
+msgstr "Sur {}"
 
 msgid "Fundings"
 msgstr "Financements"
@@ -93,9 +113,6 @@ msgstr "Coût héliportage"
 msgid "Subcontract cost"
 msgstr "Coût sous-traitance"
 
-msgid "Interventions"
-msgstr "Interventions"
-
 msgid "3D Length"
 msgstr "Longueur 3D"
 
@@ -120,17 +137,23 @@ msgstr "Descriptif"
 msgid "Remarks and notes"
 msgstr "Remarques et notes"
 
+msgid "External id"
+msgstr "ID externe"
+
 msgid "Intervention"
 msgstr "Intervention"
 
-msgid "Path"
-msgstr "Tronçon"
+msgid "Interventions"
+msgstr "Interventions"
 
 msgid "Mandays cost"
 msgstr "Coût jours-hommes"
 
 msgid "Total cost"
 msgstr "Coût total"
+
+msgid "Display order"
+msgstr "Ordre d'affichage"
 
 msgid "Intervention's status"
 msgstr "Statut"
@@ -297,6 +320,3 @@ msgstr "Ajouter un financement"
 
 msgid "No intervention related."
 msgstr "Pas d'intervention liée."
-
-msgid "Display order"
-msgstr "Ordre d'affichage"

@@ -51,7 +51,7 @@ class VarTmpTestCase(TestCase):
 class SyncMobileTilesTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileTilesTest, cls).setUpClass()
+        super().setUpClass()
         translation.deactivate()
 
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
@@ -131,7 +131,7 @@ class SyncMobileTilesTest(VarTmpTestCase):
 class SyncMobileFailTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileFailTest, cls).setUpClass()
+        super().setUpClass()
         translation.deactivate()
 
     def test_fail_directory_not_empty(self):
@@ -209,7 +209,7 @@ class SyncMobileFailTest(VarTmpTestCase):
 class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileSpecificOptionsTest, cls).setUpClass()
+        super().setUpClass()
         FlatPageFactory.create(published_fr=True)
         FlatPageFactory.create(published_en=True)
 
@@ -233,7 +233,7 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
 class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileFlatpageTest, cls).setUpClass()
+        super().setUpClass()
         translation.deactivate()
 
         cls.portals = []
@@ -309,7 +309,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
 class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileSettingsTest, cls).setUpClass()
+        super().setUpClass()
         translation.deactivate()
 
     def test_sync_settings(self):
@@ -353,7 +353,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
 class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncMobileTreksTest, cls).setUpClass()
+        super().setUpClass()
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
         picto_desk = get_dummy_uploaded_image()
@@ -464,13 +464,13 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         self.assertTrue(os.path.exists(os.path.join('var/tmp/nolang', str(self.trek_1.pk), 'media',
                                                     'upload')))
 
-    def test_medias_treks_one_picture(self):
+    def test_medias_treks_multiple_picture(self):
         output = StringIO()
         management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
-        self.assertEqual(1, len(os.listdir(os.path.join('var/tmp/nolang', str(self.trek_1.pk),
+        self.assertEqual(2, len(os.listdir(os.path.join('var/tmp/nolang', str(self.trek_1.pk),
                                                         'media/paperclip/trekking_trek', str(self.trek_1.pk)))))
-        self.assertEqual(1, len(os.listdir(os.path.join('var/tmp/nolang', str(self.trek_1.pk),
+        self.assertEqual(2, len(os.listdir(os.path.join('var/tmp/nolang', str(self.trek_1.pk),
                                                         'media/paperclip/trekking_poi', str(self.poi_1.pk)))))
         self.assertEqual(1, len(os.listdir(os.path.join('var/tmp/nolang', str(self.trek_1.pk),
                                                         'media/paperclip/tourism_touristiccontent',
@@ -482,13 +482,32 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         self.assertEqual(2, len(os.listdir(os.path.join('var/tmp/nolang', str(self.trek_1.pk), 'media/upload'))))
         with open(os.path.join('var/tmp/en', str(self.trek_1.pk), 'trek.geojson'), 'r') as f:
             trek_geojson = json.load(f)
-            # Check inside file generated we have only one picture.
+            # Check inside file generated we have 2 pictures
+            self.assertEqual(len(trek_geojson['properties']['pictures']), 2)
+
+        with open(os.path.join('var/tmp/en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
+            poi_geojson = json.load(f)
+            # Check inside file generated we have 2 pictures
+            self.assertEqual(len(poi_geojson['features'][0]['properties']['pictures']), 2)
+
+    @override_settings(MOBILE_NUMBER_PICTURES_SYNC=1)
+    def test_medias_treks_configuration_number_picture(self):
+        output = StringIO()
+        management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        self.assertEqual(1, len(os.listdir(os.path.join('var/tmp/nolang', str(self.trek_1.pk),
+                                                        'media/paperclip/trekking_trek', str(self.trek_1.pk)))))
+        self.assertEqual(1, len(os.listdir(os.path.join('var/tmp/nolang', str(self.trek_1.pk),
+                                                        'media/paperclip/trekking_poi', str(self.poi_1.pk)))))
+        with open(os.path.join('var/tmp/en', str(self.trek_1.pk), 'trek.geojson'), 'r') as f:
+            trek_geojson = json.load(f)
+            # Check inside file generated we have only one picture
             self.assertEqual(len(trek_geojson['properties']['pictures']), 1)
 
         with open(os.path.join('var/tmp/en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
-            trek_geojson = json.load(f)
-            # Check inside file generated we have only one picture.
-            self.assertEqual(len(trek_geojson['features'][0]['properties']['pictures']), 1)
+            poi_geojson = json.load(f)
+            # Check inside file generated we have only one picture
+            self.assertEqual(len(poi_geojson['features'][0]['properties']['pictures']), 1)
 
     @mock.patch('geotrek.api.mobile.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):

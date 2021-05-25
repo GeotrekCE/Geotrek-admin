@@ -1,5 +1,4 @@
-from __future__ import unicode_literals
-
+from io import BytesIO
 import json
 import logging
 import mimetypes
@@ -25,7 +24,7 @@ from mapentity import models as mapentity_models
 from .mixins import JSONResponseMixin, FilterListMixin, ModelViewMixin
 from ..decorators import view_permission_required
 from ..helpers import capture_image
-from ..settings import app_settings, _MAP_STYLES
+from ..settings import app_settings
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +37,7 @@ def serve_attachment(request, path):
     original_path = re.sub(r'\.\d+x\d+_q\d+(_crop)?\.(jpg|png|jpeg)$', '', path, count=1, flags=re.IGNORECASE)
     attachment = get_object_or_404(get_attachment_model(), attachment_file=original_path)
     obj = attachment.content_object
-    if not issubclass(obj._meta.model, mapentity_models.MapEntityMixin):
+    if not hasattr(obj._meta.model, 'attachments'):
         raise Http404
     if not obj.is_public():
         if not request.user.is_authenticated:
@@ -76,7 +75,7 @@ class JSSettings(JSONResponseMixin, TemplateView):
         dictsettings['debug'] = settings.DEBUG
         dictsettings['map'] = dict(
             extent=getattr(settings, 'LEAFLET_CONFIG', {}).get('SPATIAL_EXTENT'),
-            styles=_MAP_STYLES,
+            styles=app_settings['MAP_STYLES'],
         )
 
         # URLs
@@ -114,7 +113,7 @@ class BaseListView(FilterListMixin, ModelViewMixin):
     columns = None
 
     def __init__(self, *args, **kwargs):
-        super(BaseListView, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if self.columns is None:
             # All model fields except geometries
@@ -126,7 +125,7 @@ class BaseListView(FilterListMixin, ModelViewMixin):
 
     @view_permission_required()
     def dispatch(self, *args, **kwargs):
-        return super(BaseListView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 @csrf_exempt
@@ -161,8 +160,9 @@ def map_screenshot(request):
         width = context.get('viewport', {}).get('width')
         height = context.get('viewport', {}).get('height')
 
-        response = HttpResponse()
-        capture_image(map_url, response, width=width, height=height, selector=selector)
+        stream = BytesIO()
+        capture_image(map_url, stream, width=width, height=height, selector=selector)
+        response = HttpResponse(stream.getvalue(), content_type='image/png')
         response['Content-Disposition'] = 'attachment; filename=%s.png' % datetime.now().strftime('%Y%m%d-%H%M%S')
         return response
 

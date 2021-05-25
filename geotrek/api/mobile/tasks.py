@@ -1,11 +1,9 @@
-# -*- encoding: UTF-8 -
-
 import os
 
 from celery import shared_task, current_task
 from django.conf import settings
 from django.core.management import call_command
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from geotrek.common.tasks import GeotrekImportTask
 
@@ -27,7 +25,7 @@ def launch_sync_mobile(*args, **kwargs):
                 'name': current_task.name,
                 'current': 5,
                 'total': 100,
-                'infos': u"{}".format(_(u"Init sync ..."))
+                'infos': _("Init sync ..."),
             }
         )
         sync_mobile_options = {

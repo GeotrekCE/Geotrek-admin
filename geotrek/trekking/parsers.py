@@ -1,11 +1,11 @@
 from django.contrib.gis.geos import Point
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from geotrek.common.parsers import ShapeParser, AttachmentParserMixin
 from geotrek.trekking.models import Trek
 
 
-class DurationParserMixin(object):
+class DurationParserMixin:
     def filter_duration(self, src, val):
         val = val.upper().replace(',', '.')
         try:

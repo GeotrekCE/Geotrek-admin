@@ -12,7 +12,7 @@ from mapentity.factories import UserFactory
 from django.contrib.auth.models import Permission
 
 
-class PracticeFactory(factory.DjangoModelFactory):
+class PracticeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Practice
 
@@ -20,7 +20,7 @@ class PracticeFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image()
 
 
-class LevelFactory(factory.DjangoModelFactory):
+class LevelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Level
 
@@ -81,7 +81,7 @@ class DivingManagerFactory(UserFactory):
             obj.user_permissions.add(perm)
 
 
-class DifficultyFactory(factory.DjangoModelFactory):
+class DifficultyFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Difficulty
 

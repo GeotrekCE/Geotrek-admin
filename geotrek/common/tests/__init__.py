@@ -6,7 +6,7 @@ from django.contrib.auth.models import Permission, User
 from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.conf import settings
 
 # Workaround https://code.djangoproject.com/ticket/22865
@@ -20,10 +20,10 @@ from geotrek.authent.factories import StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
 
-class TranslationResetMixin(object):
+class TranslationResetMixin:
     def setUp(self):
         translation.deactivate()
-        super(TranslationResetMixin, self).setUp()
+        super().setUp()
 
 
 class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):

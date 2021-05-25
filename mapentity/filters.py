@@ -1,8 +1,8 @@
-from django.db.models.fields.related import ManyToOneRel
+from django.db.models.fields.related import ManyToOneRel, ForeignKey
 from django.conf import settings
 
-from django_filters import FilterSet, Filter
-from django_filters.filterset import get_model_field
+from django_filters import FilterSet, Filter, ModelMultipleChoiceFilter
+from django_filters.filterset import get_model_field, remote_queryset
 from django.contrib.gis import forms
 
 from .settings import app_settings, API_SRID
@@ -17,7 +17,7 @@ class PolygonFilter(Filter):
         kwargs.setdefault('field_name', app_settings['GEOM_FIELD_NAME'])
         kwargs.setdefault('widget', HiddenGeometryWidget)
         kwargs.setdefault('lookup_expr', 'intersects')
-        super(PolygonFilter, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class PythonPolygonFilter(PolygonFilter):
@@ -41,7 +41,7 @@ class PythonPolygonFilter(PolygonFilter):
 
 class BaseMapEntityFilterSet(FilterSet):
     def __init__(self, *args, **kwargs):
-        super(BaseMapEntityFilterSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.__bypass_labels()
 
     def __bypass_labels(self):
@@ -56,7 +56,6 @@ class BaseMapEntityFilterSet(FilterSet):
                 for i, widget in enumerate(field.widget.widgets):
                     self.__set_placeholder(field.fields[i], widget)
             elif isinstance(field, forms.ChoiceField):
-                field.empty_label = field.label
                 self.__set_placeholder(field, field.widget)
             elif isinstance(field, forms.NullBooleanField):
                 choices = [(u'1', field.label)] + field.widget.choices[1:]
@@ -94,3 +93,11 @@ class MapEntityFilterSet(BaseMapEntityFilterSet):
 
     class Meta:
         fields = ['bbox']
+        filter_overrides = {
+            ForeignKey: {
+                'filter_class': ModelMultipleChoiceFilter,
+                'extra': lambda f: {
+                    'queryset': remote_queryset(f),
+                }
+            },
+        }

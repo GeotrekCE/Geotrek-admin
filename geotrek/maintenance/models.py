@@ -1,10 +1,10 @@
 import os
 from datetime import datetime
 
-from django.db.models import Q
+from django.db.models import Q, Min, Max
 from django.db.models.functions import ExtractYear
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
@@ -20,18 +20,19 @@ from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPrope
 from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
 class InterventionManager(NoDeleteManager):
-    def all_years(self):
+    def year_choices(self):
         return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
-            .order_by('-year').values_list('year', flat=True).distinct()
+            .order_by('-year').distinct().values_list('year', 'year')
 
 
-class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     target_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
@@ -81,12 +82,12 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         verbose_name_plural = _("Interventions")
 
     def __init__(self, *args, **kwargs):
-        super(Intervention, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._geom = None
 
     def default_stake(self):
         stake = None
-        if self.target:
+        if self.target and isinstance(self.target, Topology):
             for path in self.target.paths.exclude(stake=None):
                 if path.stake > stake:
                     stake = path.stake
@@ -107,13 +108,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         if self.stake is None:
             self.stake = self.default_stake()
 
-        super(Intervention, self).save(*args, **kwargs)
-
-        # Set kind of Intervention topology
-        if self.target and not self.on_existing_target:
-            topology_kind = self._meta.object_name.upper()
-            self.target.kind = topology_kind
-            self.target.save(update_fields=['kind'])
+        super().save(*args, **kwargs)
 
         # Invalidate project map
         if self.project:
@@ -123,10 +118,6 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                 pass
 
         self.reload()
-
-    @property
-    def on_existing_target(self):
-        return bool(self.target)
 
     @classproperty
     def target_verbose_name(cls):
@@ -146,12 +137,10 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def target_csv_display(self):
-        if self.on_existing_target:
-            return "%s: %s (%s)" % (
-                _(self.target.kind.capitalize()),
-                self.target,
-                self.target.pk)
-        return ''
+        return "%s: %s (%s)" % (
+            _(self.target._meta.verbose_name),
+            self.target,
+            self.target.pk)
 
     @property
     def in_project(self):
@@ -190,9 +179,9 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def total_cost(self):
         return self.total_cost_mandays + \
-            self.material_cost or 0 + \
-            self.heliport_cost or 0 + \
-            self.subcontract_cost or 0
+            (self.material_cost or 0) + \
+            (self.heliport_cost or 0) + \
+            (self.subcontract_cost or 0)
 
     @classproperty
     def total_cost_verbose_name(cls):
@@ -236,12 +225,18 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @classmethod
     def get_interventions(cls, obj):
         blade_content_type = ContentType.objects.get_for_model(Blade)
+        non_topology_content_types = [blade_content_type]
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            non_topology_content_types += [
+                ContentType.objects.get_by_natural_key('outdoor', 'site'),
+                ContentType.objects.get_by_natural_key('outdoor', 'course'),
+            ]
         if settings.TREKKING_TOPOLOGY_ENABLED:
             topologies = list(Topology.overlapping(obj).values_list('pk', flat=True))
         else:
             area = obj.geom.buffer(settings.INTERVENTION_INTERSECTION_MARGIN)
             topologies = list(Topology.objects.existing().filter(geom__intersects=area).values_list('pk', flat=True))
-        qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
+        qs = Q(target_id__in=topologies) & ~Q(target_type__in=non_topology_content_types)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
             qs |= Q(target_id__in=blades, target_type=blade_content_type)
@@ -250,8 +245,14 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @classmethod
     def path_interventions(cls, path):
         blade_content_type = ContentType.objects.get_for_model(Blade)
+        non_topology_content_types = [blade_content_type]
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            non_topology_content_types += [
+                ContentType.objects.get_by_natural_key('outdoor', 'site'),
+                ContentType.objects.get_by_natural_key('outdoor', 'course'),
+            ]
         topologies = list(Topology.objects.filter(aggregations__path=path).values_list('pk', flat=True))
-        qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
+        qs = Q(target_id__in=topologies) & ~Q(target_type__in=non_topology_content_types)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
             qs |= Q(target_id__in=blades, target_type=blade_content_type)
@@ -276,6 +277,10 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         if self.target_type == ContentType.objects.get_for_model(Infrastructure):
             return [self.target]
         return []
+
+    def distance(self, to_cls):
+        """Distance to associate this intervention to another class"""
+        return settings.MAINTENANCE_INTERSECTION_MARGIN
 
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))
@@ -365,14 +370,14 @@ class ManDay(models.Model):
 
 
 class ProjectManager(NoDeleteManager):
-    def all_years(self):
-        all_years = list(self.existing().exclude(begin_year=None).values_list('begin_year', flat=True))
-        all_years += list(self.existing().exclude(end_year=None).values_list('end_year', flat=True))
-        all_years.sort(reverse=True)
-        return all_years
+    def year_choices(self):
+        bounds = self.existing().aggregate(min=Min('begin_year'), max=Max('end_year'))
+        if not bounds['min'] or not bounds['max']:
+            return []
+        return [(year, year) for year in range(bounds['min'], bounds['max'] + 1)]
 
 
-class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
+class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
               StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
@@ -405,7 +410,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
         ordering = ['-begin_year', 'name']
 
     def __init__(self, *args, **kwargs):
-        super(Project, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._geom = None
 
     @property

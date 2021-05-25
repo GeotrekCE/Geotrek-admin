@@ -5,7 +5,7 @@ from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 from tinymce.widgets import TinyMCE
 
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from geotrek.tourism import models as tourism_models
 
 if 'modeltranslation' in settings.INSTALLED_APPS:

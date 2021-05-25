@@ -8,7 +8,7 @@ from django.db import transaction
 
 from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
-from geotrek.core.helpers import TopologyHelper
+from geotrek.core.models import Topology
 from geotrek.infrastructure.models import (InfrastructureType,
                                            InfrastructureCondition, Infrastructure)
 from django.conf import settings
@@ -50,11 +50,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
-        try:
-            from osgeo import gdal, ogr, osr  # NOQA
-
-        except ImportError:
-            raise CommandError('GDAL Python bindings are not available. Can not proceed.')
 
         filename = options['point_layer']
 
@@ -225,7 +220,7 @@ class Command(BaseCommand):
                 geometry.coord_dim = 2
                 geometry = geometry.transform(settings.API_SRID, clone=True)
                 serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-                topology = TopologyHelper.deserialize(serialized)
+                topology = Topology.deserialize(serialized)
                 infra.mutate(topology)
             except IndexError:
                 raise GEOSException('Invalid Geometry type. You need 1 path')

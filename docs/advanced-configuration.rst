@@ -17,6 +17,12 @@ After any change in ``custom.py``, run:
 
     sudo service geotrek restart
 
+Sometimes you must also run :
+
+::
+
+    sudo dpkg-reconfigure -u geotrek-admin
+
 .. note ::
 
     Don't override the ``os.getenv()`` settings as they are managed with Basic configuration.
@@ -124,9 +130,9 @@ In order to activate suricate reports:
 
     .. code-block :: python
 
-        geotrek loaddata geotrek/feedback/fixtures/basic.json
+        geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
-3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization>`)
+3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization-section>`)
 
 
 Anonymize feedback reports
@@ -172,6 +178,11 @@ The following settings are related to sensitive areas:
     # Buffer around treks to intersects sensitive areas
     SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
 
+To take these changes into account, you need to run :
+
+::
+
+    sudo dpkg-reconfigure -u geotrek-admin
 
 Diving
 ------
@@ -184,14 +195,52 @@ add the following code:
     # Enable diving module
     INSTALLED_APPS += ('geotrek.diving', )
 
-Then run ``sudo geotrek migrate; sudo service geotrek restart``.
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
 
 ::
 
-    sudo geotrek loaddata geotrek/diving/fixtures/basic.json
-    cp /opt/geotrek-admin/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
+    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+
+Outdoor
+-------
+
+In order to enable outdoor module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable outdoor module
+    INSTALLED_APPS += ('geotrek.outdoor', )
+
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
+
+You can also insert outdoor minimal data:
+
+::
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+
+
+Note: outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
+You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
+https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
+
+Swagger
+-------
+
+In order to enable swagger module to auto-document API ``/api/v2/``, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable API v2 documentation
+    INSTALLED_APPS += ('drf_yasg', )
+
+Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
+
 
 WYSIWYG editor configuration
 ----------------------------
@@ -316,13 +365,13 @@ layer style.
 
 .. code-block :: python
 
-    MAP_STYLES['path'] = {'color': 'red', 'weight': 5}
+    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
 
 Or change just one parameter (the opacity for example) :
 
 .. code-block :: python
 
-    MAP_STYLES['city']['opacity'] = 0.8
+    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
 
 Regarding colors that depend from database content, such as land layers
@@ -535,7 +584,7 @@ apparence of objects in public trek PDF exports, use the following setting:
 
 ::
 
-    MAP_STYLES['print']['path'] = {'weight': 3}
+    MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
 
 See *Leaflet* reference documentation for detail about layers apparence.
 
@@ -691,6 +740,15 @@ Boundingbox of your project : x minimum , y minimum , x max, y max
 *If you extend spatial extent, don't forget to load a new DEM that covers all the zone.*
 *If you shrink spatial extent, be sure there is no element in the removed zone or you will no more be able to see and edit it.*
 
+**API**
+
+::
+
+    API_IS_PUBLIC = True
+
+Choose if you want the API V2 to be available for everyone without authentication. This API provides access to promotion content (Treks, POIs, Touristic Contents ...). Set to False if Geotrek is intended to be used only for managing content and not promoting them.
+Note that this setting does not impact the Path endpoints, which means that the Paths informations will always need authentication to be display in the API, regardless of this setting.
+
 **Dynamic segmentation**
 
 ::
@@ -823,20 +881,21 @@ Minimum distance to merge 2 paths.
 
 ::
 
-    MAP_STYLES = {'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
-                  'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-                  'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-                  'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-                  'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-                  'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-                  'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-                  'print': {'path': {'weight': 1},
-                            'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                                     'arrowColor': 'black', 'arrowSize': 10},}
-                  }
+    MAPENTITY_CONFIG['MAP_STYLES'] = {
+        'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+        'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+        'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+        'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+        'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+        'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+        'print': {'path': {'weight': 1},
+                  'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                           'arrowColor': 'black', 'arrowSize': 10},}
+    }
 
 Color of the different layers on the map
 
@@ -844,8 +903,8 @@ Color of the different layers on the map
 
     ::
 
-        MAP_STYLES['path'] = {'weigth': 2, 'opacity': 2.0, 'color': 'yellow'}*
-        MAP_STYLES['city']['opacity'] = 0.8*
+        MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'weigth': 2, 'opacity': 2.0, 'color': 'yellow'}*
+        MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8*
 
     *For color: use color picker for example*
 
@@ -873,7 +932,7 @@ Color of the different layers on the top right for landing.
     ::
 
         COLORS_POOL['restrictedarea'] = ['plum', 'violet', 'yellow', 'red', '#79a8f3']
-        MAP_STYLES['city']['opacity'] = 0.8*
+        MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8*
 
     *For color: use color picker for example*
 
@@ -1171,7 +1230,7 @@ Order of all the objects without practices on Geotrek-rando website
 
     SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 
-Path on your server wehre the datas for mobile
+Path on your server where the datas for mobile will be saved
 
     *If you want to modify it, do not forget to import os at the top of the file.*
     *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
@@ -1183,6 +1242,14 @@ Path on your server wehre the datas for mobile
     SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
 Options of the sync_mobile command
+
+|
+
+::
+
+    MOBILE_NUMBER_PICTURES_SYNC = 3
+
+Number max of pictures that will be displayed and synchronized for each object (trek, poi, etc.) in the mobile app.
 
 |
 
@@ -1292,8 +1359,8 @@ It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 
 **Custom SQL**
 
-Put your custom SQL in a file name `/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql
+Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``
 
 * app name is the name of the Django application, eg. trekking or tourism
-* pre_… scripts are executed before Django migrations and post_… scripts after
+* ``pre_``… scripts are executed before Django migrations and ``post_``… scripts after
 * script are executed in INSTALLED_APPS order, then by alphabetical order of script names

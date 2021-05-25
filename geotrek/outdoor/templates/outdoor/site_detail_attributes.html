@@ -1,0 +1,206 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n mapentity_tags outdoor_tags %}
+
+{% block attributes %}
+    <h3>{% trans "Tree view" %}</h3>
+    {% for ancestor in object.get_ancestors %}
+        <ul>
+            <li>
+                <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
+    {% endfor %}
+                <ul>
+                    <li>
+                        <b>{{ object }}</b>
+                        <ul>
+                            {% for child in object.children.all %}
+                                <li>
+                                    <a href="{% url 'outdoor:site_detail' child.pk %}">{{ child }}</a>
+                                </li>
+                            {% endfor %}
+                            {% for course in object.courses.all %}
+                                <li>
+                                    <a href="{% url 'outdoor:course_detail' course.pk %}">{{ course }}</a>
+                                </li>
+                            {% endfor %}
+                            <li>
+                                <a href="{% url 'outdoor:site_add' %}?site={{ object.pk }}">
+                                    + <i>{% trans "Add a child site" %}</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'outdoor:course_add' %}?site={{ object.pk }}">
+                                    + <i>{% trans "Add a course" %}</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% if object.parent %}
+                    <li>
+                        <a href="{% url 'outdoor:site_add' %}?site={{ object.parent.pk }}">
+                            + <i>{% trans "Add a brother site" %}</i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+    {% for ancestor in object.get_ancestors %}
+            </li>
+        </ul>
+    {% endfor %}
+
+    <h3>{% trans "Attributes" %}</h3>
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Parents" %}</th>
+            <td>{% if object.parent %}{% valuelist object.get_ancestors field='name_display' %}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Children" %}</th>
+            <td>{% if object.children.exists %}{% valuelist object.get_children field='name_display' %}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Sectors" %}</th>
+            <td>
+                {% for sector in object.super_sectors %}
+                    {% if forloop.first %}<ul>{% endif %}
+                        <li{% if sector.pk != object.practice.sector.pk %} style="font-style: italic;"{% endif %}>{{ sector }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Practices" %}</th>
+            <td>
+                {% for practice in object.super_practices %}
+                    {% if forloop.first %}<ul>{% endif %}
+                        <li{% if practice.pk != object.practice.pk %} style="font-style: italic;"{% endif %}>{{ practice }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description_teaser" }}</th>
+            <td>{% if object.description_teaser %}{{ object.description_teaser|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"ambiance" }}</th>
+            <td>{% if object.ambiance %}{{ object.ambiance|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"advice" }}</th>
+            <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        {% for rating in object.ratings_min.all %}
+            <tr>
+                <th>{{ rating.scale.name }} min</th>
+                <td>{{ rating.name }}</td>
+            </tr>
+        {% endfor %}
+        {% for rating in object.ratings_max.all %}
+            <tr>
+                <th>{{ rating.scale.name }} max</th>
+                <td>{{ rating.name }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th>{{ object|verbose:"period" }}</th>
+            <td>{% if object.period %}{{ object.period }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"orientation" }}</th>
+            <td>
+                {% for orientation in object.super_orientation %}
+                    <span{% if orientation not in object.orientation %} style="font-style: italic;"{% endif %}>{{ orientation|orientation_display }}{% if not forloop.last %}</span>,{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"wind" }}</th>
+            <td>
+                {% for wind in object.super_wind %}
+                    <span{% if wind not in object.wind %} style="font-style: italic;"{% endif %}>{{ wind|wind_display }}{% if not forloop.last %}</span>,{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"labels" }}</th>
+            <td>
+                {% valuelist object.labels.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"themes" }}</th>
+            <td>
+                {% valuelist object.themes.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"information_desks" }}</th>
+            <td>
+                {% valuelist object.information_desks.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"web_links" }}</th>
+            <td>
+                {% valuelist object.web_links.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"portal" }}</th>
+            <td>
+                {% valuelist object.portal.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"source" }}</th>
+            <td>
+                {% valuelist object.source.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Managers" %}</th>
+            <td>
+                {% for manager in object.super_managers %}
+                    {% if forloop.first %}<ul>{% endif %}
+                        <li{% if manager not in object.managers.all %} style="font-style: italic;"{% endif %}>{{ manager }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        {% include "common/publication_info_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+
+    {{ block.super }}
+{% endblock attributes %}

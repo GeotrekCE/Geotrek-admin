@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 12:11+0200\n"
+"POT-Creation-Date: 2020-11-12 14:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 #: ../../docker.rst:5
 msgid "DOCKER"
@@ -35,22 +35,49 @@ msgstr ""
 
 #: ../../docker.rst:15
 msgid ""
-"1. Install docker and docker-compose, either from your distribution or "
-"from upstream packages (cf. https://docs.docker.com/install/) 1. Download"
-" the code from https://github.com/GeotrekCE/Geotrek-admin/releases"
+"Install Docker and Docker Compose, either from your distribution or from "
+"upstream packages (cf. https://docs.docker.com/install/)"
 msgstr ""
 
-#: ../../docker.rst:18
-msgid "or checkout it with git from https://github.com/GeotrekCE/Geotrek-admin/"
+#: ../../docker.rst:17
+msgid ""
+"Download the code from https://github.com/GeotrekCE/Geotrek-"
+"admin/releases or checkout it with git from https://github.com/GeotrekCE"
+"/Geotrek-admin/"
 msgstr ""
 
 #: ../../docker.rst:19
+msgid "Unzip the tarball"
+msgstr ""
+
+#: ../../docker.rst:20
 msgid ""
-"1. Unzip the tarball 1. Copy docker-compose-prod.yml to docker-"
-"compose.yml and edit to feed your needs if necessary 1. Copy .env-"
-"prod.dist to .env and edit to feed your needs if necessary 1. Create user"
-" and database, enable postgis extension 1. Run docker-compose run --rm "
-"web update.sh 1. Run docker-compose up"
+"Copy ``docker-compose-prod.yml`` to ``docker-compose.yml`` and edit to "
+"feed your needs if necessary"
+msgstr ""
+
+#: ../../docker.rst:21
+msgid ""
+"Copy ``.env-prod.dist`` to ``.env`` and edit to feed your needs if "
+"necessary"
+msgstr ""
+
+#: ../../docker.rst:22
+msgid "Create user and database, enable PostGIS extension"
+msgstr ""
+
+#: ../../docker.rst:23
+msgid "Run ``docker-compose run --rm web update.sh``"
+msgstr ""
+
+#: ../../docker.rst:24
+msgid "Run ``docker-compose up``"
+msgstr ""
+
+#: ../../docker.rst:25
+msgid ""
+"Install NGINX (or equivalent) and add a configuration file (taking "
+"inspiration from ``nginx.conf.in``)"
 msgstr ""
 
 #: ../../docker.rst:28
@@ -59,7 +86,6 @@ msgstr ""
 
 #: ../../docker.rst:30
 msgid ""
-"Replace `sudo geotrek …` command by `cd <install directory>; docker-"
-"compose run --rm ./manage.py …`"
+"Replace ``sudo geotrek …`` commands by ``cd <install directory>; docker-"
+"compose run --rm web ./manage.py …``"
 msgstr ""
-
