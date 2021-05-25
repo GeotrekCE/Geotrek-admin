@@ -20,3 +20,17 @@ class StandardResultsSetPagination(PageNumberPagination):
             ]))
         else:
             return super(StandardResultsSetPagination, self).get_paginated_response(data)
+
+    def get_page_size(self):
+        if self.request.query_params.get('no_page_size'):
+            return None
+        else:
+            return 100
+
+
+    def get_max_page_size(self):
+        if self.request.query_params.get('no_page_size'):
+            return None
+        else:
+            return 1000
+
