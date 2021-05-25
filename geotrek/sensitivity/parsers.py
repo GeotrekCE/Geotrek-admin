@@ -8,7 +8,7 @@ from .models import SensitiveArea, Species, SportPractice
 class BiodivParser(Parser):
     model = SensitiveArea
     label = "Biodiv'Sports"
-    url = 'https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore&page_size=100'
+    url = 'https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore'
     eid = 'eid'
     separator = None
     delete = True
