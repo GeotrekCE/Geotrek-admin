@@ -63,11 +63,15 @@ class InterventionForm(CommonForm):
 
     fieldslayout = [
         Div(
-            HTML("""
-               <ul class="nav nav-tabs">
-                   <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
-                   <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-               </ul>""" % (_("Main"), _("Advanced"))),
+            HTML(
+                """<ul class="nav nav-tabs">
+    <li id="tab-main" class="nav-item">
+        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {0}</a>
+    </li>
+    <li id="tab-advanced" class="nav-item">
+        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
+    </li>
+</ul>""".format(_("Main"), _("Advanced"))),
             Div(
                 Div(
                     'structure',

@@ -1211,27 +1211,30 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         url = "/trek/{pk}/".format(pk=self.content1.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<a class="btn btn-primary pull-right" '
+                            '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
-                            'Update</a>'.format(pk=self.content1.pk))
+                            '<i class="bi bi-pencil-square"></i> '
+                            'Update</a>'.format(pk=self.content1.pk),
+                            html=True)
 
     def test_edit_button_other_structure(self):
         url = "/trek/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<span class="btn disabled pull-right" href="#">'
-                            '<i class="icon-pencil"></i> Update</span>')
+                            '<span class="btn ml-auto disabled" href="#">'
+                            '<i class="bi bi-pencil-square"></i> Update</span>',
+                            html=True)
 
     def test_edit_button_bypass_structure(self):
         self.add_bypass_perm()
         url = "/trek/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<a class="btn btn-primary pull-right" '
+                            '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
-                            'Update</a>'.format(pk=self.content2.pk))
+                            '<i class="bi bi-pencil-square"></i> '
+                            'Update</a>'.format(pk=self.content2.pk),
+                            html=True)
 
     def test_can_edit_same_structure(self):
         url = "/trek/edit/{pk}/".format(pk=self.content1.pk)

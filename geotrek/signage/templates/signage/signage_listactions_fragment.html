@@ -1,17 +1,16 @@
 {% load i18n %}
 
 {% if appname == "signage" %}
-<div class="btn-group">
-    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+<div class="btn-group mr-2">
+    <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
         <strong>
             {% if modelname == 'signage' %}{% trans "Signages" %}{% endif %}
             {% if modelname == 'blade' %}{% trans "Blades" %}{% endif %}
         </strong>
-        <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        {% if modelname != 'signage' %}<li><a href="{% url 'signage:signage_list' %}">{% trans "Signages" %}</a></li>{% endif %}
-        {% if modelname != 'blade' %}<li><a href="{% url 'signage:blade_list' %}">{% trans "Blades" %}</a></li>{% endif %}
+        {% if modelname != 'signage' %}<li class="dropdown-item"><a href="{% url 'signage:signage_list' %}">{% trans "Signages" %}</a></li>{% endif %}
+        {% if modelname != 'blade' %}<li class="dropdown-item"><a href="{% url 'signage:blade_list' %}">{% trans "Blades" %}</a></li>{% endif %}
     </ul>
 </div>
 {% endif %}
