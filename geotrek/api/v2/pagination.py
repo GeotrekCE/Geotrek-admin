@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 100
+    page_size = 50
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
@@ -19,18 +19,10 @@ class StandardResultsSetPagination(PageNumberPagination):
                 ('features', data['features'])
             ]))
         else:
-            return super(StandardResultsSetPagination, self).get_paginated_response(data)
+            return super().get_paginated_response(data)
 
-    def get_page_size(self):
-        if self.request.query_params.get('no_page_size'):
+    def paginate_queryset(self, queryset, request, view=None):
+        if 'no_page' in request.query_params:
             return None
-        else:
-            return 100
-
-
-    def get_max_page_size(self):
-        if self.request.query_params.get('no_page_size'):
-            return None
-        else:
-            return 1000
+        return super().paginate_queryset(queryset, request, view)
 
