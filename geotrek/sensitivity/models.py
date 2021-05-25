@@ -4,7 +4,7 @@
 
 import datetime
 import simplekml
-
+import logging
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry, Polygon
@@ -16,7 +16,9 @@ from geotrek.common.mixins import (OptionalPictogramMixin, NoDeleteMixin, TimeSt
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import simplify_coords
 from pyopenair.factory import wkt2openair
+from geotrek.sensitivity.helpers import openair_atimes_concat
 
+logger = logging.getLogger("geotrek")
 
 class SportPractice(models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
@@ -183,29 +185,25 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         geom = self.geom
         if geom.geom_type == 'Point':
             geom = geom.buffer(self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 4)
-        if self.species.radius:
-            geometry = ()
-            for coords in geom.coords[0]:
-                coords += (self.species.radius, )
-                geometry += (coords, )
-            geom = GEOSGeometry(Polygon(geometry), srid=settings.SRID)
-        geom = geom.transform(4326, clone=True)  # KML uses WGS84
+        geom = geom.transform(4326, clone=True)
         geom = geom.simplify(0.001, preserve_topology=True)
         other = {}
-        other['*ADescr'] = self.species.name + ' (published on '+self.publication_date.strftime("%d/%m/%Y")+')'
+        other['*AUID'] = "GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity){{{{{id}}}}}".format(id=str(self.pk))
+        other['*ADescr'] = "{name} (published on {published_date})".format(name=self.species.name, published_date=self.publication_date.strftime("%d/%m/%Y"))
+        other['*ATimes'] = openair_atimes_concat(self)
         wkt = geom.wkt
-        openair = wkt2openair(
-            wkt = wkt, 
-            an = self.species.name, 
-            ac = 'ZSM', 
-            ah_unit='m', 
-            ah_alti = self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 
-            ah_mode='AGL', 
-            al_mode='SFC', 
-            comment=self.species.name + ' (published on '+self.publication_date.strftime("%d/%m/%Y")+')',
-            other = other
-            )
-        return openair
+        data = {
+            'wkt' : wkt, 
+            'an': self.species.name, 
+            'ac': 'ZSM', 
+            'ah_unit':'m', 
+            'ah_alti': self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 
+            'ah_mode':'AGL', 
+            'al_mode':'SFC', 
+            # 'comment': self.species.name + ' (published on '+self.publication_date.strftime("%d/%m/%Y")+')',
+            'other': other 
+        }
+        return wkt2openair(**data)
 
     @property
     def wgs84_geom(self):
