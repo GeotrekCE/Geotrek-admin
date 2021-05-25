@@ -5,10 +5,10 @@ from calendar import monthrange
 def openair_atimes(month: int) -> str:
     """Format month number to OpenAir ATime item 
 
-    :param month: [description]
-    :type month: [type]
-    :return: [description]
-    :rtype: [type]
+    :param month: Months (1-12)
+    :type month: int
+    :return: ATimes item
+    :rtype: str
     """
     year=date.today().year
     str_lmonth = str(monthrange(year, month)[1]).zfill(2)
