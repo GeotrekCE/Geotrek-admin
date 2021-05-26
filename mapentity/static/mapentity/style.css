@@ -767,7 +767,12 @@ label.requiredField .asteriskField {
 
 /*
  * Inline formsets
+ * TODO: when move formset to mapentity use crispy forms
  */
+.formset {
+    padding: 5px;
+}
+
 .formset .form-row {
     border: solid 1px lightgray;
     padding: 5px;
