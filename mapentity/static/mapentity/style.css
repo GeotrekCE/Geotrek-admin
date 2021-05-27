@@ -59,10 +59,6 @@ select[multiple] {
 
 /***** Reusables ******/
 
-.centered {
-    text-align: center;
-}
-
 .autohide {
     opacity: 0.1;
 }
@@ -280,8 +276,14 @@ tr.selected-row td {
 #maphead {
     position: absolute;
     padding-top: 3px;
+    text-align: center;
     z-index: 999;
     width: 100%;
+}
+
+#maphead .chosen-container {
+    max-width: 180px;
+    text-align: left;
 }
 
 /***** Entity List ******/
