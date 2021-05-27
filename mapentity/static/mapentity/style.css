@@ -766,20 +766,36 @@ label.requiredField .asteriskField {
 
 
 /*
- * Many-to-many fields
+ * Inline formsets
+ * TODO: when move formset to mapentity use crispy forms
  */
-.form-row.inline.controls {
-    border: solid 1px lightgray;
+.formset {
     padding: 5px;
-    margin: 1px;
 }
 
-.form-row.inline.controls:last-of-type {
+.formset .form-row {
+    border: solid 1px lightgray;
+    padding: 5px;
+    margin-bottom: .5em;
+}
+
+.formset .form-row:last-of-type {
     border: none;
 }
 
-fieldset.formset .form-row:last-of-type a.delete-row {
+.formset .form-row .delete-row {
+    flex-basis: 100%;
+}
+.formset .form-row:last-of-type a.delete-row {
     display: none;
+}
+
+.formset .form-row > .form-group {
+    padding-right: 5px;
+    padding-left: 5px;
+    flex-basis: 33%;
+    max-width: 33%;
+    flex-grow: 1;
 }
 
 /* Form layout */

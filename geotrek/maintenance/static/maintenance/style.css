@@ -6,21 +6,8 @@
     border: none;
 }
 
-.intervention .form-row.inline.controls label {
-    width: auto;
-    float: none;
-    display: inline-block;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
 .intervention .form-horizontal .formset .controls {
-    margin-left: 0px;
-    display: inline-block;
-}
-
-.intervention .formset .control-group {
-    display: inline-block;
+    align-items: flex-end;
 }
 
 .details-panel .spacer {
