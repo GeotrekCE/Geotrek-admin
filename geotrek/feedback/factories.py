@@ -1,9 +1,17 @@
+import factory
 from django.conf import settings
 from django.contrib.gis.geos import Point
-
-import factory
-
+from geotrek import feedback
+from geotrek.common.models import Label
 from geotrek.feedback import models as feedback_models
+
+
+class ReportStatusFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = feedback_models.ReportStatus
+
+    label = factory.Sequence(lambda n: "Status %s" % n)
+    suricate_id = factory.Sequence(lambda n: "ID %s" % n)
 
 
 class ReportActivityFactory(factory.django.DjangoModelFactory):
@@ -18,13 +26,6 @@ class ReportCategoryFactory(factory.django.DjangoModelFactory):
         model = feedback_models.ReportCategory
 
     label = factory.Sequence(lambda n: "Category %s" % n)
-
-
-class ReportStatusFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = feedback_models.ReportStatus
-
-    label = factory.Sequence(lambda n: "Status %s" % n)
 
 
 class ReportProblemMagnitudeFactory(factory.django.DjangoModelFactory):
@@ -44,3 +45,4 @@ class ReportFactory(factory.django.DjangoModelFactory):
     activity = factory.SubFactory(ReportActivityFactory)
     problem_magnitude = factory.SubFactory(ReportProblemMagnitudeFactory)
     category = factory.SubFactory(ReportCategoryFactory)
+    status = factory.SubFactory(ReportStatusFactory)

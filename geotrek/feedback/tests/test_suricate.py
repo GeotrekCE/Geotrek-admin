@@ -6,7 +6,7 @@ import requests
 from django.core.management import call_command
 from django.test import TestCase
 from django.test.utils import override_settings
-from geotrek.feedback.factories import ReportFactory
+from geotrek.feedback.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import (
     AttachedMessage,
@@ -110,7 +110,8 @@ class SuricateAPITests(TestCase):
     def test_save_on_report_posts_to_suricate(self, post_report):
         """Test post to suricate on save Report"""
         # Create a report
-        report = ReportFactory()
+        status = ReportStatusFactory(suricate_id='to_transmit')
+        report = ReportFactory(status=status)
         # Assert post_report_to_suricate is called
         post_report.assert_called_once_with(report)
 

@@ -1,13 +1,14 @@
 import html
 import logging
-
+from datetime import datetime
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.mixins import PicturesMixin, TimeStampedModelMixin
-from geotrek.trekking.models import Trek
+from geotrek.trekking.models import Trek, TrekRelationshipManager
 from mapentity.models import MapEntityMixin
 
 from .helpers import SuricateMessenger, send_report_managers
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def status_default():
     """Set status to New by default"""
-    new_status_query = ReportStatus.objects.filter(label="Nouveau")
+    new_status_query = ReportStatus.objects.filter(label="A transmettre")
     if new_status_query:
         return new_status_query.get().pk
     return None
@@ -71,19 +72,20 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         on_delete=models.CASCADE,
         verbose_name=_("Related trek"),
     )
-    # Todo check options
     created = models.DateTimeField(
-        default="2021-01-01 12:00:00", verbose_name=_("Creation date")
+        default=make_aware(datetime.strptime("2021-01-01 12:00:00", "%Y-%d-%m %H:%M:%S")), 
+        verbose_name=_("Creation date")
     )
     uid = models.UUIDField(
         unique=True, verbose_name=_("Identifiant"), blank=True, null=True
     )
-    locked = models.BooleanField(default=False, verbose_name=_("Vérouillé"))
+    locked = models.BooleanField(default=False, verbose_name=_("Locked"))
     origin = models.CharField(
-        default="unknown", max_length=100, verbose_name=_("Origine")
+        default="unknown", max_length=100, verbose_name=_("Origin")
     )
     last_updated = models.DateTimeField(
-        default="2021-01-01 12:00:00", verbose_name=_("Dernière mise à jour")
+        default=make_aware(datetime.strptime("2021-01-01 12:00:00", "%Y-%d-%m %H:%M:%S")), 
+        verbose_name=_("Last updated")
     )
 
     class Meta:
@@ -126,23 +128,22 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         return html.unescape(self.comment)
 
 
-@receiver(post_save, sender=Report, dispatch_uid="on_report_created")
-def on_report_saved(sender, instance, created, **kwargs):
+@receiver(pre_save, sender=Report, dispatch_uid="on_report_created")
+def on_report_saved(sender, instance, **kwargs):
     """Send an email to managers when a report is created."""
-    if not created:
-        return
-    try:
-        send_report_managers(instance)
-    except Exception as e:
-        logger.error("Email could not be sent to managers.")
-        logger.exception(e)  # This sends an email to admins :)
-
     if settings.SURICATE_REPORT_ENABLED:
-        try:
-            SuricateMessenger().post_report(instance)
-        except Exception as e:
-            logger.error("Report could not be sent to Suricate API.")
-            logger.exception(e)
+        if instance.status.suricate_id == "to_transmit":
+            try:
+                send_report_managers(instance)
+            except Exception as e:
+                logger.error("Email could not be sent to managers.")
+                logger.exception(e)  # This sends an email to admins :)
+            try:
+                SuricateMessenger().post_report(instance)
+                instance.status = ReportStatus.get(suricate_id='filed')
+            except Exception as e:
+                logger.error("Report could not be sent to Suricate API.")
+                logger.exception(e)
 
 
 class ReportActivity(models.Model):
