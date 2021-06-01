@@ -52,6 +52,12 @@ select[multiple] {
     background-position-y: 5px;
 }
 
+/* Fix a Chosen bug, which sets width to 0px when initialized while hidden */
+#mainfilter .chosen-container-multi,
+#mainform .chosen-container-multi {
+    width: 220px !important;
+}
+
 .table th, .table td {
     padding: 4px;
     line-height: 25px;
