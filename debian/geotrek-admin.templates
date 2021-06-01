@@ -8,8 +8,9 @@ Template: geotrek-admin/RANDO_SERVER_NAME
 Type: string
 Default: *
 Description: Geotrek-rando server name(s)
- Domain name(s) of Geotrek-rando web server(s).
- You can enter several domains separated by a space.
+ Url of Geotrek-rando web server(s).
+ You can enter several urls separated by a space.
+ Ex: https://url.test.
  If set to * Geotrek-admin will accept user report from any domain.
 
 Template: geotrek-admin/MANAGE_DB
