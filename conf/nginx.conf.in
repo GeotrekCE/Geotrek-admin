@@ -6,7 +6,11 @@ upstream api_server {
     server unix:/tmp/gunicorn-geotrek_api.sock fail_timeout=0;
 }
 
-add_header Access-Control-Allow-Origin ${RANDO_SERVER_NAME};
+map ${DOLLAR}http_origin ${DOLLAR}allow_origin {
+    "~${RANDO_SERVER_NAME_PIPE}" ${DOLLAR}http_origin;
+    default "";
+}
+
 
 server {
     listen ${NGINX_PORT};
@@ -49,6 +53,7 @@ server {
         location ~ ^/api {
             proxy_pass http://api_server;
             proxy_read_timeout ${TIMEOUT}s;
+            add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin;
         }
 
         proxy_pass http://ui_server;

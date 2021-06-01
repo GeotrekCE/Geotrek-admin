@@ -20,6 +20,7 @@ db_get geotrek-admin/TIME_ZONE; export TIME_ZONE="$RET"
 db_get geotrek-admin/LANGUAGES; export LANGUAGES="$RET"
 db_get geotrek-admin/SERVER_NAME; export SERVER_NAME="$RET"
 db_get geotrek-admin/RANDO_SERVER_NAME; export RANDO_SERVER_NAME="$RET"
+export RANDO_SERVER_NAME_PIPE="`echo "$RANDO_SERVER_NAME" | sed 's/ /|/g'`"
 db_get geotrek-admin/DEFAULT_STRUCTURE; export DEFAULT_STRUCTURE="$RET"
 
 db_get geotrek-admin/WORKERS; export WORKERS="$RET"
