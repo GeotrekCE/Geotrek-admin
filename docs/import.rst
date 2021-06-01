@@ -46,7 +46,7 @@ To import touristic content from Esprit Parc national database, create (or updat
 
     class XXXEspritParcParser(EspritParcParser):
         label = "Marque Esprit Parc"
-        url = "http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX"
+        url = "https://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX"
 
 Then set up appropriate values:
 
@@ -73,7 +73,7 @@ If you use an url that filters a unique category, you can change its name. Examp
             'deleted': False,
         }
         m2m_constant_fields = {
-            'type1': ["GeotrekTypeName"],
+            'type1': "GeotrekTypeName",
         }
 
 URL to get Esprit parc types: `https://gestion.espritparcnational.com/ws/?f=getTypologieProduits`.
