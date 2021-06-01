@@ -14,11 +14,3 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     background-color: #B4B4B4;
     color: #bbb;
 }
-
-/* Projects */
-.dynamic-form .asteriskField {
-    display: none;
-}
-.dynamic-form label.requiredField {
-    font-weight: normal;
-}

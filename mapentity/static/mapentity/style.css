@@ -917,3 +917,11 @@ TODO: please help;
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
 }
+
+/* Projects */
+.dynamic-form .asteriskField {
+    display: none;
+}
+.dynamic-form label.requiredField {
+    font-weight: normal;
+}
