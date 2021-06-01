@@ -52,6 +52,12 @@ select[multiple] {
     background-position-y: 5px;
 }
 
+/* Fix a Chosen bug, which sets width to 0px when initialized while hidden */
+#mainfilter .chosen-container-multi,
+#mainform .chosen-container-multi {
+    width: 220px !important;
+}
+
 .table th, .table td {
     padding: 4px;
     line-height: 25px;
@@ -877,4 +883,45 @@ TODO: please help;
     .details-panel {
         background-size: 64px auto;
     }
+}
+
+/* Style language menu */
+.dropdown-menu > li > form {
+    margin: 0;
+}
+
+.dropdown-menu > li > form > button {
+    background: none;
+    border: none;
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 20px;
+    color: #333333;
+    white-space: nowrap;
+    width: 100%;
+    text-align: left;
+}
+
+.dropdown-menu > li > form > button:hover,
+.dropdown-menu > li > form > button:focus {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #0081c2;
+    background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+    background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+    background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+}
+
+/* Projects */
+.dynamic-form .asteriskField {
+    display: none;
+}
+.dynamic-form label.requiredField {
+    font-weight: normal;
 }
