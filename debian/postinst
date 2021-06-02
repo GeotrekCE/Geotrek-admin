@@ -90,6 +90,7 @@ ldconfig
 # Update database
 echo "Migrate database" >&2
 geotrek migrate --noinput -v0 || true
+geotrek clearsessions || true
 geotrek sync_translation_fields --noinput > /dev/null || true
 geotrek update_translation_fields > /dev/null || true
 geotrek update_geotrek_permissions -v0 || true

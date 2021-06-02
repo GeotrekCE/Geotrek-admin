@@ -18,6 +18,7 @@ CHANGELOG
 - Upgrade Chosen to 1.2.0
 - Move to vendor folder updated JS Libraries used by Mapentity
 - Update HTML markup in many templates, and update tests too
+- Expired sessions stored in database are now deleted at each update
 
 **Bug fixes**
 
