@@ -11,11 +11,6 @@ map ${DOLLAR}http_origin ${DOLLAR}allow_origin {
     default "";
 }
 
-map ${DOLLAR}http_origin ${DOLLAR}allow_origin {
-    "~${RANDO_SERVER_NAME_PIPE}" ${DOLLAR}http_origin;
-    default "";
-}
-
 server {
     listen ${NGINX_PORT};
     server_name ${SERVER_NAME};
