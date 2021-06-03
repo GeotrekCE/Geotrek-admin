@@ -12,7 +12,7 @@ CHANGELOG
 First, if you changed file `/opt/geotrek-admin/var/conf/nginx.conf.in`, back it up somewhere.
 1 - While installing, choose 'Y' to get the new version.
 2 - Copy your changes from the backed up file to the new version.
-3 - Execute : dpkg-reconfigure geotrek-admin to reapply your customization.
+3 - Execute : `dpkg-reconfigure geotrek-admin` to reapply your customization.
 
 **User Interface**
 
