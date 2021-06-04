@@ -198,7 +198,9 @@ class GeotrekPOIFilter(BaseFilterBackend):
             qs = qs.filter(type__in=types.split(','))
         trek = request.GET.get('trek', None)
         if trek is not None:
-            qs = Topology.overlapping(Trek.objects.get(pk=trek), qs)
+            t = Trek.objects.get(pk=trek)
+            qs = Topology.overlapping(t, qs)
+            qs = qs.exclude(pk__in=t.pois_excluded.all())
         return qs
 
     def get_schema_fields(self, view):
