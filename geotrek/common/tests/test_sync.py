@@ -306,6 +306,8 @@ class SyncTest(VarTmpTestCase):
         output = StringIO()
         trek = TrekFactory.create(published_it=True, published_en=True, published_fr=True, name_fr='FR', name_en='EN',
                                   name_it="IT")
+        trek_2 = TrekFactory.create(published_it=True, published_en=True, published_fr=True, name_fr='FR_2',
+                                    name_en='EN_2', name_it="IT_2")
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
                                 skip_pdf=False, skip_tiles=True, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(trek.pk), '%s.pdf' % trek.slug)))
@@ -317,6 +319,13 @@ class SyncTest(VarTmpTestCase):
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'fr.gpx')))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek.pk), 'it.kml')))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'fr.kml')))
+
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek_2.pk), 'it_2.pdf')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek_2.pk), 'fr_2.pdf')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek_2.pk), 'it_2.gpx')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek_2.pk), 'fr_2.gpx')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'it', 'treks', str(trek_2.pk), 'it_2.kml')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek_2.pk), 'fr_2.kml')))
 
 
 class SyncComplexTest(VarTmpTestCase):
