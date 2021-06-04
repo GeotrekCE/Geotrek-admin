@@ -22,7 +22,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix gpx/kml are not generated on all languages (The first object was working).
 
 
 2.58.0 (2021-05-20)
