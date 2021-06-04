@@ -251,6 +251,10 @@ class PicturesMixin:
             })
         return serialized
 
+    @property
+    def sorted_attachments(self):
+        return self.attachments.order_by('-starred', 'date_insert')
+
 
 class BasePublishableMixin(models.Model):
     """ Basic fields to control publication of objects.
