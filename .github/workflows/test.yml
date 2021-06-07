@@ -60,6 +60,10 @@ jobs:
     services:
       postgres:
         image: postgis/postgis:10-2.5
+        env:
+          POSTGRES_DB: ci_test
+          POSTGRES_PASSWORD: ci_test
+          POSTGRES_USER: ci_test
         ports:
           - 5432:5432
         # Set health checks to wait until postgres has started
@@ -111,17 +115,29 @@ jobs:
         sudo apt-get install -y --no-install-recommends postgis
         python3 -m pip install --upgrade pip setuptools wheel
         pip3 install -r requirements.txt -U
-    - name: Test with coverage
+
+
+    - name: Check migrations
+      run: |
+        python3 ./manage.py makemigrations --check
+
+    - name: Prepare environment
       run: |
         mkdir -p $VAR_DIR
-        python3 ./manage.py makemigrations --check
         python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        celery -A geotrek worker -c 1 &
-        coverage run ./manage.py test -v 3
 #        python3 ./manage.py sync_translation_fields --noinput
 #        python3 ./manage.py update_translation_fields
 #        python3 ./manage.py update_geotrek_permissions
 #        python3 ./manage.py update_post_migration_languages
+
+    - name: Launch Celery
+      run: |
+        celery -A geotrek worker -c 1 &
+
+    - name: Unit test
+      run: |
+        coverage run ./manage.py test -v 3
+
 #    - name: Coverage upload
 #      run: |
 #        pip install codecov
