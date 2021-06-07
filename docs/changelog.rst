@@ -11,6 +11,8 @@ CHANGELOG
 - Fix required '*geom' position
 - Fix scroll unwanted when list is full
 - Fix responsive on dataTables
+- Remove excluded POIs from results in POI endpoint on api v2 when filtering by trek id
+- Sort attachments listed in api v2 endpoints for Trek, TouristicContent, POI
 
 **Maintenance**
 
