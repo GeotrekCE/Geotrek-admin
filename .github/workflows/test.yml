@@ -113,6 +113,8 @@ jobs:
         CAPTURE_HOST: localhost
         REDIS_HOST: 127.0.0.1
       run: |
+        sudo mkdir -p /opt/geotrek-admin/var/conf/extra_static
+        whoami
         python3 ./manage.py migrate
         python3 ./manage.py collectstatic --clear --noinput --verbosity=0
         python3 ./manage.py sync_translation_fields --noinput
