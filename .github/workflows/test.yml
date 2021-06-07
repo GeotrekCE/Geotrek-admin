@@ -113,7 +113,14 @@ jobs:
         CAPTURE_HOST: localhost
         REDIS_HOST: 127.0.0.1
       run: |
+        python3 ./manage.py migrate
+        python3 ./manage.py collectstatic --clear --noinput --verbosity=0
+        python3 ./manage.py sync_translation_fields --noinput
+        python3 ./manage.py update_translation_fields
+        python3 ./manage.py update_geotrek_permissions
+        python3 ./manage.py update_post_migration_languages
         celery -A geotrek worker -c 1 &
+
         coverage run ./manage.py test -v 2
 #    - name: Coverage upload
 #      run: |
