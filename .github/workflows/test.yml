@@ -60,6 +60,10 @@ jobs:
     services:
       postgres:
         image: postgis/postgis:10-2.5
+        env:
+          POSTGRES_DB: ci_test
+          POSTGRES_PASSWORD: ci_test
+          POSTGRES_USER: ci_test
         ports:
           - 5432:5432
         # Set health checks to wait until postgres has started
