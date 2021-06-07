@@ -102,6 +102,8 @@ jobs:
         POSTGRES_USER: ci_test
         SERVER_NAME: localhost
         SECRET_KEY: test-test-test
+        CONVERSION_HOST: localhost
+        CAPTURE_HOST: localhost
       run: |
         coverage run ./manage.py test
 #    - name: Coverage upload
