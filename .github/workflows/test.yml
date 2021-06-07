@@ -13,6 +13,16 @@ on:
       - created
 env:
   DEBIAN_FRONTEND: noninteractive
+  POSTGRES_DB: ci_test
+  POSTGRES_PASSWORD: ci_test
+  POSTGRES_USER: ci_test
+  POSTGRES_HOST: 127.0.0.1
+  SERVER_NAME: localhost
+  SECRET_KEY: test-test-test
+  CONVERSION_HOST: localhost
+  CAPTURE_HOST: localhost
+  REDIS_HOST: 127.0.0.1
+  VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
 
 jobs:
   flake8:
@@ -43,13 +53,13 @@ jobs:
       matrix:
         python-version: ['3.6', '3.8']  # should match default versions in supported LTS (now 3.6 for 18.04 and 3.8 for 20.04)
         tests-env: ['tests', 'tests_nds']
+
+    env:
+      ENV: ${{ matrix.tests-env }}
+
     services:
       postgres:
         image: postgis/postgis:10-2.5
-        env:
-          POSTGRES_DB: ci_test
-          POSTGRES_PASSWORD: ci_test
-          POSTGRES_USER: ci_test
         ports:
           - 5432:5432
         # Set health checks to wait until postgres has started
@@ -102,18 +112,6 @@ jobs:
         python3 -m pip install --upgrade pip setuptools wheel
         pip3 install -r requirements.txt -U
     - name: Test with coverage
-      env:
-        ENV: ${{ matrix.tests-env }}
-        POSTGRES_DB: ci_test
-        POSTGRES_PASSWORD: ci_test
-        POSTGRES_USER: ci_test
-        POSTGRES_HOST: 127.0.0.1
-        SERVER_NAME: localhost
-        SECRET_KEY: test-test-test
-        CONVERSION_HOST: localhost
-        CAPTURE_HOST: localhost
-        REDIS_HOST: 127.0.0.1
-        VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
       run: |
         mkdir -p $VAR_DIR
         python3 ./manage.py makemigrations --check
