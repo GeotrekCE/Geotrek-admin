@@ -25,29 +25,9 @@ env:
   VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
 
 jobs:
-  flake8:
-    name: Check python linting
-    runs-on: ubuntu-18.04
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.6
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.6  # lint with minimal version supported (3.6 in 18.04)
-    - name: Install dependencies
-      run: |
-        echo "${{ github.event_name }}! ${{ github.event.action }}"
-        python -m pip install --upgrade pip
-        python -m pip install flake8
-    - name: Lint with flake8
-      run: |
-        flake8 geotrek mapentity
-        test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
   test:
     name: Python Unittests
     runs-on: ubuntu-20.04
-    needs: [flake8]
 
     strategy:
       matrix:
@@ -80,13 +60,18 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
     - uses: actions/cache@v2
       with:
-        path: ~/.cache/pip
+        path: |
+          ~/.cache/pip
+          ~/.lib/
+
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Install dependencies
+
+    - name: Install System dependencies
       run: |
         sudo apt-get update -q
         sudo apt-get -qq -y install \
@@ -113,9 +98,11 @@ jobs:
              libgdk-pixbuf2.0-dev \
              libffi-dev
         sudo apt-get install -y --no-install-recommends postgis
+
+    - name: Install python dependecies
+      run: |
         python3 -m pip install --upgrade pip setuptools wheel
         pip3 install -r requirements.txt -U
-
 
     - name: Check migrations
       run: |
@@ -124,6 +111,7 @@ jobs:
     - name: Prepare environment
       run: |
         mkdir -p $VAR_DIR
+        mkdir -p $VAR_DIR/conf/extra_static
         python3 ./manage.py collectstatic --clear --noinput --verbosity=0
 #        python3 ./manage.py sync_translation_fields --noinput
 #        python3 ./manage.py update_translation_fields
