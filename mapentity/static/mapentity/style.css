@@ -1,6 +1,8 @@
 
 /***** Bootstrap customizations ******/
-
+.modal-header .close {
+    order: 2;
+}
 .dropdown-menu {
     z-index: 9999;
 }
