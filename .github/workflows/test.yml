@@ -106,7 +106,7 @@ jobs:
         CONVERSION_HOST: localhost
         CAPTURE_HOST: localhost
       run: |
-        coverage run ./manage.py test
+        ENV=tests coverage run ./manage.py test
 #    - name: Coverage upload
 #      run: |
 #        pip install codecov
