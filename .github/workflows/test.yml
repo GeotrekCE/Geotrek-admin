@@ -25,29 +25,9 @@ env:
   VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
 
 jobs:
-  flake8:
-    name: Check python linting
-    runs-on: ubuntu-18.04
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.6
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.6  # lint with minimal version supported (3.6 in 18.04)
-    - name: Install dependencies
-      run: |
-        echo "${{ github.event_name }}! ${{ github.event.action }}"
-        python -m pip install --upgrade pip
-        python -m pip install flake8
-    - name: Lint with flake8
-      run: |
-        flake8 geotrek mapentity
-        test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
   test:
     name: Python Unittests
     runs-on: ubuntu-20.04
-    needs: [flake8]
 
     strategy:
       matrix:
