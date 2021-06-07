@@ -113,8 +113,8 @@ jobs:
         mkdir -p $VAR_DIR
         mkdir -p $VAR_DIR/conf/extra_static
         python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-#        python3 ./manage.py sync_translation_fields --noinput
-#        python3 ./manage.py update_translation_fields
+        python3 ./manage.py sync_translation_fields --noinput
+        python3 ./manage.py update_translation_fields
 #        python3 ./manage.py update_geotrek_permissions
 #        python3 ./manage.py update_post_migration_languages
 
