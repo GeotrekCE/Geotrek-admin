@@ -92,8 +92,8 @@ jobs:
              libgdk-pixbuf2.0-dev \
              libffi-dev
         sudo apt-get install -y --no-install-recommends postgis
-        python -m pip install --upgrade pip setuptools wheel
-        pip install -r requirements.txt -U
+        python3 -m pip install --upgrade pip setuptools wheel
+        pip3 install -r requirements.txt -U
     - name: Test with coverage
       env:
         ENV: tests
@@ -106,8 +106,7 @@ jobs:
         CONVERSION_HOST: localhost
         CAPTURE_HOST: localhost
       run: |
-        mkdir var
-        ENV=tests coverage run ./manage.py test
+        coverage run ./manage.py test -v 2
 #    - name: Coverage upload
 #      run: |
 #        pip install codecov
