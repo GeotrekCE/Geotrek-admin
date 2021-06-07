@@ -41,6 +41,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.6', '3.8']  # should match default versions in supported LTS (now 3.6 for 18.04 and 3.8 for 20.04)
+        tests-env: ['tests', 'tests_nds']
     services:
       postgres:
         image: postgis/postgis:10-2.5
@@ -96,7 +97,7 @@ jobs:
         pip3 install -r requirements.txt -U
     - name: Test with coverage
       env:
-        ENV: tests
+        ENV: ${{ matrix.tests-env }}
         POSTGRES_DB: ci_test
         POSTGRES_PASSWORD: ci_test
         POSTGRES_USER: ci_test
