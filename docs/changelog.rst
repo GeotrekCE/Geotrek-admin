@@ -7,8 +7,9 @@ CHANGELOG
 
 **Bug fixes**
 
--
-
+- Fix confirm delete attachment modal
+- Fix required '*geom' position
+- Fix scroll unwanted when list is full
 
 2.59.0 (2021-06-07)
 -------------------
