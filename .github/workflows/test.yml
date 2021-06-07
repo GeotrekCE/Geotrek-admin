@@ -41,6 +41,18 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.6', '3.8']  # should match default versions in supported LTS (now 3.6 for 18.04 and 3.8 for 20.04)
+    services:
+      postgres:
+        image: postgis/postgis:10-2.5
+        env:
+          POSTGRES_DB: ci_test
+          POSTGRES_PASSWORD: ci_test
+          POSTGRES_USER: ci_test
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -83,8 +95,15 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install -r requirements.txt -U
     - name: Test with coverage
+      env:
+        ENV: tests
+        POSTGRES_DB: ci_test
+        POSTGRES_PASSWORD: ci_test
+        POSTGRES_USER: ci_test
+        SERVER_NAME: localhost
+        SECRET_KEY: test-test-test
       run: |
-        ENV=tests coverage run ./manage.py test
+        coverage run ./manage.py test
 #    - name: Coverage upload
 #      run: |
 #        pip install codecov
