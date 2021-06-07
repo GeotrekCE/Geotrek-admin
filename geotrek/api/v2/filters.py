@@ -518,7 +518,7 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
             ),
         )
 
-    def filter_queryset_related_objects_published(self, queryset, request, prefix, optional_query=None):
+    def filter_queryset_related_objects_published_not_deleted(self, queryset, request, prefix, optional_query=None):
         """
         TODO : this method is not optimal. the API should have a route /object returning all objects and /object/used returning only used objects.
         Return a queryset filtered by publication status or related objects.
@@ -539,7 +539,10 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
         else:
             # one language is specified
             related_field_name = '{}__published_{}'.format(prefix, language)
-            q |= Q(**{related_field_name: True})
+            q &= Q(**{related_field_name: True})
+        # Ensure no deleted content is taken in consideration in the filter
+        related_field_name = '{}__deleted'.format(prefix)
+        q &= Q(**{related_field_name: False})
         q &= optional_query
         qs = qs.filter(q)
         return qs.distinct()
@@ -550,8 +553,8 @@ class GeotrekRelatedPortalTrekFilter(GeotrekRelatedPortalGenericFilter):
         portals = request.GET.get('portals')
         query = Q()
         if portals:
-            query = Q(treks__portal__in=portals.split(',')) & Q(treks__deleted=False)
-        return self.filter_queryset_related_objects_published(qs, request, 'treks', query)
+            query = Q(treks__portal__in=portals.split(','))
+        return self.filter_queryset_related_objects_published_not_deleted(qs, request, 'treks', query)
 
 
 class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
@@ -559,10 +562,9 @@ class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPorta
         portals = request.GET.get('portals')
         query = Q()
         if portals:
-            query = Q(trek__portal__in=portals.split(',')) & Q(trek__deleted=False) \
-                | Q(touristiccontent__portal__in=portals.split(',')) & Q(touristiccontent__deleted=False)
-        set_1 = self.filter_queryset_related_objects_published(qs, request, 'trek', query)
-        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontent', query)
+            query = Q(trek__portal__in=portals.split(',')) | Q(touristiccontent__portal__in=portals.split(','))
+        set_1 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'trek', query)
+        set_2 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'touristiccontent', query)
         return (set_1 | set_2).distinct()
 
 
@@ -571,8 +573,8 @@ class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):
         portals = request.GET.get('portals')
         query = Q()
         if portals:
-            query = Q(contents__portal__in=portals.split(',')) & Q(contents__deleted=False)
-        return self.filter_queryset_related_objects_published(qs, request, 'contents', query)
+            query = Q(contents__portal__in=portals.split(','))
+        return self.filter_queryset_related_objects_published_not_deleted(qs, request, 'contents', query)
 
 
 class GeotrekRelatedPortalThemeFilter(GeotrekRelatedPortalGenericFilter):
@@ -580,12 +582,12 @@ class GeotrekRelatedPortalThemeFilter(GeotrekRelatedPortalGenericFilter):
         portals = request.GET.get('portals')
         query = Q()
         if portals:
-            query = Q(treks__portal__in=portals.split(',')) & Q(treks__deleted=False) \
-                | Q(touristiccontents__portal__in=portals.split(',')) & Q(touristiccontents__deleted=False) \
-                | Q(touristic_events__portal__in=portals.split(',')) & Q(touristic_events__deleted=False)
-        set_1 = self.filter_queryset_related_objects_published(qs, request, 'treks', query)
-        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontents', query)
-        set_3 = self.filter_queryset_related_objects_published(qs, request, 'touristic_events', query)
+            query = Q(treks__portal__in=portals.split(',')) \
+                | Q(touristiccontents__portal__in=portals.split(',')) \
+                | Q(touristic_events__portal__in=portals.split(','))
+        set_1 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'treks', query)
+        set_2 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'touristiccontents', query)
+        set_3 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'touristic_events', query)
         return (set_1 | set_2 | set_3).distinct()
 
 
