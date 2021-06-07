@@ -60,13 +60,18 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
     - uses: actions/cache@v2
       with:
-        path: ~/.cache/pip
+        path: |
+          ~/.cache/pip
+          ~/.lib/
+
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: Install dependencies
+
+    - name: Install System dependecies
       run: |
         sudo apt-get update -q
         sudo apt-get -qq -y install \
@@ -93,9 +98,11 @@ jobs:
              libgdk-pixbuf2.0-dev \
              libffi-dev
         sudo apt-get install -y --no-install-recommends postgis
+
+    - name: Install python dependecies
+      run: |
         python3 -m pip install --upgrade pip setuptools wheel
         pip3 install -r requirements.txt -U
-
 
     - name: Check migrations
       run: |
