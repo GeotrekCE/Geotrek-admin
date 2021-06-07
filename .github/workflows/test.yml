@@ -73,17 +73,17 @@ jobs:
              libpangocairo-1.0-0 \
              libgdk-pixbuf2.0-dev \
              libffi-dev
-        apt-get install -y --no-install-recommends postgis
+        sudo apt-get install -y --no-install-recommends postgis
         python -m pip install --upgrade pip setuptools wheel
         pip install -r requirements.txt -U
     - name: Test with coverage
       run: |
-        coverage run ./manage.py test
-    - name: Coverage upload
-      run: |
-        pip install codecov
-        cd src
-        codecov
+        ENV=tests coverage run ./manage.py test
+#    - name: Coverage upload
+#      run: |
+#        pip install codecov
+#        cd src
+#        codecov
 
 #  build_docker_image:
 #    name: Build docker image
