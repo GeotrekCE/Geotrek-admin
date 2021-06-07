@@ -106,6 +106,9 @@ jobs:
         CONVERSION_HOST: localhost
         CAPTURE_HOST: localhost
       run: |
+        mkdir var
+        ./manage.py makemigrations --check
+        ./manage.py migrate --no-input
         ENV=tests coverage run ./manage.py test
 #    - name: Coverage upload
 #      run: |
