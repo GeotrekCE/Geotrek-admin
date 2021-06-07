@@ -8,7 +8,7 @@ ALLOWED_HOSTS = ['localhost']
 
 CELERY_ALWAYS_EAGER = True
 
-TEST_EXCLUDE = ('django',)
+# TEST_EXCLUDE = ('django',)
 
 INSTALLED_APPS += (
     'geotrek.diving',
@@ -27,16 +27,14 @@ LAND_BBOX_AREAS_ENABLED = True
 
 TIME_ZONE = "UTC"
 
+# class DisableMigrations():
+#     def __contains__(self, item):
+#         return True
+#
+#     def __getitem__(self, item):
+#         return None
 
-class DisableMigrations():
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return None
-
-
-MIGRATION_MODULES = DisableMigrations()
+# MIGRATION_MODULES = DisableMigrations()
 
 ADMINS = (
     ('test', 'test@test.com'),
@@ -44,4 +42,4 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-TEST_RUNNER = 'geotrek.test_runner.TestRunner'
+# TEST_RUNNER = 'geotrek.test_runner.TestRunner'
