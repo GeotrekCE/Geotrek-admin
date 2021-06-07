@@ -44,7 +44,7 @@ easy-thumbnails==2.7
 entrypoints==0.3
 env-file==2019.4.13
 factory-boy==3.2.0
-Faker==6.0.0
+Faker==8.5.1
 Fiona==1.8.17
 flake8==3.7.9
 freezegun==0.3.15
