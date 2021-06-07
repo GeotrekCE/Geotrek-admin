@@ -13,6 +13,8 @@ CHANGELOG
 - Fix responsive on dataTables
 - Remove excluded POIs from results in POI endpoint on api v2 when filtering by trek id
 - Sort attachments listed in api v2 endpoints for Trek, TouristicContent, POI
+- Ensure content is displayed only when a related object is published on api v2
+- Exclude deleted content of portal filters in api v2
 
 **Maintenance**
 
