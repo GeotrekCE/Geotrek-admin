@@ -71,7 +71,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: Install System dependecies
+    - name: Install System dependencies
       run: |
         sudo apt-get update -q
         sudo apt-get -qq -y install \

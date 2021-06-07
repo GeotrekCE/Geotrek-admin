@@ -27,14 +27,14 @@ LAND_BBOX_AREAS_ENABLED = True
 
 TIME_ZONE = "UTC"
 
-# class DisableMigrations():
-#     def __contains__(self, item):
-#         return True
-#
-#     def __getitem__(self, item):
-#         return None
+class DisableMigrations():
+    def __contains__(self, item):
+        return True
 
-# MIGRATION_MODULES = DisableMigrations()
+    def __getitem__(self, item):
+        return None
+
+MIGRATION_MODULES = DisableMigrations()
 
 ADMINS = (
     ('test', 'test@test.com'),
