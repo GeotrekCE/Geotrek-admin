@@ -38,6 +38,7 @@ jobs:
     name: Python Unittests
     runs-on: ubuntu-20.04
     needs: [flake8]
+
     strategy:
       matrix:
         python-version: ['3.6', '3.8']  # should match default versions in supported LTS (now 3.6 for 18.04 and 3.8 for 20.04)
@@ -102,7 +103,7 @@ jobs:
         pip3 install -r requirements.txt -U
     - name: Test with coverage
       env:
-        ENV: '${{ matrix.tests-env }}'
+        ENV: ${{ matrix.tests-env }}
         POSTGRES_DB: ci_test
         POSTGRES_PASSWORD: ci_test
         POSTGRES_USER: ci_test
@@ -112,18 +113,18 @@ jobs:
         CONVERSION_HOST: localhost
         CAPTURE_HOST: localhost
         REDIS_HOST: 127.0.0.1
+        VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
       run: |
-        sudo mkdir -p /opt/geotrek-admin/var/conf/extra_static
-        sudo chown runner:runner -R /opt/geotrek-admin/
-        python3 ./manage.py migrate
+        mkdir -p $VAR_DIR
+        python3 ./manage.py makemigations --check
         python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        python3 ./manage.py sync_translation_fields --noinput
-        python3 ./manage.py update_translation_fields
-        python3 ./manage.py update_geotrek_permissions
-        python3 ./manage.py update_post_migration_languages
+#        python3 ./manage.py sync_translation_fields --noinput
+#        python3 ./manage.py update_translation_fields
+#        python3 ./manage.py update_geotrek_permissions
+#        python3 ./manage.py update_post_migration_languages
         celery -A geotrek worker -c 1 &
 
-        coverage run ./manage.py test -v 2
+        coverage run ./manage.py test -v 3
 #    - name: Coverage upload
 #      run: |
 #        pip install codecov
