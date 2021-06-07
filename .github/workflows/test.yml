@@ -107,6 +107,7 @@ jobs:
         CONVERSION_HOST: localhost
         CAPTURE_HOST: localhost
       run: |
+        export ENV=tests
         coverage run ./manage.py test -v 2
 #    - name: Coverage upload
 #      run: |
