@@ -54,6 +54,11 @@ jobs:
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
+      redis:
+        image: redis:5.0-alpine
+        ports:
+          - 6379:6379
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -106,8 +111,9 @@ jobs:
         SECRET_KEY: test-test-test
         CONVERSION_HOST: localhost
         CAPTURE_HOST: localhost
+        REDIS_HOST: 127.0.0.1
       run: |
-        echo $ENV
+        celery -A geotrek worker -c 1 &
         coverage run ./manage.py test -v 2
 #    - name: Coverage upload
 #      run: |
