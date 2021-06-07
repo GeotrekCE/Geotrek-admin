@@ -116,7 +116,7 @@ jobs:
         VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
       run: |
         mkdir -p $VAR_DIR
-        python3 ./manage.py makemigations --check
+        python3 ./manage.py makemigrations --check
         python3 ./manage.py collectstatic --clear --noinput --verbosity=0
         celery -A geotrek worker -c 1 &
         coverage run ./manage.py test -v 3
