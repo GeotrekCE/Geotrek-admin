@@ -1,9 +1,11 @@
+import os
 from unittest import mock
 
 from django.contrib.gis.geos import Point
 from django.db import connection
 from django.test import TestCase, override_settings
 
+from settings import TMP_DIR
 from ..utils import sql_extent, uniquify, format_coordinates, spatial_reference
 from ..utils.postgresql import debug_pg_notices
 from ..utils.import_celery import (create_tmp_destination,
@@ -52,7 +54,7 @@ class UtilsTest(TestCase):
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(
-            ('/opt/geotrek-admin/var/tmp/bombadil', '/opt/geotrek-admin/var/tmp/bombadil/bombadil'),
+            (os.path.join(TMP_DIR, 'bombadil'), os.path.join(TMP_DIR, 'bombadil', 'bombadil')),
             create_tmp_destination('bombadil')
         )
 
