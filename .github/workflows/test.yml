@@ -100,12 +100,13 @@ jobs:
         POSTGRES_DB: ci_test
         POSTGRES_PASSWORD: ci_test
         POSTGRES_USER: ci_test
+        POSTGRES_HOST: 127.0.0.1
         SERVER_NAME: localhost
         SECRET_KEY: test-test-test
         CONVERSION_HOST: localhost
         CAPTURE_HOST: localhost
       run: |
-        coverage run ./manage.py test
+        ENV=tests coverage run ./manage.py test
 #    - name: Coverage upload
 #      run: |
 #        pip install codecov
