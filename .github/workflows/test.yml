@@ -107,8 +107,8 @@ jobs:
         CAPTURE_HOST: localhost
       run: |
         mkdir var
-        ./manage.py makemigrations --check
-        ./manage.py migrate --no-input
+        python3 ./manage.py makemigrations --check
+        python3 ./manage.py migrate --no-input
         ENV=tests coverage run ./manage.py test
 #    - name: Coverage upload
 #      run: |
