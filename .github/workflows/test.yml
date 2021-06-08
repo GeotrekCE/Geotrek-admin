@@ -270,11 +270,11 @@ jobs:
 
       - name: Install package
         run: |
-          sudo dpkg -i /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo gdebi /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
 
-      - name: Fix dependencies
-        run: |
-          sudo apt-get install -f -y
+#      - name: Fix dependencies
+#        run: |
+#          sudo apt-get install -f -y
 
       - name: E2E test
         run: |
@@ -302,11 +302,11 @@ jobs:
 
       - name: Install package
         run: |
-          sudo dpkg -i /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get -y -qq install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
 
-      - name: Fix dependencies
-        run: |
-          sudo apt-get install -f -y
+#      - name: Fix dependencies
+#        run: |
+#          sudo apt-get install -f -y
 
       - name: E2E test
         run: |
