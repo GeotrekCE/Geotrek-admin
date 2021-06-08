@@ -170,7 +170,7 @@ jobs:
       - name: Building package debian 18.04
         run: |
           dpkg-buildpackage -uc -us -b
-          find /home/runner |grep .deb
+          find / |grep .deb
       - name: Archive package artifact
         uses: actions/upload-artifact@v2
         with:
@@ -198,7 +198,7 @@ jobs:
       - name: Building package debian 20.04
         run: |
           dpkg-buildpackage -uc -us -b
-          find /home/runner |grep .deb
+          find / |grep .deb
       - name: Archive package artifact
         uses: actions/upload-artifact@v2
         with:
