@@ -133,22 +133,22 @@ jobs:
 #        pip install codecov
 #        codecov
 
-#  build_docker_image:
-#    name: Build docker image
-#    runs-on: ubuntu-20.04
-#    needs: [test]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Set up Docker Buildx
-#        id: buildx
-#        uses: docker/setup-buildx-action@v1
-#      - name: Build Docker image
-#        run: |
-#          docker build -t screamshotter_ci:latest .
-#      - name: Upload image
-#        uses: ishworkh/docker-image-artifact-upload@v1
-#        with:
-#          image: "screamshotter_ci:latest"
+  build_docker_image:
+    name: Build docker image
+    runs-on: ubuntu-20.04
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build Docker image
+        run: |
+          docker build -t geotrek:latest .
+      - name: Upload image
+        uses: ishworkh/docker-image-artifact-upload@v1
+        with:
+          image: "geotrek:latest"
 #  build_deb_18_04:
 #    name: Build 18.04 package
 #    runs-on: ubuntu-latest
