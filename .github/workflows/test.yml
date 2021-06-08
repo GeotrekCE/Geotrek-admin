@@ -71,10 +71,11 @@ jobs:
       with:
         path: |
           ~/.cache/pip
+          ~/.wheel_dir
 
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}
         restore-keys: |
-          ${{ runner.os }}-pip-
+          ${{ runner.os }}-pip-${{ matrix.python-version }}
 
     - name: Install System dependencies
       run: |
@@ -107,7 +108,8 @@ jobs:
     - name: Install python dependecies
       run: |
         python3 -m pip install --upgrade pip setuptools wheel
-        pip3 install -r requirements.txt -U
+        pip3 wheel --wheel-dir=~/.wheel_dir -r requirements.txt
+        pip3 install --no-index --find-links=~/.wheel_dir -r requirements.txt
 
     - name: Check migrations
       run: |
@@ -173,7 +175,7 @@ jobs:
         with:
           name: debian-18-04
           path: |
-            /home/runner/work/geotrek-admin/*.deb
+            /home/runner/work/*.deb
 
   build_deb_20_04:
     name: Build 20.04 package
@@ -200,84 +202,63 @@ jobs:
         with:
           name: debian-20-04
           path: |
-            /home/runner/work/geotrek-admin/*.deb
+            /home/runner/work/*.deb
 
-#  e2e_docker_image:
-#    name: Tests E2E docker
-#    runs-on: ubuntu-20.04
-#    needs: [build_docker_image]
-#    steps:
-#      - name: Download image
-#        uses: ishworkh/docker-image-artifact-download@v1
-#        with:
-#          image: "screamshotter_ci:latest"
-#      - name: Launch service
-#        run: |
-#          docker run -d -p 8000:8000 screamshotter_ci:latest
-#          echo "Waiting for container..."
-#          while ! nc -z "127.0.0.1" "8000"; do
-#            sleep 0.1
-#          done
-#      - name: E2E test
-#        run: |
-#          sleep 2
-#          curl -d url=https://google.com http://localhost:8000 > google.png
-#          if file google.png |grep -qE 'image|png'; then
-#            echo "File is PNG";
-#            exit 0;
-#          else
-#            echo "File is not PNG";
-#            exit 1;
-#          fi
-#  e2e_deb_18_04:
-#    name: Tests E2E 18.04
-#    runs-on: ubuntu-18.04
-#    needs: [ build_deb_18_04 ]
-#    steps:
-#      - uses: actions/download-artifact@v2
-#        with:
-#          name: debian-18-04
-#      - name: Install package
-#        run: |
-#          sudo dpkg -i /home/runner/work/screamshotter/screamshotter/*.deb || exit 0;
-#      - name: Fix dependencies
-#        run: |
-#          sudo apt-get install -f -y
-#      - name: E2E test
-#        run: |
-#          curl -d url=https://google.com http://localhost:8000 > google.png
-#          if file google.png |grep -qE 'image|png'; then
-#            echo "File is PNG";
-#            exit 0;
-#          else
-#            echo "File is not PNG";
-#            exit 1;
-#          fi
-#
-#  e2e_deb_20_04:
-#    name: Tests E2E 20.04
-#    runs-on: ubuntu-20.04
-#    needs: [ build_deb_20_04 ]
-#    steps:
-#      - uses: actions/download-artifact@v2
-#        with:
-#          name: debian-20-04
-#      - name: Install package
-#        run: |
-#          sudo dpkg -i /home/runner/work/screamshotter/screamshotter/*.deb || exit 0;
-#      - name: Fix dependencies
-#        run: |
-#          sudo apt-get install -f -y
-#      - name: E2E test
-#        run: |
-#          curl -d url=https://google.com http://localhost:8000 > google.png
-#          if file google.png |grep -qE 'image|png'; then
-#            echo "File is PNG";
-#            exit 0;
-#          else
-#            echo "File is not PNG";
-#            exit 1;
-#          fi
+  e2e_docker_image:
+    name: Tests E2E docker
+    runs-on: ubuntu-20.04
+    needs: [build_docker_image]
+    steps:
+      - name: Download image
+        uses: ishworkh/docker-image-artifact-download@v1
+        with:
+          image: "geotrek-admin:latest"
+      - name: Launch service
+        run: |
+          docker run -d -p 8000:8000 geotrek-admin:latest
+          echo "Waiting for container..."
+          while ! nc -z "127.0.0.1" "8000"; do
+            sleep 0.1
+          done
+      - name: E2E test
+        run: |
+          sleep 2
+
+  e2e_deb_18_04:
+    name: Tests E2E 18.04
+    runs-on: ubuntu-18.04
+    needs: [ build_deb_18_04 ]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: debian-18-04
+      - name: Install package
+        run: |
+          sudo dpkg -i /home/runner/work/geotrek-admin/geotrek-admin/*.deb || exit 0;
+      - name: Fix dependencies
+        run: |
+          sudo apt-get install -f -y
+      - name: E2E test
+        run: |
+          sleep 1
+
+  e2e_deb_20_04:
+    name: Tests E2E 20.04
+    runs-on: ubuntu-20.04
+    needs: [ build_deb_20_04 ]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: debian-20-04
+      - name: Install package
+        run: |
+          sudo dpkg -i /home/runner/work/geotrek-admin/geotrek-admin/*.deb || exit 0;
+      - name: Fix dependencies
+        run: |
+          sudo apt-get install -f -y
+      - name: E2E test
+        run: |
+          sleep 1
 #  deploy:
 #    name: Publish (on release only)
 #    runs-on: ubuntu-18.04
