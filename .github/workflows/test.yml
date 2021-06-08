@@ -164,7 +164,7 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get update -q
-          apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev
+          apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
       - name: Building package debian 18.04
         run: |
           dpkg-buildpackage -uc -us -b
@@ -191,7 +191,7 @@ jobs:
           apt-get update -q
           apt-get install -q -y software-properties-common
           add-apt-repository ppa:jyrki-pulliainen/dh-virtualenv
-          apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev
+          apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
       - name: Building package debian 20.04
         run: |
           dpkg-buildpackage -uc -us -b
