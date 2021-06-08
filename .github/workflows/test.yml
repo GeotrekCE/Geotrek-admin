@@ -170,6 +170,7 @@ jobs:
       - name: Building package debian 18.04
         run: |
           dpkg-buildpackage -uc -us -b
+          find /home/runner |grep .deb
       - name: Archive package artifact
         uses: actions/upload-artifact@v2
         with:
@@ -197,6 +198,7 @@ jobs:
       - name: Building package debian 20.04
         run: |
           dpkg-buildpackage -uc -us -b
+          find /home/runner |grep .deb
       - name: Archive package artifact
         uses: actions/upload-artifact@v2
         with:
@@ -212,7 +214,7 @@ jobs:
       - name: Download image
         uses: ishworkh/docker-image-artifact-download@v1
         with:
-          image: "geotrek-admin:latest"
+          image: "geotrek:latest"
       - name: Launch service
         run: |
           docker run -d -p 8000:8000 geotrek-admin:latest
