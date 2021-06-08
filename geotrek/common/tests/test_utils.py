@@ -13,7 +13,6 @@ from ..utils.postgresql import debug_pg_notices
 
 
 class UtilsTest(TestCase):
-
     def test_sqlextent(self):
         ext = sql_extent(
             "SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")
