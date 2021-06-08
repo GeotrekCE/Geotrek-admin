@@ -20,9 +20,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "${{ github.event_name }}! ${{ github.event.action }}"
-          python -m pip install --upgrade pip
-          python -m pip install flake8
+          python3 -m pip install --upgrade pip
+          python3 -m pip install flake8
 
       - name: Flake8
         run: |
