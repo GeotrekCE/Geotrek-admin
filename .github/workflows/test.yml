@@ -176,7 +176,7 @@ jobs:
         with:
           name: debian-18-04
           path: |
-            /home/runner/work/*.deb
+            /home/runner/work/Geotrek-admin/*.deb
 
   build_deb_20_04:
     name: Build 20.04 package
@@ -204,7 +204,7 @@ jobs:
         with:
           name: debian-20-04
           path: |
-            /home/runner/work/*.deb
+            /home/runner/work/Geotrek-admin/*.deb
 
   e2e_docker_image:
     name: Tests E2E docker
@@ -236,7 +236,7 @@ jobs:
           name: debian-18-04
       - name: Install package
         run: |
-          sudo dpkg -i /home/runner/work/geotrek-admin/geotrek-admin/*.deb || exit 0;
+          sudo dpkg -i /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
       - name: Fix dependencies
         run: |
           sudo apt-get install -f -y
@@ -254,7 +254,7 @@ jobs:
           name: debian-20-04
       - name: Install package
         run: |
-          sudo dpkg -i /home/runner/work/geotrek-admin/geotrek-admin/*.deb || exit 0;
+          sudo dpkg -i /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
       - name: Fix dependencies
         run: |
           sudo apt-get install -f -y
