@@ -93,9 +93,12 @@ class PathList(MapEntityList):
 
     @classproperty
     def columns(cls):
-        columns = ['id', 'checkbox', 'name', 'length', 'length_2d']
-        return columns
-
+        base_columns = ['id', 'checkbox', 'name', 'length']
+        extra_columns = settings.COLUMNS_LISTS['path'] #todo error no setting
+        if extra_columns:
+            base_columns.extend(extra_columns)
+        logger.warning(base_columns)
+        return base_columns
 
 class PathJsonList(MapEntityJsonList, PathList):
     def get_context_data(self, **kwargs):
@@ -117,7 +120,6 @@ class PathFormatList(MapEntityFormat, PathList):
         return super().get_queryset() \
             .select_related('structure', 'comfort', 'source', 'stake') \
             .prefetch_related('usages', 'networks')
-
 
 class PathDetail(MapEntityDetail):
     model = Path

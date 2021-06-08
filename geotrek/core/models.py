@@ -3,13 +3,13 @@ import logging
 import functools
 
 import simplekml
-
 from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
 
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
+from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from django.contrib.gis.geos import fromstr, LineString, GEOSGeometry
 
@@ -134,6 +134,20 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
+
+    @property
+    def date_insert_display(self):
+        if not self.date_insert:
+            return ""
+        else:
+            return date_format(self.date_insert, "SHORT_DATE_FORMAT")
+
+    @property
+    def date_update_display(self):
+        if not self.date_update:
+            return ""
+        else:
+            return date_format(self.date_update, "SHORT_DATE_FORMAT")
 
     def __str__(self):
         return self.name or _('path %d') % self.pk
