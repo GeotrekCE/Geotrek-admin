@@ -263,6 +263,10 @@ jobs:
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
           sudo apt-get -y install postgis
+          echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
+          echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
+          echo "geotrek-admin geotrek-admin/POSTGRES_PORT string 5433" >> .debian_settings
+          sudo debconf-set-selections .debian_settings
 
       - name: Install package
         run: |
@@ -294,7 +298,7 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PORT string 5433" >> .debian_settings
-          debconf-set-selections .debian_settings
+          sudo debconf-set-selections .debian_settings
 
       - name: Install package
         run: |
