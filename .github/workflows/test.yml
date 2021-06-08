@@ -27,18 +27,17 @@ env:
 jobs:
   test:
     name: Python Unittests
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04]
-        # python-version: ['3.6', '3.8']  # should match default versions in supported LTS (now 3.6 for 18.04 and 3.8 for 20.04)
         tests-env: ['tests', 'tests_nds']
         include:
           - os: ubuntu-18.04
-            python-version: 3.6
+            python-version: 3.6  # default python version in 18.04
           - os: ubuntu-20.04
-            python-version: 3.8
+            python-version: 3.8  # default python version in 20.04
 
     env:
       ENV: ${{ matrix.tests-env }}
@@ -132,7 +131,6 @@ jobs:
 #    - name: Coverage upload
 #      run: |
 #        pip install codecov
-#        cd src
 #        codecov
 
 #  build_docker_image:
