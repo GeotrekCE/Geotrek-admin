@@ -31,8 +31,14 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.6', '3.8']  # should match default versions in supported LTS (now 3.6 for 18.04 and 3.8 for 20.04)
+        os: [ubuntu-18.04, ubuntu-20.04]
+        # python-version: ['3.6', '3.8']  # should match default versions in supported LTS (now 3.6 for 18.04 and 3.8 for 20.04)
         tests-env: ['tests', 'tests_nds']
+        include:
+          - os: ubuntu-18.04
+            python-version: 3.6
+          - os: ubuntu-20.04
+            python-version: 3.8
 
     env:
       ENV: ${{ matrix.tests-env }}
