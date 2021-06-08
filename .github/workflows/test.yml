@@ -256,16 +256,22 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: debian-18-04
-      - name: Install package
-        run: |
-          sudo dpkg -i /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-      - name: Fix dependencies
+
+      - name: Simulate install.sh procedure
         run: |
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
           sudo apt-get -y install postgis
+
+      - name: Install package
+        run: |
+          sudo dpkg -i /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+
+      - name: Fix dependencies
+        run: |
           sudo apt-get install -f -y
+
       - name: E2E test
         run: |
           sudo geotrek loaddata test-integration
@@ -278,16 +284,22 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: debian-20-04
-      - name: Install package
-        run: |
-          sudo dpkg -i /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-      - name: Fix dependencies
+
+      - name: Simulate install.sh procedure
         run: |
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
           sudo apt-get -y install postgis
+
+      - name: Install package
+        run: |
+          sudo dpkg -i /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+
+      - name: Fix dependencies
+        run: |
           sudo apt-get install -f -y
+
       - name: E2E test
         run: |
           sleep 1
