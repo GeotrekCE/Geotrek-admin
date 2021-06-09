@@ -285,9 +285,7 @@ jobs:
 
       - name: Simulate install.sh procedure
         run: |
-          sudo apt-get remove --purge postgresql
-          ls -als /etc/apt/sources.list.d
-          sudo rm /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get remove --purge postgresql  # delete preinstalled postgresql
           sudo apt-get -q update
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
