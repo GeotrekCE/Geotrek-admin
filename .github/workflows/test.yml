@@ -297,7 +297,6 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PORT string 5433" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/MANAGE_DB boolean true" >> .debian_settings
 
           cat .debian_settings
           sudo debconf-set-selections .debian_settings
