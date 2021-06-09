@@ -311,6 +311,7 @@ tr.selected-row td {
     #list-panel {
         padding-left: 10px;
         height: calc(100vh - 65px);
+
     }
 }
 
