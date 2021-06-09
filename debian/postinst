@@ -50,7 +50,7 @@ mkdir -p /opt/geotrek-admin/var/pid || true
 chown -R geotrek.geotrek /opt/geotrek-admin/var || true
 
 # Create database (only on a new install)
-if [ "$MANAGE_DB" = "true" ] && [ "$2" = "" ]; then
+if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	echo "Create Database" >&2
 	su postgres -c "psql -q -c \"CREATE USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD';\"" || true
 	su postgres -c "psql -q -c 'CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;'" || true
@@ -107,7 +107,7 @@ echo "Copy static files" >&2
 geotrek collectstatic --clear --noinput -v0 || true
 
 # Insert initial data (only on a new install with an empty database)
-if [ "$MANAGE_DB" = "true" ] && [ "$2" = "" ]; then
+if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	echo "Insert initial data" >&2
 	geotrek loaddata -v0 minimal || true
 	geotrek loaddata -v0 cirkwi || true
