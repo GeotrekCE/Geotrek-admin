@@ -305,10 +305,16 @@ tr.selected-row td {
 
 #list-panel {
     padding-left: 10px;
-    height: calc(100vh - 65px);
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+}
+
+@media (min-width: 768px) {
+    #list-panel {
+        padding-left: 10px;
+        height: calc(100vh - 65px);
+    }
 }
 
 #list-panel .list-title {
@@ -381,9 +387,20 @@ tr.selected-row td {
 
 /* Datatables customization for filters and pagination */
 
+.table-responsive {
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+}
+@media (min-width: 768px) {
+    .table-responsive {
+        flex-grow: 1;
+    }
+}
 .dataTables_wrapper {
     flex-grow: 1;
 }
+
 div.dataTables_wrapper div.dataTables_paginate {
     float: right;
 }
