@@ -10,7 +10,11 @@ CHANGELOG
 - Fix confirm delete attachment modal not visible
 - Fix required '*geom' position
 - Fix scroll unwanted when list is full
-- Fix responsive on dataTable
+- Fix responsive on dataTables
+
+**Maintenance**
+
+- Update to django-mapentity 2.3.2
 
 2.59.0 (2021-06-07)
 -------------------
