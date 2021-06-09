@@ -286,6 +286,7 @@ jobs:
       - name: Simulate install.sh procedure
         run: |
           sudo apt-get remove --purge postgresql libpq-dev postgresql-client  # delete preinstalled postgresql
+          sudo apt-get -q update
           sudo apt-get -y install postgis
           sudo systemctl restart postgresql
           echo "Create Database"
