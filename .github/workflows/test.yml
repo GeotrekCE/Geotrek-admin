@@ -287,7 +287,7 @@ jobs:
 
       - name: Install package
         run: |
-          sudo apt-get -y -qq install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
 
 #      - name: Fix dependencies
 #        run: |
@@ -320,7 +320,7 @@ jobs:
 
       - name: Install package
         run: |
-          sudo apt-get -y -qq install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
 
 #      - name: Fix dependencies
 #        run: |
