@@ -266,11 +266,12 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PORT string 5433" >> .debian_settings
+          cat .debian_settings
           sudo debconf-set-selections .debian_settings
 
       - name: Install package
         run: |
-          sudo gdebi /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get -y -qq install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
 
 #      - name: Fix dependencies
 #        run: |
