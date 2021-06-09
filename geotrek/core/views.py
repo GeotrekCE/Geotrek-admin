@@ -94,11 +94,10 @@ class PathList(MapEntityList):
     @classproperty
     def columns(cls):
         base_columns = ['id', 'checkbox', 'name', 'length']
-        extra_columns = settings.COLUMNS_LISTS['path'] #todo error no setting
-        if extra_columns:
-            base_columns.extend(extra_columns)
-        logger.warning(base_columns)
+        extra_columns = settings.COLUMNS_LISTS.get('path', [])
+        base_columns.extend(extra_columns)
         return base_columns
+
 
 class PathJsonList(MapEntityJsonList, PathList):
     def get_context_data(self, **kwargs):
@@ -120,6 +119,7 @@ class PathFormatList(MapEntityFormat, PathList):
         return super().get_queryset() \
             .select_related('structure', 'comfort', 'source', 'stake') \
             .prefetch_related('usages', 'networks')
+
 
 class PathDetail(MapEntityDetail):
     model = Path
@@ -310,7 +310,13 @@ class TrailLayer(MapEntityLayer):
 class TrailList(MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
-    columns = ['id', 'name', 'departure', 'arrival', 'length']
+
+    @classproperty
+    def columns(cls):
+        base_columns = ['id', 'name', 'length']
+        extra_columns = settings.COLUMNS_LISTS.get('trail', [])
+        base_columns.extend(extra_columns)
+        return base_columns
 
 
 class TrailJsonList(MapEntityJsonList, TrailList):
