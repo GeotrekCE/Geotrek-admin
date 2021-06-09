@@ -7,9 +7,10 @@ CHANGELOG
 
 **Bug fixes**
 
-- Fix confirm delete attachment modal
+- Fix confirm delete attachment modal not visible
 - Fix required '*geom' position
 - Fix scroll unwanted when list is full
+- Fix responsive on dataTable
 
 2.59.0 (2021-06-07)
 -------------------
