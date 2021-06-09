@@ -7,6 +7,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.utils import classproperty
 from geotrek.common.views import FormsetMixin
 from geotrek.core.models import AltimetryMixin
 
@@ -36,7 +37,13 @@ class SignageLayer(MapEntityLayer):
 class SignageList(MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
-    columns = ['id', 'name', 'code', 'type', 'condition']
+
+    @classproperty
+    def columns(cls):
+        base_columns = ['id', 'name']
+        extra_columns = settings.COLUMNS_LISTS.get('signage', [])
+        base_columns.extend(extra_columns)
+        return base_columns
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):
