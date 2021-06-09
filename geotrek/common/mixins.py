@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 
 from django.utils.safestring import mark_safe
+from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import slugify
 
@@ -42,6 +43,20 @@ class TimeStampedModelMixin(models.Model):
         self.date_insert = fromdb.date_insert
         self.date_update = fromdb.date_update
         return self
+
+    @property
+    def date_insert_display(self):
+        if not self.date_insert:
+            return ""
+        else:
+            return date_format(self.date_insert, "SHORT_DATE_FORMAT")
+
+    @property
+    def date_update_display(self):
+        if not self.date_update:
+            return ""
+        else:
+            return date_format(self.date_update, "SHORT_DATE_FORMAT")
 
     @property
     def lastmod_display(self):
