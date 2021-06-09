@@ -5,6 +5,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.utils import classproperty
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 
@@ -25,7 +26,13 @@ class InfrastructureLayer(MapEntityLayer):
 class InfrastructureList(MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilterSet
-    columns = ['id', 'name', 'type', 'condition', 'cities']
+
+    @classproperty
+    def columns(cls):
+        base_columns = ['id', 'name']
+        extra_columns = settings.COLUMNS_LISTS.get('infrastructure', [])
+        base_columns.extend(extra_columns)
+        return base_columns
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
