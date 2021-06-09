@@ -290,10 +290,10 @@ jobs:
           sudo apt-get -y install postgis
           sudo systemctl restart postgresql
           echo "Create Database"
-          su postgres -c "psql -q -c \"CREATE USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD';\""
-          su postgres -c "psql -q -c 'CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;'"
-          su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis;'"
-          su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis_raster;'"
+          sudo -u postgres -c "psql -q -c \"CREATE USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD';\""
+          sudo -u postgres -c "psql -q -c 'CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;'"
+          sudo -u postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis;'"
+          sudo -u postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis_raster;'"
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PORT string 5433" >> .debian_settings
