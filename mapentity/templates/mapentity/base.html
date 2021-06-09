@@ -111,7 +111,7 @@
           <script type="text/javascript" src="{% static 'mapentity/vendor/bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.min.js' %}"></script>
         {% endif %}
         <script src="{% static 'mapentity/jquery.hoverIntent.js' %}"></script>
-        <script src="{% static 'paperclip/bootstrap-3-confirm.js' %}"></script>
+        <script src="{% static 'paperclip/bootstrap-4-confirm.js' %}"></script>
         {% for lang in LANGUAGES %}
             {% if lang.0 != 'en' %}<script type="text/javascript" src="{% get_static_prefix %}mapentity/vendor/bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.{{ lang.0 }}.min.js"  charset="UTF-8"></script>{% endif %}
         {% endfor %}

@@ -1,9 +1,6 @@
 
 /***** Bootstrap customizations ******/
-/* Override bad order in modal from paperclip */
-.modal-header .close {
-    order: 2;
-}
+
 .dropdown-menu {
     z-index: 9999;
 }
