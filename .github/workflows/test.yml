@@ -263,7 +263,7 @@ jobs:
 
       - name: E2E test
         run: |
-          ./node_modules/.bin/cypress run --record
+          ./node_modules/.bin/cypress run
         continue-on-error: true
 
       - name: Archive results as artifacts
@@ -311,15 +311,32 @@ jobs:
       - name: Install package
         run: |
           sudo apt install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+
       - name: Load Data
         run: |
           sudo geotrek loaddata minimal
           sudo geotrek loaddata cirkwi
           sudo geotrek loaddata basic
           sudo geotrek loaddata test-integration
+          cd /opt/geotrek-admin
+          for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null && cp -R $dir/* /opt/geotrek-admin/var/media/upload/ && popd > /dev/null; done
+
+      - name: Install cypress
+        run: |
+          npm i cypress
+
       - name: E2E test
         run: |
-          echo "run"
+          ./node_modules/.bin/cypress run
+        continue-on-error: true
+
+      - name: Archive results as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-cypress
+          path: |
+            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
+            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
   e2e_deb_20_04:
     name: Tests E2E 20.04
@@ -359,13 +376,25 @@ jobs:
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
 
-#      - name: Fix dependencies
-#        run: |
-#          sudo apt-get install -f -y
+          cd /opt/geotrek-admin
+          for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null && cp -R $dir/* /opt/geotrek-admin/var/media/upload/ && popd > /dev/null; done
+
+      - name: Install cypress
+        run: |
+          npm i cypress
 
       - name: E2E test
         run: |
-          sleep 1
+          ./node_modules/.bin/cypress run
+        continue-on-error: true
+
+      - name: Archive results as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-cypress
+          path: |
+            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
+            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 #  deploy:
 #    name: Publish (on release only)
 #    runs-on: ubuntu-18.04
