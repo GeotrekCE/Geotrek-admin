@@ -299,6 +299,7 @@ jobs:
           --health-cmd pg_isready
 
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: debian-18-04
@@ -331,7 +332,7 @@ jobs:
 
       - name: Install cypress
         run: |
-          sudo npm i cypress
+          npm install cypress
 
       - name: E2E test
         run: |
@@ -368,6 +369,7 @@ jobs:
           --health-cmd pg_isready
 
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: debian-20-04
@@ -393,7 +395,7 @@ jobs:
 
       - name: Install cypress
         run: |
-          npm i cypress
+          npm install cypress
 
       - name: E2E test
         run: |
