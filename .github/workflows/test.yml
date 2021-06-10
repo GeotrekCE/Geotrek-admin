@@ -278,6 +278,20 @@ jobs:
     name: Tests E2E 18.04
     runs-on: ubuntu-18.04
     needs: [ build_deb_18_04 ]
+
+    services:
+      postgres:
+        image: postgis/postgis:10-2.5
+        env:
+          POSTGRES_DB: ci_test
+          POSTGRES_PASSWORD: ci_test
+          POSTGRES_USER: ci_test
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+
     steps:
       - uses: actions/download-artifact@v2
         with:
