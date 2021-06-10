@@ -321,7 +321,6 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          sudo rm /etc/nginx/sites-enabled/default
           sudo systemctl restart nginx
 
       - name: Load Data
@@ -394,7 +393,6 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          sudo rm /etc/nginx/sites-enabled/default
           sudo systemctl restart nginx
 
       - name: Load Data
@@ -407,8 +405,6 @@ jobs:
           	cd $dir > /dev/null
           	sudo cp -r * /opt/geotrek-admin/var/media/upload/
           done
-          sudo rm /etc/nginx/sites-enabled/default
-          sudo systemctl restart nginx
 
       - name: Install cypress
         run: |
