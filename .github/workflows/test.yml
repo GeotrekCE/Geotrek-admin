@@ -290,6 +290,7 @@ jobs:
           sudo apt-get -y install postgis
           sudo systemctl restart postgresql
           echo "Create Database"
+          ls -als /var/run/postgresql/
           sudo -u postgres psql -h /var/run/postgresql/.s.PGSQL.5433 -q -c "CREATE USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD';"
           sudo -u postgres psql -h /var/run/postgresql/.s.PGSQL.5433 -q -c "CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;"
           sudo -u postgres psql -h /var/run/postgresql/.s.PGSQL.5433 -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis;'
