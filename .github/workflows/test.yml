@@ -318,12 +318,14 @@ jobs:
           sudo geotrek loaddata cirkwi
           sudo geotrek loaddata basic
           sudo geotrek loaddata test-integration
-          cd /opt/geotrek-admin
-          for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null && cp -R $dir/* /opt/geotrek-admin/var/media/upload/ && popd > /dev/null; done
+          for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
+          	cd $dir > /dev/null
+          	cp -r * /opt/geotrek-admin/var/media/upload/
+          done
 
       - name: Install cypress
         run: |
-          npm i cypress
+          sudo npm i cypress
 
       - name: E2E test
         run: |
@@ -375,9 +377,10 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-
-          cd /opt/geotrek-admin
-          for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null && cp -R $dir/* /opt/geotrek-admin/var/media/upload/ && popd > /dev/null; done
+          for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
+          	cd $dir > /dev/null
+          	cp -r * /opt/geotrek-admin/var/media/upload/
+          done
 
       - name: Install cypress
         run: |
