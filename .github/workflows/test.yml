@@ -317,7 +317,11 @@ jobs:
 
       - name: Install package
         run: |
-          sudo apt install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
+          	cd $dir > /dev/null
+          	sudo cp -r * /opt/geotrek-admin/var/media/upload/
+          done
 
       - name: Load Data
         run: |
@@ -388,6 +392,17 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
+          	cd $dir > /dev/null
+          	sudo cp -r * /opt/geotrek-admin/var/media/upload/
+          done
+
+      - name: Load Data
+        run: |
+          sudo geotrek loaddata minimal
+          sudo geotrek loaddata cirkwi
+          sudo geotrek loaddata basic
+          sudo geotrek loaddata test-integration
           for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
           	cd $dir > /dev/null
           	sudo cp -r * /opt/geotrek-admin/var/media/upload/
