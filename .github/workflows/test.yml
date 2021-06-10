@@ -318,10 +318,8 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
-          	cd $dir > /dev/null
-          	sudo cp -r * /opt/geotrek-admin/var/media/upload/
-          done
+          sudo rm /etc/nginx/sites-enabled/default
+          sudo systemctl restart nginx
 
       - name: Load Data
         run: |
@@ -346,7 +344,7 @@ jobs:
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: docker-cypress
+          name: cypress-18.04
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
@@ -392,10 +390,8 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
-          	cd $dir > /dev/null
-          	sudo cp -r * /opt/geotrek-admin/var/media/upload/
-          done
+          sudo rm /etc/nginx/sites-enabled/default
+          sudo systemctl restart nginx
 
       - name: Load Data
         run: |
@@ -407,6 +403,8 @@ jobs:
           	cd $dir > /dev/null
           	sudo cp -r * /opt/geotrek-admin/var/media/upload/
           done
+          sudo rm /etc/nginx/sites-enabled/default
+          sudo systemctl restart nginx
 
       - name: Install cypress
         run: |
@@ -420,7 +418,7 @@ jobs:
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: docker-cypress
+          name: cypress-20.04
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
