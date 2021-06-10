@@ -25,6 +25,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 
@@ -87,16 +88,12 @@ class PathLayer(MapEntityLayer):
         return geojson_lookup
 
 
-class PathList(MapEntityList):
+class PathList(CustomColumnsMixin, MapEntityList):
     queryset = Path.objects.all()
     filterform = PathFilterSet
-
-    @classproperty
-    def columns(cls):
-        base_columns = ['id', 'checkbox', 'name', 'length']
-        extra_columns = settings.COLUMNS_LISTS.get('path', [])
-        base_columns.extend(extra_columns)
-        return base_columns
+    mandatory_columns = ['id', 'checkbox', 'name', 'length']
+    default_extra_columns = ['length_2d']
+    settings_key = 'path'
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -307,16 +304,12 @@ class TrailLayer(MapEntityLayer):
     properties = ['name']
 
 
-class TrailList(MapEntityList):
+class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
-
-    @classproperty
-    def columns(cls):
-        base_columns = ['id', 'name', 'length']
-        extra_columns = settings.COLUMNS_LISTS.get('trail', [])
-        base_columns.extend(extra_columns)
-        return base_columns
+    mandatory_columns = ['id', 'name', 'length']
+    default_extra_columns = ['departure', 'arrival']
+    settings_key = 'trail'
 
 
 class TrailJsonList(MapEntityJsonList, TrailList):

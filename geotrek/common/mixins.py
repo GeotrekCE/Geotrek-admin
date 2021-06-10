@@ -489,3 +489,17 @@ apply_merge.short_description = _('Merge')
 
 class MergeActionMixin:
     actions = [apply_merge]
+
+
+class CustomColumnsMixin:
+    """
+    Customize columns in List views
+    """
+
+    @classproperty
+    def columns(cls):
+        # Get extra columns names from instance settings, or use default extra columns
+        extra_columns = settings.COLUMNS_LISTS.get(cls.settings_key, cls.default_extra_columns)
+        # Some columns are mandatory to prevent crashes
+        columns = cls.mandatory_columns + extra_columns
+        return columns
