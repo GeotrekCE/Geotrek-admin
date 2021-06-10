@@ -303,6 +303,7 @@ jobs:
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
+          echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
           cat .debian_settings
           sudo debconf-set-selections .debian_settings
@@ -324,6 +325,20 @@ jobs:
     name: Tests E2E 20.04
     runs-on: ubuntu-20.04
     needs: [ build_deb_20_04 ]
+
+    services:
+      postgres:
+        image: postgis/postgis:10-2.5
+        env:
+          POSTGRES_DB: ci_test
+          POSTGRES_PASSWORD: ci_test
+          POSTGRES_USER: ci_test
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -334,13 +349,10 @@ jobs:
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
-          sudo apt-get -y install postgis
-          sudo systemctl restart postgresql
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
+          echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/POSTGRES_PORT string 5433" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/MANAGE_DB boolean true" >> .debian_settings
-
+          cat .debian_settings
           sudo debconf-set-selections .debian_settings
 
       - name: Install package
