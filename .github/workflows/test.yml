@@ -177,7 +177,6 @@ jobs:
           path: |
             /home/runner/work/Geotrek-admin/*.deb
 
-
   build_deb_20_04:
     name: Build 20.04 package
     runs-on: ubuntu-latest
@@ -204,6 +203,8 @@ jobs:
           name: debian-20-04
           path: |
             /home/runner/work/Geotrek-admin/*.deb
+
+
 
 
   e2e_docker_image:
@@ -277,6 +278,7 @@ jobs:
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
 
+
   e2e_deb_18_04:
     name: Tests E2E 18.04
     runs-on: ubuntu-18.04
@@ -284,6 +286,7 @@ jobs:
 
     env:
       CYPRESS_BASE_URL: http://localhost
+      CYPRESS_CACHE_FOLDER: ~/cypress/cache
 
     services:
       postgres:
@@ -356,6 +359,7 @@ jobs:
 
     env:
       CYPRESS_BASE_URL: http://localhost
+      CYPRESS_CACHE_FOLDER: ~/cypress/cache
 
     services:
       postgres:
