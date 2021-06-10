@@ -253,7 +253,6 @@ jobs:
           sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/media /var/www/geotrek/media
           sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
           sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf /etc/nginx/sites-enabled/geotrek.conf
-          sudo rm /etc/nginx/sites-enabled/default
           sudo systemctl restart nginx
 
       - name: install Cypress
@@ -321,6 +320,7 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo systemctl status nginx
           sudo systemctl restart nginx
 
       - name: Load Data
@@ -393,6 +393,7 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          systemctl status nginx.service
           sudo systemctl restart nginx
 
       - name: Load Data
