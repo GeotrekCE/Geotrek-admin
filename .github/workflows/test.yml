@@ -177,6 +177,7 @@ jobs:
           path: |
             /home/runner/work/Geotrek-admin/*.deb
 
+
   build_deb_20_04:
     name: Build 20.04 package
     runs-on: ubuntu-latest
@@ -203,6 +204,7 @@ jobs:
           name: debian-20-04
           path: |
             /home/runner/work/Geotrek-admin/*.deb
+
 
   e2e_docker_image:
     name: Tests E2E docker
@@ -274,12 +276,15 @@ jobs:
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
+
   e2e_deb_18_04:
     name: Tests E2E 18.04
     runs-on: ubuntu-18.04
     needs: [ build_deb_18_04 ]
+
     env:
       CYPRESS_BASE_URL: http://localhost
+
     services:
       postgres:
         image: postgis/postgis:10-2.5
@@ -321,7 +326,7 @@ jobs:
           sudo geotrek loaddata test-integration
           for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
           	cd $dir > /dev/null
-          	cp -r * /opt/geotrek-admin/var/media/upload/
+          	sudo cp -r * /opt/geotrek-admin/var/media/upload/
           done
 
       - name: Install cypress
@@ -345,8 +350,10 @@ jobs:
     name: Tests E2E 20.04
     runs-on: ubuntu-20.04
     needs: [ build_deb_20_04 ]
+
     env:
       CYPRESS_BASE_URL: http://localhost
+
     services:
       postgres:
         image: postgis/postgis:10-2.5
@@ -381,7 +388,7 @@ jobs:
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
           	cd $dir > /dev/null
-          	cp -r * /opt/geotrek-admin/var/media/upload/
+          	sudo cp -r * /opt/geotrek-admin/var/media/upload/
           done
 
       - name: Install cypress
