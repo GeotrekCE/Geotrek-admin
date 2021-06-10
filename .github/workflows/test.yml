@@ -285,34 +285,23 @@ jobs:
 
       - name: Simulate install.sh procedure
         run: |
-          sudo apt-get remove --purge postgresql libpq-dev postgresql-client  # delete preinstalled postgresql
-          sudo apt-get -q update
-          sudo apt-get -y install postgis
-          sudo systemctl restart postgresql
-          echo "Create Database"
-          ls -als /var/run/postgresql/
-          sudo -u postgres psql -h /var/run/postgresql/.s.PGSQL.5433 -q -c "CREATE USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD';"
-          sudo -u postgres psql -h /var/run/postgresql/.s.PGSQL.5433 -q -c "CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;"
-          sudo -u postgres psql -h /var/run/postgresql/.s.PGSQL.5433 -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis;'
-          sudo -u postgres psql -h /var/run/postgresql/.s.PGSQL.5433 -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis_raster;'
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/POSTGRES_PORT string 5433" >> .debian_settings
-
           cat .debian_settings
           sudo debconf-set-selections .debian_settings
 
       - name: Install package
         run: |
           sudo apt install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-
-#      - name: Fix dependencies
-#        run: |
-#          sudo apt-get install -f -y
-
+      - name: Load Data
+        run: |
+          sudo geotrek loaddata minimal
+          sudo geotrek loaddata cirkwi
+          sudo geotrek loaddata basic
+          sudo geotrek loaddata test-integration
       - name: E2E test
         run: |
-          sudo geotrek loaddata test-integration
+          echo "run"
 
   e2e_deb_20_04:
     name: Tests E2E 20.04
