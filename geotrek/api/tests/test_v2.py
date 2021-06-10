@@ -181,7 +181,10 @@ class BaseApiTest(TestCase):
         cls.practice = trek_factory.PracticeFactory()
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
-        cls.poi = trek_factory.POIFactory()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.all()[0], 0.5, 0.5)])
+        else:
+            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT (700040 6600040)')
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
@@ -780,6 +783,26 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
         response = self.get_poi_list({'types': self.poi_type.pk, 'trek': self.treks[0].pk})
         self.assertEqual(response.status_code, 200)
+
+    def test_poi_list_filter_trek(self):
+        response = self.get_poi_list({'trek': self.treks[0].pk})
+        json_response = response.json()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            len(json_response.get('results')),
+            trek_models.POI.objects.all().count()
+        )
+
+        t = self.treks[0]
+        t.pois_excluded.add(self.poi)
+        t.save()
+
+        response = self.get_poi_list({'trek': t.pk})
+        json_response = response.json()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(json_response.get('results')), trek_models.POI.objects.all().count() - 1)
 
     def test_poi_list_filter_distance(self):
         """ Test POI list is filtered by reference point distance """
