@@ -794,6 +794,8 @@ env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(E
 with open(env_settings_file, 'r') as f:
     exec(f.read())
 
+COLUMNS_LISTS = {}
+
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
 if custom_settings_file and 'tests' not in ENV:
@@ -808,4 +810,3 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 USE_X_FORWARDED_HOST = False
-COLUMNS_LISTS = {}
