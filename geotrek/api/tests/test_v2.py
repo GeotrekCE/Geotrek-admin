@@ -1,3 +1,5 @@
+from unittest import skipIf
+
 from django.contrib.gis.geos import MultiLineString
 from django.urls import reverse
 from django.test.testcases import TestCase
@@ -181,7 +183,8 @@ class BaseApiTest(TestCase):
         cls.practice = trek_factory.PracticeFactory()
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
-        cls.poi = trek_factory.POIFactory()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.all()[0], 0.5, 0.5)])
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
@@ -662,6 +665,32 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_themes_list({'portals': self.portal.pk})
         self.assertContains(response, self.theme.label)
 
+    def test_theme_list_filter_portal(self):
+        portal2 = common_factory.TargetPortalFactory()
+        trek = trek_factory.TrekFactory.create(published=True)
+        trek.portal.add(portal2)
+        trek.themes.add(self.theme)
+        trek.save()
+        # Ok because the trek is published
+        response = self.get_themes_list({'portals': portal2.pk})
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        trek.published = False
+        trek.save()
+        # No theme should be returned because the trek is not published anymore
+        response = self.get_themes_list({'portals': portal2.pk})
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+        trek.published = True
+        trek.deleted = True
+        trek.save()
+        # No theme should be returned because the published trek on this portal is deleted
+        response = self.get_themes_list({'portals': portal2.pk})
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
     def test_city_list(self):
         self.check_number_elems_response(
             self.get_city_list(),
@@ -780,6 +809,27 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
         response = self.get_poi_list({'types': self.poi_type.pk, 'trek': self.treks[0].pk})
         self.assertEqual(response.status_code, 200)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_poi_list_filter_trek(self):
+        response = self.get_poi_list({'trek': self.treks[0].pk})
+        json_response = response.json()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            len(json_response.get('results')),
+            trek_models.POI.objects.all().count()
+        )
+
+        t = self.treks[0]
+        t.pois_excluded.add(self.poi)
+        t.save()
+
+        response = self.get_poi_list({'trek': t.pk})
+        json_response = response.json()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(json_response.get('results')), trek_models.POI.objects.all().count() - 1)
 
     def test_poi_list_filter_distance(self):
         """ Test POI list is filtered by reference point distance """

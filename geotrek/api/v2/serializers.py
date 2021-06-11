@@ -257,7 +257,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         external_id = serializers.CharField(source='eid')
         types = serializers.SerializerMethodField(read_only=True)
         cities = serializers.SerializerMethodField(read_only=True)
-        attachments = AttachmentSerializer(many=True)
+        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
@@ -401,7 +401,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         second_external_id = serializers.CharField(source='eid2')
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
-        attachments = AttachmentSerializer(many=True)
+        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
         pdf = serializers.SerializerMethodField('get_pdf_url')
@@ -594,7 +594,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        attachments = AttachmentSerializer(many=True)
+        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
