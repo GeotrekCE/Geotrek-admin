@@ -1,3 +1,4 @@
+
 import logging
 import os
 
@@ -19,6 +20,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
 from django.shortcuts import get_object_or_404
@@ -44,10 +46,12 @@ class TouristicContentLayer(MapEntityLayer):
     properties = ['name']
 
 
-class TouristicContentList(MapEntityList):
+class TouristicContentList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
-    columns = ['id', 'name', 'category']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['category']
+    settings_key = 'touristic_content'
 
     @property
     def categories_list(self):
@@ -160,10 +164,12 @@ class TouristicEventLayer(MapEntityLayer):
     properties = ['name']
 
 
-class TouristicEventList(MapEntityList):
+class TouristicEventList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
-    columns = ['id', 'name', 'type', 'begin_date', 'end_date']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['type', 'begin_date', 'end_date']
+    settings_key = 'touristic_event'
 
 
 class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):

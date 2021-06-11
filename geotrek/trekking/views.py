@@ -1,3 +1,4 @@
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
@@ -19,6 +20,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.api.v2.functions import Length
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
@@ -59,10 +61,12 @@ class TrekLayer(MapEntityLayer):
     queryset = Trek.objects.existing()
 
 
-class TrekList(FlattenPicturesMixin, MapEntityList):
+class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = TrekFilterSet
-    columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
     queryset = Trek.objects.existing()
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
+    settings_key = 'trek'
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -244,10 +248,12 @@ class POILayer(MapEntityLayer):
     properties = ['name', 'published']
 
 
-class POIList(FlattenPicturesMixin, MapEntityList):
+class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     model = POI
     filterform = POIFilterSet
-    columns = ['id', 'name', 'type', 'thumbnail']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['type', 'thumbnail']
+    settings_key = 'poi'
     queryset = model.objects.existing()
 
 
@@ -430,9 +436,11 @@ class ServiceLayer(MapEntityLayer):
     queryset = Service.objects.existing()
 
 
-class ServiceList(MapEntityList):
+class ServiceList(CustomColumnsMixin, MapEntityList):
     filterform = ServiceFilterSet
-    columns = ['id', 'name']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = []
+    settings_key = 'service'
     queryset = Service.objects.existing()
 
 

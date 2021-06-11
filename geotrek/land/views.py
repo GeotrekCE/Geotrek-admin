@@ -1,7 +1,6 @@
-from django.conf import settings
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from geotrek.common.utils import classproperty
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
@@ -60,16 +59,12 @@ class LandEdgeLayer(MapEntityLayer):
     properties = ['color_index', 'name']
 
 
-class LandEdgeList(MapEntityList):
+class LandEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = LandEdge.objects.existing()
     filterform = LandEdgeFilterSet
-
-    @classproperty
-    def columns(cls):
-        base_columns = ['id', 'length']
-        extra_columns = settings.COLUMNS_LISTS.get('landedge', [])
-        base_columns.extend(extra_columns)
-        return base_columns
+    mandatory_columns = ['id', 'land_type']
+    default_extra_columns = ['length']
+    settings_key = 'landedge'
 
 
 class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):

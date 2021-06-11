@@ -1,3 +1,4 @@
+
 import logging
 
 from django.utils.translation import gettext_lazy as _
@@ -5,6 +6,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.altimetry.models import AltimetryMixin
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
 from .models import Intervention, Project
@@ -25,10 +27,12 @@ class InterventionLayer(MapEntityLayer):
     properties = ['name']
 
 
-class InterventionList(MapEntityList):
+class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
-    columns = ['id', 'name', 'date', 'type', 'target', 'status', 'stake']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
+    settings_key = 'intervention'
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -116,10 +120,12 @@ class ProjectLayer(MapEntityLayer):
         return super().get_queryset().filter(pk__in=nonemptyqs)
 
 
-class ProjectList(MapEntityList):
+class ProjectList(CustomColumnsMixin, MapEntityList):
     queryset = Project.objects.existing()
     filterform = ProjectFilterSet
-    columns = ['id', 'name', 'period', 'type', 'domain']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['period', 'type', 'domain']
+    settings_key = 'project'
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):

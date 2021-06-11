@@ -30,6 +30,7 @@ class InfrastructureList(CustomColumnsMixin, MapEntityList):
     default_extra_columns = ['type', 'condition', 'cities']
     settings_key = 'infrastructure'
 
+
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
     pass
 

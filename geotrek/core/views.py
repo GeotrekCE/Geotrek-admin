@@ -24,7 +24,6 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.utils import classproperty
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
@@ -307,8 +306,8 @@ class TrailLayer(MapEntityLayer):
 class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
-    mandatory_columns = ['id', 'name', 'length']
-    default_extra_columns = ['departure', 'arrival']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['departure', 'arrival', 'length']
     settings_key = 'trail'
 
 
