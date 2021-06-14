@@ -4,6 +4,7 @@ from unittest import skipIf, mock
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
@@ -16,6 +17,7 @@ from geotrek.common.tests import CommonTest
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
+from geotrek.core.views import PathList
 from geotrek.core.models import Path, Trail, PathSource
 
 from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
@@ -594,6 +596,11 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=True)
         response = self.client.get(obj.get_layer_url(), {"no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 2)
+
+    @override_settings(COLUMNS_LISTS={'path': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
+    def test_custom_columns_mixin(self):
+        # Assert columns equal mandatoy columns plus custom extra columns
+        self.assertEqual(PathList.columns, ['id', 'checkbox', 'name', 'length', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
