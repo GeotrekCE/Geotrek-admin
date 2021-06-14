@@ -64,7 +64,7 @@ class LandEdgeList(CustomColumnsMixin, MapEntityList):
     filterform = LandEdgeFilterSet
     mandatory_columns = ['id', 'land_type']
     default_extra_columns = ['length']
-    settings_key = 'landedge'
+    settings_key = 'landedge_view'
 
 
 class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
@@ -72,12 +72,13 @@ class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
 
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
-    columns = [
-        'id', 'land_type', 'owner', 'agreement',
+    mandatory_columns = ['id']
+    extra_default_columns = [
+        'land_type', 'owner', 'agreement',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
-    ] + AltimetryMixin.COLUMNS
-
+        'cities', 'districts', 'areas'
+        ] + AltimetryMixin.COLUMNS
+    settings_key = 'landedge_export'
 
 class LandEdgeDetail(MapEntityDetail):
     queryset = LandEdge.objects.existing()

@@ -28,7 +28,7 @@ class InfrastructureList(CustomColumnsMixin, MapEntityList):
     filterform = InfrastructureFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'condition', 'cities']
-    settings_key = 'infrastructure'
+    settings_key = 'infrastructure_view'
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
@@ -36,11 +36,13 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
-    columns = [
+    mandatory_columns = ['id']
+    default_extra_columns = [
         'id', 'name', 'type', 'condition', 'description',
         'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
         'date_update', 'cities', 'districts', 'areas',
-    ] + AltimetryMixin.COLUMNS
+        ] + AltimetryMixin.COLUMNS
+    settings_key = 'infrastructure_export'
 
 
 class InfrastructureDetail(MapEntityDetail):

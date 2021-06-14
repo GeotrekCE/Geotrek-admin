@@ -51,7 +51,7 @@ class TouristicContentList(CustomColumnsMixin, MapEntityList):
     filterform = TouristicContentFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['category']
-    settings_key = 'touristic_content'
+    settings_key = 'touristic_content_view'
 
     @property
     def categories_list(self):
@@ -64,13 +64,14 @@ class TouristicContentJsonList(MapEntityJsonList, TouristicContentList):
 
 
 class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
-    columns = [
-        'id', 'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
         'review', 'published', 'publication_date', 'source', 'portal', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'approved'
     ]
-
+    settings_key = 'touristic_content_export'
 
 class TouristicContentDetail(MapEntityDetail):
     queryset = TouristicContent.objects.existing()
@@ -169,7 +170,7 @@ class TouristicEventList(CustomColumnsMixin, MapEntityList):
     filterform = TouristicEventFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'begin_date', 'end_date']
-    settings_key = 'touristic_event'
+    settings_key = 'touristic_event_view'
 
 
 class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
@@ -177,8 +178,9 @@ class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
 
 
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
-    columns = [
-        'id', 'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
         'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
         'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
         'participant_number', 'booking', 'target_audience', 'practical_info',
@@ -186,6 +188,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas', 'approved'
     ]
+    settings_key = 'touristic_event_export'
 
 
 class TouristicEventDetail(MapEntityDetail):

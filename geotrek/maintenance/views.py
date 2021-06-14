@@ -32,7 +32,7 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
     filterform = InterventionFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
-    settings_key = 'intervention'
+    settings_key = 'intervention_view'
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -40,8 +40,9 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
-    columns = [
-        'id', 'name', 'date', 'type', 'target', 'status', 'stake',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'name', 'date', 'type', 'target', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
         'width', 'height', 'length', 'area', 'structure',
         'description', 'date_insert', 'date_update',
@@ -49,6 +50,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         'total_cost_mandays', 'total_cost',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
+    settings_key = 'intervention_export'
 
 
 class InterventionDetail(MapEntityDetail):
@@ -125,7 +127,7 @@ class ProjectList(CustomColumnsMixin, MapEntityList):
     filterform = ProjectFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['period', 'type', 'domain']
-    settings_key = 'project'
+    settings_key = 'project_view'
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):
@@ -133,13 +135,15 @@ class ProjectJsonList(MapEntityJsonList, ProjectList):
 
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
-    columns = [
-        'id', 'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
-        'interventions', 'interventions_total_cost', 'comments', 'contractors',
-        'project_owner', 'project_manager', 'founders',
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
-    ]
+    mandatory_columns = ['id']
+    settings_key = 'project_export'
+    default_extra_columns = [
+                             'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
+                             'interventions', 'interventions_total_cost', 'comments', 'contractors',
+                             'project_owner', 'project_manager', 'founders',
+                             'date_insert', 'date_update',
+                             'cities', 'districts', 'areas',
+                            ]
 
 
 class ProjectDetail(MapEntityDetail):

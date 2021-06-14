@@ -39,13 +39,15 @@ class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
     filterform = SensitiveAreaFilterSet
     mandatory_columns = ['id', 'species']
     default_extra_columns = ['category']
-    settings_key = 'sensitivity'
+    settings_key = 'sensitivity_view'
 
 
 class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
-    columns = [
-        'id', 'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
     ]
+    settings_key = 'sensitivity_export'
 
 
 class SensitiveAreaDetail(MapEntityDetail):

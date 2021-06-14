@@ -39,7 +39,7 @@ class SignageList(CustomColumnsMixin, MapEntityList):
     filterform = SignageFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['code', 'type', 'condition']
-    settings_key = 'signage'
+    settings_key = 'signage_view'
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):
@@ -47,12 +47,14 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 
 
 class SignageFormatList(MapEntityFormat, SignageList):
-    columns = [
-        'id', 'structure', 'name', 'code', 'type', 'condition', 'description',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'code', 'type', 'condition', 'description',
         'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
         'printed_elevation', 'sealing', 'manager',
     ] + AltimetryMixin.COLUMNS
+    settings_key = 'signage_export'
 
 
 class SignageDetail(MapEntityDetail):
