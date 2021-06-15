@@ -138,12 +138,12 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
     mandatory_columns = ['id']
     settings_key = 'project_export'
     default_extra_columns = [
-                             'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
-                             'interventions', 'interventions_total_cost', 'comments', 'contractors',
-                             'project_owner', 'project_manager', 'founders',
-                             'date_insert', 'date_update',
-                             'cities', 'districts', 'areas',
-                            ]
+        'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
+        'interventions', 'interventions_total_cost', 'comments', 'contractors',
+        'project_owner', 'project_manager', 'founders',
+        'date_insert', 'date_update',
+        'cities', 'districts', 'areas',
+    ]
 
 
 class ProjectDetail(MapEntityDetail):
