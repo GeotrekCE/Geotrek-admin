@@ -1369,8 +1369,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
 
 ::
 
-    COLUMNS_LISTS["path_view"] = (
-        [
+    COLUMNS_LISTS["path_view"] = [
             "length_2d",
             "valid",
             "structure",
@@ -1390,9 +1389,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "draft",
             "trails",
         ],
-    )
-    COLUMNS_LISTS["trail_view"] = (
-        [
+    COLUMNS_LISTS["trail_view"] = [
             "departure",
             "arrival",
             "length",
@@ -1404,9 +1401,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_insert",
             "comments",
         ],
-    )
-    COLUMNS_LISTS["landedge_view"] = (
-        [
+    COLUMNS_LISTS["landedge_view"] = [
             "land_type",
             "min_elevation",
             "max_elevation",
@@ -1416,9 +1411,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "owner",
             "agreement",
         ],
-    )
-    COLUMNS_LISTS["infrastructure_view"] = (
-        [
+    COLUMNS_LISTS["infrastructure_view"] = [
             "condition",
             "cities",
             "structure",
@@ -1431,9 +1424,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "implantation_year",
             "published",
         ],
-    )
-    COLUMNS_LISTS["signage_view"] = (
-        [
+    COLUMNS_LISTS["signage_view"] = [
             "code",
             "type",
             "condition",
@@ -1450,9 +1441,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "manager",
             "published",
         ],
-    )
-    COLUMNS_LISTS["intervention_view"] = (
-        [
+    COLUMNS_LISTS["intervention_view"] = [
             "date",
             "type",
             "target",
@@ -1472,9 +1461,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_insert",
             "description",
         ],
-    )
-    COLUMNS_LISTS["project_view"] = (
-        [
+    COLUMNS_LISTS["project_view"] = [
             "structure",
             "begin_year",
             "end_year",
@@ -1490,9 +1477,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_insert",
             "comments",
         ],
-    )
-    COLUMNS_LISTS["trek_view"] = (
-        [
+    COLUMNS_LISTS["trek_view"] = [
             "structure",
             "departure",
             "arrival",
@@ -1521,15 +1506,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "reservation_id",
             "portal",
         ],
-    )
-    COLUMNS_LISTS["poi_view"] = (
-        ["structure", "description", "type", "min_elevation", "date_update", "date_insert"],
-    )
-    COLUMNS_LISTS["service_view"] = (
-        ["structure", "min_elevation", "type", "length_2d", "date_update", "date_insert"],
-    )
-    COLUMNS_LISTS["dive_view"] = (
-        [
+    COLUMNS_LISTS["poi_view"] = ["structure", "description", "type", "min_elevation", "date_update", "date_insert"],
+    COLUMNS_LISTS["service_view"] = ["structure", "min_elevation", "type", "length_2d", "date_update", "date_insert"],
+    COLUMNS_LISTS["dive_view"] = [
             "structure",
             "description_teaser",
             "description",
@@ -1548,9 +1527,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_update",
             "date_insert",
         ],
-    )
-    COLUMNS_LISTS["touristic_content_view"] = (
-        [
+    COLUMNS_LISTS["touristic_content_view"] = [
             "structure",
             "description_teaser",
             "description",
@@ -1567,9 +1544,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_update",
             "date_insert",
         ],
-    )
-    COLUMNS_LISTS["touristic_event_view"] = (
-        [
+    COLUMNS_LISTS["touristic_event_view"] = [
             "structure",
             "themes",
             "description_teaser",
@@ -1595,9 +1570,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_update",
             "date_insert",
         ],
-    )
-    COLUMNS_LISTS["feedback_view"] = (
-        [
+    COLUMNS_LISTS["feedback_view"] = [
             "email",
             "comment",
             "activity",
@@ -1608,9 +1581,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_update",
             "date_insert",
         ],
-    )
-    COLUMNS_LISTS["sensitivity_view"] = (
-        [
+    COLUMNS_LISTS["sensitivity_view"] = [
             "structure",
             "species",
             "published",
@@ -1623,10 +1594,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_update",
             "date_insert",
         ],
-    )
-
-    COLUMNS_LISTS["path_export"] = (
-        [
+    COLUMNS_LISTS["path_export"] = [
             "structure",
             "valid",
             "visible",
@@ -1649,9 +1617,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["trail_export"] = (
-        [
+    COLUMNS_LISTS["trail_export"] = [
             "structure",
             "name",
             "comments",
@@ -1669,9 +1635,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["landedge_export"] = (
-        [
+    COLUMNS_LISTS["landedge_export"] = [
             "land_type",
             "owner",
             "agreement",
@@ -1687,9 +1651,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["infrastructure_export"] = (
-        [
+    COLUMNS_LISTS["infrastructure_export"] = [
             "name",
             "type",
             "condition",
@@ -1710,9 +1672,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["signage_export"] = (
-        [
+    COLUMNS_LISTS["signage_export"] = [
             "structure",
             "name",
             "code",
@@ -1738,9 +1698,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["intervention_export"] = (
-        [
+    COLUMNS_LISTS["intervention_export"] = [
             "name",
             "date",
             "type",
@@ -1774,9 +1732,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["project_export"] = (
-        [
+    COLUMNS_LISTS["project_export"] = [
             "structure",
             "name",
             "period",
@@ -1797,9 +1753,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "districts",
             "areas",
         ],
-    )
-    COLUMNS_LISTS["trek_export"] = (
-        [
+    COLUMNS_LISTS["trek_export"] = [
             "eid",
             "eid2",
             "structure",
@@ -1849,9 +1803,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["poi_export"] = (
-        [
+    COLUMNS_LISTS["poi_export"] = [
             "structure",
             "eid",
             "name",
@@ -1874,9 +1826,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["service_export"] = (
-        [
+    COLUMNS_LISTS["service_export"] = [
             "eid",
             "type",
             "length",
@@ -1886,9 +1836,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "max_elevation",
             "slope",
         ],
-    )
-    COLUMNS_LISTS["dive_export"] = (
-        [
+    COLUMNS_LISTS["dive_export"] = [
             "eid",
             "structure",
             "name",
@@ -1910,9 +1858,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "portal",
             "review",
         ],
-    )
-    COLUMNS_LISTS["touristic_content_export"] = (
-        [
+    COLUMNS_LISTS["touristic_content_export"] = [
             "structure",
             "eid",
             "name",
@@ -1938,9 +1884,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "areas",
             "approved",
         ],
-    )
-    COLUMNS_LISTS["touristic_event_export"] = (
-        [
+    COLUMNS_LISTS["touristic_event_export"] = [
             "structure",
             "eid",
             "name",
@@ -1975,9 +1919,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "areas",
             "approved",
         ],
-    )
-    COLUMNS_LISTS["feedback_export"] = (
-        [
+    COLUMNS_LISTS["feedback_export"] = [
             "email",
             "activity",
             "comment",
@@ -1988,7 +1930,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_insert",
             "lastmod",
         ],
-    )
     COLUMNS_LISTS["sensitivity_export"] = [
         "species",
         "published",
