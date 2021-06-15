@@ -273,8 +273,6 @@ class POIFormatList(MapEntityFormat, POIList):
         'cities', 'districts', 'areas'
     ] + AltimetryMixin.COLUMNS
 
-    set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
-
     def get_queryset(self):
         qs = super().get_queryset()
 
