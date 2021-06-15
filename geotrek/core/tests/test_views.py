@@ -17,7 +17,7 @@ from geotrek.common.tests import CommonTest
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
-from geotrek.core.views import PathList
+from geotrek.core.views import PathFormatList, PathList
 from geotrek.core.models import Path, Trail, PathSource
 
 from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
@@ -597,10 +597,15 @@ class PathViewsTest(CommonTest):
         response = self.client.get(obj.get_layer_url(), {"no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 2)
 
-    @override_settings(COLUMNS_LISTS={'path': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
-    def test_custom_columns_mixin(self):
+    @override_settings(COLUMNS_LISTS={'path_view': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
+    def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatoy columns plus custom extra columns
         self.assertEqual(PathList.columns, ['id', 'checkbox', 'name', 'length', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+
+    @override_settings(COLUMNS_LISTS={'path_export': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatoy columns plus custom extra columns
+        self.assertEqual(PathFormatList.columns, ['id', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
