@@ -40,10 +40,10 @@ class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     mandatory_columns = ['id']
     default_extra_columns = [
-                             'email', 'activity', 'comment', 'category',
-                             'problem_magnitude', 'status', 'related_trek',
-                             'date_insert', 'lastmod',
-                            ]
+        'email', 'activity', 'comment', 'category',
+        'problem_magnitude', 'status', 'related_trek',
+        'date_insert', 'lastmod',
+    ]
     settings_key = 'feedback_export'
 
 

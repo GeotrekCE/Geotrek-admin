@@ -73,6 +73,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     ]
     settings_key = 'touristic_content_export'
 
+
 class TouristicContentDetail(MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 

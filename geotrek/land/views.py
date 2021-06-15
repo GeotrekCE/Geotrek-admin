@@ -77,8 +77,9 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
         'land_type', 'owner', 'agreement',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas'
-        ] + AltimetryMixin.COLUMNS
+    ] + AltimetryMixin.COLUMNS
     settings_key = 'landedge_export'
+
 
 class LandEdgeDetail(MapEntityDetail):
     queryset = LandEdge.objects.existing()

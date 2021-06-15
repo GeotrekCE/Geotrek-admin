@@ -46,14 +46,16 @@ class DiveJsonList(MapEntityJsonList, DiveList):
 
 class DiveFormatList(MapEntityFormat, DiveList):
     mandatory_columns = ['id']
-    default_extra_columns = ['eid', 'structure', 'name', 'departure',
-                             'description', 'description_teaser',
-                             'advice', 'difficulty', 'levels',
-                             'themes', 'practice', 'disabled_sport',
-                             'published', 'publication_date', 'date_insert', 'date_update',
-                             'areas', 'source', 'portal', 'review'
-                            ]
+    default_extra_columns = [
+        'eid', 'structure', 'name', 'departure',
+        'description', 'description_teaser',
+        'advice', 'difficulty', 'levels',
+        'themes', 'practice', 'disabled_sport',
+        'published', 'publication_date', 'date_insert', 'date_update',
+        'areas', 'source', 'portal', 'review'
+    ]
     settings_key = 'dive_export'
+
 
 class DiveDetail(MapEntityDetail):
     queryset = Dive.objects.existing()

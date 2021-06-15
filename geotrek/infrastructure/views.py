@@ -41,7 +41,7 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
         'id', 'name', 'type', 'condition', 'description',
         'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
         'date_update', 'cities', 'districts', 'areas',
-        ] + AltimetryMixin.COLUMNS
+    ] + AltimetryMixin.COLUMNS
     settings_key = 'infrastructure_export'
 
 
