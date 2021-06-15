@@ -135,20 +135,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
 
-    @property
-    def date_insert_display(self):
-        if not self.date_insert:
-            return ""
-        else:
-            return date_format(self.date_insert, "SHORT_DATE_FORMAT")
-
-    @property
-    def date_update_display(self):
-        if not self.date_update:
-            return ""
-        else:
-            return date_format(self.date_update, "SHORT_DATE_FORMAT")
-
     def __str__(self):
         return self.name or _('path %d') % self.pk
 
@@ -991,20 +977,6 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
-
-    @property
-    def date_insert_display(self):
-        if not self.date_insert:
-            return ""
-        else:
-            return date_format(self.date_insert, "SHORT_DATE_FORMAT")
-
-    @property
-    def date_update_display(self):
-        if not self.date_update:
-            return ""
-        else:
-            return date_format(self.date_update, "SHORT_DATE_FORMAT")
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _("Trails"))

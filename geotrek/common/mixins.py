@@ -46,17 +46,11 @@ class TimeStampedModelMixin(models.Model):
 
     @property
     def date_insert_display(self):
-        if not self.date_insert:
-            return ""
-        else:
-            return date_format(self.date_insert, "SHORT_DATE_FORMAT")
+        return date_format(self.date_insert, "SHORT_DATE_FORMAT")
 
     @property
     def date_update_display(self):
-        if not self.date_update:
-            return ""
-        else:
-            return date_format(self.date_update, "SHORT_DATE_FORMAT")
+        return date_format(self.date_update, "SHORT_DATE_FORMAT")
 
     @property
     def lastmod_display(self):
