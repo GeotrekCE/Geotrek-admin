@@ -786,6 +786,7 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
+HIDDEN_FORM_FIELDS = {}
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')

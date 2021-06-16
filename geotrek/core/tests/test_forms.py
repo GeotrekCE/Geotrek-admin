@@ -1,7 +1,10 @@
 from django.conf import settings
+from django.core.checks import Error
 from django.test import TestCase
 
 from unittest import skipIf
+
+from django.test.utils import override_settings
 
 from geotrek.core.factories import TrailFactory, PathFactory
 from geotrek.authent.factories import UserFactory
@@ -36,3 +39,15 @@ class PathFormTest(TestCase):
             data={'geom': '{"geom": "LINESTRING(3 45.5, 3 46.5)", "snap": [null, null]}'}
         )
         self.assertFalse(form2.is_valid(), str(form2.errors))
+
+    @override_settings(HIDDEN_FORM_FIELDS={'path': ['structure', 'im_missing']})
+    def test_hidden_fields_configuration_check(self):
+        errors = PathForm.check_fields_to_hide()
+        expected_errors = [
+            Error(
+                "Cannot hide field 'im_missing'",
+                hint='Field not included in form',
+                obj='geotrek.core.forms.PathForm'
+            )
+        ]
+        self.assertEqual(errors, expected_errors)

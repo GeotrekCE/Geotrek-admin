@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.core.checks import Error
+from django.forms.widgets import HiddenInput
 from django.utils.translation import gettext_lazy as _
 from django import forms
 
@@ -5,6 +8,10 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.widgets import LineTopologyWidget
 from geotrek.core.models import Path, Trail
 from geotrek.core.fields import TopologyField, SnappedLineStringField
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class TopologyForm(CommonForm):
@@ -73,6 +80,29 @@ class PathForm(CommonForm):
             if not self.user.has_perm('core.add_draft_path') or not self.user.has_perm('core.add_path'):
                 del self.fields['draft']
         self.fields['geom'].label = ''
+
+        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get("path", []):
+            if self.fields[field_to_hide].required:
+                logger.warning(
+                    f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                )
+            else:
+                self.fields[field_to_hide].widget = HiddenInput()
+
+    @classmethod
+    def check_fields_to_hide(cls):
+        errors = []
+        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get("path", []):
+            if field_to_hide not in cls._meta.fields:
+                errors.append(
+                    Error(
+                        f"Cannot hide field '{field_to_hide}'",
+                        hint="Field not included in form",
+                        # Diplay dotted path only
+                        obj=str(cls).split(" ")[1].strip(">").strip("'"),
+                    )
+                )
+        return errors
 
     def clean_geom(self):
         pk = self.instance.pk if self.instance and self.instance.pk else -1
