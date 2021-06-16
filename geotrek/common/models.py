@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+
 from PIL import Image
 
 from django.conf import settings
@@ -71,21 +73,20 @@ class Theme(PictogramMixin):
         the picture (crop right 50%).
         If the pictogram is a square, do not crop.
         """
-        pictogram, ext = os.path.splitext(self.pictogram.name)
-        pictopath = os.path.join(settings.MEDIA_ROOT, self.pictogram.name)
-        output = os.path.join(settings.MEDIA_ROOT, pictogram + '_off' + ext)
+        current_picto_path = Path(self.pictogram.path)
+        output_path = Path(current_picto_path.parent, f"{current_picto_path.stem}_off", current_picto_path.suffix)
 
         # Recreate only if necessary !
         # is_empty = os.path.getsize(output) == 0
         # is_newer = os.path.getmtime(pictopath) > os.path.getmtime(output)
-        if not os.path.exists(output):
+        if not os.path.exists(output_path):
             #  or is_empty or is_newer:
-            image = Image.open(pictopath)
+            image = Image.open(current_picto_path)
             w, h = image.size
             if w > h:
-                image = image.crop((0, 0, w / 2, h))
-            image.save(output)
-        return open(output, 'rb')
+                image = image.crop(box=(0, 0, w / 2, h))
+            image.save(output_path)
+        return open(output_path, 'rb')
 
 
 class RecordSource(OptionalPictogramMixin):
