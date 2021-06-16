@@ -681,7 +681,7 @@ For each module, use the following syntax to configure columns to display in the
     COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
 
 
-For each module, use the following syntax to configure columns to export as CSV. 
+For each module, use the following syntax to configure columns to export as CSV or SHP.
 
 ::
 
