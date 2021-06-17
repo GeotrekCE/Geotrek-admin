@@ -59,9 +59,9 @@ class CommonForm(MapEntityForm):
             return
         model = modelfield.remote_field.model
         # Filter structured choice fields according to user's structure
-        if issubclass(model, StructureRelated) and model.check_structure_in_forms:
+        if issubclass(model, StructureRelated) and model.check_structure_in_forms and self.user:
             field.queryset = field.queryset.filter(structure=self.user.profile.structure)
-        if issubclass(model, StructureOrNoneRelated) and model.check_structure_in_forms:
+        if issubclass(model, StructureOrNoneRelated) and model.check_structure_in_forms and self.user:
             field.queryset = field.queryset.filter(Q(structure=self.user.profile.structure) | Q(structure=None))
         if issubclass(model, NoDeleteMixin):
             field.queryset = field.queryset.filter(deleted=False)
@@ -72,7 +72,7 @@ class CommonForm(MapEntityForm):
         self.fields = self.fields.copy()
         self.update = kwargs.get("instance") is not None
         if 'structure' in self.fields:
-            if self.user.has_perm('authent.can_bypass_structure'):
+            if self.user and self.user.has_perm('authent.can_bypass_structure'):
                 if not self.instance.pk:
                     self.fields['structure'].initial = self.user.profile.structure
             else:

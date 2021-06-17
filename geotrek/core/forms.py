@@ -68,41 +68,27 @@ class PathForm(CommonForm):
             ['structure', 'name', 'stake', 'comfort', 'departure', 'arrival', 'comments',
              'source', 'networks', 'usages', 'valid', 'draft', 'reverse_geom', 'geom']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, hide_fields=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
             if not self.instance.draft:
                 # Prevent to set a path as draft again (it could be used by a topology)
                 del self.fields['draft']
-            if not self.user.has_perm('core.change_path'):
+            if self.user and not self.user.has_perm('core.change_path'):
                 del self.fields['draft']
-        else:
+        elif self.user:
             if not self.user.has_perm('core.add_draft_path') or not self.user.has_perm('core.add_path'):
                 del self.fields['draft']
         self.fields['geom'].label = ''
 
-        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get("path", []):
-            if self.fields[field_to_hide].required:
-                logger.warning(
-                    f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
-                )
-            else:
-                self.fields[field_to_hide].widget = HiddenInput()
-
-    @classmethod
-    def check_fields_to_hide(cls):
-        errors = []
-        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get("path", []):
-            if field_to_hide not in cls._meta.fields:
-                errors.append(
-                    Error(
-                        f"Cannot hide field '{field_to_hide}'",
-                        hint="Field not included in form",
-                        # Diplay dotted path only
-                        obj=str(cls).split(" ")[1].strip(">").strip("'"),
+        if hide_fields:
+            for field_to_hide in settings.HIDDEN_FORM_FIELDS.get("path", []):
+                if self.fields[field_to_hide].required:
+                    logger.warning(
+                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
                     )
-                )
-        return errors
+                else:
+                    self.fields[field_to_hide].widget = HiddenInput()
 
     def clean_geom(self):
         pk = self.instance.pk if self.instance and self.instance.pk else -1

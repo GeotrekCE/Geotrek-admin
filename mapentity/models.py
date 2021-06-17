@@ -8,7 +8,7 @@ from django.db.utils import OperationalError
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import FieldError, ObjectDoesNotExist
-from django.urls import reverse, NoReverseMatch
+from django.urls import reverse_lazy, NoReverseMatch
 from django.contrib import auth
 from django.contrib.admin.models import LogEntry as BaseLogEntry
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION
@@ -146,49 +146,52 @@ class BaseMapEntityMixin(models.Model):
 
     @classmethod
     def get_layer_url(cls):
-        return reverse(cls._entity.url_name(ENTITY_LAYER))
+        return reverse_lazy(cls._entity.url_name(ENTITY_LAYER))
 
     @classmethod
     def get_list_url(cls):
-        return reverse(cls._entity.url_name(ENTITY_LIST))
+        return reverse_lazy(cls._entity.url_name(ENTITY_LIST))
 
     @classmethod
     def get_jsonlist_url(cls):
-        return reverse(cls._entity.url_name(ENTITY_JSON_LIST))
+        return reverse_lazy(cls._entity.url_name(ENTITY_JSON_LIST))
 
     @classmethod
     def get_format_list_url(cls):
-        return reverse(cls._entity.url_name(ENTITY_FORMAT_LIST))
+        return reverse_lazy(cls._entity.url_name(ENTITY_FORMAT_LIST))
 
     @classmethod
     def get_add_url(cls):
-        return reverse(cls._entity.url_name(ENTITY_CREATE))
+        if cls._entity:
+            return reverse_lazy(cls._entity.url_name(ENTITY_CREATE))
+        else:
+            return ""
 
     def get_absolute_url(self):
         return self.get_detail_url()
 
     @classmethod
     def get_generic_detail_url(cls):
-        return reverse(cls._entity.url_name(ENTITY_DETAIL), args=[str(0)])
+        return reverse_lazy(cls._entity.url_name(ENTITY_DETAIL), args=[str(0)])
 
     def get_detail_url(self):
-        return reverse(self._entity.url_name(ENTITY_DETAIL), args=[str(self.pk)])
+        return reverse_lazy(self._entity.url_name(ENTITY_DETAIL), args=[str(self.pk)])
 
     @property
     def map_image_url(self):
         return self.get_map_image_url()
 
     def get_map_image_url(self):
-        return reverse(self._entity.url_name(ENTITY_MAPIMAGE), args=[str(self.pk)])
+        return reverse_lazy(self._entity.url_name(ENTITY_MAPIMAGE), args=[str(self.pk)])
 
     def get_document_url(self):
-        return reverse(self._entity.url_name(ENTITY_DOCUMENT), args=[str(self.pk)])
+        return reverse_lazy(self._entity.url_name(ENTITY_DOCUMENT), args=[str(self.pk)])
 
     def get_update_url(self):
-        return reverse(self._entity.url_name(ENTITY_UPDATE), args=[str(self.pk)])
+        return reverse_lazy(self._entity.url_name(ENTITY_UPDATE), args=[str(self.pk)])
 
     def get_delete_url(self):
-        return reverse(self._entity.url_name(ENTITY_DELETE), args=[str(self.pk)])
+        return reverse_lazy(self._entity.url_name(ENTITY_DELETE), args=[str(self.pk)])
 
     def get_map_image_extent(self, srid=API_SRID):
         fieldname = app_settings['GEOM_FIELD_NAME']
