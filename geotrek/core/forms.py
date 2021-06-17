@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.core.checks import Error
 from django.forms.widgets import HiddenInput
 from django.utils.translation import gettext_lazy as _
 from django import forms
