@@ -1,7 +1,6 @@
-from django import forms
 from geotrek.core.forms import PathForm
 from django.conf import settings
-from django.core.checks import Error, register, Tags
+from django.core import checks
 
 MAP_SETTINGS_KEYS = {
     PathForm: 'path'
@@ -14,7 +13,7 @@ def check_fields_to_hide_on_form(errors, form_class):
     for field_to_hide in settings.HIDDEN_FORM_FIELDS.get(form_key, []):
         if field_to_hide not in form_fields:
             errors.append(
-                Error(
+                checks.Error(
                     f"Cannot hide field '{field_to_hide}'",
                     hint="Field not included in form",
                     # Diplay dotted path only
