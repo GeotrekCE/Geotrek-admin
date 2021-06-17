@@ -492,8 +492,21 @@ class CustomColumnsMixin:
 
     @classproperty
     def columns(cls):
-        # Get extra columns names from instance settings, or use default extra columns
-        extra_columns = settings.COLUMNS_LISTS.get(cls.settings_key, cls.default_extra_columns)
-        # Some columns are mandatory to prevent crashes
-        columns = cls.mandatory_columns + extra_columns
-        return columns
+        mandatory_cols = getattr(cls, 'mandatory_columns', None)
+        default_extra_cols = getattr(cls, 'default_extra_columns', None)
+        # If we ended up here, then we know 'columns' is not defined higher in the MRO
+        if (mandatory_cols is None or default_extra_cols is None):
+            logger.error(
+                f"Cannot build columns for class {cls}.\n"
+                + "Please define on this class either : \n"
+                + "  - a field 'columns'\n"
+                + "OR \n"
+                + "  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+            )
+            return []
+        else:
+            # Get extra columns names from instance settings, or use default extra columns
+            extra_columns = settings.COLUMNS_LISTS.get(cls.settings_key, default_extra_cols)
+            # Some columns are mandatory to prevent crashes
+            columns = cls.mandatory_columns + extra_columns
+            return columns
