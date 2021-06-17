@@ -1,3 +1,4 @@
+from geotrek.common.mixins import CustomColumnsMixin
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
@@ -19,8 +20,10 @@ class SiteLayer(MapEntityLayer):
     queryset = Site.objects.all()
 
 
-class SiteList(MapEntityList):
-    columns = ['id', 'name', 'super_practices', 'lastmod']
+class SiteList(CustomColumnsMixin, MapEntityList):
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['super_practices', 'lastmod']
+    settings_key = 'outdoor_site_view'
     filterform = SiteFilterSet
     queryset = Site.objects.all()
 
@@ -100,12 +103,14 @@ class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
 
 
 class SiteFormatList(MapEntityFormat, SiteList):
-    columns = [
-        'id', 'structure', 'name', 'practice', 'description',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'practice', 'description',
         'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
         'portal', 'source', 'information_desks', 'web_links', 'eid',
         'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
     ]
+    settings_key = 'outdoor_site_export'
 
 
 class CourseLayer(MapEntityLayer):
@@ -114,8 +119,10 @@ class CourseLayer(MapEntityLayer):
     queryset = Course.objects.all()
 
 
-class CourseList(MapEntityList):
-    columns = ['id', 'name', 'site', 'lastmod']
+class CourseList(CustomColumnsMixin, MapEntityList):
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['site', 'lastmod']
+    settings_key = 'outdoor_course_view'
     filterform = CourseFilterSet
     queryset = Course.objects.all()
 
@@ -195,7 +202,9 @@ class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
 
 
 class CourseFormatList(MapEntityFormat, CourseList):
-    columns = [
-        'id', 'structure', 'name', 'site', 'description',
-        'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'site', 'description',
+        'advice', 'equipment', 'eid', 'height', 'length', 'ratings'
     ]
+    settings_key = 'outdoor_course_export'
