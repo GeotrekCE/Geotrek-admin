@@ -30,12 +30,14 @@ class TranslatedModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Track translated fields
+        self.orig_fields = list(self.fields.keys())
         self._translated = {}
-        self.replace_orig_fields()
-        self.populate_fields()
+
+        if 'modeltranslation' in settings.INSTALLED_APPS:
+            self.replace_orig_fields()
+            self.populate_fields()
 
     def replace_orig_fields(self):
-        self.orig_fields = list(self.fields.keys())
         # Expand i18n fields
         try:
             # Obtain model translation options
