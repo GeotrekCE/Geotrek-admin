@@ -2,6 +2,8 @@ from zipfile import is_zipfile
 from copy import deepcopy
 
 from django import forms
+from django.conf import settings
+from django.core.checks.messages import Error
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
@@ -124,6 +126,21 @@ class CommonForm(MapEntityForm):
         else:
             self.instance.structure = default_structure()
         return super().save(commit)
+
+    @classmethod
+    def check_fields_to_hide(cls):
+        errors = []
+        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get("path", []):
+            if field_to_hide not in cls._meta.fields:
+                errors.append(
+                    Error(
+                        f"Cannot hide field '{field_to_hide}'",
+                        hint="Field not included in form" + str(cls._meta.fields),
+                        # Diplay dotted path only
+                        obj=str(cls).split(" ")[1].strip(">").strip("'"),
+                    )
+                )
+        return errors
 
 
 class ImportDatasetForm(forms.Form):
