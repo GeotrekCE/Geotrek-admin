@@ -8,9 +8,12 @@ class CoreConfig(AppConfig):
     verbose_name = _("Core")
 
     def ready(self):
-        from .forms import PathForm
+        from .forms import PathForm, TrailForm
 
         def check_hidden_fields_settings(app_configs, **kwargs):
-            return PathForm.check_fields_to_hide()
+            # Check all Forms hidden fields settings
+            errors = PathForm.check_fields_to_hide()
+            errors.extend(TrailForm.check_fields_to_hide())
+            return errors
 
         register(check_hidden_fields_settings, Tags.security)

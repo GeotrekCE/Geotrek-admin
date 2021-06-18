@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import FieldDoesNotExist
+from django.forms.widgets import HiddenInput
 from django.urls import reverse
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
@@ -22,11 +23,21 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit
 from crispy_forms.bootstrap import FormActions
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class CommonForm(MapEntityForm):
 
     class Meta:
         fields = []
+
+    MAP_SETTINGS = {
+        'PathForm': 'path',
+        'TrekForm': 'trek',
+        'TrailForm': 'trail',
+    }
 
     def deep_remove(self, fieldslayout, name):
         if isinstance(fieldslayout, list):
@@ -82,6 +93,19 @@ class CommonForm(MapEntityForm):
                     self.filter_related_field(name, field)
                 del self.fields['structure']
 
+        # Get settings key for this Form
+        settings_key = self.MAP_SETTINGS[self.__class__.__name__]
+        # For each field listed in 'to hide' setting, for this Form
+        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get(settings_key, []):
+            # Do not hide require fields
+            if self.fields[field_to_hide].required:
+                logger.warning(
+                    f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                )
+            # Hide optional fields
+            else:
+                self.fields[field_to_hide].widget = HiddenInput()
+
     def clean(self):
         structure = self.cleaned_data.get('structure')
         if not structure:
@@ -130,12 +154,12 @@ class CommonForm(MapEntityForm):
     @classmethod
     def check_fields_to_hide(cls):
         errors = []
-        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get("path", []):
+        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get(cls.MAP_SETTINGS[cls.__name__], []):
             if field_to_hide not in cls._meta.fields:
                 errors.append(
                     Error(
                         f"Cannot hide field '{field_to_hide}'",
-                        hint="Field not included in form" + str(cls._meta.fields),
+                        hint="Field not included in form",
                         # Diplay dotted path only
                         obj=str(cls).split(" ")[1].strip(">").strip("'"),
                     )
