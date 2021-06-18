@@ -37,7 +37,6 @@ class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = Dive.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['levels', 'thumbnail']
-    settings_key = 'dive_view'
 
 
 class DiveJsonList(MapEntityJsonList, DiveList):
@@ -54,7 +53,6 @@ class DiveFormatList(MapEntityFormat, DiveList):
         'published', 'publication_date', 'date_insert', 'date_update',
         'areas', 'source', 'portal', 'review'
     ]
-    settings_key = 'dive_export'
 
 
 class DiveDetail(MapEntityDetail):

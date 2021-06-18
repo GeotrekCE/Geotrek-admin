@@ -66,7 +66,6 @@ class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = Trek.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
-    settings_key = 'trek_view'
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -86,7 +85,6 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'publication_date', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'source', 'portal', 'length_2d'
     ] + AltimetryMixin.COLUMNS
-    settings_key = 'trek_export'
 
 
 class TrekGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
@@ -252,11 +250,10 @@ class POILayer(MapEntityLayer):
 
 class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     model = POI
+    queryset = model.objects.existing()
     filterform = POIFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'thumbnail']
-    settings_key = 'poi_view'
-    queryset = model.objects.existing()
 
 
 class POIJsonList(MapEntityJsonList, POIList):
@@ -265,7 +262,6 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 class POIFormatList(MapEntityFormat, POIList):
     mandatory_columns = ['id']
-    settings_key = 'poi_export'
     default_extra_columns = [
         'id', 'structure', 'eid', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
@@ -442,7 +438,6 @@ class ServiceList(CustomColumnsMixin, MapEntityList):
     filterform = ServiceFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = []
-    settings_key = 'service_view'
     queryset = Service.objects.existing()
 
 
@@ -455,7 +450,6 @@ class ServiceFormatList(MapEntityFormat, ServiceList):
     default_extra_columns = [
         'id', 'eid', 'type'
     ] + AltimetryMixin.COLUMNS
-    settings_key = 'service_export'
 
 
 class ServiceDetail(MapEntityDetail):

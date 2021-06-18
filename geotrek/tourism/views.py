@@ -51,7 +51,6 @@ class TouristicContentList(CustomColumnsMixin, MapEntityList):
     filterform = TouristicContentFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['category']
-    settings_key = 'touristic_content_view'
 
     @property
     def categories_list(self):
@@ -71,7 +70,6 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
         'review', 'published', 'publication_date', 'source', 'portal', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'approved'
     ]
-    settings_key = 'touristic_content_export'
 
 
 class TouristicContentDetail(MapEntityDetail):
@@ -171,7 +169,6 @@ class TouristicEventList(CustomColumnsMixin, MapEntityList):
     filterform = TouristicEventFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'begin_date', 'end_date']
-    settings_key = 'touristic_event_view'
 
 
 class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
@@ -189,7 +186,6 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas', 'approved'
     ]
-    settings_key = 'touristic_event_export'
 
 
 class TouristicEventDetail(MapEntityDetail):

@@ -9,7 +9,6 @@ from modelcluster.fields import ParentalKey
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
-from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from django.contrib.gis.geos import fromstr, LineString, GEOSGeometry
 

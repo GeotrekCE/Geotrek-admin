@@ -92,7 +92,6 @@ class PathList(CustomColumnsMixin, MapEntityList):
     filterform = PathFilterSet
     mandatory_columns = ['id', 'checkbox', 'name', 'length']
     default_extra_columns = ['length_2d']
-    settings_key = 'path_view'
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -111,7 +110,6 @@ class PathFormatList(MapEntityFormat, PathList):
         'comfort', 'source', 'stake', 'usages', 'networks',
         'date_insert', 'date_update', 'length_2d'
     ] + AltimetryMixin.COLUMNS
-    settings_key = 'path_export'
 
     def get_queryset(self):
         return super().get_queryset() \
@@ -310,7 +308,6 @@ class TrailList(CustomColumnsMixin, MapEntityList):
     filterform = TrailFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['departure', 'arrival', 'length']
-    settings_key = 'trail_view'
 
 
 class TrailJsonList(MapEntityJsonList, TrailList):
@@ -324,7 +321,6 @@ class TrailFormatList(MapEntityFormat, TrailList):
         'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
-    settings_key = 'trail_export'
 
 
 class TrailDetail(MapEntityDetail):

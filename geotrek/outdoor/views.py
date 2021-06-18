@@ -23,7 +23,6 @@ class SiteLayer(MapEntityLayer):
 class SiteList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['super_practices', 'lastmod']
-    settings_key = 'outdoor_site_view'
     filterform = SiteFilterSet
     queryset = Site.objects.all()
 
@@ -110,7 +109,6 @@ class SiteFormatList(MapEntityFormat, SiteList):
         'portal', 'source', 'information_desks', 'web_links', 'eid',
         'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
     ]
-    settings_key = 'outdoor_site_export'
 
 
 class CourseLayer(MapEntityLayer):
@@ -122,7 +120,6 @@ class CourseLayer(MapEntityLayer):
 class CourseList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['site', 'lastmod']
-    settings_key = 'outdoor_course_view'
     filterform = CourseFilterSet
     queryset = Course.objects.all()
 
@@ -207,4 +204,3 @@ class CourseFormatList(MapEntityFormat, CourseList):
         'structure', 'name', 'site', 'description',
         'advice', 'equipment', 'eid', 'height', 'length', 'ratings'
     ]
-    settings_key = 'outdoor_course_export'

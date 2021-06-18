@@ -1361,6 +1361,7 @@ List of all the filters enabled on mobile.
 
     *Remove any of the filters if you don't want one of them. It's useless to add other one.*
 
+
 |
 
 ** Custom columns available **
@@ -1418,7 +1419,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "type",
             "description",
             "date_update",
-            "length_2d",
             "date_insert",
             "date_insert",
             "implantation_year",
@@ -1714,7 +1714,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "cities",
             "districts",
             "areas",
-            "length",
             "ascent",
             "descent",
             "min_elevation",
@@ -1745,7 +1744,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "descent",
             "min_elevation",
             "max_elevation",
-            "slope",
         ],
     COLUMNS_LISTS["intervention_export"] = [
             "name",

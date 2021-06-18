@@ -32,7 +32,6 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
     filterform = InterventionFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
-    settings_key = 'intervention_view'
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -50,7 +49,6 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         'total_cost_mandays', 'total_cost',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
-    settings_key = 'intervention_export'
 
 
 class InterventionDetail(MapEntityDetail):
@@ -127,7 +125,6 @@ class ProjectList(CustomColumnsMixin, MapEntityList):
     filterform = ProjectFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['period', 'type', 'domain']
-    settings_key = 'project_view'
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):
@@ -136,7 +133,6 @@ class ProjectJsonList(MapEntityJsonList, ProjectList):
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
     mandatory_columns = ['id']
-    settings_key = 'project_export'
     default_extra_columns = [
         'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
         'interventions', 'interventions_total_cost', 'comments', 'contractors',

@@ -64,7 +64,6 @@ class LandEdgeList(CustomColumnsMixin, MapEntityList):
     filterform = LandEdgeFilterSet
     mandatory_columns = ['id', 'land_type']
     default_extra_columns = ['length']
-    settings_key = 'landedge_view'
 
 
 class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
@@ -78,7 +77,6 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
         'date_insert', 'date_update',
         'cities', 'districts', 'areas'
     ] + AltimetryMixin.COLUMNS
-    settings_key = 'landedge_export'
 
 
 class LandEdgeDetail(MapEntityDetail):
