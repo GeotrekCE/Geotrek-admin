@@ -8,6 +8,7 @@ from django.conf import settings
 from django.test.utils import override_settings
 
 from geotrek.authent import factories as authent_factory, models as authent_models
+from geotrek.feedback import factories as feedback_factory
 from geotrek.core import factories as core_factory, models as path_models
 from geotrek.common import factories as common_factory, models as common_models
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file, get_dummy_uploaded_document
@@ -422,6 +423,9 @@ class BaseApiTest(TestCase):
 
     def get_organism_detail(self, id_organism, params=None):
         return self.client.get(reverse('apiv2:organism-detail', args=(id_organism,)), params)
+
+    def get_status_list(self, params=None):
+        return self.client.get(reverse('apiv2:status'), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -1489,3 +1493,28 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
+
+
+class ReportStatusTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.status1 = feedback_factory.ReportStatusFactory(label="A transmettre")
+        cls.status2 = feedback_factory.ReportStatusFactory(label="En cours de traitement")
+
+    def test_list(self):
+        response = self.client.get('/api/v2/feedback_status/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.status1.pk,
+                    "label": {'en': "A transmettre", 'es': None, 'fr': None, 'it': None},
+                },
+                {
+                    "id": self.status2.pk,
+                    "label": {'en': "En cours de traitement", 'es': None, 'fr': None, 'it': None},
+                }]
+        })
