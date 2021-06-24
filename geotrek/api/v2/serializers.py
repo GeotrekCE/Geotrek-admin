@@ -23,6 +23,8 @@ from geotrek.core.models import simplify_coords
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    from geotrek.feedback import models as feedback_models
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism import models as tourism_models
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -836,6 +838,18 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'id', 'geometry', 'url', 'structure', 'name', 'site', 'description',
                 'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
             )
+
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    class ReportStatusSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = feedback_models.ReportStatus
+            fields = ('id', 'label')
+
 
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     class FlatPageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

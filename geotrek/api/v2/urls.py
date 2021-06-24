@@ -16,6 +16,8 @@ router.register('label', api_views.LabelViewSet, basename='label')
 router.register('organism', api_views.OrganismViewSet, basename='organism')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    router.register('feedback_status', api_views.ReportStatusViewSet, basename='status')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('trek', api_views.TrekViewSet, basename='trek')
     router.register('poi', api_views.POIViewSet, basename='poi')

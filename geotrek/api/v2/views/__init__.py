@@ -7,6 +7,8 @@ from .authent import StructureViewSet  # noqa
 from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet, LabelViewSet, OrganismViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    from .feedback import ReportStatusViewSet  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from .trekking import TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet, DifficultyViewSet, NetworksViewSet, PracticeViewSet  # noqa
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
