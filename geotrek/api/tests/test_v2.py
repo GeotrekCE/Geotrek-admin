@@ -425,16 +425,16 @@ class BaseApiTest(TestCase):
         return self.client.get(reverse('apiv2:organism-detail', args=(id_organism,)), params)
 
     def get_status_list(self, params=None):
-        return self.client.get(reverse('apiv2:status'), params)
+        return self.client.get(reverse('apiv2:feedback-status'), params)
 
     def get_activity_list(self, params=None):
-        return self.client.get(reverse('apiv2:activity'), params)
+        return self.client.get(reverse('apiv2:feedback-activity'), params)
 
     def get_category_list(self, params=None):
-        return self.client.get(reverse('apiv2:category'), params)
+        return self.client.get(reverse('apiv2:feedback-category'), params)
 
     def get_magnitude_list(self, params=None):
-        return self.client.get(reverse('apiv2:magnitude'), params)
+        return self.client.get(reverse('apiv2:feedback-magnitude'), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
