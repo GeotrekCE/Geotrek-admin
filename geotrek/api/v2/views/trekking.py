@@ -29,7 +29,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def retrieve(self, request, pk=None, format=None):
         # Return detail view even for unpublished treks that are childrens of other published treks
-        qs_filtered = self.filter_published_lang_retrieve(request, self.queryset)
+        qs_filtered = self.filter_published_lang_retrieve(request, self.get_queryset())
         try:
             trek = qs_filtered.get(pk=pk)
         except self.get_queryset().model.DoesNotExist:
@@ -40,7 +40,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def filter_published_lang_retrieve(self, request, queryset):
         # filter trek by publication language (including parents publication language)
-        qs = self.get_queryset()
+        qs = queryset
         language = request.GET.get('language', 'all')
         associated_published_fields = [f.name for f in qs.model._meta.get_fields() if f.name.startswith('published')]
 
