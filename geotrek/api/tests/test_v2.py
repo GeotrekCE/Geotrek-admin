@@ -1614,3 +1614,30 @@ class TrekOrderingTestCase(TestCase):
         self.assertEqual(response.json()['results'][1]['id'], self.trek1.pk)
         self.assertEqual(response.json()['results'][2]['id'], self.trek2.pk)
         self.assertEqual(response.json()['results'][3]['id'], self.trek4.pk)
+
+
+class TouristicContentOrderingTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.tc1 = tourism_factory.TouristicContentFactory(name_fr="AAA", name_en='ABA', published_fr=True, published_en=True)
+        cls.tc2 = tourism_factory.TouristicContentFactory(name_fr="ABA", name_en='BAA', published_fr=True, published_en=True)
+        cls.tc3 = tourism_factory.TouristicContentFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
+        cls.tc4 = tourism_factory.TouristicContentFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
+
+    def test_order_fr(self):
+        params = {'language': 'fr'}
+        response = self.client.get(reverse('apiv2:touristiccontent-list'), params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.tc1.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.tc2.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.tc3.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.tc4.pk)
+
+    def test_order_en(self):
+        params = {'language': 'en'}
+        response = self.client.get(reverse('apiv2:touristiccontent-list'), params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.tc3.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.tc1.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.tc2.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.tc4.pk)
