@@ -8,6 +8,7 @@ from django.conf import settings
 from django.test.utils import override_settings
 
 from geotrek.authent import factories as authent_factory, models as authent_models
+from geotrek.feedback import factories as feedback_factory
 from geotrek.core import factories as core_factory, models as path_models
 from geotrek.common import factories as common_factory, models as common_models
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file, get_dummy_uploaded_document
@@ -423,6 +424,18 @@ class BaseApiTest(TestCase):
     def get_organism_detail(self, id_organism, params=None):
         return self.client.get(reverse('apiv2:organism-detail', args=(id_organism,)), params)
 
+    def get_status_list(self, params=None):
+        return self.client.get(reverse('apiv2:feedback-status'), params)
+
+    def get_activity_list(self, params=None):
+        return self.client.get(reverse('apiv2:feedback-activity'), params)
+
+    def get_category_list(self, params=None):
+        return self.client.get(reverse('apiv2:feedback-category'), params)
+
+    def get_magnitude_list(self, params=None):
+        return self.client.get(reverse('apiv2:feedback-magnitude'), params)
+
 
 class APIAccessAnonymousTestCase(BaseApiTest):
     """
@@ -614,7 +627,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          TOUR_PROPERTIES_GEOJSON_STRUCTURE)
 
-        self.assertEqual(json_response.get('features')[0].get('properties').get('count_children'), 1)
+        self.assertEqual(json_response.get('features')[1].get('properties').get('count_children'), 1)
 
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_trek_external_pdf(self):
@@ -635,7 +648,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_list({'language': 'en'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['results'][0]['pdf'],
-                         f'http://testserver/api/en/treks/{self.treks[0].pk}/trek.pdf')
+                         f'http://testserver/api/en/treks/{self.child2.pk}/child-2.pdf')
 
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
@@ -1489,3 +1502,142 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
+
+
+class ReportStatusTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.status1 = feedback_factory.ReportStatusFactory(label="A transmettre")
+        cls.status2 = feedback_factory.ReportStatusFactory(label="En cours de traitement")
+        cls.activity1 = feedback_factory.ReportActivityFactory(label="Horse-riding")
+        cls.activity2 = feedback_factory.ReportActivityFactory(label="Climbing")
+        cls.magnitude1 = feedback_factory.ReportProblemMagnitudeFactory(label="Easy")
+        cls.magnitude2 = feedback_factory.ReportProblemMagnitudeFactory(label="Hardcore")
+        cls.category1 = feedback_factory.ReportCategoryFactory(label="Conflict")
+        cls.category2 = feedback_factory.ReportCategoryFactory(label="Literring")
+
+    def test_status_list(self):
+        response = self.client.get('/api/v2/feedback_status/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.status1.pk,
+                    "label": {'en': "A transmettre", 'es': None, 'fr': None, 'it': None},
+                },
+                {
+                    "id": self.status2.pk,
+                    "label": {'en': "En cours de traitement", 'es': None, 'fr': None, 'it': None},
+                }]
+        })
+
+    def test_activity_list(self):
+        response = self.client.get('/api/v2/feedback_activity/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.activity1.pk,
+                    "label": {'en': "Horse-riding", 'es': None, 'fr': None, 'it': None},
+                },
+                {
+                    "id": self.activity2.pk,
+                    "label": {'en': "Climbing", 'es': None, 'fr': None, 'it': None},
+                }]
+        })
+
+    def test_magnitude_list(self):
+        response = self.client.get('/api/v2/feedback_magnitude/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.magnitude1.pk,
+                    "label": {'en': "Easy", 'es': None, 'fr': None, 'it': None},
+                },
+                {
+                    "id": self.magnitude2.pk,
+                    "label": {'en': "Hardcore", 'es': None, 'fr': None, 'it': None},
+                }]
+        })
+
+    def test_category_list(self):
+        response = self.client.get('/api/v2/feedback_category/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.category1.pk,
+                    "label": {'en': "Conflict", 'es': None, 'fr': None, 'it': None},
+                },
+                {
+                    "id": self.category2.pk,
+                    "label": {'en': "Literring", 'es': None, 'fr': None, 'it': None},
+                }]
+        })
+
+
+class TrekOrderingTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.trek1 = trek_factory.TrekFactory(name_fr="AAA", name_en='ABA', published_fr=True, published_en=True)
+        cls.trek2 = trek_factory.TrekFactory(name_fr="ABA", name_en='BAA', published_fr=True, published_en=True)
+        cls.trek3 = trek_factory.TrekFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
+        cls.trek4 = trek_factory.TrekFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
+
+    def test_order_fr(self):
+        params = {'language': 'fr'}
+        response = self.client.get(reverse('apiv2:trek-list'), params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek1.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek2.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek3.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.trek4.pk)
+
+    def test_order_en(self):
+        params = {'language': 'en'}
+        response = self.client.get(reverse('apiv2:trek-list'), params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek3.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek1.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek2.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.trek4.pk)
+
+
+class TouristicContentOrderingTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.tc1 = tourism_factory.TouristicContentFactory(name_fr="AAA", name_en='ABA', published_fr=True, published_en=True)
+        cls.tc2 = tourism_factory.TouristicContentFactory(name_fr="ABA", name_en='BAA', published_fr=True, published_en=True)
+        cls.tc3 = tourism_factory.TouristicContentFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
+        cls.tc4 = tourism_factory.TouristicContentFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
+
+    def test_order_fr(self):
+        params = {'language': 'fr'}
+        response = self.client.get(reverse('apiv2:touristiccontent-list'), params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.tc1.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.tc2.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.tc3.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.tc4.pk)
+
+    def test_order_en(self):
+        params = {'language': 'en'}
+        response = self.client.get(reverse('apiv2:touristiccontent-list'), params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.tc3.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.tc1.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.tc2.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.tc4.pk)
