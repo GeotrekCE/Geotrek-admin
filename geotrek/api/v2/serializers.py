@@ -850,6 +850,36 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
             model = feedback_models.ReportStatus
             fields = ('id', 'label')
 
+    class ReportCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = feedback_models.ReportCategory
+            fields = ('id', 'label')
+
+    class ReportActivitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = feedback_models.ReportActivity
+            fields = ('id', 'label')
+
+    class ReportProblemMagnitudeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = feedback_models.ReportProblemMagnitude
+            fields = ('id', 'label')
+
 
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     class FlatPageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
