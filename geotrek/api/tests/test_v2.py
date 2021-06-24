@@ -627,7 +627,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          TOUR_PROPERTIES_GEOJSON_STRUCTURE)
 
-        self.assertEqual(json_response.get('features')[0].get('properties').get('count_children'), 1)
+        self.assertEqual(json_response.get('features')[1].get('properties').get('count_children'), 1)
 
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_trek_external_pdf(self):
@@ -648,7 +648,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_list({'language': 'en'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['results'][0]['pdf'],
-                         f'http://testserver/api/en/treks/{self.treks[0].pk}/trek.pdf')
+                         f'http://testserver/api/en/treks/{self.child2.pk}/child-2.pdf')
 
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
@@ -1587,3 +1587,30 @@ class ReportStatusTestCase(TestCase):
                     "label": {'en': "Literring", 'es': None, 'fr': None, 'it': None},
                 }]
         })
+
+
+class TrekOrderingTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.trek1 = trek_factory.TrekFactory(name_fr="AAA", name_en='ABA', published_fr=True, published_en=True)
+        cls.trek2 = trek_factory.TrekFactory(name_fr="ABA", name_en='BAA', published_fr=True, published_en=True)
+        cls.trek3 = trek_factory.TrekFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
+        cls.trek4 = trek_factory.TrekFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
+
+    def test_order_fr(self):
+        params = {'language': 'fr'}
+        response = self.client.get(reverse('apiv2:trek-list'), params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek1.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek2.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek3.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.trek4.pk)
+
+    def test_order_en(self):
+        params = {'language': 'en'}
+        response = self.client.get(reverse('apiv2:trek-list'), params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek3.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek1.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek2.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.trek4.pk)
