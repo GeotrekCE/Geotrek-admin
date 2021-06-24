@@ -427,6 +427,15 @@ class BaseApiTest(TestCase):
     def get_status_list(self, params=None):
         return self.client.get(reverse('apiv2:status'), params)
 
+    def get_activity_list(self, params=None):
+        return self.client.get(reverse('apiv2:activity'), params)
+
+    def get_category_list(self, params=None):
+        return self.client.get(reverse('apiv2:category'), params)
+
+    def get_magnitude_list(self, params=None):
+        return self.client.get(reverse('apiv2:magnitude'), params)
+
 
 class APIAccessAnonymousTestCase(BaseApiTest):
     """
@@ -1500,8 +1509,14 @@ class ReportStatusTestCase(TestCase):
     def setUpTestData(cls):
         cls.status1 = feedback_factory.ReportStatusFactory(label="A transmettre")
         cls.status2 = feedback_factory.ReportStatusFactory(label="En cours de traitement")
+        cls.activity1 = feedback_factory.ReportActivityFactory(label="Horse-riding")
+        cls.activity2 = feedback_factory.ReportActivityFactory(label="Climbing")
+        cls.magnitude1 = feedback_factory.ReportProblemMagnitudeFactory(label="Easy")
+        cls.magnitude2 = feedback_factory.ReportProblemMagnitudeFactory(label="Hardcore")
+        cls.category1 = feedback_factory.ReportCategoryFactory(label="Conflict")
+        cls.category2 = feedback_factory.ReportCategoryFactory(label="Literring")
 
-    def test_list(self):
+    def test_status_list(self):
         response = self.client.get('/api/v2/feedback_status/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -1516,5 +1531,59 @@ class ReportStatusTestCase(TestCase):
                 {
                     "id": self.status2.pk,
                     "label": {'en': "En cours de traitement", 'es': None, 'fr': None, 'it': None},
+                }]
+        })
+
+    def test_activity_list(self):
+        response = self.client.get('/api/v2/feedback_activity/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.activity1.pk,
+                    "label": {'en': "Horse-riding", 'es': None, 'fr': None, 'it': None},
+                },
+                {
+                    "id": self.activity2.pk,
+                    "label": {'en': "Climbing", 'es': None, 'fr': None, 'it': None},
+                }]
+        })
+
+    def test_magnitude_list(self):
+        response = self.client.get('/api/v2/feedback_magnitude/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.magnitude1.pk,
+                    "label": {'en': "Easy", 'es': None, 'fr': None, 'it': None},
+                },
+                {
+                    "id": self.magnitude2.pk,
+                    "label": {'en': "Hardcore", 'es': None, 'fr': None, 'it': None},
+                }]
+        })
+
+    def test_category_list(self):
+        response = self.client.get('/api/v2/feedback_category/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "id": self.category1.pk,
+                    "label": {'en': "Conflict", 'es': None, 'fr': None, 'it': None},
+                },
+                {
+                    "id": self.category2.pk,
+                    "label": {'en': "Literring", 'es': None, 'fr': None, 'it': None},
                 }]
         })
