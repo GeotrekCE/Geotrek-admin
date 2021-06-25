@@ -9,6 +9,7 @@ CHANGELOG
 
 - Add Web Links to Trek endpoints in APIv2
 - Add endpoints for Web Links categories in APIv2
+- Ensure APIv2 returns outdoor sites list and outdoor courses list as ordered by localized name
 
 
 2.60.0 (2021-06-25)
