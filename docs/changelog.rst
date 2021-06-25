@@ -35,6 +35,7 @@ CHANGELOG
 
 - Update to django-mapentity 2.3.2
 
+
 2.59.0 (2021-06-07)
 -------------------
 
