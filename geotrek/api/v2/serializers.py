@@ -114,6 +114,27 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Route
             fields = ('id', 'pictogram', 'route')
 
+    class WebLinkCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = trekking_models.WebLinkCategory
+            fields = ('label', 'id', 'pictogram')
+
+    class WebLinkSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+        category = WebLinkCategorySerializer()
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = trekking_models.WebLink
+            fields = ('name', 'url', 'category')
+
 
 class ReservationSystemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
@@ -421,6 +442,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         next = serializers.ReadOnlyField(source='next_id')
         cities = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
+        web_links = WebLinkSerializer(many=True)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -552,7 +574,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'parents', 'parking_location', 'pdf', 'points_reference',
                 'portal', 'practice', 'previous', 'public_transport',
                 'published', 'reservation_system', 'route', 'second_external_id',
-                'source', 'structure', 'themes', 'update_datetime', 'url'
+                'source', 'structure', 'themes', 'update_datetime', 'url', 'web_links'
             )
 
     class TourSerializer(TrekSerializer):

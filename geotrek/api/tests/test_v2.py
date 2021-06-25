@@ -47,7 +47,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
     'portal', 'practice', 'previous', 'public_transport', 'published',
     'reservation_system', 'route', 'second_external_id', 'source', 'structure',
-    'themes', 'update_datetime', 'url'
+    'themes', 'update_datetime', 'url', 'web_links'
 ])
 
 PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
@@ -1589,55 +1589,130 @@ class ReportStatusTestCase(TestCase):
         })
 
 
-class TrekOrderingTestCase(TestCase):
+class LanguageOrderingTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.trek1 = trek_factory.TrekFactory(name_fr="AAA", name_en='ABA', published_fr=True, published_en=True)
         cls.trek2 = trek_factory.TrekFactory(name_fr="ABA", name_en='BAA', published_fr=True, published_en=True)
         cls.trek3 = trek_factory.TrekFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
         cls.trek4 = trek_factory.TrekFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
-
-    def test_order_fr(self):
-        params = {'language': 'fr'}
-        response = self.client.get(reverse('apiv2:trek-list'), params)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['results'][0]['id'], self.trek1.pk)
-        self.assertEqual(response.json()['results'][1]['id'], self.trek2.pk)
-        self.assertEqual(response.json()['results'][2]['id'], self.trek3.pk)
-        self.assertEqual(response.json()['results'][3]['id'], self.trek4.pk)
-
-    def test_order_en(self):
-        params = {'language': 'en'}
-        response = self.client.get(reverse('apiv2:trek-list'), params)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['results'][0]['id'], self.trek3.pk)
-        self.assertEqual(response.json()['results'][1]['id'], self.trek1.pk)
-        self.assertEqual(response.json()['results'][2]['id'], self.trek2.pk)
-        self.assertEqual(response.json()['results'][3]['id'], self.trek4.pk)
-
-
-class TouristicContentOrderingTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+        cls.course1 = outdoor_factory.CourseFactory(name_fr="AAA", name_en='ABA', published_fr=True, published_en=True)
+        cls.course2 = outdoor_factory.CourseFactory(name_fr="ABA", name_en='BAA', published_fr=True, published_en=True)
+        cls.course3 = outdoor_factory.CourseFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
+        cls.course4 = outdoor_factory.CourseFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
+        cls.site1 = outdoor_factory.SiteFactory(name_fr="AAA", name_en='ABA', published_fr=True, published_en=True)
+        cls.site2 = outdoor_factory.SiteFactory(name_fr="ABA", name_en='BAA', published_fr=True, published_en=True)
+        cls.site3 = outdoor_factory.SiteFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
+        cls.site4 = outdoor_factory.SiteFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
         cls.tc1 = tourism_factory.TouristicContentFactory(name_fr="AAA", name_en='ABA', published_fr=True, published_en=True)
         cls.tc2 = tourism_factory.TouristicContentFactory(name_fr="ABA", name_en='BAA', published_fr=True, published_en=True)
         cls.tc3 = tourism_factory.TouristicContentFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
         cls.tc4 = tourism_factory.TouristicContentFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
 
-    def test_order_fr(self):
-        params = {'language': 'fr'}
-        response = self.client.get(reverse('apiv2:touristiccontent-list'), params)
+    def assert_ordered_by_language(self, endpoint, ordered_ids, language):
+        # GET request on list with language param
+        response = self.client.get(reverse(endpoint), {'language': language})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['results'][0]['id'], self.tc1.pk)
-        self.assertEqual(response.json()['results'][1]['id'], self.tc2.pk)
-        self.assertEqual(response.json()['results'][2]['id'], self.tc3.pk)
-        self.assertEqual(response.json()['results'][3]['id'], self.tc4.pk)
+        # Assert response list is ordered as expected
+        for index, expected_id in enumerate(ordered_ids):
+            self.assertEqual(response.json()['results'][index]['id'], expected_id)
 
-    def test_order_en(self):
-        params = {'language': 'en'}
-        response = self.client.get(reverse('apiv2:touristiccontent-list'), params)
+    def test_ordered_trek_lists(self):
+        order_fr = [self.trek1.id, self.trek2.id, self.trek3.id, self.trek4.id]
+        self.assert_ordered_by_language('apiv2:trek-list', order_fr, 'fr')
+        order_en = [self.trek3.id, self.trek1.id, self.trek2.id, self.trek4.id]
+        self.assert_ordered_by_language('apiv2:trek-list', order_en, 'en')
+
+    def test_ordered_touristic_content_lists(self):
+        order_fr = [self.tc1.id, self.tc2.id, self.tc3.id, self.tc4.id]
+        self.assert_ordered_by_language('apiv2:touristiccontent-list', order_fr, 'fr')
+        order_en = [self.tc3.id, self.tc1.id, self.tc2.id, self.tc4.id]
+        self.assert_ordered_by_language('apiv2:touristiccontent-list', order_en, 'en')
+
+    def test_ordered_outdoor_site_lists(self):
+        order_fr = [self.site1.id, self.site2.id, self.site3.id, self.site4.id]
+        self.assert_ordered_by_language('apiv2:site-list', order_fr, 'fr')
+        order_en = [self.site3.id, self.site1.id, self.site2.id, self.site4.id]
+        self.assert_ordered_by_language('apiv2:site-list', order_en, 'en')
+
+    def test_order_outdoor_course_lists(self):
+        order_fr = [self.course1.id, self.course2.id, self.course3.id, self.course4.id]
+        self.assert_ordered_by_language('apiv2:course-list', order_fr, 'fr')
+        order_en = [self.course3.id, self.course1.id, self.course2.id, self.course4.id]
+        self.assert_ordered_by_language('apiv2:course-list', order_en, 'en')
+
+
+class WebLinksCategoryTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.web_link_cat1 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto1.png', label="To do")
+        cls.web_link_cat2 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto2.png', label="To see")
+        cls.web_link_cat3 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto3.png', label="To eat")
+
+    def test_web_links_category_list(self):
+        response = self.client.get(reverse('apiv2:weblink-category-list'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['results'][0]['id'], self.tc3.pk)
-        self.assertEqual(response.json()['results'][1]['id'], self.tc1.pk)
-        self.assertEqual(response.json()['results'][2]['id'], self.tc2.pk)
-        self.assertEqual(response.json()['results'][3]['id'], self.tc4.pk)
+        self.assertJSONEqual(response.content, {
+            "count": 3,
+            "next": None,
+            "previous": None,
+            "results": [
+                {
+                    "label": {'en': "To do", 'es': None, 'fr': None, 'it': None},
+                    "id": self.web_link_cat1.pk,
+                    "pictogram": "http://testserver/media/dummy_picto1.png",
+                },
+                {
+                    "label": {'en': "To eat", 'es': None, 'fr': None, 'it': None},
+                    "id": self.web_link_cat3.pk,
+                    "pictogram": "http://testserver/media/dummy_picto3.png",
+                },
+                {
+                    "label": {'en': "To see", 'es': None, 'fr': None, 'it': None},
+                    "id": self.web_link_cat2.pk,
+                    "pictogram": "http://testserver/media/dummy_picto2.png",
+                }]
+        })
+
+    def test_web_links_category_detail(self):
+        response = self.client.get(f"/api/v2/weblink_category/{self.web_link_cat1.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "label": {'en': "To do", 'es': None, 'fr': None, 'it': None},
+            "id": self.web_link_cat1.pk,
+            "pictogram": "http://testserver/media/dummy_picto1.png",
+        })
+
+
+class TrekWebLinksTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.web_link_cat = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto.png', label_en='Category')
+        cls.web_link1 = trek_factory.WebLinkFactory(category=cls.web_link_cat, name="Web link", name_en="Web link", url="http://dummy.url")
+        cls.web_link2 = trek_factory.WebLinkFactory(category=cls.web_link_cat, name="Web link", name_en="Web link", url="http://dummy.url")
+        cls.trek1 = trek_factory.TrekFactory(web_links=[cls.web_link1, cls.web_link2])
+
+    def test_web_links_in_trek_list(self):
+        response = self.client.get(reverse('apiv2:trek-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek1.pk)
+        self.assertEqual(response.json()['results'][0]['web_links'][0]['name']['en'], "Web link")
+        self.assertEqual(response.json()['results'][0]['web_links'][0]['url'], "http://dummy.url")
+        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['label']['en'], "Category")
+        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['id'], self.web_link_cat.pk)
+        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['name']['en'], "Web link")
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['url'], "http://dummy.url")
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['label']['en'], "Category")
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['id'], self.web_link_cat.pk)
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
+
+    def test_web_links_in_trek_detail(self):
+        response = self.client.get(f"/api/v2/trek/{self.trek1.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['id'], self.trek1.pk)
+        self.assertEqual(response.json()['web_links'][0]['name']['en'], "Web link")
+        self.assertEqual(response.json()['web_links'][0]['url'], "http://dummy.url")
+        self.assertEqual(response.json()['web_links'][0]['category']['label']['en'], "Category")
+        self.assertEqual(response.json()['web_links'][0]['category']['id'], self.web_link_cat.pk)
+        self.assertEqual(response.json()['web_links'][0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')

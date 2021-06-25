@@ -31,6 +31,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('trek_difficulty', api_views.DifficultyViewSet, basename='difficulty')
     router.register('trek_network', api_views.NetworksViewSet, basename='network')
     router.register('trek_practice', api_views.PracticeViewSet, basename='practice')
+    router.register('weblink_category', api_views.WebLinkCategoryViewSet, basename='weblink-category')
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristiccontent_category', api_views.TouristicContentCategoryViewSet,
                     basename='touristiccontentcategory')
