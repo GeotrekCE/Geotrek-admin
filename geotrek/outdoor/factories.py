@@ -65,10 +65,8 @@ class SiteFactory(StructureRelatedDefaultFactory):
 
     @factory.post_generation
     def managers(obj, create, extracted=None, **kwargs):
-        if create:
-            if extracted:
-                for organism in extracted:
-                    obj.managers.add(organism)
+        if create and extracted:
+            obj.managers.set(extracted)
 
 
 class OutdoorManagerFactory(UserFactory):

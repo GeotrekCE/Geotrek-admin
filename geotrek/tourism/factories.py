@@ -76,10 +76,8 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
-        if create:
-            if extracted:
-                for source in extracted:
-                    obj.source.add(source)
+        if create and extracted:
+            obj.source.set(extracted)
 
     @factory.post_generation
     def portals(obj, create, extracted=None, **kwargs):
@@ -134,17 +132,13 @@ class TouristicEventFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
-        if create:
-            if extracted:
-                for source in extracted:
-                    obj.source.add(source)
+        if create and extracted:
+            obj.source.set(extracted)
 
     @factory.post_generation
     def portals(obj, create, extracted=None, **kwargs):
-        if create:
-            if extracted:
-                for portal in extracted:
-                    obj.portal.add(portal)
+        if create and extracted:
+            obj.portal.set(extracted)
 
     @factory.post_generation
     def themes(obj, create, extracted=None, **kwargs):
