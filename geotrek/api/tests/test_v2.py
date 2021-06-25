@@ -47,7 +47,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
     'portal', 'practice', 'previous', 'public_transport', 'published',
     'reservation_system', 'route', 'second_external_id', 'source', 'structure',
-    'themes', 'update_datetime', 'url'
+    'themes', 'update_datetime', 'url', 'web_links'
 ])
 
 PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
@@ -1688,9 +1688,9 @@ class WebLinksCategoryTestCase(TestCase):
 class TrekWebLinksTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.web_link_cat = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto.png')
-        cls.web_link1 = trek_factory.WebLinkFactory(category=cls.web_link_cat)
-        cls.web_link2 = trek_factory.WebLinkFactory(category=cls.web_link_cat)
+        cls.web_link_cat = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto.png', label_en='Category')
+        cls.web_link1 = trek_factory.WebLinkFactory(category=cls.web_link_cat, name="Web link", name_en="Web link", url="http://dummy.url")
+        cls.web_link2 = trek_factory.WebLinkFactory(category=cls.web_link_cat, name="Web link", name_en="Web link", url="http://dummy.url")
         cls.trek1 = trek_factory.TrekFactory(web_links=[cls.web_link1, cls.web_link2])
 
     def test_web_links_in_trek_list(self):
@@ -1702,6 +1702,11 @@ class TrekWebLinksTestCase(TestCase):
         self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['label']['en'], "Category")
         self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['id'], self.web_link_cat.pk)
         self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['name']['en'], "Web link")
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['url'], "http://dummy.url")
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['label']['en'], "Category")
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['id'], self.web_link_cat.pk)
+        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
 
     def test_web_links_in_trek_detail(self):
         response = self.client.get(f"/api/v2/trek/{self.trek1.pk}/")
