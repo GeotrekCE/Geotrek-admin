@@ -2,8 +2,14 @@
 CHANGELOG
 =========
 
-2.59.0+dev
+
+2.60.0 (2021-06-25)
 -------------------
+
+**New features**
+
+- Add endpoints for user feedback in APIv2 : report category, report activity, report problem magnitude, and report status
+- Ensure APIv2 returns treks list and touristic contents list as ordered by localized name
 
 **Bug fixes**
 
@@ -19,6 +25,7 @@ CHANGELOG
 **Maintenance**
 
 - Update to django-mapentity 2.3.2
+
 
 2.59.0 (2021-06-07)
 -------------------
