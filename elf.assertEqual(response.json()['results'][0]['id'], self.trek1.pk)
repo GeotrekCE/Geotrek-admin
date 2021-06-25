@@ -1,0 +1,145 @@
+[1mdiff --git a/geotrek/api/tests/test_v2.py b/geotrek/api/tests/test_v2.py[m
+[1mindex 25f108b26..0e566e2c6 100644[m
+[1m--- a/geotrek/api/tests/test_v2.py[m
+[1m+++ b/geotrek/api/tests/test_v2.py[m
+[36m@@ -1641,3 +1641,32 @@[m [mclass TouristicContentOrderingTestCase(TestCase):[m
+         self.assertEqual(response.json()['results'][1]['id'], self.tc1.pk)[m
+         self.assertEqual(response.json()['results'][2]['id'], self.tc2.pk)[m
+         self.assertEqual(response.json()['results'][3]['id'], self.tc4.pk)[m
+[32m+[m
+[32m+[m
+[32m+[m[32mclass TrekWebLinksTestCase(TestCase):[m
+[32m+[m[32m    @classmethod[m
+[32m+[m[32m    def setUpTestData(cls):[m
+[32m+[m[32m        cls.web_link_cat = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto.png')[m
+[32m+[m[32m        cls.web_link1 = trek_factory.WebLinkFactory(category=cls.web_link_cat)[m
+[32m+[m[32m        cls.web_link2 = trek_factory.WebLinkFactory(category=cls.web_link_cat)[m
+[32m+[m[32m        cls.trek1 = trek_factory.TrekFactory(web_links=[cls.web_link1, cls.web_link2])[m
+[32m+[m
+[32m+[m[32m    def test_web_links_in_trek_list(self):[m
+[32m+[m[32m        response = self.client.get(reverse('apiv2:trek-list'))[m
+[32m+[m[32m        self.assertEqual(response.status_code, 200)[m
+[32m+[m[32m        self.assertEqual(response.json()['results'][0]['id'], self.trek1.pk)[m
+[32m+[m[32m        self.assertEqual(response.json()['results'][0]['web_links'][0]['name']['en'], "Web link")[m
+[32m+[m[32m        self.assertEqual(response.json()['results'][0]['web_links'][0]['url'], "http://dummy.url")[m
+[32m+[m[32m        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['label']['en'], "Category")[m
+[32m+[m[32m        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['id'], self.web_link_cat.pk)[m
+[32m+[m[32m        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')[m
+[32m+[m
+[32m+[m[32m    def test_web_links_in_trek_detail(self):[m
+[32m+[m[32m        response = self.client.get(f"/api/v2/trek/{self.trek1.pk}/")[m
+[32m+[m[32m        self.assertEqual(response.status_code, 200)[m
+[32m+[m[32m        self.assertEqual(response.json()['id'], self.trek1.pk)[m
+[32m+[m[32m        self.assertEqual(response.json()['web_links'][0]['name']['en'], "Web link")[m
+[32m+[m[32m        self.assertEqual(response.json()['web_links'][0]['url'], "http://dummy.url")[m
+[32m+[m[32m        self.assertEqual(response.json()['web_links'][0]['category']['label']['en'], "Category")[m
+[32m+[m[32m        self.assertEqual(response.json()['web_links'][0]['category']['id'], self.web_link_cat.pk)[m
+[32m+[m[32m        self.assertEqual(response.json()['web_links'][0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')[m
+[1mdiff --git a/geotrek/api/v2/serializers.py b/geotrek/api/v2/serializers.py[m
+[1mindex 16f4c479b..3592f8c3c 100644[m
+[1m--- a/geotrek/api/v2/serializers.py[m
+[1m+++ b/geotrek/api/v2/serializers.py[m
+[36m@@ -114,6 +114,27 @@[m [mif 'geotrek.trekking' in settings.INSTALLED_APPS:[m
+             model = trekking_models.Route[m
+             fields = ('id', 'pictogram', 'route')[m
+ [m
+[32m+[m[32m    class WebLinkCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):[m
+[32m+[m[32m        label = serializers.SerializerMethodField(read_only=True)[m
+[32m+[m
+[32m+[m[32m        def get_label(self, obj):[m
+[32m+[m[32m            return get_translation_or_dict('label', self, obj)[m
+[32m+[m
+[32m+[m[32m        class Meta:[m
+[32m+[m[32m            model = trekking_models.WebLinkCategory[m
+[32m+[m[32m            fields = ('label', 'id', 'pictogram')[m
+[32m+[m
+[32m+[m[32m    class WebLinkSerializer(DynamicFieldsMixin, serializers.ModelSerializer):[m
+[32m+[m[32m        name = serializers.SerializerMethodField(read_only=True)[m
+[32m+[m[32m        category = WebLinkCategorySerializer()[m
+[32m+[m
+[32m+[m[32m        def get_name(self, obj):[m
+[32m+[m[32m            return get_translation_or_dict('name', self, obj)[m
+[32m+[m
+[32m+[m[32m        class Meta:[m
+[32m+[m[32m            model = trekking_models.WebLink[m
+[32m+[m[32m            fields = ('name', 'url', 'category')[m
+[32m+[m
+ [m
+ class ReservationSystemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):[m
+     class Meta:[m
+[36m@@ -421,6 +442,7 @@[m [mif 'geotrek.trekking' in settings.INSTALLED_APPS:[m
+         next = serializers.ReadOnlyField(source='next_id')[m
+         cities = serializers.SerializerMethodField(read_only=True)[m
+         departure_city = serializers.SerializerMethodField(read_only=True)[m
+[32m+[m[32m        web_links = WebLinkSerializer(many=True)[m
+ [m
+         def get_update_datetime(self, obj):[m
+             return obj.topo_object.date_update[m
+[36m@@ -552,7 +574,7 @@[m [mif 'geotrek.trekking' in settings.INSTALLED_APPS:[m
+                 'parents', 'parking_location', 'pdf', 'points_reference',[m
+                 'portal', 'practice', 'previous', 'public_transport',[m
+                 'published', 'reservation_system', 'route', 'second_external_id',[m
+[31m-                'source', 'structure', 'themes', 'update_datetime', 'url'[m
+[32m+[m[32m                'source', 'structure', 'themes', 'update_datetime', 'url', 'web_links'[m
+             )[m
+ [m
+     class TourSerializer(TrekSerializer):[m
+[1mdiff --git a/geotrek/api/v2/urls.py b/geotrek/api/v2/urls.py[m
+[1mindex eaaa79177..968671d6c 100644[m
+[1m--- a/geotrek/api/v2/urls.py[m
+[1m+++ b/geotrek/api/v2/urls.py[m
+[36m@@ -31,6 +31,7 @@[m [mif 'geotrek.trekking' in settings.INSTALLED_APPS:[m
+     router.register('trek_difficulty', api_views.DifficultyViewSet, basename='difficulty')[m
+     router.register('trek_network', api_views.NetworksViewSet, basename='network')[m
+     router.register('trek_practice', api_views.PracticeViewSet, basename='practice')[m
+[32m+[m[32m    router.register('weblink_category', api_views.WebLinkCategoryViewSet, basename='weblink-category')[m
+ if 'geotrek.tourism' in settings.INSTALLED_APPS:[m
+     router.register('touristiccontent_category', api_views.TouristicContentCategoryViewSet,[m
+                     basename='touristiccontentcategory')[m
+[1mdiff --git a/geotrek/api/v2/views/__init__.py b/geotrek/api/v2/views/__init__.py[m
+[1mindex e59de2a65..9242493e3 100644[m
+[1m--- a/geotrek/api/v2/views/__init__.py[m
+[1m+++ b/geotrek/api/v2/views/__init__.py[m
+[36m@@ -10,7 +10,7 @@[m [mif 'geotrek.core' in settings.INSTALLED_APPS:[m
+ if 'geotrek.feedback' in settings.INSTALLED_APPS:[m
+     from .feedback import ReportStatusViewSet, ReportActivityViewSet, ReportCategoryViewSet, ReportProblemMagnitudeViewSet  # noqa[m
+ if 'geotrek.trekking' in settings.INSTALLED_APPS:[m
+[31m-    from .trekking import TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet, DifficultyViewSet, NetworksViewSet, PracticeViewSet  # noqa[m
+[32m+[m[32m    from .trekking import TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet, DifficultyViewSet, NetworksViewSet, PracticeViewSet, WebLinkCategoryViewSet  # noqa[m
+ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:[m
+     from .sensitivity import SensitiveAreaViewSet  # noqa[m
+     from .sensitivity import SportPracticeViewSet  # noqa[m
+[1mdiff --git a/geotrek/api/v2/views/trekking.py b/geotrek/api/v2/views/trekking.py[m
+[1mindex 549a9d9ff..fd8a845be 100644[m
+[1m--- a/geotrek/api/v2/views/trekking.py[m
+[1m+++ b/geotrek/api/v2/views/trekking.py[m
+[36m@@ -13,6 +13,11 @@[m [mfrom geotrek.api.v2.functions import Transform, Length, Length3D[m
+ from geotrek.trekking import models as trekking_models[m
+ [m
+ [m
+[32m+[m[32mclass WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):[m
+[32m+[m[32m    serializer_class = api_serializers.WebLinkCategorySerializer[m
+[32m+[m[32m    queryset = trekking_models.WebLinkCategory.objects.all()[m
+[32m+[m
+[32m+[m
+ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):[m
+     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTrekQueryParamsFilter,)[m
+     serializer_class = api_serializers.TrekSerializer[m
+[1mdiff --git a/geotrek/trekking/factories.py b/geotrek/trekking/factories.py[m
+[1mindex 931be348b..169d56c55 100644[m
+[1m--- a/geotrek/trekking/factories.py[m
+[1m+++ b/geotrek/trekking/factories.py[m
+[36m@@ -102,6 +102,13 @@[m [mclass TrekFactory(TopologyFactory):[m
+     reservation_system = factory.SubFactory(ReservationSystemFactory)[m
+     reservation_id = 'XXXXXXXXX'[m
+ [m
+[32m+[m[32m    @factory.post_generation[m
+[32m+[m[32m    def web_links(obj, create, extracted=None, **kwargs):[m
+[32m+[m[32m        if create:[m
+[32m+[m[32m            if extracted:[m
+[32m+[m[32m                for web_link in extracted:[m
+[32m+[m[32m                    obj.web_links.add(web_link)[m
+[32m+[m
+     @factory.post_generation[m
+     def sources(obj, create, extracted=None, **kwargs):[m
+         if create:[m

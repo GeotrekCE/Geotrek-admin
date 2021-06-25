@@ -103,6 +103,13 @@ class TrekFactory(TopologyFactory):
     reservation_id = 'XXXXXXXXX'
 
     @factory.post_generation
+    def web_links(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                for web_link in extracted:
+                    obj.web_links.add(web_link)
+
+    @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
         if create:
             if extracted:

@@ -13,6 +13,11 @@ from geotrek.api.v2.functions import Transform, Length, Length3D
 from geotrek.trekking import models as trekking_models
 
 
+class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.WebLinkCategorySerializer
+    queryset = trekking_models.WebLinkCategory.objects.all()
+
+
 class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTrekQueryParamsFilter,)
     serializer_class = api_serializers.TrekSerializer
