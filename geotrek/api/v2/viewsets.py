@@ -32,6 +32,8 @@ class GeotrekGeometricViewset(GeotrekViewSet):
             api_filters.GeotrekInBBoxFilter,
             api_filters.GeotrekDistanceToPointFilter)
     distance_filter_field = 'geom'
+    bbox_filter_field = 'geom'
+    bbox_filter_include_overlapping = True
     renderer_classes = GeotrekViewSet.renderer_classes + [GeoJSONRenderer, ]
 
     def get_serializer_class(self):

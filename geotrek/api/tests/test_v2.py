@@ -442,10 +442,6 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     TestCase for administrator API profile
     """
 
-    @classmethod
-    def setUpTestData(cls):
-        BaseApiTest.setUpTestData()
-
     def test_path_list(self):
         response = self.get_path_list()
         self.assertEqual(response.status_code, 401)
@@ -559,6 +555,55 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_list({
             'dist': '50000',
             'point': f"{self.reference_point.x},{self.reference_point.x}",
+        })
+        # json collection structure is ok
+        json_response = response.json()
+        ids_treks = [element['id'] for element in json_response['results']]
+        self.assertNotIn(trek_toulouse.pk, ids_treks)
+
+    def test_trek_list_filter_in_bbox(self):
+        """ Test Trek list is filtered by bbox param """
+        toulouse_trek_geom = LineString([
+            [
+                1.4464187622070312,
+                43.65147866566022
+            ],
+            [
+                1.435432434082031,
+                43.63682057801007
+            ],
+            [
+                1.4574050903320312,
+                43.62439567002734
+            ],
+            [
+                1.4426422119140625,
+                43.601775746067986
+            ],
+            [
+                1.473541259765625,
+                43.58810023846608
+            ]], srid=4326)
+        toulouse_trek_geom.transform(2154)
+        path_trek = core_factory.PathFactory(geom=toulouse_trek_geom)
+        trek_toulouse = trek_factory.TrekFactory(paths=[(path_trek, 0, 1)], geom=toulouse_trek_geom)
+        trek_toulouse.geom.buffer(10)
+        trek_toulouse.geom.transform(4326)
+        xmin, ymin, xmax, ymax = trek_toulouse.geom.extent
+
+        # test pois is in bbox filter
+        response = self.get_trek_list({
+            'in_bbox': f'{xmin},{ymin},{xmax},{ymax}',
+        })
+
+        # json collection structure is ok
+        json_response = response.json()
+        ids_treks = [element['id'] for element in json_response['results']]
+        self.assertIn(trek_toulouse.pk, ids_treks)
+
+        # test trek is not in distance filter (< 50km)
+        response = self.get_trek_list({
+            'in_bbox': f'{0.0},{0.0},{1.0},{1.0}',
         })
         # json collection structure is ok
         json_response = response.json()
@@ -890,6 +935,48 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertNotIn(poi_1.pk, ids_pois)
         self.assertNotIn(poi_2.pk, ids_pois)
 
+    def test_poi_list_filter_in_bbox(self):
+        """ Test POI list is filtered by bbox param """
+        geom_path = LineString([(1.4464187622070312, 43.65147866566022),
+                                (1.435432434082031, 43.63682057801007)], srid=4326)
+        geom_path.transform(2154)
+        pois_path = core_factory.PathFactory(geom=geom_path)
+        geom_point_1 = Point(x=1.4464187622070312,
+                             y=43.65147866566022, srid=4326)
+        geom_point_1.transform(2154)
+        poi_1 = trek_factory.POIFactory(paths=[(pois_path, 0, 0)],
+                                        geom=geom_point_1)
+        geom_point_2 = Point(x=1.435432434082031,
+                             y=43.63682057801007, srid=4326)
+        geom_point_2.transform(2154)
+        poi_2 = trek_factory.POIFactory(paths=[(pois_path, 0, 0)],
+                                        geom=geom_point_2)
+
+        test_bbox = LineString(geom_point_1, geom_point_2, srid=2154)
+        test_bbox.buffer(10)
+        test_bbox.transform(4326)
+        xmin, ymin, xmax, ymax = test_bbox.extent
+
+        # test pois is in bbox filter
+        response = self.get_poi_list({
+            'in_bbox': f'{xmin},{ymin},{xmax},{ymax}',
+        })
+        # json collection structure is ok
+        json_response = response.json()
+        ids_pois = [element['id'] for element in json_response['results']]
+        self.assertIn(poi_1.pk, ids_pois)
+        self.assertIn(poi_2.pk, ids_pois)
+
+        # test trek is not in distance filter (< 50km)
+        response = self.get_poi_list({
+            'in_bbox': f'{0.0},{0.0},{1.0},{1.0}',
+        })
+        # json collection structure is ok
+        json_response = response.json()
+        ids_pois = [element['id'] for element in json_response['results']]
+        self.assertNotIn(poi_1.pk, ids_pois)
+        self.assertNotIn(poi_2.pk, ids_pois)
+
     def test_poi_type(self):
         response = self.get_poi_type()
         self.assertEqual(response.status_code, 200)
@@ -985,6 +1072,42 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_touristiccontent_list({
             'dist': '50000',
             'point': f"{self.reference_point.x},{self.reference_point.y}",
+        })
+
+        json_response = response.json()
+        ids = [element['id'] for element in json_response['results']]
+        self.assertNotIn(tc_1.pk, ids)
+        self.assertNotIn(tc_2.pk, ids)
+
+    def test_touristiccontent_list_filter_in_bbox(self):
+        """ Test Touristic content list is filtered by bbox """
+        geom_point_1 = Point(x=1.4464187622070312,
+                             y=43.65147866566022, srid=4326)
+        geom_point_1.transform(2154)
+        tc_1 = tourism_factory.TouristicContentFactory(geom=geom_point_1)
+        geom_point_2 = Point(x=1.435432434082031,
+                             y=43.63682057801007, srid=4326)
+        geom_point_2.transform(2154)
+        tc_2 = tourism_factory.TouristicContentFactory(geom=geom_point_2)
+
+        bbox = LineString(geom_point_1, geom_point_2, srid=2154)
+        bbox.buffer(10)
+        bbox.transform(4326)
+        xmin, ymin, xmax, ymax = bbox.extent
+
+        # test present filtering < 110km
+        response = self.get_touristiccontent_list({
+            'in_bbox': f"{xmin},{ymin},{xmax},{ymax}",
+        })
+
+        json_response = response.json()
+        ids = [element['id'] for element in json_response['results']]
+        self.assertIn(tc_1.pk, ids)
+        self.assertIn(tc_2.pk, ids)
+
+        # test present filtering < 50km
+        response = self.get_touristiccontent_list({
+            'in_bbox': f"{0.0},{0.0},{1.0},{1.0}",
         })
 
         json_response = response.json()

@@ -5,6 +5,10 @@ CHANGELOG
 2.61.0+dev
 -------------------
 
+**Bug fixes**
+
+* Fix filter in_bbox in API v2
+
 
 2.61.0 (2021-06-25)
 -------------------
