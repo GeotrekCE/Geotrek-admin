@@ -562,7 +562,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertNotIn(trek_toulouse.pk, ids_treks)
 
     def test_trek_list_filter_in_bbox(self):
-        """ Test Trek list is filtered by reference point distance """
+        """ Test Trek list is filtered by bbox param """
         toulouse_trek_geom = LineString([
             [
                 1.4464187622070312,
@@ -936,7 +936,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertNotIn(poi_2.pk, ids_pois)
 
     def test_poi_list_filter_in_bbox(self):
-        """ Test POI list is filtered by reference point distance """
+        """ Test POI list is filtered by bbox param """
         geom_path = LineString([(1.4464187622070312, 43.65147866566022),
                                 (1.435432434082031, 43.63682057801007)], srid=4326)
         geom_path.transform(2154)
@@ -1080,7 +1080,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertNotIn(tc_2.pk, ids)
 
     def test_touristiccontent_list_filter_in_bbox(self):
-        """ Test Touristic content list is filtered by reference point distance """
+        """ Test Touristic content list is filtered by bbox """
         geom_point_1 = Point(x=1.4464187622070312,
                              y=43.65147866566022, srid=4326)
         geom_point_1.transform(2154)

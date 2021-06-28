@@ -62,7 +62,7 @@ class GeotrekInBBoxFilter(InBBOXFilter):
     """
 
     def get_filter_bbox(self, request):
-        """ transform bbox to internal SRID to get working """
+        """ Transform bbox to internal SRID to get working """
         bbox = super().get_filter_bbox(request)
         if bbox:
             bbox.srid = 4326
