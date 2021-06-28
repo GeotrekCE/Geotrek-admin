@@ -61,6 +61,14 @@ class GeotrekInBBoxFilter(InBBOXFilter):
     Override DRF gis InBBOXFilter with coreapi field descriptors
     """
 
+    def get_filter_bbox(self, request):
+        """ transform bbox to internal SRID to get working """
+        bbox = super().get_filter_bbox(request)
+        if bbox:
+            bbox.srid = 4326
+            bbox.transform(settings.SRID)
+        return bbox
+
     def get_schema_fields(self, view):
         return (
             Field(
