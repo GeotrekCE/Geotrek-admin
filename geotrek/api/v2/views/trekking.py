@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import F, Q
+from django.db.models import F, Q, Prefetch
 from django.db.models.aggregates import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -26,7 +26,9 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return trekking_models.Trek.objects.existing() \
             .select_related('topo_object') \
-            .prefetch_related('topo_object__aggregations', 'accessibilities', 'attachments') \
+            .prefetch_related('topo_object__aggregations', 'accessibilities', 'attachments',
+                              Prefetch('web_links',
+                                       queryset=trekking_models.WebLink.objects.select_related('category'))) \
             .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                       length_2d_m=Length('geom'),
                       length_3d_m=Length3D('geom_3d')) \
@@ -70,8 +72,10 @@ class TourViewSet(TrekViewSet):
     serializer_class = api_serializers.TourSerializer
 
     def get_queryset(self):
-        return super().get_queryset().annotate(count_children=Count('trek_children')) \
+        qs = super().get_queryset()
+        qs = qs.annotate(count_children=Count('trek_children'))\
             .filter(count_children__gt=0)
+        return qs
 
 
 class PracticeViewSet(api_viewsets.GeotrekViewSet):
