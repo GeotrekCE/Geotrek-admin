@@ -86,7 +86,7 @@ class PracticeViewSet(api_viewsets.GeotrekViewSet):
         return Response(serializer.data)
 
 
-class NetworksViewSet(api_viewsets.GeotrekViewSet):
+class NetworkViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
     serializer_class = api_serializers.NetworkSerializer
     queryset = trekking_models.TrekNetwork.objects.all()
