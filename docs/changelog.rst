@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix filter in_bbox in API v2
+* Fix filter difficulty in API v2
 
 
 2.61.0 (2021-06-25)
