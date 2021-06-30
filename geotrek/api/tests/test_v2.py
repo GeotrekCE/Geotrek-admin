@@ -1839,3 +1839,75 @@ class TrekWebLinksTestCase(TestCase):
         self.assertEqual(response.json()['web_links'][0]['category']['label']['en'], "Category")
         self.assertEqual(response.json()['web_links'][0]['category']['id'], self.web_link_cat.pk)
         self.assertEqual(response.json()['web_links'][0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
+
+
+class TrekDifficultyFilterCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.v_easy = trek_factory.DifficultyLevelFactory(difficulty="Very easy")
+        cls.easy = trek_factory.DifficultyLevelFactory(difficulty="Easy")
+        cls.medium = trek_factory.DifficultyLevelFactory(difficulty="Medium")
+        cls.hard = trek_factory.DifficultyLevelFactory(difficulty="Very hard")
+        cls.v_hard = trek_factory.DifficultyLevelFactory(difficulty="Hard")
+        cls.trek_v_easy = trek_factory.TrekFactory(difficulty=cls.v_easy)
+        cls.trek_easy = trek_factory.TrekFactory(difficulty=cls.easy)
+        cls.trek_medium = trek_factory.TrekFactory(difficulty=cls.medium)
+        cls.trek_hard = trek_factory.TrekFactory(difficulty=cls.hard)
+        cls.trek_v_hard = trek_factory.TrekFactory(difficulty=cls.v_hard)
+
+    def test_difficulty_ids(self):
+        self.assertEqual(self.v_easy.id, 1)
+        self.assertEqual(self.easy.id, 2)
+        self.assertEqual(self.medium.id, 3)
+        self.assertEqual(self.hard.id, 4)
+        self.assertEqual(self.v_hard.id, 5)
+
+    def test_filter_difficulty_min_1(self):
+        response = self.client.get(f"/api/v2/trek/?difficulty_min={self.v_easy.id}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 5)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek_v_easy.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek_easy.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek_medium.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.trek_hard.pk)
+        self.assertEqual(response.json()['results'][4]['id'], self.trek_v_hard.pk)
+
+    def test_filter_difficulty_min_2(self):
+        response = self.client.get(f"/api/v2/trek/?difficulty_min={self.medium.id}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 3)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek_medium.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek_hard.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek_v_hard.pk)
+
+    def test_filter_difficulty_max_1(self):
+        response = self.client.get(f"/api/v2/trek/?difficulty_max={self.v_hard.id}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 5)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek_v_easy.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek_easy.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek_medium.pk)
+        self.assertEqual(response.json()['results'][3]['id'], self.trek_hard.pk)
+        self.assertEqual(response.json()['results'][4]['id'], self.trek_v_hard.pk)
+
+    def test_filter_difficulty_max_2(self):
+        response = self.client.get(f"/api/v2/trek/?difficulty_max={self.medium.id}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 3)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek_v_easy.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek_easy.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek_medium.pk)
+
+    def test_filter_difficulty_min_max_1(self):
+        response = self.client.get(f"/api/v2/trek/?difficulty_min={self.easy.id}&difficulty_max={self.hard.id}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 3)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek_easy.pk)
+        self.assertEqual(response.json()['results'][1]['id'], self.trek_medium.pk)
+        self.assertEqual(response.json()['results'][2]['id'], self.trek_hard.pk)
+
+    def test_filter_difficulty_min_max_2(self):
+        response = self.client.get(f"/api/v2/trek/?difficulty_min={self.hard.id}&difficulty_max={self.hard.id}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['id'], self.trek_hard.pk)
