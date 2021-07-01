@@ -94,7 +94,11 @@ class CommonForm(MapEntityForm):
                 del self.fields['structure']
 
         # Get settings key for this Form
-        settings_key = self.MAP_SETTINGS[self.__class__.__name__]
+        try:
+            settings_key = self.MAP_SETTINGS[self.__class__.__name__]
+        except KeyError as e:
+            logger.warning("No value set in MAP_SETTINGS dictonary for form class " + self.__class__.__name__)
+            settings_key = None
         # For each field listed in 'to hide' setting, for this Form
         for field_to_hide in settings.HIDDEN_FORM_FIELDS.get(settings_key, []):
             # Do not hide require fields
