@@ -71,3 +71,12 @@ class AutoLoginTest(TestCase):
         self.middleware(self.request)
         self.assertFalse(self.request.user.is_anonymous)
         self.assertEqual(self.request.user, self.internal_user)
+
+    def test_auto_login_proxy(self):
+        middleware.AUTOLOGIN_IPS = ['1.2.3.4']
+        self.request.META['HTTP_X_FORWARDED_FOR'] = '1.2.3.4,2.2.2.2'
+
+        self.assertTrue(self.request.user.is_anonymous)
+        self.middleware(self.request)
+        self.assertFalse(self.request.user.is_anonymous)
+        self.assertEqual(self.request.user, self.internal_user)
