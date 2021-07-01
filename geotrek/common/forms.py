@@ -96,7 +96,7 @@ class CommonForm(MapEntityForm):
         # Get settings key for this Form
         try:
             settings_key = self.MAP_SETTINGS[self.__class__.__name__]
-        except KeyError as e:
+        except KeyError:
             logger.warning("No value set in MAP_SETTINGS dictonary for form class " + self.__class__.__name__)
             settings_key = None
         # For each field listed in 'to hide' setting, for this Form
