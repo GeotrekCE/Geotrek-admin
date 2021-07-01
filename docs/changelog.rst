@@ -5,6 +5,10 @@ CHANGELOG
 2.61.1+dev (XXX-XX-XX)
 ----------------------
 
+**Bug fixes**
+
+* Fix filter difficulty in API v2
+
 
 2.61.1 (2021-06-28)
 -------------------
@@ -12,7 +16,6 @@ CHANGELOG
 **Bug fixes**
 
 * Fix filter in_bbox in API v2
-* Fix filter difficulty in API v2
 
 
 2.61.0 (2021-06-25)
