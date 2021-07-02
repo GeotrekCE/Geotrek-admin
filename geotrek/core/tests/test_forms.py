@@ -1,8 +1,10 @@
+from django.forms.widgets import HiddenInput
 from django.conf import settings
 from django.core.checks import Error
 from django.test import TestCase
 
 from unittest import skipIf
+from unittest.mock import patch
 
 from django.test.utils import override_settings
 
@@ -51,3 +53,17 @@ class PathFormTest(TestCase):
             )
         ]
         self.assertEqual(errors, expected_errors)
+
+    @patch('geotrek.common.forms.logger')
+    @override_settings(HIDDEN_FORM_FIELDS={'path': ['geom', 'departure']})
+    def test_hidden_fields_configuration_required_fields(self, fake_log):
+        user = UserFactory()
+        PathForm(user=user)
+        fake_log.warning.assert_called_with('Ignoring entry in HIDDEN_FORM_FIELDS: field \'geom\' is required on form PathForm.')
+
+    @override_settings(HIDDEN_FORM_FIELDS={'path': ['name', 'departure']})
+    def test_hidden_fields(self):
+        user = UserFactory()
+        form = PathForm(user=user)
+        self.assertIsInstance(form.fields['name'].widget, HiddenInput)
+        self.assertIsInstance(form.fields['departure'].widget, HiddenInput)
