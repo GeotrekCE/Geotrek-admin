@@ -10,6 +10,10 @@ CHANGELOG
 - Add custom columns configuration to list views 
 - Add custom columns configuration to list CSV exports
 
+**Bug fixes**
+
+* Fix filter difficulty in API v2
+
 
 2.61.1 (2021-06-28)
 -------------------
