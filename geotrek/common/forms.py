@@ -80,6 +80,16 @@ class CommonForm(MapEntityForm):
             field.queryset = field.queryset.filter(deleted=False)
 
     def __init__(self, *args, **kwargs):
+
+        # Get settings key for this Form
+        try:
+            settings_key = self.MAP_SETTINGS[self.__class__.__name__]
+            # Extract list of fields to hide
+            self.hidden_fields = settings.HIDDEN_FORM_FIELDS.get(settings_key, [])
+        except KeyError:
+            logger.warning("No value set in MAP_SETTINGS dictonary for form class " + self.__class__.__name__)
+            self.hidden_fields = []
+
         self.fieldslayout = deepcopy(self.fieldslayout)
         super().__init__(*args, **kwargs)
         self.fields = self.fields.copy()
@@ -93,22 +103,17 @@ class CommonForm(MapEntityForm):
                     self.filter_related_field(name, field)
                 del self.fields['structure']
 
-        # Get settings key for this Form
-        try:
-            settings_key = self.MAP_SETTINGS[self.__class__.__name__]
-        except KeyError:
-            logger.warning("No value set in MAP_SETTINGS dictonary for form class " + self.__class__.__name__)
-            settings_key = None
-        # For each field listed in 'to hide' setting, for this Form
-        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get(settings_key, []):
-            # Do not hide require fields
-            if self.fields[field_to_hide].required:
-                logger.warning(
-                    f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
-                )
-            # Hide optional fields
-            else:
-                self.fields[field_to_hide].widget = HiddenInput()
+        # For each field listed in 'to hide' list for this Form
+        for field_to_hide in self.hidden_fields:
+            # Ignore if field was translated (handled in TranslatedModelForm)
+            if field_to_hide not in self._translated:
+                # Hide only if optional
+                if self.fields[field_to_hide].required:
+                    logger.warning(
+                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                    )
+                else:
+                    self.fields[field_to_hide].widget = HiddenInput()
 
     def clean(self):
         structure = self.cleaned_data.get('structure')

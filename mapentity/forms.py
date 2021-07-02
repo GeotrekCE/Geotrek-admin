@@ -98,6 +98,7 @@ class MapEntityForm(TranslatedModelForm):
     fieldslayout = None
     geomfields = []
     leftpanel_scrollable = True
+    hidden_fields = []
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -225,8 +226,12 @@ class MapEntityForm(TranslatedModelForm):
                 field.fields = self.__replace_translatable_fields(field.fields)
                 newlayout.append(field)
             else:
+                # Add translated fields to layout
                 if field in self._translated:
-                    newlayout.append(self.__tabbed_layout_for_field(field))
+                    field_is_required = self.fields[f"{field}_{settings.MODELTRANSLATION_DEFAULT_LANGUAGE}"].required
+                    # Only if they are required or not hidden
+                    if field_is_required or field not in self.hidden_fields:
+                        newlayout.append(self.__tabbed_layout_for_field(field))
                 else:
                     newlayout.append(field)
         return newlayout
