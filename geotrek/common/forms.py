@@ -82,13 +82,10 @@ class CommonForm(MapEntityForm):
     def __init__(self, *args, **kwargs):
 
         # Get settings key for this Form
-        try:
-            settings_key = self.MAP_SETTINGS[self.__class__.__name__]
-            # Extract list of fields to hide
-            self.hidden_fields = settings.HIDDEN_FORM_FIELDS.get(settings_key, [])
-        except KeyError:
+        settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, None)
+        if settings_key is None:
             logger.warning("No value set in MAP_SETTINGS dictonary for form class " + self.__class__.__name__)
-            self.hidden_fields = []
+        self.hidden_fields = settings.HIDDEN_FORM_FIELDS.get(settings_key, [])
 
         self.fieldslayout = deepcopy(self.fieldslayout)
         super().__init__(*args, **kwargs)
