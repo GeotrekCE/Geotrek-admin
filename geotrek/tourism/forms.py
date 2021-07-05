@@ -53,6 +53,7 @@ class TouristicEventForm(CommonForm):
 
     fieldslayout = [
         Div(
+            'structure',
             'name',
             'review',
             'published',
@@ -79,7 +80,6 @@ class TouristicEventForm(CommonForm):
             'source',
             'portal',
             'eid',
-            'structure'
         )
     ]
 
