@@ -305,6 +305,7 @@ tr.selected-row td {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    max-width: calc(100% - 40px);
 }
 
 @media (min-width: 768px) {
@@ -362,8 +363,9 @@ tr.selected-row td {
         width: 40px;
         height: auto;
         max-height: calc(100vh - 65px);
-        overflow-x: none;
+        overflow-x: inherit;
         overflow-y: auto;
+        flex-shrink: 0;
     }
 }
 

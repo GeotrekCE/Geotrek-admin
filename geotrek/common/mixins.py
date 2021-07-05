@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 
 from django.utils.safestring import mark_safe
+from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import slugify
 
@@ -42,6 +43,14 @@ class TimeStampedModelMixin(models.Model):
         self.date_insert = fromdb.date_insert
         self.date_update = fromdb.date_update
         return self
+
+    @property
+    def date_insert_display(self):
+        return date_format(self.date_insert, "SHORT_DATETIME_FORMAT")
+
+    @property
+    def date_update_display(self):
+        return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
 
     @property
     def lastmod_display(self):
@@ -474,3 +483,85 @@ apply_merge.short_description = _('Merge')
 
 class MergeActionMixin:
     actions = [apply_merge]
+
+
+class CustomColumnsMixin:
+    """
+    Customize columns in List views
+    """
+
+    MAP_SETTINGS = {
+        'PathList': 'path_view',
+        'PathJsonList': 'path_view',
+        'PathFormatList': 'path_export',
+        'TrailList': 'trail_view',
+        'TrailJsonList': 'trail_view',
+        'TrailFormatList': 'trail_export',
+        'LandEdgeList': 'landedge_view',
+        'LandEdgeJsonList': 'landedge_view',
+        'LandEdgeFormatList': 'landedge_export',
+        'InfrastructureList': 'infrastructure_view',
+        'InfrastructureJsonList': 'infrastructure_view',
+        'InfrastructureFormatList': 'infrastructure_export',
+        'SignageList': 'signage_view',
+        'SignageJsonList': 'signage_view',
+        'SignageFormatList': 'signage_export',
+        'InterventionList': 'intervention_view',
+        'InterventionJsonList': 'intervention_view',
+        'InterventionFormatList': 'intervention_export',
+        'ProjectList': 'project_view',
+        'ProjectJsonList': 'project_view',
+        'ProjectFormatList': 'project_export',
+        'TrekList': 'trek_view',
+        'TrekJsonList': 'trek_view',
+        'TrekFormatList': 'trek_export',
+        'POIList': 'poi_view',
+        'POIJsonList': 'poi_view',
+        'POIFormatList': 'poi_export',
+        'ServiceList': 'service_view',
+        'ServiceJsonList': 'service_view',
+        'ServiceFormatList': 'service_export',
+        'DiveList': 'dive_view',
+        'DiveJsonList': 'dive_view',
+        'DiveFormatList': 'dive_export',
+        'TouristicContentList': 'touristic_content_view',
+        'TouristicContentJsonList': 'touristic_content_view',
+        'TouristicContentFormatList': 'touristic_content_export',
+        'TouristicEventList': 'touristic_event_view',
+        'TouristicEventJsonList': 'touristic_event_view',
+        'TouristicEventFormatList': 'touristic_event_export',
+        'ReportList': 'feedback_view',
+        'ReportJsonList': 'feedback_view',
+        'ReportFormatList': 'feedback_export',
+        'SensitiveAreaList': 'sensitivity_view',
+        'SensitiveAreaJsonList': 'sensitivity_view',
+        'SensitiveAreaFormatList': 'sensitivity_export',
+        'SiteList': 'outdoor_site_view',
+        'SiteJsonList': 'outdoor_site_view',
+        'SiteFormatList': 'outdoor_site_export',
+        'CourseList': 'outdoor_course_view',
+        'CourseJsonList': 'outdoor_course_view',
+        'CourseFormatList': 'outdoor_course_export',
+    }
+
+    @classproperty
+    def columns(cls):
+        mandatory_cols = getattr(cls, 'mandatory_columns', None)
+        default_extra_cols = getattr(cls, 'default_extra_columns', None)
+        settings_key = cls.MAP_SETTINGS.get(cls.__name__, '')
+        # If we ended up here, then we know 'columns' is not defined higher in the MRO
+        if (mandatory_cols is None or default_extra_cols is None):
+            logger.error(
+                f"Cannot build columns for class {cls}.\n"
+                + "Please define on this class either : \n"
+                + "  - a field 'columns'\n"
+                + "OR \n"
+                + "  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+            )
+            return []
+        else:
+            # Get extra columns names from instance settings, or use default extra columns
+            extra_columns = settings.COLUMNS_LISTS.get(settings_key, default_extra_cols)
+            # Some columns are mandatory to prevent crashes
+            columns = cls.mandatory_columns + extra_columns
+            return columns

@@ -1,3 +1,4 @@
+
 import logging
 import os
 
@@ -19,6 +20,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
 from django.shortcuts import get_object_or_404
@@ -44,10 +46,11 @@ class TouristicContentLayer(MapEntityLayer):
     properties = ['name']
 
 
-class TouristicContentList(MapEntityList):
+class TouristicContentList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
-    columns = ['id', 'name', 'category']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['category']
 
     @property
     def categories_list(self):
@@ -60,8 +63,9 @@ class TouristicContentJsonList(MapEntityJsonList, TouristicContentList):
 
 
 class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
-    columns = [
-        'id', 'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
         'review', 'published', 'publication_date', 'source', 'portal', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'approved'
@@ -160,10 +164,11 @@ class TouristicEventLayer(MapEntityLayer):
     properties = ['name']
 
 
-class TouristicEventList(MapEntityList):
+class TouristicEventList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
-    columns = ['id', 'name', 'type', 'begin_date', 'end_date']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['type', 'begin_date', 'end_date']
 
 
 class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
@@ -171,8 +176,9 @@ class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
 
 
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
-    columns = [
-        'id', 'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
         'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
         'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
         'participant_number', 'booking', 'target_audience', 'practical_info',

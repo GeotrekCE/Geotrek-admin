@@ -1,3 +1,4 @@
+
 from django.conf import settings
 from django.db.models import Q
 from django.contrib.gis.db.models.functions import Transform
@@ -12,6 +13,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
 
@@ -30,10 +32,11 @@ class DiveLayer(MapEntityLayer):
     queryset = Dive.objects.existing()
 
 
-class DiveList(FlattenPicturesMixin, MapEntityList):
+class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = DiveFilterSet
-    columns = ['id', 'name', 'levels', 'thumbnail']
     queryset = Dive.objects.existing()
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['levels', 'thumbnail']
 
 
 class DiveJsonList(MapEntityJsonList, DiveList):
@@ -41,8 +44,9 @@ class DiveJsonList(MapEntityJsonList, DiveList):
 
 
 class DiveFormatList(MapEntityFormat, DiveList):
-    columns = [
-        'id', 'eid', 'structure', 'name', 'departure',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'eid', 'structure', 'name', 'departure',
         'description', 'description_teaser',
         'advice', 'difficulty', 'levels',
         'themes', 'practice', 'disabled_sport',
