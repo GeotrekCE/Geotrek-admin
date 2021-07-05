@@ -1,9 +1,12 @@
+from mapentity.views.generic import MapEntityList
+from geotrek.common.mixins import CustomColumnsMixin
 import re
 from unittest import skipIf, mock
 
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
@@ -16,6 +19,7 @@ from geotrek.common.tests import CommonTest
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
+from geotrek.core.views import PathFormatList, PathList
 from geotrek.core.models import Path, Trail, PathSource
 
 from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
@@ -24,6 +28,8 @@ from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
 from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
+
+from unittest.mock import patch
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -594,6 +600,29 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=True)
         response = self.client.get(obj.get_layer_url(), {"no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 2)
+
+    @override_settings(COLUMNS_LISTS={'path_view': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatoy columns plus custom extra columns
+        self.assertEqual(PathList.columns, ['id', 'checkbox', 'name', 'length', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+
+    @override_settings(COLUMNS_LISTS={'path_export': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatoy columns plus custom extra columns
+        self.assertEqual(PathFormatList.columns, ['id', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+
+    @override_settings(COLUMNS_LISTS={})
+    @patch('geotrek.common.mixins.logger')
+    def test_custom_columns_mixin_error_log(self, mock_logger):
+        # Create view where columns fields are omitted
+        class MissingColumns(CustomColumnsMixin, MapEntityList):
+            model = Path
+            # columns = None
+
+        MissingColumns()
+        # Assert logger raises error message
+        message = "Cannot build columns for class <class 'geotrek.core.tests.test_views.PathViewsTest.test_custom_columns_mixin_error_log.<locals>.MissingColumns'>.\nPlease define on this class either : \n  - a field 'columns'\nOR \n  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+        mock_logger.error.assert_called_with(message)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

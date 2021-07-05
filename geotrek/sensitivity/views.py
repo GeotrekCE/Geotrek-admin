@@ -1,3 +1,4 @@
+
 import json
 import logging
 from django.conf import settings
@@ -12,6 +13,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
 
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
@@ -32,15 +34,17 @@ class SensitiveAreaLayer(MapEntityLayer):
     properties = ['species', 'radius', 'published']
 
 
-class SensitiveAreaList(MapEntityList):
+class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
     queryset = SensitiveArea.objects.existing()
     filterform = SensitiveAreaFilterSet
-    columns = ['id', 'species', 'category']
+    mandatory_columns = ['id', 'species']
+    default_extra_columns = ['category']
 
 
 class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
-    columns = [
-        'id', 'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
     ]
 
 

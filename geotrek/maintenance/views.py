@@ -1,3 +1,4 @@
+
 import logging
 
 from django.utils.translation import gettext_lazy as _
@@ -5,6 +6,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.altimetry.models import AltimetryMixin
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
 from .models import Intervention, Project
@@ -25,10 +27,11 @@ class InterventionLayer(MapEntityLayer):
     properties = ['name']
 
 
-class InterventionList(MapEntityList):
+class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
-    columns = ['id', 'name', 'date', 'type', 'target', 'status', 'stake']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -36,8 +39,9 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
-    columns = [
-        'id', 'name', 'date', 'type', 'target', 'status', 'stake',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'name', 'date', 'type', 'target', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
         'width', 'height', 'length', 'area', 'structure',
         'description', 'date_insert', 'date_update',
@@ -116,10 +120,11 @@ class ProjectLayer(MapEntityLayer):
         return super().get_queryset().filter(pk__in=nonemptyqs)
 
 
-class ProjectList(MapEntityList):
+class ProjectList(CustomColumnsMixin, MapEntityList):
     queryset = Project.objects.existing()
     filterform = ProjectFilterSet
-    columns = ['id', 'name', 'period', 'type', 'domain']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['period', 'type', 'domain']
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):
@@ -127,8 +132,9 @@ class ProjectJsonList(MapEntityJsonList, ProjectList):
 
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
-    columns = [
-        'id', 'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
         'interventions', 'interventions_total_cost', 'comments', 'contractors',
         'project_owner', 'project_manager', 'founders',
         'date_insert', 'date_update',

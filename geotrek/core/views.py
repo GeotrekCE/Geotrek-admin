@@ -24,7 +24,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.utils import classproperty
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 
@@ -87,14 +87,11 @@ class PathLayer(MapEntityLayer):
         return geojson_lookup
 
 
-class PathList(MapEntityList):
+class PathList(CustomColumnsMixin, MapEntityList):
     queryset = Path.objects.all()
     filterform = PathFilterSet
-
-    @classproperty
-    def columns(cls):
-        columns = ['id', 'checkbox', 'name', 'length', 'length_2d']
-        return columns
+    mandatory_columns = ['id', 'checkbox', 'name', 'length']
+    default_extra_columns = ['length_2d']
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -107,10 +104,11 @@ class PathJsonList(MapEntityJsonList, PathList):
 
 
 class PathFormatList(MapEntityFormat, PathList):
-    columns = [
-        'id', 'structure', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
         'comfort', 'source', 'stake', 'usages', 'networks',
-        'date_insert', 'date_update', 'length_2d',
+        'date_insert', 'date_update', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
     def get_queryset(self):
@@ -305,10 +303,11 @@ class TrailLayer(MapEntityLayer):
     properties = ['name']
 
 
-class TrailList(MapEntityList):
+class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
-    columns = ['id', 'name', 'departure', 'arrival', 'length']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['departure', 'arrival', 'length']
 
 
 class TrailJsonList(MapEntityJsonList, TrailList):
@@ -316,8 +315,9 @@ class TrailJsonList(MapEntityJsonList, TrailList):
 
 
 class TrailFormatList(MapEntityFormat, TrailList):
-    columns = [
-        'id', 'structure', 'name', 'comments', 'departure', 'arrival',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'comments', 'departure', 'arrival',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS

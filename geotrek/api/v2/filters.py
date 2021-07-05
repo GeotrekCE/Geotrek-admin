@@ -336,10 +336,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(length__lte=length_max)
         difficulty_min = request.GET.get('difficulty_min')
         if difficulty_min:
-            qs = qs.filter(difficulty__cirkwi_level__gte=difficulty_min)
+            qs = qs.filter(difficulty__id__gte=difficulty_min)
         difficulty_max = request.GET.get('difficulty_max')
         if difficulty_max:
-            qs = qs.filter(difficulty__cirkwi_level__lte=difficulty_max)
+            qs = qs.filter(difficulty__id__lte=difficulty_max)
         ascent_min = request.GET.get('ascent_min')
         if ascent_min:
             qs = qs.filter(ascent__gte=ascent_min)

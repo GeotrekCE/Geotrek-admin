@@ -1405,7 +1405,7 @@ class APISwaggerTestCase(BaseApiTest):
         BaseApiTest.setUpTestData()
 
     def test_schema_fields(self):
-        response = self.client.get('/api/v2/?format=openapi')
+        response = self.client.get('/api/v2/', {'format': 'openapi'})
         self.assertContains(response, 'Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84).')
         self.assertContains(response, 'Set language for translation. Can be all or a two-letters language code.')
         self.assertContains(response, 'Filter by minimum difficulty level (id).')
@@ -1458,14 +1458,14 @@ class RatingScaleTestCase(TestCase):
         })
 
     def test_filter_q(self):
-        response = self.client.get('/api/v2/outdoor_ratingscale/?q=A')
+        response = self.client.get('/api/v2/outdoor_ratingscale/', {'q': 'A'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for scale in response.json()['results']:
             self.assertEqual(scale['name']['en'], 'AAA')
 
     def test_filter_practice(self):
-        response = self.client.get('/api/v2/outdoor_ratingscale/?practices={}'.format(self.practice2.pk))
+        response = self.client.get('/api/v2/outdoor_ratingscale/', {'practices': self.practice2.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for scale in response.json()['results']:
@@ -1525,14 +1525,14 @@ class RatingTestCase(TestCase):
         })
 
     def test_filter_q(self):
-        response = self.client.get('/api/v2/outdoor_rating/?q=BBB')
+        response = self.client.get('/api/v2/outdoor_rating/', {'q': 'BBB'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for rating in response.json()['results']:
             self.assertNotEqual(rating['name']['en'] == 'BBB', rating['scale'] == self.scale1.pk)
 
     def test_filter_scale(self):
-        response = self.client.get('/api/v2/outdoor_rating/?scale={}'.format(self.scale2.pk))
+        response = self.client.get('/api/v2/outdoor_rating/', {'scale': self.scale2.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         for rating in response.json()['results']:
@@ -1603,25 +1603,25 @@ class FlatPageTestCase(TestCase):
         })
 
     def test_filter_q(self):
-        response = self.client.get('/api/v2/flatpage/?q=BB')
+        response = self.client.get('/api/v2/flatpage/', {'q': 'BB'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'BBB')
 
     def test_filter_targets(self):
-        response = self.client.get('/api/v2/flatpage/?targets=web')
+        response = self.client.get('/api/v2/flatpage/', {'targets': 'web'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
 
     def test_filter_sources(self):
-        response = self.client.get('/api/v2/flatpage/?sources={}'.format(self.source.pk))
+        response = self.client.get('/api/v2/flatpage/', {'sources': self.source.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
 
     def test_filter_portals(self):
-        response = self.client.get('/api/v2/flatpage/?portals={}'.format(self.portal.pk))
+        response = self.client.get('/api/v2/flatpage/', {'portals': self.portal.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
@@ -1839,3 +1839,73 @@ class TrekWebLinksTestCase(TestCase):
         self.assertEqual(response.json()['web_links'][0]['category']['label']['en'], "Category")
         self.assertEqual(response.json()['web_links'][0]['category']['id'], self.web_link_cat.pk)
         self.assertEqual(response.json()['web_links'][0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
+
+
+class TrekDifficultyFilterCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.v_easy = trek_factory.DifficultyLevelFactory(difficulty="Very easy")
+        cls.easy = trek_factory.DifficultyLevelFactory(difficulty="Easy")
+        cls.medium = trek_factory.DifficultyLevelFactory(difficulty="Medium")
+        cls.hard = trek_factory.DifficultyLevelFactory(difficulty="Very hard")
+        cls.v_hard = trek_factory.DifficultyLevelFactory(difficulty="Hard")
+        cls.trek_v_easy = trek_factory.TrekFactory(difficulty=cls.v_easy)
+        cls.trek_easy = trek_factory.TrekFactory(difficulty=cls.easy)
+        cls.trek_medium = trek_factory.TrekFactory(difficulty=cls.medium)
+        cls.trek_hard = trek_factory.TrekFactory(difficulty=cls.hard)
+        cls.trek_v_hard = trek_factory.TrekFactory(difficulty=cls.v_hard)
+
+    def assert_trek_is_in_reponse(self, response, expected_trek):
+        found = list(filter(lambda trek: trek['id'] == expected_trek.pk, response.json()['results']))
+        self.assertTrue(found)
+
+    def assert_trek_is_not_in_reponse(self, response, expected_trek):
+        found = list(filter(lambda trek: trek['id'] == expected_trek.pk, response.json()['results']))
+        self.assertFalse(found)
+
+    def test_difficulty_ids(self):
+        self.assertEqual(self.v_easy.id, 1)
+        self.assertEqual(self.easy.id, 2)
+        self.assertEqual(self.medium.id, 3)
+        self.assertEqual(self.hard.id, 4)
+        self.assertEqual(self.v_hard.id, 5)
+
+    def test_filter_difficulty_min(self):
+        response = self.client.get("/api/v2/trek/", {'difficulty_min': self.medium.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 3)
+        self.assert_trek_is_not_in_reponse(response, self.trek_v_easy)
+        self.assert_trek_is_not_in_reponse(response, self.trek_easy)
+        self.assert_trek_is_in_reponse(response, self.trek_medium)
+        self.assert_trek_is_in_reponse(response, self.trek_hard)
+        self.assert_trek_is_in_reponse(response, self.trek_v_hard)
+
+    def test_filter_difficulty_max(self):
+        response = self.client.get("/api/v2/trek/", {'difficulty_max': self.medium.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 3)
+        self.assert_trek_is_in_reponse(response, self.trek_v_easy)
+        self.assert_trek_is_in_reponse(response, self.trek_easy)
+        self.assert_trek_is_in_reponse(response, self.trek_medium)
+        self.assert_trek_is_not_in_reponse(response, self.trek_hard)
+        self.assert_trek_is_not_in_reponse(response, self.trek_v_hard)
+
+    def test_filter_difficulty_min_max_1(self):
+        response = self.client.get("/api/v2/trek/", {'difficulty_min': self.easy.id, 'difficulty_max': self.hard.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 3)
+        self.assert_trek_is_not_in_reponse(response, self.trek_v_easy)
+        self.assert_trek_is_in_reponse(response, self.trek_easy)
+        self.assert_trek_is_in_reponse(response, self.trek_medium)
+        self.assert_trek_is_in_reponse(response, self.trek_hard)
+        self.assert_trek_is_not_in_reponse(response, self.trek_v_hard)
+
+    def test_filter_difficulty_min_max_2(self):
+        response = self.client.get("/api/v2/trek/", {'difficulty_min': self.hard.id, 'difficulty_max': self.hard.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        self.assert_trek_is_not_in_reponse(response, self.trek_v_easy)
+        self.assert_trek_is_not_in_reponse(response, self.trek_easy)
+        self.assert_trek_is_not_in_reponse(response, self.trek_medium)
+        self.assert_trek_is_in_reponse(response, self.trek_hard)
+        self.assert_trek_is_not_in_reponse(response, self.trek_v_hard)
