@@ -47,12 +47,10 @@ License
 * OpenSource - BSD
 * Copyright (c) 2012-2018 - Makina Corpus / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
 
-.. image:: http://depot.makina-corpus.org/public/logo.gif
+.. image:: https://geotrek.fr/assets/img/logo_makina.svg
     :target: http://www.makina-corpus.com
-    :align: right
 
-
-----------
+----
 
 .. image:: http://geotrek.fr/assets/img/parc_ecrins.png
     :target: http://www.ecrins-parcnational.fr

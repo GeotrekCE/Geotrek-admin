@@ -15,6 +15,11 @@ class ReportProblemMagnitudeTO(TranslationOptions):
     fields = ('label',)
 
 
+class ReportStatusTO(TranslationOptions):
+    fields = ('label',)
+
+
 translator.register(feedback_models.ReportCategory, ReportCategoryTO)
+translator.register(feedback_models.ReportStatus, ReportStatusTO)
 translator.register(feedback_models.ReportActivity, ReportActivityTO)
 translator.register(feedback_models.ReportProblemMagnitude, ReportProblemMagnitudeTO)

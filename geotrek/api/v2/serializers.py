@@ -23,6 +23,8 @@ from geotrek.core.models import simplify_coords
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    from geotrek.feedback import models as feedback_models
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism import models as tourism_models
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -111,6 +113,27 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.Route
             fields = ('id', 'pictogram', 'route')
+
+    class WebLinkCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = trekking_models.WebLinkCategory
+            fields = ('label', 'id', 'pictogram')
+
+    class WebLinkSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+        category = WebLinkCategorySerializer()
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = trekking_models.WebLink
+            fields = ('name', 'url', 'category')
 
 
 class ReservationSystemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -419,6 +442,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         next = serializers.ReadOnlyField(source='next_id')
         cities = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
+        web_links = WebLinkSerializer(many=True)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -550,7 +574,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'parents', 'parking_location', 'pdf', 'points_reference',
                 'portal', 'practice', 'previous', 'public_transport',
                 'published', 'reservation_system', 'route', 'second_external_id',
-                'source', 'structure', 'themes', 'update_datetime', 'url'
+                'source', 'structure', 'themes', 'update_datetime', 'url', 'web_links'
             )
 
     class TourSerializer(TrekSerializer):
@@ -836,6 +860,48 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'id', 'geometry', 'url', 'structure', 'name', 'site', 'description',
                 'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
             )
+
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    class ReportStatusSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = feedback_models.ReportStatus
+            fields = ('id', 'label')
+
+    class ReportCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = feedback_models.ReportCategory
+            fields = ('id', 'label')
+
+    class ReportActivitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = feedback_models.ReportActivity
+            fields = ('id', 'label')
+
+    class ReportProblemMagnitudeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = feedback_models.ReportProblemMagnitude
+            fields = ('id', 'label')
+
 
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     class FlatPageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

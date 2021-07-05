@@ -2,8 +2,35 @@
 CHANGELOG
 =========
 
-2.59.0+dev
+2.61.1+dev (XXX-XX-XX)
+----------------------
+
+
+2.61.1 (2021-06-28)
 -------------------
+
+**Bug fixes**
+
+* Fix filter in_bbox in API v2
+
+
+2.61.0 (2021-06-25)
+-------------------
+
+**New features**
+
+- Add Web Links to Trek endpoints in APIv2
+- Add endpoints for Web Links categories in APIv2
+- Ensure APIv2 returns outdoor sites list and outdoor courses list as ordered by localized name
+
+
+2.60.0 (2021-06-25)
+-------------------
+
+**New features**
+
+- Add endpoints for user feedback in APIv2 : report category, report activity, report problem magnitude, and report status
+- Ensure APIv2 returns treks list and touristic contents list as ordered by localized name
 
 **Bug fixes**
 
@@ -19,6 +46,7 @@ CHANGELOG
 **Maintenance**
 
 - Update to django-mapentity 2.3.2
+
 
 2.59.0 (2021-06-07)
 -------------------
