@@ -8,11 +8,13 @@ class TrekkingConfig(AppConfig):
     verbose_name = _("Trekking")
 
     def ready(self):
-        from .forms import TrekForm
+        from .forms import TrekForm, POIForm, ServiceForm
 
         def check_hidden_fields_settings(app_configs, **kwargs):
             # Check all Forms hidden fields settings
             errors = TrekForm.check_fields_to_hide()
+            errors.extend(POIForm.check_fields_to_hide())
+            errors.extend(ServiceForm.check_fields_to_hide())
             return errors
 
         register(check_hidden_fields_settings, Tags.security)

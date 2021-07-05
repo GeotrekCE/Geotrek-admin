@@ -37,6 +37,19 @@ class CommonForm(MapEntityForm):
         'PathForm': 'path',
         'TrekForm': 'trek',
         'TrailForm': 'trail',
+        'LandEdgeForm': 'landedge',
+        'InfrastructureForm': 'infrastructure',
+        'InterventionForm': 'intervention',
+        'SignageForm': 'signage',
+        'ProjectForm': 'project',
+        'SiteForm': 'site',
+        'CourseForm': 'course',
+        'TouristicContentForm': 'touristic_content',
+        'TouristicEventForm': 'touristic_event',
+        'POIForm': 'poi',
+        'ServiceForm': 'service',
+        'DiveForm': 'dive',
+        'SensitiveAreaForm': 'sensitivity',
     }
 
     def deep_remove(self, fieldslayout, name):
