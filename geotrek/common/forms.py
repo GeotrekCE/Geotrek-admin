@@ -49,7 +49,9 @@ class CommonForm(MapEntityForm):
         'POIForm': 'poi',
         'ServiceForm': 'service',
         'DiveForm': 'dive',
-        'SensitiveAreaForm': 'sensitivity',
+        'SensitiveAreaForm': 'sensitivity_species',
+        'RegulatorySensitiveAreaForm': 'sensitivity_regulatory',
+        'BladeForm': 'blade',
     }
 
     def deep_remove(self, fieldslayout, name):

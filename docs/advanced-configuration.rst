@@ -2288,10 +2288,34 @@ An exhaustive list of form fields hideable in each module.
             'portal',
             'eid',
         ],
-    HIDDEN_FORM_FIELDS["sensitivity"] = [
+    HIDDEN_FORM_FIELDS["sensitivity_species"] = [
             "contact",
             "published",
             "description",
+        ],
+    HIDDEN_FORM_FIELDS["sensitivity_regulatory"] = [
+            "contact",
+            "published",
+            "description",
+            "pictogram",
+            "elevation",
+            "url",
+            "period01",
+            "period02",
+            "period03",
+            "period04",
+            "period05",
+            "period06",
+            "period07",
+            "period08",
+            "period09",
+            "period10",
+            "period11",
+            "period12",
+        ],
+    HIDDEN_FORM_FIELDS["blade"] = [
+            "condition",
+            "color",
         ]
 
 **Other settings**
