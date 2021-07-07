@@ -1377,7 +1377,7 @@ List of all the filters enabled on mobile.
 
 |
 
-**Custom columns available **
+**Custom columns available**
 
 A (nearly?) exhaustive list of attributes available for display and export as columns in each module.
 
