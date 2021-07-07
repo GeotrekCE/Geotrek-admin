@@ -15,6 +15,7 @@ CHANGELOG
 
 - Add custom columns configuration to list views 
 - Add custom columns configuration to list CSV exports
+- Add custom form fields configuration to creation views
 
 **Bug fixes**
 
