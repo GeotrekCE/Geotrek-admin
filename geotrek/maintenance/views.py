@@ -90,11 +90,11 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 
                 # Calculate total cost of mandays for a given intervention and a given job
                 job_cost_query = Subquery(mandays_query) * Value(job_cost)
-                
+
                 # Annotate queryset with this cost query
                 params = {column_name: job_cost_query}
                 queryset = queryset.annotate(**params)
-        
+
         return queryset
 
     mandatory_columns = ['id']
