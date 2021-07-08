@@ -788,7 +788,7 @@ PARSER_RETRY_HTTP_STATUS = [503]
 USE_BOOKLET_PDF = False
 HIDDEN_FORM_FIELDS = {}
 COLUMNS_LISTS = {}
-ENABLE_JOB_COST_DETAILED_EXPORT = False
+ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')

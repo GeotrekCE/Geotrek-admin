@@ -49,14 +49,14 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if settings.ENABLE_JOB_COST_DETAILED_EXPORT:
+        if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
             jobs_as_names = list(set(self.all_mandays.values_list('job__job', flat=True)))  # All jobs that are used in interventions, as unique names
             cost_column_names = map(self.build_cost_column_name, jobs_as_names)   # Column names for each job cost
             self.mandatory_columns.extend(cost_column_names)  # Add these column names to export
 
     def get_queryset(self):
         queryset = Intervention.objects.existing()
-        if settings.ENABLE_JOB_COST_DETAILED_EXPORT:
+        if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
             jobs_used_in_interventions = list(set(self.all_mandays.values_list('job__job', 'job_id')))  # All jobs that are used in interventions, as unique names and ids
             for job_name, job_id in jobs_used_in_interventions:
                 column_name = self.build_cost_column_name(job_name)
