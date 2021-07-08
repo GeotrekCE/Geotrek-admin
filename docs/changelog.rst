@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- Add detailed jobs costs to interventions exports, with a new column for each job 
+
 
 2.62.0 (2021-07-06)
 ----------------------
