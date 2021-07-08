@@ -1,6 +1,7 @@
 
 import logging
 
+from django.db.models import Subquery, OuterRef
 from django.utils.translation import gettext_lazy as _
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
@@ -9,7 +10,7 @@ from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
-from .models import Intervention, Project
+from .models import Intervention, Project, ManDay
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
@@ -39,7 +40,34 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
+
+    all_mandays = ManDay.objects.all()  # Used to find all jobs that ARE USED in interventions
+
+    def build_cost_column_name(self, job_name):
+        return f"{_('Cost')} {job_name}"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        jobs_as_names = list(set(self.all_mandays.values_list('job__job', flat=True)))  # All jobs that are used in interventions, as unique names
+        cost_column_names = map(self.build_cost_column_name, jobs_as_names)   # Column names for each job cost
+        self.mandatory_columns.extend(cost_column_names)  # Add these column names to export
+
+    def get_queryset(self):
+        queryset = Intervention.objects.existing()
+        jobs_used_in_interventions = list(set(self.all_mandays.values_list('job__job', 'job_id')))  # All jobs that are used in interventions, as unique names and ids
+        for job_name, job_id in jobs_used_in_interventions:
+            column_name = self.build_cost_column_name(job_name)
+            # Create subquery to retrieve manday object for a given intervention and a given job
+            manday_query = ManDay.objects.filter(intervention=OuterRef('pk'), job_id=job_id)
+            # Use this subquery to calculate cost for a given intervention and a given job, thanks to manday subquery result
+            subquery = (Subquery((manday_query.values('nb_days'))) * Subquery((manday_query.values('job__cost'))))
+            # Annotate queryset with this cost query
+            params = {column_name: subquery}
+            queryset = queryset.annotate(**params)
+        return queryset
+
     mandatory_columns = ['id']
+
     default_extra_columns = [
         'name', 'date', 'type', 'target', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
