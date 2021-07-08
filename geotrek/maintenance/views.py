@@ -2,7 +2,8 @@
 import logging
 
 from django.conf import settings
-from django.db.models import Subquery, OuterRef
+from django.db.models import Subquery, OuterRef, Sum
+from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
@@ -50,23 +51,50 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
-            jobs_as_names = list(set(self.all_mandays.values_list('job__job', flat=True)))  # All jobs that are used in interventions, as unique names
-            cost_column_names = map(self.build_cost_column_name, jobs_as_names)   # Column names for each job cost
-            self.mandatory_columns.extend(cost_column_names)  # Add these column names to export
+            # Get all jobs that are used in interventions, as unique names
+            jobs_as_names = list(
+                set(self.all_mandays.values_list("job__job", flat=True))
+            )
+            # Create column names for each unique job cost
+            cost_column_names = map(
+                self.build_cost_column_name, jobs_as_names
+            )
+            # Add these column names to export
+            self.mandatory_columns.extend(
+                cost_column_names
+            )
 
     def get_queryset(self):
         queryset = Intervention.objects.existing()
+
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
-            jobs_used_in_interventions = list(set(self.all_mandays.values_list('job__job', 'job_id')))  # All jobs that are used in interventions, as unique names and ids
-            for job_name, job_id in jobs_used_in_interventions:
+
+            # Get all jobs that are used in interventions, as unique names, ids and costs
+            jobs_used_in_interventions = list(
+                set(self.all_mandays.values_list("job__job", "job_id", "job__cost"))
+            )
+
+            # Iter over unique jobs
+            for job_name, job_id, job_cost in jobs_used_in_interventions:
+
+                # Create column name for current job cost
                 column_name = self.build_cost_column_name(job_name)
-                # Create subquery to retrieve manday object for a given intervention and a given job
-                manday_query = ManDay.objects.filter(intervention=OuterRef('pk'), job_id=job_id)
-                # Use this subquery to calculate cost for a given intervention and a given job, thanks to manday subquery result
-                subquery = (Subquery((manday_query.values('nb_days'))) * Subquery((manday_query.values('job__cost'))))
+
+                # Create subquery to retrieve total of mandays for a given intervention and a given job
+                mandays_query = (
+                    ManDay.objects.filter(intervention=OuterRef("pk"), job_id=job_id)
+                    .values("nb_days")
+                    .annotate(total_days=Sum("nb_days"))  # Aggregate mandays sum
+                    .values("total_days")
+                )
+
+                # Calculate total cost of mandays for a given intervention and a given job
+                job_cost_query = Subquery(mandays_query) * Value(job_cost)
+                
                 # Annotate queryset with this cost query
-                params = {column_name: subquery}
+                params = {column_name: job_cost_query}
                 queryset = queryset.annotate(**params)
+        
         return queryset
 
     mandatory_columns = ['id']
