@@ -1,3 +1,6 @@
+import csv
+from decimal import Decimal
+from io import StringIO
 import os
 from collections import OrderedDict
 from unittest import skipIf
@@ -7,6 +10,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point, LineString
 from django.contrib.gis import gdal
 from django.test import TestCase
+from django.test.utils import override_settings
+from django.urls import reverse
 
 from geotrek.common.tests import CommonTest
 from mapentity.factories import SuperUserFactory
@@ -18,7 +23,7 @@ from geotrek.core.models import PathAggregation
 from geotrek.common.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
-from geotrek.maintenance.views import ProjectFormatList
+from geotrek.maintenance.views import InterventionFormatList, ProjectFormatList
 from geotrek.core.factories import PathFactory, TopologyFactory
 from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
@@ -26,7 +31,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import BladeFactory, SignageFactory
 from geotrek.signage.models import Signage
 from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
-                                           InterventionDisorderFactory, InterventionStatusFactory,
+                                           InterventionDisorderFactory, InterventionStatusFactory, ManDayFactory,
                                            ProjectFactory, ContractorFactory, InterventionJobFactory,
                                            SignageInterventionFactory, ProjectWithInterventionFactory)
 from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
@@ -605,3 +610,64 @@ class ExportTest(TranslationResetMixin, TestCase):
         for feature in geom_type_layer['MultiLineString']:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
+
+
+@override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
+class TestDetailedJobCostsExports(TestCase):
+
+    def setUp(self):
+        self.user = SuperUserFactory.create()
+        self.client.force_login(self.user)
+
+        self.job1 = InterventionJobFactory(job="Worker", cost=12)
+        self.job2 = InterventionJobFactory(job="Streamer", cost=60)
+        self.job1_column_name = "Cost Worker"
+        self.job2_column_name = "Cost Streamer"
+        self.interv = InterventionFactory()
+        self.manday1 = ManDayFactory(nb_days=3, job=self.job1, intervention=self.interv)
+        self.manday2 = ManDayFactory(nb_days=2, job=self.job2, intervention=self.interv)
+
+        self.job3 = InterventionJobFactory(job="Banker", cost=5000)
+        self.job3_column_name = "Cost Banker"
+
+    def test_detailed_mandays_export(self):
+        # Assert each job used in intervention has a column in export view
+        columns = InterventionFormatList().columns
+        self.assertIn(self.job1_column_name, columns)
+        self.assertIn(self.job2_column_name, columns)
+
+        # Assert no duplicate in column exports
+        self.assertEqual(len(columns), len(set(columns)))
+
+        # Assert job not used in intervention is not exported
+        self.assertNotIn(self.job3_column_name, columns)
+        
+        # Assert queryset contains right amount for each cost
+        qs = InterventionFormatList().get_queryset()
+        interv_in_query_set = qs.get(id=self.interv.id)
+
+        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
+        print(type(cost1_in_query_set))
+        self.assertEqual(cost1_in_query_set, self.job1.cost * self.manday1.nb_days)
+
+        cost2_in_query_set = getattr(interv_in_query_set, self.job2_column_name)
+        self.assertEqual(cost2_in_query_set, self.job2.cost * self.manday2.nb_days)
+
+        # Assert deleted manday does not create an entry DOESN'T WORK FOR NOW because of class columns vs instance columns
+        # # TODO fix our deletion problem
+        # manday1.delete()
+        # columns = InterventionFormatList().columns
+        # self.assertNotIn(job1_column_name, columns)
+        
+        # TODO test translations
+
+    def test_csv_detailed_cost_content(self):
+        response = self.client.get('/intervention/list/export/', params={'format': 'csv'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+
+        # Assert right costs in CSV
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        for row in reader:
+            self.assertEqual(Decimal(row[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
+            self.assertEqual(Decimal(row[self.job2_column_name]), self.job2.cost * self.manday2.nb_days)
