@@ -11,7 +11,6 @@ from django.contrib.gis.geos import Point, LineString
 from django.contrib.gis import gdal
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.urls import reverse
 
 from geotrek.common.tests import CommonTest
 from mapentity.factories import SuperUserFactory
@@ -641,7 +640,7 @@ class TestDetailedJobCostsExports(TestCase):
 
         # Assert job not used in intervention is not exported
         self.assertNotIn(self.job3_column_name, columns)
-        
+
         # Assert queryset contains right amount for each cost
         qs = InterventionFormatList().get_queryset()
         interv_in_query_set = qs.get(id=self.interv.id)
@@ -658,7 +657,7 @@ class TestDetailedJobCostsExports(TestCase):
         # manday1.delete()
         # columns = InterventionFormatList().columns
         # self.assertNotIn(job1_column_name, columns)
-        
+
         # TODO test translations
 
     def test_csv_detailed_cost_content(self):
