@@ -102,7 +102,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
     default_extra_columns = [
         'name', 'date', 'type', 'target', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
-        'width', 'height', 'length', 'area', 'structure',
+        'width', 'height', 'area', 'structure',
         'description', 'date_insert', 'date_update',
         'material_cost', 'heliport_cost', 'subcontract_cost',
         'total_cost_mandays', 'total_cost',
