@@ -56,13 +56,15 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
                 set(self.all_mandays.values_list("job__job", flat=True))
             )
             # Create column names for each unique job cost
-            cost_column_names = map(
-                self.build_cost_column_name, jobs_as_names
-            )
+            cost_column_names = list(map(self.build_cost_column_name, jobs_as_names))
+            # Only keep column names that were not already added on last request
+            # 'bit dirty innit...
+            # TODO find a solution to remove colums when all mandays for this job are deleted...  other than restarting the app
+            columns_to_add = [
+                name for name in cost_column_names if name not in self.mandatory_columns
+            ]
             # Add these column names to export
-            self.mandatory_columns.extend(
-                cost_column_names
-            )
+            self.mandatory_columns.extend(columns_to_add)
 
     def get_queryset(self):
         queryset = Intervention.objects.existing()
