@@ -646,17 +646,29 @@ class TestDetailedJobCostsExports(TestCase):
         interv_in_query_set = qs.get(id=self.interv.id)
 
         cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
-        print(type(cost1_in_query_set))
         self.assertEqual(cost1_in_query_set, self.job1.cost * self.manday1.nb_days)
 
         cost2_in_query_set = getattr(interv_in_query_set, self.job2_column_name)
         self.assertEqual(cost2_in_query_set, self.job2.cost * self.manday2.nb_days)
 
-        # Assert deleted manday does not create an entry DOESN'T WORK FOR NOW because of class columns vs instance columns
-        # # TODO fix our deletion problem
-        # manday1.delete()
-        # columns = InterventionFormatList().columns
-        # self.assertNotIn(job1_column_name, columns)
+        # Assert cost is calculated properly when we add and remove mandays on the same job
+        # Add manday and refresh
+        manday1bis = ManDayFactory(nb_days=1, job=self.job1, intervention=self.interv)
+        qs = InterventionFormatList().get_queryset()
+        interv_in_query_set = qs.get(id=self.interv.id)
+        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
+        self.assertEqual(cost1_in_query_set, self.job1.cost * (self.manday1.nb_days + manday1bis.nb_days))
+        # Remove manday and refresh
+        manday1bis.delete()
+        qs = InterventionFormatList().get_queryset()
+        interv_in_query_set = qs.get(id=self.interv.id)
+        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
+        self.assertEqual(cost1_in_query_set, self.job1.cost * self.manday1.nb_days)
+
+        # Assert deleted manday does not create an entry
+        self.manday1.delete()
+        columns = InterventionFormatList().columns
+        self.assertNotIn(self.job1_column_name, columns)
 
         # TODO test translations
 

@@ -43,37 +43,25 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
 
-    all_mandays = ManDay.objects.all()  # Used to find all jobs that ARE USED in interventions
-
-    def build_cost_column_name(self, job_name):
+    def build_cost_column_name(cls, job_name):
         return f"{_('Cost')} {job_name}"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
-            # Get all jobs that are used in interventions, as unique names
-            jobs_as_names = list(
-                set(self.all_mandays.values_list("job__job", flat=True))
-            )
-            # Create column names for each unique job cost
-            cost_column_names = list(map(self.build_cost_column_name, jobs_as_names))
-            # Only keep column names that were not already added on last request
-            # 'bit dirty innit...
-            # TODO find a solution to remove colums when all mandays for this job are deleted...  other than restarting the app
-            columns_to_add = [
-                name for name in cost_column_names if name not in self.mandatory_columns
-            ]
-            # Add these column names to export
-            self.mandatory_columns.extend(columns_to_add)
-
     def get_queryset(self):
+
+        # Generates queries like this :     example with 2 jobs - "Worker" costs 12 and "Streamer" costs 60
+        # SELECT "intervention",
+        # ((SELECT SUM(U0."nb_days") AS "total_days" FROM "maintenance_manday" U0 WHERE (U0."intervention_id" = "maintenance_intervention"."id" AND U0."job_id" = 4) GROUP BY U0."job_id") * 12.00) AS "Cost Worker",
+        # ((SELECT SUM(U0."nb_days") AS "total_days" FROM "maintenance_manday" U0 WHERE (U0."intervention_id" = "maintenance_intervention"."id" AND U0."job_id" = 5) GROUP BY U0."job_id") * 60.00) AS "Cost Streamer"
+        # FROM "maintenance_intervention" WHERE NOT "maintenance_intervention"."deleted"
+
         queryset = Intervention.objects.existing()
 
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
 
             # Get all jobs that are used in interventions, as unique names, ids and costs
+            all_mandays = ManDay.objects.all()
             jobs_used_in_interventions = list(
-                set(self.all_mandays.values_list("job__job", "job_id", "job__cost"))
+                set(all_mandays.values_list("job__job", "job_id", "job__cost"))
             )
 
             # Iter over unique jobs
@@ -85,7 +73,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
                 # Create subquery to retrieve total of mandays for a given intervention and a given job
                 mandays_query = (
                     ManDay.objects.filter(intervention=OuterRef("pk"), job_id=job_id)
-                    .values("nb_days")
+                    .values("job_id")
                     .annotate(total_days=Sum("nb_days"))  # Aggregate mandays sum
                     .values("total_days")
                 )
@@ -99,7 +87,19 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 
         return queryset
 
-    mandatory_columns = ['id']
+    def get_mandatory_columns(cls):
+        mandatory_columns = ['id']
+        if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
+            all_mandays = ManDay.objects.all()  # Used to find all jobs that ARE USED in interventions
+            # Get all jobs that are used in interventions, as unique names
+            jobs_as_names = list(
+                set(all_mandays.values_list("job__job", flat=True))
+            )
+            # Create column names for each unique job cost
+            cost_column_names = list(map(cls.build_cost_column_name, jobs_as_names))
+            # Add these column names to export
+            mandatory_columns = mandatory_columns + cost_column_names
+        return mandatory_columns
 
     default_extra_columns = [
         'name', 'date', 'type', 'target', 'status', 'stake',
