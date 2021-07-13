@@ -47,12 +47,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         return f"{_('Cost')} {job_name}"
 
     def get_queryset(self):
-
-        # Generates queries like this :     example with 2 jobs - "Worker" costs 12 and "Streamer" costs 60
-        # SELECT "intervention",
-        # ((SELECT SUM(U0."nb_days") AS "total_days" FROM "maintenance_manday" U0 WHERE (U0."intervention_id" = "maintenance_intervention"."id" AND U0."job_id" = 4) GROUP BY U0."job_id") * 12.00) AS "Cost Worker",
-        # ((SELECT SUM(U0."nb_days") AS "total_days" FROM "maintenance_manday" U0 WHERE (U0."intervention_id" = "maintenance_intervention"."id" AND U0."job_id" = 5) GROUP BY U0."job_id") * 60.00) AS "Cost Streamer"
-        # FROM "maintenance_intervention" WHERE NOT "maintenance_intervention"."deleted"
+        """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
 
         queryset = Intervention.objects.existing()
 
@@ -70,15 +65,15 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
                 # Create column name for current job cost
                 column_name = self.build_cost_column_name(job_name)
 
-                # Create subquery to retrieve total of mandays for a given intervention and a given job
+                # Create subquery to retrieve total cost of mandays for a given intervention and a given job
                 mandays_query = (
-                    ManDay.objects.filter(intervention=OuterRef("pk"), job_id=job_id)
-                    .values("job_id")
-                    .annotate(total_days=Sum("nb_days"))  # Aggregate mandays sum
-                    .values("total_days")
+                    ManDay.objects.filter(intervention=OuterRef("pk"), job_id=job_id)  # Extract all mandays for a given intervention and a given job
+                    .values("job_id")  # Group by job
+                    .annotate(total_days=Sum("nb_days"))  # Select number of days worked
+                    .values("total_days")  # Rename result as total_days
                 )
 
-                # Calculate total cost of mandays for a given intervention and a given job
+                # Use total_days and job cost to calculate total cost for a given intervention and a given job
                 job_cost_query = Subquery(mandays_query) * Value(job_cost)
 
                 # Annotate queryset with this cost query
