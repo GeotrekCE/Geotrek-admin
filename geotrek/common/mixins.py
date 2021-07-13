@@ -544,11 +544,11 @@ class CustomColumnsMixin:
         'CourseFormatList': 'outdoor_course_export',
     }
 
-    def get_mandatory_columns(cls):
-        mandatory_cols = getattr(cls, 'mandatory_columns', None)
+    def get_mandatory_columns(self):
+        mandatory_cols = getattr(self, 'mandatory_columns', None)
         if (mandatory_cols is None):
             logger.error(
-                f"Cannot build columns for class {cls.__class__.__name__}.\n"
+                f"Cannot build columns for class {self.__class__.__name__}.\n"
                 + "Please define on this class either : \n"
                 + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
                 + "OR \n"
@@ -556,11 +556,11 @@ class CustomColumnsMixin:
             )
         return mandatory_cols
 
-    def get_default_extra_columns(cls):
-        default_extra_columns = getattr(cls, 'default_extra_columns', None)
+    def get_default_extra_columns(self):
+        default_extra_columns = getattr(self, 'default_extra_columns', None)
         if (default_extra_columns is None):
             logger.error(
-                f"Cannot build columns for class {cls.__class__.__name__}.\n"
+                f"Cannot build columns for class {self.__class__.__name__}.\n"
                 + "Please define on this class either : \n"
                 + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
                 + "OR \n"
@@ -569,10 +569,10 @@ class CustomColumnsMixin:
         return default_extra_columns
 
     @property
-    def columns(cls):
-        mandatory_cols = cls.get_mandatory_columns()
-        default_extra_cols = cls.get_default_extra_columns()
-        settings_key = cls.MAP_SETTINGS.get(cls.__class__.__name__, '')
+    def columns(self):
+        mandatory_cols = self.get_mandatory_columns()
+        default_extra_cols = self.get_default_extra_columns()
+        settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, '')
         if (mandatory_cols is None or default_extra_cols is None):
             return []
         else:
