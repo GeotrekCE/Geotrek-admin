@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 from django.forms import FloatField
 from django.utils.translation import gettext_lazy as _
 from django.forms.models import inlineformset_factory
@@ -29,7 +30,10 @@ class ManDayForm(forms.ModelForm):
         self.fields['nb_days'].label = ''
         self.fields['nb_days'].widget.attrs['class'] = 'input-mini'
         self.fields['job'].widget.attrs['class'] = 'input-medium'
-        self.fields['job'].queryset = InterventionJob.objects.filter(active=True)
+        if self.instance and self.instance.pk:
+            self.fields['job'].queryset = InterventionJob.objects.filter(Q(active=True) | Q(id=self.instance.job.id))
+        else:
+            self.fields['job'].queryset = InterventionJob.objects.filter(active=True)
 
 
 ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, form=ManDayForm, extra=1)
