@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- Add 'active' field to job model, and hide inactive jobs in forms
+
 
 2.62.0 (2021-07-06)
 ----------------------
