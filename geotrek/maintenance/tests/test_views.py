@@ -11,7 +11,7 @@ from django.contrib.gis.geos import Point, LineString
 from django.contrib.gis import gdal
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.utils.translation import activate
+from django.utils.translation import activate, deactivate_all
 
 from geotrek.common.tests import CommonTest
 from mapentity.factories import SuperUserFactory
@@ -679,6 +679,7 @@ class TestDetailedJobCostsExports(TestCase):
         interv_in_query_set = qs.get(id=self.interv.id)
         cost2_in_query_set = getattr(interv_in_query_set, f"Coût {self.job2}")
         self.assertEqual(cost2_in_query_set, self.job2.cost * self.manday2.nb_days)
+        deactivate_all()
 
     def test_csv_detailed_cost_content(self):
         response = self.client.get('/intervention/list/export/', params={'format': 'csv'})
