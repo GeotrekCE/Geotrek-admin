@@ -12,7 +12,7 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 
-from .models import Intervention, Project
+from .models import Intervention, InterventionJob, Project
 
 
 class ManDayForm(forms.ModelForm):
@@ -29,6 +29,7 @@ class ManDayForm(forms.ModelForm):
         self.fields['nb_days'].label = ''
         self.fields['nb_days'].widget.attrs['class'] = 'input-mini'
         self.fields['job'].widget.attrs['class'] = 'input-medium'
+        self.fields['job'].queryset = InterventionJob.objects.filter(active=True)
 
 
 ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, form=ManDayForm, extra=1)

@@ -339,6 +339,7 @@ class InterventionJob(StructureOrNoneRelated):
 
     job = models.CharField(max_length=128, verbose_name=_("Job"))
     cost = models.DecimalField(verbose_name=_("Cost"), default=1.0, decimal_places=2, max_digits=8)
+    active = models.BooleanField(verbose_name=_("Active"), default=True)
 
     class Meta:
         verbose_name = _("Intervention's job")

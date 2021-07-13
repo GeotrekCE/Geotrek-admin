@@ -36,9 +36,9 @@ class InterventionDisorderAdmin(MergeActionMixin, admin.ModelAdmin):
 
 
 class InterventionJobAdmin(MergeActionMixin, admin.ModelAdmin):
-    list_display = ('job', 'cost', 'structure')
+    list_display = ('job', 'cost', 'structure', 'active')
     search_fields = ('job', 'structure')
-    list_filter = ('structure',)
+    list_filter = ('structure', 'active')
     merge_field = "job"
 
 
