@@ -604,12 +604,12 @@ class PathViewsTest(CommonTest):
     @override_settings(COLUMNS_LISTS={'path_view': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatoy columns plus custom extra columns
-        self.assertEqual(PathList.columns, ['id', 'checkbox', 'name', 'length', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+        self.assertEqual(PathList().columns, ['id', 'checkbox', 'name', 'length', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
 
     @override_settings(COLUMNS_LISTS={'path_export': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatoy columns plus custom extra columns
-        self.assertEqual(PathFormatList.columns, ['id', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+        self.assertEqual(PathFormatList().columns, ['id', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
 
     @override_settings(COLUMNS_LISTS={})
     @patch('geotrek.common.mixins.logger')
@@ -621,7 +621,7 @@ class PathViewsTest(CommonTest):
 
         MissingColumns()
         # Assert logger raises error message
-        message = "Cannot build columns for class <class 'geotrek.core.tests.test_views.PathViewsTest.test_custom_columns_mixin_error_log.<locals>.MissingColumns'>.\nPlease define on this class either : \n  - a field 'columns'\nOR \n  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+        message = "Cannot build columns for class MissingColumns.\nPlease define on this class either : \n  - a field 'columns'\nOR \n  - two fields 'mandatory_columns' AND 'default_extra_columns'"
         mock_logger.error.assert_called_with(message)
 
 

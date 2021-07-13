@@ -548,7 +548,7 @@ class CustomColumnsMixin:
         mandatory_cols = getattr(cls, 'mandatory_columns', None)
         if (mandatory_cols is None):
             logger.error(
-                f"Cannot build columns for class {cls}.\n"
+                f"Cannot build columns for class {cls.__class__.__name__}.\n"
                 + "Please define on this class either : \n"
                 + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
                 + "OR \n"
@@ -560,7 +560,7 @@ class CustomColumnsMixin:
         default_extra_columns = getattr(cls, 'default_extra_columns', None)
         if (default_extra_columns is None):
             logger.error(
-                f"Cannot build columns for class {cls}.\n"
+                f"Cannot build columns for class {cls.__class__.__name__}.\n"
                 + "Please define on this class either : \n"
                 + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
                 + "OR \n"
