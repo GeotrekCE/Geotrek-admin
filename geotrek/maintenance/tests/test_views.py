@@ -577,7 +577,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         shapefiles = pfl.path_directory
         devnull = open(os.devnull, "wb")
         pfl.serialize(Project.objects.all(), stream=devnull, delete=False,
-                      fields=ProjectFormatList.columns)
+                      fields=ProjectFormatList().columns)
         shapefiles = [shapefile for shapefile in os.listdir(shapefiles) if shapefile[-3:] == "shp"]
         datasources = [gdal.DataSource(os.path.join(pfl.path_directory, s)) for s in shapefiles]
         layers = [ds[0] for ds in datasources]
