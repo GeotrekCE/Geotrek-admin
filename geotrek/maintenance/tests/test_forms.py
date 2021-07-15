@@ -30,4 +30,3 @@ class ManDayFormTest(TestCase):
         self.assertNotIn(self.job1, qs2)  # Deactivated does not show
         self.assertIn(self.job3, qs2)
         self.assertIn(self.job3, qs2)
-
