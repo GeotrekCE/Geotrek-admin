@@ -13,12 +13,13 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 
-from .models import Intervention, InterventionJob, Project
+from .models import Intervention, InterventionJob, ManDay, Project
 
 
 class ManDayForm(forms.ModelForm):
 
     class Meta:
+        model = ManDay
         fields = ('id', 'nb_days', 'job')
 
     def __init__(self, *args, **kwargs):
@@ -31,7 +32,7 @@ class ManDayForm(forms.ModelForm):
         self.fields['nb_days'].widget.attrs['class'] = 'input-mini'
         self.fields['job'].widget.attrs['class'] = 'input-medium'
         if self.instance and self.instance.pk:
-            self.fields['job'].queryset = InterventionJob.objects.filter(Q(active=True) | Q(id=self.instance.job.id))
+            self.fields['job'].queryset = InterventionJob.objects.filter(Q(active=True) | Q(id=self.instance.job_id))
         else:
             self.fields['job'].queryset = InterventionJob.objects.filter(active=True)
 

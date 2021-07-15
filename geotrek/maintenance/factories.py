@@ -46,7 +46,7 @@ class ManDayFactory(factory.django.DjangoModelFactory):
     job = factory.SubFactory(InterventionJobFactory)
 
 
-class InterventionFactory(factory.django.DjangoModelFactory):
+class LightInterventionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Intervention
 
@@ -55,6 +55,9 @@ class InterventionFactory(factory.django.DjangoModelFactory):
     stake = factory.SubFactory(StakeFactory)
     type = factory.SubFactory(InterventionTypeFactory)
     target = factory.SubFactory(TopologyFactory)
+
+
+class InterventionFactory(LightInterventionFactory):
 
     @factory.post_generation
     def create_intervention(obj, create, extracted, **kwargs):
