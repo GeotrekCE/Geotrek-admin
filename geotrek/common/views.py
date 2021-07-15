@@ -18,7 +18,7 @@ from django.views.generic import RedirectView, View
 from mapentity.helpers import api_bbox
 from mapentity.registry import registry
 from mapentity import views as mapentity_views
-from geotrek.celery import app as celery_app
+from geotrek.celery_tasks import app as celery_app
 from geotrek.common.mixins import transform_pdf_booklet_callback
 from geotrek.common.utils import sql_extent
 from geotrek.common.models import FileType, Attachment, TargetPortal

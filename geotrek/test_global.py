@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from io import StringIO
 
-from geotrek.celery import debug_task
+from geotrek.celery_tasks import debug_task
 
 from django.test.testcases import TestCase
 

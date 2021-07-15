@@ -12,7 +12,7 @@ from django.views.generic import RedirectView
 from django_celery_results.models import TaskResult
 from django.utils import timezone
 
-from geotrek.celery import app as celery_app
+from geotrek.celery_tasks import app as celery_app
 from .tasks import launch_sync_mobile
 
 
