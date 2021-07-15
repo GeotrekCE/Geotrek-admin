@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 - Add 'active' field to job model, and hide inactive jobs in forms
+- Add detailed jobs costs to interventions exports, with a new column for each job 
 
 
 2.62.0 (2021-07-06)
