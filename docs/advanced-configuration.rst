@@ -690,6 +690,13 @@ For each module, use the following syntax to configure columns to export as CSV 
 
 Please refer to the "settings detail" section for a complete list of modules and available columms.
 
+Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost. 
+
+::
+
+    ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
+
+
 
 Configure form fields in creation views
 ----------------------------------------------

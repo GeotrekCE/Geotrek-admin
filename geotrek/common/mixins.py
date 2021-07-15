@@ -544,24 +544,40 @@ class CustomColumnsMixin:
         'CourseFormatList': 'outdoor_course_export',
     }
 
-    @classproperty
-    def columns(cls):
-        mandatory_cols = getattr(cls, 'mandatory_columns', None)
-        default_extra_cols = getattr(cls, 'default_extra_columns', None)
-        settings_key = cls.MAP_SETTINGS.get(cls.__name__, '')
-        # If we ended up here, then we know 'columns' is not defined higher in the MRO
-        if (mandatory_cols is None or default_extra_cols is None):
+    def get_mandatory_columns(self):
+        mandatory_cols = getattr(self, 'mandatory_columns', None)
+        if (mandatory_cols is None):
             logger.error(
-                f"Cannot build columns for class {cls}.\n"
+                f"Cannot build columns for class {self.__class__.__name__}.\n"
                 + "Please define on this class either : \n"
-                + "  - a field 'columns'\n"
+                + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
                 + "OR \n"
                 + "  - two fields 'mandatory_columns' AND 'default_extra_columns'"
             )
+        return mandatory_cols
+
+    def get_default_extra_columns(self):
+        default_extra_columns = getattr(self, 'default_extra_columns', None)
+        if (default_extra_columns is None):
+            logger.error(
+                f"Cannot build columns for class {self.__class__.__name__}.\n"
+                + "Please define on this class either : \n"
+                + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
+                + "OR \n"
+                + "  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+            )
+        return default_extra_columns
+
+    @property
+    def columns(self):
+        mandatory_cols = self.get_mandatory_columns()
+        default_extra_cols = self.get_default_extra_columns()
+        settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, '')
+        if (mandatory_cols is None or default_extra_cols is None):
             return []
         else:
             # Get extra columns names from instance settings, or use default extra columns
             extra_columns = settings.COLUMNS_LISTS.get(settings_key, default_extra_cols)
             # Some columns are mandatory to prevent crashes
-            columns = cls.mandatory_columns + extra_columns
+            columns = mandatory_cols + extra_columns
             return columns
