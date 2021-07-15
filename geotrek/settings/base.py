@@ -787,6 +787,8 @@ PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
 HIDDEN_FORM_FIELDS = {}
+COLUMNS_LISTS = {}
+ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
@@ -794,8 +796,6 @@ assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
 env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(ENV))
 with open(env_settings_file, 'r') as f:
     exec(f.read())
-
-COLUMNS_LISTS = {}
 
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
