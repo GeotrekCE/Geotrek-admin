@@ -7,6 +7,7 @@ CHANGELOG
 
 **New features**
 
+- Add difficulty level fields (usage and maintenance) to infrastructure
 - Add detailed jobs costs to interventions exports, with a new column for each job 
 
 
