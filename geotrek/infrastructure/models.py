@@ -55,6 +55,34 @@ class InfrastructureCondition(StructureOrNoneRelated):
         return self.label
 
 
+class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
+    label = models.CharField(verbose_name=_("Label"), max_length=250)
+
+    class Meta:
+        verbose_name = _("Infrastructure Maintenance Difficulty Level")
+        verbose_name_plural = _("Infrastructure Maintenance Difficulty Levels")
+        ordering = ('label',)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+
+class InfrastructureUsageDifficultyLevel(StructureOrNoneRelated):
+    label = models.CharField(verbose_name=_("Label"), max_length=250)
+
+    class Meta:
+        verbose_name = _("Infrastructure Usage Difficulty Levels")
+        verbose_name_plural = _("Infrastructure Usage Difficulty Levels")
+        ordering = ('label',)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+
 class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
     topo_object = models.OneToOneField(Topology, parent_link=True,
