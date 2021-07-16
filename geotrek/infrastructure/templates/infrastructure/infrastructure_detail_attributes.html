@@ -31,6 +31,14 @@
             <th>{{ object|verbose:"implantation_year" }}</th>
             <td>{{ object.implantation_year|default:"" }}</td>
         </tr>
+                <tr>
+            <th>{{ object|verbose:"usage_difficulty" }}</th>
+            <td>{{ object.usage_difficulty }}</td>
+        </tr>
+                <tr>
+            <th>{{ object|verbose:"maintenance_difficulty" }}</th>
+            <td>{{ object.maintenance_difficulty }}</td>
+        </tr>
         <tr>
             <th>{{ object|verbose:"published" }}</th>
             <td>{{ object.published|yesno|title }}</td>
