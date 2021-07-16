@@ -1,10 +1,10 @@
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import gettext_lazy as _
 from django_filters import CharFilter, MultipleChoiceFilter
+from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.core.filters import ValidTopologyFilterSet, TopologyFilterTrail
-from .models import Infrastructure, INFRASTRUCTURE_TYPES
+from .models import Infrastructure, INFRASTRUCTURE_TYPES, InfrastructureMaintenanceDifficultyLevel, InfrastructureUsageDifficultyLevel
 from geotrek.maintenance.models import Intervention
 from geotrek.zoning.filters import ZoningFilterSet
 
@@ -18,6 +18,10 @@ class InfrastructureFilterSet(ValidTopologyFilterSet, ZoningFilterSet, Structure
     category = MultipleChoiceFilter(label=_("Category"), field_name='type__type',
                                     choices=INFRASTRUCTURE_TYPES)
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
+    usage_difficulty = MultipleChoiceFilter(label=_("Usage difficulty"), method='filter_usage_difficulty_level',
+                                            choices=InfrastructureUsageDifficultyLevel.objects.level_choices())
+    maintenance_difficulty = MultipleChoiceFilter(label=_("Maintenance difficulty"), method='filter_maintenance_difficulty_level',
+                                                  choices=InfrastructureMaintenanceDifficultyLevel.objects.level_choices())
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
@@ -31,3 +35,11 @@ class InfrastructureFilterSet(ValidTopologyFilterSet, ZoningFilterSet, Structure
         interventions = Intervention.objects.filter(target_type=infrastructure_ct, date__year__in=value) \
             .values_list('target_id', flat=True)
         return qs.filter(id__in=interventions).distinct()
+
+    def filter_maintenance_difficulty_level(self, qs, name, value):
+        infras = Infrastructure.objects.filter(usage_difficulty__in=value)
+        return infras
+
+    def filter_usage_difficulty_level(self, qs, name, value):
+        infras = Infrastructure.objects.filter(maintenance_difficulty__in=value)
+        return infras

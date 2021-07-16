@@ -55,8 +55,14 @@ class InfrastructureCondition(StructureOrNoneRelated):
         return self.label
 
 
+class DifficultyLevelManager(NoDeleteManager):
+    def level_choices(self):
+        return [(level.id, str(level)) for level in self.all()]
+
+
 class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), max_length=250)
+    objects = DifficultyLevelManager()
 
     class Meta:
         verbose_name = _("Infrastructure Maintenance Difficulty Level")
@@ -71,6 +77,7 @@ class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
 
 class InfrastructureUsageDifficultyLevel(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), max_length=250)
+    objects = DifficultyLevelManager()
 
     class Meta:
         verbose_name = _("Infrastructure Usage Difficulty Levels")
@@ -157,7 +164,7 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
                                                blank=True, null=True,
                                                on_delete=models.SET_NULL)
     usage_difficulty = models.ForeignKey(InfrastructureUsageDifficultyLevel,
-                                         verbose_name=_("Usage difficulty"), 
+                                         verbose_name=_("Usage difficulty"),
                                          help_text=_("Danger level of end users' infrastructure usage"),
                                          blank=True, null=True,
                                          on_delete=models.SET_NULL)
