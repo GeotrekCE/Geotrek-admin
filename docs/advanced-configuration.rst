@@ -1442,6 +1442,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_insert",
             "date_insert",
             "implantation_year",
+            "usage_difficulty", 
+            "maintenance_difficulty"
             "published",
         ],
     COLUMNS_LISTS["signage_view"] = [
@@ -1739,6 +1741,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "max_elevation",
             "slope",
+            "usage_difficulty", 
+            "maintenance_difficulty"
         ],
     COLUMNS_LISTS["signage_export"] = [
             "structure",
@@ -2126,6 +2130,8 @@ An exhaustive list of form fields hideable in each module.
             "description",
             "published",
             "implantation_year",
+            "usage_difficulty",
+            "maintenance_difficulty"
         ],
     HIDDEN_FORM_FIELDS["signage"] = [
             "condition",
