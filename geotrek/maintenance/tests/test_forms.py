@@ -26,3 +26,17 @@ class ManDayFormTest(TestCase):
         self.assertIn(self.job1, qs)  # Deactivated does show
         self.assertIn(self.job3, qs)
         self.assertIn(self.job3, qs)
+
+    def test_form_active_job_is_valid(self):
+        form = ManDayForm(data={
+            'nb_days': 4,
+            'job': self.job2.pk
+        })
+        self.assertTrue(form.is_valid())
+
+    def test_form_inactive_job_is_invalid(self):
+        form = ManDayForm(data={
+            'nb_days': 4,
+            'job': self.job1.pk
+        })
+        self.assertFalse(form.is_valid())
