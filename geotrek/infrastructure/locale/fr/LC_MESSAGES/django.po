@@ -90,3 +90,9 @@ msgstr "Ajouter un aménagement"
 
 msgid "Intervention year"
 msgstr "Année d'intervention"
+
+msgid "Usage difficulty"
+msgstr "Difficulté d'usage"
+
+msgid "Maintenance difficulty"
+msgstr "Difficulté d'entretien"

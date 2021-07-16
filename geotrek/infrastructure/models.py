@@ -151,6 +151,13 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     type = models.ForeignKey(InfrastructureType, verbose_name=_("Type"), on_delete=models.CASCADE)
     objects = InfrastructureGISManager()
+    maintenance_difficulty = models.ForeignKey(InfrastructureMaintenanceDifficultyLevel,
+                                               verbose_name=_("Maintenance difficulty"),
+                                               blank=True, null=True,
+                                               on_delete=models.SET_NULL)
+    usage_difficulty = models.ForeignKey(InfrastructureUsageDifficultyLevel,
+                                         verbose_name=_("Usage difficulty"), blank=True, null=True,
+                                         on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("Infrastructure")
