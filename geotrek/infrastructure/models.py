@@ -55,14 +55,8 @@ class InfrastructureCondition(StructureOrNoneRelated):
         return self.label
 
 
-class DifficultyLevelManager(NoDeleteManager):
-    def level_choices(self):
-        return [(level.id, str(level)) for level in self.all()]
-
-
 class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), max_length=250)
-    objects = DifficultyLevelManager()
 
     class Meta:
         verbose_name = _("Infrastructure Maintenance Difficulty Level")
@@ -77,7 +71,6 @@ class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
 
 class InfrastructureUsageDifficultyLevel(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), max_length=250)
-    objects = DifficultyLevelManager()
 
     class Meta:
         verbose_name = _("Infrastructure Usage Difficulty Levels")

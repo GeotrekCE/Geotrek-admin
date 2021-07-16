@@ -55,3 +55,17 @@ class InfrastructureNoPictogramFactory(TopologyFactory):
     type = factory.SubFactory(InfrastructureTypeNoPictogramFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True
+
+
+class InfrastructureUsageDifficultyLevelFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = models.InfrastructureUsageDifficultyLevel
+    label = factory.Sequence(lambda n: "Usage level %s" % n)
+
+
+class InfrastructureMaintenanceDifficultyLevelFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = models.InfrastructureMaintenanceDifficultyLevel
+    label = factory.Sequence(lambda n: "Maintenance level %s" % n)

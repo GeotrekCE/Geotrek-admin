@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django_filters import CharFilter, MultipleChoiceFilter
+from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -18,10 +18,8 @@ class InfrastructureFilterSet(ValidTopologyFilterSet, ZoningFilterSet, Structure
     category = MultipleChoiceFilter(label=_("Category"), field_name='type__type',
                                     choices=INFRASTRUCTURE_TYPES)
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
-    usage_difficulty = MultipleChoiceFilter(label=_("Usage difficulty"), method='filter_usage_difficulty_level',
-                                            choices=InfrastructureUsageDifficultyLevel.objects.level_choices())
-    maintenance_difficulty = MultipleChoiceFilter(label=_("Maintenance difficulty"), method='filter_maintenance_difficulty_level',
-                                                  choices=InfrastructureMaintenanceDifficultyLevel.objects.level_choices())
+    maintenance_difficulty = ModelMultipleChoiceFilter(queryset=InfrastructureMaintenanceDifficultyLevel.objects.all(), label=_("Maintenance difficulty"))
+    usage_difficulty = ModelMultipleChoiceFilter(queryset=InfrastructureUsageDifficultyLevel.objects.all(), label=_("Usage difficulty"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
