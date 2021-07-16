@@ -316,21 +316,21 @@
         "pk": 1,
         "model": "infrastructure.infrastructuremaintenancedifficultylevel",
         "fields": {
-            "label": "Prudence habituelle mais sans mesures de protection n\u00e9cessaire"
+            "label": "Prudence habituelle"
         }
     },
     {
         "pk": 2,
         "model": "infrastructure.infrastructuremaintenancedifficultylevel",
         "fields": {
-            "label": "Prudence renforc\u00e9e avec mesures de protection recommand\u00e9es mais sans obligation"
+            "label": "Protection recommand\u00e9e"
         }
     },
     {
         "pk": 3,
         "model": "infrastructure.infrastructuremaintenancedifficultylevel",
         "fields": {
-            "label": "Mesures de protection obligatoires avec uniquement des agents form\u00e9s"
+            "label": "Agents form\u00e9s seulement"
         }
     }
 ]
