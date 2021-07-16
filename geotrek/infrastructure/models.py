@@ -153,10 +153,13 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
     objects = InfrastructureGISManager()
     maintenance_difficulty = models.ForeignKey(InfrastructureMaintenanceDifficultyLevel,
                                                verbose_name=_("Maintenance difficulty"),
+                                               help_text=_("Danger level of maintenance agents' interventions on infrastructure"),
                                                blank=True, null=True,
                                                on_delete=models.SET_NULL)
     usage_difficulty = models.ForeignKey(InfrastructureUsageDifficultyLevel,
-                                         verbose_name=_("Usage difficulty"), blank=True, null=True,
+                                         verbose_name=_("Usage difficulty"), 
+                                         help_text=_("Danger level of end users' infrastructure usage"),
+                                         blank=True, null=True,
                                          on_delete=models.SET_NULL)
 
     class Meta:
