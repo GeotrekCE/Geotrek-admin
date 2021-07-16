@@ -62,6 +62,7 @@ class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
         verbose_name = _("Infrastructure Maintenance Difficulty Level")
         verbose_name_plural = _("Infrastructure Maintenance Difficulty Levels")
         ordering = ('label',)
+        unique_together = ('label', 'structure')
 
     def __str__(self):
         if self.structure:
@@ -70,12 +71,13 @@ class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
 
 
 class InfrastructureUsageDifficultyLevel(StructureOrNoneRelated):
-    label = models.CharField(verbose_name=_("Label"), max_length=250)
+    label = models.CharField(verbose_name=_("Label"), unique=True, max_length=250)
 
     class Meta:
         verbose_name = _("Infrastructure Usage Difficulty Levels")
         verbose_name_plural = _("Infrastructure Usage Difficulty Levels")
         ordering = ('label',)
+        unique_together = ('label', 'structure')
 
     def __str__(self):
         if self.structure:
@@ -155,12 +157,14 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
                                                verbose_name=_("Maintenance difficulty"),
                                                help_text=_("Danger level of maintenance agents' interventions on infrastructure"),
                                                blank=True, null=True,
-                                               on_delete=models.SET_NULL)
+                                               on_delete=models.SET_NULL,
+                                               related_name='infrastructures_set')
     usage_difficulty = models.ForeignKey(InfrastructureUsageDifficultyLevel,
                                          verbose_name=_("Usage difficulty"),
                                          help_text=_("Danger level of end users' infrastructure usage"),
                                          blank=True, null=True,
-                                         on_delete=models.SET_NULL)
+                                         on_delete=models.SET_NULL,
+                                         related_name='infrastructures_set')
 
     class Meta:
         verbose_name = _("Infrastructure")
