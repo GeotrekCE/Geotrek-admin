@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 from django.forms import FloatField
 from django.utils.translation import gettext_lazy as _
 from django.forms.models import inlineformset_factory
@@ -12,12 +13,13 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 
-from .models import Intervention, Project
+from .models import Intervention, InterventionJob, ManDay, Project
 
 
 class ManDayForm(forms.ModelForm):
 
     class Meta:
+        model = ManDay
         fields = ('id', 'nb_days', 'job')
 
     def __init__(self, *args, **kwargs):
@@ -29,6 +31,10 @@ class ManDayForm(forms.ModelForm):
         self.fields['nb_days'].label = ''
         self.fields['nb_days'].widget.attrs['class'] = 'input-mini'
         self.fields['job'].widget.attrs['class'] = 'input-medium'
+        if self.instance and self.instance.pk:
+            self.fields['job'].queryset = InterventionJob.objects.filter(Q(active=True) | Q(id=self.instance.job_id))
+        else:
+            self.fields['job'].queryset = InterventionJob.objects.filter(active=True)
 
 
 ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, form=ManDayForm, extra=1)
