@@ -63,7 +63,7 @@ CHANGELOG
 
 **Maintenance**
 
-- Update to django-mapentity 2.3.2
+- Update to paperclip 2.3.2
 
 
 2.59.0 (2021-06-07)
