@@ -33,11 +33,11 @@
         </tr>
                 <tr>
             <th>{{ object|verbose:"usage_difficulty" }}</th>
-            <td>{{ object.usage_difficulty }}</td>
+            <td>{{ object.usage_difficulty|default:"" }}</td>
         </tr>
                 <tr>
             <th>{{ object|verbose:"maintenance_difficulty" }}</th>
-            <td>{{ object.maintenance_difficulty }}</td>
+            <td>{{ object.maintenance_difficulty|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"published" }}</th>
