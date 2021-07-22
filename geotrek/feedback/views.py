@@ -29,7 +29,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     model = feedback_models.Report
     filterform = ReportFilterSet
     mandatory_columns = ['id', 'email', 'activity']
-    default_extra_columns = ['category', 'status', 'lastmod']
+    default_extra_columns = ['category', 'status', 'date_update']
 
 
 class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
@@ -41,7 +41,7 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     default_extra_columns = [
         'email', 'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'lastmod',
+        'date_insert', 'date_update',
     ]
 
 
