@@ -31,7 +31,7 @@ class InfrastructureConditionFactory(factory.django.DjangoModelFactory):
 
 
 class InfrastructureUsageDifficultyLevelFactory(factory.django.DjangoModelFactory):
-    
+
     class Meta:
         model = models.InfrastructureUsageDifficultyLevel
     label = factory.Sequence(lambda n: "Usage level %s" % n)
