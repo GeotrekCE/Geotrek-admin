@@ -328,11 +328,12 @@ class MapEntityTest(TestCase):
                                                              modelname=self.model._meta.model_name)
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        content_json = response.json()
+        content = response.content
         if hasattr(self, 'length'):
+            content_json = response.json()
             length = content_json['features'][0]['properties'].pop('length')
             self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, {
+        self.assertJSONEqual(content, {
             'type': 'FeatureCollection',
             'features': [{
                 'id': self.obj.pk,
