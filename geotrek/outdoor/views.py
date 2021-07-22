@@ -22,7 +22,7 @@ class SiteLayer(MapEntityLayer):
 
 class SiteList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['super_practices', 'lastmod']
+    default_extra_columns = ['super_practices', 'date_update']
     filterform = SiteFilterSet
     queryset = Site.objects.all()
 
@@ -119,7 +119,7 @@ class CourseLayer(MapEntityLayer):
 
 class CourseList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['site', 'lastmod']
+    default_extra_columns = ['site', 'date_update']
     filterform = CourseFilterSet
     queryset = Course.objects.all()
 
