@@ -16,7 +16,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
         class Meta(TopologyForm.Meta):
             fields = TopologyForm.Meta.fields + \
-                ['structure', 'name', 'description', 'type', 'condition', 'published']
+                ['structure', 'name', 'description', 'type', 'condition', 'implantation_year', 'published']
 else:
     class BaseInfrastructureForm(CommonForm):
 
