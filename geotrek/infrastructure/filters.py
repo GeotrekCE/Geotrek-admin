@@ -33,11 +33,3 @@ class InfrastructureFilterSet(ValidTopologyFilterSet, ZoningFilterSet, Structure
         interventions = Intervention.objects.filter(target_type=infrastructure_ct, date__year__in=value) \
             .values_list('target_id', flat=True)
         return qs.filter(id__in=interventions).distinct()
-
-    def filter_maintenance_difficulty_level(self, qs, name, value):
-        infras = Infrastructure.objects.filter(usage_difficulty__in=value)
-        return infras
-
-    def filter_usage_difficulty_level(self, qs, name, value):
-        infras = Infrastructure.objects.filter(maintenance_difficulty__in=value)
-        return infras
