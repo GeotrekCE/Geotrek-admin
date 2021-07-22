@@ -17,6 +17,7 @@ class DifficultyLeversFilterTest(TestCase):
         cls.infra_m2 = InfrastructureFactory(maintenance_difficulty=cls.maintenance_level_2)
 
     def test_filter_usages(self):
+        '''Test usage difficulty filter on infrastructure'''
         data = {
             'usage_difficulty': [self.usage_level_1.pk]
         }
@@ -27,6 +28,8 @@ class DifficultyLeversFilterTest(TestCase):
         self.assertNotIn(self.infra_m2, qs)
 
     def test_filter_maintenance(self):
+        '''Test maintenance difficulty filter on infrastructure'''
+
         data = {
             'maintenance_difficulty': [self.maintenance_level_2.pk],
         }
@@ -37,6 +40,7 @@ class DifficultyLeversFilterTest(TestCase):
         self.assertIn(self.infra_m2, qs)
 
     def test_filter_combo(self):
+        '''Test both usage difficulty filter and maintenance difficulty filter on infrastructure as lower bound'''
         data = {
             'usage_difficulty': [self.usage_level_1.pk],
             'maintenance_difficulty': [self.maintenance_level_2.pk],
