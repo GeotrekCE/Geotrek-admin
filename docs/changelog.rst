@@ -8,7 +8,12 @@ CHANGELOG
 **New features**
 
 - Add difficulty level fields (usage and maintenance) to infrastructure
+- Add 'active' field to job model, and hide inactive jobs in forms
 - Add detailed jobs costs to interventions exports, with a new column for each job 
+
+**Bug fixes**
+
+* Fix length_kilometer attribute computation in treks
 
 
 2.62.0 (2021-07-06)
@@ -64,7 +69,7 @@ CHANGELOG
 
 **Maintenance**
 
-- Update to django-mapentity 2.3.2
+- Update to paperclip 2.3.2
 
 
 2.59.0 (2021-06-07)
