@@ -631,6 +631,8 @@ class TestDetailedJobCostsExports(TestCase):
         self.job3_column_name = "Cost Banker"
 
     def test_detailed_mandays_export(self):
+        '''Test detailed intervention job costs are exported properly, and follow data changes'''
+
         # Assert each job used in intervention has a column in export view
         columns = InterventionFormatList().columns
         self.assertIn(self.job1_column_name, columns)
@@ -682,6 +684,8 @@ class TestDetailedJobCostsExports(TestCase):
         deactivate_all()
 
     def test_csv_detailed_cost_content(self):
+        '''Test CSV job costs exports contain accurate total price'''
+
         response = self.client.get('/intervention/list/export/', params={'format': 'csv'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Type'), 'text/csv')

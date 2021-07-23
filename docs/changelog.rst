@@ -7,6 +7,7 @@ CHANGELOG
 
 **New features**
 
+- Add difficulty level fields (usage and maintenance) to infrastructure
 - Add 'active' field to job model, and hide inactive jobs in forms
 - Add detailed jobs costs to interventions exports, with a new column for each job 
 

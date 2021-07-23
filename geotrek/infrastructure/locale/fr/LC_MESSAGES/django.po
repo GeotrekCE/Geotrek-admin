@@ -90,3 +90,15 @@ msgstr "Ajouter un aménagement"
 
 msgid "Intervention year"
 msgstr "Année d'intervention"
+
+msgid "Usage difficulty"
+msgstr "Niveau des usagers"
+
+msgid "Maintenance difficulty"
+msgstr "Niveau des interventions"
+
+msgid "Danger level of maintenance agents' interventions on infrastructure"
+msgstr "Niveau de dangerosité potentielle des interventions sur l'aménagement par les agents"
+
+msgid "Danger level of end users' infrastructure usage"
+msgstr "Niveau de dangerosité potentielle de l'aménagement pour les usagers randonneurs"
