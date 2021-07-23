@@ -118,6 +118,11 @@ When adding a new field ``my_field`` to a model ``MyModel``, please proceed with
 
 Follow the documentation you just edited to test that custom columns and hideable fields do work properly with your new field.
 
+**In API v2** :
+
+If ``MyModel`` is served by APIv2, make sure to add a serializer for the new field in ``geotrek/api/v2/serializers.py`` and if you wish to filter on this field, create a new filter and add it to the right ``ViewSet`` under ``geotrek/api/v2/views``, using attribute ``filter_backends``.
+
+
 Run tests
 ---------
 
