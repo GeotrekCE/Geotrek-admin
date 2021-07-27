@@ -1999,7 +1999,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "status",
             "related_trek",
             "date_insert",
-            "lastmod",
+            "date_update",
         ],
     COLUMNS_LISTS["sensitivity_export"] = [
             "species",
