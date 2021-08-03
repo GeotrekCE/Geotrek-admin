@@ -107,11 +107,11 @@ class SuricateAPITests(TestCase):
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
     def test_save_on_report_posts_to_suricate(self, post_report):
         """Test post to suricate on save Report"""
-        # Create a report with an UID - emulates report from Suricate 
+        # Create a report with an UID - emulates report from Suricate
         uid = uuid.uuid4()
         Report.objects.create(uid=uid)
         post_report.assert_not_called()
-        # Create a report with no UID - emulates new report from Geotrek 
+        # Create a report with no UID - emulates new report from Geotrek
         report = Report.objects.create(uid=None)
         post_report.assert_called_once_with(report)
 

@@ -144,7 +144,7 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
             #     content_type=ContentType.objects.get_for_model(parent_model),
             #     object_id=parent,
             #     creator=creator,
-            #TODO FIX DOWNLOAD ATTACHMENTS 
+            # TODO FIX DOWNLOAD ATTACHMENTS
             #     attachment_file=self.download_attachment(document["url"]),
             # )
 

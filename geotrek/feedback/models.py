@@ -71,7 +71,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         verbose_name=_("Related trek"),
     )
     created = models.DateTimeField(
-        default=make_aware(datetime.strptime("2021-01-01 12:00:00", "%Y-%d-%m %H:%M:%S")), 
+        default=make_aware(datetime.strptime("2021-01-01 12:00:00", "%Y-%d-%m %H:%M:%S")),
         verbose_name=_("Creation date")
     )
     uid = models.UUIDField(
@@ -82,7 +82,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         default="unknown", max_length=100, verbose_name=_("Origin")
     )
     last_updated = models.DateTimeField(
-        default=make_aware(datetime.strptime("2021-01-01 12:00:00", "%Y-%d-%m %H:%M:%S")), 
+        default=make_aware(datetime.strptime("2021-01-01 12:00:00", "%Y-%d-%m %H:%M:%S")),
         verbose_name=_("Last updated")
     )
 
