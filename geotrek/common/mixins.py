@@ -52,11 +52,7 @@ class TimeStampedModelMixin(models.Model):
     def date_update_display(self):
         return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
 
-    @property
-    def lastmod_display(self):
-        return self.date_update.strftime("%Y-%m-%y %H:%M")
-
-    lastmod_verbose_name = _("Modification")
+    date_update_verbose_name = _("Update date")
 
 
 class NoDeleteQuerySet(models.QuerySet):
