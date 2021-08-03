@@ -1,3 +1,4 @@
+from geotrek.common.mixins import CustomColumnsMixin
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
@@ -10,7 +11,7 @@ from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.serializers import SiteSerializer, SiteGeojsonSerializer, CourseSerializer, CourseGeojsonSerializer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityViewSet)
+                             MapEntityDelete, MapEntityViewSet, MapEntityFormat)
 
 
 class SiteLayer(MapEntityLayer):
@@ -19,8 +20,9 @@ class SiteLayer(MapEntityLayer):
     queryset = Site.objects.all()
 
 
-class SiteList(MapEntityList):
-    columns = ['id', 'name', 'super_practices', 'lastmod']
+class SiteList(CustomColumnsMixin, MapEntityList):
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['super_practices', 'date_update']
     filterform = SiteFilterSet
     queryset = Site.objects.all()
 
@@ -99,14 +101,25 @@ class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
     pass
 
 
+class SiteFormatList(MapEntityFormat, SiteList):
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'practice', 'description',
+        'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
+        'portal', 'source', 'information_desks', 'web_links', 'eid',
+        'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
+    ]
+
+
 class CourseLayer(MapEntityLayer):
     properties = ['name']
     filterform = CourseFilterSet
     queryset = Course.objects.all()
 
 
-class CourseList(MapEntityList):
-    columns = ['id', 'name', 'site', 'lastmod']
+class CourseList(CustomColumnsMixin, MapEntityList):
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['site', 'date_update']
     filterform = CourseFilterSet
     queryset = Course.objects.all()
 
@@ -183,3 +196,11 @@ class CourseDocumentPublic(CourseDocumentPublicMixin, DocumentPublic):
 
 class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
     pass
+
+
+class CourseFormatList(MapEntityFormat, CourseList):
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'site', 'description',
+        'advice', 'equipment', 'eid', 'height', 'length', 'ratings'
+    ]

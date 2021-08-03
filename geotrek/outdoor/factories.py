@@ -63,6 +63,11 @@ class SiteFactory(StructureRelatedDefaultFactory):
     eid = "42"
     geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
 
+    @factory.post_generation
+    def managers(obj, create, extracted=None, **kwargs):
+        if create and extracted:
+            obj.managers.set(extracted)
+
 
 class OutdoorManagerFactory(UserFactory):
     is_staff = True

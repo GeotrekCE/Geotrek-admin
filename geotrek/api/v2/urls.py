@@ -13,8 +13,14 @@ router.register('theme', api_views.ThemeViewSet, basename='theme')
 router.register('source', api_views.SourceViewSet, basename='source')
 router.register('reservationsystem', api_views.ReservationSystemViewSet, basename='reservationsystem')
 router.register('label', api_views.LabelViewSet, basename='label')
+router.register('organism', api_views.OrganismViewSet, basename='organism')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    router.register('feedback_status', api_views.ReportStatusViewSet, basename='feedback-status')
+    router.register('feedback_category', api_views.ReportCategoryViewSet, basename='feedback-category')
+    router.register('feedback_activity', api_views.ReportActivityViewSet, basename='feedback-activity')
+    router.register('feedback_magnitude', api_views.ReportProblemMagnitudeViewSet, basename='feedback-magnitude')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('trek', api_views.TrekViewSet, basename='trek')
     router.register('poi', api_views.POIViewSet, basename='poi')
@@ -23,8 +29,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('trek_accessibility', api_views.AccessibilityViewSet, basename='accessibility')
     router.register('trek_route', api_views.RouteViewSet, basename='route')
     router.register('trek_difficulty', api_views.DifficultyViewSet, basename='difficulty')
-    router.register('trek_network', api_views.NetworksViewSet, basename='network')
+    router.register('trek_network', api_views.NetworkViewSet, basename='network')
     router.register('trek_practice', api_views.PracticeViewSet, basename='practice')
+    router.register('weblink_category', api_views.WebLinkCategoryViewSet, basename='weblink-category')
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristiccontent_category', api_views.TouristicContentCategoryViewSet,
                     basename='touristiccontentcategory')
@@ -43,6 +50,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('outdoor_sitetype', api_views.SiteTypeViewSet, basename='sitetype')
     router.register('outdoor_ratingscale', api_views.RatingScaleViewSet, basename='ratingscale')
     router.register('outdoor_rating', api_views.RatingViewSet, basename='rating')
+    router.register('outdoor_course', api_views.CourseViewSet, basename='course')
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     router.register('flatpage', api_views.FlatPageViewSet, basename='flatpage')
 

@@ -30,12 +30,14 @@ class TranslatedModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Track translated fields
+        self.orig_fields = list(self.fields.keys())
         self._translated = {}
-        self.replace_orig_fields()
-        self.populate_fields()
+
+        if 'modeltranslation' in settings.INSTALLED_APPS:
+            self.replace_orig_fields()
+            self.populate_fields()
 
     def replace_orig_fields(self):
-        self.orig_fields = list(self.fields.keys())
         # Expand i18n fields
         try:
             # Obtain model translation options
@@ -52,11 +54,11 @@ class TranslatedModelForm(forms.ModelForm):
             # Add translated fields (e.g. `name_fr`, `name_en`...)
             for translated_language in app_settings['TRANSLATED_LANGUAGES']:
                 lang = translated_language[0]
-                name = '%s_%s' % (modelfield, lang)
+                name = '{0}_{1}'.format(modelfield, lang)
                 # Add to form.fields{}
                 translated = copy.deepcopy(native)
                 translated.required = native.required and (lang == settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
-                translated.label = "%s [%s]" % (translated.label, lang)
+                translated.label = u"{0} [{1}]".format(translated.label, lang)
                 self.fields[name] = translated
                 # Keep track of replacements
                 self._translated.setdefault(modelfield, []).append(name)
@@ -82,12 +84,12 @@ class TranslatedModelForm(forms.ModelForm):
 
 class SubmitButton(HTML):
 
-    def __init__(self, divid, label):
+    def __init__(self, div_id, label):
         content = ("""
-            <a id="%s" class="btn btn-success pull-right offset1"
+            <a id="{0}" class="btn btn-success"
                onclick="javascript:$(this).parents('form').submit();">
-                <i class="icon-white icon-ok-sign"></i> %s
-            </a>""" % (divid, label))
+                <i class="bi bi-check-circle-fill"></i> {1}
+            </a>""".format(div_id, label))
         super().__init__(content)
 
 
@@ -96,6 +98,7 @@ class MapEntityForm(TranslatedModelForm):
     fieldslayout = None
     geomfields = []
     leftpanel_scrollable = True
+    hidden_fields = []
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -142,18 +145,20 @@ class MapEntityForm(TranslatedModelForm):
         is_creation = self.instance.pk is None
 
         actions = [
+            Button('cancel', _('Cancel'), css_class="btn btn-light ml-auto mr-2"),
             SubmitButton('save_changes', _('Create') if is_creation else _('Save changes')),
-            Button('cancel', _('Cancel'), css_class="pull-right offset1"),
         ]
 
         # Generic behaviour
         if not is_creation:
             self.helper.form_action = self.instance.get_update_url()
             # Put delete url in Delete button
-            actions.insert(0, HTML('<a class="btn %s delete" href="%s"><i class="icon-white icon-trash"></i> %s</a>' % (
-                'btn-danger' if self.can_delete else 'disabled',
-                self.instance.get_delete_url() if self.can_delete else '#',
-                _("Delete"))))
+            actions.insert(0, HTML(
+                """<a class="btn {0} delete" href="{1}"><i class="bi bi-trash"></i> {2}</a>""".format(
+                    'btn-danger' if self.can_delete else 'disabled',
+                    self.instance.get_delete_url() if self.can_delete else '#',
+                    _("Delete")
+                )))
         else:
             self.helper.form_action = self.instance.get_add_url()
 
@@ -166,37 +171,51 @@ class MapEntityForm(TranslatedModelForm):
         fieldslayout = self.__replace_translatable_fields(fieldslayout)
 
         has_geomfield = len(self.geomfields) > 0
-        leftpanel_css = "span" + ('4' if has_geomfield else '12')
+        leftpanel_css = "col-12"
+        if has_geomfield:
+            leftpanel_css = "col-12 col-sm-6 col-lg-5"
         if self.leftpanel_scrollable:
             leftpanel_css += " scrollable"
 
         leftpanel = Div(
             *fieldslayout,
             css_class=leftpanel_css,
-            css_id="modelfields"
+            css_id="modelfields",
         )
 
         rightpanel = tuple()
         if has_geomfield:
             rightpanel = (Div(
                 *self.geomfields,
-                css_class="span8",
+                css_class="col-12 col-sm-6 col-lg-7",
                 css_id="geomfield"
             ),)
+
+        # Create form actions
+        # crispy_form bootstrap4 template is overriden
+        # because of label and field classes added but not wanted here
+        formactions = FormActions(
+            *actions,
+            css_class="form-actions",
+            template='mapentity/crispy_forms/bootstrap4/layout/formactions.html'
+        )
 
         # Main form layout
         self.helper.help_text_inline = True
         self.helper.form_class = 'form-horizontal'
+        self.helper.form_style = "default"
+        self.helper.label_class = 'col-md-auto'
+        self.helper.field_class = 'controls col-md-auto'
         self.helper.layout = Layout(
             Div(
                 Div(
                     leftpanel,
                     *rightpanel,
-                    css_class="row-fluid"
+                    css_class="row"
                 ),
                 css_class="container-fluid"
             ),
-            FormActions(*actions, css_class="form-actions"),
+            formactions,
         )
 
     def __replace_translatable_fields(self, fieldslayout):
@@ -207,8 +226,12 @@ class MapEntityForm(TranslatedModelForm):
                 field.fields = self.__replace_translatable_fields(field.fields)
                 newlayout.append(field)
             else:
+                # Add translated fields to layout
                 if field in self._translated:
-                    newlayout.append(self.__tabbed_layout_for_field(field))
+                    field_is_required = self.fields[f"{field}_{settings.MODELTRANSLATION_DEFAULT_LANGUAGE}"].required
+                    # Only if they are required or not hidden
+                    if field_is_required or field not in self.hidden_fields:
+                        newlayout.append(self.__tabbed_layout_for_field(field))
                 else:
                     newlayout.append(field)
         return newlayout
@@ -216,7 +239,7 @@ class MapEntityForm(TranslatedModelForm):
     def __tabbed_layout_for_field(self, field):
         fields = []
         for replacement in self._translated[field]:
-            active = "active" if replacement.endswith('_%s' % settings.MODELTRANSLATION_DEFAULT_LANGUAGE) else ""
+            active = "active" if replacement.endswith('_{0}'.format(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)) else ""
             fields.append(Div(replacement,
                               css_class="tab-pane " + active,
                               css_id=replacement))
@@ -225,8 +248,11 @@ class MapEntityForm(TranslatedModelForm):
             HTML("""
             <ul class="nav nav-pills">
             {{% for lang in TRANSLATED_LANGUAGES %}}
-                <li {{% if lang.0 == '{lang_code}'""" """ %}}class="active"{{% endif %}}><a href="#{field}_{{{{ lang.0 }}}}"
-                    data-toggle="tab">{{{{ lang.0 }}}}</a></li>
+                <li class="nav-item">
+                    <a class="nav-link{{% if lang.0 == '{lang_code}'""" """ %}} active{{% endif %}}" href="#{field}_{{{{ lang.0 }}}}"
+                        data-toggle="tab">{{{{ lang.0 }}}}
+                    </a>
+                </li>
             {{% endfor %}}
             </ul>
             """.format(lang_code=settings.MODELTRANSLATION_DEFAULT_LANGUAGE, field=field)),
@@ -247,19 +273,22 @@ class AttachmentForm(BaseAttachmentForm):
         self.helper.form_tag = True
         self.helper.form_class = 'attachment form-horizontal'
         self.helper.help_text_inline = True
+        self.helper.form_style = "default"
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
 
         if self.is_creation:
             form_actions = [
                 Submit('submit_attachment',
                        _('Submit attachment'),
-                       css_class="btn-primary offset1")
+                       css_class="btn-primary")
             ]
         else:
             form_actions = [
                 Button('cancel', _('Cancel'), css_class=""),
                 Submit('submit_attachment',
                        _('Update attachment'),
-                       css_class="btn-primary offset1")
+                       css_class="btn-primary")
             ]
 
         self.helper.form_action = self.form_url

@@ -2,16 +2,168 @@
 CHANGELOG
 =========
 
-2.55.1+dev
+2.62.0+dev (XXXX-XX-XX)
+----------------------
+
+**New features**
+
+- Add difficulty level fields (usage and maintenance) to infrastructure
+- Add 'active' field to job model, and hide inactive jobs in forms
+- Add detailed jobs costs to interventions exports, with a new column for each job
+
+**Bug fixes**
+
+* Fix length_kilometer attribute computation in treks
+* Fix date update format in lists
+
+
+2.62.0 (2021-07-06)
+----------------------
+
+**New features**
+
+- Add custom columns configuration to list views
+- Add custom columns configuration to list CSV exports
+- Add custom form fields configuration to creation views
+
+**Bug fixes**
+
+* Fix filter difficulty in API v2
+
+
+2.61.1 (2021-06-28)
 -------------------
 
 **Bug fixes**
 
--
+* Fix filter in_bbox in API v2
+
+
+2.61.0 (2021-06-25)
+-------------------
+
+**New features**
+
+- Add Web Links to Trek endpoints in APIv2
+- Add endpoints for Web Links categories in APIv2
+- Ensure APIv2 returns outdoor sites list and outdoor courses list as ordered by localized name
+
+
+2.60.0 (2021-06-25)
+-------------------
+
+**New features**
+
+- Add endpoints for user feedback in APIv2 : report category, report activity, report problem magnitude, and report status
+- Ensure APIv2 returns treks list and touristic contents list as ordered by localized name
+
+**Bug fixes**
+
+- Fix confirm delete attachment modal not visible
+- Fix required '*geom' position
+- Fix scroll unwanted when list is full
+- Fix responsive on dataTables
+- Remove excluded POIs from results in POI endpoint on api v2 when filtering by trek id
+- Sort attachments listed in api v2 endpoints for Trek, TouristicContent, POI
+- Ensure content is displayed only when a related object is published on api v2
+- Exclude deleted content of portal filters in api v2
+
+**Maintenance**
+
+- Update to paperclip 2.3.2
+
+
+2.59.0 (2021-06-07)
+-------------------
+
+**Breaking Change**
+
+- Template nginx.conf.in was changed to work with multiple rando portals (#2670).
+
+First, if you changed file `/opt/geotrek-admin/var/conf/nginx.conf.in`, back it up somewhere.
+1 - While installing, choose 'Y' to get the new version.
+2 - Copy your changes from the backed up file to the new version.
+3 - Execute : `dpkg-reconfigure geotrek-admin` to reapply your customization.
+
+**User Interface**
+
+- Important visual changes due to CSS framework upgrade
+- Improve responsive
+
+**Maintenance**
+
+- Upgrade Bootstrap to 4.6
+- Upgrade JQuery to 1.9.1
+- Upgrade DataTables to 1.10.23
+- Upgrade Chosen to 1.2.0
+- Move to vendor folder updated JS Libraries used by Mapentity
+- Update HTML markup in many templates, and update tests too
+- Expired sessions stored in database are now deleted at each update
+
+**Bug fixes**
+
+- Fix gpx/kml are not generated on all languages (The first object was working).
+
+
+2.58.0 (2021-05-20)
+-------------------
+
+**Documentation**
+
+- Add documentation ssl
+
+**New features**
+
+- Mobile API returns multiple pictures for objects like Treks and POIs. Can be configurated with MOBILE_NUMBER_PICTURES_SYNC setting.
+- Add filter bad topologies and geoms
+
+**Bug fixes**
+
+- Fix DistanceToPointFilter usage in API v2
+- Fix pdf/gpx/kml are not generated on all languages
+
+
+2.57.0 (2021-04-28)
+-------------------
+
+**New features**
+
+- Add managers field to outdoor sites
+
+**Bug fixes**
+
+- Fix projection of departure_geom in API v2
+
+
+2.56.0 (2021-04-27)
+-------------------
+
+**Bug fixes**
+
+- Fix API v2 crash when trek geom is a point
+
+**New features**
+
+- Add outdoor course endpoint to API v2
+- Add all fields to outdoor site/course exports (csv/gpx/shp)
+- Link outdoor sites and courses to other objects, especially
+  POIs, infrastructures and interventions
+
+**Documentation**
+
+- Update database ULM schemas (with outdoor)
+- Update faq.rst
+- Proofreading
 
 **Maintenance**
 
 - Update parser for Esprit Parc National data streams
+- Upgrade Weasyprint to 52.5
+- Use screamshotter >= 2.0.9 by default
+
+**Security**
+
+- Bump django-debug-toolbar from 3.1.1 to 3.2.1
 
 
 2.55.1 (2021-04-15)

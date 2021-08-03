@@ -50,6 +50,8 @@ _MAP_STYLES = deepcopy(_DEFAULT_MAP_STYLES)
 _MAP_STYLES.update(app_settings['MAP_STYLES'])
 app_settings['MAP_STYLES'] = _MAP_STYLES
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'theme_advanced_buttons1': 'bold,italic,forecolor,separator,bullist,numlist,link,media,separator,undo,redo,\

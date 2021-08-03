@@ -30,6 +30,20 @@ class InfrastructureConditionFactory(factory.django.DjangoModelFactory):
     label = factory.Sequence(lambda n: "Condition %s" % n)
 
 
+class InfrastructureUsageDifficultyLevelFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = models.InfrastructureUsageDifficultyLevel
+    label = factory.Sequence(lambda n: "Usage level %s" % n)
+
+
+class InfrastructureMaintenanceDifficultyLevelFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = models.InfrastructureMaintenanceDifficultyLevel
+    label = factory.Sequence(lambda n: "Maintenance level %s" % n)
+
+
 class InfrastructureFactory(TopologyFactory):
     class Meta:
         model = models.Infrastructure
@@ -37,6 +51,8 @@ class InfrastructureFactory(TopologyFactory):
     type = factory.SubFactory(InfrastructureTypeFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True
+    usage_difficulty = factory.SubFactory(InfrastructureUsageDifficultyLevelFactory)
+    maintenance_difficulty = factory.SubFactory(InfrastructureMaintenanceDifficultyLevelFactory)
 
 
 class PointInfrastructureFactory(PointTopologyFactory):

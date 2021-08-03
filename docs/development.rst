@@ -84,6 +84,43 @@ Model modification
 .. note ::
 
     Add migration file to source control.
+    
+Model modification - Definition of Done for new model fields
+------------------
+
+When adding a new field ``my_field`` to a model ``MyModel``, please proceed with the following changes to ensure this field is included in existing functionalities.
+
+**In** ``MyModel`` **class** :
+
+- If ``my_field`` is a ``ForeignKey``, make sure to override ``related_name`` with an explicit set name
+
+- Make sure to set ``verbose_name`` on the field and add proper translations in ``.mo`` files
+
+**Outside of model class** :
+
+- Look for form class ``MyModelForm(CommonForm)`` :
+
+    - If it exists, and field needs to be included in form, add ``my_field`` to form attributes (``fields`` on the ``Meta`` class, sometimes ``fieldslayout`` as well). 
+
+    - If field is added to the form **and is optional**, please add ``my_field`` to the documentation for hideable form fields : in ``docs/advanced-configuration.rst`` look for ``HIDDEN_FORM_FIELDS['mymodel']`` and add your field to the list.
+
+- Look for list view class ``MyModelList(CustomColumnsMixin, MapEntityList)`` :
+
+    - If it exists, please add ``my_field`` to the documentation for custom list view columns : in ``docs/advanced-configuration.rst`` look for ``COLUMNS_LISTS['mymodel_view']`` and add your field to the list.
+
+    - If it exists, and if you wish to display a column for ``my_field`` in the list view for this model by default, simply add ``my_field`` to ``default_extra_colums`` on this class.
+
+- Look for exports view class ``MyModelFormatList(MapEntityFormat, MyModelList)`` :
+
+    - If it exists, please add ``my_field`` to the documentation for custom list exports columns : in ``docs/advanced-configuration.rst`` look for ``COLUMNS_LISTS['mymodel_export']`` and add your field to the list.
+
+    - If it exists, and if you wish to display a column for ``my_field`` in CSV/SHP exports for this model by default, simply add ``my_field`` to ``default_extra_colums`` on this class.
+
+Follow the documentation you just edited to test that custom columns and hideable fields do work properly with your new field.
+
+**In API v2** :
+
+If ``MyModel`` is served by APIv2, make sure to add a serializer for the new field in ``geotrek/api/v2/serializers.py`` and if you wish to filter on this field, create a new filter and add it to the right ``ViewSet`` under ``geotrek/api/v2/views``, using attribute ``filter_backends``.
 
 
 Run tests

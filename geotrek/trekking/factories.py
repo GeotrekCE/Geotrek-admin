@@ -103,18 +103,19 @@ class TrekFactory(TopologyFactory):
     reservation_id = 'XXXXXXXXX'
 
     @factory.post_generation
+    def web_links(obj, create, extracted=None, **kwargs):
+        if create and extracted:
+            obj.web_links.set(extracted)
+
+    @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
-        if create:
-            if extracted:
-                for source in extracted:
-                    obj.source.add(source)
+        if create and extracted:
+            obj.source.set(extracted)
 
     @factory.post_generation
     def portals(obj, create, extracted=None, **kwargs):
-        if create:
-            if extracted:
-                for portal in extracted:
-                    obj.portal.add(portal)
+        if create and extracted:
+            obj.portal.set(extracted)
 
 
 class TrekWithPOIsFactory(TrekFactory):

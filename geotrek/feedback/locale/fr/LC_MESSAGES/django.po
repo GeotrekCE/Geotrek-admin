@@ -99,6 +99,36 @@ msgstr "Lien vers le signalement"
 msgid "Invalid geometry value."
 msgstr "Géométrie invalide"
 
+msgid "Non confirmé par les sentinelles"
+msgstr "Non confirmé par les sentinelles"
+
+msgid "Déposé"
+msgstr "Déposé"
+
+msgid "En cours de traitement"
+msgstr "En cours de traitement"
+
+msgid "Résolu"
+msgstr "Résolu"
+
+msgid "Classé sans suite"
+msgstr "Classé sans suite"
+
+msgid "A transmettre"
+msgstr "A transmettre"
+
+msgid "Nouveau"
+msgstr "Nouveau"
+
+msgid "Affecté"
+msgstr "Affecté"
+
+msgid "Intervention prévue"
+msgstr "Intervention prévue"
+
+msgid "Intervention terminée"
+msgstr "Intervention terminée"
+
 msgid "Geotrek : Signal a mistake"
 msgstr "Geotrek : signalement d'un problème"
 

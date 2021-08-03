@@ -1,6 +1,6 @@
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
@@ -59,10 +59,11 @@ class LandEdgeLayer(MapEntityLayer):
     properties = ['color_index', 'name']
 
 
-class LandEdgeList(MapEntityList):
+class LandEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = LandEdge.objects.existing()
     filterform = LandEdgeFilterSet
-    columns = ['id', 'land_type', 'length']
+    mandatory_columns = ['id', 'land_type']
+    default_extra_columns = ['length']
 
 
 class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
@@ -70,10 +71,11 @@ class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
 
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
-    columns = [
-        'id', 'land_type', 'owner', 'agreement',
+    mandatory_columns = ['id']
+    extra_default_columns = [
+        'land_type', 'owner', 'agreement',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas'
     ] + AltimetryMixin.COLUMNS
 
 

@@ -5,7 +5,7 @@ JQDataTable.init = function($elem, url, options) {
     JQDataTable.apply_patch();
 
     var default_options = {
-            "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
+            "sDom": "<'row'<'col-6'l><'col-6'f>r>t<'row'<'col-6'i><'col-6'p>>",
             "sPaginationType": "bootstrap",
             "oLanguage": {
               "sLengthMenu": "_MENU_ records per page"
@@ -73,6 +73,7 @@ JQDataTable.goToPage = function(dtable, is_found, cb_found, cb_not_found) {
 
 // Set up a bootstrap configuration for jqDataTable
 // taken from: http://datatables.net/blog/Twitter_Bootstrap_2
+// Change with Bootstrap4 classes
 JQDataTable.apply_patch = function() {
     if ( JQDataTable.patched )
         return;
@@ -81,7 +82,7 @@ JQDataTable.apply_patch = function() {
 
     /* Default class modification */
     $.extend($.fn.dataTableExt.oStdClasses, {
-      "sWrapper": "dataTables_wrapper form-inline"
+      "sWrapper": "dataTables_wrapper"
     }); /* API method to get paging information */
     $.fn.dataTableExt.oApi.fnPagingInfo = function (oSettings) {
       return {
@@ -104,7 +105,8 @@ JQDataTable.apply_patch = function() {
                 fnDraw(oSettings);
               }
             };
-          $(nPaging).addClass('pagination').append('<ul>' + '<li class="prev disabled"><a href="#">&larr; ' + oLang.sPrevious + '</a></li>' + '<li class="next disabled"><a href="#">' + oLang.sNext + ' &rarr; </a></li>' + '</ul>');
+          $(nPaging)
+            .append('<ul class="pagination pagination-sm">' + '<li class="page-item prev disabled"><a class="page-link" href="#">&larr; ' + oLang.sPrevious + '</a></li>' + '<li class="page-item next disabled"><a class="page-link" href="#">' + oLang.sNext + ' &rarr; </a></li>' + '</ul>');
           var els = $('a', nPaging);
           $(els[0]).bind('click.DT', {
             action: "previous"
@@ -137,7 +139,7 @@ JQDataTable.apply_patch = function() {
             // Add the new list items and their event handlers
             for (j = iStart; j <= iEnd; j++) {
               sClass = (j == oPaging.iPage + 1) ? 'class="active"' : '';
-              $('<li ' + sClass + '><a href="#">' + j + '</a></li>').insertBefore($('li:last', an[i])[0]).bind('click', function (e) {
+              $('<li ' + sClass + '><a class="page-link" href="#">' + j + '</a></li>').insertBefore($('li:last', an[i])[0]).bind('click', function (e) {
                 e.preventDefault();
                 oSettings._iDisplayStart = (parseInt($('a', this).text(), 10) - 1) * oPaging.iLength;
                 fnDraw(oSettings);

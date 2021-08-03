@@ -11,7 +11,7 @@ MapEntity.TogglableFilter = L.Class.extend({
         this.visible = false;
         this.popover = $('#filters-popover')
                           .popover({
-                              placement: 'bottom',
+                              placement: 'right',
                               html: true,
                               content: '',
                               title: 'Useless'
@@ -37,6 +37,7 @@ MapEntity.TogglableFilter = L.Class.extend({
                 $('form#mainfilter select[multiple]').trigger('chosen:updated');
             }, 1);
         });
+
         // Make sure filter-set class is added if a choice is selected.
         $('#mainfilter select[multiple]').chosen().on('change', function (e) {
             var $target = $(e.target),
@@ -75,7 +76,7 @@ MapEntity.TogglableFilter = L.Class.extend({
                     }
                 });
 
-                self.popover.on('hidden', function () {
+                self.popover.on('hidden.bs.popover', function () {
                     $(document).off('click.outside');
                 });
             }
@@ -83,21 +84,7 @@ MapEntity.TogglableFilter = L.Class.extend({
     },
 
     tip: function () {
-        return this.popover.data('popover').$tip;
-    },
-
-    htip: function () {
-        return this.hover.data('popover').$tip;
-    },
-
-    __reposition: function (tip) {
-        // Adjust position nicely along filter button
-        var btnleft = this.$button.position().left,
-            btnwidth = this.$button.width(),
-            btntop = this.$button.position().top,
-            btnheight = this.$button.height();
-        tip.css('left', btnleft + btnwidth/2 - tip.width()/2);
-        tip.css('top', btntop + btnheight + 10);
+        return $(this.popover.data('bs.popover').tip);
     },
 
     showinfo: function () {
@@ -105,10 +92,6 @@ MapEntity.TogglableFilter = L.Class.extend({
         if (this.visible)
             return;
         this.hover.popover('show');
-        // Adjust popover width
-        this.htip()
-            .width(this.htip().find('.popover-title').outerWidth());
-        this.__reposition(this.htip());
     },
 
     hideinfo: function () {
@@ -157,8 +140,6 @@ MapEntity.TogglableFilter = L.Class.extend({
             // Adjust popover width
             this.tip()
                 .width(this.tip().find('#filters-panel form').outerWidth());
-
-            this.__reposition(this.tip());
         }
     },
 
@@ -186,7 +167,6 @@ MapEntity.TogglableFilter = L.Class.extend({
                 return $(node).text()
             }).join(', ')
         }
-
         if (set) {
             this.fields[name] = {name: name, val:val, value:value, label:label};
         }

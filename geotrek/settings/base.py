@@ -544,6 +544,8 @@ TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENA
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
+MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)
 
 SIGNAGE_LINE_ENABLED = False
 
@@ -592,8 +594,8 @@ HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
 TOURISTIC_CONTENTS_API_ORDER = ()
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3')
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3', 'bootstrap4')
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Mobile app_directories
 MOBILE_TILES_URL = [
@@ -608,6 +610,7 @@ MOBILE_TILES_HIGH_ZOOMS = list(range(15, 17))
 MOBILE_CATEGORY_PICTO_SIZE = 32
 MOBILE_POI_PICTO_SIZE = 32
 MOBILE_INFORMATIONDESKTYPE_PICTO_SIZE = 32
+MOBILE_NUMBER_PICTURES_SYNC = 3
 MOBILE_LENGTH_INTERVALS = [
     {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
     {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
@@ -783,6 +786,9 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
+HIDDEN_FORM_FIELDS = {}
+COLUMNS_LISTS = {}
+ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')

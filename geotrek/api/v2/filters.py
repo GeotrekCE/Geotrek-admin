@@ -61,6 +61,14 @@ class GeotrekInBBoxFilter(InBBOXFilter):
     Override DRF gis InBBOXFilter with coreapi field descriptors
     """
 
+    def get_filter_bbox(self, request):
+        """ Transform bbox to internal SRID to get working """
+        bbox = super().get_filter_bbox(request)
+        if bbox:
+            bbox.srid = 4326
+            bbox.transform(settings.SRID)
+        return bbox
+
     def get_schema_fields(self, view):
         return (
             Field(
@@ -77,6 +85,13 @@ class GeotrekDistanceToPointFilter(DistanceToPointFilter):
     """
     Override DRF gis DistanceToPointFilter with coreapi field descriptors
     """
+
+    def get_filter_point(self, request, **kwargs):
+        point = super().get_filter_point(request, **kwargs)
+        if point:
+            point.srid = 4326
+            point.transform(settings.SRID)
+        return point
 
     def get_schema_fields(self, view):
         return (
@@ -191,7 +206,9 @@ class GeotrekPOIFilter(BaseFilterBackend):
             qs = qs.filter(type__in=types.split(','))
         trek = request.GET.get('trek', None)
         if trek is not None:
-            qs = Topology.overlapping(Trek.objects.get(pk=trek), qs)
+            t = Trek.objects.get(pk=trek)
+            qs = Topology.overlapping(t, qs)
+            qs = qs.exclude(pk__in=t.pois_excluded.all())
         return qs
 
     def get_schema_fields(self, view):
@@ -319,10 +336,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(length__lte=length_max)
         difficulty_min = request.GET.get('difficulty_min')
         if difficulty_min:
-            qs = qs.filter(difficulty__cirkwi_level__gte=difficulty_min)
+            qs = qs.filter(difficulty__id__gte=difficulty_min)
         difficulty_max = request.GET.get('difficulty_max')
         if difficulty_max:
-            qs = qs.filter(difficulty__cirkwi_level__lte=difficulty_max)
+            qs = qs.filter(difficulty__id__lte=difficulty_max)
         ascent_min = request.GET.get('ascent_min')
         if ascent_min:
             qs = qs.filter(ascent__gte=ascent_min)
@@ -480,6 +497,24 @@ class GeotrekSiteFilter(BaseFilterBackend):
         )
 
 
+class GeotrekCourseFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        q = request.GET.get('q')
+        if q:
+            queryset = queryset.filter(name__icontains=q)
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Filter by some case-insensitive text contained in name.')
+                )
+            ),
+        )
+
+
 class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         return (
@@ -491,7 +526,7 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
             ),
         )
 
-    def filter_queryset_related_objects_published(self, queryset, request, prefix, optional_query=None):
+    def filter_queryset_related_objects_published_not_deleted(self, queryset, request, prefix, optional_query=None):
         """
         TODO : this method is not optimal. the API should have a route /object returning all objects and /object/used returning only used objects.
         Return a queryset filtered by publication status or related objects.
@@ -512,7 +547,10 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
         else:
             # one language is specified
             related_field_name = '{}__published_{}'.format(prefix, language)
-            q |= Q(**{related_field_name: True})
+            q &= Q(**{related_field_name: True})
+        # Ensure no deleted content is taken in consideration in the filter
+        related_field_name = '{}__deleted'.format(prefix)
+        q &= Q(**{related_field_name: False})
         q &= optional_query
         qs = qs.filter(q)
         return qs.distinct()
@@ -524,7 +562,7 @@ class GeotrekRelatedPortalTrekFilter(GeotrekRelatedPortalGenericFilter):
         query = Q()
         if portals:
             query = Q(treks__portal__in=portals.split(','))
-        return self.filter_queryset_related_objects_published(qs, request, 'treks', query)
+        return self.filter_queryset_related_objects_published_not_deleted(qs, request, 'treks', query)
 
 
 class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
@@ -532,9 +570,9 @@ class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPorta
         portals = request.GET.get('portals')
         query = Q()
         if portals:
-            query = Q(Q(trek__portal__in=portals.split(',')) | Q(touristiccontent__portal__in=portals.split(',')))
-        set_1 = self.filter_queryset_related_objects_published(qs, request, 'trek', query)
-        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontent', query)
+            query = Q(trek__portal__in=portals.split(',')) | Q(touristiccontent__portal__in=portals.split(','))
+        set_1 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'trek', query)
+        set_2 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'touristiccontent', query)
         return (set_1 | set_2).distinct()
 
 
@@ -544,7 +582,7 @@ class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):
         query = Q()
         if portals:
             query = Q(contents__portal__in=portals.split(','))
-        return self.filter_queryset_related_objects_published(qs, request, 'contents', query)
+        return self.filter_queryset_related_objects_published_not_deleted(qs, request, 'contents', query)
 
 
 class GeotrekRelatedPortalThemeFilter(GeotrekRelatedPortalGenericFilter):
@@ -555,9 +593,9 @@ class GeotrekRelatedPortalThemeFilter(GeotrekRelatedPortalGenericFilter):
             query = Q(treks__portal__in=portals.split(',')) \
                 | Q(touristiccontents__portal__in=portals.split(',')) \
                 | Q(touristic_events__portal__in=portals.split(','))
-        set_1 = self.filter_queryset_related_objects_published(qs, request, 'treks', query)
-        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontents', query)
-        set_3 = self.filter_queryset_related_objects_published(qs, request, 'touristic_events', query)
+        set_1 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'treks', query)
+        set_2 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'touristiccontents', query)
+        set_3 = self.filter_queryset_related_objects_published_not_deleted(qs, request, 'touristic_events', query)
         return (set_1 | set_2 | set_3).distinct()
 
 

@@ -1,3 +1,4 @@
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -11,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from mapentity import views as mapentity_views
 
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.feedback.filters import ReportFilterSet
 from geotrek.feedback import models as feedback_models
@@ -23,13 +25,11 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     properties = ['email']
 
 
-class ReportList(mapentity_views.MapEntityList):
+class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     model = feedback_models.Report
     filterform = ReportFilterSet
-    columns = [
-        'id', 'email', 'activity', 'category',
-        'status', 'lastmod',
-    ]
+    mandatory_columns = ['id', 'email', 'activity']
+    default_extra_columns = ['category', 'status', 'date_update']
 
 
 class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
@@ -37,10 +37,11 @@ class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
 
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
-    columns = [
-        'id', 'email', 'activity', 'comment', 'category',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'email', 'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'lastmod',
+        'date_insert', 'date_update',
     ]
 
 

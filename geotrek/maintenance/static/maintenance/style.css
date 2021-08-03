@@ -1,0 +1,26 @@
+.intervention table tr.total {
+    border-top: solid 2px;
+}
+.intervention table tr.total td {
+    background-color: white;
+    border: none;
+}
+
+.intervention .form-horizontal .formset .controls {
+    align-items: flex-end;
+}
+
+.details-panel .spacer {
+    /* Intervention list in detail pages ``maintenance_detail_fragment.html``
+       Give space to "Add intervention button".
+    */
+    float: left;
+    height: 35px;
+}
+
+.details-panel th.status,
+.details-panel th.stake,
+.details-panel th.date,
+.details-panel th.total_cost {
+    width: 60px;
+}

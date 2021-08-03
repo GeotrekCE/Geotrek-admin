@@ -47,7 +47,7 @@ MapEntity.History = L.Class.extend({
 
         $('#historylist a').hoverIntent(
             function (e) {
-                $(this).find('.close').removeClass('hidden');
+                $(this).find('.close').removeClass('d-none');
                 $(this).data('original-text', $(this).find('.content').text());
                 var title = $(this).data('original-title');
                 if (title)
@@ -55,26 +55,9 @@ MapEntity.History = L.Class.extend({
             },
             function (e) {
                 $(this).find('.content').text($(this).data('original-text'));
-                $(this).find('.close').addClass('hidden');
+                $(this).find('.close').addClass('d-none');
             }
         );
-/*
-        window.setTimeout(function () {
-            // Remove all entries returning 404 :) Useful to remove deleted entries
-            $('#historylist li.history > a').each(function () {
-                var path = $(this).attr('href');
-                $.ajax({
-                    type: "HEAD",
-                    url: path,
-                    statusCode: {
-                        404: function() {
-                            history.remove(path);
-                        }
-                    }
-                });
-            });
-        }, 10000);  // Don't stress loading.
-*/
     },
 });
 

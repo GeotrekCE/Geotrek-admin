@@ -18,14 +18,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_pictures(self, obj):
             if not obj.resized_pictures:
                 return []
-            first_picture = obj.resized_pictures[0][0]
-            thdetail_first = obj.resized_pictures[0][1]
-            return [{
-                'author': first_picture.author,
-                'title': first_picture.title,
-                'legend': first_picture.legend,
-                'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
-            }]
+            root_pk = self.context.get('root_pk') or obj.pk
+            return obj.serializable_pictures_mobile(root_pk)
 
         class Meta:
             model = trekking_models.POI
