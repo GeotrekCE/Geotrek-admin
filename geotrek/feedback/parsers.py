@@ -1,26 +1,24 @@
 import logging
 from datetime import datetime
 
+from django.apps import apps
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.utils.timezone import make_aware
-from geotrek.feedback.models import (
-    AttachedMessage,
-    MessageAttachedDocument,
-    Report,
-    ReportActivity,
-    ReportAttachedDocument,
-    ReportCategory,
-    ReportProblemMagnitude,
-    ReportStatus,
-)
+from geotrek.common.models import Attachment, FileType
+from geotrek.common.parsers import AttachmentParserMixin
+from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
+                                     ReportCategory, ReportProblemMagnitude,
+                                     ReportStatus)
 
 from .helpers import SuricateRequestManager
 
 logger = logging.getLogger(__name__)
 
 
-class SuricateParser(SuricateRequestManager):
+class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
     def parse_date(self, date):
         """Parse datetime string from Suricate Rest API"""
         date_no_timezone = datetime.strptime(date, "%B, %d %Y %H:%M:%S")
@@ -132,33 +130,23 @@ class SuricateParser(SuricateRequestManager):
         """Parse documents list from Suricate Rest API"""
 
         for document in documents:
-            # Parse fields
-            fields = {"file_name": document["nomfichier"], "url": document["url"]}
 
+            creator, created = get_user_model().objects.get_or_create(
+                username="feedback", defaults={"is_active": False}
+            )
             # Attach document to the right object
-            if type_parent == "Report":
-                # Attach document to a report and create
-                fields["report"] = parent
-                document_obj, updated = ReportAttachedDocument.objects.update_or_create(
-                    suricate_id=document["id"], defaults=fields
-                )
-                if updated:
-                    logger.info(
-                        f"New or updated document - id: {document['id']}, parent: {parent.uid}"
-                    )
-            elif type_parent == "Message":
-                # Attach document to a message and create
-                fields["message"] = parent
-                (
-                    document_obj,
-                    updated,
-                ) = MessageAttachedDocument.objects.update_or_create(
-                    suricate_id=document["id"], defaults=fields
-                )
-                if updated:
-                    logger.info(
-                        f"New or updated Message document - id: {document['id']}, parent: {parent.suricate_id}"
-                    )
+            parent_model = apps.get_model(app_label='feedback', model_name=type_parent)
+
+            # Attachment.objects.create(
+            #     filetype=FileType.objects.get_or_create(type=settings.REPORT_FILETYPE)[
+            #         0
+            #     ],
+            #     content_type=ContentType.objects.get_for_model(parent_model),
+            #     object_id=parent,
+            #     creator=creator,
+            #TODO FIX DOWNLOAD ATTACHMENTS 
+            #     attachment_file=self.download_attachment(document["url"]),
+            # )
 
     def create_messages(self, messages, parent):
         """Parse messages list from Suricate Rest API"""
@@ -187,7 +175,7 @@ class SuricateParser(SuricateRequestManager):
                 )
 
             # Parse documents attached to message
-            self.create_documents(message["documents"], message_obj, "Message")
+            self.create_documents(message["documents"], message_obj, "AttachedMessage")
 
     def initialize_internal_statuses(self):
         """Create extra statuses that Suricate does not have to know about"""

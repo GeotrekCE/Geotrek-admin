@@ -3,12 +3,10 @@ import logging
 from datetime import datetime
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.mixins import PicturesMixin, TimeStampedModelMixin
-from geotrek.trekking.models import Trek, TrekRelationshipManager
+from geotrek.trekking.models import Trek
 from mapentity.models import MapEntityMixin
 
 from .helpers import SuricateMessenger, send_report_managers
@@ -222,28 +220,3 @@ class AttachedMessage(models.Model):
     )
     type = models.CharField(max_length=100)
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
-
-
-class AttachedDocument(models.Model):
-    """Reports come with documents"""
-
-    file_name = models.CharField(max_length=100)
-    url = models.CharField(max_length=500)
-    suricate_id = models.IntegerField(
-        null=True, blank=True, unique=True, verbose_name=_("Identifiant")
-    )
-
-    class Meta:
-        abstract = True
-
-
-class ReportAttachedDocument(AttachedDocument):
-    """Documents are attached to a report """
-
-    report = models.ForeignKey(Report, on_delete=models.CASCADE)
-
-
-class MessageAttachedDocument(AttachedDocument):
-    """Documents are attached to a message"""
-
-    message = models.ForeignKey(AttachedMessage, on_delete=models.CASCADE)
