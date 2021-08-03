@@ -3,25 +3,22 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
+from django.urls.base import reverse
 from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback import serializers as feedback_serializers
 from geotrek.feedback.filters import ReportFilterSet
+from geotrek.feedback.forms import ReportForm
 from mapentity import views as mapentity_views
+from mapentity.views.generic import MapEntityCreate
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from mapentity import views as mapentity_views
-
-from geotrek.common.mixins import CustomColumnsMixin
-from geotrek.common.models import Attachment, FileType
-from geotrek.feedback.filters import ReportFilterSet
-from geotrek.feedback import models as feedback_models
-from geotrek.feedback import serializers as feedback_serializers
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
@@ -83,6 +80,14 @@ class FeedbackOptionsView(APIView):
         }
 
         return Response(options)
+
+
+class DiveCreate(MapEntityCreate):
+    model = feedback_models.Report
+    form_class = ReportForm
+
+    def get_success_url(self):
+        return reverse('feedback:report_list')
 
 
 class ReportViewSet(mapentity_views.MapEntityViewSet):

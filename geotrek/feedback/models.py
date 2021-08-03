@@ -125,23 +125,22 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     def comment_text(self):
         return html.unescape(self.comment)
 
-
-@receiver(pre_save, sender=Report, dispatch_uid="on_report_created")
-def on_report_saved(sender, instance, **kwargs):
-    """Send an email to managers when a report is created."""
-    if settings.SURICATE_REPORT_ENABLED:
-        if instance.status.suricate_id == "to_transmit":
+    def save(self, *args, **kwargs):
+        if self.pk is None and self.uid is None:  # This is a new report, coming from Rando and not from Suricate
             try:
-                send_report_managers(instance)
-            except Exception as e:
-                logger.error("Email could not be sent to managers.")
-                logger.exception(e)  # This sends an email to admins :)
-            try:
-                SuricateMessenger().post_report(instance)
-                instance.status = ReportStatus.get(suricate_id='filed')
+                SuricateMessenger().post_report(self)
+                # self.status = ReportStatus.get_or_create(suricate_id='filed')
+                try:
+                    send_report_managers(self)
+                except Exception as e:
+                    logger.error("Email could not be sent to managers.")
+                    logger.exception(e)  # This sends an email to admins :)
             except Exception as e:
                 logger.error("Report could not be sent to Suricate API.")
                 logger.exception(e)
+        # Notice we don't save in this case
+        else:  # This is an update or a new report from Suricate - save
+            super().save(*args, **kwargs)
 
 
 class ReportActivity(models.Model):
