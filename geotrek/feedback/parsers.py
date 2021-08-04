@@ -132,24 +132,25 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
     def create_documents(self, documents, parent, type_parent):
         """Parse documents list from Suricate Rest API"""
 
-        for document in documents:
+        # TODO
+        # for document in documents:
 
-            creator, created = get_user_model().objects.get_or_create(
-                username="feedback", defaults={"is_active": False}
-            )
-            # Attach document to the right object
-            parent_model = apps.get_model(app_label='feedback', model_name=type_parent)
+        #     creator, created = get_user_model().objects.get_or_create(
+        #         username="feedback", defaults={"is_active": False}
+        #     )
+        # Attach document to the right object
+        # parent_model = apps.get_model(app_label='feedback', model_name=type_parent)
 
-            # Attachment.objects.create(
-            #     filetype=FileType.objects.get_or_create(type=settings.REPORT_FILETYPE)[
-            #         0
-            #     ],
-            #     content_type=ContentType.objects.get_for_model(parent_model),
-            #     object_id=parent,
-            #     creator=creator,
-            # TODO FIX DOWNLOAD ATTACHMENTS
-            #     attachment_file=self.download_attachment(document["url"]),
-            # )
+        # Attachment.objects.create(
+        #     filetype=FileType.objects.get_or_create(type=settings.REPORT_FILETYPE)[
+        #         0
+        #     ],
+        #     content_type=ContentType.objects.get_for_model(parent_model),
+        #     object_id=parent,
+        #     creator=creator,
+        # TODO FIX DOWNLOAD ATTACHMENTS
+        #     attachment_file=self.download_attachment(document["url"]),
+        # )
 
     def create_messages(self, messages, parent):
         """Parse messages list from Suricate Rest API"""

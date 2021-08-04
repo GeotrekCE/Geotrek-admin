@@ -1,10 +1,9 @@
 import html
 import logging
-from datetime import datetime
+
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.formats import date_format
-from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.mixins import PicturesMixin, TimeStampedModelMixin
 from geotrek.trekking.models import Trek
