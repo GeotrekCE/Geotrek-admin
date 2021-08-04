@@ -94,6 +94,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     """Disable permissions requirement"""
 
     model = feedback_models.Report
+    queryset = feedback_models.Report.objects.all()
     parser_classes = [FormParser, MultiPartParser]
     serializer_class = feedback_serializers.ReportSerializer
     geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer

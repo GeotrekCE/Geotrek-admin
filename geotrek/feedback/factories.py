@@ -43,4 +43,3 @@ class ReportFactory(factory.django.DjangoModelFactory):
     activity = factory.SubFactory(ReportActivityFactory)
     problem_magnitude = factory.SubFactory(ReportProblemMagnitudeFactory)
     category = factory.SubFactory(ReportCategoryFactory)
-    status = factory.SubFactory(ReportStatusFactory)
