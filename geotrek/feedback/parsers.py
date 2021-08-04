@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+import sys
 # Todo uncomment for parsing documents
 # from django.apps import apps
 from django.conf import settings
@@ -62,6 +63,7 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
         # i = 0
         # Parse alerts
         for report in data["alertes"]:
+            sys.stdout.write(f"Processing report {report['uid']}\n")
             # print("Alert " + str(i))
 
             # Parse dates
@@ -154,24 +156,20 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
 
     def create_messages(self, messages, parent):
         """Parse messages list from Suricate Rest API"""
-
         for message in messages:
             # Parse date
             msg_creation = self.parse_date(message["date"])
 
             # Parse fields
             fields = {
-                "date": msg_creation,
                 "author": message["redacteur"],
                 "content": message["texte"],
                 "type": message["type"],
-                "suricate_id": message["id"],
-                "report": parent,
             }
 
             # Create message object
             message_obj, updated = AttachedMessage.objects.update_or_create(
-                suricate_id=message["id"], defaults=fields
+                suricate_id=message["id"], date=msg_creation, report=parent, defaults=fields
             )
             if updated:
                 logger.info(

@@ -230,7 +230,10 @@ class AttachedMessage(models.Model):
     author = models.CharField(max_length=300)
     content = models.TextField()
     suricate_id = models.IntegerField(
-        null=True, blank=True, unique=True, verbose_name=_("Identifiant")
+        null=True, blank=True, verbose_name=_("Identifiant")
     )
     type = models.CharField(max_length=100)
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('suricate_id', 'date', 'report')

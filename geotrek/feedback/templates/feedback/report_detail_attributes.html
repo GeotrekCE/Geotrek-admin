@@ -50,6 +50,25 @@
                 <th>{{ report|verbose:"uid" }}</th>
                 <td>{{ report.uid }}</td>
             </tr>
+            <tr>
+                <th>{% trans "Messages" %}</th>
+                <td>
+                    {% for msg in report.attachedmessage_set.all %}
+                        {% if forloop.first %}
+                        <table>
+                        <thead><th>{% trans "Text" %}</th><th>{% trans "Author" %}</th><th>{% trans "Date" %}</th></thead>
+                        <tbody>
+                        {% endif %}
+                        <tr><td>{{ msg.content }}</td><td>{{ msg.author }}</td><td>{{ msg.date }}</td></tr>
+                        {% if forloop.last %}
+                        </tbody>
+                        </table>
+                        {% endif %}
+                    {% empty %}
+                        <span class="none">{% trans "None" %}</span>
+                    {% endfor %}
+                </td>
+            </tr>
         {% endif %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
