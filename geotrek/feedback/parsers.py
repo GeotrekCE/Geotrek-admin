@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime
-
-from django.apps import apps
+# Todo uncomment for parsing documents
+# from django.apps import apps
 from django.conf import settings
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
 # from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.utils.timezone import make_aware
