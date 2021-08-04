@@ -52,6 +52,7 @@ class CommonForm(MapEntityForm):
         'SensitiveAreaForm': 'sensitivity_species',
         'RegulatorySensitiveAreaForm': 'sensitivity_regulatory',
         'BladeForm': 'blade',
+        'ReportForm': 'report',
     }
 
     def deep_remove(self, fieldslayout, name):

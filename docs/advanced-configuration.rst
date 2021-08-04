@@ -2329,7 +2329,19 @@ An exhaustive list of form fields hideable in each module.
     HIDDEN_FORM_FIELDS["blade"] = [
             "condition",
             "color",
+        ],
+    HIDDEN_FORM_FIELDS["report"] = [
+            "comment",
+            "activity",
+            "category",
+            "problem_magnitude",
+            "related_trek",
+            "status",
+            "locked",
+            "uid",
+            "origin"
         ]
+
 
 **Other settings**
 ::

@@ -9,10 +9,14 @@ class ReportForm(CommonForm):
         fields = [
             "geom",
             "email",
-            "activity",
             "comment",
+            "activity",
             "category",
             "problem_magnitude",
             "related_trek",
+            "status",
+            "locked",
+            "uid",
+            "origin"
         ]
         model = Report

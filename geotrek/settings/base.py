@@ -217,6 +217,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
+                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
             'loaders': [
@@ -811,3 +812,9 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 USE_X_FORWARDED_HOST = False
+HIDDEN_FORM_FIELDS['report'] = {
+    "status",
+    "locked",
+    "uid",
+    "origin"
+}

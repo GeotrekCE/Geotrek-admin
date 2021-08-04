@@ -72,8 +72,14 @@ msgstr "Amplitudes des problèmes"
 msgid "Attributes"
 msgstr "Informations"
 
-msgid "Map"
-msgstr "Carte"
+msgid "Creation date in Suricate"
+msgstr "Date de création dans Suricate"
+
+msgid "Last updated in Suricate"
+msgstr "Date de modification dans Suricate"
+
+msgid "Identifier"
+msgstr "Identifiant"
 
 #, python-format
 msgid "%(email)s has sent a feedback."

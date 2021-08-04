@@ -108,9 +108,12 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
                 "category": rep_category,
                 "problem_magnitude": rep_magnitude,
                 "status": rep_status,
-                "created": rep_creation,
-                "last_updated": rep_updated,
+                "created_in_suricate": rep_creation,
+                "last_updated_in_suricate": rep_updated,
             }
+            # TODO When implementing workflow :
+            # if report.locked then suricate_status != geotrek_status
+            # suricate_status must not override geotrek_status until we solve and unlock (see slides)
             report_obj, updated = Report.objects.update_or_create(
                 uid=report["uid"], defaults=fields
             )

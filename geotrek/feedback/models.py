@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.utils.formats import date_format
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.mixins import PicturesMixin, TimeStampedModelMixin
@@ -70,20 +71,20 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         on_delete=models.CASCADE,
         verbose_name=_("Related trek"),
     )
-    created = models.DateTimeField(
-        default=make_aware(datetime.strptime("2021-01-01 12:00:00", "%Y-%d-%m %H:%M:%S")),
-        verbose_name=_("Creation date")
+    created_in_suricate = models.DateTimeField(
+        blank=True, null=True,
+        verbose_name=_("Creation date in Suricate")
     )
     uid = models.UUIDField(
-        unique=True, verbose_name=_("Identifiant"), blank=True, null=True
+        unique=True, verbose_name=_("Identifier"), blank=True, null=True
     )
     locked = models.BooleanField(default=False, verbose_name=_("Locked"))
     origin = models.CharField(
-        default="unknown", max_length=100, verbose_name=_("Origin")
+        blank=True, null=True, default="unknown", max_length=100, verbose_name=_("Origin")
     )
-    last_updated = models.DateTimeField(
-        default=make_aware(datetime.strptime("2021-01-01 12:00:00", "%Y-%d-%m %H:%M:%S")),
-        verbose_name=_("Last updated")
+    last_updated_in_suricate = models.DateTimeField(
+        blank=True, null=True,
+        verbose_name=_("Last updated in Suricate")
     )
 
     class Meta:
@@ -125,22 +126,37 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     def comment_text(self):
         return html.unescape(self.comment)
 
+    def try_send_report_managers(self):
+        try:
+            send_report_managers(self)
+        except Exception as e:
+            logger.error("Email could not be sent to managers.")
+            logger.exception(e)  # This sends an email to admins :)
+
     def save(self, *args, **kwargs):
-        if self.pk is None and self.uid is None:  # This is a new report, coming from Rando and not from Suricate
-            try:
-                SuricateMessenger().post_report(self)
-                # self.status = ReportStatus.get_or_create(suricate_id='filed')
-                try:
-                    send_report_managers(self)
-                except Exception as e:
-                    logger.error("Email could not be sent to managers.")
-                    logger.exception(e)  # This sends an email to admins :)
-            except Exception as e:
-                logger.error("Report could not be sent to Suricate API.")
-                logger.exception(e)
-        # Notice we don't save in this case
-        else:  # This is an update or a new report from Suricate - save
+        if not settings.SURICATE_REPORT_ENABLED:
+            self.try_send_report_managers()
             super().save(*args, **kwargs)
+        else:
+            if self.pk is None and self.uid is None:  # This is a new report, coming from Rando and not from Suricate
+                try:
+                    SuricateMessenger().post_report(self)
+                    # self.status = ReportStatus.get_or_create(suricate_id='filed')
+                    self.try_send_report_managers()
+                except Exception as e:
+                    logger.error("Report could not be sent to Suricate API.")
+                    logger.exception(e)
+            # Notice we don't save in this case
+            else:  # This is an update or a new report from Suricate - save
+                super().save(*args, **kwargs)
+
+    @property
+    def created_in_suricate_update_display(self):
+        return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
+
+    @property
+    def updated_in_suricate_update_display(self):
+        return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
 
 
 class ReportActivity(models.Model):
