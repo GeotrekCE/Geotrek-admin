@@ -1,8 +1,6 @@
 import factory
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from geotrek import feedback
-from geotrek.common.models import Label
 from geotrek.feedback import models as feedback_models
 
 

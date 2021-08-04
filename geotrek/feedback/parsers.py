@@ -4,10 +4,10 @@ from datetime import datetime
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.utils.timezone import make_aware
-from geotrek.common.models import Attachment, FileType
+# from geotrek.common.models import Attachment, FileType
 from geotrek.common.parsers import AttachmentParserMixin
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
