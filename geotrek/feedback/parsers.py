@@ -88,14 +88,14 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
             )
             if created:
                 logger.info(f"Created new feedback category - label: {report['type']}")
-
             # Parse status
-            rep_status = ReportStatus.objects.get(suricate_id=report["statut"])
-
-            # Parse activity
-            rep_activity = ReportActivity.objects.get(suricate_id=report["idactivite"])
+            rep_status, created = ReportStatus.objects.get_or_create(suricate_id=report["statut"])
             if created:
-                logger.info(f"Created new feedback category - label: {report['type']}")
+                logger.info(f"Created new feedback status - label: {report['type']}")
+            # Parse activity
+            rep_activity, created = ReportActivity.objects.get_or_create(suricate_id=report["idactivite"])
+            if created:
+                logger.info(f"Created new feedback activity - label: {report['type']}")
 
             # Create report object
             fields = {
@@ -176,17 +176,3 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
 
             # Parse documents attached to message
             self.create_documents(message["documents"], message_obj, "AttachedMessage")
-
-    def initialize_internal_statuses(self):
-        """Create extra statuses that Suricate does not have to know about"""
-        ReportStatus.objects.create(suricate_id="to_transmit", label="A transmettre")
-        ReportStatus.objects.create(
-            suricate_id="intervention_late", label="Intervention en retard"
-        )
-        ReportStatus.objects.create(
-            suricate_id="planned_late", label="Programmation en retard"
-        )
-        ReportStatus.objects.create(suricate_id="programmed", label="Programmé")
-        ReportStatus.objects.create(
-            suricate_id="intervention_over", label="Intervention terminée"
-        )
