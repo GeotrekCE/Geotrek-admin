@@ -7,6 +7,7 @@ from django.conf import settings
 # from django.contrib.auth import get_user_model
 # from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
+from django.contrib.gis.geos.collections import Polygon
 from django.utils.timezone import make_aware
 # from geotrek.common.models import Attachment, FileType
 from geotrek.common.parsers import AttachmentParserMixin
@@ -20,6 +21,12 @@ logger = logging.getLogger(__name__)
 
 
 class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
+    
+    def __init__(self) -> None:
+        super().__init__()
+        self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+
+
     def parse_date(self, date):
         """Parse datetime string from Suricate Rest API"""
         date_no_timezone = datetime.strptime(date, "%B, %d %Y %H:%M:%S")
@@ -64,72 +71,72 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
         # Parse alerts
         for report in data["alertes"]:
             sys.stdout.write(f"Processing report {report['uid']}\n")
-            # print("Alert " + str(i))
-
-            # Parse dates
-            rep_updated = self.parse_date(report["updated"])
-            rep_creation = self.parse_date(report["datedepot"])
 
             # Parse geom
             rep_gps = Point(report["gpslongitude"], report["gpslatitude"], srid=4326)
             rep_srid = rep_gps.transform(settings.SRID, clone=True)
             rep_point = Point(rep_srid.coords)
+            should_import = self.bbox.intersects(rep_point)
 
-            # Parse magnitude
-            rep_magnitude, created = ReportProblemMagnitude.objects.get_or_create(
-                label=report["ampleur"]
-            )
-            if created:
-                logger.info(
-                    f"Created new feedback magnitude - label: {report['ampleur']}"
+            if should_import:
+                # Parse dates
+                rep_updated = self.parse_date(report["updated"])
+                rep_creation = self.parse_date(report["datedepot"])
+
+                # Parse magnitude
+                rep_magnitude, created = ReportProblemMagnitude.objects.get_or_create(
+                    label=report["ampleur"]
                 )
+                if created:
+                    logger.info(
+                        f"Created new feedback magnitude - label: {report['ampleur']}"
+                    )
 
-            # Parse category
-            rep_category, created = ReportCategory.objects.get_or_create(
-                label=report["type"]
-            )
-            if created:
-                logger.info(f"Created new feedback category - label: {report['type']}")
-            # Parse status
-            rep_status, created = ReportStatus.objects.get_or_create(suricate_id=report["statut"])
-            if created:
-                logger.info(f"Created new feedback status - label: {report['type']}")
-            # Parse activity
-            rep_activity, created = ReportActivity.objects.get_or_create(suricate_id=report["idactivite"])
-            if created:
-                logger.info(f"Created new feedback activity - label: {report['type']}")
-
-            # Create report object
-            fields = {
-                "locked": bool(report["locked"]),
-                "email": report["emaildeposant"],
-                "comment": report["commentaire"],
-                "geom": rep_point,
-                "origin": report["origin"],
-                "activity": rep_activity,
-                "category": rep_category,
-                "problem_magnitude": rep_magnitude,
-                "status": rep_status,
-                "created_in_suricate": rep_creation,
-                "last_updated_in_suricate": rep_updated,
-            }
-            # TODO When implementing workflow :
-            # if report.locked then suricate_status != geotrek_status
-            # suricate_status must not override geotrek_status until we solve and unlock (see slides)
-            report_obj, updated = Report.objects.update_or_create(
-                uid=report["uid"], defaults=fields
-            )
-            if updated:
-                logger.info(
-                    f"New or updated report - id: {report['uid']}, location: {report_obj.geom}"
+                # Parse category
+                rep_category, created = ReportCategory.objects.get_or_create(
+                    label=report["type"]
                 )
+                if created:
+                    logger.info(f"Created new feedback category - label: {report['type']}")
+                # Parse status
+                rep_status, created = ReportStatus.objects.get_or_create(suricate_id=report["statut"])
+                if created:
+                    logger.info(f"Created new feedback status - label: {report['type']}")
+                # Parse activity
+                rep_activity, created = ReportActivity.objects.get_or_create(suricate_id=report["idactivite"])
+                if created:
+                    logger.info(f"Created new feedback activity - label: {report['type']}")
 
-            # Parse documents attached to report
-            self.create_documents(report["documents"], report_obj, "Report")
+                # Create report object
+                fields = {
+                    "locked": bool(report["locked"]),
+                    "email": report["emaildeposant"],
+                    "comment": report["commentaire"],
+                    "geom": rep_point,
+                    "origin": report["origin"],
+                    "activity": rep_activity,
+                    "category": rep_category,
+                    "problem_magnitude": rep_magnitude,
+                    "status": rep_status,
+                    "created_in_suricate": rep_creation,
+                    "last_updated_in_suricate": rep_updated,
+                }
+                # TODO When implementing workflow :
+                # if report.locked then suricate_status != geotrek_status
+                # suricate_status must not override geotrek_status until we solve and unlock (see slides)
+                report_obj, updated = Report.objects.update_or_create(
+                    uid=report["uid"], defaults=fields
+                )
+                if updated:
+                    logger.info(
+                        f"New or updated report - id: {report['uid']}, location: {report_obj.geom}"
+                    )
 
-            # Parse messages attached to report
-            self.create_messages(report["messages"], report_obj)
-            # i += 1
+                # Parse documents attached to report
+                self.create_documents(report["documents"], report_obj, "Report")
+
+                # Parse messages attached to report
+                self.create_messages(report["messages"], report_obj)
 
     def create_documents(self, documents, parent, type_parent):
         """Parse documents list from Suricate Rest API"""
