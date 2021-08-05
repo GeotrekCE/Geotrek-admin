@@ -21,11 +21,10 @@ logger = logging.getLogger(__name__)
 
 
 class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
-    
-    def __init__(self) -> None:
+
+    def __init__(self):
         super().__init__()
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
-
 
     def parse_date(self, date):
         """Parse datetime string from Suricate Rest API"""
@@ -76,7 +75,7 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
             rep_gps = Point(report["gpslongitude"], report["gpslatitude"], srid=4326)
             rep_srid = rep_gps.transform(settings.SRID, clone=True)
             rep_point = Point(rep_srid.coords)
-            should_import = self.bbox.intersects(rep_point)
+            should_import = rep_point.within(self.bbox)
 
             if should_import:
                 # Parse dates
