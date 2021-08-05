@@ -42,6 +42,21 @@ msgstr "Amplitude du problème"
 msgid "Status"
 msgstr "Statut"
 
+msgid "Statuses"
+msgstr "Statuts"
+
+msgid "Text"
+msgstr "Texte"
+
+msgid "Author"
+msgstr "Auteur"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Message"
+msgstr "Message"
+
 msgid "Location"
 msgstr "Emplacement"
 
