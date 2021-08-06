@@ -1,3 +1,6 @@
+from unittest import mock
+import uuid 
+
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.core import mail
@@ -20,8 +23,18 @@ class EmailSendingTest(TestCase):
         ReportFactory.create()
         self.assertEqual(len(mail.outbox), 1)
 
-    def test_a_mail_is_not_sent_on_report_modification(self):
+    @override_settings(SURICATE_REPORT_ENABLED=False)
+    def test_a_mail_is_not_sent_on_report_modification_no_suricate_mode(self):
         r = ReportFactory.create()
+        self.assertEqual(len(mail.outbox), 1)
+        r.comment = 'More info about it'
+        r.save()
+        self.assertEqual(len(mail.outbox), 1)
+
+    @override_settings(SURICATE_REPORT_ENABLED=True)
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
+    def test_a_mail_is_not_sent_on_report_modification_suricate_mode(self, post_report):
+        r = ReportFactory.create(uid="027b1b63-fa59-48e1-bfdf-daaefc03dee2")
         self.assertEqual(len(mail.outbox), 1)
         r.comment = 'More info about it'
         r.save()

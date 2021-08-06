@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def status_default():
     """Set status to New by default"""
-    new_status_query = ReportStatus.objects.filter(label="A transmettre")
+    new_status_query = ReportStatus.objects.filter(label="Nouveau")
     if new_status_query:
         return new_status_query.get().pk
     return None
@@ -133,20 +133,23 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
             logger.exception(e)  # This sends an email to admins :)
 
     def save(self, *args, **kwargs):
-        if not settings.SURICATE_REPORT_ENABLED:
-            self.try_send_report_managers()
-            super().save(*args, **kwargs)
-        else:
-            if self.pk is None and self.uid is None:  # This is a new report, coming from Rando and not from Suricate
-                try:
-                    SuricateMessenger().post_report(self)
-                    # self.status = ReportStatus.get_or_create(suricate_id='filed')
+        if not settings.SURICATE_REPORT_ENABLED:  # Geotrek Mode
+            if self.pk is None:  # New report should alert
+                self.try_send_report_managers()
+            super().save(*args, **kwargs)  # Report updates should do nothing more
+        else:  # Suricate Mode
+            if self.pk is None:  # This is a new report
+                if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
+                    try:
+                        SuricateMessenger().post_report(self)
+                    except Exception as e:
+                        logger.error("Report could not be sent to Suricate API.")
+                        logger.exception(e)
+                else:  # This new report comes from Suricate : alert nmanagers and save
                     self.try_send_report_managers()
-                except Exception as e:
-                    logger.error("Report could not be sent to Suricate API.")
-                    logger.exception(e)
-            # Notice we don't save in this case
-            else:  # This is an update or a new report from Suricate - save
+                    super().save(*args, **kwargs)
+            else:  # This is an update
+                # TODO We'll need to implement some of the workflow here
                 super().save(*args, **kwargs)
 
     @property
