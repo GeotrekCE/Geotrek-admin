@@ -132,7 +132,7 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
     def get_alerts(self, verbosity=1):
         """Get reports list from Suricate Rest API"""
         if verbosity >= 1:
-            sys.stdout.write(f"Starting reports parsing from Suricate\n")
+            sys.stdout.write("Starting reports parsing from Suricate\n")
         data = self.get_from_suricate("wsGetAlerts")
         total_reports = len(data["alertes"])
         current_report = 1
