@@ -15,7 +15,6 @@ from geotrek.feedback.models import (
     AttachedMessage,
     Report,
     ReportActivity,
-    ReportCategory,
     ReportProblemMagnitude,
     ReportStatus,
 )
