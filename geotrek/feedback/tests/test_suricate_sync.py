@@ -95,9 +95,10 @@ class SuricateAPITests(TestCase):
         """Test GET requests on Alerts endpoint creates alerts and related objects"""
         self.build_get_request_patch(mocked)
         call_command("sync_suricate")
-        self.assertEqual(Report.objects.count(), 9)
+        # 8 out of 9 are imported because one of them is out of bbox by design
+        self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
-        self.assertEqual(AttachedMessage.objects.count(), 47)
+        self.assertEqual(AttachedMessage.objects.count(), 44)
         # TODO when we can download attachments
         # self.assertEqual(ReportAttachedDocument.objects.count(), 100)
         # self.assertEqual(MessageAttachedDocument.objects.count(), 4)

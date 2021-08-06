@@ -55,7 +55,7 @@
             "ampleur": "possible"
         },
         {
-            "commentaire": "Deux randonneurs sur le chemin de Saint Guilhem (en septembre / octobre 2018) nous indiquent: très mauvais état du chemin pour arriver à Aulas.",
+            "commentaire": "This report is out of BBOX - it will not be imported",
             "locked": 0,
             "emaildeposant": "secr.st.guilhem@gmail.com",
             "datedepot": "October, 29 2018 13:10:46",
@@ -63,36 +63,11 @@
             "updated": "November, 06 2018 10:02:51",
             "documents": [],
             "uid": "7B802170-5056-AA2B-DDC03611D99845F2",
-            "gpslongitude": 3.5771918794337303,
+            "gpslongitude": 60.5771918794337303,
             "origin": "website",
             "statut": "waiting",
-            "gpslatitude": 44.00336323866391,
-            "messages": [
-                {
-                    "date": "June, 15 2019 04:00:00",
-                    "redacteur": "",
-                    "texte": "Ce signalement a le statut \"En cours de traitement\" depuis 4 mois. Pensez à envoyer un message à la sentinelle, afin de la tenir informée de la situation. Merci.",
-                    "id": 91004,
-                    "type": "delai",
-                    "documents": []
-                },
-                {
-                    "date": "November, 06 2018 10:02:58",
-                    "redacteur": "Christophe LAVIGNE",
-                    "texte": "Votre remarque concerne bien un équipement labellisé Gard pleine nature par le Département du Gard, promu dans un topoguide coédité avec la Fédération  Française de Randonnée Pédestre.\r\nConformément aux engagements liés à ce label de qualité nous nous engageons en lien avec le Comité Départemental de la Randonnée Pédestre du Gard à pouvoir résoudre cette question dans les meilleurs délais. \r\n\r\n\tChristophe LAVIGNE\r\n                                                                                                         Département du GARD\r\n\tDEVPN-Attractivité&PN\r\n\tchristophe.lavigne@gard.fr\r\n",
-                    "id": 62923,
-                    "type": "deposant",
-                    "documents": []
-                },
-                {
-                    "date": "November, 06 2018 10:02:51",
-                    "redacteur": "Christophe LAVIGNE",
-                    "texte": "Passage au statut : En cours de traitement\n\rExplications : Votre remarque concerne bien un équipement labellisé Gard pleine nature par le Département du Gard, promu dans un topoguide coédité avec la Fédération  Française de Randonnée Pédestre.\r\nConformément aux engagements liés à ce label de qualité nous nous engageons en lien avec le Comité Départemental de la Randonnée Pédestre du Gard à pouvoir résoudre cette question dans les meilleurs délais. \r\n\r\n\tChristophe LAVIGNE\r\n                                                                                                         Département du GARD\r\n\tDEVPN-Attractivité&PN\r\n\tchristophe.lavigne@gard.fr\r\n",
-                    "id": 62922,
-                    "type": "statut",
-                    "documents": []
-                }
-            ],
+            "gpslatitude": 60.00336323866391,
+            "messages": [],
             "type": "Incident / Sécurité",
             "ampleur": "difficile"
         },

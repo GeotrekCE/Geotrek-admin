@@ -126,14 +126,27 @@ In order to activate suricate reports:
             'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
         }
 
-2. Load lists for category, activity and problem magnitude :
+2. Load lists for category and problem magnitude :
 
     .. code-block :: python
 
         geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
+3. Load lists for activities and/or report statuses :
+
+    .. code-block :: python
+
+        geotrek sync_suricate --activities_only --statuses_only -v 2
+
 3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization-section>`)
 
+4. Load alerts from Suricate (located in your bounding box) :
+
+    .. code-block :: python
+
+        geotrek sync_suricate -v 2
+
+Be aware that, when enabling Suricate support, **reports created in Geotrek-Admin will not be saved to the database, they will only be sent to Suricate**. Reports are only saved when synchronized back from Suricate. Therefore, you should run the synchronization command after creating a report.
 
 Anonymize feedback reports
 ---------------------------
