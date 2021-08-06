@@ -329,7 +329,7 @@ def import_view(request):
 
         if 'import-suricate' in request.POST:
             form_suricate = ImportSuricateForm(choices_suricate, request.POST)
-            if form_suricate.is_valid():
+            if form_suricate.is_valid() and settings.SURICATE_REPORT_ENABLED:
                 parser = SuricateParser()
                 parser.get_statuses()
                 parser.get_activities()
