@@ -6,8 +6,6 @@ class Command(BaseCommand):
     leave_locale_alone = True
 
     def add_arguments(self, parser):
-        # parser.add_argument('-l', dest='limit', type=int, help='Limit number of lines to import')
-        # todo
         parser.add_argument(
             "--activities_only",
             dest="activities_only",
@@ -20,9 +18,9 @@ class Command(BaseCommand):
             help="Import statuses but no activities nor alerts",
             default=False,
         )
-        # todo documents
 
     def handle(self, *args, **options):
+        verbosity = options['verbosity']
         parser = SuricateParser()
         if options["activities_only"] and options["statuses_only"]:
             parser.get_statuses()
@@ -34,4 +32,4 @@ class Command(BaseCommand):
         else:
             parser.get_statuses()
             parser.get_activities()
-            parser.get_alerts()
+            parser.get_alerts(verbosity=verbosity)
