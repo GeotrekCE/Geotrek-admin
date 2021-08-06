@@ -215,6 +215,32 @@ class ImportDatasetForm(forms.Form):
         )
 
 
+class ImportSuricateForm(forms.Form):
+    parser = forms.TypedChoiceField(
+        label=_('Data to import from Suricate'),
+        widget=forms.RadioSelect,
+        required=True,
+    )
+
+    def __init__(self, choices=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['parser'].choices = choices
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'parser',
+                ),
+                FormActions(
+                    Submit('import-suricate', _("Import"), css_class='button white')
+                ),
+                css_class='file-attachment-form',
+            )
+        )
+
+
 class ImportDatasetFormWithFile(ImportDatasetForm):
     zipfile = forms.FileField(
         label=_('File'),

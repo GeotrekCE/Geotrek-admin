@@ -75,6 +75,9 @@ msgstr "Créer un signalement"
 msgid "Suricate id"
 msgstr "ID Suricate"
 
+msgid "Data to import from Suricate"
+msgstr "Données à importer depuis Suricate"
+
 msgid "Activities"
 msgstr "Activités"
 

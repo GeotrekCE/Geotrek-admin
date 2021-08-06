@@ -1,3 +1,4 @@
+from geotrek.feedback.parsers import SuricateParser
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -40,7 +41,7 @@ from .permissions import PublicOrReadPermMixin
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
 from .tasks import import_datas, import_datas_from_web
-from .forms import ImportDatasetForm, ImportDatasetFormWithFile, SyncRandoForm
+from .forms import ImportDatasetForm, ImportSuricateForm, ImportDatasetFormWithFile, SyncRandoForm
 from .models import Theme
 from .serializers import ThemeSerializer
 from .tasks import launch_sync_rando
@@ -295,10 +296,12 @@ def import_view(request):
     render_dict = {}
 
     choices, choices_url, classes = discover_available_parsers(request.user)
+    choices_suricate = [("everything", _("Reports"))]
 
     form = ImportDatasetFormWithFile(choices, prefix="with-file")
     form_without_file = ImportDatasetForm(
         choices_url, prefix="without-file")
+    form_suricate = ImportSuricateForm(choices_suricate)
 
     if request.method == 'POST':
         if 'upload-file' in request.POST:
@@ -324,11 +327,21 @@ def import_view(request):
                     name=parser.__name__, module=parser.__module__, user=request.user.pk
                 )
 
+        if 'import-suricate' in request.POST:
+            form_suricate = ImportSuricateForm(choices_suricate, request.POST)
+            if form_suricate.is_valid():
+                parser = SuricateParser()
+                parser.get_statuses()
+                parser.get_activities()
+                parser.get_alerts(verbosity=1)
+
     # Hide second form if parser has no web based imports.
     if choices:
         render_dict['form'] = form
     if choices_url:
         render_dict['form_without_file'] = form_without_file
+    if settings.SURICATE_REPORT_ENABLED:
+        render_dict['form_suricate'] = form_suricate
 
     return render(request, 'common/import_dataset.html', render_dict)
 
