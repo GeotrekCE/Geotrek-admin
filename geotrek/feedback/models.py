@@ -132,25 +132,45 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
             logger.error("Email could not be sent to managers.")
             logger.exception(e)  # This sends an email to admins :)
 
-    def save(self, *args, **kwargs):
-        if not settings.SURICATE_REPORT_ENABLED:  # Geotrek Mode
-            if self.pk is None:  # New report should alert
+    def try_send_report_to_suricate(self):
+        try:
+            SuricateMessenger().post_report(self)
+        except Exception as e:
+            logger.error("Report could not be sent to Suricate API.")
+            logger.exception(e)
+
+    def save_no_suricate(self, *args, **kwargs):
+        """Save method for No Suricate mode"""
+        if self.pk is None:  # New report should alert
+            self.try_send_report_managers()
+        super().save(*args, **kwargs)  # Report updates should do nothing more
+
+    def save_suricate_report_mode(self, *args, **kwargs):
+        """Save method for Suricate Report mode"""
+        if self.pk is None:  # New report should alert managers AND be sent to Suricate
+            self.try_send_report_managers()
+            self.try_send_report_to_suricate()
+        super().save(*args, **kwargs)  # Report updates should do nothing more
+
+    def save_suricate_management_mode(self, *args, **kwargs):
+        """Save method for Suricate Management mode"""
+        if self.pk is None:  # This is a new report
+            if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
+                self.try_send_report_to_suricate()
+            else:  # This new report comes from Suricate : alert managers and save
                 self.try_send_report_managers()
-            super().save(*args, **kwargs)  # Report updates should do nothing more
-        else:  # Suricate Mode
-            if self.pk is None:  # This is a new report
-                if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
-                    try:
-                        SuricateMessenger().post_report(self)
-                    except Exception as e:
-                        logger.error("Report could not be sent to Suricate API.")
-                        logger.exception(e)
-                else:  # This new report comes from Suricate : alert nmanagers and save
-                    self.try_send_report_managers()
-                    super().save(*args, **kwargs)
-            else:  # This is an update
-                # TODO We'll need to implement some of the workflow here
                 super().save(*args, **kwargs)
+        else:  # This is an update
+            # TODO We'll need to implement some of the workflow here
+            super().save(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:
+            self.save_no_suricate(*args, **kwargs)  # No Suricate Mode
+        elif settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:
+            self.save_suricate_report_mode(*args, **kwargs)  # Suricate Report Mode
+        elif settings.SURICATE_MANAGEMENT_ENABLED:
+            self.save_suricate_management_mode(*args, **kwargs)  # Suricate Management Mode
 
     @property
     def created_in_suricate_update_display(self):

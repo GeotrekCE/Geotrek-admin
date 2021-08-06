@@ -21,5 +21,5 @@ def forced_layers(request):
 
 def suricate_enabled(request):
     return {
-        "suricate_enabled": settings.SURICATE_REPORT_ENABLED
+        "suricate_enabled": settings.SURICATE_MANAGEMENT_ENABLED
     }

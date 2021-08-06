@@ -109,10 +109,20 @@ class SuricateAPITests(SuricateTests):
         # self.assertEqual(ReportAttachedDocument.objects.count(), 100)
         # self.assertEqual(MessageAttachedDocument.objects.count(), 4)
 
+    @override_settings(SURICATE_REPORT_ENABLED=True)
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
-    def test_save_on_report_posts_to_suricate(self, post_report):
-        """Test post to suricate on save Report"""
+    def test_save_on_report_posts_to_suricate_in_report_mode(self, post_report):
+        """Test post to suricate on save Report in Suricate Report Mode"""
+        report = Report.objects.create()
+        post_report.assert_called_once_with(report)
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
+    def test_save_on_report_posts_to_suricate_in_management_mode(self, post_report):
+        """Test post to suricate on save Report in Suricate Management Mode"""
         # Create a report with an UID - emulates report from Suricate
         uid = uuid.uuid4()
         Report.objects.create(uid=uid)
@@ -120,6 +130,15 @@ class SuricateAPITests(SuricateTests):
         # Create a report with no UID - emulates new report from Geotrek
         report = Report.objects.create(uid=None)
         post_report.assert_called_once_with(report)
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @override_settings(SURICATE_REPORT_ENABLED=False)
+    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
+    def test_save_on_report_doesnt_post_to_suricate_in_no_suricate_mode(self, post_report):
+        """Test post to suricate on save Report in Suricate Management Mode"""
+        Report.objects.create()
+        post_report.assert_not_called()
 
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_post_request_to_suricate(self, mock_post):
@@ -145,13 +164,13 @@ class SuricateAPITests(SuricateTests):
         # Define a mock response
         self.build_failed_request_patch(mock_post)
 
-        # Create a report, should raise an excemption
+        # Create a report, should raise an exception
         self.assertRaises(Exception, ReportFactory())
 
 
 class SuricateInterfaceTests(SuricateTests):
 
-    @override_settings(SURICATE_REPORT_ENABLED=False)
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_import_from_interface_disabled(self, mocked):
         user = UserFactory.create(username='Slush', password='Puppy')
@@ -170,7 +189,7 @@ class SuricateInterfaceTests(SuricateTests):
         )
         self.assertEqual(Report.objects.count(), 0)
 
-    @override_settings(SURICATE_REPORT_ENABLED=True)
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_import_from_interface_enabled(self, mocked):
         user = UserFactory.create(username='Slush', password='Puppy')
