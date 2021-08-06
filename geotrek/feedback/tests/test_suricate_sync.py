@@ -1,3 +1,4 @@
+from mapentity.factories import UserFactory
 import os
 from unittest import mock
 from unittest.mock import MagicMock
@@ -6,12 +7,15 @@ import uuid
 from django.core.management import call_command
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.urls.base import reverse
+from django.utils.translation import gettext_lazy as _
 from geotrek.feedback.factories import ReportFactory
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import (
     AttachedMessage,
     Report,
     ReportActivity,
+    ReportCategory,
     ReportProblemMagnitude,
     ReportStatus,
 )
@@ -30,7 +34,7 @@ def mocked_json(file_name):
         return bytes(f.read(), encoding="UTF-8")
 
 
-class SuricateAPITests(TestCase):
+class SuricateTests(TestCase):
     """Test Suricate API"""
 
     def build_get_request_patch(self, mocked: MagicMock):
@@ -76,6 +80,9 @@ class SuricateAPITests(TestCase):
         mock_response.status_code = 400
         mocked.return_value = mock_response
 
+
+class SuricateAPITests(SuricateTests):
+
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_statuses(self, mocked):
         """Test GET requests on Statuses endpoint creates statuses objects"""
@@ -103,7 +110,6 @@ class SuricateAPITests(TestCase):
         # self.assertEqual(ReportAttachedDocument.objects.count(), 100)
         # self.assertEqual(MessageAttachedDocument.objects.count(), 4)
 
-    @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
     def test_save_on_report_posts_to_suricate(self, post_report):
@@ -131,7 +137,6 @@ class SuricateAPITests(TestCase):
         result = SuricateMessenger().post_report(report)
         self.assertEqual(result, None)
 
-    @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_request_to_suricate_fails(self, mock_post):
@@ -143,3 +148,48 @@ class SuricateAPITests(TestCase):
 
         # Create a report, should raise an excemption
         self.assertRaises(Exception, ReportFactory())
+
+
+class SuricateInterfaceTests(SuricateTests):
+
+    @override_settings(SURICATE_REPORT_ENABLED=False)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_import_from_interface_disabled(self, mocked):
+        user = UserFactory.create(username='Slush', password='Puppy')
+        self.client.force_login(user)
+        self.build_get_request_patch(mocked)
+        url = reverse('common:import_dataset')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'import-suricate')
+        self.assertNotContains(response, _('Data to import from Suricate'))
+        response = self.client.post(
+            url, {
+                'import-suricate': 'Import',
+                'parser': 'everything',
+            }
+        )
+        self.assertEqual(Report.objects.count(), 0)
+
+    @override_settings(SURICATE_REPORT_ENABLED=True)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_import_from_interface_enabled(self, mocked):
+        user = UserFactory.create(username='Slush', password='Puppy')
+        self.client.force_login(user)
+        self.build_get_request_patch(mocked)
+        url = reverse('common:import_dataset')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'import-suricate')
+        self.assertContains(response, _('Data to import from Suricate'))
+        response = self.client.post(
+            url, {
+                'import-suricate': 'Import',
+                'parser': 'everything',
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        # 8 out of 9 are imported because one of them is out of bbox by design
+        self.assertEqual(Report.objects.count(), 8)
+        self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
+        self.assertEqual(AttachedMessage.objects.count(), 44)
