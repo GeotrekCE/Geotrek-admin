@@ -172,12 +172,12 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
             self.save_suricate_management_mode(*args, **kwargs)  # Suricate Management Mode
 
     @property
-    def created_in_suricate_update_display(self):
-        return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
+    def created_in_suricate_display(self):
+        return date_format(self.created_in_suricate, "SHORT_DATETIME_FORMAT")
 
     @property
-    def updated_in_suricate_update_display(self):
-        return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
+    def last_updated_in_suricate_display(self):
+        return date_format(self.last_updated_in_suricate, "SHORT_DATETIME_FORMAT")
 
 
 class ReportActivity(models.Model):
