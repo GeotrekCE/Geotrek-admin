@@ -39,12 +39,12 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
 
         # Parse activities and create
         for activity in data["activites"]:
-            obj, updated = ReportActivity.objects.update_or_create(
+            obj, created = ReportActivity.objects.update_or_create(
                 suricate_id=activity["id"], defaults={"label": activity["libelle"]}
             )
-            if updated:
+            if created:
                 logger.info(
-                    f"New or updated activity - id: {activity['id']}, label: {activity['libelle']}"
+                    f"New activity - id: {activity['id']}, label: {activity['libelle']}"
                 )
 
     def get_statuses(self):
@@ -54,12 +54,12 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
 
         # Parse statuses and create
         for status in data["statuts"]:
-            obj, updated = ReportStatus.objects.get_or_create(
+            obj, created = ReportStatus.objects.get_or_create(
                 suricate_id=status["id"], defaults={"label": status["libelle"]}
             )
-            if updated:
+            if created:
                 logger.info(
-                    f"New or updated status - id: {status['id']}, label: {status['libelle']}"
+                    f"New status - id: {status['id']}, label: {status['libelle']}"
                 )
 
     def send_managers_new_reports(self):
@@ -101,13 +101,9 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
             if created:
                 logger.info(f"Created new feedback category - label: {report['type']}")
             # Parse status
-            rep_status, created = ReportStatus.objects.get_or_create(suricate_id=report["statut"])
-            if created:
-                logger.info(f"Created new feedback status - label: {report['type']}")
+            rep_status, created = ReportStatus.objects.get(suricate_id=report["statut"])
             # Parse activity
-            rep_activity, created = ReportActivity.objects.get_or_create(suricate_id=report["idactivite"])
-            if created:
-                logger.info(f"Created new feedback activity - label: {report['type']}")
+            rep_activity, created = ReportActivity.objects.get(suricate_id=report["idactivite"])
 
             # Create report object
             fields = {
