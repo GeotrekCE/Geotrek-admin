@@ -67,5 +67,343 @@
             "label_en": "Impossible to use",
             "suricate_id": 2
         }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 1,
+        "fields": {
+            "label": "Cano\u00eb-kayak",
+            "label_fr": "Cano\u00eb-kayak",
+            "label_en": "Cano\u00eb-kayak",
+            "suricate_id": "1"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 2,
+        "fields": {
+            "label": "Baignade, natation en eau libre",
+            "label_fr": "Baignade, natation en eau libre",
+            "label_en": "Swimming, swimming in open water",
+            "suricate_id": "2"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 3,
+        "fields": {
+            "label": "Plong\u00e9e",
+            "label_fr": "Plong\u00e9e",
+            "label_en": "Diving",
+            "suricate_id": "4"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 4,
+        "fields": {
+            "label": "Vol libre (parapente, deltaplane)",
+            "label_fr": "Vol libre (parapente, deltaplane)",
+            "label_en": "Free flight (paragliding, hang gliding)",
+            "suricate_id": "6"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 5,
+        "fields": {
+            "label": "Via ferrata / via corda",
+            "label_fr": "Via ferrata / via corda",
+            "label_en": "Via ferrata / via corda",
+            "suricate_id": "7"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 6,
+        "fields": {
+            "label": "Aviron",
+            "label_fr": "Aviron",
+            "label_en": "Rowing",
+            "suricate_id": "10"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 7,
+        "fields": {
+            "label": "Canyonisme",
+            "label_fr": "Canyonisme",
+            "label_en": "Canyoning",
+            "suricate_id": "12"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 8,
+        "fields": {
+            "label": "Char \u00e0 voile",
+            "label_fr": "Char \u00e0 voile",
+            "label_en": "Yachting",
+            "suricate_id": "13"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 9,
+        "fields": {
+            "label": "Course d'orientation",
+            "label_fr": "Course d'orientation",
+            "label_en": "Orientation race",
+            "suricate_id": "14"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 10,
+        "fields": {
+            "label": "Trail",
+            "label_fr": "Trail",
+            "label_en": "Trail",
+            "suricate_id": "15"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 11,
+        "fields": {
+            "label": "Cyclisme sur pistes cyclables, v\u00e9loroutes",
+            "label_fr": "Cyclisme sur pistes cyclables, v\u00e9loroutes",
+            "label_en": "Cycling on cycle paths, cycle routes",
+            "suricate_id": "16"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 12,
+        "fields": {
+            "label": "Escalade",
+            "label_fr": "Escalade",
+            "label_en": "Climbing",
+            "suricate_id": "17"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 13,
+        "fields": {
+            "label": "Motocyclisme",
+            "label_fr": "Motocyclisme",
+            "label_en": "Motorcycling",
+            "suricate_id": "19"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 14,
+        "fields": {
+            "label": "Motonautisme",
+            "label_fr": "Motonautisme",
+            "label_en": "Powerboating",
+            "suricate_id": "20"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 15,
+        "fields": {
+            "label": "P\u00eache",
+            "label_fr": "P\u00eache",
+            "label_en": "Fishing",
+            "suricate_id": "24"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 16,
+        "fields": {
+            "label": "\u00c9quitation",
+            "label_fr": "\u00c9quitation",
+            "label_en": "Horse riding",
+            "suricate_id": "30"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 17,
+        "fields": {
+            "label": "Randonn\u00e9e p\u00e9destre",
+            "label_fr": "Randonn\u00e9e p\u00e9destre",
+            "label_en": "Hiking",
+            "suricate_id": "31"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 18,
+        "fields": {
+            "label": "Raquette \u00e0 neige",
+            "label_fr": "Raquette \u00e0 neige",
+            "label_en": "Snowshoe",
+            "suricate_id": "32"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 19,
+        "fields": {
+            "label": "Raid multisport",
+            "label_fr": "Raid multisport",
+            "label_en": "Multisport raid",
+            "suricate_id": "33"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 20,
+        "fields": {
+            "label": "Ski alpin",
+            "label_fr": "Ski alpin",
+            "label_en": "Alpine skiing",
+            "suricate_id": "34"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 21,
+        "fields": {
+            "label": "Ski nautique",
+            "label_fr": "Ski nautique",
+            "label_en": "Water skiing",
+            "suricate_id": "37"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 22,
+        "fields": {
+            "label": "Ski nordique",
+            "label_fr": "Ski nordique",
+            "label_en": "Nordic Ski",
+            "suricate_id": "38"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 23,
+        "fields": {
+            "label": "Sp\u00e9l\u00e9ologie",
+            "label_fr": "Sp\u00e9l\u00e9ologie",
+            "label_en": "Speleology",
+            "suricate_id": "40"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 24,
+        "fields": {
+            "label": "Sports de tra\u00eeneau",
+            "label_fr": "Sports de tra\u00eeneau",
+            "label_en": "Sled sports",
+            "suricate_id": "41"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 25,
+        "fields": {
+            "label": "Surf / Stand up paddle",
+            "label_fr": "Surf / Stand up paddle",
+            "label_en": "Surf / Stand up paddle",
+            "suricate_id": "42"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 26,
+        "fields": {
+            "label": "Tir \u00e0 l'arc",
+            "label_fr": "Tir \u00e0 l'arc",
+            "label_en": "Archery",
+            "suricate_id": "44"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 27,
+        "fields": {
+            "label": "Triathlon",
+            "label_fr": "Triathlon",
+            "label_en": "Triathlon",
+            "suricate_id": "45"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 28,
+        "fields": {
+            "label": "Nage en eaux vives",
+            "label_fr": "Nage en eaux vives",
+            "label_en": "Whitewater swimming",
+            "suricate_id": "46"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 29,
+        "fields": {
+            "label": "Kite surf, snowkite (Glisses a\u00e9rotract\u00e9es)",
+            "label_fr": "Kite surf, snowkite (Glisses a\u00e9rotract\u00e9es)",
+            "label_en": "Kite surf, snowkite (Aerotracted slides)",
+            "suricate_id": "48"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 30,
+        "fields": {
+            "label": "VTT",
+            "label_fr": "VTT",
+            "label_en": "VTT",
+            "suricate_id": "49"
+        }
+    },
+    {
+        "model": "feedback.reportactivity",
+        "pk": 31,
+        "fields": {
+            "label": "Voile",
+            "label_fr": "Voile",
+            "label_en": "Sailing",
+            "suricate_id": "50"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "pk": 1,
+        "fields": {
+            "label": "Nouveau"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "pk": 2,
+        "fields": {
+            "label": "R\u00e9pondu"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "pk": 3,
+        "fields": {
+            "label": "En cours"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "pk": 4,
+        "fields": {
+            "label": "Trait\u00e9"
+        }
     }
 ]
