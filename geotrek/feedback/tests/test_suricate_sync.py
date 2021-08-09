@@ -11,7 +11,7 @@ from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
 from geotrek.feedback.factories import ReportFactory
-from geotrek.feedback.helpers import SuricateMessenger
+from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
 from geotrek.feedback.models import (
     AttachedMessage,
     Report,
@@ -25,6 +25,7 @@ SURICATE_REPORT_SETTINGS = {
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
+    "AUTH": ("", ""),
 }
 
 
@@ -49,8 +50,8 @@ class SuricateTests(TestCase):
                 mock_response.status_code = 200
                 mock_response.content = mocked_json("suricate_statuses.json")
             elif "GetAlerts" in url:
-                mock_response.status_code = 200
                 mock_response.content = mocked_json("suricate_alerts.json")
+                mock_response.status_code = 200
             else:
                 mock_response.status_code = 404
             return mock_response
@@ -80,6 +81,13 @@ class SuricateTests(TestCase):
         mock_response.status_code = 400
         mocked.return_value = mock_response
 
+    def build_extra_failed_request_patch(self, mocked: MagicMock):
+        """Mock error responses from Suricate API"""
+        mock_response = mock.Mock()
+        mock_response.status_code = 408  # reqest timeout
+        mock_response.content = {}
+        mocked.return_value = mock_response
+
 
 class SuricateAPITests(SuricateTests):
 
@@ -105,7 +113,7 @@ class SuricateAPITests(SuricateTests):
         """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
         self.build_get_request_patch(mocked)
         self.assertEqual(len(mail.outbox), 0)
-        call_command("sync_suricate")
+        call_command("sync_suricate", verbosity=2)
         # 8 out of 9 are imported because one of them is out of bbox by design
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
@@ -116,6 +124,15 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
+        # Test update report does not send email and saves
+        r = Report.objects.all()[0]
+        r.category = None
+        r.save()
+        # Fetch it again to verify 'super.save' was called (i know, weird)
+        r = Report.objects.all()[0]
+        self.assertIsNone(r.category)
+        # Assert no mail
+        self.assertEqual(len(mail.outbox), 1)
 
     @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
@@ -163,9 +180,10 @@ class SuricateAPITests(SuricateTests):
         result = SuricateMessenger().post_report(report)
         self.assertEqual(result, None)
 
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.requests.post")
-    def test_request_to_suricate_fails(self, mock_post):
+    def test_post_request_to_suricate_fails(self, mock_post):
         """Test post request itself but fails
         Request post is mock
         """
@@ -174,6 +192,29 @@ class SuricateAPITests(SuricateTests):
 
         # Create a report, should raise an exception
         self.assertRaises(Exception, ReportFactory())
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_request_to_suricate_fails_1(self, mock_get):
+        """Test get request itself fails
+        """
+        # Mock error 408
+        self.build_extra_failed_request_patch(mock_get)
+        # Get raises an exception
+        with self.assertRaises(Exception):
+            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_request_to_suricate_fails_2(self, mock_get):
+        """Test get request itself fails
+        """
+        # Mock error 400
+        self.build_failed_request_patch(mock_get)
+        # Get raises an exception
+        self.assertRaises(Exception, SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList"))
 
 
 class SuricateInterfaceTests(SuricateTests):

@@ -37,7 +37,7 @@ class SuricateRequestManager:
             )
         else:
             data = json.loads(response.content.decode())
-            if "code_ok" in data and not data["code_ok"]:
+            if "code_ok" in data and not bool(data["code_ok"]):
                 raise Exception(
                     f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']}]"
                 )
