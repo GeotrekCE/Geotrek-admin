@@ -95,15 +95,15 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
                 )
 
             # Parse category
-            rep_category, created = ReportCategory.objects.get_or_create(
+            rep_category = ReportCategory.objects.get_or_create(
                 label=report["type"]
             )
             if created:
                 logger.info(f"Created new feedback category - label: {report['type']}")
             # Parse status
-            rep_status, created = ReportStatus.objects.get(suricate_id=report["statut"])
+            rep_status = ReportStatus.objects.get(suricate_id=report["statut"])
             # Parse activity
-            rep_activity, created = ReportActivity.objects.get(suricate_id=report["idactivite"])
+            rep_activity = ReportActivity.objects.get(suricate_id=report["idactivite"])
 
             # Create report object
             fields = {
