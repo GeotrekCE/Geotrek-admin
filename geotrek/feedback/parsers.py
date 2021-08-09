@@ -15,7 +15,7 @@ from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
                                      ReportStatus)
 
-from .helpers import SuricateRequestManager
+from .helpers import SuricateRequestManager, send_reports_managers
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,18 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
                     f"New or updated status - id: {status['id']}, label: {status['libelle']}"
                 )
 
+    def send_managers_new_reports(self):
+        try:
+            send_reports_managers()
+        except Exception as e:
+            logger.error("Email could not be sent to managers.")
+            logger.exception(e)  # This sends an email to admins :)
+
     def parse_report(self, report):
+        """
+        Parse a JSON report from Suricate API
+        :return: returns True if and only if this report is imported (it is in bbox) and is new
+        """
         # Parse geom
         rep_gps = Point(report["gpslongitude"], report["gpslatitude"], srid=4326)
         rep_srid = rep_gps.transform(settings.SRID, clone=True)
@@ -115,12 +126,12 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
             # TODO When implementing workflow :
             # if report.locked then suricate_status != geotrek_status
             # suricate_status must not override geotrek_status until we solve and unlock (see slides)
-            report_obj, updated = Report.objects.update_or_create(
+            report_obj, created = Report.objects.update_or_create(
                 uid=report["uid"], defaults=fields
             )
-            if updated:
+            if created:
                 logger.info(
-                    f"New or updated report - id: {report['uid']}, location: {report_obj.geom}"
+                    f"New report - id: {report['uid']}, location: {report_obj.geom}"
                 )
 
             # Parse documents attached to report
@@ -129,21 +140,30 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
             # Parse messages attached to report
             self.create_messages(report["messages"], report_obj)
 
+            return created
+
     def get_alerts(self, verbosity=1):
-        """Get reports list from Suricate Rest API"""
+        """
+        Get reports list from Suricate Rest API
+        :return: returns True if and only if reports was imported (it is in bbox)
+        """
         if verbosity >= 1:
             sys.stdout.write("Starting reports parsing from Suricate\n")
         data = self.get_from_suricate("wsGetAlerts")
         total_reports = len(data["alertes"])
         current_report = 1
+        reports_created = False
         # Parse alerts
         for report in data["alertes"]:
             if verbosity == 2:
                 sys.stdout.write(f"Processing report {report['uid']} - {current_report}/{total_reports} \n")
-            self.parse_report(report)
+            report_created = self.parse_report(report)
+            reports_created = reports_created or report_created
             current_report += 1
         if verbosity >= 1:
             sys.stdout.write(f"Parsed {total_reports} reports from Suricate\n")
+        if reports_created:
+            self.send_managers_new_reports()
 
     def create_documents(self, documents, parent, type_parent):
         """Parse documents list from Suricate Rest API"""
@@ -182,12 +202,12 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
             }
 
             # Create message object
-            message_obj, updated = AttachedMessage.objects.update_or_create(
+            message_obj, created = AttachedMessage.objects.update_or_create(
                 suricate_id=message["id"], date=msg_creation, report=parent, defaults=fields
             )
-            if updated:
+            if created:
                 logger.info(
-                    f"New or updated Message - id: {message['id']}, parent: {parent.uid}"
+                    f"New Message - id: {message['id']}, parent: {parent.uid}"
                 )
 
             # Parse documents attached to message

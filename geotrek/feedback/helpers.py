@@ -94,6 +94,12 @@ def send_report_managers(report, template_name="feedback/report_email.html"):
     mail_managers(subject, message, fail_silently=False)
 
 
+def send_reports_managers(template_name="feedback/reports_email.html"):
+    subject = _("New reports from Suricate")
+    message = render_to_string(template_name)
+    mail_managers(subject, message, fail_silently=False)
+
+
 class SuricateMessenger(SuricateRequestManager):
     def post_report(self, report):
         check = md5(

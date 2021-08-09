@@ -24,6 +24,9 @@ msgstr "Retours utilisateurs"
 msgid "Feedback from {email}"
 msgstr "Signalement de {email}"
 
+msgid "New reports from Suricate"
+msgstr "Nouveaux signalements Suricate"
+
 msgid "Email"
 msgstr "Email"
 
@@ -155,6 +158,12 @@ msgstr "Intervention terminée"
 
 msgid "Geotrek : Signal a mistake"
 msgstr "Geotrek : signalement d'un problème"
+
+msgid "New reports have been imported from Suricate."
+msgstr "De nouveaux signalements ont été importés depuis Suricate."
+
+msgid "Please consult your reports in Geotrek-Admin."
+msgstr "Consultez vos signalements dans Geotrek-Admin."
 
 msgid ""
 "Hello,\n"

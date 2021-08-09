@@ -157,8 +157,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         if self.pk is None:  # This is a new report
             if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.try_send_report_to_suricate()
-            else:  # This new report comes from Suricate : alert managers and save
-                self.try_send_report_managers()
+            else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
         else:  # This is an update
             # TODO We'll need to implement some of the workflow here

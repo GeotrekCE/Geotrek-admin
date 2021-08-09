@@ -7,6 +7,7 @@ from geotrek.feedback.parsers import SuricateParser
 
 logger = logging.getLogger(__name__)
 
+
 class Command(BaseCommand):
     leave_locale_alone = True
 

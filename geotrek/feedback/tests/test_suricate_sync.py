@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 import uuid
 
 from django.core.management import call_command
+from django.core import mail
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls.base import reverse
@@ -82,6 +83,7 @@ class SuricateTests(TestCase):
 
 class SuricateAPITests(SuricateTests):
 
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_statuses(self, mocked):
         """Test GET requests on Statuses endpoint creates statuses objects"""
@@ -89,6 +91,7 @@ class SuricateAPITests(SuricateTests):
         call_command("sync_suricate", statuses_only=True)
         self.assertEqual(ReportStatus.objects.count(), 5)
 
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_activities(self, mocked):
         """Test GET requests on Activities endpoint creates statuses objects"""
@@ -96,10 +99,12 @@ class SuricateAPITests(SuricateTests):
         call_command("sync_suricate", activities_only=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
 
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_get_alerts(self, mocked):
-        """Test GET requests on Alerts endpoint creates alerts and related objects"""
+    def test_get_alerts_creates_alerts_and_send_mail(self, mocked):
+        """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
         self.build_get_request_patch(mocked)
+        self.assertEqual(len(mail.outbox), 0)
         call_command("sync_suricate")
         # 8 out of 9 are imported because one of them is out of bbox by design
         self.assertEqual(Report.objects.count(), 8)
@@ -108,6 +113,9 @@ class SuricateAPITests(SuricateTests):
         # TODO when we can download attachments
         # self.assertEqual(ReportAttachedDocument.objects.count(), 100)
         # self.assertEqual(MessageAttachedDocument.objects.count(), 4)
+        self.assertEqual(len(mail.outbox), 1)
+        sent_mail = mail.outbox[0]
+        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
 
     @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
