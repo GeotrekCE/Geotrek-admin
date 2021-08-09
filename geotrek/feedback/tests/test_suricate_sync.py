@@ -109,7 +109,7 @@ class SuricateAPITests(SuricateTests):
         self.build_get_request_patch(mocked_get)
         call_command("sync_suricate", activities_only=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
-        mocked_logger.info.assert_called_with("Created new activity - id: 51, label: Roller, Skateboard")
+        mocked_logger.info.assert_called_with("New activity - id: 51, label: Roller, Skateboard")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
