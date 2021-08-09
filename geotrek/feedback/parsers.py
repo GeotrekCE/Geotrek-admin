@@ -95,7 +95,7 @@ class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
                 )
 
             # Parse category
-            rep_category = ReportCategory.objects.get_or_create(
+            rep_category, created = ReportCategory.objects.get_or_create(
                 label=report["type"]
             )
             if created:
