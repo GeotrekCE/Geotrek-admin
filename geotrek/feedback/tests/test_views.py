@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.conf import settings
 from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
@@ -190,3 +191,10 @@ class ListOptionsTest(TranslationResetMixin, BaseAPITest):
         self.assertEqual(data['activities'][0]['label'], self.activity.label_it)
         self.assertEqual(data['categories'][0]['label'], self.cat.label_it)
         self.assertEqual(data['magnitudeProblems'][0]['label'], self.pb_magnitude.label_it)
+
+    def test_display_dates(self):
+        date_time_1 = datetime.strptime("24/03/21 20:51", '%d/%m/%y %H:%M')
+        date_time_2 = datetime.strptime("28/03/21 5:51", '%d/%m/%y %H:%M')
+        r = feedback_factories.ReportFactory(created_in_suricate=date_time_1, last_updated_in_suricate=date_time_2)
+        self.assertEqual("03/24/2021 8:51 p.m.", r.created_in_suricate_display)
+        self.assertEqual("03/28/2021 5:51 a.m.", r.last_updated_in_suricate_display)

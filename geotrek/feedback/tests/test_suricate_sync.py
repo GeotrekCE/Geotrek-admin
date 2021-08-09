@@ -92,26 +92,47 @@ class SuricateTests(TestCase):
 class SuricateAPITests(SuricateTests):
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.logger")
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_get_statuses(self, mocked):
+    def test_get_statuses(self, mocked_get, mocked_logger):
         """Test GET requests on Statuses endpoint creates statuses objects"""
-        self.build_get_request_patch(mocked)
+        self.build_get_request_patch(mocked_get)
         call_command("sync_suricate", statuses_only=True)
         self.assertEqual(ReportStatus.objects.count(), 5)
+        mocked_logger.info.assert_called_with("New status - id: classified, label: Classé sans suite")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.logger")
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_get_activities(self, mocked):
+    def test_get_activities(self, mocked_get, mocked_logger):
         """Test GET requests on Activities endpoint creates statuses objects"""
-        self.build_get_request_patch(mocked)
+        self.build_get_request_patch(mocked_get)
         call_command("sync_suricate", activities_only=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
+        mocked_logger.info.assert_called_with("Created new activity - id: 51, label: Roller, Skateboard")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_get_alerts_creates_alerts_and_send_mail(self, mocked):
-        """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
+    def test_get_activities_and_statuses(self, mocked):
+        """Test GET requests on Activities endpoint creates statuses objects"""
         self.build_get_request_patch(mocked)
+        call_command("sync_suricate", activities_only=True, statuses_only=True)
+        self.assertEqual(ReportActivity.objects.count(), 32)
+        self.assertEqual(ReportStatus.objects.count(), 5)
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @mock.patch("geotrek.feedback.management.commands.sync_suricate.logger")
+    def test_command_disabled(self, mocked):
+        """Test sync_suricate command is disabled when setting is False"""
+        call_command("sync_suricate", activities_only=True, statuses_only=True)
+        mocked.error.assert_called_with("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED.")
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.logger")
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_alerts_creates_alerts_and_send_mail(self, mocked_get, mocked_logger):
+        """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
+        self.build_get_request_patch(mocked_get)
         self.assertEqual(len(mail.outbox), 0)
         call_command("sync_suricate", verbosity=2)
         # 8 out of 9 are imported because one of them is out of bbox by design
