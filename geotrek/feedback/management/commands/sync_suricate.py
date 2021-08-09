@@ -13,15 +13,15 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--activities_only",
-            dest="activities_only",
-            help="Import activities but no statuses nor alerts",
+            "--activities",
+            dest="activities",
+            help="Import activities but no alerts",
             default=False,
         )
         parser.add_argument(
-            "--statuses_only",
-            dest="statuses_only",
-            help="Import statuses but no activities nor alerts",
+            "--statuses",
+            dest="statuses",
+            help="Import statuses but no alerts",
             default=False,
         )
 
@@ -29,16 +29,12 @@ class Command(BaseCommand):
         verbosity = options['verbosity']
         if settings.SURICATE_MANAGEMENT_ENABLED:
             parser = SuricateParser()
-            if options["activities_only"] and options["statuses_only"]:
-                parser.get_statuses()
+            has_no_params = not (options["statuses"] | options["activities"])
+            if options["activities"] or has_no_params:
                 parser.get_activities()
-            elif options["statuses_only"]:
+            if options["statuses"] or has_no_params:
                 parser.get_statuses()
-            elif options["activities_only"]:
-                parser.get_activities()
-            else:
-                parser.get_statuses()
-                parser.get_activities()
+            if has_no_params:
                 parser.get_alerts(verbosity=verbosity)
         else:
             logger.error("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED.")

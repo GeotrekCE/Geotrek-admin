@@ -82,7 +82,7 @@ class FeedbackOptionsView(APIView):
         return Response(options)
 
 
-class DiveCreate(MapEntityCreate):
+class ReportCreate(MapEntityCreate):
     model = feedback_models.Report
     form_class = ReportForm
 

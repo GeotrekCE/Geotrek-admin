@@ -97,7 +97,7 @@ class SuricateAPITests(SuricateTests):
     def test_get_statuses(self, mocked_get, mocked_logger):
         """Test GET requests on Statuses endpoint creates statuses objects"""
         self.build_get_request_patch(mocked_get)
-        call_command("sync_suricate", statuses_only=True)
+        call_command("sync_suricate", statuses=True)
         self.assertEqual(ReportStatus.objects.count(), 5)
         mocked_logger.info.assert_called_with("New status - id: classified, label: Classé sans suite")
 
@@ -107,7 +107,7 @@ class SuricateAPITests(SuricateTests):
     def test_get_activities(self, mocked_get, mocked_logger):
         """Test GET requests on Activities endpoint creates statuses objects"""
         self.build_get_request_patch(mocked_get)
-        call_command("sync_suricate", activities_only=True)
+        call_command("sync_suricate", activities=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
         mocked_logger.info.assert_called_with("New activity - id: 51, label: Roller, Skateboard")
 
@@ -116,7 +116,7 @@ class SuricateAPITests(SuricateTests):
     def test_get_activities_and_statuses(self, mocked):
         """Test GET requests on Activities endpoint creates statuses objects"""
         self.build_get_request_patch(mocked)
-        call_command("sync_suricate", activities_only=True, statuses_only=True)
+        call_command("sync_suricate", activities=True, statuses=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
         self.assertEqual(ReportStatus.objects.count(), 5)
 
@@ -124,7 +124,7 @@ class SuricateAPITests(SuricateTests):
     @mock.patch("geotrek.feedback.management.commands.sync_suricate.logger")
     def test_command_disabled(self, mocked):
         """Test sync_suricate command is disabled when setting is False"""
-        call_command("sync_suricate", activities_only=True, statuses_only=True)
+        call_command("sync_suricate", activities=True, statuses=True)
         mocked.error.assert_called_with("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED.")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)

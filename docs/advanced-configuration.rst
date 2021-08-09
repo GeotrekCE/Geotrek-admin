@@ -162,7 +162,7 @@ Load lists for activities and/or report statuses :
 
     .. code-block :: python
 
-        geotrek sync_suricate --activities_only --statuses_only -v 2
+        geotrek sync_suricate --activities --statuses -v 2
 
 Load alerts from Suricate (located in your bounding box) :
 
