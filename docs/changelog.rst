@@ -10,6 +10,11 @@ CHANGELOG
 - Add difficulty level fields (usage and maintenance) to infrastructure
 - Add 'active' field to job model, and hide inactive jobs in forms
 - Add detailed jobs costs to interventions exports, with a new column for each job
+- Add SURICATE_MANAGEMENT_ENABLED setting
+- Add helper to make requests to Suricate
+- Add parser to retrieve statuses, activities, and reports (in bounding box) from Suricate
+- Add sync_suricate command to retrieve Suricate data
+- Change Report model to use one of 3 modes : No Suricate, Suricate Report or Suricate Management (SURICATE_REPORT_ENABLED and SURICATE_MANAGEMENT_ENABLED settings)
 
 **Bug fixes**
 
