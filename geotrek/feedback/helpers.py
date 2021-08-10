@@ -30,8 +30,10 @@ class SuricateRequestManager:
     USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
     AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if USE_AUTH else None
 
+    OLD_PREPROD_URL = "https://sentinelles-preprod.sportsdenature.fr/rest/suricate/"
+
     def check_response_integrity(self, response, id_alert=""):
-        if response.status_code not in [200, 201, 400, 401, 402]:
+        if response.status_code not in [200, 201]:
             raise Exception(
                 f"Failed to access Suricate API - Status code: {response.status_code}"
             )
@@ -51,7 +53,7 @@ class SuricateRequestManager:
         #         if check != data["check"]:
         #             raise Exception(f"Integrity of Suricate response compromised: expected checksum {check}, got checksum {data['check']}")
 
-    def get_from_suricate(self, endpoint, web_service="wsgestion/", url_params={}):
+    def get_from_suricate_no_integrity_check(self, endpoint, web_service="wsgestion/", url_params={}):
         # Build ever-present URL parameter
         origin_param = f"?id_origin={self.ID_ORIGIN}"
         # Add specific URL parameters
@@ -72,20 +74,47 @@ class SuricateRequestManager:
             response = requests.get(
                 f"{self.URL}{web_service}{endpoint}{origin_param}{extra_url_params}{check}",
             )
+        return response
+
+    def get_from_suricate(self, endpoint, web_service="wsgestion/", url_params={}):
+        response = self.get_from_suricate_no_integrity_check(endpoint, web_service, url_params)
         return self.check_response_integrity(response)
 
     def post_to_suricate(self, endpoint, params, web_service="wsgestion/"):
+        if "preprod" in self.URL and "wsstandard":
+            url = self.OLD_PREPROD_URL
+        else:
+            url = self.URL
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.post(
-                f"{self.URL}{web_service}{endpoint}",
+                f"{url}{web_service}{endpoint}",
                 params,
                 auth=self.AUTH,
             )
         else:
-            response = requests.post(f"{self.URL}{web_service}{endpoint}", params)
+            response = requests.post(f"{url}{web_service}{endpoint}", params)
 
-        return self.check_response_integrity(response)
+        if response.status_code not in [200, 201]:
+            raise Exception("Failed to post on Suricate API")
+
+    def print_response_OK_or_KO(self, response):
+        if response.status_code not in [200, 201]:
+            print(f"KO - Status code: {response.status_code}")
+        else:
+            data = json.loads(response.content.decode())
+            if "code_ok" in data and not bool(data["code_ok"]):
+                print(f"KO:   [{data['error']['code']} - {data['error']['message']}]")
+            elif "code_ok" in data and bool(data["code_ok"]):
+                print("OK")
+
+    def test_suricate_connection(self):
+        response = self.get_from_suricate_no_integrity_check(endpoint="wsGetActivities", web_service="wsgestion/")
+        print("API Gestion :")
+        self.print_response_OK_or_KO(response)
+        print("API Standard :")
+        response = self.get_from_suricate_no_integrity_check(endpoint="wsGetActivities", web_service="wsstandard/")
+        self.print_response_OK_or_KO(response)
 
 
 def send_report_managers(report, template_name="feedback/report_email.html"):
@@ -123,7 +152,7 @@ class SuricateMessenger(SuricateRequestManager):
             "version": settings.VERSION,
         }
 
-        self.post_to_suricate("wsSendReport", params, "wsstandard")
+        self.post_to_suricate("wsSendReport", params, "wsstandard/")
 
     # TODO use in workflow
     # def lock_alert(self, id_alert):

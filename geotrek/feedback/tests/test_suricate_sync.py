@@ -202,6 +202,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(result, None)
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_post_request_to_suricate_fails(self, mock_post):
@@ -235,7 +236,8 @@ class SuricateAPITests(SuricateTests):
         # Mock error 400
         self.build_failed_request_patch(mock_get)
         # Get raises an exception
-        self.assertRaises(Exception, SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList"))
+        with self.assertRaises(Exception):
+            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
 
 
 class SuricateInterfaceTests(SuricateTests):
