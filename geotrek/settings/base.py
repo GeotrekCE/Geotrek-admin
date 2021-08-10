@@ -547,6 +547,7 @@ DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
 MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)
+REPORT_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
 

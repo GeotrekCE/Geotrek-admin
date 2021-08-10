@@ -4,7 +4,6 @@
 
 {% block attributes %}
     <h3>{% trans "Attributes" %}</h3>
-
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ report|verbose:"email" }}</th>
@@ -72,4 +71,26 @@
         {% endif %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    
+    <table class="table">
+        <tr>
+            <td colspan="3">
+            {% if perms.maintenance.add_intervention %}
+                <h3>{% trans "Interventions" %}</h3>
+                    {% with columns="name,status,stake,total_cost,date" %}
+                            {% valuetable object.interventions.all columns=columns %}
+                    {% endwith %}
+
+                    <p class="spacer"></p>
+
+                    <p class="autohide">
+                        <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"
+                        class="btn btn-sm btn-success">
+                        <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
+                    </p>
+                </td>
+            {% endif %}
+        </tr>
+    </table>
+
 {% endblock attributes %}

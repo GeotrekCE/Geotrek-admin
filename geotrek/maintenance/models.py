@@ -129,7 +129,6 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         title = _('Paths')
         if not self.target._meta.model_name == "topology":
             icon = self.target._meta.model_name
-
             title = self.target.name_display
         return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
                                                       icon,

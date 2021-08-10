@@ -2,11 +2,17 @@ import html
 import logging
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
+from django.db.models.query_utils import Q
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
-from geotrek.common.mixins import PicturesMixin, TimeStampedModelMixin
-from geotrek.trekking.models import Trek
+
+from geotrek.common.mixins import (AddPropertyMixin, PicturesMixin,
+                                   TimeStampedModelMixin)
+from geotrek.common.utils import intersecting
+from geotrek.maintenance.models import Intervention
+from geotrek.trekking.models import POI, Service, Trek
 from mapentity.models import MapEntityMixin
 
 from .helpers import SuricateMessenger, send_report_managers
@@ -22,7 +28,7 @@ def status_default():
     return None
 
 
-class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
+class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, AddPropertyMixin):
     """User reports, submitted via *Geotrek-rando* or parsed from Suricate API."""
 
     email = models.EmailField(verbose_name=_("Email"))
@@ -178,6 +184,29 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     @property
     def last_updated_in_suricate_display(self):
         return date_format(self.last_updated_in_suricate, "SHORT_DATETIME_FORMAT")
+
+    @property
+    def name_display(self):
+        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                             self.get_detail_url(),
+                                                             self.email,
+                                                             self.email)
+        return s
+
+    def distance(self, to_cls):
+        """Distance to associate this report to another class"""
+        return settings.REPORT_INTERSECTION_MARGIN
+
+    def report_interventions(self):
+        report_content_type = ContentType.objects.get_for_model(Report)
+        qs = Q(target_type=report_content_type, target_id=self.id)
+        return Intervention.objects.existing().filter(qs).distinct('pk')
+
+
+Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
+Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+Report.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+Report.add_property('interventions', lambda self: Report.report_interventions(self), _("Interventions"))
 
 
 class ReportActivity(models.Model):
