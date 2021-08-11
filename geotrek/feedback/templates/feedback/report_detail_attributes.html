@@ -76,11 +76,11 @@
         <tr>
             <td colspan="3">
             {% if perms.maintenance.add_intervention %}
-                <h3>{% trans "Interventions" %}</h3>
+                <h3>{% trans "Intervention" %}</h3>
                     {% with columns="name,status,stake,total_cost,date" %}
-                            {% valuetable object.interventions.all columns=columns %}
+                            {% valuetable report.interventions.all columns=columns %}
                     {% endwith %}
-
+                    {% if report.interventions.all|length == 0 %}
                     <p class="spacer"></p>
 
                     <p class="autohide">
@@ -88,6 +88,7 @@
                         class="btn btn-sm btn-success">
                         <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
                     </p>
+                    {% endif %}
                 </td>
             {% endif %}
         </tr>
