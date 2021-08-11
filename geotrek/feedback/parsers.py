@@ -15,12 +15,12 @@ from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
                                      ReportStatus)
 
-from .helpers import SuricateRequestManager, send_reports_managers
+from .helpers import SuricateGestionRequestManager, send_reports_managers
 
 logger = logging.getLogger(__name__)
 
 
-class SuricateParser(AttachmentParserMixin, SuricateRequestManager):
+class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
 
     def __init__(self):
         super().__init__()

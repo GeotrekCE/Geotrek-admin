@@ -782,6 +782,13 @@ SURICATE_REPORT_SETTINGS = {
     'PRIVATE_KEY_SERVER_CLIENT': '',
 }
 
+SURICATE_MANAGEMENT_SETTINGS = {
+    'URL': '',
+    'ID_ORIGIN': '',
+    'PRIVATE_KEY_CLIENT_SERVER': '',
+    'PRIVATE_KEY_SERVER_CLIENT': '',
+}
+
 REPORT_FILETYPE = "Report"
 
 # Parser parameters for retries and error codes

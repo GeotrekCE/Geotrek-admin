@@ -14,23 +14,15 @@ logger = logging.getLogger(__name__)
 
 class SuricateRequestManager:
 
-    URL = settings.SURICATE_REPORT_SETTINGS["URL"]
-    ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
-    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
-        "PRIVATE_KEY_CLIENT_SERVER"
-    ]
-    PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_REPORT_SETTINGS[
-        "PRIVATE_KEY_SERVER_CLIENT"
-    ]
-    CHECK_CLIENT = (
-        f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
-    )
-    CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
+    URL = None
+    ID_ORIGIN = None
+    PRIVATE_KEY_CLIENT_SERVER = None
+    PRIVATE_KEY_SERVER_CLIENT = None
+    CHECK_CLIENT = None
+    CHECK_SERVER = None
 
-    USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
-    AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if USE_AUTH else None
-
-    OLD_PREPROD_URL = "https://sentinelles-preprod.sportsdenature.fr/rest/suricate/"
+    USE_AUTH = None
+    AUTH = None
 
     def check_response_integrity(self, response, id_alert=""):
         if response.status_code not in [200, 201]:
@@ -53,7 +45,7 @@ class SuricateRequestManager:
         #         if check != data["check"]:
         #             raise Exception(f"Integrity of Suricate response compromised: expected checksum {check}, got checksum {data['check']}")
 
-    def get_from_suricate_no_integrity_check(self, endpoint, web_service="wsgestion/", url_params={}):
+    def get_from_suricate_no_integrity_check(self, endpoint, url_params={}):
         # Build ever-present URL parameter
         origin_param = f"?id_origin={self.ID_ORIGIN}"
         # Add specific URL parameters
@@ -67,36 +59,32 @@ class SuricateRequestManager:
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.get(
-                f"{self.URL}{web_service}{endpoint}{origin_param}{extra_url_params}{check}",
+                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
                 auth=self.AUTH,
             )
         else:
             response = requests.get(
-                f"{self.URL}{web_service}{endpoint}{origin_param}{extra_url_params}{check}",
+                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
             )
         return response
 
-    def get_from_suricate(self, endpoint, web_service="wsgestion/", url_params={}):
-        response = self.get_from_suricate_no_integrity_check(endpoint, web_service, url_params)
+    def get_from_suricate(self, endpoint, url_params={}):
+        response = self.get_from_suricate_no_integrity_check(endpoint, url_params)
         return self.check_response_integrity(response)
 
-    def post_to_suricate(self, endpoint, params, web_service="wsgestion/"):
-        if "preprod" in self.URL and "wsstandard":
-            url = self.OLD_PREPROD_URL
-        else:
-            url = self.URL
+    def post_to_suricate(self, endpoint, params):
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.post(
-                f"{url}{web_service}{endpoint}",
+                f"{self.URL}{endpoint}",
                 params,
                 auth=self.AUTH,
             )
         else:
-            response = requests.post(f"{url}{web_service}{endpoint}", params)
+            response = requests.post(f"{self.URL}{endpoint}", params)
 
         if response.status_code not in [200, 201]:
-            raise Exception("Failed to post on Suricate API")
+            raise Exception(f"Failed to post on Suricate API - status code {response.status_code}")
 
     def print_response_OK_or_KO(self, response):
         if response.status_code not in [200, 201]:
@@ -109,12 +97,53 @@ class SuricateRequestManager:
                 print("OK")
 
     def test_suricate_connection(self):
-        response = self.get_from_suricate_no_integrity_check(endpoint="wsGetActivities", web_service="wsgestion/")
-        print("API Gestion :")
+        response = self.get_from_suricate_no_integrity_check(endpoint="wsGetActivities")
         self.print_response_OK_or_KO(response)
-        print("API Standard :")
-        response = self.get_from_suricate_no_integrity_check(endpoint="wsGetActivities", web_service="wsstandard/")
-        self.print_response_OK_or_KO(response)
+
+
+class SuricateStandardRequestManager(SuricateRequestManager):
+
+    URL = settings.SURICATE_REPORT_SETTINGS["URL"]
+    ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
+    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
+        "PRIVATE_KEY_CLIENT_SERVER"
+    ]
+    PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_REPORT_SETTINGS[
+        "PRIVATE_KEY_SERVER_CLIENT"
+    ]
+    CHECK_CLIENT = (
+        f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
+    )
+    CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
+
+    USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
+    AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if USE_AUTH else None
+
+
+class SuricateGestionRequestManager(SuricateRequestManager):
+
+    URL = settings.SURICATE_MANAGEMENT_SETTINGS["URL"]
+    ID_ORIGIN = settings.SURICATE_MANAGEMENT_SETTINGS["ID_ORIGIN"]
+    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_MANAGEMENT_SETTINGS[
+        "PRIVATE_KEY_CLIENT_SERVER"
+    ]
+    PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_MANAGEMENT_SETTINGS[
+        "PRIVATE_KEY_SERVER_CLIENT"
+    ]
+    CHECK_CLIENT = (
+        f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
+    )
+    CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
+
+    USE_AUTH = "AUTH" in settings.SURICATE_MANAGEMENT_SETTINGS.keys()
+    AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if USE_AUTH else None
+
+
+def test_suricate_connection():
+    print("API Standard :")
+    SuricateStandardRequestManager().test_suricate_connection()
+    print("API Gestion :")
+    SuricateGestionRequestManager().test_suricate_connection()
 
 
 def send_report_managers(report, template_name="feedback/report_email.html"):
@@ -129,7 +158,12 @@ def send_reports_managers(template_name="feedback/reports_email.html"):
     mail_managers(subject, message, fail_silently=False)
 
 
-class SuricateMessenger(SuricateRequestManager):
+class SuricateMessenger():
+
+    def __init__(self):
+        self.standard_manager = SuricateStandardRequestManager()
+        self.gestion_manager = SuricateGestionRequestManager()
+
     def post_report(self, report):
         check = md5(
             (self.PRIVATE_KEY_CLIENT_SERVER + report.email).encode()
@@ -151,19 +185,18 @@ class SuricateMessenger(SuricateRequestManager):
             "os": "linux",
             "version": settings.VERSION,
         }
-
-        self.post_to_suricate("wsSendReport", params, "wsstandard/")
+        self.standard_manager.post_to_suricate("wsSendReport", params)
 
     # TODO use in workflow
     # def lock_alert(self, id_alert):
     #     """Lock report on Suricate Rest API"""
-    #     return self.get_from_suricate(
+    #     return self.gestion_manager.get_from_suricate(
     #         "wsLockAlert", extra_url_params={"uid_alerte": id_alert}
     #     )
 
     # def unlock_alert(self, id_alert):
     #     """Unlock report on Suricate Rest API"""
-    #     return self.get_from_suricate(
+    #     return self.gestion_manager.get_from_suricate(
     #         "wsUnlockAlert", url_params={"uid_alerte": id_alert}
     #     )
 
@@ -179,7 +212,7 @@ class SuricateMessenger(SuricateRequestManager):
     #         "check": check,
     #     }
 
-    #     self.post_to_suricate("wsSendMessageSentinelle", params)
+    #     self.gestion_manager.post_to_suricate("wsSendMessageSentinelle", params)
 
     # def update_status(self, id_alert, new_status, message):
     #     """Update status for given report on Suricate Rest API"""
@@ -194,11 +227,11 @@ class SuricateMessenger(SuricateRequestManager):
     #         "txt_changestatut": message,
     #         "check": check,
     #     }
-    #     self.post_to_suricate("wsUpdateStatus", params)
+    #     self.gestion_manager.post_to_suricate("wsUpdateStatus", params)
 
     # def update_gps(self, id_alert, gps_lat, gps_long):
     #     """Update report GPS coordinates on Suricate Rest API"""
-    #     self.get_from_suricate(
+    #     self.gestion_manager.get_from_suricate(
     #         "wsUpdateStatus",
     #         url_params={
     #             "uid_alerte": id_alert,
@@ -219,4 +252,4 @@ class SuricateMessenger(SuricateRequestManager):
     #         "check": check,
     #     }
 
-    #     self.post_to_suricate("wsSendMessageSentinelle", params)
+    #     self.gestion_manager.post_to_suricate("wsSendMessageSentinelle", params)

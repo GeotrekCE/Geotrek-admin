@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from geotrek.feedback.parsers import SuricateParser
-from geotrek.feedback.helpers import SuricateRequestManager
+from geotrek.feedback.helpers import test_suricate_connection
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class Command(BaseCommand):
             default=False,
         )
         parser.add_argument(
-            "--test_connection",
+            "--connection-test",
             dest="test",
             action='store_true',
             help="Test ability to reach Suricate API",
@@ -41,7 +41,7 @@ class Command(BaseCommand):
             parser = SuricateParser()
             has_no_params = not (options["statuses"] | options["activities"] | options["test"])
             if options['test']:
-                SuricateRequestManager().test_suricate_connection()
+                test_suricate_connection()
             else:
                 if options["activities"] or has_no_params:
                     parser.get_activities()
