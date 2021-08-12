@@ -8,7 +8,7 @@ from django.db.models.query_utils import Q
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.common.mixins import (AddPropertyMixin, PicturesMixin,
+from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin, PicturesMixin,
                                    TimeStampedModelMixin)
 from geotrek.common.utils import intersecting
 from geotrek.maintenance.models import Intervention
@@ -28,7 +28,7 @@ def status_default():
     return None
 
 
-class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, AddPropertyMixin):
+class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin):
     """User reports, submitted via *Geotrek-rando* or parsed from Suricate API."""
 
     email = models.EmailField(verbose_name=_("Email"))

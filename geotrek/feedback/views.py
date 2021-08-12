@@ -22,12 +22,14 @@ from rest_framework.views import APIView
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
+    queryset = feedback_models.Report.objects.existing()
     model = feedback_models.Report
     filterform = ReportFilterSet
     properties = ["email"]
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
+    queryset = feedback_models.Report.objects.existing()
     model = feedback_models.Report
     filterform = ReportFilterSet
     mandatory_columns = ['id', 'email', 'activity']
@@ -94,7 +96,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     """Disable permissions requirement"""
 
     model = feedback_models.Report
-    queryset = feedback_models.Report.objects.all()
+    queryset = feedback_models.Report.objects.existing()
     parser_classes = [FormParser, MultiPartParser]
     serializer_class = feedback_serializers.ReportSerializer
     geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer

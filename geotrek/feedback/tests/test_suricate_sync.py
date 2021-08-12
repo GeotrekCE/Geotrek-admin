@@ -123,7 +123,7 @@ class SuricateAPITests(SuricateTests):
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_activities_and_statuses(self, mocked):
-        """Test GET requests on Activities endpoint creates statuses objects"""
+        """Test GET requests on both Activities and Statuses endpoint creates objects"""
         self.build_get_request_patch(mocked)
         call_command("sync_suricate", activities=True, statuses=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
@@ -158,10 +158,10 @@ class SuricateAPITests(SuricateTests):
         r = Report.objects.all()[0]
         r.category = None
         r.save()
-        # Fetch it again to verify 'super.save' was called (i know, weird)
+        # Fetch it again to verify 'super.save' was called (management mode)
         r = Report.objects.all()[0]
         self.assertIsNone(r.category)
-        # Assert no mail
+        # Assert no new mail on update
         self.assertEqual(len(mail.outbox), 1)
 
     @override_settings(SURICATE_REPORT_ENABLED=True)
@@ -190,7 +190,7 @@ class SuricateAPITests(SuricateTests):
     @override_settings(SURICATE_REPORT_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_save_on_report_doesnt_post_to_suricate_in_no_suricate_mode(self, post_report):
-        """Test seve does not post to suricate on save Report in No Suricate Mode"""
+        """Test save does not post to suricate on save Report in No Suricate Mode"""
         Report.objects.create()
         post_report.assert_not_called()
 
@@ -210,7 +210,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(result, None)
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_post_request_to_suricate_fails(self, mock_post):
