@@ -28,6 +28,14 @@ SURICATE_REPORT_SETTINGS = {
     "AUTH": ("", ""),
 }
 
+SURICATE_MANAGEMENT_SETTINGS = {
+    "URL": "http://suricate.example.com",
+    "ID_ORIGIN": "geotrek",
+    "PRIVATE_KEY_CLIENT_SERVER": "",
+    "PRIVATE_KEY_SERVER_CLIENT": "",
+    "AUTH": ("", ""),
+}
+
 
 def mocked_json(file_name):
     filename = os.path.join(os.path.dirname(__file__), "data", file_name)
@@ -182,7 +190,7 @@ class SuricateAPITests(SuricateTests):
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
     def test_save_on_report_doesnt_post_to_suricate_in_no_suricate_mode(self, post_report):
-        """Test post to suricate on save Report in Suricate Management Mode"""
+        """Test seve does not post to suricate on save Report in No Suricate Mode"""
         Report.objects.create()
         post_report.assert_not_called()
 

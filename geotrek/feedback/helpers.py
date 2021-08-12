@@ -165,15 +165,16 @@ class SuricateMessenger():
         self.gestion_manager = SuricateGestionRequestManager()
 
     def post_report(self, report):
+        manager = self.standard_manager
         check = md5(
-            (self.PRIVATE_KEY_CLIENT_SERVER + report.email).encode()
+            (manager.PRIVATE_KEY_CLIENT_SERVER + report.email).encode()
         ).hexdigest()
         """Send report to Suricate Rest API"""
         activity_id = report.activity.suricate_id if report.activity is not None else None
         category_id = report.category.suricate_id if report.category is not None else None
         magnitude_id = report.problem_magnitude.suricate_id if report.problem_magnitude is not None else None
         params = {
-            "id_origin": self.ID_ORIGIN,
+            "id_origin": manager.ID_ORIGIN,
             "id_user": report.email,
             "lat": report.geom.y,
             "long": report.geom.x,
@@ -185,7 +186,7 @@ class SuricateMessenger():
             "os": "linux",
             "version": settings.VERSION,
         }
-        self.standard_manager.post_to_suricate("wsSendReport", params)
+        manager.post_to_suricate("wsSendReport", params)
 
     # TODO use in workflow
     # def lock_alert(self, id_alert):
