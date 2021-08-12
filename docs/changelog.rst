@@ -11,6 +11,7 @@ CHANGELOG
 - Add 'active' field to job model, and hide inactive jobs in forms
 - Add detailed jobs costs to interventions exports, with a new column for each job
 - Add SURICATE_MANAGEMENT_ENABLED setting
+- Add SURICATE_MANAGEMENT_SETTINGS setting to configure second Suricate API
 - Add helper to make requests to Suricate
 - Add parser to retrieve statuses, activities, and reports (in bounding box) from Suricate
 - Add sync_suricate command to retrieve Suricate data
