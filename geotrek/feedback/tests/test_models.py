@@ -16,8 +16,3 @@ class TestFeedbackModel(TestCase):
     def test_get_full_url(self):
         s = f"geotrek.local/report/{self.report.pk}/"
         self.assertEqual(self.report.full_url, s)
-
-    @override_settings(ALLOWED_HOSTS=[])
-    def test_get_full_url_exception(self):
-        with self.assertRaises(Exception):
-            self.report.full_url

@@ -1,5 +1,6 @@
 from mapentity.factories import UserFactory
 import os
+import io
 from unittest import mock
 from unittest.mock import MagicMock
 import uuid
@@ -187,8 +188,7 @@ class SuricateAPITests(SuricateTests):
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_ENABLED=False)
-    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
-    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
+    @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_save_on_report_doesnt_post_to_suricate_in_no_suricate_mode(self, post_report):
         """Test seve does not post to suricate on save Report in No Suricate Mode"""
         Report.objects.create()
@@ -247,6 +247,42 @@ class SuricateAPITests(SuricateTests):
         with self.assertRaises(Exception):
             SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
 
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("sys.stdout", new_callable=io.StringIO)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_connection_test(self, mock_get, mocked_stdout):
+        """Assert connection test command outputs OK
+        """
+        # Mock error 408
+        self.build_get_request_patch(mock_get)
+        call_command("sync_suricate", test=True)
+        # Assert outputs OK
+        self.assertEquals(mocked_stdout.getvalue(), 'API Standard :\nOK\nAPI Gestion :\nOK\n')
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("sys.stdout", new_callable=io.StringIO)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_connection_test_fails_API(self, mock_get, mocked_stdout):
+        """Assert connection test command outputs error when it fails on Suricate API side
+        """
+        # Mock negative response
+        self.build_failed_request_patch(mock_get)
+        # Assert outputs KO
+        call_command("sync_suricate", test=True)
+        self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 400\nAPI Gestion :\nKO - Status code: 400\n")
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("sys.stdout", new_callable=io.StringIO)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_connection_test_fails_HTTP(self, mock_get, mocked_stdout):
+        """Assert connection test command outputs error when it fails on HTTP
+        """
+        # Mock error 408
+        self.build_extra_failed_request_patch(mock_get)
+        # Assert outputs KO
+        call_command("sync_suricate", test=True)
+        self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 408\nAPI Gestion :\nKO - Status code: 408\n")
+
 
 class SuricateInterfaceTests(SuricateTests):
 
@@ -291,3 +327,15 @@ class SuricateInterfaceTests(SuricateTests):
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
         self.assertEqual(AttachedMessage.objects.count(), 44)
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_request_to_suricate_fails_1(self, mock_get):
+        """Test get request itself fails
+        """
+        # Mock error 408
+        self.build_extra_failed_request_patch(mock_get)
+        # Get raises an exception
+        with self.assertRaises(Exception):
+            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
