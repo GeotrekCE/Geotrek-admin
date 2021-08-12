@@ -117,7 +117,7 @@ This mode sends no report data to Suricate.
 
 2 - Suricate Reports 
 
-This mode simply forwards all reports to Suricate.
+This mode simply forwards all reports to Suricate, using the Standard API to post reports.
 
 Set your account settings in `custom.py`:
 
@@ -126,7 +126,7 @@ Set your account settings in `custom.py`:
         SURICATE_REPORT_ENABLED = True
 
         SURICATE_REPORT_SETTINGS = {
-            'URL': '<Suricate API Url>',
+            'URL': '<Suricate Standard API Url>',
             'ID_ORIGIN': '<Suricate origin ID>',
             'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
             'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
@@ -143,7 +143,7 @@ To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref
 
 3. Suricate Management 
 
-This mode allows to retreive reports and related data directly from Suricate.
+This mode allows to retreive reports and related data directly from Suricate, using the Management API to get data. It requires enabling the Suricate Report mode as well.
 
 Set your account settings in `custom.py`:
 
@@ -151,12 +151,18 @@ Set your account settings in `custom.py`:
 
         SURICATE_MANAGEMENT_ENABLED = True
 
-        SURICATE_REPORT_SETTINGS = {
-            'URL': '<Suricate API Url>',
+        SURICATE_MANAGEMENT_SETTINGS = {
+            'URL': '<Suricate Management API Url>',
             'ID_ORIGIN': '<Suricate origin ID>',
             'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
             'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
         }
+
+You can use the following command to test your connection settings :
+
+    .. code-block :: python
+
+        geotrek sync_suricate -v 2 --connection-test
 
 Load lists for activities and/or report statuses :
 
