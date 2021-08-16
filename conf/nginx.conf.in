@@ -30,6 +30,7 @@ server {
     location /media/upload {
         expires 1d;
         alias /opt/geotrek-admin/var/media/upload;
+        add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin;
     }
 
     location /media_secure {
