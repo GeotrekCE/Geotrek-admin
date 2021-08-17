@@ -272,33 +272,33 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         def get_label(self, obj):
             return get_translation_or_dict('label', self, obj)
 
-    class TouristicContentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
+    class TouristicEventTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        type = serializers.SerializerMethodField(read_only=True)
+
+        def get_type(self, obj):
+            return get_translation_or_dict('type', self, obj)
+
+        class Meta:
+            model = tourism_models.TouristicContentCategory
+            fields = ('id', 'type', 'pictogram')
+
+    class TouristicModelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         create_datetime = serializers.DateTimeField(source='date_update')
         update_datetime = serializers.DateTimeField(source='date_insert')
         external_id = serializers.CharField(source='eid')
-        types = serializers.SerializerMethodField(read_only=True)
         cities = serializers.SerializerMethodField(read_only=True)
-        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
         practical_info = serializers.SerializerMethodField(read_only=True)
         pdf = serializers.SerializerMethodField('get_pdf_url')
-        departure_city = serializers.SerializerMethodField(read_only=True)
 
-        class Meta:
-            model = tourism_models.TouristicContent
-            fields = (
-                'id', 'attachments', 'approved', 'category', 'description',
-                'description_teaser', 'departure_city', 'geometry',
-                'practical_info', 'url', 'cities', 'create_datetime',
-                'external_id', 'name', 'pdf', 'portal', 'published',
-                'source', 'structure', 'themes',
-                'update_datetime', 'types', 'contact', 'email',
-                'website', 'reservation_system', 'reservation_id',
-            )
+        def get_practical_info(self, obj):
+            return get_translation_or_dict('practical_info', self, obj)
+
+        def get_cities(self, obj):
+            return [city.code for city in obj.published_cities]
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
@@ -308,19 +308,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_description_teaser(self, obj):
             return get_translation_or_dict('description_teaser', self, obj)
-
-        def get_practical_info(self, obj):
-            return get_translation_or_dict('practical_info', self, obj)
-
-        def get_types(self, obj):
-            return {
-                obj.category.id * 100 + i: [
-                    t.id for t in getattr(obj, 'type{}'.format(i)).all()
-                ] for i in (1, 2)
-            }
-
-        def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
 
         def _get_pdf_url_lang(self, obj, lang):
             if settings.ONLY_EXTERNAL_PUBLIC_PDF:
@@ -344,9 +331,53 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                     data[language] = self._get_pdf_url_lang(obj, language)
             return data
 
+    class TouristicContentSerializer(TouristicModelSerializer):
+        url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
+        types = serializers.SerializerMethodField(read_only=True)
+        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        departure_city = serializers.SerializerMethodField(read_only=True)
+
+        class Meta:
+            model = tourism_models.TouristicContent
+            fields = (
+                'id', 'attachments', 'approved', 'category', 'description',
+                'description_teaser', 'departure_city', 'geometry',
+                'practical_info', 'url', 'cities', 'create_datetime',
+                'external_id', 'name', 'pdf', 'portal', 'published',
+                'source', 'structure', 'themes',
+                'update_datetime', 'types', 'contact', 'email',
+                'website', 'reservation_system', 'reservation_id',
+            )
+
+        def get_types(self, obj):
+            return {
+                obj.category.id * 100 + i: [
+                    t.id for t in getattr(obj, 'type{}'.format(i)).all()
+                ] for i in (1, 2)
+            }
+
         def get_departure_city(self, obj):
             city = zoning_models.City.objects.all().filter(geom__contains=obj.geom).first()
             return city.code if city else None
+
+    class TouristicEventSerializer(TouristicModelSerializer):
+        url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
+        begin_date = serializers.DateField()
+        end_date = serializers.DateField()
+        type = TouristicEventTypeSerializer()
+
+        class Meta:
+            model = tourism_models.TouristicEvent
+            fields = (
+                'id', 'approved', 'type', 'description',
+                'description_teaser', 'meeting_point', 'geometry',
+                'practical_info', 'url', 'cities', 'create_datetime',
+                'external_id', 'name', 'pdf', 'portal', 'published',
+                'source', 'structure', 'themes', 'meeting_time', 'meeting_point',
+                'update_datetime', 'contact', 'email', "begin_date", "end_date",
+                'website', 'organizer', 'speaker', 'accessibility', 'participant_number',
+                'booking', 'target_audience', 'duration'
+            )
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)

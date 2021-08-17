@@ -11,7 +11,7 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-from geotrek.tourism.models import TouristicContentType
+from geotrek.tourism.models import TouristicContentType, TouristicEventType
 from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
 
@@ -227,23 +227,13 @@ class GeotrekPOIFilter(BaseFilterBackend):
         )
 
 
-class GeotrekTouristicContentFilter(BaseFilterBackend):
-    def filter_queryset(self, request, queryset, view):
+class GeotrekTouristicModelFilter(BaseFilterBackend):
+    def _filter_queryset(self, request, queryset, view):
         qs = queryset
         near_trek = request.GET.get('near_trek')
         if near_trek:
             contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
             qs = contents_intersecting.order_by('id')
-        categories = request.GET.get('categories')
-        if categories:
-            qs = qs.filter(category__in=categories.split(','))
-        types = request.GET.get('types')
-        if types:
-            types_id = types.split(',')
-            if TouristicContentType.objects.filter(id__in=types_id, in_list=1).exists():
-                qs = qs.filter(Q(type1__in=types_id))
-            if TouristicContentType.objects.filter(id__in=types_id, in_list=2).exists():
-                qs = qs.filter(Q(type2__in=types_id))
         cities = request.GET.get('cities')
         if cities:
             cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
@@ -268,22 +258,12 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
             )
         return qs
 
-    def get_schema_fields(self, view):
+    def _get_schema_fields(self, view):
         return (
             Field(
                 name='near_trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Near trek"),
                     description=_("Filter by a trek id. It will show only the touristics contents related to this trek.")
-                )
-            ), Field(
-                name='categories', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Categories"),
-                    description=_("Filter by one or more category id, comma-separated.")
-                )
-            ), Field(
-                name='types', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
                 )
             ), Field(
                 name='cities', required=False, location='query', schema=coreschema.String(
@@ -316,6 +296,65 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
                     description=_('Filter by some case-insensitive text contained in name, description teaser or description.')
                 )
             )
+        )
+
+
+class GeotrekTouristicContentFilter(GeotrekTouristicModelFilter):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        categories = request.GET.get('categories')
+        if categories:
+            qs = qs.filter(category__in=categories.split(','))
+        types = request.GET.get('types')
+        if types:
+            types_id = types.split(',')
+            if TouristicContentType.objects.filter(id__in=types_id, in_list=1).exists():
+                qs = qs.filter(Q(type1__in=types_id))
+            if TouristicContentType.objects.filter(id__in=types_id, in_list=2).exists():
+                qs = qs.filter(Q(type2__in=types_id))
+        return self._filter_queryset(request, qs, view)
+
+    def get_schema_fields(self, view):
+        return self._get_schema_fields(view) + (
+            Field(
+                name='categories', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Categories"),
+                    description=_("Filter by one or more category id, comma-separated.")
+                )
+            ), Field(
+                name='types', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Types"),
+                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
+                )
+            )
+        )
+
+
+class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        # TODO dates
+        types = request.GET.get('types')
+        if types:
+            types_id = types.split(',')
+            if TouristicEventType.objects.filter(id__in=types_id, in_list=1).exists():
+                qs = qs.filter(Q(type__in=types_id))
+        return self._filter_queryset(request, qs, view)
+
+    def get_schema_fields(self, view):
+        return (
+            *self._get_schema_fields(view),
+            Field(
+                name="types",
+                required=False,
+                location="query",
+                schema=coreschema.Integer(
+                    title=_("Types"),
+                    description=_(
+                        "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
+                    ),
+                ),
+            ),
         )
 
 
