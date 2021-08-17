@@ -364,7 +364,13 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
         end_date = serializers.DateField()
-        type = TouristicEventTypeSerializer()
+        type = serializers.SerializerMethodField(read_only=True)
+
+        def get_type(self, obj):
+            obj_type = obj.type
+            if obj_type:
+                return obj_type.pk
+            return None
 
         class Meta:
             model = tourism_models.TouristicEvent
