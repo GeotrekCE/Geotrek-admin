@@ -1,5 +1,5 @@
 from unittest import skipIf
-
+import datetime
 from django.contrib.gis.geos import MultiLineString
 from django.urls import reverse
 from django.test.testcases import TestCase
@@ -1909,3 +1909,232 @@ class TrekDifficultyFilterCase(TestCase):
         self.assert_trek_is_not_in_reponse(response, self.trek_medium)
         self.assert_trek_is_in_reponse(response, self.trek_hard)
         self.assert_trek_is_not_in_reponse(response, self.trek_v_hard)
+
+
+@override_settings(API_SRID=4326)
+@override_settings(SRID=4326)
+@override_settings(TOURISM_INTERSECTION_MARGIN=500)
+class TouristicEventTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory()
+        cls.touristic_event1 = tourism_factory.TouristicEventFactory(
+            name_fr="Exposition - Du vent, du sable et des étoiles",
+            name_en="Wind and sand",
+            description_fr="Cette exposition",
+            description_en="An expo",
+            description_teaser_fr="Un parcours dans la vie",
+            geom='SRID=%s;POINT(0.77802 43.047482)' % settings.SRID,
+            meeting_point="Bibliothèque municipale de Soueich, Mairie, 31550 Soueich",
+            begin_date=datetime.date(2021, 7, 2),
+            end_date=datetime.date(2021, 7, 3),
+            accessibility="HA",
+            target_audience="De 4 à 121 ans",
+            published=True,
+            type=cls.touristic_event_type,
+            meeting_time=datetime.time(11, 20)
+        )
+        cls.touristic_event2 = tourism_factory.TouristicEventFactory(
+            name_fr="expo",
+            geom='SRID=%s;POINT(89.00002 89.047482)' % settings.SRID,
+            published=True,
+        )
+        cls.trek = trek_factory.TrekFactory(
+            geom='SRID=%s;MULTILINESTRING ((0.77802 43.047482, 0.77803 43.047483), (0.77804 43.047484, 0.77805 43.047485, 0.77806 43.047486))' % settings.SRID
+        )
+        cls.serialized_te1 = {
+            "id": cls.touristic_event1.pk,
+            "approved": False,
+            "type": cls.touristic_event_type.pk,
+            "description": {
+                "en": "An expo",
+                "es": None,
+                "fr": "Cette exposition",
+                "it": None
+            },
+            "description_teaser": {
+                "en": None,
+                "es": None,
+                "fr": "Un parcours dans la vie",
+                "it": None
+            },
+            "meeting_point": "Bibliothèque municipale de Soueich, Mairie, 31550 Soueich",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    0.77802,
+                    43.047482
+                ]
+            },
+            "practical_info": {
+                "en": None,
+                "es": None,
+                "fr": None,
+                "it": None
+            },
+            "url": f"http://testserver/api/v2/touristicevent/{cls.touristic_event1.pk}/",
+            "cities": [],
+            "create_datetime": cls.touristic_event1.date_insert.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "external_id": None,
+            "name": {
+                "en": "Wind and sand",
+                "es": None,
+                "fr": "Exposition - Du vent, du sable et des étoiles",
+                "it": None
+            },
+            "pdf": {
+                "fr": f"http://testserver/api/fr/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf",
+                "es": f"http://testserver/api/es/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf",
+                "en": f"http://testserver/api/en/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf",
+                "it": f"http://testserver/api/it/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf"
+            },
+            "portal": [],
+            "published": True,
+            "source": [],
+            "structure": 1,
+            "themes": [cls.touristic_event1.themes.first().pk],
+            "meeting_time": "11:20:00",
+            "update_datetime": cls.touristic_event1.date_update.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "contact": "",
+            "email": None,
+            "begin_date": "2021-07-02",
+            "end_date": "2021-07-03",
+            "website": None,
+            "organizer": "",
+            "speaker": "",
+            "accessibility": "HA",
+            "participant_number": "",
+            "booking": "",
+            "target_audience": "De 4 à 121 ans",
+            "duration": ""
+        }
+        cls.serialized_te2 = {
+            "id": cls.touristic_event2.pk,
+            "approved": False,
+            "type": cls.touristic_event2.type.pk,
+            "description": {
+                "en": None,
+                "es": None,
+                "fr": None,
+                "it": None
+            },
+            "description_teaser": {
+                "en": None,
+                "es": None,
+                "fr": None,
+                "it": None
+            },
+            "meeting_point": "",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    120.00002,
+                    90.047482
+                ]
+            },
+            "practical_info": {
+                "en": None,
+                "es": None,
+                "fr": None,
+                "it": None
+            },
+            "url": f"http://testserver/api/v2/touristicevent/{cls.touristic_event2.pk}/",
+            "cities": [],
+            "create_datetime": cls.touristic_event2.date_insert.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "external_id": None,
+            "name": {
+                "en": "Touristic event",
+                "es": None,
+                "fr": "expo",
+                "it": None
+            },
+            "pdf": {
+                "fr": f"http://testserver/api/fr/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf",
+                "es": f"http://testserver/api/es/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf",
+                "en": f"http://testserver/api/en/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf",
+                "it": f"http://testserver/api/it/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf"
+            },
+            "portal": [],
+            "published": True,
+            "source": [],
+            "structure": 1,
+            "themes": [cls.touristic_event2.themes.first().pk],
+            "meeting_time": None,
+            "update_datetime": cls.touristic_event2.date_update.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            "contact": "",
+            "email": None,
+            "begin_date": "2002-02-20",
+            "end_date": "2202-02-22",
+            "website": None,
+            "organizer": "",
+            "speaker": "",
+            "accessibility": "",
+            "participant_number": "",
+            "booking": "",
+            "target_audience": None,
+            "duration": ""
+        }
+
+    def test_touristic_event_list(self):
+        response = self.client.get(reverse('apiv2:touristicevent-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te2,
+                self.serialized_te1
+            ]
+        })
+
+    def test_touristic_event_detail(self):
+        response = self.client.get(f"/api/v2/touristicevent/{self.touristic_event1.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.serialized_te1)
+
+    def test_touristicevent_near_trek(self):
+        response = self.client.get(reverse('apiv2:touristicevent-list'), params={'near_trek': self.trek.pk})
+        # Assert Event 1 appears but not Event 2
+        self.maxDiff = None
+        self.assertJSONEqual(response.content, {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te1
+            ]
+        })
+
+
+class TouristicEventTypeCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory(type_fr="Cool", type_en="af")
+        cls.serialized_tet = {
+            'id': 1,
+            'pictogram': f"http://testserver{cls.touristic_event_type.pictogram.url}",
+            'type': {
+                'en': 'af',
+                'es': None,
+                'fr': 'Cool',
+                'it': None
+            }
+        }
+
+    def test_touristic_event_type_list(self):
+        response = self.client.get(reverse('apiv2:touristiceventtype-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_tet
+            ]
+        })
+
+    def test_touristic_event_type_detail(self):
+        response = self.client.get(f"/api/v2/touristicevent_type/{self.touristic_event_type.pk}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.serialized_tet)
