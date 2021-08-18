@@ -1917,6 +1917,7 @@ class TrekDifficultyFilterCase(TestCase):
 class TouristicEventTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.maxDiff = None
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory()
         cls.touristic_event1 = tourism_factory.TouristicEventFactory(
             name_fr="Exposition - Du vent, du sable et des étoiles",
@@ -2028,8 +2029,8 @@ class TouristicEventTestCase(TestCase):
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    120.00002,
-                    90.047482
+                    89.00002,
+                    89.047482
                 ]
             },
             "practical_info": {
@@ -2096,7 +2097,6 @@ class TouristicEventTestCase(TestCase):
     def test_touristicevent_near_trek(self):
         response = self.client.get(reverse('apiv2:touristicevent-list'), params={'near_trek': self.trek.pk})
         # Assert Event 1 appears but not Event 2
-        self.maxDiff = None
         self.assertJSONEqual(response.content, {
             "count": 1,
             "next": None,
