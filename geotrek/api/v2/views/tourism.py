@@ -65,4 +65,4 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
             .select_related('type') \
             .prefetch_related('themes', 'source', 'portal') \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('id')  # Required for reliable pagination
+            .order_by('name')  # Required for reliable pagination

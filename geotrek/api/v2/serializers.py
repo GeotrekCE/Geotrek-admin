@@ -284,8 +284,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class TouristicModelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
-        create_datetime = serializers.DateTimeField(source='date_update')
-        update_datetime = serializers.DateTimeField(source='date_insert')
+        create_datetime = serializers.DateTimeField(source='date_insert')
+        update_datetime = serializers.DateTimeField(source='date_update')
         external_id = serializers.CharField(source='eid')
         cities = serializers.SerializerMethodField(read_only=True)
         name = serializers.SerializerMethodField(read_only=True)
@@ -379,7 +379,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'description_teaser', 'meeting_point', 'geometry',
                 'practical_info', 'url', 'cities', 'create_datetime',
                 'external_id', 'name', 'pdf', 'portal', 'published',
-                'source', 'structure', 'themes', 'meeting_time', 'meeting_point',
+                'source', 'structure', 'themes', 'meeting_time',
                 'update_datetime', 'contact', 'email', "begin_date", "end_date",
                 'website', 'organizer', 'speaker', 'accessibility', 'participant_number',
                 'booking', 'target_audience', 'duration'
