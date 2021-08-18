@@ -1992,7 +1992,7 @@ class TouristicEventTestCase(TestCase):
             "portal": [],
             "published": True,
             "source": [],
-            "structure": 1,
+            "structure": cls.touristic_event1.structure.pk,
             "themes": [cls.touristic_event1.themes.first().pk],
             "meeting_time": "11:20:00",
             "update_datetime": cls.touristic_event1.date_update.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
@@ -2058,7 +2058,7 @@ class TouristicEventTestCase(TestCase):
             "portal": [],
             "published": True,
             "source": [],
-            "structure": 1,
+            "structure": cls.touristic_event2.structure.pk,
             "themes": [cls.touristic_event2.themes.first().pk],
             "meeting_time": None,
             "update_datetime": cls.touristic_event2.date_update.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
@@ -2112,7 +2112,7 @@ class TouristicEventTypeCase(TestCase):
     def setUpTestData(cls):
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory(type_fr="Cool", type_en="af")
         cls.serialized_tet = {
-            'id': 1,
+            'id': cls.touristic_event_type.pk,
             'pictogram': f"http://testserver{cls.touristic_event_type.pictogram.url}",
             'type': {
                 'en': 'af',
