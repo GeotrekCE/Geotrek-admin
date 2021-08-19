@@ -346,7 +346,7 @@ class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
             types = request.GET.get('types')
             if types:
                 types_id = types.split(',')
-                if TouristicEventType.objects.filter(id__in=types_id, in_list=1).exists():
+                if TouristicEventType.objects.filter(id__in=types_id).exists():
                     qs = qs.filter(Q(type__in=types_id))
             dates_before = request.GET.get('dates_before')
             if dates_before:

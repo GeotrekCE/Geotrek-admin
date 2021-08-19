@@ -2224,6 +2224,18 @@ class TouristicEventTestCase(BaseApiTest):
             ]
         })
 
+    def test_touristic_event_type_filters(self):
+        response = self.get_touristicevent_list({'dates_after': '1970-01-01', 'types': self.touristic_event_type.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te1
+            ]
+        })
+
 
 class TouristicEventTypeTestCase(BaseApiTest):
     @classmethod
