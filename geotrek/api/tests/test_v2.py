@@ -2077,7 +2077,20 @@ class TouristicEventTestCase(TestCase):
         }
 
     def test_touristic_event_list(self):
-        response = self.client.get(reverse('apiv2:touristicevent-list'))
+        response = self.client.get("/api/v2/touristicevent/")
+        self.assertEqual(response.status_code, 200)
+        # Only one because past events are filter by default
+        self.assertJSONEqual(response.content, {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te2,
+            ]
+        })
+
+    def test_touristic_event_dates_filters(self):
+        response = self.client.get("/api/v2/touristicevent/?dates_after=1970-01-01")
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             "count": 2,
@@ -2088,6 +2101,38 @@ class TouristicEventTestCase(TestCase):
                 self.serialized_te1
             ]
         })
+        response = self.client.get("/api/v2/touristicevent/?dates_before=2200-01-01&dates_after=1970-01-01")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te2,
+                self.serialized_te1
+            ]
+        })
+        response = self.client.get("/api/v2/touristicevent/?dates_after=2021-07-03")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te2,
+                self.serialized_te1
+            ]
+        })
+        response = self.client.get("/api/v2/touristicevent/?dates_after=2021-07-04")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te2,
+            ]
+        })
 
     def test_touristic_event_detail(self):
         response = self.client.get(f"/api/v2/touristicevent/{self.touristic_event1.pk}/")
@@ -2095,7 +2140,7 @@ class TouristicEventTestCase(TestCase):
         self.assertJSONEqual(response.content, self.serialized_te1)
 
     def test_touristicevent_near_trek(self):
-        response = self.client.get(reverse('apiv2:touristicevent-list'), params={'near_trek': self.trek.pk})
+        response = self.client.get(f"/api/v2/touristicevent/?near_trek={self.trek.pk}&dates_after=1970-01-01")
         # Assert Event 1 appears but not Event 2
         self.assertJSONEqual(response.content, {
             "count": 1,

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 import coreschema
 
 from coreapi.document import Field
@@ -231,9 +231,10 @@ class GeotrekTouristicModelFilter(BaseFilterBackend):
     def _filter_queryset(self, request, queryset, view):
         qs = queryset
         near_trek = request.GET.get('near_trek')
+        print(near_trek)
         if near_trek:
             contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
-            qs = contents_intersecting.order_by('id')
+            qs = contents_intersecting.order_by('name')
         cities = request.GET.get('cities')
         if cities:
             cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
@@ -333,12 +334,24 @@ class GeotrekTouristicContentFilter(GeotrekTouristicModelFilter):
 class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
-        # TODO dates
-        types = request.GET.get('types')
-        if types:
-            types_id = types.split(',')
-            if TouristicEventType.objects.filter(id__in=types_id, in_list=1).exists():
-                qs = qs.filter(Q(type__in=types_id))
+        # Don't filter on detail view
+        if 'pk' not in view.kwargs:
+            types = request.GET.get('types')
+            if types:
+                types_id = types.split(',')
+                if TouristicEventType.objects.filter(id__in=types_id, in_list=1).exists():
+                    qs = qs.filter(Q(type__in=types_id))
+            dates_before = request.GET.get('dates_before')
+            if dates_before:
+                dates_before = datetime.strptime(dates_before, "%Y-%m-%d").date()
+                qs = qs.filter(Q(begin_date__lte=dates_before))
+            dates_after = request.GET.get('dates_after')
+            if dates_after:
+                dates_after = datetime.strptime(dates_after, "%Y-%m-%d").date()
+            else:
+                # Filter out past events by default
+                dates_after = date.today()
+            qs = qs.filter(Q(end_date__gte=dates_after))
         return self._filter_queryset(request, qs, view)
 
     def get_schema_fields(self, view):
@@ -354,7 +367,23 @@ class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
                         "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
                     ),
                 ),
-            ),
+            ), Field(
+                name='dates_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Dates before"),
+                    description=_("Filter events happening before or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='dates_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Dates after"),
+                    description=_("Filter events happening after or during date, format YYYY-MM-DD")
+                )
+            )
         )
 
 
