@@ -11,7 +11,7 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-from geotrek.tourism.models import TouristicContentType, TouristicEventType
+from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
 from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
 
@@ -230,8 +230,15 @@ class GeotrekPOIFilter(BaseFilterBackend):
 class GeotrekTouristicModelFilter(BaseFilterBackend):
     def _filter_queryset(self, request, queryset, view):
         qs = queryset
+        near_touristicevent = request.GET.get('near_touristicevent')
+        if near_touristicevent:
+            contents_intersecting = intersecting(qs, TouristicEvent.objects.get(pk=near_touristicevent))
+            qs = contents_intersecting.order_by('name')
+        near_touristiccontent = request.GET.get('near_touristiccontent')
+        if near_touristiccontent:
+            contents_intersecting = intersecting(qs, TouristicContent.objects.get(pk=near_touristiccontent))
+            qs = contents_intersecting.order_by('name')
         near_trek = request.GET.get('near_trek')
-        print(near_trek)
         if near_trek:
             contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
             qs = contents_intersecting.order_by('name')

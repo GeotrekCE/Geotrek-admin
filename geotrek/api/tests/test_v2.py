@@ -1950,7 +1950,7 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
         cls.touristic_event2 = tourism_factory.TouristicEventFactory(
             name_fr="expo",
-            geom='SRID=%s;POINT(89.00002 89.047482)' % settings.SRID,
+            geom=Point(5.77802, 2.047482, srid=4326),
             published=True,
         )
         cls.touristic_event2.portal.set([common_factory.TargetPortalFactory()])
@@ -1960,6 +1960,12 @@ class TouristicEventTestCase(BaseApiTest):
             geom=cls.path.geom,
             published=True
         )
+        cls.touristic_event3 = tourism_factory.TouristicEventFactory(
+            name_fr="expooo",
+            geom=Point(5.77802, 2.047482, srid=4326),
+            published=False,
+        )
+        cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
         cls.serialized_te1 = {
             "id": cls.touristic_event1.pk,
             "approved": False,
@@ -2046,8 +2052,8 @@ class TouristicEventTestCase(BaseApiTest):
             "geometry": {
                 "type": "Point",
                 "coordinates": [
-                    89.00002,
-                    89.047482
+                    5.77802,
+                    2.047482
                 ]
             },
             "practical_info": {
@@ -2129,6 +2135,19 @@ class TouristicEventTestCase(BaseApiTest):
                 self.serialized_te1
             ]
         })
+
+        response = self.get_touristicevent_list({'dates_before': '2021-09-01', 'dates_after': '1970-01-01'})
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 2,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te2,
+                self.serialized_te1
+            ]
+        })
+
         response = self.get_touristicevent_list({'dates_after': '2021-07-03'})
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
@@ -2141,6 +2160,7 @@ class TouristicEventTestCase(BaseApiTest):
             ]
         })
         response = self.get_touristicevent_list({'dates_after': '2021-07-04'})
+        # Event 1 finishes on 3rd of july
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             "count": 1,
@@ -2159,6 +2179,30 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristicevent_near_trek(self):
         response = self.get_touristicevent_list({'near_trek': self.trek.pk, 'dates_after': '1970-01-01'})
         # Assert Event 1 appears but not Event 2
+        self.assertJSONEqual(response.content, {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te1
+            ]
+        })
+
+    def test_touristicevent_near_touristicevent(self):
+        response = self.get_touristicevent_list({'near_touristicevent': self.touristic_event3.pk, 'dates_after': '1970-01-01'})
+        # Assert Event 2 appears but not Event 1 (too far) or Event 3 (not published)
+        self.assertJSONEqual(response.content, {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te2
+            ]
+        })
+
+    def test_touristicevent_near_touristiccontent(self):
+        response = self.get_touristicevent_list({'near_touristiccontent': self.touristic_content.pk, 'dates_after': '1970-01-01'})
+        # Assert Event 1 appears but not Event 2 (too far) or Event 3 (too far + not published)
         self.assertJSONEqual(response.content, {
             "count": 1,
             "next": None,
