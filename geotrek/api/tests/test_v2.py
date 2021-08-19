@@ -1,9 +1,8 @@
 from unittest import skipIf
 import datetime
-from django.contrib.gis.geos import MultiLineString
 from django.urls import reverse
 from django.test.testcases import TestCase
-from django.contrib.gis.geos import MultiPoint, Point, LineString
+from django.contrib.gis.geos import MultiPoint, Point, LineString, MultiLineString
 from django.conf import settings
 from django.test.utils import override_settings
 
@@ -435,6 +434,18 @@ class BaseApiTest(TestCase):
 
     def get_magnitude_list(self, params=None):
         return self.client.get(reverse('apiv2:feedback-magnitude'), params)
+
+    def get_touristicevent_list(self, params=None):
+        return self.client.get(reverse('apiv2:touristicevent-list'), params)
+
+    def get_touristicevent_detail(self, id_touristicevent, params=None):
+        return self.client.get(reverse('apiv2:touristicevent-detail', args=(id_touristicevent,)), params)
+
+    def get_touristiceventtype_list(self, params=None):
+        return self.client.get(reverse('apiv2:touristiceventtype-list'), params)
+
+    def get_touristiceventtype_detail(self, id_touristiceventtype, params=None):
+        return self.client.get(reverse('apiv2:touristiceventtype-detail', args=(id_touristiceventtype,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -1911,10 +1922,11 @@ class TrekDifficultyFilterCase(TestCase):
         self.assert_trek_is_not_in_reponse(response, self.trek_v_hard)
 
 
-@override_settings(API_SRID=4326)
 @override_settings(SRID=4326)
+@override_settings(API_SRID=4326)
 @override_settings(TOURISM_INTERSECTION_MARGIN=500)
-class TouristicEventTestCase(TestCase):
+class TouristicEventTestCase(BaseApiTest):
+
     @classmethod
     def setUpTestData(cls):
         cls.maxDiff = None
@@ -1925,7 +1937,7 @@ class TouristicEventTestCase(TestCase):
             description_fr="Cette exposition",
             description_en="An expo",
             description_teaser_fr="Un parcours dans la vie",
-            geom='SRID=%s;POINT(0.77802 43.047482)' % settings.SRID,
+            geom=Point(0.77802, 43.047482, srid=4326),
             meeting_point="Bibliothèque municipale de Soueich, Mairie, 31550 Soueich",
             begin_date=datetime.date(2021, 7, 2),
             end_date=datetime.date(2021, 7, 3),
@@ -1933,15 +1945,20 @@ class TouristicEventTestCase(TestCase):
             target_audience="De 4 à 121 ans",
             published=True,
             type=cls.touristic_event_type,
-            meeting_time=datetime.time(11, 20)
+            meeting_time=datetime.time(11, 20),
         )
+        cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
         cls.touristic_event2 = tourism_factory.TouristicEventFactory(
             name_fr="expo",
             geom='SRID=%s;POINT(89.00002 89.047482)' % settings.SRID,
             published=True,
         )
-        cls.trek = trek_factory.TrekFactory(
-            geom='SRID=%s;MULTILINESTRING ((0.77802 43.047482, 0.77803 43.047483), (0.77804 43.047484, 0.77805 43.047485, 0.77806 43.047486))' % settings.SRID
+        cls.touristic_event2.portal.set([common_factory.TargetPortalFactory()])
+        cls.path = core_factory.PathFactory.create(geom=LineString((0.77802, 43.047482), (0.77803, 43.047483), srid=4326))
+        cls.trek = trek_factory.TrekFactory.create(
+            paths=[(cls.path, 0, 1)],
+            geom=cls.path.geom,
+            published=True
         )
         cls.serialized_te1 = {
             "id": cls.touristic_event1.pk,
@@ -1989,7 +2006,7 @@ class TouristicEventTestCase(TestCase):
                 "en": f"http://testserver/api/en/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf",
                 "it": f"http://testserver/api/it/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf"
             },
-            "portal": [],
+            "portal": [cls.touristic_event1.portal.first().pk],
             "published": True,
             "source": [],
             "structure": cls.touristic_event1.structure.pk,
@@ -2055,7 +2072,7 @@ class TouristicEventTestCase(TestCase):
                 "en": f"http://testserver/api/en/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf",
                 "it": f"http://testserver/api/it/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf"
             },
-            "portal": [],
+            "portal": [cls.touristic_event2.portal.first().pk],
             "published": True,
             "source": [],
             "structure": cls.touristic_event2.structure.pk,
@@ -2077,7 +2094,7 @@ class TouristicEventTestCase(TestCase):
         }
 
     def test_touristic_event_list(self):
-        response = self.client.get("/api/v2/touristicevent/")
+        response = self.get_touristicevent_list()
         self.assertEqual(response.status_code, 200)
         # Only one because past events are filter by default
         self.assertJSONEqual(response.content, {
@@ -2090,7 +2107,7 @@ class TouristicEventTestCase(TestCase):
         })
 
     def test_touristic_event_dates_filters(self):
-        response = self.client.get("/api/v2/touristicevent/?dates_after=1970-01-01")
+        response = self.get_touristicevent_list({'dates_after': '1970-01-01'})
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             "count": 2,
@@ -2101,7 +2118,7 @@ class TouristicEventTestCase(TestCase):
                 self.serialized_te1
             ]
         })
-        response = self.client.get("/api/v2/touristicevent/?dates_before=2200-01-01&dates_after=1970-01-01")
+        response = self.get_touristicevent_list({'dates_before': '2200-01-01', 'dates_after': '1970-01-01'})
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             "count": 2,
@@ -2112,7 +2129,7 @@ class TouristicEventTestCase(TestCase):
                 self.serialized_te1
             ]
         })
-        response = self.client.get("/api/v2/touristicevent/?dates_after=2021-07-03")
+        response = self.get_touristicevent_list({'dates_after': '2021-07-03'})
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             "count": 2,
@@ -2123,7 +2140,7 @@ class TouristicEventTestCase(TestCase):
                 self.serialized_te1
             ]
         })
-        response = self.client.get("/api/v2/touristicevent/?dates_after=2021-07-04")
+        response = self.get_touristicevent_list({'dates_after': '2021-07-04'})
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             "count": 1,
@@ -2135,12 +2152,12 @@ class TouristicEventTestCase(TestCase):
         })
 
     def test_touristic_event_detail(self):
-        response = self.client.get(f"/api/v2/touristicevent/{self.touristic_event1.pk}/")
+        response = self.get_touristicevent_detail(self.touristic_event1.pk)
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.serialized_te1)
 
     def test_touristicevent_near_trek(self):
-        response = self.client.get(f"/api/v2/touristicevent/?near_trek={self.trek.pk}&dates_after=1970-01-01")
+        response = self.get_touristicevent_list({'near_trek': self.trek.pk, 'dates_after': '1970-01-01'})
         # Assert Event 1 appears but not Event 2
         self.assertJSONEqual(response.content, {
             "count": 1,
@@ -2151,8 +2168,20 @@ class TouristicEventTestCase(TestCase):
             ]
         })
 
+    def test_touristic_event_portal_filters(self):
+        response = self.get_touristicevent_list({'dates_after': '1970-01-01', 'portals': self.touristic_event1.portal.first().pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [
+                self.serialized_te1
+            ]
+        })
 
-class TouristicEventTypeCase(TestCase):
+
+class TouristicEventTypeTestCase(BaseApiTest):
     @classmethod
     def setUpTestData(cls):
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory(type_fr="Cool", type_en="af")
@@ -2168,7 +2197,7 @@ class TouristicEventTypeCase(TestCase):
         }
 
     def test_touristic_event_type_list(self):
-        response = self.client.get(reverse('apiv2:touristiceventtype-list'))
+        response = self.get_touristiceventtype_list()
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {
             "count": 1,
@@ -2180,6 +2209,6 @@ class TouristicEventTypeCase(TestCase):
         })
 
     def test_touristic_event_type_detail(self):
-        response = self.client.get(f"/api/v2/touristicevent_type/{self.touristic_event_type.pk}/")
+        response = self.get_touristiceventtype_detail(self.touristic_event_type.pk)
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.serialized_tet)
