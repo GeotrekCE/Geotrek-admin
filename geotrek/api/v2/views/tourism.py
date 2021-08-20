@@ -39,7 +39,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.InformationDeskSerializer
     queryset = tourism_models.InformationDesk.objects.all()
 
@@ -51,6 +51,7 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicEventTypeViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TouristicEventRelatedPortalFilter, )
     serializer_class = api_serializers.TouristicEventTypeSerializer
     queryset = tourism_models.TouristicEventType.objects.order_by('pk')  # Required for reliable pagination
 

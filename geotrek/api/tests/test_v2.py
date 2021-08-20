@@ -1965,6 +1965,10 @@ class TouristicEventTestCase(BaseApiTest):
             geom=Point(5.77802, 2.047482, srid=4326),
             published=False,
         )
+        # Should not appear at any point
+        cls.touristic_event4 = tourism_factory.TouristicEventFactory(
+            deleted=True
+        )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
         cls.serialized_te1 = {
             "id": cls.touristic_event1.pk,
@@ -2241,6 +2245,10 @@ class TouristicEventTypeTestCase(BaseApiTest):
     @classmethod
     def setUpTestData(cls):
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory(type_fr="Cool", type_en="af")
+        cls.touristic_event = tourism_factory.TouristicEventFactory(
+            published=True,
+            type=cls.touristic_event_type
+        )
         cls.serialized_tet = {
             'id': cls.touristic_event_type.pk,
             'pictogram': f"http://testserver{cls.touristic_event_type.pictogram.url}",
@@ -2251,6 +2259,7 @@ class TouristicEventTypeTestCase(BaseApiTest):
                 'it': None
             }
         }
+        cls.maxDiff = None
 
     def test_touristic_event_type_list(self):
         response = self.get_touristiceventtype_list()
@@ -2268,3 +2277,130 @@ class TouristicEventTypeTestCase(BaseApiTest):
         response = self.get_touristiceventtype_detail(self.touristic_event_type.pk)
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.serialized_tet)
+
+
+class TouristicEventTypeTestCase2(BaseApiTest):
+    def test_touristic_event_type_filtering(self):
+
+        ####
+        # Test filtering depending on published, deleted content for the types
+        ####
+
+        # ### Build all type scenarios
+        #  Type with no content -> don't send it
+        type_with_no_content = tourism_factory.TouristicEventTypeFactory()
+        #  Type with no published content -> don't send it
+        type_with_no_published_content = tourism_factory.TouristicEventTypeFactory()
+        not_published_event = tourism_factory.TouristicEventFactory(
+            published=False,
+            type=type_with_no_published_content
+        )
+        # Type with no content that was not deleted -> don't send it
+        type_with_only_deleted_content = tourism_factory.TouristicEventTypeFactory()
+        deleted_event = tourism_factory.TouristicEventFactory(
+            deleted=True,
+            type=type_with_only_deleted_content
+        )
+        # Type with published and not deleted content -> send it
+        type_with_published_and_not_deleted_content = tourism_factory.TouristicEventTypeFactory()
+        published_and_not_deleted_event = tourism_factory.TouristicEventFactory(
+            deleted=False,
+            published_en=True,
+            type=type_with_published_and_not_deleted_content
+        )
+        # Type with published_fr and not deleted content -> send it when language=fr
+        type_with_published_and_not_deleted_content_with_lang = tourism_factory.TouristicEventTypeFactory()
+        published_and_not_deleted_event_with_lang = tourism_factory.TouristicEventFactory(
+            deleted=False,
+            published_fr=True,
+            type=type_with_published_and_not_deleted_content_with_lang
+        )
+
+        # ### Get API result
+        response = self.get_touristiceventtype_list()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(type_with_no_content.pk, all_ids)
+        self.assertNotIn(type_with_no_published_content.pk, all_ids)
+        self.assertNotIn(type_with_only_deleted_content.pk, all_ids)
+        self.assertIn(type_with_published_and_not_deleted_content.pk, all_ids)
+        self.assertIn(type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
+
+        # ### Get API result with lang
+        response = self.get_touristiceventtype_list({'language': 'fr'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(type_with_no_content.pk, all_ids)
+        self.assertNotIn(type_with_no_published_content.pk, all_ids)
+        self.assertNotIn(type_with_only_deleted_content.pk, all_ids)
+        self.assertNotIn(type_with_published_and_not_deleted_content.pk, all_ids)
+        self.assertIn(type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
+
+        ####
+        # Add portals to events and test filtering by portal
+        ####
+
+        # ### Duplicate all type scenarios based on portal
+        queried_portal = common_factory.TargetPortalFactory()
+        other_portal = common_factory.TargetPortalFactory()
+        #  Type with no content on this portal -> don't send it
+        event_on_other_portal = tourism_factory.TouristicEventFactory(
+            published=False,
+            type=type_with_no_content,
+        )
+        event_on_other_portal.portal.set([other_portal])
+        #  Type with no published content on portal-> don't send it
+        not_published_event.portal.set([queried_portal])
+        published_event_on_other_portal = tourism_factory.TouristicEventFactory(
+            published_en=True,
+            type=type_with_no_published_content,
+        )
+        published_event_on_other_portal.portal.set([other_portal])
+        # Type with no content on portal that was not deleted -> don't send it
+        deleted_event.portal.set([queried_portal])
+        not_deleted_event_on_other_portal = tourism_factory.TouristicEventFactory(
+            deleted=False,
+            type=type_with_only_deleted_content,
+        )
+        not_deleted_event_on_other_portal.portal.set([other_portal])
+
+        # ### Get API result
+        response = self.get_touristiceventtype_list({'portals': queried_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 0)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(type_with_no_content.pk, all_ids)
+        self.assertNotIn(type_with_no_published_content.pk, all_ids)
+        self.assertNotIn(type_with_only_deleted_content.pk, all_ids)
+        # Didn't set portal on these ones yet
+        self.assertNotIn(type_with_published_and_not_deleted_content.pk, all_ids)
+        self.assertNotIn(type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
+
+        # Type with published and not deleted content on portal -> send it
+        published_and_not_deleted_event.portal.set([queried_portal])
+        # Type with published_fr and not deleted content on portal -> send it when language=fr
+        published_and_not_deleted_event_with_lang.portal.set([queried_portal])
+        response = self.get_touristiceventtype_list({'portals': queried_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(type_with_no_content.pk, all_ids)
+        self.assertNotIn(type_with_no_published_content.pk, all_ids)
+        self.assertNotIn(type_with_only_deleted_content.pk, all_ids)
+        # Portal is set this time
+        self.assertIn(type_with_published_and_not_deleted_content.pk, all_ids)
+        self.assertIn(type_with_published_and_not_deleted_content_with_lang.pk, all_ids)

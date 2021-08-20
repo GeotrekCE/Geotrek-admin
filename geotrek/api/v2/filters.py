@@ -271,7 +271,17 @@ class GeotrekTouristicModelFilter(BaseFilterBackend):
             Field(
                 name='near_trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Near trek"),
-                    description=_("Filter by a trek id. It will show only the touristics contents related to this trek.")
+                    description=_("Filter by a trek id. It will show only the contents related to this trek.")
+                )
+            ), Field(
+                name='near_touristiccontent', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Near touristic content"),
+                    description=_("Filter by a touristic content id. It will show only the contents related to this touristic content.")
+                )
+            ), Field(
+                name='near_touristicevent', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Near touristic event"),
+                    description=_("Filter by a touristic event id. It will show only the vcontents related to this touristic event.")
                 )
             ), Field(
                 name='cities', required=False, location='query', schema=coreschema.String(
@@ -590,7 +600,7 @@ class GeotrekCourseFilter(BaseFilterBackend):
         )
 
 
-class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
+class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         return (
             Field(
@@ -612,6 +622,8 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
         :param optional_query: optional query Q to add to the filter method (used by portal filter)
         """
         qs = queryset
+        # Exclude if no related objects exist
+        qs = qs.exclude(**{'{}'.format(prefix): None})
         language = request.GET.get('language', 'all')
         q = Q()
         if language == 'all':
@@ -631,16 +643,29 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
         return qs.distinct()
 
 
-class GeotrekRelatedPortalTrekFilter(GeotrekRelatedPortalGenericFilter):
-    def filter_queryset(self, request, qs, view):
+class RelatedPortalGenericFilter(RelatedObjectsPublishedNotDeletedFilter):
+    def filter_queryset_related_objects_published_not_deleted_by_portal(self, qs, request, related_name, optional_query=Q()):
         portals = request.GET.get('portals')
         query = Q()
         if portals:
-            query = Q(treks__portal__in=portals.split(','))
-        return self.filter_queryset_related_objects_published_not_deleted(qs, request, 'treks', query)
+            related_portal_in = '{}__portal__in'.format(related_name)
+            query &= Q(**{related_portal_in: portals.split(',')})
+            qs = qs.filter(query)
+        query &= optional_query
+        return self.filter_queryset_related_objects_published_not_deleted(qs, request, related_name, query)
 
 
-class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
+class TrekRelatedPortalFilter(RelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
+
+
+class TouristicEventRelatedPortalFilter(RelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevent')
+
+
+class GeotrekRelatedPortalStructureOrReservationSystemFilter(RelatedObjectsPublishedNotDeletedFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
         query = Q()
@@ -651,16 +676,12 @@ class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPorta
         return (set_1 | set_2).distinct()
 
 
-class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):
+class GeotrekRelatedPortalTourismFilter(RelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
-        portals = request.GET.get('portals')
-        query = Q()
-        if portals:
-            query = Q(contents__portal__in=portals.split(','))
-        return self.filter_queryset_related_objects_published_not_deleted(qs, request, 'contents', query)
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'contents')
 
 
-class GeotrekRelatedPortalThemeFilter(GeotrekRelatedPortalGenericFilter):
+class GeotrekRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')
         query = Q()
