@@ -280,7 +280,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta:
             model = tourism_models.TouristicContentCategory
-            fields = ('id', 'type', 'pictogram')
+            fields = ('id', 'pictogram', 'type')
 
     class TouristicModelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
@@ -375,14 +375,12 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         class Meta:
             model = tourism_models.TouristicEvent
             fields = (
-                'id', 'approved', 'type', 'description',
-                'description_teaser', 'meeting_point', 'geometry',
-                'practical_info', 'url', 'cities', 'create_datetime',
-                'external_id', 'name', 'pdf', 'portal', 'published',
-                'source', 'structure', 'themes', 'meeting_time',
-                'update_datetime', 'contact', 'email', "begin_date", "end_date",
-                'website', 'organizer', 'speaker', 'accessibility', 'participant_number',
-                'booking', 'target_audience', 'duration'
+                'id', 'accessibility', 'approved', 'begin_date', 'booking',
+                'cities', 'contact', 'create_datetime', 'description', 'description_teaser',
+                'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
+                'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
+                'practical_info', 'published', 'source', 'speaker', 'structure',
+                'target_audience', 'themes', 'type', 'update_datetime', 'url', 'website'
             )
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

@@ -138,6 +138,19 @@ COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
 ORGANISM_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 
+TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'accessibility', 'approved', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
+    'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
+    'meeting_point', 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
+    'practical_info', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
+    'type', 'update_datetime', 'url', 'website'
+])
+
+TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'pictogram', 'type'
+])
+
+
 class BaseApiTest(TestCase):
     """
     Base TestCase for all API profile
@@ -1970,275 +1983,59 @@ class TouristicEventTestCase(BaseApiTest):
             deleted=True
         )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
-        cls.serialized_te1 = {
-            "id": cls.touristic_event1.pk,
-            "approved": False,
-            "type": cls.touristic_event_type.pk,
-            "description": {
-                "en": "An expo",
-                "es": None,
-                "fr": "Cette exposition",
-                "it": None
-            },
-            "description_teaser": {
-                "en": None,
-                "es": None,
-                "fr": "Un parcours dans la vie",
-                "it": None
-            },
-            "meeting_point": "Bibliothèque municipale de Soueich, Mairie, 31550 Soueich",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    0.77802,
-                    43.047482
-                ]
-            },
-            "practical_info": {
-                "en": None,
-                "es": None,
-                "fr": None,
-                "it": None
-            },
-            "url": f"http://testserver/api/v2/touristicevent/{cls.touristic_event1.pk}/",
-            "cities": [],
-            "create_datetime": cls.touristic_event1.date_insert.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-            "external_id": None,
-            "name": {
-                "en": "Wind and sand",
-                "es": None,
-                "fr": "Exposition - Du vent, du sable et des étoiles",
-                "it": None
-            },
-            "pdf": {
-                "fr": f"http://testserver/api/fr/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf",
-                "es": f"http://testserver/api/es/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf",
-                "en": f"http://testserver/api/en/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf",
-                "it": f"http://testserver/api/it/touristiccontents/{cls.touristic_event1.pk}/wind-and-sand.pdf"
-            },
-            "portal": [cls.touristic_event1.portal.first().pk],
-            "published": True,
-            "source": [],
-            "structure": cls.touristic_event1.structure.pk,
-            "themes": [cls.touristic_event1.themes.first().pk],
-            "meeting_time": "11:20:00",
-            "update_datetime": cls.touristic_event1.date_update.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-            "contact": "",
-            "email": None,
-            "begin_date": "2021-07-02",
-            "end_date": "2021-07-03",
-            "website": None,
-            "organizer": "",
-            "speaker": "",
-            "accessibility": "HA",
-            "participant_number": "",
-            "booking": "",
-            "target_audience": "De 4 à 121 ans",
-            "duration": ""
-        }
-        cls.serialized_te2 = {
-            "id": cls.touristic_event2.pk,
-            "approved": False,
-            "type": cls.touristic_event2.type.pk,
-            "description": {
-                "en": None,
-                "es": None,
-                "fr": None,
-                "it": None
-            },
-            "description_teaser": {
-                "en": None,
-                "es": None,
-                "fr": None,
-                "it": None
-            },
-            "meeting_point": "",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    5.77802,
-                    2.047482
-                ]
-            },
-            "practical_info": {
-                "en": None,
-                "es": None,
-                "fr": None,
-                "it": None
-            },
-            "url": f"http://testserver/api/v2/touristicevent/{cls.touristic_event2.pk}/",
-            "cities": [],
-            "create_datetime": cls.touristic_event2.date_insert.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-            "external_id": None,
-            "name": {
-                "en": "Touristic event",
-                "es": None,
-                "fr": "expo",
-                "it": None
-            },
-            "pdf": {
-                "fr": f"http://testserver/api/fr/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf",
-                "es": f"http://testserver/api/es/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf",
-                "en": f"http://testserver/api/en/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf",
-                "it": f"http://testserver/api/it/touristiccontents/{cls.touristic_event2.pk}/touristic-event.pdf"
-            },
-            "portal": [cls.touristic_event2.portal.first().pk],
-            "published": True,
-            "source": [],
-            "structure": cls.touristic_event2.structure.pk,
-            "themes": [cls.touristic_event2.themes.first().pk],
-            "meeting_time": None,
-            "update_datetime": cls.touristic_event2.date_update.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-            "contact": "",
-            "email": None,
-            "begin_date": "2002-02-20",
-            "end_date": "2202-02-22",
-            "website": None,
-            "organizer": "",
-            "speaker": "",
-            "accessibility": "",
-            "participant_number": "",
-            "booking": "",
-            "target_audience": None,
-            "duration": ""
-        }
 
     def test_touristic_event_list(self):
         response = self.get_touristicevent_list()
-        self.assertEqual(response.status_code, 200)
         # Only one because past events are filter by default
-        self.assertJSONEqual(response.content, {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te2,
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 1)
 
-    def test_touristic_event_dates_filters(self):
+    def test_touristic_event_dates_filters_1(self):
         response = self.get_touristicevent_list({'dates_after': '1970-01-01'})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            "count": 2,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te2,
-                self.serialized_te1
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_dates_filters_2(self):
         response = self.get_touristicevent_list({'dates_before': '2200-01-01', 'dates_after': '1970-01-01'})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            "count": 2,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te2,
-                self.serialized_te1
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 2)
 
+    def test_touristic_event_dates_filters_3(self):
         response = self.get_touristicevent_list({'dates_before': '2021-09-01', 'dates_after': '1970-01-01'})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            "count": 2,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te2,
-                self.serialized_te1
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 2)
 
+    def test_touristic_event_dates_filters_4(self):
         response = self.get_touristicevent_list({'dates_after': '2021-07-03'})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            "count": 2,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te2,
-                self.serialized_te1
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_dates_filters_5(self):
         response = self.get_touristicevent_list({'dates_after': '2021-07-04'})
         # Event 1 finishes on 3rd of july
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te2,
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_detail(self):
         response = self.get_touristicevent_detail(self.touristic_event1.pk)
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.serialized_te1)
+        self.check_structure_response(response, TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE)
 
     def test_touristicevent_near_trek(self):
         response = self.get_touristicevent_list({'near_trek': self.trek.pk, 'dates_after': '1970-01-01'})
-        # Assert Event 1 appears but not Event 2
-        self.assertJSONEqual(response.content, {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te1
-            ]
-        })
+        # Event 1 appears but not Event 2
+        self.assertEqual(response.json().get("count"), 1)
 
     def test_touristicevent_near_touristicevent(self):
         response = self.get_touristicevent_list({'near_touristicevent': self.touristic_event3.pk, 'dates_after': '1970-01-01'})
-        # Assert Event 2 appears but not Event 1 (too far) or Event 3 (not published)
-        self.assertJSONEqual(response.content, {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te2
-            ]
-        })
+        # Event 2 appears but not Event 1 (too far) or Event 3 (not published)
+        self.assertEqual(response.json().get("count"), 1)
 
     def test_touristicevent_near_touristiccontent(self):
         response = self.get_touristicevent_list({'near_touristiccontent': self.touristic_content.pk, 'dates_after': '1970-01-01'})
-        # Assert Event 1 appears but not Event 2 (too far) or Event 3 (too far + not published)
-        self.assertJSONEqual(response.content, {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te1
-            ]
-        })
+        # Event 1 appears but not Event 2 (too far) or Event 3 (too far + not published)
+        self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_portal_filters(self):
         response = self.get_touristicevent_list({'dates_after': '1970-01-01', 'portals': self.touristic_event1.portal.first().pk})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te1
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_type_filters(self):
         response = self.get_touristicevent_list({'dates_after': '1970-01-01', 'types': self.touristic_event_type.pk})
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_te1
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 1)
 
 
 class TouristicEventTypeTestCase(BaseApiTest):
@@ -2249,74 +2046,56 @@ class TouristicEventTypeTestCase(BaseApiTest):
             published=True,
             type=cls.touristic_event_type
         )
-        cls.serialized_tet = {
-            'id': cls.touristic_event_type.pk,
-            'pictogram': f"http://testserver{cls.touristic_event_type.pictogram.url}",
-            'type': {
-                'en': 'af',
-                'es': None,
-                'fr': 'Cool',
-                'it': None
-            }
-        }
-        cls.maxDiff = None
 
     def test_touristic_event_type_list(self):
         response = self.get_touristiceventtype_list()
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            "count": 1,
-            "next": None,
-            "previous": None,
-            "results": [
-                self.serialized_tet
-            ]
-        })
+        self.assertEqual(response.json().get("count"), 1)
+        self.assertEqual(len(response.json().get("results")), 1)
 
     def test_touristic_event_type_detail(self):
         response = self.get_touristiceventtype_detail(self.touristic_event_type.pk)
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.serialized_tet)
+        self.check_structure_response(response, TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE)
 
 
-class TouristicEventTypeTestCase2(BaseApiTest):
-    def test_touristic_event_type_filtering(self):
+class TouristicEventTypeFilterTestCase(BaseApiTest):
+    """ Test filtering depending on published, deleted content for touristic event types
+    """
 
-        ####
-        # Test filtering depending on published, deleted content for the types
-        ####
-
+    @classmethod
+    def setUpTestData(cls):
         # ### Build all type scenarios
         #  Type with no content -> don't send it
-        type_with_no_content = tourism_factory.TouristicEventTypeFactory()
+        cls.type_with_no_content = tourism_factory.TouristicEventTypeFactory()
         #  Type with no published content -> don't send it
-        type_with_no_published_content = tourism_factory.TouristicEventTypeFactory()
-        not_published_event = tourism_factory.TouristicEventFactory(
+        cls.type_with_no_published_content = tourism_factory.TouristicEventTypeFactory()
+        cls.not_published_event = tourism_factory.TouristicEventFactory(
             published=False,
-            type=type_with_no_published_content
+            type=cls.type_with_no_published_content
         )
         # Type with no content that was not deleted -> don't send it
-        type_with_only_deleted_content = tourism_factory.TouristicEventTypeFactory()
-        deleted_event = tourism_factory.TouristicEventFactory(
+        cls.type_with_only_deleted_content = tourism_factory.TouristicEventTypeFactory()
+        cls.deleted_event = tourism_factory.TouristicEventFactory(
             deleted=True,
-            type=type_with_only_deleted_content
+            type=cls.type_with_only_deleted_content
         )
         # Type with published and not deleted content -> send it
-        type_with_published_and_not_deleted_content = tourism_factory.TouristicEventTypeFactory()
-        published_and_not_deleted_event = tourism_factory.TouristicEventFactory(
+        cls.type_with_published_and_not_deleted_content = tourism_factory.TouristicEventTypeFactory()
+        cls.published_and_not_deleted_event = tourism_factory.TouristicEventFactory(
             deleted=False,
             published_en=True,
-            type=type_with_published_and_not_deleted_content
+            type=cls.type_with_published_and_not_deleted_content
         )
         # Type with published_fr and not deleted content -> send it when language=fr
-        type_with_published_and_not_deleted_content_with_lang = tourism_factory.TouristicEventTypeFactory()
-        published_and_not_deleted_event_with_lang = tourism_factory.TouristicEventFactory(
+        cls.type_with_published_and_not_deleted_content_with_lang = tourism_factory.TouristicEventTypeFactory()
+        cls.published_and_not_deleted_event_with_lang = tourism_factory.TouristicEventFactory(
             deleted=False,
             published_fr=True,
-            type=type_with_published_and_not_deleted_content_with_lang
+            type=cls.type_with_published_and_not_deleted_content_with_lang
         )
 
-        # ### Get API result
+    def test_touristic_event_type_list_returns_published(self):
+        """ Assert API returns only types with published events
+        """
         response = self.get_touristiceventtype_list()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
@@ -2324,13 +2103,15 @@ class TouristicEventTypeTestCase2(BaseApiTest):
         all_ids = []
         for type in returned_types:
             all_ids.append(type['id'])
-        self.assertNotIn(type_with_no_content.pk, all_ids)
-        self.assertNotIn(type_with_no_published_content.pk, all_ids)
-        self.assertNotIn(type_with_only_deleted_content.pk, all_ids)
-        self.assertIn(type_with_published_and_not_deleted_content.pk, all_ids)
-        self.assertIn(type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
+        self.assertNotIn(self.type_with_no_content.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
+        self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_content.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
 
-        # ### Get API result with lang
+    def test_touristic_event_type_list_returns_published_in_language(self):
+        """ Assert API returns only published events in specified language
+        """
         response = self.get_touristiceventtype_list({'language': 'fr'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
@@ -2338,69 +2119,78 @@ class TouristicEventTypeTestCase2(BaseApiTest):
         all_ids = []
         for type in returned_types:
             all_ids.append(type['id'])
-        self.assertNotIn(type_with_no_content.pk, all_ids)
-        self.assertNotIn(type_with_no_published_content.pk, all_ids)
-        self.assertNotIn(type_with_only_deleted_content.pk, all_ids)
-        self.assertNotIn(type_with_published_and_not_deleted_content.pk, all_ids)
-        self.assertIn(type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
+        self.assertNotIn(self.type_with_no_content.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
+        self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
+        self.assertNotIn(self.type_with_published_and_not_deleted_content.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
 
-        ####
-        # Add portals to events and test filtering by portal
-        ####
 
+class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase):
+    """ Test filtering depending on portal for touristic event types
+    """
+
+    @classmethod
+    def setUpTestData(cls):
         # ### Duplicate all type scenarios based on portal
-        queried_portal = common_factory.TargetPortalFactory()
-        other_portal = common_factory.TargetPortalFactory()
+        super().setUpTestData()
+        cls.queried_portal = common_factory.TargetPortalFactory()
+        cls.other_portal = common_factory.TargetPortalFactory()
         #  Type with no content on this portal -> don't send it
-        event_on_other_portal = tourism_factory.TouristicEventFactory(
+        cls.event_on_other_portal = tourism_factory.TouristicEventFactory(
             published=False,
-            type=type_with_no_content,
+            type=cls.type_with_no_content,
         )
-        event_on_other_portal.portal.set([other_portal])
+        cls.event_on_other_portal.portal.set([cls.other_portal])
         #  Type with no published content on portal-> don't send it
-        not_published_event.portal.set([queried_portal])
-        published_event_on_other_portal = tourism_factory.TouristicEventFactory(
+        cls.not_published_event.portal.set([cls.queried_portal])
+        cls.published_event_on_other_portal = tourism_factory.TouristicEventFactory(
             published_en=True,
-            type=type_with_no_published_content,
+            type=cls.type_with_no_published_content,
         )
-        published_event_on_other_portal.portal.set([other_portal])
+        cls.published_event_on_other_portal.portal.set([cls.other_portal])
         # Type with no content on portal that was not deleted -> don't send it
-        deleted_event.portal.set([queried_portal])
-        not_deleted_event_on_other_portal = tourism_factory.TouristicEventFactory(
+        cls.deleted_event.portal.set([cls.queried_portal])
+        cls.not_deleted_event_on_other_portal = tourism_factory.TouristicEventFactory(
             deleted=False,
-            type=type_with_only_deleted_content,
+            type=cls.type_with_only_deleted_content,
         )
-        not_deleted_event_on_other_portal.portal.set([other_portal])
+        cls.not_deleted_event_on_other_portal.portal.set([cls.other_portal])
 
-        # ### Get API result
-        response = self.get_touristiceventtype_list({'portals': queried_portal.pk})
+    def test_touristic_event_type_list_returns_published(self):
+        """ Assert API returns only types with published events on portal
+        """
+        response = self.get_touristiceventtype_list({'portals': self.queried_portal.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 0)
         returned_types = response.json()['results']
         all_ids = []
         for type in returned_types:
             all_ids.append(type['id'])
-        self.assertNotIn(type_with_no_content.pk, all_ids)
-        self.assertNotIn(type_with_no_published_content.pk, all_ids)
-        self.assertNotIn(type_with_only_deleted_content.pk, all_ids)
+        self.assertNotIn(self.type_with_no_content.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
+        self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
         # Didn't set portal on these ones yet
-        self.assertNotIn(type_with_published_and_not_deleted_content.pk, all_ids)
-        self.assertNotIn(type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
+        self.assertNotIn(self.type_with_published_and_not_deleted_content.pk, all_ids)
+        self.assertNotIn(self.type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
 
+    def test_touristic_event_type_list_returns_published_2(self):
+        """ Assert API returns only types with published events on portal
+        """
         # Type with published and not deleted content on portal -> send it
-        published_and_not_deleted_event.portal.set([queried_portal])
+        self.published_and_not_deleted_event.portal.set([self.queried_portal])
         # Type with published_fr and not deleted content on portal -> send it when language=fr
-        published_and_not_deleted_event_with_lang.portal.set([queried_portal])
-        response = self.get_touristiceventtype_list({'portals': queried_portal.pk})
+        self.published_and_not_deleted_event_with_lang.portal.set([self.queried_portal])
+        response = self.get_touristiceventtype_list({'portals': self.queried_portal.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
         all_ids = []
         for type in returned_types:
             all_ids.append(type['id'])
-        self.assertNotIn(type_with_no_content.pk, all_ids)
-        self.assertNotIn(type_with_no_published_content.pk, all_ids)
-        self.assertNotIn(type_with_only_deleted_content.pk, all_ids)
+        self.assertNotIn(self.type_with_no_content.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
+        self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
         # Portal is set this time
-        self.assertIn(type_with_published_and_not_deleted_content.pk, all_ids)
-        self.assertIn(type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_content.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_content_with_lang.pk, all_ids)

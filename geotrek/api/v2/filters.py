@@ -281,7 +281,7 @@ class GeotrekTouristicModelFilter(BaseFilterBackend):
             ), Field(
                 name='near_touristicevent', required=False, location='query', schema=coreschema.Integer(
                     title=_("Near touristic event"),
-                    description=_("Filter by a touristic event id. It will show only the vcontents related to this touristic event.")
+                    description=_("Filter by a touristic event id. It will show only the contents related to this touristic event.")
                 )
             ), Field(
                 name='cities', required=False, location='query', schema=coreschema.String(
