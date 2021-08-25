@@ -19,7 +19,7 @@ class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTrekQueryParamsFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTrekQueryParamsFilter, api_filters.NearbyContentFilter, )
     serializer_class = api_serializers.TrekSerializer
 
     def get_queryset(self):

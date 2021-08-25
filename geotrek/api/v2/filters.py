@@ -227,8 +227,8 @@ class GeotrekPOIFilter(BaseFilterBackend):
         )
 
 
-class GeotrekTouristicModelFilter(BaseFilterBackend):
-    def _filter_queryset(self, request, queryset, view):
+class NearbyContentFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
         qs = queryset
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
@@ -242,6 +242,37 @@ class GeotrekTouristicModelFilter(BaseFilterBackend):
         if near_trek:
             contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
             qs = contents_intersecting.order_by('name')
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='near_trek', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near trek"),
+                    description=_("Filter by a trek id. It will only show the contents related to this trek.")
+                )
+            ),
+            Field(
+                name='near_touristiccontent', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near touristic content"),
+                    description=_("Filter by a touristic content id. It will only show the contents related to this touristic content.")
+                )
+            ),
+            Field(
+                name='near_touristicevent', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near touristic event"),
+                    description=_("Filter by a touristic event id. It will only show the contents related to this touristic event.")
+                )
+            )
+        )
+
+
+class GeotrekTouristicModelFilter(NearbyContentFilter):
+    def _filter_queryset(self, request, queryset, view):
+        qs = queryset
         cities = request.GET.get('cities')
         if cities:
             cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
@@ -269,21 +300,6 @@ class GeotrekTouristicModelFilter(BaseFilterBackend):
     def _get_schema_fields(self, view):
         return (
             Field(
-                name='near_trek', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Near trek"),
-                    description=_("Filter by a trek id. It will show only the contents related to this trek.")
-                )
-            ), Field(
-                name='near_touristiccontent', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Near touristic content"),
-                    description=_("Filter by a touristic content id. It will show only the contents related to this touristic content.")
-                )
-            ), Field(
-                name='near_touristicevent', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Near touristic event"),
-                    description=_("Filter by a touristic event id. It will show only the contents related to this touristic event.")
-                )
-            ), Field(
                 name='cities', required=False, location='query', schema=coreschema.String(
                     title=_("Cities"),
                     description=_('Filter by one or more city id, comma-separated.')

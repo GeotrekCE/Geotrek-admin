@@ -9,7 +9,7 @@ from geotrek.outdoor import models as outdoor_models
 
 
 class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekSiteFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekSiteFilter, api_filters.NearbyContentFilter,)
     serializer_class = api_serializers.SiteSerializer
 
     def get_queryset(self):
@@ -46,7 +46,7 @@ class RatingViewSet(api_viewsets.GeotrekViewSet):
 
 
 class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekCourseFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekCourseFilter, api_filters.NearbyContentFilter,)
     serializer_class = api_serializers.CourseSerializer
 
     def get_queryset(self):

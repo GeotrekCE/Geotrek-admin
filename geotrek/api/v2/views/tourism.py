@@ -26,7 +26,7 @@ class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicContentFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicContentFilter, api_filters.NearbyContentFilter,)
     serializer_class = api_serializers.TouristicContentSerializer
 
     def get_queryset(self):
@@ -57,7 +57,7 @@ class TouristicEventTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicEventFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicEventFilter, api_filters.NearbyContentFilter,)
     serializer_class = api_serializers.TouristicEventSerializer
 
     def get_queryset(self):
