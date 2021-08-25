@@ -146,13 +146,13 @@ def test_suricate_connection():
     SuricateGestionRequestManager().test_suricate_connection()
 
 
-def send_report_managers(report, template_name="feedback/report_email.html"):
+def send_report_to_managers(report, template_name="feedback/report_email.html"):
     subject = _("Feedback from {email}").format(email=report.email)
     message = render_to_string(template_name, {"report": report})
     mail_managers(subject, message, fail_silently=False)
 
 
-def send_reports_managers(template_name="feedback/reports_email.html"):
+def send_reports_to_managers(template_name="feedback/reports_email.html"):
     subject = _("New reports from Suricate")
     message = render_to_string(template_name)
     mail_managers(subject, message, fail_silently=False)

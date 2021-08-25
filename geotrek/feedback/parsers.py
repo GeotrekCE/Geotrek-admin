@@ -15,7 +15,7 @@ from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
                                      ReportStatus)
 
-from .helpers import SuricateGestionRequestManager, send_reports_managers
+from .helpers import SuricateGestionRequestManager, send_reports_to_managers
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
 
     def send_managers_new_reports(self):
         try:
-            send_reports_managers()
+            send_reports_to_managers()
         except Exception as e:
             logger.error("Email could not be sent to managers.")
             logger.exception(e)  # This sends an email to admins :)

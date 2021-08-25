@@ -15,7 +15,7 @@ from geotrek.maintenance.models import Intervention
 from geotrek.trekking.models import POI, Service, Trek
 from mapentity.models import MapEntityMixin
 
-from .helpers import SuricateMessenger, send_report_managers
+from .helpers import SuricateMessenger, send_report_to_managers
 
 logger = logging.getLogger(__name__)
 
@@ -131,9 +131,9 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def comment_text(self):
         return html.unescape(self.comment)
 
-    def try_send_report_managers(self):
+    def try_send_report_to_managers(self):
         try:
-            send_report_managers(self)
+            send_report_to_managers(self)
         except Exception as e:
             logger.error("Email could not be sent to managers.")
             logger.exception(e)  # This sends an email to admins :)
@@ -148,13 +148,13 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def save_no_suricate(self, *args, **kwargs):
         """Save method for No Suricate mode"""
         if self.pk is None:  # New report should alert
-            self.try_send_report_managers()
+            self.try_send_report_to_managers()
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_report_mode(self, *args, **kwargs):
         """Save method for Suricate Report mode"""
         if self.pk is None:  # New report should alert managers AND be sent to Suricate
-            self.try_send_report_managers()
+            self.try_send_report_to_managers()
             self.try_send_report_to_suricate()
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
