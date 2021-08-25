@@ -27,9 +27,10 @@ server {
         alias /opt/geotrek-admin/var/static;
     }
 
-    location /media/upload {
+    location /media {
         expires 1d;
-        alias /opt/geotrek-admin/var/media/upload;
+        alias /opt/geotrek-admin/var/media ;
+        add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin;
     }
 
     location /media_secure {
