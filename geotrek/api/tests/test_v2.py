@@ -5,6 +5,7 @@ from django.test.testcases import TestCase
 from django.contrib.gis.geos import MultiPoint, Point, LineString, MultiLineString
 from django.conf import settings
 from django.test.utils import override_settings
+from freezegun.api import freeze_time
 
 from geotrek.authent import factories as authent_factory, models as authent_models
 from geotrek.feedback import factories as feedback_factory
@@ -1938,6 +1939,7 @@ class TrekDifficultyFilterCase(TestCase):
 @override_settings(SRID=4326)
 @override_settings(API_SRID=4326)
 @override_settings(TOURISM_INTERSECTION_MARGIN=500)
+@freeze_time("2000-07-04")
 class TouristicEventTestCase(BaseApiTest):
 
     @classmethod
@@ -1986,11 +1988,16 @@ class TouristicEventTestCase(BaseApiTest):
 
     def test_touristic_event_list(self):
         response = self.get_touristicevent_list()
+        self.assertEqual(response.json().get("count"), 2)
+
+    @freeze_time("2022-02-02")
+    def test_touristic_event_list_2(self):
+        response = self.get_touristicevent_list()
         # Only one because past events are filter by default
         self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_dates_filters_1(self):
-        response = self.get_touristicevent_list({'dates_after': '1970-01-01'})
+        response = self.get_touristicevent_list()
         self.assertEqual(response.json().get("count"), 2)
 
     def test_touristic_event_dates_filters_2(self):
@@ -2015,26 +2022,26 @@ class TouristicEventTestCase(BaseApiTest):
         self.check_structure_response(response, TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE)
 
     def test_touristicevent_near_trek(self):
-        response = self.get_touristicevent_list({'near_trek': self.trek.pk, 'dates_after': '1970-01-01'})
+        response = self.get_touristicevent_list({'near_trek': self.trek.pk})
         # Event 1 appears but not Event 2
         self.assertEqual(response.json().get("count"), 1)
 
     def test_touristicevent_near_touristicevent(self):
-        response = self.get_touristicevent_list({'near_touristicevent': self.touristic_event3.pk, 'dates_after': '1970-01-01'})
+        response = self.get_touristicevent_list({'near_touristicevent': self.touristic_event3.pk})
         # Event 2 appears but not Event 1 (too far) or Event 3 (not published)
         self.assertEqual(response.json().get("count"), 1)
 
     def test_touristicevent_near_touristiccontent(self):
-        response = self.get_touristicevent_list({'near_touristiccontent': self.touristic_content.pk, 'dates_after': '1970-01-01'})
+        response = self.get_touristicevent_list({'near_touristiccontent': self.touristic_content.pk})
         # Event 1 appears but not Event 2 (too far) or Event 3 (too far + not published)
         self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_portal_filters(self):
-        response = self.get_touristicevent_list({'dates_after': '1970-01-01', 'portals': self.touristic_event1.portal.first().pk})
+        response = self.get_touristicevent_list({'portals': self.touristic_event1.portal.first().pk})
         self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_type_filters(self):
-        response = self.get_touristicevent_list({'dates_after': '1970-01-01', 'types': self.touristic_event_type.pk})
+        response = self.get_touristicevent_list({'types': self.touristic_event_type.pk})
         self.assertEqual(response.json().get("count"), 1)
 
 
