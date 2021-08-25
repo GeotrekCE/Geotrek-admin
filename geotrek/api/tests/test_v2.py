@@ -185,7 +185,9 @@ class BaseApiTest(TestCase):
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.content2 = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
+        cls.city2 = zoning_factory.CityFactory(code='02000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.district = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
+        cls.district2 = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.accessibility = trek_factory.AccessibilityFactory()
         cls.route = trek_factory.RouteFactory()
         cls.theme2 = common_factory.ThemeFactory()
@@ -649,6 +651,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_trek_city(self):
         response = self.get_trek_list({'cities': self.city.pk})
+        self.assertEqual(len(response.json()['results']), 17)
+
+    def test_trek_district(self):
+        response = self.get_trek_list({'districts': self.district.pk})
+        self.assertEqual(len(response.json()['results']), 17)
+
+    def test_trek_cities(self):
+        response = self.get_trek_list({'cities': f"{self.city.pk},{self.city2.pk}"})
+        self.assertEqual(len(response.json()['results']), 17)
+
+    def test_trek_districts(self):
+        response = self.get_trek_list({'districts': f"{self.district.pk},{self.district2.pk}"})
         self.assertEqual(len(response.json()['results']), 17)
 
     def test_trek_child_not_published_detail_view_ok_if_ancestor_published(self):
