@@ -39,7 +39,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.InformationDeskSerializer
     queryset = tourism_models.InformationDesk.objects.all()
 
@@ -48,3 +48,22 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
         elem = get_object_or_404(tourism_models.InformationDesk, pk=pk)
         serializer = api_serializers.InformationDeskSerializer(elem, many=False, context={'request': request})
         return Response(serializer.data)
+
+
+class TouristicEventTypeViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TouristicEventRelatedPortalFilter, )
+    serializer_class = api_serializers.TouristicEventTypeSerializer
+    queryset = tourism_models.TouristicEventType.objects.order_by('pk')  # Required for reliable pagination
+
+
+class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicEventFilter,)
+    serializer_class = api_serializers.TouristicEventSerializer
+
+    def get_queryset(self):
+        activate(self.request.GET.get('language'))
+        return tourism_models.TouristicEvent.objects.existing()\
+            .select_related('type') \
+            .prefetch_related('themes', 'source', 'portal') \
+            .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+            .order_by('name')  # Required for reliable pagination

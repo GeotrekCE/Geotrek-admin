@@ -79,7 +79,7 @@ class TourViewSet(TrekViewSet):
 
 
 class PracticeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.PracticeSerializer
     queryset = trekking_models.Practice.objects.all()
 
@@ -91,7 +91,7 @@ class PracticeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class NetworkViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.NetworkSerializer
     queryset = trekking_models.TrekNetwork.objects.all()
 
@@ -103,7 +103,7 @@ class NetworkViewSet(api_viewsets.GeotrekViewSet):
 
 
 class DifficultyViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.TrekDifficultySerializer
     queryset = trekking_models.DifficultyLevel.objects.all()
 
@@ -130,7 +130,7 @@ class POITypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.AccessibilitySerializer
     queryset = trekking_models.Accessibility.objects.all()
 
@@ -142,7 +142,7 @@ class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
 
 
 class RouteViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTrekFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.RouteSerializer
     queryset = trekking_models.Route.objects.all()
 
