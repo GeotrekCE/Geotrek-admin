@@ -1,0 +1,24 @@
+{
+    "statuts": [
+        {
+            "libelle": "Non confirmé par les sentinelles",
+            "id": "created"
+        },
+        {
+            "libelle": "Déposé",
+            "id": "filed"
+        },
+        {
+            "libelle": "En cours de traitement",
+            "id": "waiting"
+        },
+        {
+            "libelle": "Résolu",
+            "id": "solved"
+        },
+        {
+            "libelle": "Classé sans suite",
+            "id": "classified"
+        }
+    ]
+}

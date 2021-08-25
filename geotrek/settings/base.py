@@ -217,6 +217,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
+                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
             'loaders': [
@@ -546,6 +547,7 @@ DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
 MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)
+REPORT_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
 
@@ -771,7 +773,16 @@ SEND_REPORT_ACK = True
 
 SURICATE_REPORT_ENABLED = False
 
+SURICATE_MANAGEMENT_ENABLED = False
+
 SURICATE_REPORT_SETTINGS = {
+    'URL': '',
+    'ID_ORIGIN': '',
+    'PRIVATE_KEY_CLIENT_SERVER': '',
+    'PRIVATE_KEY_SERVER_CLIENT': '',
+}
+
+SURICATE_MANAGEMENT_SETTINGS = {
     'URL': '',
     'ID_ORIGIN': '',
     'PRIVATE_KEY_CLIENT_SERVER': '',
@@ -811,3 +822,9 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 USE_X_FORWARDED_HOST = False
+HIDDEN_FORM_FIELDS['report'] = {
+    "status",
+    "locked",
+    "uid",
+    "origin"
+}

@@ -52,6 +52,7 @@ class CommonForm(MapEntityForm):
         'SensitiveAreaForm': 'sensitivity_species',
         'RegulatorySensitiveAreaForm': 'sensitivity_regulatory',
         'BladeForm': 'blade',
+        'ReportForm': 'report',
     }
 
     def deep_remove(self, fieldslayout, name):
@@ -208,6 +209,32 @@ class ImportDatasetForm(forms.Form):
                 ),
                 FormActions(
                     Submit('import-web', _("Import"), css_class='button white')
+                ),
+                css_class='file-attachment-form',
+            )
+        )
+
+
+class ImportSuricateForm(forms.Form):
+    parser = forms.TypedChoiceField(
+        label=_('Data to import from Suricate'),
+        widget=forms.RadioSelect,
+        required=True,
+    )
+
+    def __init__(self, choices=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['parser'].choices = choices
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'parser',
+                ),
+                FormActions(
+                    Submit('import-suricate', _("Import"), css_class='button white')
                 ),
                 css_class='file-attachment-form',
             )

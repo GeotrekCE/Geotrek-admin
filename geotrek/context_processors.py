@@ -17,3 +17,9 @@ def forced_layers(request):
                         layer=[layer[0] for layer in settings.LEAFLET_CONFIG['TILES'] if layer[0] == forced_layer[0]][0])
             )
     return {'FORCED_LAYERS': response, }
+
+
+def suricate_enabled(request):
+    return {
+        "suricate_enabled": settings.SURICATE_MANAGEMENT_ENABLED
+    }

@@ -1,4 +1,6 @@
+from datetime import datetime
 from django.conf import settings
+from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
 from django.test import TestCase
 from django.contrib.auth.models import Permission
@@ -27,6 +29,8 @@ class ReportModelTest(TestCase):
 
 
 class ReportViewsetMailSend(TestCase):
+
+    @override_settings(SURICATE_REPORT_ENABLED=True)
     def test_mail_send_on_request(self):
         self.client.post(
             '/api/en/reports/report',
@@ -83,6 +87,49 @@ class ReportViewsTest(CommonTest):
         obj = self.model.objects.last()
         self.assertEqual(obj.email, data['email'])
         self.logout()
+
+    def test_crud_status(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.login()
+
+        obj = self.modelfactory()
+
+        response = self.client.get(obj.get_list_url())
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(obj.get_detail_url().replace(str(obj.pk), '1234567890'))
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get(obj.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(obj.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        self._post_update_form(obj)
+        self._check_update_geom_permission(response)
+
+        response = self.client.get(obj.get_delete_url())
+        self.assertEqual(response.status_code, 200)
+
+        url = obj.get_detail_url()
+        obj.delete()
+        response = self.client.get(url)
+        # No delete mixin
+        self.assertEqual(response.status_code, 200)
+
+        self._post_add_form()
+
+        # Test to update without login
+        self.logout()
+
+        obj = self.modelfactory()
+
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(obj.get_update_url())
+        self.assertEqual(response.status_code, 302)
 
 
 class BaseAPITest(TestCase):
@@ -187,3 +234,10 @@ class ListOptionsTest(TranslationResetMixin, BaseAPITest):
         self.assertEqual(data['activities'][0]['label'], self.activity.label_it)
         self.assertEqual(data['categories'][0]['label'], self.cat.label_it)
         self.assertEqual(data['magnitudeProblems'][0]['label'], self.pb_magnitude.label_it)
+
+    def test_display_dates(self):
+        date_time_1 = datetime.strptime("24/03/21 20:51", '%d/%m/%y %H:%M')
+        date_time_2 = datetime.strptime("28/03/21 5:51", '%d/%m/%y %H:%M')
+        r = feedback_factories.ReportFactory(created_in_suricate=date_time_1, last_updated_in_suricate=date_time_2)
+        self.assertEqual("03/24/2021 8:51 p.m.", r.created_in_suricate_display)
+        self.assertEqual("03/28/2021 5:51 a.m.", r.last_updated_in_suricate_display)
