@@ -39,9 +39,9 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter, api_filters.NearbyContentFilter,)
     serializer_class = api_serializers.InformationDeskSerializer
-    queryset = tourism_models.InformationDesk.objects.all()
+    queryset = tourism_models.InformationDesk.objects.order_by('name')
 
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view

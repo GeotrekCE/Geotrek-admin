@@ -115,7 +115,7 @@ class DifficultyViewSet(api_viewsets.GeotrekViewSet):
 
 
 class POIViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekPOIFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekPOIFilter, api_filters.NearbyContentFilter,)
     serializer_class = api_serializers.POISerializer
     queryset = trekking_models.POI.objects.existing() \
         .select_related('topo_object', 'type', ) \

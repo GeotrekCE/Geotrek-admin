@@ -1,4 +1,6 @@
 from datetime import date, datetime
+from geotrek.sensitivity.models import SensitiveArea
+from geotrek.outdoor.models import Course, Site
 import coreschema
 
 from coreapi.document import Field
@@ -229,19 +231,30 @@ class GeotrekPOIFilter(BaseFilterBackend):
 
 class NearbyContentFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        ordering = ("name",)
+        if queryset.model == SensitiveArea:
+            ordering = ("-area", "pk")
         qs = queryset
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
             contents_intersecting = intersecting(qs, TouristicEvent.objects.get(pk=near_touristicevent))
-            qs = contents_intersecting.order_by('name')
+            qs = contents_intersecting.order_by(*ordering)
         near_touristiccontent = request.GET.get('near_touristiccontent')
         if near_touristiccontent:
             contents_intersecting = intersecting(qs, TouristicContent.objects.get(pk=near_touristiccontent))
-            qs = contents_intersecting.order_by('name')
+            qs = contents_intersecting.order_by(*ordering)
         near_trek = request.GET.get('near_trek')
         if near_trek:
             contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
-            qs = contents_intersecting.order_by('name')
+            qs = contents_intersecting.order_by(*ordering)
+        near_outdoorsite = request.GET.get('near_outdoorsite')
+        if near_outdoorsite:
+            contents_intersecting = intersecting(qs, Site.objects.get(pk=near_outdoorsite))
+            qs = contents_intersecting.order_by(*ordering)
+        near_outdoorcourse = request.GET.get('near_outdoorcourse')
+        if near_outdoorcourse:
+            contents_intersecting = intersecting(qs, Course.objects.get(pk=near_outdoorcourse))
+            qs = contents_intersecting.order_by(*ordering)
         return qs
 
     def get_schema_fields(self, view):
@@ -265,6 +278,20 @@ class NearbyContentFilter(BaseFilterBackend):
                 schema=coreschema.Integer(
                     title=_("Near touristic event"),
                     description=_("Filter by a touristic event id. It will only show the contents related to this touristic event.")
+                )
+            ),
+            Field(
+                name='near_outdoorsite', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near outdoor site"),
+                    description=_("Filter by an outdoor course id. It will only show the contents related to this outdoor site.")
+                )
+            ),
+            Field(
+                name='near_outdoorcourse', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near outdoor course"),
+                    description=_("Filter by a touristic event id. It will only show the contents related to this outdoor course.")
                 )
             )
         )
