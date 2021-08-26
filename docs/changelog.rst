@@ -16,6 +16,7 @@ CHANGELOG
 - Add parser to retrieve statuses, activities, and reports (in bounding box) from Suricate
 - Add sync_suricate command to retrieve Suricate data
 - Change Report model to use one of 3 modes : No Suricate, Suricate Report or Suricate Management (SURICATE_REPORT_ENABLED and SURICATE_MANAGEMENT_ENABLED settings)
+- Add route to APIv2 to retrieve Geotrek version
 
 **Bug fixes**
 
