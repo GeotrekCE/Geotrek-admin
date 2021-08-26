@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from geotrek.outdoor.models import Course, Site
 import coreschema
 
 from coreapi.document import Field
@@ -12,6 +11,8 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from geotrek.outdoor.models import Course, Site
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
 from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
@@ -247,17 +248,18 @@ class NearbyContentFilter(BaseFilterBackend):
             contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
             qs = contents_intersecting.order_by(*ordering)
         near_outdoorsite = request.GET.get('near_outdoorsite')
-        if near_outdoorsite:
-            contents_intersecting = intersecting(qs, Site.objects.get(pk=near_outdoorsite))
-            qs = contents_intersecting.order_by(*ordering)
-        near_outdoorcourse = request.GET.get('near_outdoorcourse')
-        if near_outdoorcourse:
-            contents_intersecting = intersecting(qs, Course.objects.get(pk=near_outdoorcourse))
-            qs = contents_intersecting.order_by(*ordering)
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            if near_outdoorsite:
+                contents_intersecting = intersecting(qs, Site.objects.get(pk=near_outdoorsite))
+                qs = contents_intersecting.order_by(*ordering)
+            near_outdoorcourse = request.GET.get('near_outdoorcourse')
+            if near_outdoorcourse:
+                contents_intersecting = intersecting(qs, Course.objects.get(pk=near_outdoorcourse))
+                qs = contents_intersecting.order_by(*ordering)
         return qs
 
     def get_schema_fields(self, view):
-        return (
+        fields = (
             Field(
                 name='near_trek', required=False, location='query',
                 schema=coreschema.Integer(
@@ -279,21 +281,25 @@ class NearbyContentFilter(BaseFilterBackend):
                     description=_("Filter by a touristic event id. It will only show the contents related to this touristic event.")
                 )
             ),
-            Field(
-                name='near_outdoorsite', required=False, location='query',
-                schema=coreschema.Integer(
-                    title=_("Near outdoor site"),
-                    description=_("Filter by an outdoor course id. It will only show the contents related to this outdoor site.")
-                )
-            ),
-            Field(
-                name='near_outdoorcourse', required=False, location='query',
-                schema=coreschema.Integer(
-                    title=_("Near outdoor course"),
-                    description=_("Filter by a touristic event id. It will only show the contents related to this outdoor course.")
+        )
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            fields = fields + (
+                Field(
+                    name='near_outdoorsite', required=False, location='query',
+                    schema=coreschema.Integer(
+                        title=_("Near outdoor site"),
+                        description=_("Filter by an outdoor course id. It will only show the contents related to this outdoor site.")
+                    )
+                ),
+                Field(
+                    name='near_outdoorcourse', required=False, location='query',
+                    schema=coreschema.Integer(
+                        title=_("Near outdoor course"),
+                        description=_("Filter by a touristic event id. It will only show the contents related to this outdoor course.")
+                    )
                 )
             )
-        )
+        return fields
 
 
 class GeotrekTouristicModelFilter(NearbyContentFilter):
