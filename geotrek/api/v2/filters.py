@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from geotrek.sensitivity.models import SensitiveArea
 from geotrek.outdoor.models import Course, Site
 import coreschema
 
@@ -232,7 +231,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
 class NearbyContentFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         ordering = ("name",)
-        if queryset.model == SensitiveArea:
+        if queryset.model.__name__ == "SensitiveArea":
             ordering = ("-area", "pk")
         qs = queryset
         near_touristicevent = request.GET.get('near_touristicevent')
