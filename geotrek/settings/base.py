@@ -656,7 +656,7 @@ API_IS_PUBLIC = True
 
 SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters (always used)
-SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Aerien',] # List of Sport practices name used to filter data to export in OpenAir
+SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Aerien', ]  # List of Sport practices name used to filter data to export in OpenAir
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
