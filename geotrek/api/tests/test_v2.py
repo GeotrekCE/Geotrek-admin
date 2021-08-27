@@ -1,5 +1,4 @@
-from pathlib import Path
-from unittest import skipIf, mock
+from unittest import skipIf
 import datetime
 
 from django.contrib.gis.geos.collections import GeometryCollection
