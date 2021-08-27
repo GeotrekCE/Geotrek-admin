@@ -38,7 +38,6 @@ class TimeStampedModelMixin(models.Model):
         abstract = True
 
     def reload(self, fromdb):
-        print("RELOADING")
         """Reload fields computed at DB-level (triggers)
         """
         self.date_insert = fromdb.date_insert

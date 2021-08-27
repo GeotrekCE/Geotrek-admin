@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest import skipIf, mock
 import datetime
 
@@ -2402,41 +2403,54 @@ class NearOutdoorFilterTestCase(BaseApiTest):
 class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     @classmethod
-    @mock.patch('geotrek.common.mixins.TimeStampedModelMixin.reload', return_value=None)
-    @mock.patch('geotrek.core.models.Path.reload', return_value=None)
-    def setUpTestData(cls, mocked_reload, mocked_reload2):
-
-        with freeze_time("2003-06-09"):
-            cls.path1 = core_factory.PathFactory()
-        with freeze_time("2005-06-09"):
-            cls.path2 = core_factory.PathFactory()
-        with freeze_time("2004-06-09"):
-            cls.path1.name = "Updated in 2004"
-            cls.path1.save()
-        with freeze_time("2006-06-09"):
-            cls.path2.name = "Updated in 2006"
-            cls.path2.save()
-
-    def test_created_before_filter(self):
-        self.client.force_login(SuperUserFactory())
-        response = self.get_path_list({'created_before': '2004-12-12'})
-        self.assertEqual(response.json().get("count"), 1)
-        self.assertEqual(response.json().get("results")[0]["id"], self.path1.pk)
-
-    def test_created_after_filter(self):
-        self.client.force_login(SuperUserFactory())
-        response = self.get_path_list({'created_after': '2004-12-12'})
-        self.assertEqual(response.json().get("count"), 1)
-        self.assertEqual(response.json().get("results")[0]["id"], self.path2.pk)
+    def setUpTestData(cls):
+        cls.path1 = core_factory.PathFactory()
+        cls.path2 = core_factory.PathFactory()
 
     def test_updated_after_filter(self):
         self.client.force_login(SuperUserFactory())
-        response = self.get_path_list({'updated_after': '2005-02-12'})
-        self.assertEqual(response.json().get("count"), 1)
-        self.assertEqual(response.json().get("results")[0]["id"], self.path2.pk)
+        two_years_ago = (datetime.datetime.now() - datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        response = self.get_path_list({'updated_after': two_years_ago})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_updated_after_filter_2(self):
+        self.client.force_login(SuperUserFactory())
+        in_two_years = (datetime.datetime.now() + datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        response = self.get_path_list({'updated_after': in_two_years})
+        self.assertEqual(response.json().get("count"), 0)
 
     def test_updated_before_filter(self):
         self.client.force_login(SuperUserFactory())
-        response = self.get_path_list({'updated_before': '2005-12-12'})
-        self.assertEqual(response.json().get("count"), 1)
-        self.assertEqual(response.json().get("results")[0]["id"], self.trek1.pk)
+        two_years_ago = (datetime.datetime.now() - datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        response = self.get_path_list({'updated_before': two_years_ago})
+        self.assertEqual(response.json().get("count"), 0)
+
+    def test_updated_before_filter_2(self):
+        self.client.force_login(SuperUserFactory())
+        in_two_years = (datetime.datetime.now() + datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        response = self.get_path_list({'updated_before': in_two_years})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_created_after_filter(self):
+        self.client.force_login(SuperUserFactory())
+        two_years_ago = (datetime.datetime.now() - datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        response = self.get_path_list({'created_after': two_years_ago})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_created_after_filter_2(self):
+        self.client.force_login(SuperUserFactory())
+        in_two_years = (datetime.datetime.now() + datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        response = self.get_path_list({'created_after': in_two_years})
+        self.assertEqual(response.json().get("count"), 0)
+
+    def test_created_before_filter(self):
+        self.client.force_login(SuperUserFactory())
+        two_years_ago = (datetime.datetime.now() - datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        response = self.get_path_list({'created_before': two_years_ago})
+        self.assertEqual(response.json().get("count"), 0)
+
+    def test_created_before_filter_2(self):
+        self.client.force_login(SuperUserFactory())
+        in_two_years = (datetime.datetime.now() + datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        response = self.get_path_list({'created_before': in_two_years})
+        self.assertEqual(response.json().get("count"), 2)
