@@ -1,5 +1,6 @@
-from unittest import skipIf
+from unittest import skipIf, mock
 import datetime
+
 from django.contrib.gis.geos.collections import GeometryCollection
 from django.urls import reverse
 from django.test.testcases import TestCase
@@ -2396,3 +2397,46 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         response = self.get_sensitivearea_list({'near_outdoorsite': self.site.pk, 'period': 'any'})
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.sensitivearea1.pk)
+
+
+class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
+
+    @classmethod
+    @mock.patch('geotrek.common.mixins.TimeStampedModelMixin.reload', return_value=None)
+    @mock.patch('geotrek.core.models.Path.reload', return_value=None)
+    def setUpTestData(cls, mocked_reload, mocked_reload2):
+
+        with freeze_time("2003-06-09"):
+            cls.path1 = core_factory.PathFactory()
+        with freeze_time("2005-06-09"):
+            cls.path2 = core_factory.PathFactory()
+        with freeze_time("2004-06-09"):
+            cls.path1.name = "Updated in 2004"
+            cls.path1.save()
+        with freeze_time("2006-06-09"):
+            cls.path2.name = "Updated in 2006"
+            cls.path2.save()
+
+    def test_created_before_filter(self):
+        self.client.force_login(SuperUserFactory())
+        response = self.get_path_list({'created_before': '2004-12-12'})
+        self.assertEqual(response.json().get("count"), 1)
+        self.assertEqual(response.json().get("results")[0]["id"], self.path1.pk)
+
+    def test_created_after_filter(self):
+        self.client.force_login(SuperUserFactory())
+        response = self.get_path_list({'created_after': '2004-12-12'})
+        self.assertEqual(response.json().get("count"), 1)
+        self.assertEqual(response.json().get("results")[0]["id"], self.path2.pk)
+
+    def test_updated_after_filter(self):
+        self.client.force_login(SuperUserFactory())
+        response = self.get_path_list({'updated_after': '2005-02-12'})
+        self.assertEqual(response.json().get("count"), 1)
+        self.assertEqual(response.json().get("results")[0]["id"], self.path2.pk)
+
+    def test_updated_before_filter(self):
+        self.client.force_login(SuperUserFactory())
+        response = self.get_path_list({'updated_before': '2005-12-12'})
+        self.assertEqual(response.json().get("count"), 1)
+        self.assertEqual(response.json().get("results")[0]["id"], self.trek1.pk)

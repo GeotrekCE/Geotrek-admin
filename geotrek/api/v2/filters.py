@@ -1,4 +1,5 @@
 from datetime import date, datetime
+
 import coreschema
 
 from coreapi.document import Field
@@ -447,6 +448,66 @@ class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
                 schema=coreschema.String(
                     title=_("Dates after"),
                     description=_("Filter events happening after or during date, format YYYY-MM-DD")
+                )
+            )
+        )
+
+
+class UpdateOrCreateDateFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        updated_before = request.GET.get('updated_before')
+        if updated_before:
+            updated_before = datetime.strptime(updated_before, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_update__lte=updated_before))
+        updated_after = request.GET.get('updated_after')
+        if updated_after:
+            updated_after = datetime.strptime(updated_after, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_update__gte=updated_after))
+        created_before = request.GET.get('created_before')
+        if created_before:
+            created_before = datetime.strptime(created_before, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_insert__lte=created_before))
+        created_after = request.GET.get('created_after')
+        if created_after:
+            created_after = datetime.strptime(created_after, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_insert__gte=created_after))
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='updated_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Update date after"),
+                    description=_("Filter objects updated after or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='updated_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Update date before"),
+                    description=_("Filter objects updated before or during date, format YYYY-MM-DD")
+                )
+            ),
+            Field(
+                name='created_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Create date after"),
+                    description=_("Filter objects created after or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='created_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Create date before"),
+                    description=_("Filter objects created before or during date, format YYYY-MM-DD")
                 )
             )
         )
