@@ -4,6 +4,7 @@ from django.views.generic import RedirectView
 from rest_framework import routers
 
 from geotrek.api.v2 import views as api_views
+from geotrek.api.v2.viewsets import get_geotrek_version
 
 
 router = routers.DefaultRouter()
@@ -65,5 +66,6 @@ _urlpatterns += [
     path('sportpractice/', RedirectView.as_view(pattern_name='apiv2:sportpractice-list', permanent=True)),
     path('sportpractice/<int:pk>/', RedirectView.as_view(pattern_name='apiv2:sportpractice-detail', permanent=True)),
     path('', include(router.urls)),
+    path('version', get_geotrek_version)
 ]
 urlpatterns = [path('api/v2/', include(_urlpatterns))]

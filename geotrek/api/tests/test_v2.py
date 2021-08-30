@@ -9,6 +9,7 @@ from django.conf import settings
 from django.test.utils import override_settings
 from freezegun.api import freeze_time
 
+from geotrek import __version__
 from geotrek.authent import factories as authent_factory, models as authent_models
 from geotrek.feedback import factories as feedback_factory
 from geotrek.core import factories as core_factory, models as path_models
@@ -462,6 +463,11 @@ class BaseApiTest(TestCase):
 
     def get_touristiceventtype_detail(self, id_touristiceventtype, params=None):
         return self.client.get(reverse('apiv2:touristiceventtype-detail', args=(id_touristiceventtype,)), params)
+
+    def test_version_route(self):
+        response = self.client.get("/api/v2/version")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {'version': __version__})
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
