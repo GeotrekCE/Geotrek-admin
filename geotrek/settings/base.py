@@ -651,7 +651,8 @@ TREK_WITH_POIS_PICTURES = False
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'APIS_SORTER': 'alpha',
-    'JSON_EDITOR': True
+    'JSON_EDITOR': True,
+    'API_V2_DESCRIPTION': "New Geotrek API"
 }
 
 API_IS_PUBLIC = True
