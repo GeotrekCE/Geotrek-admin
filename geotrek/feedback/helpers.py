@@ -31,9 +31,9 @@ class SuricateRequestManager:
             )
         else:
             data = json.loads(response.content.decode())
-            if "code_ok" in data and not bool(data["code_ok"]):
+            if ("code_ok" in data) and (data["code_ok"] == 'false'):
                 raise Exception(
-                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']}]"
+                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']} - {data['message']}]"
                 )
             return data
         #  THIS SHOULD BE A THING but the documentation is at war with the API
@@ -82,9 +82,7 @@ class SuricateRequestManager:
             )
         else:
             response = requests.post(f"{self.URL}{endpoint}", params)
-
-        if response.status_code not in [200, 201]:
-            raise Exception(f"Failed to post on Suricate API - status code {response.status_code}")
+        self.check_response_integrity(response)
 
     def print_response_OK_or_KO(self, response):
         if response.status_code not in [200, 201]:
@@ -173,11 +171,12 @@ class SuricateMessenger():
         activity_id = report.activity.suricate_id if report.activity is not None else None
         category_id = report.category.suricate_id if report.category is not None else None
         magnitude_id = report.problem_magnitude.suricate_id if report.problem_magnitude is not None else None
+        gps_geom = report.geom.transform(4326, clone=True)
         params = {
             "id_origin": manager.ID_ORIGIN,
             "id_user": report.email,
-            "lat": report.geom.y,
-            "long": report.geom.x,
+            "lat": gps_geom.y,
+            "long": gps_geom.x,
             "report": report.comment,
             "activite": activity_id,
             "nature_prb": category_id,

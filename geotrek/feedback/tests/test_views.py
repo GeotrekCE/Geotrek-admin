@@ -1,5 +1,7 @@
 from datetime import datetime
 from django.conf import settings
+from django.contrib.gis.geos import Point
+
 from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
 from django.test import TestCase
@@ -32,9 +34,11 @@ class ReportViewsetMailSend(TestCase):
 
     @override_settings(SURICATE_REPORT_ENABLED=True)
     def test_mail_send_on_request(self):
+        geom = Point(0, 0, srid=2154)
         self.client.post(
             '/api/en/reports/report',
             {
+                'geom': '{\"type\":\"Point\",\"coordinates\":[4.3728446995373815,43.856935212211454]}',
                 'email': 'test@geotrek.local',
                 'comment': 'Test comment',
                 'activity': feedback_factories.ReportActivityFactory.create().pk,
