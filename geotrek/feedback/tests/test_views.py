@@ -34,7 +34,6 @@ class ReportViewsetMailSend(TestCase):
 
     @override_settings(SURICATE_REPORT_ENABLED=True)
     def test_mail_send_on_request(self):
-        geom = Point(0, 0, srid=2154)
         self.client.post(
             '/api/en/reports/report',
             {
