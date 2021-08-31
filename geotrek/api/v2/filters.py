@@ -1,9 +1,10 @@
 from datetime import date, datetime
+
+from django.db.models import Exists, OuterRef
 import coreschema
 
 from coreapi.document import Field
 from django.conf import settings
-from django.contrib.gis.db.models import Collect
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext as _
 from rest_framework.filters import BaseFilterBackend
@@ -244,12 +245,10 @@ class GeotrekTouristicModelFilter(BaseFilterBackend):
             qs = contents_intersecting.order_by('name')
         cities = request.GET.get('cities')
         if cities:
-            cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=cities_geom) if cities_geom else qs.none()
+            qs = qs.filter(Exists(City.objects.filter(code__in=cities.split(","), geom__intersects=OuterRef('geom'))))
         districts = request.GET.get('districts')
         if districts:
-            districts_geom = District.objects.filter(id__in=districts.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=districts_geom) if districts_geom else qs.none()
+            qs = qs.filter(Exists(District.objects.filter(pk__in=districts.split(","), geom__intersects=OuterRef('geom'))))
         structures = request.GET.get('structures')
         if structures:
             qs = qs.filter(structure__in=structures.split(','))
@@ -433,12 +432,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(ascent__lte=ascent_max)
         cities = request.GET.get('cities')
         if cities:
-            cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=cities_geom) if cities_geom else qs.none()
+            qs = qs.filter(Exists(City.objects.filter(code__in=cities.split(","), geom__intersects=OuterRef('geom'))))
         districts = request.GET.get('districts')
         if districts:
-            districts_geom = District.objects.filter(id__in=districts.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=districts_geom) if districts_geom else qs.none()
+            qs = qs.filter(Exists(District.objects.filter(pk__in=districts.split(","), geom__intersects=OuterRef('geom'))))
         structures = request.GET.get('structures')
         if structures:
             qs = qs.filter(structure__in=structures.split(','))
