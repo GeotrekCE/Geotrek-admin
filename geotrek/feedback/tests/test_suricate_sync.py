@@ -44,6 +44,8 @@ def mocked_json(file_name):
         return bytes(f.read(), encoding="UTF-8")
 
 
+@override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
+@override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
 class SuricateTests(TestCase):
     """Test Suricate API"""
 
@@ -221,7 +223,8 @@ class SuricateAPITests(SuricateTests):
         self.build_failed_request_patch(mock_post)
 
         # Create a report, should raise an exception
-        self.assertRaises(Exception, ReportFactory())
+        with self.assertRaises(Exception):
+            ReportFactory()
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)

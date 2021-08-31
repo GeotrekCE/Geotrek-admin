@@ -1,4 +1,7 @@
 from datetime import datetime
+import json
+from unittest import mock
+from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS
 from django.conf import settings
 
 from django.test.utils import override_settings
@@ -31,8 +34,19 @@ class ReportModelTest(TestCase):
 
 class ReportViewsetMailSend(TestCase):
 
+    @override_settings(SURICATE_REPORT_SETTINGS={"URL": "http://suricate.example.com",
+                                                 "ID_ORIGIN": "geotrek",
+                                                 "PRIVATE_KEY_CLIENT_SERVER": "",
+                                                 "PRIVATE_KEY_SERVER_CLIENT": "",
+                                                 "AUTH": ("", "")})
     @override_settings(SURICATE_REPORT_ENABLED=True)
-    def test_mail_send_on_request(self):
+    @override_settings(SURICATE_MANAGEMENTT_ENABLED=False)
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_mail_send_on_request(self, mocked_post):
+        mock_response = mock.Mock()
+        mock_response.content = json.dumps({"code_ok": 'true'}).encode()
+        mock_response.status_code = 200
+        mocked_post.return_value = mock_response
         self.client.post(
             '/api/en/reports/report',
             {

@@ -72,7 +72,7 @@ class SuricateRequestManager:
         response = self.get_from_suricate_no_integrity_check(endpoint, url_params)
         return self.check_response_integrity(response)
 
-    def post_to_suricate(self, endpoint, params):
+    def post_to_suricate(self, endpoint, params=None):
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.post(
@@ -101,40 +101,42 @@ class SuricateRequestManager:
 
 class SuricateStandardRequestManager(SuricateRequestManager):
 
-    URL = settings.SURICATE_REPORT_SETTINGS["URL"]
-    ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
-    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
-        "PRIVATE_KEY_CLIENT_SERVER"
-    ]
-    PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_REPORT_SETTINGS[
-        "PRIVATE_KEY_SERVER_CLIENT"
-    ]
-    CHECK_CLIENT = (
-        f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
-    )
-    CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
+    def __init__(self):
+        self.URL = settings.SURICATE_REPORT_SETTINGS["URL"]
+        self.ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
+        self.PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
+            "PRIVATE_KEY_CLIENT_SERVER"
+        ]
+        self.PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_REPORT_SETTINGS[
+            "PRIVATE_KEY_SERVER_CLIENT"
+        ]
+        self.CHECK_CLIENT = (
+            f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()).hexdigest()}"
+        )
+        self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
 
-    USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
-    AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if USE_AUTH else None
+        self.USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
+        self.AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if self.USE_AUTH else None
 
 
 class SuricateGestionRequestManager(SuricateRequestManager):
 
-    URL = settings.SURICATE_MANAGEMENT_SETTINGS["URL"]
-    ID_ORIGIN = settings.SURICATE_MANAGEMENT_SETTINGS["ID_ORIGIN"]
-    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_MANAGEMENT_SETTINGS[
-        "PRIVATE_KEY_CLIENT_SERVER"
-    ]
-    PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_MANAGEMENT_SETTINGS[
-        "PRIVATE_KEY_SERVER_CLIENT"
-    ]
-    CHECK_CLIENT = (
-        f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
-    )
-    CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
+    def __init__(self):
+        self.URL = settings.SURICATE_MANAGEMENT_SETTINGS["URL"]
+        self.ID_ORIGIN = settings.SURICATE_MANAGEMENT_SETTINGS["ID_ORIGIN"]
+        self.PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_MANAGEMENT_SETTINGS[
+            "PRIVATE_KEY_CLIENT_SERVER"
+        ]
+        self.PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_MANAGEMENT_SETTINGS[
+            "PRIVATE_KEY_SERVER_CLIENT"
+        ]
+        self.CHECK_CLIENT = (
+            f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()).hexdigest()}"
+        )
+        self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
 
-    USE_AUTH = "AUTH" in settings.SURICATE_MANAGEMENT_SETTINGS.keys()
-    AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if USE_AUTH else None
+        self.USE_AUTH = "AUTH" in settings.SURICATE_MANAGEMENT_SETTINGS.keys()
+        self.AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if self.USE_AUTH else None
 
 
 def test_suricate_connection():
@@ -156,7 +158,7 @@ def send_reports_to_managers(template_name="feedback/reports_email.html"):
     mail_managers(subject, message, fail_silently=False)
 
 
-class SuricateMessenger():
+class SuricateMessenger:
 
     def __init__(self):
         self.standard_manager = SuricateStandardRequestManager()
