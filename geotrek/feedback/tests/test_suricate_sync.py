@@ -145,7 +145,7 @@ class SuricateAPITests(SuricateTests):
         """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
         self.build_get_request_patch(mocked_get)
         self.assertEqual(len(mail.outbox), 0)
-        call_command("sync_suricate", verbosity=2)
+        call_command("sync_suricate", no_attachments=True, verbosity=2)
         # 8 out of 9 are imported because one of them is out of bbox by design
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
@@ -309,11 +309,13 @@ class SuricateInterfaceTests(SuricateTests):
         self.assertEqual(Report.objects.count(), 0)
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.SuricateParser.get_alerts")
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_import_from_interface_enabled(self, mocked):
+    def test_import_from_interface_enabled(self, mocked_get, mocked_parser):
         user = UserFactory.create(username='Slush', password='Puppy')
         self.client.force_login(user)
-        self.build_get_request_patch(mocked)
+        # mocked_parser = mock.Mock()
+        self.build_get_request_patch(mocked_get)
         url = reverse('common:import_dataset')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -326,10 +328,7 @@ class SuricateInterfaceTests(SuricateTests):
             }
         )
         self.assertEqual(response.status_code, 200)
-        # 8 out of 9 are imported because one of them is out of bbox by design
-        self.assertEqual(Report.objects.count(), 8)
-        self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
-        self.assertEqual(AttachedMessage.objects.count(), 44)
+        mocked_parser.assert_called_once()
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)

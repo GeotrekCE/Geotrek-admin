@@ -34,6 +34,13 @@ class Command(BaseCommand):
             help="Test ability to reach Suricate API",
             default=False,
         )
+        parser.add_argument(
+            "--no-attachments",
+            dest="no_attachments",
+            action='store_true',
+            help="Do not download images from Suricate API when retrieving reports",
+            default=False,
+        )
 
     def handle(self, *args, **options):
         verbosity = options['verbosity']
@@ -48,6 +55,6 @@ class Command(BaseCommand):
                 if options["statuses"] or has_no_params:
                     parser.get_statuses()
                 if has_no_params:
-                    parser.get_alerts(verbosity=verbosity)
+                    parser.get_alerts(verbosity=verbosity, download_attachments=not(options["no_attachments"]))
         else:
             logger.error("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED.")

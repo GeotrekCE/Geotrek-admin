@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
 from unittest import mock
-from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS
 from django.conf import settings
 
 from django.test.utils import override_settings

@@ -85,7 +85,7 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
             logger.error("Email could not be sent to managers.")
             logger.exception(e)  # This sends an email to admins :)
 
-    def parse_report(self, report):
+    def parse_report(self, report, download_attachments=True):
         """
         Parse a JSON report from Suricate API
         :return: returns True if and only if this report is imported (it is in bbox) and is new
@@ -146,15 +146,16 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
                     f"New report - id: {report['uid']}, location: {report_obj.geom}"
                 )
 
-            # Parse documents attached to report
-            self.create_documents(report["documents"], report_obj)
+            if download_attachments:
+                # Parse documents attached to report
+                self.create_documents(report["documents"], report_obj)
 
             # Parse messages attached to report
             self.create_messages(report["messages"], report_obj)
 
             return created
 
-    def get_alerts(self, verbosity=1):
+    def get_alerts(self, verbosity=1, download_attachments=True):
         """
         Get reports list from Suricate Rest API
         :return: returns True if and only if reports was imported (it is in bbox)
@@ -169,7 +170,7 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
         for report in data["alertes"]:
             if verbosity == 2:
                 sys.stdout.write(f"Processing report {report['uid']} - {current_report}/{total_reports} \n")
-            report_created = self.parse_report(report)
+            report_created = self.parse_report(report, download_attachments)
             reports_created = reports_created or report_created
             current_report += 1
         if verbosity >= 1:
