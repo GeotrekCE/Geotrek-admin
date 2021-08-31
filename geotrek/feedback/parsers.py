@@ -2,10 +2,8 @@ import logging
 import os
 import sys
 from datetime import datetime
-from time import sleep
 from urllib.parse import urlparse
 
-import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -13,11 +11,9 @@ from django.contrib.gis.geos import Point
 from django.contrib.gis.geos.collections import Polygon
 from django.core.files.base import ContentFile
 from django.utils.timezone import make_aware
-from django.utils.translation import gettext as _
 
 from geotrek.common.models import Attachment, FileType
-from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
-                                    GlobalImportError, ValueImportError)
+from geotrek.common.parsers import AttachmentParserMixin, GlobalImportError
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
                                      ReportStatus)
