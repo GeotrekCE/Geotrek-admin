@@ -84,6 +84,25 @@ class SuricateRequestManager:
             response = requests.post(f"{self.URL}{endpoint}", params)
         self.check_response_integrity(response)
 
+    def get_attachment_from_suricate(self, url):
+        try_get = settings.PARSER_NUMBER_OF_TRIES
+        assert try_get > 0
+        # while try_get:
+        if self.USE_AUTH:
+            response = requests.get(
+                url,
+                auth=self.AUTH,
+            )
+        else:
+            response = requests.get(
+                url,
+            )
+        if response.status_code not in [200, 201]:
+            logger.warning(
+                f"Failed to access Suricate attachment - Status code: {response.status_code}"
+            )
+        return response
+
     def print_response_OK_or_KO(self, response):
         if response.status_code not in [200, 201]:
             print(f"KO - Status code: {response.status_code}")
