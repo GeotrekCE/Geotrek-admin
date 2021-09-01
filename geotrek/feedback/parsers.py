@@ -27,12 +27,8 @@ class SuricateParser(SuricateGestionRequestManager):
     def __init__(self):
         super().__init__()
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
-        # Replicated Attachment parser start
-        if settings.PAPERCLIP_ENABLE_LINK is False:
-            raise Exception('You need to enable PAPERCLIP_ENABLE_LINK to use this function')
-        else:
-            self.filetype, created = FileType.objects.get_or_create(type="Photographie", structure=None)
-            self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
+        self.filetype, created = FileType.objects.get_or_create(type="Photographie", structure=None)
+        self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
     def parse_date(self, date):
         """Parse datetime string from Suricate Rest API"""
