@@ -13,7 +13,6 @@ from django.core.files.base import ContentFile
 from django.utils.timezone import make_aware
 
 from geotrek.common.models import Attachment, FileType
-from geotrek.common.parsers import GlobalImportError
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
                                      ReportStatus)
