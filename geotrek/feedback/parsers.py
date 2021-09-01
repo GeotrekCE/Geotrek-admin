@@ -13,7 +13,7 @@ from django.core.files.base import ContentFile
 from django.utils.timezone import make_aware
 
 from geotrek.common.models import Attachment, FileType
-from geotrek.common.parsers import AttachmentParserMixin, GlobalImportError
+from geotrek.common.parsers import GlobalImportError
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
                                      ReportStatus)
@@ -23,7 +23,7 @@ from .helpers import SuricateGestionRequestManager, send_reports_to_managers
 logger = logging.getLogger(__name__)
 
 
-class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
+class SuricateParser(SuricateGestionRequestManager):
 
     def __init__(self):
         super().__init__()
@@ -32,7 +32,7 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
         if settings.PAPERCLIP_ENABLE_LINK is False:
             raise Exception('You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:
-            self.filetype = FileType.objects.get_or_create(type="Photographie", structure=None)
+            self.filetype, created = FileType.objects.get_or_create(type="Photographie", structure=None)
         except FileType.DoesNotExist:
             raise GlobalImportError("FileType Photographie does not exists in "
                                     "Geotrek-Admin. Please add it")
@@ -81,7 +81,7 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
             logger.error("Email could not be sent to managers.")
             logger.exception(e)  # This sends an email to admins :)
 
-    def parse_report(self, report, download_attachments=True):
+    def parse_report(self, report):
         """
         Parse a JSON report from Suricate API
         :return: returns True if and only if this report is imported (it is in bbox) and is new
@@ -142,16 +142,15 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
                     f"New report - id: {report['uid']}, location: {report_obj.geom}"
                 )
 
-            if download_attachments:
-                # Parse documents attached to report
-                self.create_documents(report["documents"], report_obj)
+            # Parse documents attached to report
+            self.create_documents(report["documents"], report_obj)
 
             # Parse messages attached to report
             self.create_messages(report["messages"], report_obj)
 
             return created
 
-    def get_alerts(self, verbosity=1, download_attachments=True):
+    def get_alerts(self, verbosity=1):
         """
         Get reports list from Suricate Rest API
         :return: returns True if and only if reports was imported (it is in bbox)
@@ -166,7 +165,7 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
         for report in data["alertes"]:
             if verbosity == 2:
                 sys.stdout.write(f"Processing report {report['uid']} - {current_report}/{total_reports} \n")
-            report_created = self.parse_report(report, download_attachments)
+            report_created = self.parse_report(report)
             reports_created = reports_created or report_created
             current_report += 1
         if verbosity >= 1:
@@ -194,8 +193,9 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
                 }
             )
 
-            if not created:
-                # Don't download if it isn't new
+            # If this is False then attachment is either new or had a failed download last time => download file
+            # If this is True then attachment isn't new and was downloaded before => skip this file
+            if attachment.attachment_file.name:
                 continue
 
             if parsed_url.scheme in ('http', 'https'):

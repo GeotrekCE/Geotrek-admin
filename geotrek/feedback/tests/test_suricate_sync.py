@@ -1,3 +1,4 @@
+from geotrek.common.models import Attachment
 from mapentity.factories import UserFactory
 import os
 import io
@@ -44,12 +45,18 @@ def mocked_json(file_name):
         return bytes(f.read(), encoding="UTF-8")
 
 
+def mocked_image(file_name):
+    filename = os.path.join(os.path.dirname(__file__), "data", file_name)
+    with open(filename, "rb") as f:
+        return bytearray(f.read())
+
+
 @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
 @override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
 class SuricateTests(TestCase):
     """Test Suricate API"""
 
-    def build_get_request_patch(self, mocked: MagicMock):
+    def build_get_request_patch(self, mocked: MagicMock, cause_JPG_error=False):
         """Mock get requests to Suricate API"""
 
         def build_response_patch(url, params=None, **kwargs):
@@ -62,6 +69,11 @@ class SuricateTests(TestCase):
                 mock_response.content = mocked_json("suricate_statuses.json")
             elif "GetAlerts" in url:
                 mock_response.content = mocked_json("suricate_alerts.json")
+                mock_response.status_code = 200
+            elif cause_JPG_error:
+                mock_response.status_code = 404
+            elif ".jpg" in url or ".png" in url or ".JPG" in url:
+                mock_response.content = mocked_image("theme-fauna.png")
                 mock_response.status_code = 200
             else:
                 mock_response.status_code = 404
@@ -143,16 +155,14 @@ class SuricateAPITests(SuricateTests):
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_alerts_creates_alerts_and_send_mail(self, mocked_get, mocked_logger):
         """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
-        self.build_get_request_patch(mocked_get)
+        self.build_get_request_patch(mocked_get, cause_JPG_error=True)
         self.assertEqual(len(mail.outbox), 0)
-        call_command("sync_suricate", no_attachments=True, verbosity=2)
+        call_command("sync_suricate", verbosity=2)
         # 8 out of 9 are imported because one of them is out of bbox by design
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
         self.assertEqual(AttachedMessage.objects.count(), 44)
-        # TODO when we can download attachments
-        # self.assertEqual(ReportAttachedDocument.objects.count(), 100)
-        # self.assertEqual(MessageAttachedDocument.objects.count(), 4)
+        self.assertEqual(Attachment.objects.count(), 4)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
@@ -165,6 +175,26 @@ class SuricateAPITests(SuricateTests):
         self.assertIsNone(r.category)
         # Assert no new mail on update
         self.assertEqual(len(mail.outbox), 1)
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.logger")
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_failed_attachments_are_downloaded_on_next_sync(self, mocked_get, mocked_logger):
+        """Test failed requests to download attachments are retried on next sync"""
+        self.assertEqual(Attachment.objects.count(), 0)
+        # Fail to download all images
+        self.build_get_request_patch(mocked_get, cause_JPG_error=True)
+        call_command("sync_suricate", verbosity=2)
+        self.assertEqual(Attachment.objects.count(), 4)
+        for atta in Attachment.objects.all():
+            # All attachments are missing their image file
+            self.assertFalse(atta.attachment_file.name)
+        self.build_get_request_patch(mocked_get, cause_JPG_error=False)
+        call_command("sync_suricate", verbosity=2)
+        self.assertEqual(Attachment.objects.count(), 4)
+        for atta in Attachment.objects.all():
+            # No attachments are missing their image file
+            self.assertTrue(atta.attachment_file.name)
 
     @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)

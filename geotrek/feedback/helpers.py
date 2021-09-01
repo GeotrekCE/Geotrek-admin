@@ -85,9 +85,6 @@ class SuricateRequestManager:
         self.check_response_integrity(response)
 
     def get_attachment_from_suricate(self, url):
-        try_get = settings.PARSER_NUMBER_OF_TRIES
-        assert try_get > 0
-        # while try_get:
         if self.USE_AUTH:
             response = requests.get(
                 url,
