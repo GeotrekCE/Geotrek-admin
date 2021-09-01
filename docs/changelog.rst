@@ -28,6 +28,7 @@ CHANGELOG
 * Fix length_kilometer attribute computation in treks
 * Fix date update format in lists
 * Add CORS header to access medias
+* Change geographic intersection calculation from annoted queries to optimized build-in method
 
 
 2.62.0 (2021-07-06)
