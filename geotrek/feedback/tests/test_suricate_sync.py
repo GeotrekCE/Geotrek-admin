@@ -189,12 +189,26 @@ class SuricateAPITests(SuricateTests):
         for atta in Attachment.objects.all():
             # All attachments are missing their image file
             self.assertFalse(atta.attachment_file.name)
+        # Succesfully download all images
         self.build_get_request_patch(mocked_get, cause_JPG_error=False)
         call_command("sync_suricate", verbosity=2)
         self.assertEqual(Attachment.objects.count(), 4)
         for atta in Attachment.objects.all():
             # No attachments are missing their image file
             self.assertTrue(atta.attachment_file.name)
+        # Succesfully download all images a second time to cover "skip file" case
+        call_command("sync_suricate", verbosity=2)
+        self.assertEqual(Attachment.objects.count(), 4)
+        for atta in Attachment.objects.all():
+            # No attachments are missing their image file
+            self.assertTrue(atta.attachment_file.name)
+
+    @override_settings(PAPERCLIP_ENABLE_LINK=False)
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    def test_sync_needs_paperclip_enabled(self):
+        """Test failed requests to download attachments are retried on next sync"""
+        with self.assertRaises(Exception):
+            call_command("sync_suricate", verbosity=2)
 
     @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)

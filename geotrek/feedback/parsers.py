@@ -31,12 +31,9 @@ class SuricateParser(SuricateGestionRequestManager):
         # Replicated Attachment parser start
         if settings.PAPERCLIP_ENABLE_LINK is False:
             raise Exception('You need to enable PAPERCLIP_ENABLE_LINK to use this function')
-        try:
+        else:
             self.filetype, created = FileType.objects.get_or_create(type="Photographie", structure=None)
-        except FileType.DoesNotExist:
-            raise GlobalImportError("FileType Photographie does not exists in "
-                                    "Geotrek-Admin. Please add it")
-        self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
+            self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
     def parse_date(self, date):
         """Parse datetime string from Suricate Rest API"""
@@ -203,9 +200,8 @@ class SuricateParser(SuricateGestionRequestManager):
                 if response.status_code in [200, 201]:
                     f = ContentFile(response.content)
                     attachment.attachment_file.save(file_url, f, save=False)
-            else:
                 attachment.attachment_link = file_url
-            attachment.save()
+                attachment.save()
 
     def create_messages(self, messages, parent):
         """Parse messages list from Suricate Rest API"""
