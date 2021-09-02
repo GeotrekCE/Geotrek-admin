@@ -1,28 +1,40 @@
-from unittest import skipIf
 import datetime
+from unittest import skipIf
 
-from django.contrib.gis.geos.collections import GeometryCollection
-from django.urls import reverse
-from django.test.testcases import TestCase
-from django.contrib.gis.geos import MultiPoint, Point, LineString, MultiLineString, Polygon
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
+                                     Point, Polygon)
+from django.contrib.gis.geos.collections import GeometryCollection
+from django.test.testcases import TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
+from django.utils import timezone
 from freezegun.api import freeze_time
 
 from geotrek import __version__
-from geotrek.authent import factories as authent_factory, models as authent_models
+from geotrek.authent import factories as authent_factory
+from geotrek.authent import models as authent_models
+from geotrek.common import factories as common_factory
+from geotrek.common import models as common_models
+from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
+                                           get_dummy_uploaded_file,
+                                           get_dummy_uploaded_image)
+from geotrek.core import factories as core_factory
+from geotrek.core import models as path_models
 from geotrek.feedback import factories as feedback_factory
-from geotrek.core import factories as core_factory, models as path_models
-from geotrek.common import factories as common_factory, models as common_models
-from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file, get_dummy_uploaded_document
 from geotrek.flatpages import factories as flatpages_factory
-from geotrek.outdoor import factories as outdoor_factory, models as outdoor_models
-from geotrek.sensitivity import factories as sensitivity_factory, models as sensitivity_models
-from geotrek.trekking import factories as trek_factory, models as trek_models
-from geotrek.tourism import factories as tourism_factory, models as tourism_models
-from geotrek.zoning import factories as zoning_factory, models as zoning_models
+from geotrek.outdoor import factories as outdoor_factory
+from geotrek.outdoor import models as outdoor_models
+from geotrek.sensitivity import factories as sensitivity_factory
+from geotrek.sensitivity import models as sensitivity_models
+from geotrek.tourism import factories as tourism_factory
+from geotrek.tourism import models as tourism_models
+from geotrek.trekking import factories as trek_factory
+from geotrek.trekking import models as trek_models
+from geotrek.zoning import factories as zoning_factory
+from geotrek.zoning import models as zoning_models
 from mapentity.factories import SuperUserFactory
-
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -2425,51 +2437,50 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
     def setUpTestData(cls):
         cls.path1 = core_factory.PathFactory()
         cls.path2 = core_factory.PathFactory()
+        cls.user = SuperUserFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+        return super().setUp()
 
     def test_updated_after_filter(self):
-        self.client.force_login(SuperUserFactory())
-        two_years_ago = (datetime.datetime.now() - datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
+        print(two_years_ago)
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'updated_after': two_years_ago})
         self.assertEqual(response.json().get("count"), 2)
 
     def test_updated_after_filter_2(self):
-        self.client.force_login(SuperUserFactory())
-        in_two_years = (datetime.datetime.now() + datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        in_two_years = (timezone.now() + relativedelta(years=2)).date()
         response = self.get_path_list({'updated_after': in_two_years})
         self.assertEqual(response.json().get("count"), 0)
 
     def test_updated_before_filter(self):
-        self.client.force_login(SuperUserFactory())
-        two_years_ago = (datetime.datetime.now() - datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'updated_before': two_years_ago})
         self.assertEqual(response.json().get("count"), 0)
 
     def test_updated_before_filter_2(self):
-        self.client.force_login(SuperUserFactory())
-        in_two_years = (datetime.datetime.now() + datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        in_two_years = (timezone.now() + relativedelta(years=2)).date()
         response = self.get_path_list({'updated_before': in_two_years})
         self.assertEqual(response.json().get("count"), 2)
 
     def test_created_after_filter(self):
-        self.client.force_login(SuperUserFactory())
-        two_years_ago = (datetime.datetime.now() - datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'created_after': two_years_ago})
         self.assertEqual(response.json().get("count"), 2)
 
     def test_created_after_filter_2(self):
-        self.client.force_login(SuperUserFactory())
-        in_two_years = (datetime.datetime.now() + datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        in_two_years = (timezone.now() + relativedelta(years=2)).date()
         response = self.get_path_list({'created_after': in_two_years})
         self.assertEqual(response.json().get("count"), 0)
 
     def test_created_before_filter(self):
-        self.client.force_login(SuperUserFactory())
-        two_years_ago = (datetime.datetime.now() - datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'created_before': two_years_ago})
         self.assertEqual(response.json().get("count"), 0)
 
     def test_created_before_filter_2(self):
-        self.client.force_login(SuperUserFactory())
-        in_two_years = (datetime.datetime.now() + datetime.timedelta(days=2 * 365)).strftime('%Y-%m-%d')
+        in_two_years = (timezone.now() + relativedelta(years=2)).date()
         response = self.get_path_list({'created_before': in_two_years})
         self.assertEqual(response.json().get("count"), 2)
