@@ -1,26 +1,40 @@
-from unittest import skipIf
 import datetime
-from django.urls import reverse
-from django.test.testcases import TestCase
-from django.contrib.gis.geos import MultiPoint, Point, LineString, MultiLineString
+from unittest import skipIf
+
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
+                                     Point, Polygon)
+from django.contrib.gis.geos.collections import GeometryCollection
+from django.test.testcases import TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
+from django.utils import timezone
 from freezegun.api import freeze_time
 
 from geotrek import __version__
-from geotrek.authent import factories as authent_factory, models as authent_models
+from geotrek.authent import factories as authent_factory
+from geotrek.authent import models as authent_models
+from geotrek.common import factories as common_factory
+from geotrek.common import models as common_models
+from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
+                                           get_dummy_uploaded_file,
+                                           get_dummy_uploaded_image)
+from geotrek.core import factories as core_factory
+from geotrek.core import models as path_models
 from geotrek.feedback import factories as feedback_factory
-from geotrek.core import factories as core_factory, models as path_models
-from geotrek.common import factories as common_factory, models as common_models
-from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file, get_dummy_uploaded_document
 from geotrek.flatpages import factories as flatpages_factory
-from geotrek.outdoor import factories as outdoor_factory, models as outdoor_models
-from geotrek.sensitivity import factories as sensitivity_factory, models as sensitivity_models
-from geotrek.trekking import factories as trek_factory, models as trek_models
-from geotrek.tourism import factories as tourism_factory, models as tourism_models
-from geotrek.zoning import factories as zoning_factory, models as zoning_models
+from geotrek.outdoor import factories as outdoor_factory
+from geotrek.outdoor import models as outdoor_models
+from geotrek.sensitivity import factories as sensitivity_factory
+from geotrek.sensitivity import models as sensitivity_models
+from geotrek.tourism import factories as tourism_factory
+from geotrek.tourism import models as tourism_models
+from geotrek.trekking import factories as trek_factory
+from geotrek.trekking import models as trek_models
+from geotrek.zoning import factories as zoning_factory
+from geotrek.zoning import models as zoning_models
 from mapentity.factories import SuperUserFactory
-
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -2221,3 +2235,252 @@ class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase)
         # Portal is set this time
         self.assertIn(self.type_with_published_and_not_deleted_content.pk, all_ids)
         self.assertIn(self.type_with_published_and_not_deleted_content_with_lang.pk, all_ids)
+
+
+class NearOutdoorFilterTestCase(BaseApiTest):
+    """ Test near_outdoorsite and near_outdoorcourse filter on routes
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site = outdoor_factory.SiteFactory(
+            published_fr=True,
+            geom=GeometryCollection(Point(0.1, 0.1, srid=2154))
+        )
+        cls.course = outdoor_factory.CourseFactory(
+            published_fr=True,
+            geom=GeometryCollection(Point(0, 0, srid=2154)),
+            site=cls.site
+        )
+        # trek1 is nearby
+        cls.path1 = core_factory.PathFactory.create(geom=LineString((0.0, 0.0), (1.0, 1.0), srid=2154))
+        cls.trek1 = trek_factory.TrekFactory.create(
+            paths=[(cls.path1, 0, 1)],
+            geom=cls.path1.geom,
+            published_fr=True
+        )
+        # trek2 is far away
+        cls.path2 = core_factory.PathFactory.create(geom=LineString((9999.0, 9999.0), (9999.0, 9998.0), srid=2154))
+        cls.trek2 = trek_factory.TrekFactory.create(
+            paths=[(cls.path2, 0, 1)],
+            geom=cls.path2.geom,
+            published_fr=True
+        )
+        # event1 is nearby
+        cls.touristic_event1 = tourism_factory.TouristicEventFactory(
+            geom=(Point(0.5, 0.5, srid=2154)),
+            published=True,
+        )
+        # event2 is far away
+        cls.touristic_event2 = tourism_factory.TouristicEventFactory(
+            geom=(Point(9999.5, 9999.5, srid=2154)),
+            published=True,
+        )
+        # content1 is nearby
+        cls.touristic_content1 = tourism_factory.TouristicContentFactory(
+            geom=(Point(0.5, 0.5, srid=2154)),
+            published=True,
+        )
+        # content2 is far away
+        cls.touristic_content2 = tourism_factory.TouristicContentFactory(
+            geom=(Point(9999.5, 9999.5, srid=2154)),
+            published=True,
+        )
+        # site1 is nearby
+        cls.site1 = outdoor_factory.SiteFactory(
+            published_fr=True,
+            geom=GeometryCollection(Point(0.5, 0.5, srid=2154))
+        )
+        # site2 is far away
+        cls.site2 = outdoor_factory.SiteFactory(
+            published_fr=True,
+            geom=GeometryCollection(Point(9999.5, 9999.5, srid=2154))
+        )
+        # course1 is nearby
+        cls.course1 = outdoor_factory.CourseFactory(
+            published_fr=True,
+            geom=GeometryCollection(Point(0.5, 0.5, srid=2154)),
+            site=cls.site1
+        )
+        # course2 is far away
+        cls.course2 = outdoor_factory.CourseFactory(
+            published_fr=True,
+            geom=GeometryCollection(Point(9999.5, 9999.5, srid=2154)),
+            site=cls.site2
+        )
+        # poi 1 is nearby
+        cls.poi1 = trek_factory.POIFactory(
+            paths=[(cls.path1, 0, 0)],
+            geom=cls.path1.geom
+        )
+        # poi 2 isfar away
+        cls.poi2 = trek_factory.POIFactory(
+            paths=[(cls.path2, 0, 0)],
+            geom=cls.path2.geom
+        )
+        # info desk 1 is nearby
+        cls.info_desk1 = tourism_factory.InformationDeskFactory(
+            geom=Point(0.0, 0.0, srid=2154)
+        )
+        # info desk 2 is far away
+        cls.info_desk2 = tourism_factory.InformationDeskFactory(
+            geom=Point(9999.5, 9999.5, srid=2154)
+        )
+        cls.trek1.information_desks.set([cls.info_desk1])
+        cls.trek2.information_desks.set([cls.info_desk2])
+        # sensitive area 1 is nearby
+        cls.sensitivearea1 = sensitivity_factory.SensitiveAreaFactory(
+            geom=Polygon(
+                (
+                    (0, 0),
+                    (0, 1),
+                    (1, 1),
+                    (0, 0)
+                ),
+                srid=2154
+            )
+        )
+        # sensitive area 2 is nearby
+        cls.sensitivearea2 = sensitivity_factory.SensitiveAreaFactory(
+            geom=Polygon(
+                (
+                    (9999, 9999),
+                    (9999, 9998),
+                    (9998, 9998),
+                    (9999, 9999)
+                ),
+                srid=2154
+            )
+        )
+
+    def test_trek_near_outdoorcourse(self):
+        response = self.get_trek_list({'near_outdoorcourse': self.course.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.trek1.pk)
+
+    def test_trek_near_outdoorsite(self):
+        response = self.get_trek_list({'near_outdoorsite': self.site.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.trek1.pk)
+
+    def test_touristicevent_near_outdoorcourse(self):
+        response = self.get_touristicevent_list({'near_outdoorcourse': self.course.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.touristic_event1.pk)
+
+    def test_touristicevent_near_outdoorsite(self):
+        response = self.get_touristicevent_list({'near_outdoorsite': self.site.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.touristic_event1.pk)
+
+    def test_touristiccontent_near_outdoorcourse(self):
+        response = self.get_touristiccontent_list({'near_outdoorcourse': self.course.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.touristic_content1.pk)
+
+    def test_outdoorcourse_near_outdoorcourse(self):
+        response = self.get_course_list({'near_outdoorcourse': self.course.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.course1.pk)
+
+    def test_outdoorcourse_near_outdoorsite(self):
+        response = self.get_course_list({'near_outdoorsite': self.site.pk})
+        self.assertEqual(response.json()["count"], 2)
+        self.assertEqual(response.json()["results"][0]["id"], self.course.pk)
+        self.assertEqual(response.json()["results"][1]["id"], self.course1.pk)
+
+    def test_outdoorsite_near_outdoorcourse(self):
+        response = self.get_site_list({'near_outdoorcourse': self.course.pk})
+        self.assertEqual(response.json()["count"], 2)
+        self.assertEqual(response.json()["results"][0]["id"], self.site.pk)
+        self.assertEqual(response.json()["results"][1]["id"], self.site1.pk)
+
+    def test_outdoorsite_near_outdoorsite(self):
+        response = self.get_site_list({'near_outdoorsite': self.site.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.site1.pk)
+
+    def test_poi_near_outdoorcourse(self):
+        response = self.get_poi_list({'near_outdoorcourse': self.course.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.poi1.pk)
+
+    def test_poi_near_outdoorsite(self):
+        response = self.get_poi_list({'near_outdoorsite': self.site.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.poi1.pk)
+
+    def test_infodesk_near_outdoorcourse(self):
+        response = self.get_informationdesk_list({'near_outdoorcourse': self.course.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk1.pk)
+
+    def test_infodesk_near_outdoorsite(self):
+        response = self.get_informationdesk_list({'near_outdoorsite': self.site.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk1.pk)
+
+    def test_sensitivearea_near_outdoorcourse(self):
+        response = self.get_sensitivearea_list({'near_outdoorcourse': self.course.pk, 'period': 'any'})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.sensitivearea1.pk)
+
+    def test_sensitivearea_near_outdoorsite(self):
+        response = self.get_sensitivearea_list({'near_outdoorsite': self.site.pk, 'period': 'any'})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.sensitivearea1.pk)
+
+
+class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.path1 = core_factory.PathFactory()
+        cls.path2 = core_factory.PathFactory()
+        cls.user = SuperUserFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+        return super().setUp()
+
+    def test_updated_after_filter(self):
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
+        print(two_years_ago)
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
+        response = self.get_path_list({'updated_after': two_years_ago})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_updated_after_filter_2(self):
+        in_two_years = (timezone.now() + relativedelta(years=2)).date()
+        response = self.get_path_list({'updated_after': in_two_years})
+        self.assertEqual(response.json().get("count"), 0)
+
+    def test_updated_before_filter(self):
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
+        response = self.get_path_list({'updated_before': two_years_ago})
+        self.assertEqual(response.json().get("count"), 0)
+
+    def test_updated_before_filter_2(self):
+        in_two_years = (timezone.now() + relativedelta(years=2)).date()
+        response = self.get_path_list({'updated_before': in_two_years})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_created_after_filter(self):
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
+        response = self.get_path_list({'created_after': two_years_ago})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_created_after_filter_2(self):
+        in_two_years = (timezone.now() + relativedelta(years=2)).date()
+        response = self.get_path_list({'created_after': in_two_years})
+        self.assertEqual(response.json().get("count"), 0)
+
+    def test_created_before_filter(self):
+        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
+        response = self.get_path_list({'created_before': two_years_ago})
+        self.assertEqual(response.json().get("count"), 0)
+
+    def test_created_before_filter_2(self):
+        in_two_years = (timezone.now() + relativedelta(years=2)).date()
+        response = self.get_path_list({'created_before': in_two_years})
+        self.assertEqual(response.json().get("count"), 2)

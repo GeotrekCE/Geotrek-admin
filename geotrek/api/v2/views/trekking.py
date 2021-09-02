@@ -19,7 +19,11 @@ class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTrekQueryParamsFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.GeotrekTrekQueryParamsFilter,
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter
+    )
     serializer_class = api_serializers.TrekSerializer
 
     def get_queryset(self):
@@ -115,7 +119,11 @@ class DifficultyViewSet(api_viewsets.GeotrekViewSet):
 
 
 class POIViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekPOIFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.GeotrekPOIFilter,
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter
+    )
     serializer_class = api_serializers.POISerializer
     queryset = trekking_models.POI.objects.existing() \
         .select_related('topo_object', 'type', ) \

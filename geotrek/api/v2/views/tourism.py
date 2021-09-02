@@ -26,7 +26,11 @@ class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicContentFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.GeotrekTouristicContentFilter,
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter
+    )
     serializer_class = api_serializers.TouristicContentSerializer
 
     def get_queryset(self):
@@ -39,9 +43,9 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter, api_filters.NearbyContentFilter,)
     serializer_class = api_serializers.InformationDeskSerializer
-    queryset = tourism_models.InformationDesk.objects.all()
+    queryset = tourism_models.InformationDesk.objects.order_by('name')
 
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
@@ -57,7 +61,11 @@ class TouristicEventTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicEventFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.GeotrekTouristicEventFilter,
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter
+    )
     serializer_class = api_serializers.TouristicEventSerializer
 
     def get_queryset(self):

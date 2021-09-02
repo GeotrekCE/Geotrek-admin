@@ -1,10 +1,11 @@
 from datetime import date, datetime
 
-from django.db.models import Exists, OuterRef
+
 import coreschema
 
 from coreapi.document import Field
 from django.conf import settings
+from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext as _
 from rest_framework.filters import BaseFilterBackend
@@ -12,6 +13,8 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from geotrek.outdoor.models import Course, Site
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
 from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
@@ -228,21 +231,82 @@ class GeotrekPOIFilter(BaseFilterBackend):
         )
 
 
-class GeotrekTouristicModelFilter(BaseFilterBackend):
-    def _filter_queryset(self, request, queryset, view):
+class NearbyContentFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        ordering = ("name",)
+        if queryset.model.__name__ == "SensitiveArea":
+            ordering = ("-area", "pk")
         qs = queryset
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
             contents_intersecting = intersecting(qs, TouristicEvent.objects.get(pk=near_touristicevent))
-            qs = contents_intersecting.order_by('name')
+            qs = contents_intersecting.order_by(*ordering)
         near_touristiccontent = request.GET.get('near_touristiccontent')
         if near_touristiccontent:
             contents_intersecting = intersecting(qs, TouristicContent.objects.get(pk=near_touristiccontent))
-            qs = contents_intersecting.order_by('name')
+            qs = contents_intersecting.order_by(*ordering)
         near_trek = request.GET.get('near_trek')
         if near_trek:
             contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
-            qs = contents_intersecting.order_by('name')
+            qs = contents_intersecting.order_by(*ordering)
+        near_outdoorsite = request.GET.get('near_outdoorsite')
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            if near_outdoorsite:
+                contents_intersecting = intersecting(qs, Site.objects.get(pk=near_outdoorsite))
+                qs = contents_intersecting.order_by(*ordering)
+            near_outdoorcourse = request.GET.get('near_outdoorcourse')
+            if near_outdoorcourse:
+                contents_intersecting = intersecting(qs, Course.objects.get(pk=near_outdoorcourse))
+                qs = contents_intersecting.order_by(*ordering)
+        return qs
+
+    def get_schema_fields(self, view):
+        fields = (
+            Field(
+                name='near_trek', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near trek"),
+                    description=_("Filter by a trek id. It will only show the contents related to this trek.")
+                )
+            ),
+            Field(
+                name='near_touristiccontent', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near touristic content"),
+                    description=_("Filter by a touristic content id. It will only show the contents related to this touristic content.")
+                )
+            ),
+            Field(
+                name='near_touristicevent', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near touristic event"),
+                    description=_("Filter by a touristic event id. It will only show the contents related to this touristic event.")
+                )
+            ),
+        )
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            fields = fields + (
+                Field(
+                    name='near_outdoorsite', required=False, location='query',
+                    schema=coreschema.Integer(
+                        title=_("Near outdoor site"),
+                        description=_("Filter by an outdoor course id. It will only show the contents related to this outdoor site.")
+                    )
+                ),
+                Field(
+                    name='near_outdoorcourse', required=False, location='query',
+                    schema=coreschema.Integer(
+                        title=_("Near outdoor course"),
+                        description=_("Filter by a touristic event id. It will only show the contents related to this outdoor course.")
+                    )
+                )
+            )
+        return fields
+
+
+class GeotrekTouristicModelFilter(NearbyContentFilter):
+    def _filter_queryset(self, request, queryset, view):
+        qs = queryset
         cities = request.GET.get('cities')
         if cities:
             qs = qs.filter(Exists(City.objects.filter(code__in=cities.split(","), geom__intersects=OuterRef('geom'))))
@@ -268,21 +332,6 @@ class GeotrekTouristicModelFilter(BaseFilterBackend):
     def _get_schema_fields(self, view):
         return (
             Field(
-                name='near_trek', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Near trek"),
-                    description=_("Filter by a trek id. It will show only the contents related to this trek.")
-                )
-            ), Field(
-                name='near_touristiccontent', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Near touristic content"),
-                    description=_("Filter by a touristic content id. It will show only the contents related to this touristic content.")
-                )
-            ), Field(
-                name='near_touristicevent', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Near touristic event"),
-                    description=_("Filter by a touristic event id. It will show only the contents related to this touristic event.")
-                )
-            ), Field(
                 name='cities', required=False, location='query', schema=coreschema.String(
                     title=_("Cities"),
                     description=_('Filter by one or more city id, comma-separated.')
@@ -398,6 +447,66 @@ class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
                 schema=coreschema.String(
                     title=_("Dates after"),
                     description=_("Filter events happening after or during date, format YYYY-MM-DD")
+                )
+            )
+        )
+
+
+class UpdateOrCreateDateFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        updated_before = request.GET.get('updated_before')
+        if updated_before:
+            updated_before = datetime.strptime(updated_before, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_update__lte=updated_before))
+        updated_after = request.GET.get('updated_after')
+        if updated_after:
+            updated_after = datetime.strptime(updated_after, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_update__gte=updated_after))
+        created_before = request.GET.get('created_before')
+        if created_before:
+            created_before = datetime.strptime(created_before, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_insert__lte=created_before))
+        created_after = request.GET.get('created_after')
+        if created_after:
+            created_after = datetime.strptime(created_after, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_insert__gte=created_after))
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='updated_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Update date after"),
+                    description=_("Filter objects updated after or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='updated_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Update date before"),
+                    description=_("Filter objects updated before or during date, format YYYY-MM-DD")
+                )
+            ),
+            Field(
+                name='created_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Create date after"),
+                    description=_("Filter objects created after or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='created_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Create date before"),
+                    description=_("Filter objects created before or during date, format YYYY-MM-DD")
                 )
             )
         )

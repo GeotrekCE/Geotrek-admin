@@ -13,9 +13,11 @@ from mapentity.renderers import GeoJSONRenderer
 
 
 class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
-    filter_backends = (DjangoFilterBackend,
-                       api_filters.GeotrekQueryParamsFilter,
-                       api_filters.GeotrekPublishedFilter)
+    filter_backends = (
+        DjangoFilterBackend,
+        api_filters.GeotrekQueryParamsFilter,
+        api_filters.GeotrekPublishedFilter,
+    )
     pagination_class = api_pagination.StandardResultsSetPagination
     permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
@@ -29,10 +31,11 @@ class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class GeotrekGeometricViewset(GeotrekViewSet):
-    filter_backends = GeotrekViewSet.filter_backends + \
-        (api_filters.GeotrekQueryParamsDimensionFilter,
-            api_filters.GeotrekInBBoxFilter,
-            api_filters.GeotrekDistanceToPointFilter)
+    filter_backends = GeotrekViewSet.filter_backends + (
+        api_filters.GeotrekQueryParamsDimensionFilter,
+        api_filters.GeotrekInBBoxFilter,
+        api_filters.GeotrekDistanceToPointFilter,
+    )
     distance_filter_field = 'geom'
     bbox_filter_field = 'geom'
     bbox_filter_include_overlapping = True
