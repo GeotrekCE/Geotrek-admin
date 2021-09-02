@@ -135,6 +135,24 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.WebLink
             fields = ('name', 'url', 'category')
 
+    class ServiceTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = trekking_models.ServiceType
+            fields = ('id', 'name', 'practices', 'pictogram')
+
+    class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
+        structure = serializers.CharField(source='structure.name')
+
+        class Meta:
+            model = trekking_models.Service
+            fields = ('id', 'eid', 'geometry', 'structure', 'type')
+
 
 class ReservationSystemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:

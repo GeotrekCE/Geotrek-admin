@@ -153,6 +153,13 @@ COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
 
 ORGANISM_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
+SERVICE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'eid', 'geometry', 'structure', 'type'
+])
+
+SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'name', 'practices', 'pictogram'
+])
 
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
@@ -269,6 +276,10 @@ class BaseApiTest(TestCase):
         # create a reference point for distance filter (in 4326, Cahors city)
         cls.reference_point = Point(x=1.4388656616210938,
                                     y=44.448487178796235, srid=4326)
+        cls.service_type = trek_factory.ServiceTypeFactory()
+        cls.service = trek_factory.ServiceFactory(
+            type=cls.service_type
+        )
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -482,6 +493,18 @@ class BaseApiTest(TestCase):
         response = self.client.get("/api/v2/version")
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {'version': __version__})
+
+    def get_servicetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:servicetype-list'), params)
+
+    def get_service_list(self, params=None):
+        return self.client.get(reverse('apiv2:service-list'), params)
+
+    def get_servicetype_detail(self, id_servicetype, params=None):
+        return self.client.get(reverse('apiv2:servicetype-detail', args=(id_servicetype,)), params)
+
+    def get_service_detail(self, id_service, params=None):
+        return self.client.get(reverse('apiv2:service-detail', args=(id_service,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -888,6 +911,30 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_structure_detail(self.structure.pk),
             STRUCTURE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_service_list(self):
+        self.check_number_elems_response(
+            self.get_service_list(),
+            trek_models.Service
+        )
+
+    def test_service_detail(self):
+        self.check_structure_response(
+            self.get_service_detail(self.service.pk),
+            SERVICE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_servicetype_list(self):
+        self.check_number_elems_response(
+            self.get_servicetype_list(),
+            trek_models.ServiceType
+        )
+
+    def test_servicetype_detail(self):
+        self.check_structure_response(
+            self.get_servicetype_detail(self.service_type.pk),
+            SERVICE_TYPE_DETAIL_JSON_STRUCTURE
         )
 
     def test_poi_list(self):

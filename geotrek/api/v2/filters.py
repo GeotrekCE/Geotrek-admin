@@ -16,7 +16,7 @@ from geotrek.core.models import Topology
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
-from geotrek.trekking.models import Trek
+from geotrek.trekking.models import ServiceType, Trek
 from geotrek.zoning.models import City, District
 
 
@@ -236,6 +236,8 @@ class NearbyContentFilter(BaseFilterBackend):
         ordering = ("name",)
         if queryset.model.__name__ == "SensitiveArea":
             ordering = ("-area", "pk")
+        elif queryset.model.__name__ == "Service":
+            ordering = ("id",)
         qs = queryset
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
@@ -449,6 +451,27 @@ class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
                     description=_("Filter events happening after or during date, format YYYY-MM-DD")
                 )
             )
+        )
+
+
+class GeotrekServiceFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        types = request.GET.get('types')
+        if types:
+            types_id = types.split(',')
+            if ServiceType.objects.filter(id__in=types_id).exists():
+                qs = qs.filter(Q(type__in=types_id))
+        return self._filter_queryset(request, qs, view)
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='types', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Types"),
+                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
+                )
+            ),
         )
 
 
