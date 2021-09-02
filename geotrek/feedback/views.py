@@ -29,7 +29,13 @@ class ReportLayer(mapentity_views.MapEntityLayer):
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
-    queryset = feedback_models.Report.objects.existing()
+    queryset = (
+        feedback_models.Report.objects.existing()
+        .select_related(
+            "activity", "category", "problem_magnitude", "status", "related_trek"
+        )
+        .prefetch_related("attachments")
+    )
     model = feedback_models.Report
     filterform = ReportFilterSet
     mandatory_columns = ['id', 'email', 'activity']
@@ -96,7 +102,13 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     """Disable permissions requirement"""
 
     model = feedback_models.Report
-    queryset = feedback_models.Report.objects.existing()
+    queryset = (
+        feedback_models.Report.objects.existing()
+        .select_related(
+            "activity", "category", "problem_magnitude", "status", "related_trek"
+        )
+        .prefetch_related("attachments")
+    )
     parser_classes = [FormParser, MultiPartParser]
     serializer_class = feedback_serializers.ReportSerializer
     geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer
