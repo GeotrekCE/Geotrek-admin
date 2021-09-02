@@ -277,6 +277,7 @@ class BaseApiTest(TestCase):
         cls.reference_point = Point(x=1.4388656616210938,
                                     y=44.448487178796235, srid=4326)
         cls.service_type = trek_factory.ServiceTypeFactory()
+        cls.service_type1 = trek_factory.ServiceTypeFactory()
         cls.service = trek_factory.ServiceFactory(
             type=cls.service_type
         )
@@ -505,6 +506,10 @@ class BaseApiTest(TestCase):
 
     def get_service_detail(self, id_service, params=None):
         return self.client.get(reverse('apiv2:service-detail', args=(id_service,)), params)
+
+    def test_service_types_filter(self):
+        response = self.get_service_list({'types': self.service_type.pk})
+        self.assertEqual(response.json().get("count"), 1)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
