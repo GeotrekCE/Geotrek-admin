@@ -826,11 +826,8 @@ class Service(StructureRelated, MapEntityMixin, Topology):
 
     @classmethod
     def topology_services(cls, topology):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
-        else:
-            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+        area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+        qs = cls.objects.existing().filter(geom__intersects=area)
         if isinstance(topology, Trek):
             qs = qs.filter(type__practices=topology.practice)
         return qs
