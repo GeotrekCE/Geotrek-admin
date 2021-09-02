@@ -197,3 +197,95 @@ Translate documentation
 .. code-block :: python
 
     docker-compose run --rm sphinx sphinx-intl update -p _build/locale -l fr
+
+
+Pycharm configuration
+=====================
+
+While possible, configuring Pycharm when your is supposed to run in a docker container using Python's venv can be
+surprisingly difficult.
+
+This section will guide you to configure a ready-to-debug Pycharm IDE.
+
+This guide has been tested with Pycharm Professional Edition (mandatory for Django support) 2021.2.1.
+
+First, follow the instruction to setup your docker container in `Quickstart`_.
+
+Configuring the Python interpreter
+----------------------------------
+
+Pycharm's Python interpreter settings is re-used through the whole system, so it should be configured first.
+Head over to::
+
+    File | Settings | Project: Geotrek-admin | Python Interpreter
+
+Click on the little cogwheel and choose "Add" to add a new interpreter.
+We are going to configure Pycharm to use the virtual env interpreter that is present in our docker container.
+
+You can then copy those settings :
+
+.. image:: images/pycharm_config/interpreter_conf.png
+
+Select your new interpreter as the project interpreter and configure the path mapping so that the absolute path to your repo is mapped to /opt/geotrek-admin.
+
+.. image:: images/pycharm_config/interpreter_packages.png
+
+.. warning:: After configuring your path mapping, it should say <Project root> -> /opt/geotrek-admin
+
+.. note:: Make sure that Pycharm has detected all Python packages and pay a special attention to the presence of Django.
+
+Pycharm django module configuration
+-----------------------------------
+
+Pycharm needs a little bit of help to understand correctly the django settings, so let's do that !
+
+Head over to::
+
+    File | Settings | Languages & Frameworks | Django
+
+And set the settings folder to::
+
+    geotrek/settings
+
+Your configuration should look like this
+
+.. image:: images/pycharm_config/language_framework_conf.png
+
+
+.. note:: Before running anything Geotrek related through Pycharm interface we will have to specify the settings module to use (test, dev, prod, etc.) through the run configuration. This is done later in this guide.
+
+Running Geotrek through Pycharm
+-------------------------------
+
+Head over to to the Run/Debug Configurations screen (top right corner for those not familiar with Intellij) and create a new django server.
+
+.. image:: images/pycharm_config/run_server.png
+
+
+Name it "run", set the Host to "0.0.0.0" and select "Remote Python <version> Docker Compose (web..." in your dropdown.
+
+Finally, add as an environnement variable::
+
+    ENV=dev 
+
+.. image:: images/pycharm_config/run_conf.png
+
+.. note:: Here the *DJANGO_SETTINGS_MODULE* env variable has been set by Pycharm.
+
+Running tests through Pycharm
+-----------------------------
+
+To configure your tests, you should edit the *test configuration templates* as the IDE will autogenerate the test configuration according to the tests that you asked to run.
+
+In the Run/Debug Configurations screen, click on "Edit configuration templates" (bottom left corner).
+
+From there, select *Django tests* and pick your Python interpreter in the dropdown menu.
+
+Finally add an environnement variable "ENV=tests".
+
+Your configuration should look similar to this one :
+
+.. image:: images/pycharm_config/test.png
+
+
+That's it ! You are now ready to go !
