@@ -507,10 +507,6 @@ class BaseApiTest(TestCase):
     def get_service_detail(self, id_service, params=None):
         return self.client.get(reverse('apiv2:service-detail', args=(id_service,)), params)
 
-    def test_service_types_filter(self):
-        response = self.get_service_list({'types': self.service_type.pk})
-        self.assertEqual(response.json().get("count"), 1)
-
 
 class APIAccessAnonymousTestCase(BaseApiTest):
     """
@@ -941,6 +937,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             self.get_servicetype_detail(self.service_type.pk),
             SERVICE_TYPE_DETAIL_JSON_STRUCTURE
         )
+
+    def test_service_types_filter(self):
+        response = self.get_service_list({'types': self.service_type.pk})
+        self.assertEqual(response.json().get("count"), 1)
 
     def test_poi_list(self):
         response = self.get_poi_list()
