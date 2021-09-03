@@ -50,6 +50,9 @@ class Licence(models.Model):
 
     label = models.CharField(max_length=128, verbose_name=_("Licence Name"), null=False, blank=False, unique=True)  # FIXME : rename to label
 
+    def __str__(self):
+        return self.label
+
     class Meta:
         verbose_name = _("Attachment licence")
         verbose_name_plural = _("Attachment licences")

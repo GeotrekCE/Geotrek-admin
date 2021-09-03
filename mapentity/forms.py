@@ -294,3 +294,6 @@ class AttachmentForm(BaseAttachmentForm):
         self.helper.form_action = self.form_url
         self.helper.layout.fields.append(
             FormActions(*form_actions, css_class="form-actions"))
+
+    class Meta(BaseAttachmentForm.Meta):
+        fields = BaseAttachmentForm.Meta.fields + ("license",)
