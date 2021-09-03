@@ -159,3 +159,24 @@ class RouteViewSet(api_viewsets.GeotrekViewSet):
         elem = get_object_or_404(trekking_models.Route, pk=pk)
         serializer = api_serializers.RouteSerializer(elem, many=False, context={'request': request})
         return Response(serializer.data)
+
+
+class ServiceTypeViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.ServiceTypeSerializer
+    queryset = trekking_models.ServiceType.objects.all().order_by('pk')
+
+    def retrieve(self, request, pk=None, format=None):
+        # Allow to retrieve objects even if not visible in list view
+        elem = get_object_or_404(trekking_models.ServiceType, pk=pk)
+        serializer = api_serializers.ServiceTypeSerializer(elem, many=False, context={'request': request})
+        return Response(serializer.data)
+
+
+class ServiceViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.NearbyContentFilter, api_filters.UpdateOrCreateDateFilter, api_filters.GeotrekServiceFilter)
+    serializer_class = api_serializers.ServiceSerializer
+    queryset = trekking_models.Service.objects.all() \
+        .select_related('topo_object', 'type', ) \
+        .prefetch_related('topo_object__aggregations', 'attachments') \
+        .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
+        .order_by('pk')
