@@ -173,7 +173,7 @@ class ServiceTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ServiceViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.NearbyContentFilter, api_filters.UpdateOrCreateDateFilter)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.NearbyContentFilter, api_filters.UpdateOrCreateDateFilter, api_filters.GeotrekServiceFilter)
     serializer_class = api_serializers.ServiceSerializer
     queryset = trekking_models.Service.objects.all() \
         .select_related('topo_object', 'type', ) \

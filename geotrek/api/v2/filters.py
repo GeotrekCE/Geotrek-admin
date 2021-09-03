@@ -459,10 +459,11 @@ class GeotrekServiceFilter(BaseFilterBackend):
         qs = queryset
         types = request.GET.get('types')
         if types:
+            print(types)
             types_id = types.split(',')
             if ServiceType.objects.filter(id__in=types_id).exists():
                 qs = qs.filter(Q(type__in=types_id))
-        return self._filter_queryset(request, qs, view)
+        return qs
 
     def get_schema_fields(self, view):
         return (

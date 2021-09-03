@@ -277,7 +277,7 @@ class BaseApiTest(TestCase):
         cls.reference_point = Point(x=1.4388656616210938,
                                     y=44.448487178796235, srid=4326)
         cls.service_type = trek_factory.ServiceTypeFactory()
-        cls.service_type1 = trek_factory.ServiceTypeFactory()
+        cls.service1 = trek_factory.ServiceFactory()
         cls.service = trek_factory.ServiceFactory(
             type=cls.service_type
         )
@@ -1522,6 +1522,7 @@ class APISwaggerTestCase(BaseApiTest):
         self.assertContains(response, 'Filter by minimum difficulty level (id).')
         self.assertContains(response, 'Reference point to compute distance (WGS84). Example: lng,lat.')
         self.assertContains(response, 'Filter by one or more practice id, comma-separated.')
+        self.assertContains(response, 'Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.')
 
     def test_swagger_ui(self):
         response = self.client.get('/api/v2/')
