@@ -257,6 +257,11 @@ class ReportProblemMagnitude(models.Model):
     suricate_id = models.PositiveIntegerField(
         verbose_name=_("Suricate id"), null=True, blank=True, unique=True
     )
+    suricate_label = models.CharField(
+        verbose_name=_("Suricate label"),
+        max_length=128,
+        null=True, blank=True, unique=True
+    )
 
     class Meta:
         verbose_name = _("Problem magnitude")

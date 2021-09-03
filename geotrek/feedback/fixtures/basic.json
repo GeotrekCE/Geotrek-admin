@@ -45,7 +45,8 @@
         "fields": {
             "label": "Utilisation possible",
             "label_fr": "Utilisation possible",
-            "suricate_id": 0
+            "suricate_id": 0,
+            "suricate_label": "possible"
         }
     },
     {
@@ -55,7 +56,8 @@
             "label": "Utilisation difficile",
             "label_fr": "Utilisation difficile",
             "label_en": "Difficult to use",
-            "suricate_id": 1
+            "suricate_id": 1,
+            "suricate_label": "difficile"
         }
     },
     {
@@ -65,7 +67,8 @@
             "label": "Utilisation impossible",
             "label_fr": "Utilisation impossible",
             "label_en": "Impossible to use",
-            "suricate_id": 2
+            "suricate_id": 2,
+            "suricate_label": "impossible"
         }
     }
 ]

@@ -91,7 +91,7 @@ class SuricateParser(SuricateGestionRequestManager):
 
             # Parse magnitude
             rep_magnitude, created = ReportProblemMagnitude.objects.get_or_create(
-                label=report["ampleur"]
+                suricate_label=report["ampleur"]
             )
             if created:
                 logger.info(
