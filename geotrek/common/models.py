@@ -46,9 +46,19 @@ class FileType(StructureOrNoneRelated, BaseFileType):
         return self.type
 
 
+class Licence(models.Model):
+
+    label = models.CharField(max_length=128, verbose_name=_("Licence Name"), null=False, blank=False, unique=True)  # FIXME : rename to label
+
+    class Meta:
+        verbose_name = _("Attachment licence")
+        verbose_name_plural = _("Attachment licences")
+
+
 class Attachment(BaseAttachment):
 
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
+    license = models.ForeignKey(Licence, verbose_name=_("License"), null=True, blank=True, on_delete=models.SET_NULL)
 
 
 class Theme(PictogramMixin):

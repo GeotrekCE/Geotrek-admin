@@ -21,6 +21,7 @@ CHANGELOG
 - Add 'created_before', 'updated_before', 'created_after' and 'updated_after' filters in APIv2
 - Add route to APIv2 to retrieve Geotrek version
 - Add API_V2_DESCRIPTION setting to change description text in API v2 Swagger page
+- Add Licence field to attachements
 
 
 **Bug fixes**
