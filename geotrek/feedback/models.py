@@ -138,13 +138,6 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             logger.error("Email could not be sent to managers.")
             logger.exception(e)  # This sends an email to admins :)
 
-    def try_send_report_to_suricate(self):
-        try:
-            SuricateMessenger().post_report(self)
-        except Exception as e:
-            logger.error("Report could not be sent to Suricate API.")
-            logger.exception(e)
-
     def save_no_suricate(self, *args, **kwargs):
         """Save method for No Suricate mode"""
         if self.pk is None:  # New report should alert
@@ -155,14 +148,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         """Save method for Suricate Report mode"""
         if self.pk is None:  # New report should alert managers AND be sent to Suricate
             self.try_send_report_to_managers()
-            self.try_send_report_to_suricate()
+            SuricateMessenger().post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_management_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
             if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
-                self.try_send_report_to_suricate()
+                SuricateMessenger().post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
         else:  # This is an update
@@ -263,6 +256,11 @@ class ReportProblemMagnitude(models.Model):
     label = models.CharField(verbose_name=_("Problem magnitude"), max_length=128)
     suricate_id = models.PositiveIntegerField(
         verbose_name=_("Suricate id"), null=True, blank=True, unique=True
+    )
+    suricate_label = models.CharField(
+        verbose_name=_("Suricate label"),
+        max_length=128,
+        null=True, blank=True, unique=True
     )
 
     class Meta:

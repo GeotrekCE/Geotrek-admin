@@ -22,6 +22,7 @@ CHANGELOG
 - Add route to APIv2 to retrieve Geotrek version
 - Add API_V2_DESCRIPTION setting to change description text in API v2 Swagger page
 - Add endpoints for services in APIv2 : service, service type
+- Add link between reports and interventions
 
 
 **Bug fixes**

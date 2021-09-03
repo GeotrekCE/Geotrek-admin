@@ -1,16 +1,18 @@
 import logging
-from datetime import datetime
+import os
 import sys
-# Todo uncomment for parsing documents
-# from django.apps import apps
+from datetime import datetime
+from urllib.parse import urlparse
+
 from django.conf import settings
-# from django.contrib.auth import get_user_model
-# from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.contrib.gis.geos.collections import Polygon
+from django.core.files.base import ContentFile
 from django.utils.timezone import make_aware
-# from geotrek.common.models import Attachment, FileType
-from geotrek.common.parsers import AttachmentParserMixin
+
+from geotrek.common.models import Attachment, FileType
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
                                      ReportStatus)
@@ -20,11 +22,13 @@ from .helpers import SuricateGestionRequestManager, send_reports_to_managers
 logger = logging.getLogger(__name__)
 
 
-class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
+class SuricateParser(SuricateGestionRequestManager):
 
     def __init__(self):
         super().__init__()
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        self.filetype, created = FileType.objects.get_or_create(type="Photographie", structure=None)
+        self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
     def parse_date(self, date):
         """Parse datetime string from Suricate Rest API"""
@@ -87,7 +91,7 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
 
             # Parse magnitude
             rep_magnitude, created = ReportProblemMagnitude.objects.get_or_create(
-                label=report["ampleur"]
+                suricate_label=report["ampleur"]
             )
             if created:
                 logger.info(
@@ -131,7 +135,7 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
                 )
 
             # Parse documents attached to report
-            self.create_documents(report["documents"], report_obj, "Report")
+            self.create_documents(report["documents"], report_obj)
 
             # Parse messages attached to report
             self.create_messages(report["messages"], report_obj)
@@ -161,28 +165,38 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
         if reports_created:
             self.send_managers_new_reports()
 
-    def create_documents(self, documents, parent, type_parent):
+    def create_documents(self, documents, parent):
         """Parse documents list from Suricate Rest API"""
+        for document in documents:
 
-        # TODO
-        # for document in documents:
+            file_id = document["id"]
+            file_url = document["url"]
+            uid, ext = os.path.splitext(os.path.basename(file_url))
+            uid = uid + str(file_id)
+            parsed_url = urlparse(file_url)
 
-        #     creator, created = get_user_model().objects.get_or_create(
-        #         username="feedback", defaults={"is_active": False}
-        #     )
-        # Attach document to the right object
-        # parent_model = apps.get_model(app_label='feedback', model_name=type_parent)
+            attachment, created = Attachment.objects.get_or_create(
+                object_id=parent.pk,
+                title=uid,
+                content_type=ContentType.objects.get_for_model(parent),
+                defaults={
+                    'filetype': self.filetype,
+                    'creator': self.creator
+                }
+            )
 
-        # Attachment.objects.create(
-        #     filetype=FileType.objects.get_or_create(type=settings.REPORT_FILETYPE)[
-        #         0
-        #     ],
-        #     content_type=ContentType.objects.get_for_model(parent_model),
-        #     object_id=parent,
-        #     creator=creator,
-        # TODO FIX DOWNLOAD ATTACHMENTS
-        #     attachment_file=self.download_attachment(document["url"]),
-        # )
+            # If this is False then attachment is either new or had a failed download last time => download file
+            # If this is True then attachment isn't new and was downloaded before => skip this file
+            if attachment.attachment_file.name:
+                continue
+
+            if parsed_url.scheme in ('http', 'https'):
+                response = self.get_attachment_from_suricate(file_url)
+                if response.status_code in [200, 201]:
+                    f = ContentFile(response.content)
+                    attachment.attachment_file.save(file_url, f, save=False)
+                attachment.attachment_link = file_url
+                attachment.save()
 
     def create_messages(self, messages, parent):
         """Parse messages list from Suricate Rest API"""
@@ -207,4 +221,4 @@ class SuricateParser(AttachmentParserMixin, SuricateGestionRequestManager):
                 )
 
             # Parse documents attached to message
-            self.create_documents(message["documents"], message_obj, "AttachedMessage")
+            # self.create_documents(message["documents"], message_obj, "AttachedMessage")
