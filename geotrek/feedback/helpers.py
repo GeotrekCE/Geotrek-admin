@@ -31,9 +31,9 @@ class SuricateRequestManager:
             )
         else:
             data = json.loads(response.content.decode())
-            if "code_ok" in data and not bool(data["code_ok"]):
+            if ("code_ok" in data) and (data["code_ok"] == 'false'):
                 raise Exception(
-                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']}]"
+                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']} - {data['message']}]"
                 )
             return data
         #  THIS SHOULD BE A THING but the documentation is at war with the API
@@ -72,7 +72,7 @@ class SuricateRequestManager:
         response = self.get_from_suricate_no_integrity_check(endpoint, url_params)
         return self.check_response_integrity(response)
 
-    def post_to_suricate(self, endpoint, params):
+    def post_to_suricate(self, endpoint, params=None):
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.post(
@@ -82,9 +82,23 @@ class SuricateRequestManager:
             )
         else:
             response = requests.post(f"{self.URL}{endpoint}", params)
+        self.check_response_integrity(response)
 
+    def get_attachment_from_suricate(self, url):
+        if self.USE_AUTH:
+            response = requests.get(
+                url,
+                auth=self.AUTH,
+            )
+        else:
+            response = requests.get(
+                url,
+            )
         if response.status_code not in [200, 201]:
-            raise Exception(f"Failed to post on Suricate API - status code {response.status_code}")
+            logger.warning(
+                f"Failed to access Suricate attachment - Status code: {response.status_code}"
+            )
+        return response
 
     def print_response_OK_or_KO(self, response):
         if response.status_code not in [200, 201]:
@@ -103,40 +117,42 @@ class SuricateRequestManager:
 
 class SuricateStandardRequestManager(SuricateRequestManager):
 
-    URL = settings.SURICATE_REPORT_SETTINGS["URL"]
-    ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
-    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
-        "PRIVATE_KEY_CLIENT_SERVER"
-    ]
-    PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_REPORT_SETTINGS[
-        "PRIVATE_KEY_SERVER_CLIENT"
-    ]
-    CHECK_CLIENT = (
-        f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
-    )
-    CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
+    def __init__(self):
+        self.URL = settings.SURICATE_REPORT_SETTINGS["URL"]
+        self.ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
+        self.PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
+            "PRIVATE_KEY_CLIENT_SERVER"
+        ]
+        self.PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_REPORT_SETTINGS[
+            "PRIVATE_KEY_SERVER_CLIENT"
+        ]
+        self.CHECK_CLIENT = (
+            f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()).hexdigest()}"
+        )
+        self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
 
-    USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
-    AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if USE_AUTH else None
+        self.USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
+        self.AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if self.USE_AUTH else None
 
 
 class SuricateGestionRequestManager(SuricateRequestManager):
 
-    URL = settings.SURICATE_MANAGEMENT_SETTINGS["URL"]
-    ID_ORIGIN = settings.SURICATE_MANAGEMENT_SETTINGS["ID_ORIGIN"]
-    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_MANAGEMENT_SETTINGS[
-        "PRIVATE_KEY_CLIENT_SERVER"
-    ]
-    PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_MANAGEMENT_SETTINGS[
-        "PRIVATE_KEY_SERVER_CLIENT"
-    ]
-    CHECK_CLIENT = (
-        f"&check={md5((PRIVATE_KEY_CLIENT_SERVER + ID_ORIGIN).encode()).hexdigest()}"
-    )
-    CHECK_SERVER = md5((PRIVATE_KEY_SERVER_CLIENT + ID_ORIGIN).encode()).hexdigest()
+    def __init__(self):
+        self.URL = settings.SURICATE_MANAGEMENT_SETTINGS["URL"]
+        self.ID_ORIGIN = settings.SURICATE_MANAGEMENT_SETTINGS["ID_ORIGIN"]
+        self.PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_MANAGEMENT_SETTINGS[
+            "PRIVATE_KEY_CLIENT_SERVER"
+        ]
+        self.PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_MANAGEMENT_SETTINGS[
+            "PRIVATE_KEY_SERVER_CLIENT"
+        ]
+        self.CHECK_CLIENT = (
+            f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()).hexdigest()}"
+        )
+        self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
 
-    USE_AUTH = "AUTH" in settings.SURICATE_MANAGEMENT_SETTINGS.keys()
-    AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if USE_AUTH else None
+        self.USE_AUTH = "AUTH" in settings.SURICATE_MANAGEMENT_SETTINGS.keys()
+        self.AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if self.USE_AUTH else None
 
 
 def test_suricate_connection():
@@ -158,7 +174,7 @@ def send_reports_to_managers(template_name="feedback/reports_email.html"):
     mail_managers(subject, message, fail_silently=False)
 
 
-class SuricateMessenger():
+class SuricateMessenger:
 
     def __init__(self):
         self.standard_manager = SuricateStandardRequestManager()
@@ -173,11 +189,12 @@ class SuricateMessenger():
         activity_id = report.activity.suricate_id if report.activity is not None else None
         category_id = report.category.suricate_id if report.category is not None else None
         magnitude_id = report.problem_magnitude.suricate_id if report.problem_magnitude is not None else None
+        gps_geom = report.geom.transform(4326, clone=True)
         params = {
             "id_origin": manager.ID_ORIGIN,
             "id_user": report.email,
-            "lat": report.geom.y,
-            "long": report.geom.x,
+            "lat": gps_geom.y,
+            "long": gps_geom.x,
             "report": report.comment,
             "activite": activity_id,
             "nature_prb": category_id,

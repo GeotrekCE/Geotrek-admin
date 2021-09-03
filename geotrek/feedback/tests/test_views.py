@@ -1,5 +1,8 @@
 from datetime import datetime
+import json
+from unittest import mock
 from django.conf import settings
+
 from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
 from django.test import TestCase
@@ -30,11 +33,23 @@ class ReportModelTest(TestCase):
 
 class ReportViewsetMailSend(TestCase):
 
+    @override_settings(SURICATE_REPORT_SETTINGS={"URL": "http://suricate.example.com",
+                                                 "ID_ORIGIN": "geotrek",
+                                                 "PRIVATE_KEY_CLIENT_SERVER": "",
+                                                 "PRIVATE_KEY_SERVER_CLIENT": "",
+                                                 "AUTH": ("", "")})
     @override_settings(SURICATE_REPORT_ENABLED=True)
-    def test_mail_send_on_request(self):
+    @override_settings(SURICATE_MANAGEMENTT_ENABLED=False)
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_mail_send_on_request(self, mocked_post):
+        mock_response = mock.Mock()
+        mock_response.content = json.dumps({"code_ok": 'true'}).encode()
+        mock_response.status_code = 200
+        mocked_post.return_value = mock_response
         self.client.post(
             '/api/en/reports/report',
             {
+                'geom': '{\"type\":\"Point\",\"coordinates\":[4.3728446995373815,43.856935212211454]}',
                 'email': 'test@geotrek.local',
                 'comment': 'Test comment',
                 'activity': feedback_factories.ReportActivityFactory.create().pk,
