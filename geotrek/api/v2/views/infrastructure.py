@@ -12,6 +12,7 @@ class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
     queryset = infra_models.Infrastructure.objects.existing() \
         .select_related('topo_object', 'type', ) \
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
+        .prefetch_related('topo_object__aggregations', 'attachments') \
         .order_by('pk')
 
 

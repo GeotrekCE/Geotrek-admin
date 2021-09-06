@@ -997,10 +997,12 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
     class InfrastructureSerializer(serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         structure = serializers.CharField(source='structure.name')
+        attachments = AttachmentSerializer(many=True)
+
 
         class Meta:
             model = infrastructure_models.Infrastructure
-            fields = ('id', 'condition', 'description', 'eid', 'geometry', 'implantation_year', 'maintenance_difficulty', 'structure', 'type', 'usage_difficulty')
+            fields = ('id', 'attachments', 'condition', 'description', 'eid', 'geometry', 'name', 'implantation_year', 'maintenance_difficulty', 'structure', 'type', 'usage_difficulty')
 
     class InfrastructureConditionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
