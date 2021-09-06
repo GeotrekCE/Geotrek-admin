@@ -194,6 +194,13 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     type = serializers.SerializerMethodField(read_only=True)
     thumbnail = serializers.SerializerMethodField(read_only=True)
     backend = serializers.SerializerMethodField(read_only=True)
+    license = serializers.SerializerMethodField(read_only=True)
+
+    def get_license(self, obj):
+        if obj.license:
+            return obj.license.label
+        else:
+            return ""
 
     def get_url(self, obj):
         if obj.attachment_file:
@@ -228,10 +235,7 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = common_models.Attachment
-        fields = (
-            'author', 'backend', 'thumbnail',
-            'legend', 'title', 'url', "type"
-        )
+        fields = ('author', 'backend', 'thumbnail', 'legend', 'title', 'url', 'type', 'license')
 
 
 class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
