@@ -2,7 +2,6 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 
 from django.test import TestCase
-from django.core import mail
 from django.conf import settings
 
 from geotrek.authent.factories import StructureFactory
@@ -22,13 +21,6 @@ from io import StringIO
 import os
 
 from unittest import mock
-
-
-class CommandEmailsTests(TestCase):
-    def test_command_emails_manager(self):
-        call_command('test_managers_emails')
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, '[%s] Test email for managers' % settings.TITLE)
 
 
 @mock.patch('sys.stdout', new_callable=StringIO)
