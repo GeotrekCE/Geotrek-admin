@@ -9,7 +9,7 @@ from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
+from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin, PicturesMixin
 from geotrek.common.models import Organism
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
@@ -319,8 +319,7 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-             AltimetryMixin, TimeStampedModelMixin):
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -358,16 +357,25 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         return _("Add a new outdoor course")
 
     @property
-    def parents(self):
-        return Course.objects.filter(course_children__child=self)
-
-    @property
     def duration_pretty(self):
         return geotrek_tags.duration(self.duration)
 
     @property
+    def parents(self):
+        return Course.objects.filter(course_children__child=self)
+
+    def parents_id(self):
+        parents = self.course_parents.values_list('parent__id', flat=True)
+        return parents
+
+    @property
     def children(self):
         return Course.objects.filter(course_parents__parent=self).order_by('course_parents__order')
+
+    @property
+    def children_id(self):
+        children = self.course_children.values_list('child__id', flat=True)
+        return children
 
     def course_interventions(self):
         # Interventions on courses
