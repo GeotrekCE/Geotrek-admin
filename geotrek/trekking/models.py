@@ -713,6 +713,13 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         return qs
 
     @classmethod
+    def site_all_pois(cls, site):
+        object_geom = site.geom.transform(settings.SRID, clone=True).buffer(settings.OUTDOOR_INTERSECTION_MARGIN)
+        qs = cls.objects.existing().filter(geom__intersects=object_geom)
+        qs = qs.order_by('pk')
+        return qs
+
+    @classmethod
     def published_topology_pois(cls, topology):
         return cls.topology_pois(topology).filter(published=True)
 

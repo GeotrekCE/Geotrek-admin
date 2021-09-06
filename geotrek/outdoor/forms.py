@@ -34,6 +34,7 @@ class SiteForm(CommonForm):
             'web_links',
             'portal',
             'source',
+            'pois_excluded',
             'managers',
             'eid',
         )
@@ -43,7 +44,7 @@ class SiteForm(CommonForm):
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
                   'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
                   'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'eid',
-                  'orientation', 'wind', 'managers']
+                  'orientation', 'wind', 'managers', 'pois_excluded']
         model = Site
 
     def __init__(self, site=None, *args, **kwargs):
@@ -64,6 +65,10 @@ class SiteForm(CommonForm):
                         initial=ratings[0] if ratings else None
                     )
                     self.fieldslayout[0].insert(10, fieldname)
+        if self.instance.pk:
+            self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
+        else:
+            self.fieldslayout[0].remove('pois_excluded')
 
     def save(self, *args, **kwargs):
         site = super().save(self, *args, **kwargs)

@@ -15,7 +15,7 @@ from geotrek.core.models import Topology
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
-from geotrek.trekking.models import ServiceType, Trek
+from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
 
 
@@ -212,6 +212,11 @@ class GeotrekPOIFilter(BaseFilterBackend):
             t = Trek.objects.get(pk=trek)
             qs = Topology.overlapping(t, qs)
             qs = qs.exclude(pk__in=t.pois_excluded.all())
+        site = request.GET.get('site', None)
+        if site is not None:
+            s = Site.objects.get(pk=site)
+            qs = qs.filter(pk__in=POI.site_all_pois(s))
+            qs = qs.exclude(pk__in=s.pois_excluded.all())
         return qs
 
     def get_schema_fields(self, view):
@@ -225,6 +230,11 @@ class GeotrekPOIFilter(BaseFilterBackend):
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
                     description=_("Filter by a trek id. It will show only the POIs related to this trek.")
+                )
+            ), Field(
+                name='site', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Site"),
+                    description=_("Filter by a site id. It will show only the POIs related to this outdoor site.")
                 )
             ),
         )

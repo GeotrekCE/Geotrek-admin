@@ -174,6 +174,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='sites',
                                     verbose_name=_("Source"))
+    pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_sites', verbose_name=_("Excluded POIs"),
+                                           blank=True)
     web_links = models.ManyToManyField('trekking.WebLink', related_name="sites", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
@@ -260,6 +262,10 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         "Return managers of itself and its descendants"
         sites = self.get_descendants(include_self=True)
         return Organism.objects.filter(site__in=sites)  # Sorted and unique
+
+    @property
+    def all_pois(self):
+        return POI.site_all_pois(self)
 
     def site_interventions(self):
         # Interventions on sites
