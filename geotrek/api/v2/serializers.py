@@ -999,7 +999,6 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
         structure = serializers.CharField(source='structure.name')
         attachments = AttachmentSerializer(many=True)
 
-
         class Meta:
             model = infrastructure_models.Infrastructure
             fields = ('id', 'attachments', 'condition', 'description', 'eid', 'geometry', 'name', 'implantation_year', 'maintenance_difficulty', 'structure', 'type', 'usage_difficulty')
