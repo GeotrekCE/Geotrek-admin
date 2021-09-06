@@ -24,6 +24,8 @@ from geotrek.core import factories as core_factory
 from geotrek.core import models as path_models
 from geotrek.feedback import factories as feedback_factory
 from geotrek.flatpages import factories as flatpages_factory
+from geotrek.infrastructure import factories as infrastructure_factory
+from geotrek.infrastructure import models as infrastructure_models
 from geotrek.outdoor import factories as outdoor_factory
 from geotrek.outdoor import models as outdoor_models
 from geotrek.sensitivity import factories as sensitivity_factory
@@ -161,6 +163,26 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'name', 'practices', 'pictogram'
 ])
 
+INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'condition', 'description', 'eid', 'geometry', 'implantation_year', 'maintenance_difficulty', 'structure', 'type', 'usage_difficulty'
+])
+
+INFRASTRUCTURE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram', 'structure', 'type'
+])
+
+INFRASTRUCTURE_CONDITION_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
+INFRASTRUCTURE_USAGE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
+INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
@@ -280,6 +302,16 @@ class BaseApiTest(TestCase):
         cls.service1 = trek_factory.ServiceFactory()
         cls.service = trek_factory.ServiceFactory(
             type=cls.service_type
+        )
+        cls.infrastructure_type = infrastructure_factory.InfrastructureTypeFactory()
+        cls.infrastructure_condition = infrastructure_factory.InfrastructureConditionFactory()
+        cls.infrastructure_usagedifficulty = infrastructure_factory.InfrastructureUsageDifficultyLevelFactory()
+        cls.infrastructure_maintenancedifficulty = infrastructure_factory.InfrastructureMaintenanceDifficultyLevelFactory()
+        cls.infrastructure = infrastructure_factory.InfrastructureFactory(
+            type=cls.infrastructure_type,
+            usage_difficulty=cls.infrastructure_usagedifficulty,
+            maintenance_difficulty=cls.infrastructure_maintenancedifficulty,
+            condition=cls.infrastructure_condition,
         )
 
     def check_number_elems_response(self, response, model):
@@ -506,6 +538,36 @@ class BaseApiTest(TestCase):
 
     def get_service_detail(self, id_service, params=None):
         return self.client.get(reverse('apiv2:service-detail', args=(id_service,)), params)
+
+    def get_infrastructuretype_detail(self, id_infrastructuretype, params=None):
+        return self.client.get(reverse('apiv2:infrastructuretype-detail', args=(id_infrastructuretype,)), params)
+
+    def get_infrastructuretype_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructuretype-list'), params)
+
+    def get_infrastructure_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-list'), params)
+
+    def get_infrastructure_detail(self, id_infrastructure, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-detail', args=(id_infrastructure,)), params)
+
+    def get_infrastructurecondition_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructurecondition-list'), params)
+
+    def get_infrastructurecondition_detail(self, id_infrastructurecondition, params=None):
+        return self.client.get(reverse('apiv2:infrastructurecondition-detail', args=(id_infrastructurecondition,)), params)
+
+    def get_infrastructuremaintenancedifficulty_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructuremaintenancedifficulty-list'), params)
+
+    def get_infrastructuremaintenancedifficulty_detail(self, id_infrastructuremaintenancedifficulty, params=None):
+        return self.client.get(reverse('apiv2:infrastructuremaintenancedifficulty-detail', args=(id_infrastructuremaintenancedifficulty,)), params)
+
+    def get_infrastructureusagedifficulty_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructureusagedifficulty-list'), params)
+
+    def get_infrastructureusagedifficulty_detail(self, id_infrastructureusagedifficulty, params=None):
+        return self.client.get(reverse('apiv2:infrastructureusagedifficulty-detail', args=(id_infrastructureusagedifficulty,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -924,6 +986,66 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_service_detail(self.service.pk),
             SERVICE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructure_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructure_list(),
+            infrastructure_models.Infrastructure
+        )
+
+    def test_infrastructure_detail(self):
+        self.check_structure_response(
+            self.get_infrastructure_detail(self.infrastructure.pk),
+            INFRASTRUCTURE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructuretype_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructuretype_list(),
+            infrastructure_models.InfrastructureType
+        )
+
+    def test_infrastructuretype_detail(self):
+        self.check_structure_response(
+            self.get_infrastructuretype_detail(self.infrastructure_type.pk),
+            INFRASTRUCTURE_TYPE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructurecondition_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructurecondition_list(),
+            infrastructure_models.InfrastructureCondition
+        )
+
+    def test_infrastructurecondition_detail(self):
+        self.check_structure_response(
+            self.get_infrastructurecondition_detail(self.infrastructure_condition.pk),
+            INFRASTRUCTURE_CONDITION_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructuremaintenancedifficulty_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructuremaintenancedifficulty_list(),
+            infrastructure_models.InfrastructureMaintenanceDifficultyLevel
+        )
+
+    def test_infrastructuremaintenancedifficulty_detail(self):
+        self.check_structure_response(
+            self.get_infrastructuremaintenancedifficulty_detail(self.infrastructure_maintenancedifficulty.pk),
+            INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructureusagedifficulty_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructureusagedifficulty_list(),
+            infrastructure_models.InfrastructureUsageDifficultyLevel
+        )
+
+    def test_infrastructureusagedifficulty_detail(self):
+        self.check_structure_response(
+            self.get_infrastructureusagedifficulty_detail(self.infrastructure_usagedifficulty.pk),
+            INFRASTRUCTURE_USAGE_DIFFICULTY_DETAIL_JSON_STRUCTURE
         )
 
     def test_servicetype_list(self):
