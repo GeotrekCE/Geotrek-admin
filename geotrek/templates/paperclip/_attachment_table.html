@@ -1,0 +1,10 @@
+{% extends "paperclip/_attachment_table.html" %}
+{% load i18n %}
+
+{% block extra_column_header %}
+<th>{% trans "License" %}</th>
+{% endblock %}
+
+{% block extra_column_data %}
+    <td> {{ att.license.label }} </td>
+{% endblock %}
