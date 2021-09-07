@@ -3,6 +3,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.db.models.query_utils import Q
 from django.utils.translation import gettext_lazy as _
 from django.utils.formats import date_format
 
@@ -158,8 +159,25 @@ class TouristicContentCategory(PictogramMixin):
         return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
-class TouristicContentType(OptionalPictogramMixin):
+class TouristicContentTypeFilteringManager(MultilingualManager):
+    def has_content_published_not_deleted_in_category_in_list(self, category, list_index):
+        """ Retrieves content types for which there exist an event that is published and not deleted on this category and list (type1 or type2)
+        """
+        i = list_index
+        qs = super().get_queryset().filter(in_list=i)
+        # Building following logic : return type1 if (contents1__category==category) & (contents1_published_fr | contents1_published_en) & not(contents1_deleted)
+        q_lang = Q()
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            published_field_name = f"contents{i}__published_{lang}"
+            q_lang |= Q(**{published_field_name: True})
+        deleted_field_name = f"contents{i}__deleted"
+        category_field_name = f"contents{i}__category"
+        q = Q(**{category_field_name: category}) & q_lang & Q(**{deleted_field_name: False})
+        return qs.filter(q).distinct()
 
+
+class TouristicContentType(OptionalPictogramMixin):
+    objects = TouristicContentTypeFilteringManager()
     label = models.CharField(verbose_name=_("Label"), max_length=128)
     category = models.ForeignKey(TouristicContentCategory, related_name='types', on_delete=models.CASCADE,
                                  verbose_name=_("Category"))

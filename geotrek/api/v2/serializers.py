@@ -284,7 +284,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                     'id': t.id,
                     'label': get_translation_or_dict('label', self, t),
                     'pictogram': t.pictogram.url if t.pictogram else None,
-                } for t in obj.types.filter(in_list=i)]
+                } for t in obj.types.has_content_published_not_deleted_in_category_in_list(obj.pk, i)]
             } for i in (1, 2)]
 
         def get_label(self, obj):
@@ -297,7 +297,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return get_translation_or_dict('type', self, obj)
 
         class Meta:
-            model = tourism_models.TouristicContentCategory
+            model = tourism_models.TouristicEventType
             fields = ('id', 'pictogram', 'type')
 
     class TouristicModelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
