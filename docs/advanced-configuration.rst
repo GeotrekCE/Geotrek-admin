@@ -57,7 +57,7 @@ be sent to the managers:
 
 ::
 
-    sudo geotrek test_managers_emails
+    sudo geotrek sendtestemail --managers
 
 
 Disable modules and components
@@ -115,7 +115,7 @@ Geotrek reports can work together with Suricate API, using one of 3 modes:
 
 This mode sends no report data to Suricate.
 
-**2** - Suricate Reports 
+**2** - Suricate Reports
 
 This mode simply forwards all reports to Suricate, using the Standard API to post reports.
 
@@ -141,7 +141,7 @@ Then load lists for categories, activities, statuses and problem magnitude:
 To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
 
 
-**3**. Suricate Management 
+**3**. Suricate Management
 
 This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It requires enabling the Suricate Report mode as well.
 
@@ -720,7 +720,7 @@ To know how many workers you should set, please refer to `gunicorn documentation
 Configure columns displayed in lists views and exports
 ----------------------------------------------
 
-For each module, use the following syntax to configure columns to display in the main table. 
+For each module, use the following syntax to configure columns to display in the main table.
 
 ::
 
@@ -736,7 +736,7 @@ For each module, use the following syntax to configure columns to export as CSV 
 
 Please refer to the "settings detail" section for a complete list of modules and available columms.
 
-Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost. 
+Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
 
 ::
 
@@ -747,7 +747,7 @@ Another setting exists to enable a more detailed export of jobs costs in the int
 Configure form fields in creation views
 ----------------------------------------------
 
-For each module, use the following syntax to configure fields to hide in the creation form. 
+For each module, use the following syntax to configure fields to hide in the creation form.
 
 ::
 
@@ -1488,7 +1488,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_insert",
             "date_insert",
             "implantation_year",
-            "usage_difficulty", 
+            "usage_difficulty",
             "maintenance_difficulty"
             "published",
         ],
@@ -1787,7 +1787,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "max_elevation",
             "slope",
-            "usage_difficulty", 
+            "usage_difficulty",
             "maintenance_difficulty"
         ],
     COLUMNS_LISTS["signage_export"] = [
