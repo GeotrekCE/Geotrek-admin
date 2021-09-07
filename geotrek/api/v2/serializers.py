@@ -277,6 +277,12 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = ('id', 'label', 'order', 'pictogram', 'types')
 
         def get_types(self, obj):
+            request = self.context['request']
+            portals = request.GET.get('portals')
+            if portals:
+                portals = portals.split(',')
+            language = request.GET.get('language')
+
             return [{
                 'id': obj.id * 100 + i,
                 'label': get_translation_or_dict('type{}_label'.format(i), self, obj),
@@ -284,7 +290,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                     'id': t.id,
                     'label': get_translation_or_dict('label', self, t),
                     'pictogram': t.pictogram.url if t.pictogram else None,
-                } for t in obj.types.has_content_published_not_deleted_in_category_in_list(obj.pk, i)]
+                } for t in obj.types.has_content_published_not_deleted_in_list(i, obj.pk, portals, language)]
             } for i in (1, 2)]
 
         def get_label(self, obj):
