@@ -173,9 +173,9 @@ class TouristicContentTypeFilteringManager(MultilingualManager):
         #          & (contents1_published_fr | contents1_published_en)
         #          & not(contents1_deleted)
         #
-        # q_total  =      q_portal 
-        #               & q_category    
-        #               & q_lang             
+        # q_total  =      q_portal
+        #               & q_category
+        #               & q_lang
         #               & q_deleted
 
         q_portal = Q()
