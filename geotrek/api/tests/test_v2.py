@@ -2615,7 +2615,6 @@ class TouristicContentTypeFilterTestCase(BaseApiTest):
         self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)
 
     def test_returned_published_not_deleted_by_portal_and_lang(self):
-        print(self.category2.pk)
         response = self.get_touristiccontentcategory_list({'portals': self.portal.pk, 'language': 'es'})
         types_in_list = [self.content_published_es_portal]
         types_not_in_list = [self.content_deleted, self.content_not_published, self.content_published_en, self.content_cat2]
