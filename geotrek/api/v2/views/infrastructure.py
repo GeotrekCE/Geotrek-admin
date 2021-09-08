@@ -1,4 +1,3 @@
-from geotrek.settings.base import API_IS_PUBLIC
 from django.conf import settings
 from django.db.models import F
 from geotrek.api.v2 import serializers as api_serializers, \
