@@ -312,6 +312,7 @@ class BaseApiTest(TestCase):
             usage_difficulty=cls.infrastructure_usagedifficulty,
             maintenance_difficulty=cls.infrastructure_maintenancedifficulty,
             condition=cls.infrastructure_condition,
+            published=True
         )
 
     def check_number_elems_response(self, response, model):

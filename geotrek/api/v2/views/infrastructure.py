@@ -7,7 +7,11 @@ from geotrek.api.v2.functions import Transform
 
 
 class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.NearbyContentFilter, api_filters.UpdateOrCreateDateFilter)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.GeotrekPublishedFilter
+    )
     serializer_class = api_serializers.InfrastructureSerializer
     queryset = infra_models.Infrastructure.objects.existing() \
         .select_related('topo_object', 'type', ) \

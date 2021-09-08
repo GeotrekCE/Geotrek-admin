@@ -753,17 +753,24 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
         qs = queryset
         # Exclude if no related objects exist
         qs = qs.exclude(**{'{}'.format(prefix): None})
-        language = request.GET.get('language', 'all')
         q = Q()
-        if language == 'all':
-            # no language specified. Check for all.
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                related_field_name = '{}__published_{}'.format(prefix, lang)
-                q |= Q(**{related_field_name: True})
-        else:
-            # one language is specified
-            related_field_name = '{}__published_{}'.format(prefix, language)
+        # check if the model of the queryset published field is translated
+        associated_published_fields = [f.name for f in qs.model._meta.get_field(prefix).remote_field.model._meta.get_fields() if f.name.startswith('published')]
+        if len(associated_published_fields) == 1:
+            related_field_name = '{}__published'.format(prefix)
             q &= Q(**{related_field_name: True})
+        elif len(associated_published_fields) > 1:
+            language = request.GET.get('language')
+            if language:
+                # one language is specified
+                related_field_name = '{}__published_{}'.format(prefix, language)
+                q &= Q(**{related_field_name: True})
+            else:
+                # no language specified. Check for all.
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    related_field_name = '{}__published_{}'.format(prefix, lang)
+                    q |= Q(**{related_field_name: True})
+
         # Ensure no deleted content is taken in consideration in the filter
         related_field_name = '{}__deleted'.format(prefix)
         q &= Q(**{related_field_name: False})
