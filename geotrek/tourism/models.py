@@ -168,9 +168,15 @@ class TouristicContentTypeFilteringManager(MultilingualManager):
         qs = super().get_queryset().filter(in_list=i)
         # Building following logic :
         # return type1 if:
-        #            (contents1__portal__in==portals) & (contents1__category==category) & (contents1_published_fr | contents1_published_en) & not(contents1_deleted)
+        #            (contents1__portal__in==portals)
+        #          & (contents1__category==category)
+        #          & (contents1_published_fr | contents1_published_en)
+        #          & not(contents1_deleted)
         #
-        # q_total  =             q_portal             &        q_category               &                     q_lang                        &       q_deleted
+        # q_total  =      q_portal 
+        #               & q_category    
+        #               & q_lang             
+        #               & q_deleted
 
         q_portal = Q()
         if portals:
