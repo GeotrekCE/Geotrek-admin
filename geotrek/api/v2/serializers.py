@@ -39,6 +39,8 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     from geotrek.flatpages import models as flatpages_models
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     from geotrek.infrastructure import models as infrastructure_models
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage import models as signage_models
 
 
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
@@ -1019,4 +1021,55 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
         class Meta:
             model = infrastructure_models.InfrastructureUsageDifficultyLevel
+            fields = ('id', 'label', 'structure')
+
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+
+    class LineSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        pictogram = serializers.CharField(source='pictogram_name')
+
+        class Meta:
+            model = signage_models.Line
+            fields = ('id', 'text', 'pictogram', 'distance', 'time')
+
+    class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        lines = LineSerializer(many=True)
+
+        class Meta:
+            model = signage_models.Blade
+            fields = ('id', 'number', 'color', 'direction', 'lines')
+
+    class SignageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
+        structure = serializers.CharField(source='structure.name')
+        attachments = AttachmentSerializer(many=True)
+        blades = BladeSerializer(source='blades_set', many=True)
+
+        class Meta:
+            model = signage_models.Signage
+            fields = ('id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid', 'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing', 'structure', 'type')
+
+    class SignageTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        class Meta:
+            model = signage_models.SignageType
+            fields = ('id', 'label', 'pictogram', 'structure')
+
+    class DirectionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        class Meta:
+            model = signage_models.Direction
+            fields = ('id', 'label')
+
+    class SealingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        class Meta:
+            model = signage_models.Sealing
+            fields = ('id', 'label', 'structure')
+
+    class ColorSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        class Meta:
+            model = signage_models.Color
+            fields = ('id', 'label')
+
+    class BladeTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        class Meta:
+            model = signage_models.BladeType
             fields = ('id', 'label', 'structure')

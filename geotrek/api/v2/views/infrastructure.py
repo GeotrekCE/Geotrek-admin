@@ -1,3 +1,4 @@
+from geotrek.settings.base import API_IS_PUBLIC
 from django.conf import settings
 from django.db.models import F
 from geotrek.api.v2 import serializers as api_serializers, \
@@ -17,7 +18,7 @@ class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class InfrastructureTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.InfrastructureRelatedPortalFilter, )
     serializer_class = api_serializers.InfrastructureTypeSerializer
     queryset = infra_models.InfrastructureType.objects.all().order_by('pk')
 

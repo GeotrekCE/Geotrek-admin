@@ -70,7 +70,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.CASCADE)
     sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
-    type = models.ForeignKey(SignageType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.CASCADE)
     coordinates_verbose_name = _("Coordinates")
 
     class Meta:

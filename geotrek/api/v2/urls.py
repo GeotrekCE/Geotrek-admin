@@ -64,6 +64,14 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('outdoor_course', api_views.CourseViewSet, basename='course')
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     router.register('flatpage', api_views.FlatPageViewSet, basename='flatpage')
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    router.register('signage', api_views.SignageViewSet, basename='signage')
+    router.register('signage_type', api_views.SignageTypeViewSet, basename='signage-type')
+    router.register('signage_blade_type', api_views.BladeTypeViewSet, basename='signage-blade-type')
+    router.register('signage_sealing', api_views.SealingViewSet, basename='signage-sealing')
+    router.register('signage_color', api_views.ColorViewSet, basename='signage-color')
+    router.register('signage_direction', api_views.DirectionViewSet, basename='signage-direction')
+
 
 app_name = 'apiv2'
 _urlpatterns = []

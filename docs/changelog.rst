@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 - Add endpoints for infrastructure and related types in APIv2
+- Add endpoints for signage and related types in APIv2
 
 
 2.63.0 (2021-09-03)

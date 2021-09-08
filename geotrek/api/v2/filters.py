@@ -789,6 +789,16 @@ class TrekRelatedPortalFilter(RelatedPortalGenericFilter):
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
 
 
+class SignageRelatedPortalFilter(RelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'signages')
+
+
+class InfrastructureRelatedPortalFilter(RelatedPortalGenericFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'infrastructures')
+
+
 class TouristicEventRelatedPortalFilter(RelatedPortalGenericFilter):
     def filter_queryset(self, request, qs, view):
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevent')
