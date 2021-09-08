@@ -36,6 +36,8 @@ from geotrek.trekking import factories as trek_factory
 from geotrek.trekking import models as trek_models
 from geotrek.zoning import factories as zoning_factory
 from geotrek.zoning import models as zoning_models
+from geotrek.signage import factories as signage_factory
+from geotrek.signage import models as signage_models
 from mapentity.factories import SuperUserFactory
 
 PAGINATED_JSON_STRUCTURE = sorted([
@@ -195,6 +197,32 @@ TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'pictogram', 'type'
 ])
 
+SIGNAGE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
+    'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
+    'structure', 'type'
+])
+
+SIGNAGE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram', 'structure'
+])
+
+SIGNAGE_BLADE_COLOR_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label'
+])
+
+SIGNAGE_DIRECTION_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label'
+])
+
+SIGNAGE_SEALING_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
+SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
 
 class BaseApiTest(TestCase):
     """
@@ -312,6 +340,21 @@ class BaseApiTest(TestCase):
             usage_difficulty=cls.infrastructure_usagedifficulty,
             maintenance_difficulty=cls.infrastructure_maintenancedifficulty,
             condition=cls.infrastructure_condition,
+            published=True
+        )
+        cls.bladetype = signage_factory.BladeTypeFactory(
+        )
+        cls.color = signage_factory.BladeColorFactory()
+        cls.sealing = signage_factory.SealingFactory()
+        cls.direction = signage_factory.BladeDirectionFactory()
+        cls.bladetype = signage_factory.BladeFactory(
+            color=cls.color,
+            type=cls.bladetype,
+            direction=cls.direction
+        )
+        cls.signagetype = signage_factory.SignageTypeFactory()
+        cls.signage = signage_factory.SignageFactory(
+            type=cls.signagetype,
             published=True
         )
 
@@ -569,6 +612,42 @@ class BaseApiTest(TestCase):
 
     def get_infrastructureusagedifficulty_detail(self, id_infrastructureusagedifficulty, params=None):
         return self.client.get(reverse('apiv2:infrastructure-usage-difficulty-detail', args=(id_infrastructureusagedifficulty,)), params)
+
+    def get_signage_detail(self, id_signage, params=None):
+        return self.client.get(reverse('apiv2:signage-detail', args=(id_signage,)), params)
+
+    def get_signage_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-list'), params)
+
+    def get_signagetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-type-list'), params)
+
+    def get_signagetype_detail(self, id_signagetype, params=None):
+        return self.client.get(reverse('apiv2:signage-type-detail', args=(id_signagetype,)), params)
+
+    def get_signagebladetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-blade-type-list'), params)
+
+    def get_signagebladetype_detail(self, id_signagebladetype, params=None):
+        return self.client.get(reverse('apiv2:signage-blade-type-detail', args=(id_signagebladetype,)), params)
+
+    def get_signagesealing_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-sealing-list'), params)
+
+    def get_signagesealing_detail(self, id_signagesealing, params=None):
+        return self.client.get(reverse('apiv2:signage-sealing-detail', args=(id_signagesealing,)), params)
+
+    def get_signagecolor_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-color-list'), params)
+
+    def get_signagecolor_detail(self, id_signagecolor, params=None):
+        return self.client.get(reverse('apiv2:signage-color-detail', args=(id_signagecolor,)), params)
+
+    def get_signagedirection_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-direction-list'), params)
+
+    def get_signagedirection_detail(self, id_signagedirection, params=None):
+        return self.client.get(reverse('apiv2:signage-direction-detail', args=(id_signagedirection,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -1059,6 +1138,78 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_servicetype_detail(self.service_type.pk),
             SERVICE_TYPE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signage_detail(self):
+        self.check_structure_response(
+            self.get_signage_detail(self.signage.pk),
+            SIGNAGE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signage_list(self):
+        self.check_number_elems_response(
+            self.get_signage_list(),
+            signage_models.Signage
+        )
+
+    def test_signagetype_list(self):
+        self.check_number_elems_response(
+            self.get_signagetype_list(),
+            signage_models.SignageType
+        )
+
+    def test_signagetype_detail(self):
+        self.check_structure_response(
+            self.get_signagetype_detail(self.signagetype.pk),
+            SIGNAGE_TYPE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signagebladetype_list(self):
+        self.check_number_elems_response(
+            self.get_signagebladetype_list(),
+            signage_models.BladeType
+        )
+
+    def test_signagebladetype_detail(self):
+        self.check_structure_response(
+            self.get_signagebladetype_detail(self.bladetype.pk),
+            SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signagesealing_list(self):
+        self.check_number_elems_response(
+            self.get_signagesealing_list(),
+            signage_models.Sealing
+        )
+
+    def test_signagesealing_detail(self):
+        self.check_structure_response(
+            self.get_signagesealing_detail(self.sealing.pk),
+            SIGNAGE_SEALING_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signagecolor_list(self):
+        self.check_number_elems_response(
+            self.get_signagecolor_list(),
+            signage_models.Color
+        )
+
+    def test_signagecolor_detail(self):
+        self.check_structure_response(
+            self.get_signagecolor_detail(self.color.pk),
+            SIGNAGE_BLADE_COLOR_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signagedirection_list(self):
+        self.check_number_elems_response(
+            self.get_signagedirection_list(),
+            signage_models.Direction
+        )
+
+    def test_signagedirection_detail(self):
+        self.check_structure_response(
+            self.get_signagedirection_detail(self.direction.pk),
+            SIGNAGE_DIRECTION_DETAIL_JSON_STRUCTURE
         )
 
     def test_service_types_filter(self):
