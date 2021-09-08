@@ -161,7 +161,7 @@ class TouristicContentCategory(PictogramMixin):
 
 class TouristicContentTypeFilteringManager(MultilingualManager):
     def has_content_published_not_deleted_in_list(self, list_index, category=None, portals=None, language=None):
-        """ Retrieves content types for which there exist an event that is published and not deleted in list (type1 or type2)
+        """ Retrieves content types for which there exists an event that is published and not deleted in list (type1 or type2)
         """
         i = list_index
         q_total = Q()

@@ -2498,7 +2498,6 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     def test_updated_after_filter(self):
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
-        print(two_years_ago)
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'updated_after': two_years_ago})
         self.assertEqual(response.json().get("count"), 2)
@@ -2537,3 +2536,87 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
         in_two_years = (timezone.now() + relativedelta(years=2)).date()
         response = self.get_path_list({'created_before': in_two_years})
         self.assertEqual(response.json().get("count"), 2)
+
+
+class TouristicContentTypeFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.category1 = tourism_factory.TouristicContentCategoryFactory(label="POI")
+        cls.category2 = tourism_factory.TouristicContentCategoryFactory(label="Food")
+        cls.content_deleted = tourism_factory.TouristicContentFactory(
+            category=cls.category1,
+            deleted=True
+        )
+        cls.content_not_published = tourism_factory.TouristicContentFactory(
+            category=cls.category1,
+            published=False,
+            published_fr=False,
+        )
+        cls.content_published_en = tourism_factory.TouristicContentFactory(
+            category=cls.category1,
+            published_fr=False,
+            published_en=True,
+        )
+        cls.portal = tourism_factory.TargetPortalFactory()
+        cls.content_published_es_portal = tourism_factory.TouristicContentFactory(
+            category=cls.category1,
+            published_fr=False,
+            published_en=False,
+            published_es=True,
+        )
+        cls.content_published_es_portal.portal.set([cls.portal])
+        cls.content_cat2 = tourism_factory.TouristicContentFactory(
+            category=cls.category2,
+            published_fr=False,
+            published_en=True,
+        )
+
+    def assert_types_returned_in_first_category(self, response, content_in_list, content_not_in_list):
+        self.assertEqual(response.status_code, 200)
+        self.assert_returned_types(1, response, content_in_list, content_not_in_list)
+        self.assert_returned_types(2, response, content_in_list, content_not_in_list)
+
+    def assert_returned_types(self, i, response, content_in_list, content_not_in_list):
+        returned_types = response.json()['results'][0]['types'][i - 1]['values']
+        self.assertEqual(len(returned_types), len(content_in_list))
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        # type1
+        if i == 1:
+            for content in content_in_list:
+                self.assertIn(content.type1.all()[0].pk, all_ids)
+            for content in content_not_in_list:
+                self.assertNotIn(content.type1.all()[0].pk, all_ids)
+        # type2
+        elif i == 2:
+            for content in content_in_list:
+                self.assertIn(content.type2.all()[0].pk, all_ids)
+            for content in content_not_in_list:
+                self.assertNotIn(content.type2.all()[0].pk, all_ids)
+
+    def test_returned_published_not_deleted(self):
+        response = self.get_touristiccontentcategory_list()
+        types_in_list = [self.content_published_en, self.content_published_es_portal]
+        types_not_in_list = [self.content_deleted, self.content_not_published, self.content_cat2]
+        self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)
+
+    def test_returned_published_not_deleted_by_lang(self):
+        response = self.get_touristiccontentcategory_list({'language': 'en'})
+        types_in_list = [self.content_published_en]
+        types_not_in_list = [self.content_deleted, self.content_not_published, self.content_published_es_portal, self.content_cat2]
+        self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)
+
+    def test_returned_published_not_deleted_by_portal(self):
+        response = self.get_touristiccontentcategory_list({'portals': self.portal.pk})
+        types_in_list = [self.content_published_es_portal]
+        types_not_in_list = [self.content_deleted, self.content_not_published, self.content_published_en, self.content_cat2]
+        self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)
+
+    def test_returned_published_not_deleted_by_portal_and_lang(self):
+        print(self.category2.pk)
+        response = self.get_touristiccontentcategory_list({'portals': self.portal.pk, 'language': 'es'})
+        types_in_list = [self.content_published_es_portal]
+        types_not_in_list = [self.content_deleted, self.content_not_published, self.content_published_en, self.content_cat2]
+        self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)

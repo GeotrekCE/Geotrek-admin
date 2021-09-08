@@ -1,3 +1,4 @@
+from geotrek.tourism.models import TouristicContent
 import json
 
 from easy_thumbnails.alias import aliases
@@ -282,7 +283,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             if portals:
                 portals = portals.split(',')
             language = request.GET.get('language')
-
             return [{
                 'id': obj.id * 100 + i,
                 'label': get_translation_or_dict('type{}_label'.format(i), self, obj),
