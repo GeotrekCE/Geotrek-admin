@@ -19,10 +19,10 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     router.register('infrastructure', api_views.InfrastructureViewSet, basename='infrastructure')
-    router.register('infrastructure_type', api_views.InfrastructureTypeViewSet, basename='infrastructuretype')
-    router.register('infrastructure_condition', api_views.InfrastructureConditionViewSet, basename='infrastructurecondition')
-    router.register('infrastructure_usage_difficulty_level', api_views.InfrastructureUsageDifficultyLevelViewSet, basename='infrastructuremaintenancedifficulty')
-    router.register('infrastructure_maintenance_difficulty_level', api_views.InfrastructureMaintenanceDifficultyLevelViewSet, basename='infrastructureusagedifficulty')
+    router.register('infrastructure_type', api_views.InfrastructureTypeViewSet, basename='infrastructure-type')
+    router.register('infrastructure_condition', api_views.InfrastructureConditionViewSet, basename='infrastructure-condition')
+    router.register('infrastructure_usage_difficulty_level', api_views.InfrastructureUsageDifficultyLevelViewSet, basename='infrastructure-usage-difficulty')
+    router.register('infrastructure_maintenance_difficulty_level', api_views.InfrastructureMaintenanceDifficultyLevelViewSet, basename='infrastructure-maintenance-difficulty')
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
     router.register('feedback_status', api_views.ReportStatusViewSet, basename='feedback-status')
     router.register('feedback_category', api_views.ReportCategoryViewSet, basename='feedback-category')

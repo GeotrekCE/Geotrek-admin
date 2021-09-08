@@ -540,10 +540,10 @@ class BaseApiTest(TestCase):
         return self.client.get(reverse('apiv2:service-detail', args=(id_service,)), params)
 
     def get_infrastructuretype_detail(self, id_infrastructuretype, params=None):
-        return self.client.get(reverse('apiv2:infrastructuretype-detail', args=(id_infrastructuretype,)), params)
+        return self.client.get(reverse('apiv2:infrastructure-type-detail', args=(id_infrastructuretype,)), params)
 
     def get_infrastructuretype_list(self, params=None):
-        return self.client.get(reverse('apiv2:infrastructuretype-list'), params)
+        return self.client.get(reverse('apiv2:infrastructure-type-list'), params)
 
     def get_infrastructure_list(self, params=None):
         return self.client.get(reverse('apiv2:infrastructure-list'), params)
@@ -552,22 +552,22 @@ class BaseApiTest(TestCase):
         return self.client.get(reverse('apiv2:infrastructure-detail', args=(id_infrastructure,)), params)
 
     def get_infrastructurecondition_list(self, params=None):
-        return self.client.get(reverse('apiv2:infrastructurecondition-list'), params)
+        return self.client.get(reverse('apiv2:infrastructure-condition-list'), params)
 
     def get_infrastructurecondition_detail(self, id_infrastructurecondition, params=None):
-        return self.client.get(reverse('apiv2:infrastructurecondition-detail', args=(id_infrastructurecondition,)), params)
+        return self.client.get(reverse('apiv2:infrastructure-condition-detail', args=(id_infrastructurecondition,)), params)
 
     def get_infrastructuremaintenancedifficulty_list(self, params=None):
-        return self.client.get(reverse('apiv2:infrastructuremaintenancedifficulty-list'), params)
+        return self.client.get(reverse('apiv2:infrastructure-maintenance-difficulty-list'), params)
 
     def get_infrastructuremaintenancedifficulty_detail(self, id_infrastructuremaintenancedifficulty, params=None):
-        return self.client.get(reverse('apiv2:infrastructuremaintenancedifficulty-detail', args=(id_infrastructuremaintenancedifficulty,)), params)
+        return self.client.get(reverse('apiv2:infrastructure-maintenance-difficulty-detail', args=(id_infrastructuremaintenancedifficulty,)), params)
 
     def get_infrastructureusagedifficulty_list(self, params=None):
-        return self.client.get(reverse('apiv2:infrastructureusagedifficulty-list'), params)
+        return self.client.get(reverse('apiv2:infrastructure-usage-difficulty-list'), params)
 
     def get_infrastructureusagedifficulty_detail(self, id_infrastructureusagedifficulty, params=None):
-        return self.client.get(reverse('apiv2:infrastructureusagedifficulty-detail', args=(id_infrastructureusagedifficulty,)), params)
+        return self.client.get(reverse('apiv2:infrastructure-usage-difficulty-detail', args=(id_infrastructureusagedifficulty,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
