@@ -10,6 +10,11 @@ CHANGELOG
 - Filter TouristicContentTypes according to published content in APIv2 
 
 
+**Bug fixes**
+
+* Fix missing translations for infrastructure difficulty levels in admin
+
+
 2.63.0 (2021-09-03)
 ----------------------
 
