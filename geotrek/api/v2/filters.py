@@ -715,7 +715,7 @@ class GeotrekSiteFilter(BaseFilterBackend):
             Field(
                 name='root_sites_only', required=False, location='query', schema=coreschema.String(
                     title=_("Root sites only"),
-                    description=_('Only return sites that are at the top of the hierarchy and have no parents. Use any string to activate.')
+                    description=_('Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate.')
                 )
             ),
         )
