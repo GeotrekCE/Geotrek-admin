@@ -490,11 +490,6 @@ class BaseApiTest(TestCase):
     def get_touristiceventtype_detail(self, id_touristiceventtype, params=None):
         return self.client.get(reverse('apiv2:touristiceventtype-detail', args=(id_touristiceventtype,)), params)
 
-    def test_version_route(self):
-        response = self.client.get("/api/v2/version")
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {'version': __version__})
-
     def get_servicetype_list(self, params=None):
         return self.client.get(reverse('apiv2:servicetype-list'), params)
 
@@ -578,6 +573,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         # json collection structure is ok
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_version_route(self):
+        response = self.client.get("/api/v2/version")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {'version': __version__})
 
     def test_trek_list_filter_distance(self):
         """ Test Trek list is filtered by reference point distance """
