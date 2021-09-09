@@ -343,6 +343,8 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
+    pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
+                                           blank=True)
 
     check_structure_in_forms = False
 
@@ -382,6 +384,10 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     def children_id(self):
         children = self.course_children.values_list('child__id', flat=True)
         return children
+
+    @property
+    def all_pois(self):
+        return POI.outdoor_all_pois(self)
 
     def course_interventions(self):
         # Interventions on courses
