@@ -13,6 +13,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix missing translations for infrastructure difficulty levels in admin
+* Fix impossible import of uninstalled module 'sensitivity' in 'dive'
 
 
 2.63.0 (2021-09-03)
