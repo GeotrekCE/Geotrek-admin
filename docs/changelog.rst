@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- Filter TouristicContentTypes according to published content in APIv2 
+
 
 2.63.0 (2021-09-03)
 ----------------------
