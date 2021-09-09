@@ -1,6 +1,4 @@
 from datetime import date, datetime
-from logging import root
-
 
 import coreschema
 
