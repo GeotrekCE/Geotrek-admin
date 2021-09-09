@@ -755,7 +755,9 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
         qs = qs.exclude(**{'{}'.format(prefix): None})
         q = Q()
         # check if the model of the queryset published field is translated
-        associated_published_fields = [f.name for f in qs.model._meta.get_field(prefix).remote_field.model._meta.get_fields() if f.name.startswith('published')]
+        related_object = qs.model._meta.get_field(prefix).remote_field
+        fields_on_related_object = related_object.model._meta.get_fields()
+        associated_published_fields = [f.name for f in fields_on_related_object if f.name.startswith('published')]
         if len(associated_published_fields) == 1:
             related_field_name = '{}__published'.format(prefix)
             q &= Q(**{related_field_name: True})
