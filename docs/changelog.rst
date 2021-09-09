@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add filter on Outdoor Site route to only retrieve root sites from hierarchy
+
 
 2.63.0 (2021-09-03)
 ----------------------
