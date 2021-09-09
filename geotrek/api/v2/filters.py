@@ -212,12 +212,22 @@ class GeotrekPOIFilter(BaseFilterBackend):
             t = Trek.objects.get(pk=trek)
             qs = Topology.overlapping(t, qs)
             qs = qs.exclude(pk__in=t.pois_excluded.all())
-        site = request.GET.get('site', None)
-        if site is not None:
-            s = Site.objects.get(pk=site)
-            qs = qs.filter(pk__in=POI.site_all_pois(s))
-            qs = qs.exclude(pk__in=s.pois_excluded.all())
+        sites = request.GET.get('sites', None)
+        if sites is not None:
+            qs = qs.filter(pk__in=self.get_pois_to_filter_outdoor_objects(Site, sites))
+        courses = request.GET.get('courses', None)
+        if courses is not None:
+            qs = qs.filter(pk__in=self.get_pois_to_filter_outdoor_objects(Course, courses))
         return qs
+
+    def get_pois_to_filter_outdoor_objects(self, model, elems):
+        list_pois = POI.objects.none()
+        for obj in elems.split(','):
+            o = model.objects.get(pk=obj)
+            tmp = POI.outdoor_all_pois(o)
+            tmp.exclude(pk__in=o.pois_excluded.all())
+            list_pois |= tmp
+        return list_pois.distinct()
 
     def get_schema_fields(self, view):
         return (
@@ -232,9 +242,14 @@ class GeotrekPOIFilter(BaseFilterBackend):
                     description=_("Filter by a trek id. It will show only the POIs related to this trek.")
                 )
             ), Field(
-                name='site', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Site"),
-                    description=_("Filter by a site id. It will show only the POIs related to this outdoor site.")
+                name='sites', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Sites"),
+                    description=_("Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas.")
+                )
+            ), Field(
+                name='courses', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Courses"),
+                    description=_("Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas.")
                 )
             ),
         )

@@ -265,7 +265,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
 
     @property
     def all_pois(self):
-        return POI.site_all_pois(self)
+        return POI.outdoor_all_pois(self)
 
     def site_interventions(self):
         # Interventions on sites
