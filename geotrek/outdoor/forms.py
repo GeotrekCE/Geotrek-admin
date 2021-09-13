@@ -132,6 +132,7 @@ class CourseForm(CommonForm):
     def __init__(self, site=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['site'].initial = site
+        self.fields['duration'].widget.attrs['min'] = '0'
         if self.instance.pk and self.instance.site and self.instance.site.practice:
             for scale in self.instance.site.practice.rating_scales.all():
                 ratings = self.instance.ratings.filter(scale=scale)
@@ -154,7 +155,6 @@ class CourseForm(CommonForm):
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0].remove('pois_excluded')
-        self.fields['duration'].widget.attrs['min'] = '0'
 
     def clean_children_course(self):
         """

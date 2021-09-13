@@ -1263,7 +1263,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          POI_PROPERTIES_GEOJSON_STRUCTURE)
 
-        response = self.get_poi_list({'types': self.poi_type.pk, 'trek': self.treks[0].pk})
+        response = self.get_poi_list({'types': self.poi_type.pk, 'trek': self.treks[0].pk, 'sites': self.site.pk, 'courses': self.course.pk})
         self.assertEqual(response.status_code, 200)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
