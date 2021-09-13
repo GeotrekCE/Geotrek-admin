@@ -24,6 +24,8 @@ from geotrek.core import factories as core_factory
 from geotrek.core import models as path_models
 from geotrek.feedback import factories as feedback_factory
 from geotrek.flatpages import factories as flatpages_factory
+from geotrek.infrastructure import factories as infrastructure_factory
+from geotrek.infrastructure import models as infrastructure_models
 from geotrek.outdoor import factories as outdoor_factory
 from geotrek.outdoor import models as outdoor_models
 from geotrek.sensitivity import factories as sensitivity_factory
@@ -34,6 +36,8 @@ from geotrek.trekking import factories as trek_factory
 from geotrek.trekking import models as trek_models
 from geotrek.zoning import factories as zoning_factory
 from geotrek.zoning import models as zoning_models
+from geotrek.signage import factories as signage_factory
+from geotrek.signage import models as signage_models
 from mapentity.factories import SuperUserFactory
 
 PAGINATED_JSON_STRUCTURE = sorted([
@@ -161,6 +165,26 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'name', 'practices', 'pictogram'
 ])
 
+INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'attachments', 'condition', 'description', 'eid', 'geometry', 'implantation_year', 'maintenance_difficulty', 'name', 'structure', 'type', 'usage_difficulty'
+])
+
+INFRASTRUCTURE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram', 'structure', 'type'
+])
+
+INFRASTRUCTURE_CONDITION_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
+INFRASTRUCTURE_USAGE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
+INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
@@ -171,6 +195,32 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
 
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'pictogram', 'type'
+])
+
+SIGNAGE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
+    'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
+    'structure', 'type'
+])
+
+SIGNAGE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram', 'structure'
+])
+
+SIGNAGE_BLADE_COLOR_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label'
+])
+
+SIGNAGE_DIRECTION_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label'
+])
+
+SIGNAGE_SEALING_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
+])
+
+SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'structure'
 ])
 
 
@@ -280,6 +330,32 @@ class BaseApiTest(TestCase):
         cls.service1 = trek_factory.ServiceFactory()
         cls.service = trek_factory.ServiceFactory(
             type=cls.service_type
+        )
+        cls.infrastructure_type = infrastructure_factory.InfrastructureTypeFactory()
+        cls.infrastructure_condition = infrastructure_factory.InfrastructureConditionFactory()
+        cls.infrastructure_usagedifficulty = infrastructure_factory.InfrastructureUsageDifficultyLevelFactory()
+        cls.infrastructure_maintenancedifficulty = infrastructure_factory.InfrastructureMaintenanceDifficultyLevelFactory()
+        cls.infrastructure = infrastructure_factory.InfrastructureFactory(
+            type=cls.infrastructure_type,
+            usage_difficulty=cls.infrastructure_usagedifficulty,
+            maintenance_difficulty=cls.infrastructure_maintenancedifficulty,
+            condition=cls.infrastructure_condition,
+            published=True
+        )
+        cls.bladetype = signage_factory.BladeTypeFactory(
+        )
+        cls.color = signage_factory.BladeColorFactory()
+        cls.sealing = signage_factory.SealingFactory()
+        cls.direction = signage_factory.BladeDirectionFactory()
+        cls.bladetype = signage_factory.BladeFactory(
+            color=cls.color,
+            type=cls.bladetype,
+            direction=cls.direction
+        )
+        cls.signagetype = signage_factory.SignageTypeFactory()
+        cls.signage = signage_factory.SignageFactory(
+            type=cls.signagetype,
+            published=True
         )
 
     def check_number_elems_response(self, response, model):
@@ -501,6 +577,72 @@ class BaseApiTest(TestCase):
 
     def get_service_detail(self, id_service, params=None):
         return self.client.get(reverse('apiv2:service-detail', args=(id_service,)), params)
+
+    def get_infrastructuretype_detail(self, id_infrastructuretype, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-type-detail', args=(id_infrastructuretype,)), params)
+
+    def get_infrastructuretype_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-type-list'), params)
+
+    def get_infrastructure_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-list'), params)
+
+    def get_infrastructure_detail(self, id_infrastructure, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-detail', args=(id_infrastructure,)), params)
+
+    def get_infrastructurecondition_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-condition-list'), params)
+
+    def get_infrastructurecondition_detail(self, id_infrastructurecondition, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-condition-detail', args=(id_infrastructurecondition,)), params)
+
+    def get_infrastructuremaintenancedifficulty_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-maintenance-difficulty-list'), params)
+
+    def get_infrastructuremaintenancedifficulty_detail(self, id_infrastructuremaintenancedifficulty, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-maintenance-difficulty-detail', args=(id_infrastructuremaintenancedifficulty,)), params)
+
+    def get_infrastructureusagedifficulty_list(self, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-usage-difficulty-list'), params)
+
+    def get_infrastructureusagedifficulty_detail(self, id_infrastructureusagedifficulty, params=None):
+        return self.client.get(reverse('apiv2:infrastructure-usage-difficulty-detail', args=(id_infrastructureusagedifficulty,)), params)
+
+    def get_signage_detail(self, id_signage, params=None):
+        return self.client.get(reverse('apiv2:signage-detail', args=(id_signage,)), params)
+
+    def get_signage_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-list'), params)
+
+    def get_signagetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-type-list'), params)
+
+    def get_signagetype_detail(self, id_signagetype, params=None):
+        return self.client.get(reverse('apiv2:signage-type-detail', args=(id_signagetype,)), params)
+
+    def get_signagebladetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-blade-type-list'), params)
+
+    def get_signagebladetype_detail(self, id_signagebladetype, params=None):
+        return self.client.get(reverse('apiv2:signage-blade-type-detail', args=(id_signagebladetype,)), params)
+
+    def get_signagesealing_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-sealing-list'), params)
+
+    def get_signagesealing_detail(self, id_signagesealing, params=None):
+        return self.client.get(reverse('apiv2:signage-sealing-detail', args=(id_signagesealing,)), params)
+
+    def get_signagecolor_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-color-list'), params)
+
+    def get_signagecolor_detail(self, id_signagecolor, params=None):
+        return self.client.get(reverse('apiv2:signage-color-detail', args=(id_signagecolor,)), params)
+
+    def get_signagedirection_list(self, params=None):
+        return self.client.get(reverse('apiv2:signage-direction-list'), params)
+
+    def get_signagedirection_detail(self, id_signagedirection, params=None):
+        return self.client.get(reverse('apiv2:signage-direction-detail', args=(id_signagedirection,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -926,6 +1068,66 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             SERVICE_DETAIL_JSON_STRUCTURE
         )
 
+    def test_infrastructure_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructure_list(),
+            infrastructure_models.Infrastructure
+        )
+
+    def test_infrastructure_detail(self):
+        self.check_structure_response(
+            self.get_infrastructure_detail(self.infrastructure.pk),
+            INFRASTRUCTURE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructuretype_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructuretype_list(),
+            infrastructure_models.InfrastructureType
+        )
+
+    def test_infrastructuretype_detail(self):
+        self.check_structure_response(
+            self.get_infrastructuretype_detail(self.infrastructure_type.pk),
+            INFRASTRUCTURE_TYPE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructurecondition_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructurecondition_list(),
+            infrastructure_models.InfrastructureCondition
+        )
+
+    def test_infrastructurecondition_detail(self):
+        self.check_structure_response(
+            self.get_infrastructurecondition_detail(self.infrastructure_condition.pk),
+            INFRASTRUCTURE_CONDITION_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructuremaintenancedifficulty_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructuremaintenancedifficulty_list(),
+            infrastructure_models.InfrastructureMaintenanceDifficultyLevel
+        )
+
+    def test_infrastructuremaintenancedifficulty_detail(self):
+        self.check_structure_response(
+            self.get_infrastructuremaintenancedifficulty_detail(self.infrastructure_maintenancedifficulty.pk),
+            INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_infrastructureusagedifficulty_list(self):
+        self.check_number_elems_response(
+            self.get_infrastructureusagedifficulty_list(),
+            infrastructure_models.InfrastructureUsageDifficultyLevel
+        )
+
+    def test_infrastructureusagedifficulty_detail(self):
+        self.check_structure_response(
+            self.get_infrastructureusagedifficulty_detail(self.infrastructure_usagedifficulty.pk),
+            INFRASTRUCTURE_USAGE_DIFFICULTY_DETAIL_JSON_STRUCTURE
+        )
+
     def test_servicetype_list(self):
         self.check_number_elems_response(
             self.get_servicetype_list(),
@@ -936,6 +1138,78 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_servicetype_detail(self.service_type.pk),
             SERVICE_TYPE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signage_detail(self):
+        self.check_structure_response(
+            self.get_signage_detail(self.signage.pk),
+            SIGNAGE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signage_list(self):
+        self.check_number_elems_response(
+            self.get_signage_list(),
+            signage_models.Signage
+        )
+
+    def test_signagetype_list(self):
+        self.check_number_elems_response(
+            self.get_signagetype_list(),
+            signage_models.SignageType
+        )
+
+    def test_signagetype_detail(self):
+        self.check_structure_response(
+            self.get_signagetype_detail(self.signagetype.pk),
+            SIGNAGE_TYPE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signagebladetype_list(self):
+        self.check_number_elems_response(
+            self.get_signagebladetype_list(),
+            signage_models.BladeType
+        )
+
+    def test_signagebladetype_detail(self):
+        self.check_structure_response(
+            self.get_signagebladetype_detail(self.bladetype.pk),
+            SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signagesealing_list(self):
+        self.check_number_elems_response(
+            self.get_signagesealing_list(),
+            signage_models.Sealing
+        )
+
+    def test_signagesealing_detail(self):
+        self.check_structure_response(
+            self.get_signagesealing_detail(self.sealing.pk),
+            SIGNAGE_SEALING_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signagecolor_list(self):
+        self.check_number_elems_response(
+            self.get_signagecolor_list(),
+            signage_models.Color
+        )
+
+    def test_signagecolor_detail(self):
+        self.check_structure_response(
+            self.get_signagecolor_detail(self.color.pk),
+            SIGNAGE_BLADE_COLOR_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_signagedirection_list(self):
+        self.check_number_elems_response(
+            self.get_signagedirection_list(),
+            signage_models.Direction
+        )
+
+    def test_signagedirection_detail(self):
+        self.check_structure_response(
+            self.get_signagedirection_detail(self.direction.pk),
+            SIGNAGE_DIRECTION_DETAIL_JSON_STRUCTURE
         )
 
     def test_service_types_filter(self):
@@ -2498,7 +2772,6 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     def test_updated_after_filter(self):
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
-        print(two_years_ago)
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'updated_after': two_years_ago})
         self.assertEqual(response.json().get("count"), 2)
@@ -2569,3 +2842,86 @@ class RootSitesOnlyFilterTestCase(BaseApiTest):
         self.assertIn(self.site_root2.pk, all_ids)
         self.assertNotIn(self.site_child1.pk, all_ids)
         self.assertNotIn(self.site_child2.pk, all_ids)
+
+        
+class TouristicContentTypeFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.category1 = tourism_factory.TouristicContentCategoryFactory(label="POI")
+        cls.category2 = tourism_factory.TouristicContentCategoryFactory(label="Food")
+        cls.content_deleted = tourism_factory.TouristicContentFactory(
+            category=cls.category1,
+            deleted=True
+        )
+        cls.content_not_published = tourism_factory.TouristicContentFactory(
+            category=cls.category1,
+            published=False,
+            published_fr=False,
+        )
+        cls.content_published_en = tourism_factory.TouristicContentFactory(
+            category=cls.category1,
+            published_fr=False,
+            published_en=True,
+        )
+        cls.portal = tourism_factory.TargetPortalFactory()
+        cls.content_published_es_portal = tourism_factory.TouristicContentFactory(
+            category=cls.category1,
+            published_fr=False,
+            published_en=False,
+            published_es=True,
+        )
+        cls.content_published_es_portal.portal.set([cls.portal])
+        cls.content_cat2 = tourism_factory.TouristicContentFactory(
+            category=cls.category2,
+            published_fr=False,
+            published_en=True,
+        )
+
+    def assert_types_returned_in_first_category(self, response, content_in_list, content_not_in_list):
+        self.assertEqual(response.status_code, 200)
+        self.assert_returned_types(1, response, content_in_list, content_not_in_list)
+        self.assert_returned_types(2, response, content_in_list, content_not_in_list)
+
+    def assert_returned_types(self, i, response, content_in_list, content_not_in_list):
+        returned_types = response.json()['results'][0]['types'][i - 1]['values']
+        self.assertEqual(len(returned_types), len(content_in_list))
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        # type1
+        if i == 1:
+            for content in content_in_list:
+                self.assertIn(content.type1.all()[0].pk, all_ids)
+            for content in content_not_in_list:
+                self.assertNotIn(content.type1.all()[0].pk, all_ids)
+        # type2
+        elif i == 2:
+            for content in content_in_list:
+                self.assertIn(content.type2.all()[0].pk, all_ids)
+            for content in content_not_in_list:
+                self.assertNotIn(content.type2.all()[0].pk, all_ids)
+
+    def test_returned_published_not_deleted(self):
+        response = self.get_touristiccontentcategory_list()
+        types_in_list = [self.content_published_en, self.content_published_es_portal]
+        types_not_in_list = [self.content_deleted, self.content_not_published, self.content_cat2]
+        self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)
+
+    def test_returned_published_not_deleted_by_lang(self):
+        response = self.get_touristiccontentcategory_list({'language': 'en'})
+        types_in_list = [self.content_published_en]
+        types_not_in_list = [self.content_deleted, self.content_not_published, self.content_published_es_portal, self.content_cat2]
+        self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)
+
+    def test_returned_published_not_deleted_by_portal(self):
+        response = self.get_touristiccontentcategory_list({'portals': self.portal.pk})
+        types_in_list = [self.content_published_es_portal]
+        types_not_in_list = [self.content_deleted, self.content_not_published, self.content_published_en, self.content_cat2]
+        self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)
+
+    def test_returned_published_not_deleted_by_portal_and_lang(self):
+        response = self.get_touristiccontentcategory_list({'portals': self.portal.pk, 'language': 'es'})
+        types_in_list = [self.content_published_es_portal]
+        types_not_in_list = [self.content_deleted, self.content_not_published, self.content_published_en, self.content_cat2]
+        self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)

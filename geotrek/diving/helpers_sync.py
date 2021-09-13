@@ -4,8 +4,11 @@ import os
 
 from geotrek.diving import models
 from geotrek.diving import views as diving_views
-from geotrek.sensitivity import views as sensitivity_views
-from geotrek.tourism import views as tourism_views
+
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    from geotrek.sensitivity import views as sensitivity_views
+if 'geotrek.tourism' in settings.INSTALLED_APPS:
+    from geotrek.tourism import views as tourism_views
 
 
 class SyncRando:
