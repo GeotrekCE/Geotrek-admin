@@ -2843,7 +2843,7 @@ class RootSitesOnlyFilterTestCase(BaseApiTest):
         self.assertNotIn(self.site_child1.pk, all_ids)
         self.assertNotIn(self.site_child2.pk, all_ids)
 
-        
+
 class TouristicContentTypeFilterTestCase(BaseApiTest):
 
     @classmethod
