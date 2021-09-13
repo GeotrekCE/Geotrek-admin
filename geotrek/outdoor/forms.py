@@ -150,6 +150,7 @@ class CourseForm(CommonForm):
             self.fields['children_course'].initial = [c.child.pk for c in self.instance.course_children.all()]
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+        if self.instance.pk:
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0].remove('pois_excluded')
