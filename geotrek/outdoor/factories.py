@@ -101,5 +101,9 @@ class CourseFactory(StructureRelatedDefaultFactory):
     equipment = "Rope"
     height = 42
     published = True
+    duration = 55
     eid = "43"
     geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
+    type = factory.SubFactory(CourseTypeFactory)
+    ratings_description = 'Ths rating is ratable'
+    gear = 'Shoes mandatory'
