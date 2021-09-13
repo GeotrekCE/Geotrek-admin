@@ -20,7 +20,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from .zoning import CityViewSet, DistrictViewSet  # noqa
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    from .outdoor import SiteViewSet, OutdoorPracticeViewSet, SiteTypeViewSet, RatingScaleViewSet, RatingViewSet, CourseViewSet  # noqa
+    from .outdoor import SiteViewSet, OutdoorPracticeViewSet, SiteTypeViewSet, CourseTypeViewSet, RatingScaleViewSet, RatingViewSet, CourseViewSet  # noqa
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     from .flatpages import FlatPageViewSet  # noqa
 if 'drf_yasg' in settings.INSTALLED_APPS:

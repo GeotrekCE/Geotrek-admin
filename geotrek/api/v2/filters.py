@@ -794,6 +794,16 @@ class TouristicEventRelatedPortalFilter(RelatedPortalGenericFilter):
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevent')
 
 
+# class SiteRelatedPortalFilter(RelatedPortalGenericFilter):
+#     def filter_queryset(self, request, qs, view):
+#         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'sites')
+
+
+# class CourseRelatedPortalFilter(RelatedPortalGenericFilter):
+#     def filter_queryset(self, request, qs, view):
+#         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'courses')
+
+
 class GeotrekRelatedPortalStructureOrReservationSystemFilter(RelatedObjectsPublishedNotDeletedFilter):
     def filter_queryset(self, request, qs, view):
         portals = request.GET.get('portals')

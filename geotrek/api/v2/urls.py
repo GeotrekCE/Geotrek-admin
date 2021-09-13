@@ -53,6 +53,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('outdoor_site', api_views.SiteViewSet, basename='site')
     router.register('outdoor_practice', api_views.OutdoorPracticeViewSet, basename='outdoor-practice')
     router.register('outdoor_sitetype', api_views.SiteTypeViewSet, basename='sitetype')
+    router.register('outdoor_coursetype', api_views.CourseTypeViewSet, basename='coursetype')
     router.register('outdoor_ratingscale', api_views.RatingScaleViewSet, basename='ratingscale')
     router.register('outdoor_rating', api_views.RatingViewSet, basename='rating')
     router.register('outdoor_course', api_views.CourseViewSet, basename='course')

@@ -18,5 +18,11 @@
         {{ practices|safe }}
     </script>
 {% endif %}
+{% if modelname == "course" %}
+    <script type="application/json" id="site-practices-types">
+        {% course_sites as sites %}
+        {{ sites|safe }}
+    </script>
+{% endif %}
 
 {% endif %}

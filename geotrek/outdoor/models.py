@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
+from django.core.validators import MinValueValidator
 from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
@@ -10,6 +11,7 @@ from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
 from geotrek.common.models import Organism
+from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
@@ -92,12 +94,26 @@ class Rating(OptionalPictogramMixin, models.Model):
 
 class SiteType(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    practice = models.ForeignKey('Practice', related_name="types", on_delete=models.PROTECT,
+    practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Site type")
         verbose_name_plural = _("Site types")
+        ordering = ('name', )
+
+    def __str__(self):
+        return self.name
+
+
+class CourseType(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.PROTECT,
+                                 verbose_name=_("Practice"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Course type")
+        verbose_name_plural = _("Course types")
         ordering = ('name', )
 
     def __str__(self):
@@ -309,12 +325,19 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
+    ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
+    gear = models.TextField(verbose_name=_("Gear"), blank=True)
+    duration = models.FloatField(verbose_name=_("Duration"), null=True, blank=True,
+                                 help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
+                                 validators=[MinValueValidator(0)])
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
     equipment = models.TextField(verbose_name=_("Equipment"), blank=True)
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
+                             verbose_name=_("Type"), null=True, blank=True)
 
     check_structure_in_forms = False
 
@@ -337,6 +360,10 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     @property
     def parents(self):
         return Course.objects.filter(course_children__child=self)
+
+    @property
+    def duration_pretty(self):
+        return geotrek_tags.duration(self.duration)
 
     @property
     def children(self):

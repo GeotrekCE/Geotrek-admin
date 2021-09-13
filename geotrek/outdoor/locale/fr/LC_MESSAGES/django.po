@@ -328,3 +328,21 @@ msgstr "Informations pratiques"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
+
+msgid "Ratings description"
+msgstr "Description des cotations"
+
+msgid "Gear"
+msgstr "Matériel"
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "Course type"
+msgstr "Type de parcours"
+
+msgid "Course types"
+msgstr "Types de parcours"

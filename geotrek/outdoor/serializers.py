@@ -60,7 +60,7 @@ class CourseSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Transl
 
     class Meta:
         model = Course
-        fields = ('id', 'structure', 'name', 'site', 'description', 'advice',
+        fields = ('id', 'structure', 'name', 'site', 'description', 'duration_pretty', 'advice',
                   'equipment', 'height', 'eid', 'ratings') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields

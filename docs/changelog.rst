@@ -8,7 +8,9 @@ CHANGELOG
 **New features**
 
 - Filter TouristicContentTypes according to published content in APIv2 
-
+- APIv2 : Add filter on Outdoor Site route to only retrieve root sites from hierarchy
+- Add fields 'duration', 'type', 'gear', 'ratings_description' to Outdoor Course
+- Add Course Type management to admin site
 
 **Bug fixes**
 

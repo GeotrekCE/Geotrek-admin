@@ -895,6 +895,16 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.SiteType
             fields = ('id', 'name', 'practice')
 
+    class CourseTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = outdoor_models.CourseType
+            fields = ('id', 'name', 'practice')
+
     class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:site-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
@@ -904,7 +914,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'geometry', 'url', 'structure', 'name', 'practice', 'description',
                 'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
-                'portal', 'source', 'information_desks', 'web_links', 'eid',
+                'portal', 'source', 'information_desks', 'web_links', 'eid', 'type',
                 'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
             )
 
@@ -915,8 +925,8 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Course
             fields = (
-                'id', 'geometry', 'url', 'structure', 'name', 'site', 'description',
-                'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
+                'id', 'gear', 'geometry', 'url', 'structure', 'name', 'site', 'duration', 'description', 'type',
+                'advice', 'equipment', 'eid', 'height', 'length', 'ratings', 'ratings_description'
             )
 
 if 'geotrek.feedback' in settings.INSTALLED_APPS:

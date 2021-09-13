@@ -1,5 +1,8 @@
 from django import template
 from django.conf import settings
+from datetime import datetime, timedelta
+
+from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
 
@@ -27,3 +30,34 @@ def is_site_model(model):
 @register.simple_tag
 def is_course_model(model):
     return model._meta.model_name == 'course'
+
+
+@register.filter
+def duration(value):
+    """
+    Returns a duration in hours to a human readable version (minutes, days, ...)
+    """
+    if value is None:
+        return ""
+
+    seconds = timedelta(minutes=float(value) * 60)
+    duration = datetime(1, 1, 1) + seconds
+
+    if duration.day > 1:
+        if duration.hour > 0 or duration.minute > 0:
+            final_duration = _("%s days") % duration.day
+
+        else:
+            final_duration = _("%s days") % (duration.day - 1)
+
+    elif duration.hour > 0 and duration.minute > 0:
+        final_duration = _("%(hour)s h %(min)s") % {'hour': duration.hour,
+                                                    'min': duration.minute, }
+
+    elif duration.hour > 0:
+        final_duration = _("%(hour)s h") % {'hour': duration.hour}
+
+    else:
+        final_duration = _("%s min") % duration.minute
+
+    return final_duration

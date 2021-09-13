@@ -126,7 +126,7 @@ RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'ambiance', 'description', 'description_teaser', 'eid', 'geometry', 'id',
     'information_desks', 'labels', 'name', 'period', 'portal', 'practice', 'source', 'managers',
-    'structure', 'themes', 'url', 'web_links', 'orientation', 'wind', 'ratings_min', 'ratings_max',
+    'structure', 'themes', 'type', 'url', 'web_links', 'orientation', 'wind', 'ratings_min', 'ratings_max',
 ])
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
@@ -147,9 +147,11 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 ])
 
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
-    'length', 'name', 'ratings', 'site', 'structure', 'url',
+    'advice', 'description', 'duration', 'eid', 'equipment', 'gear', 'geometry', 'height', 'id',
+    'length', 'name', 'ratings', 'ratings_description', 'site', 'structure', 'type', 'url',
 ])
+
+COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 
 ORGANISM_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
@@ -272,7 +274,11 @@ class BaseApiTest(TestCase):
         # Create a trek with a point geom
         cls.trek_point = trek_factory.TrekFactory.create(paths=[(cls.path, 0, 0)], geom=Point(cls.path.geom.coords[0]))
         cls.nb_treks += 4  # add parent, 1 child published and treks with a multilinestring/point geom
-        cls.course = outdoor_factory.CourseFactory(site=cls.site)
+        cls.coursetype = outdoor_factory.CourseTypeFactory()
+        cls.course = outdoor_factory.CourseFactory(
+            site=cls.site,
+            type=cls.coursetype
+        )
         # create a reference point for distance filter (in 4326, Cahors city)
         cls.reference_point = Point(x=1.4388656616210938,
                                     y=44.448487178796235, srid=4326)
@@ -506,6 +512,12 @@ class BaseApiTest(TestCase):
 
     def get_service_detail(self, id_service, params=None):
         return self.client.get(reverse('apiv2:service-detail', args=(id_service,)), params)
+
+    def get_coursetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:coursetype-list'), params)
+
+    def get_coursetype_detail(self, id_coursetype, params=None):
+        return self.client.get(reverse('apiv2:coursetype-detail', args=(id_coursetype,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -1369,6 +1381,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_course_detail(self.course.pk),
             COURSE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_coursetype_list(self):
+        self.check_number_elems_response(
+            self.get_coursetype_list(),
+            outdoor_models.CourseType
+        )
+
+    def test_coursetype_detail(self):
+        self.check_structure_response(
+            self.get_coursetype_detail(self.coursetype.pk),
+            COURSETYPE_PROPERTIES_JSON_STRUCTURE
         )
 
     def test_course_list_filters(self):
