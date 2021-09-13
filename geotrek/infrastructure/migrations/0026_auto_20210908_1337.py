@@ -24,4 +24,9 @@ class Migration(migrations.Migration):
             name='maintenance_difficulty',
             field=models.ForeignKey(blank=True, help_text='Danger level of infrastructure maintenance', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='infrastructures_set', to='infrastructure.infrastructuremaintenancedifficultylevel', verbose_name='Maintenance difficulty'),
         ),
+        migrations.AlterField(
+            model_name='infrastructure',
+            name='type',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='infrastructures', to='infrastructure.infrastructuretype', verbose_name='Type'),
+        ),
     ]

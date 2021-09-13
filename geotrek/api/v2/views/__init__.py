@@ -23,6 +23,10 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from .outdoor import SiteViewSet, OutdoorPracticeViewSet, SiteTypeViewSet, CourseTypeViewSet, RatingScaleViewSet, RatingViewSet, CourseViewSet  # noqa
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     from .flatpages import FlatPageViewSet  # noqa
+if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+    from .infrastructure import InfrastructureTypeViewSet, InfrastructureViewSet, InfrastructureUsageDifficultyLevelViewSet, InfrastructureConditionViewSet, InfrastructureMaintenanceDifficultyLevelViewSet  # noqa
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from .signage import SignageViewSet, SignageTypeViewSet, SealingViewSet, ColorViewSet, DirectionViewSet, BladeTypeViewSet  # noqa
 if 'drf_yasg' in settings.INSTALLED_APPS:
     from .swagger import schema_view  # noqa
 
