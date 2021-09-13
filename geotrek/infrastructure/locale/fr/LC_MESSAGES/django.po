@@ -94,11 +94,17 @@ msgstr "Année d'intervention"
 msgid "Usage difficulty"
 msgstr "Niveau des usagers"
 
+msgid "Usage difficulty levels"
+msgstr "Niveaux des usagers"
+
 msgid "Maintenance difficulty"
 msgstr "Niveau des interventions"
 
-msgid "Danger level of maintenance agents' interventions on infrastructure"
-msgstr "Niveau de dangerosité potentielle des interventions sur l'aménagement par les agents"
+msgid "Maintenance difficulty levels"
+msgstr "Niveaux des interventions"
+
+msgid "Danger level of infrastructure maintenance"
+msgstr "Niveau de dangerosité des interventions d'entretien"
 
 msgid "Danger level of end users' infrastructure usage"
-msgstr "Niveau de dangerosité potentielle de l'aménagement pour les usagers randonneurs"
+msgstr "Niveau de dangerosité de l'aménagement pour les usagers"

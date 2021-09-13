@@ -7,11 +7,10 @@ from django.conf import settings
 from extended_choices import Choices
 from mapentity.models import MapEntityMixin
 
-from geotrek.common.utils import classproperty
-from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.common.utils import classproperty
 from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin, NoDeleteManager
-
+from geotrek.core.models import Topology, Path
 
 INFRASTRUCTURE_TYPES = Choices(
     ('BUILDING', 'A', _("Building")),
@@ -59,8 +58,8 @@ class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), max_length=250)
 
     class Meta:
-        verbose_name = _("Infrastructure Maintenance Difficulty Level")
-        verbose_name_plural = _("Infrastructure Maintenance Difficulty Levels")
+        verbose_name = _("Maintenance difficulty")
+        verbose_name_plural = _("Maintenance difficulty levels")
         ordering = ('label',)
         unique_together = ('label', 'structure')
 
@@ -74,8 +73,8 @@ class InfrastructureUsageDifficultyLevel(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), unique=True, max_length=250)
 
     class Meta:
-        verbose_name = _("Infrastructure Usage Difficulty Levels")
-        verbose_name_plural = _("Infrastructure Usage Difficulty Levels")
+        verbose_name = _("Usage difficulty")
+        verbose_name_plural = _("Usage difficulty levels")
         ordering = ('label',)
         unique_together = ('label', 'structure')
 
@@ -155,7 +154,7 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
     objects = InfrastructureGISManager()
     maintenance_difficulty = models.ForeignKey(InfrastructureMaintenanceDifficultyLevel,
                                                verbose_name=_("Maintenance difficulty"),
-                                               help_text=_("Danger level of maintenance agents' interventions on infrastructure"),
+                                               help_text=_("Danger level of infrastructure maintenance"),
                                                blank=True, null=True,
                                                on_delete=models.SET_NULL,
                                                related_name='infrastructures_set')

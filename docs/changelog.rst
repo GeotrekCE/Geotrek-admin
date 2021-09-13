@@ -9,6 +9,13 @@ CHANGELOG
 
 - Add endpoints for infrastructure and related types in APIv2
 - Add endpoints for signage and related types in APIv2
+- Filter TouristicContentTypes according to published content in APIv2 
+
+
+**Bug fixes**
+
+* Fix missing translations for infrastructure difficulty levels in admin
+* Fix impossible import of uninstalled module 'sensitivity' in 'dive'
 
 
 2.63.0 (2021-09-03)
