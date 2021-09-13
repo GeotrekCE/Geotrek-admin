@@ -33,12 +33,14 @@ class SiteTypeAdmin(MergeActionMixin, TranslationAdmin):
     search_fields = ('name', )
     merge_field = 'name'
 
+
 @admin.register(CourseType)
 class CourseTypeAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('name', 'practice')
     list_filter = ('practice', )
     search_fields = ('name', )
     merge_field = 'name'
+
 
 @admin.register(RatingScale)
 class RatingScaleAdmin(MergeActionMixin, TranslationAdmin):
