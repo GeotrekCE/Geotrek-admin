@@ -925,6 +925,14 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:course-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+        gear = serializers.SerializerMethodField(read_only=True)
+        ratings_description = serializers.SerializerMethodField(read_only=True)
+
+        def get_gear(self, obj):
+            return get_translation_or_dict('gear', self, obj)
+
+        def get_ratings_description(self, obj):
+            return get_translation_or_dict('ratings_description', self, obj)
 
         class Meta:
             model = outdoor_models.Course
