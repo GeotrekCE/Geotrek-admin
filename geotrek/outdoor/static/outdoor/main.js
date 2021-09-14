@@ -32,13 +32,13 @@ $(window).on('entity:map', function (e, data) {
 
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    if (data.modelname = 'site')
+    if (data.modelname == 'site')
         // Refresh types by practice
         $('#id_practice').change(function () {
             update_site_types();
         });
     $('#id_practice').trigger('change');
-    if (data.modelname = 'course')
+    if (data.modelname == 'course')
         // Refresh types by practice
         $('#id_site').change(function () {
             update_course_types();
