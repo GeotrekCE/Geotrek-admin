@@ -1,8 +1,14 @@
-geotrek-admin (2.63.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.64.0+dev) UNRELEASED; urgency=medium
 
   * 
 
- -- Célia PRAT <celia.prat@makina-corpus.com>  Fri, 03 Sep 2021 18:45:38 +0200
+ -- Célia PRAT <celia.prat@makina-corpus.com>  Tue, 14 Sep 2021 11:15:24 +0200
+
+geotrek-admin (2.64.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia PRAT <celia.prat@makina-corpus.com>  Tue, 14 Sep 2021 10:27:16 +0200
 
 geotrek-admin (2.63.0) RELEASED; urgency=medium
 

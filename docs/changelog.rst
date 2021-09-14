@@ -2,7 +2,13 @@
 CHANGELOG
 =========
 
-2.63.0+dev (XXXX-XX-XX)
+2.64.0+dev (XXXX-XX-XX)
+----------------------
+
+**New features**
+
+
+2.64.0 (2021-09-14)
 ----------------------
 
 **New features**
