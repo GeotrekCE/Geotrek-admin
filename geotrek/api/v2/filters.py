@@ -1,6 +1,5 @@
 from datetime import date, datetime
 
-
 import coreschema
 
 from coreapi.document import Field
@@ -695,6 +694,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
 
 class GeotrekSiteFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        root_sites_only = request.GET.get('root_sites_only')
+        if root_sites_only:
+            # Being a root node <=> having no parent
+            queryset = queryset.filter(parent=None)
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)
@@ -706,6 +709,12 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 name='q', required=False, location='query', schema=coreschema.String(
                     title=_("Query string"),
                     description=_('Filter by some case-insensitive text contained in name.')
+                )
+            ),
+            Field(
+                name='root_sites_only', required=False, location='query', schema=coreschema.String(
+                    title=_("Root sites only"),
+                    description=_('Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate.')
                 )
             ),
         )

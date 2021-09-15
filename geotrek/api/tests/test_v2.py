@@ -566,11 +566,6 @@ class BaseApiTest(TestCase):
     def get_touristiceventtype_detail(self, id_touristiceventtype, params=None):
         return self.client.get(reverse('apiv2:touristiceventtype-detail', args=(id_touristiceventtype,)), params)
 
-    def test_version_route(self):
-        response = self.client.get("/api/v2/version")
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {'version': __version__})
-
     def get_servicetype_list(self, params=None):
         return self.client.get(reverse('apiv2:servicetype-list'), params)
 
@@ -720,6 +715,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         # json collection structure is ok
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_version_route(self):
+        response = self.client.get("/api/v2/version")
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {'version': __version__})
 
     def test_trek_list_filter_distance(self):
         """ Test Trek list is filtered by reference point distance """
@@ -2810,6 +2810,38 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
         in_two_years = (timezone.now() + relativedelta(years=2)).date()
         response = self.get_path_list({'created_before': in_two_years})
         self.assertEqual(response.json().get("count"), 2)
+
+
+class RootSitesOnlyFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site_root1 = outdoor_factory.SiteFactory()
+        cls.site_root2 = outdoor_factory.SiteFactory()
+        cls.site_child1 = outdoor_factory.SiteFactory(
+            parent=cls.site_root1
+        )
+        cls.site_child2 = outdoor_factory.SiteFactory(
+            parent=cls.site_child1
+        )
+
+    def test_return_all_sites_with_no_filter(self):
+        response = self.get_site_list()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 4)
+
+    def test_root_sites_only_filter(self):
+        response = self.get_site_list({'root_sites_only': "true"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site_root1.pk, all_ids)
+        self.assertIn(self.site_root2.pk, all_ids)
+        self.assertNotIn(self.site_child1.pk, all_ids)
+        self.assertNotIn(self.site_child2.pk, all_ids)
 
 
 class TouristicContentTypeFilterTestCase(BaseApiTest):

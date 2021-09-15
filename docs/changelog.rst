@@ -13,6 +13,7 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add filter on Outdoor Site route to only retrieve root sites from hierarchy
 - Add endpoints for infrastructure and related types in APIv2
 - Add endpoints for signage and related types in APIv2
 - Filter TouristicContentTypes according to published content in APIv2 

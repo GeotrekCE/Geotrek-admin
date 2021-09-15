@@ -395,3 +395,9 @@ msgstr ""
 
 msgid "External ID"
 msgstr "ID externe"
+
+msgid "Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate."
+msgstr "Ne retourner que les sites qui sont au sommet de la hiérarchie des sites et n'ont pas de parent. Activable par n'importe quelle chaîne de charactères."
+
+msgid "Root sites only"
+msgstr "Sites racine seulement"
