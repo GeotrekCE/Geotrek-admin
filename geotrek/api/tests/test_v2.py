@@ -2917,3 +2917,188 @@ class TouristicContentTypeFilterTestCase(BaseApiTest):
         types_in_list = [self.content_published_es_portal]
         types_not_in_list = [self.content_deleted, self.content_not_published, self.content_published_en, self.content_cat2]
         self.assert_types_returned_in_first_category(response, types_in_list, types_not_in_list)
+
+
+class SiteTypeFilterTestCase(BaseApiTest):
+    """ Test filtering depending on published, deleted content for outdoor site types
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        # ### Build all type scenarios
+        #  Type with no site -> don't send it
+        cls.type_with_no_site = outdoor_factory.SiteTypeFactory()
+        #  Type with no published site -> don't send it
+        cls.type_with_no_published_site = outdoor_factory.SiteTypeFactory()
+        cls.not_published_site = outdoor_factory.SiteFactory(
+            published=False,
+            type=cls.type_with_no_published_site
+        )
+        # Type with published and not deleted site -> send it
+        cls.type_with_published_and_not_deleted_site = outdoor_factory.SiteTypeFactory()
+        cls.published_and_not_deleted_site = outdoor_factory.SiteFactory(
+            published_en=True,
+            type=cls.type_with_published_and_not_deleted_site
+        )
+        # Type with published_fr and not deleted site -> send it when language=fr
+        cls.type_with_published_and_not_deleted_site_with_lang = outdoor_factory.SiteTypeFactory()
+        cls.published_and_not_deleted_site_with_lang = outdoor_factory.SiteFactory(
+            published_fr=True,
+            type=cls.type_with_published_and_not_deleted_site_with_lang
+        )
+
+    def test_sites_type_list_returns_published(self):
+        """ Assert API returns only types with published sites
+        """
+        response = self.get_sitetype_list()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.type_with_no_site.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_site.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_site_with_lang.pk, all_ids)
+
+    def test_sites_type_list_returns_published_in_language(self):
+        """ Assert API returns only published sites in specified language
+        """
+        response = self.get_sitetype_list({'language': 'fr'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.type_with_no_site.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
+        self.assertNotIn(self.type_with_published_and_not_deleted_site.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_site_with_lang.pk, all_ids)
+
+
+class SiteTypeFilterTestCaseByPortal(SiteTypeFilterTestCase):
+    """ Test filtering depending on portal for outdoor site types
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        # ### Duplicate all type scenarios based on portal
+        super().setUpTestData()
+        cls.queried_portal = common_factory.TargetPortalFactory()
+        cls.other_portal = common_factory.TargetPortalFactory()
+        #  Type with no site on this portal -> don't send it
+        cls.type_with_no_site = outdoor_factory.SiteTypeFactory()
+        cls.site_on_other_portal = outdoor_factory.SiteFactory(
+            published=False,
+            type=cls.type_with_no_site,
+        )
+        cls.site_on_other_portal.portal.set([cls.other_portal])
+        #  Type with no published site on portal-> don't send it
+        cls.not_published_site.portal.set([cls.queried_portal])
+        cls.published_site_on_other_portal = outdoor_factory.SiteFactory(
+            published_en=True,
+            type=cls.type_with_no_published_site,
+        )
+        cls.published_site_on_other_portal.portal.set([cls.other_portal])
+        # Type with no site on portal that was not deleted -> don't send it
+        cls.not_deleted_site_on_other_portal = outdoor_factory.SiteFactory(
+            type=cls.type_with_no_published_site,
+        )
+        cls.not_deleted_site_on_other_portal.portal.set([cls.other_portal])
+
+    def test_sites_type_list_returns_published(self):
+        """ Assert API returns only types with published site on portal
+        """
+        response = self.get_sitetype_list({'portals': self.queried_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 0)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.type_with_no_site.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
+        # Didn't set portal on these ones yet
+        self.assertNotIn(self.type_with_published_and_not_deleted_site.pk, all_ids)
+        self.assertNotIn(self.type_with_published_and_not_deleted_site_with_lang.pk, all_ids)
+
+    def test_sites_type_list_returns_published_2(self):
+        """ Assert API returns only types with published sites on portal
+        """
+        # Type with published and not deleted site on portal -> send it
+        self.published_and_not_deleted_site.portal.set([self.queried_portal])
+        # Type with published_fr and not deleted site on portal -> send it when language=fr
+        self.published_and_not_deleted_site_with_lang.portal.set([self.queried_portal])
+        response = self.get_sitetype_list({'portals': self.queried_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.type_with_no_site.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
+        # Portal is set this time
+        self.assertIn(self.type_with_published_and_not_deleted_site.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_site_with_lang.pk, all_ids)
+
+
+class CourseTypeFilterTestCase(BaseApiTest):
+    """ Test filtering depending on published, deleted content for outdoor course types
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        # ### Build all type scenarios
+        #  Type with no course -> don't send it
+        cls.type_with_no_course = outdoor_factory.CourseTypeFactory()
+        #  Type with no published course -> don't send it
+        cls.type_with_no_published_course = outdoor_factory.CourseTypeFactory()
+        cls.not_published_course = outdoor_factory.CourseFactory(
+            published=False,
+            type=cls.type_with_no_published_course
+        )
+        # Type with published and not deleted course -> send it
+        cls.type_with_published_and_not_deleted_course = outdoor_factory.CourseTypeFactory()
+        cls.published_and_not_deleted_course = outdoor_factory.CourseFactory(
+            published_en=True,
+            type=cls.type_with_published_and_not_deleted_course
+        )
+        # Type with published_fr and not deleted course -> send it when language=fr
+        cls.type_with_published_and_not_deleted_course_with_lang = outdoor_factory.CourseTypeFactory()
+        cls.published_and_not_deleted_course_with_lang = outdoor_factory.CourseFactory(
+            published_fr=True,
+            type=cls.type_with_published_and_not_deleted_course_with_lang
+        )
+
+    def test_course_type_list_returns_published(self):
+        """ Assert API returns only types with published course
+        """
+        response = self.get_coursetype_list()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.type_with_no_course.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_course.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_course.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_course_with_lang.pk, all_ids)
+
+    def test_course_type_list_returns_published_in_language(self):
+        """ Assert API returns only published course in specified language
+        """
+        response = self.get_coursetype_list({'language': 'fr'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.type_with_no_course.pk, all_ids)
+        self.assertNotIn(self.type_with_no_published_course.pk, all_ids)
+        self.assertNotIn(self.type_with_published_and_not_deleted_course.pk, all_ids)
+        self.assertIn(self.type_with_published_and_not_deleted_course_with_lang.pk, all_ids)
