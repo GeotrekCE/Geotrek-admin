@@ -2,7 +2,7 @@ import factory
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from geotrek.authent.factories import StructureRelatedDefaultFactory
-from geotrek.outdoor.models import Site, Practice, SiteType, RatingScale, Rating, Sector, Course
+from geotrek.outdoor.models import Site, Practice, SiteType, CourseType, RatingScale, Rating, Sector, Course
 from mapentity.factories import UserFactory
 
 
@@ -40,6 +40,14 @@ class RatingFactory(factory.django.DjangoModelFactory):
 class SiteTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = SiteType
+
+    name = "Site type"
+    practice = factory.SubFactory(PracticeFactory)
+
+
+class CourseTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = CourseType
 
     name = "Site type"
     practice = factory.SubFactory(PracticeFactory)
@@ -93,5 +101,9 @@ class CourseFactory(StructureRelatedDefaultFactory):
     equipment = "Rope"
     height = 42
     published = True
+    duration = 55
     eid = "43"
     geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
+    type = factory.SubFactory(CourseTypeFactory)
+    ratings_description = 'Ths rating is ratable'
+    gear = 'Shoes mandatory'

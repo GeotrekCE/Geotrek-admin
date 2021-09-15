@@ -102,11 +102,15 @@ class CourseForm(CommonForm):
             'structure',
             'name',
             'site',
+            'type',
             'review',
             'published',
             'description',
+            'ratings_description',
+            'duration',
             'advice',
             'equipment',
+            'gear',
             'height',
             'children_course',
             'eid',
@@ -115,8 +119,8 @@ class CourseForm(CommonForm):
     ]
 
     class Meta:
-        fields = ['geom', 'structure', 'name', 'site', 'review', 'published', 'description',
-                  'advice', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
+        fields = ['geom', 'structure', 'name', 'site', 'type', 'review', 'published', 'description', 'ratings_description', 'duration',
+                  'advice', 'gear', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
         model = Course
 
     def __init__(self, site=None, *args, **kwargs):
@@ -140,6 +144,7 @@ class CourseForm(CommonForm):
             self.fields['children_course'].initial = [c.child.pk for c in self.instance.course_children.all()]
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+        self.fields['duration'].widget.attrs['min'] = '0'
 
     def clean_children_course(self):
         """

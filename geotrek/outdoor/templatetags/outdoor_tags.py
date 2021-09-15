@@ -18,7 +18,7 @@ def site_practices():
         str(practice.pk): {
             'types': {
                 str(type.pk): type.name
-                for type in practice.types.all()
+                for type in practice.site_types.all()
             },
             'scales': {
                 str(scale.pk): {
@@ -33,7 +33,22 @@ def site_practices():
         }
         for practice in Practice.objects.all()
     }
+
     return json.dumps(practices)
+
+
+@register.simple_tag
+def course_sites():
+    sites = {
+        str(site.pk): {
+            'types': {
+                str(type.pk): type.name
+                for type in site.practice.course_types.all()
+            }
+        } if not(site.practice is None) else {'types': {}}
+        for site in Site.objects.all()
+    }
+    return json.dumps(sites)
 
 
 @register.filter

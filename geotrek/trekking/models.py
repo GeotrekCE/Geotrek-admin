@@ -21,10 +21,11 @@ from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
                                    PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
 from geotrek.common.models import Theme, ReservationSystem
+from geotrek.common.templatetags import geotrek_tags
+
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
 
-from .templatetags import trekking_tags
 
 from colorfield.fields import ColorField
 
@@ -256,7 +257,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     @property
     def duration_pretty(self):
-        return trekking_tags.duration(self.duration)
+        return geotrek_tags.duration(self.duration)
 
     @classproperty
     def duration_pretty_verbose_name(cls):

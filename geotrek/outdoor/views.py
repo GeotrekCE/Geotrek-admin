@@ -114,14 +114,14 @@ class SiteFormatList(MapEntityFormat, SiteList):
 class CourseLayer(MapEntityLayer):
     properties = ['name']
     filterform = CourseFilterSet
-    queryset = Course.objects.all()
+    queryset = Course.objects.prefetch_related('type').all()
 
 
 class CourseList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['site', 'date_update']
     filterform = CourseFilterSet
-    queryset = Course.objects.all()
+    queryset = Course.objects.prefetch_related('type').all()
 
 
 class CourseJsonList(MapEntityJsonList, CourseList):
@@ -129,7 +129,7 @@ class CourseJsonList(MapEntityJsonList, CourseList):
 
 
 class CourseDetail(MapEntityDetail):
-    queryset = Course.objects.all()
+    queryset = Course.objects.prefetch_related('type').all()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

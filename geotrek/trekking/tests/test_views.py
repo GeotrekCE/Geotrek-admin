@@ -44,7 +44,7 @@ from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
                                         TrekWithSignagesFactory)
-from geotrek.trekking.templatetags import trekking_tags
+from geotrek.common.templatetags import geotrek_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
 from geotrek.tourism import factories as tourism_factories
@@ -1176,20 +1176,20 @@ class TrekViewTranslationTest(TrekkingManagerTest):
 
 class TemplateTagsTest(TestCase):
     def test_duration(self):
-        self.assertEqual("15 min", trekking_tags.duration(0.25))
-        self.assertEqual("30 min", trekking_tags.duration(0.5))
-        self.assertEqual("1 h", trekking_tags.duration(1))
-        self.assertEqual("1 h 45", trekking_tags.duration(1.75))
-        self.assertEqual("3 h 30", trekking_tags.duration(3.5))
-        self.assertEqual("4 h", trekking_tags.duration(4))
-        self.assertEqual("6 h", trekking_tags.duration(6))
-        self.assertEqual("10 h", trekking_tags.duration(10))
-        self.assertEqual("1 days", trekking_tags.duration(24))
-        self.assertEqual("2 days", trekking_tags.duration(32))
-        self.assertEqual("2 days", trekking_tags.duration(48))
-        self.assertEqual("3 days", trekking_tags.duration(49))
-        self.assertEqual("8 days", trekking_tags.duration(24 * 8))
-        self.assertEqual("9 days", trekking_tags.duration(24 * 9))
+        self.assertEqual("15 min", geotrek_tags.duration(0.25))
+        self.assertEqual("30 min", geotrek_tags.duration(0.5))
+        self.assertEqual("1 h", geotrek_tags.duration(1))
+        self.assertEqual("1 h 45", geotrek_tags.duration(1.75))
+        self.assertEqual("3 h 30", geotrek_tags.duration(3.5))
+        self.assertEqual("4 h", geotrek_tags.duration(4))
+        self.assertEqual("6 h", geotrek_tags.duration(6))
+        self.assertEqual("10 h", geotrek_tags.duration(10))
+        self.assertEqual("1 days", geotrek_tags.duration(24))
+        self.assertEqual("2 days", geotrek_tags.duration(32))
+        self.assertEqual("2 days", geotrek_tags.duration(48))
+        self.assertEqual("3 days", geotrek_tags.duration(49))
+        self.assertEqual("8 days", geotrek_tags.duration(24 * 8))
+        self.assertEqual("9 days", geotrek_tags.duration(24 * 9))
 
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):

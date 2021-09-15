@@ -30,8 +30,20 @@ class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.SiteRelatedPortalFilter,
+    )
     serializer_class = api_serializers.SiteTypeSerializer
     queryset = outdoor_models.SiteType.objects \
+        .order_by('pk')  # Required for reliable pagination
+
+
+class CourseTypeViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.CourseRelatedPortalFilter,
+    )
+    serializer_class = api_serializers.CourseTypeSerializer
+    queryset = outdoor_models.CourseType.objects \
         .order_by('pk')  # Required for reliable pagination
 
 

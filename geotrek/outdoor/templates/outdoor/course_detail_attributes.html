@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n mapentity_tags outdoor_tags %}
+{% load i18n geotrek_tags mapentity_tags outdoor_tags %}
 
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
@@ -51,6 +51,10 @@
             <td>{% if object.site.practice %}{{ object.site.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"description" }}</th>
             <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
@@ -72,6 +76,18 @@
                 <td>{{ rating.name }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <th>{{ object|verbose:"duration" }}</th>
+            <td>{{ object.duration|duration }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"ratings_description" }}</th>
+            <td>{% if object.ratings_description %}{{ object.ratings_description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"gear" }}</th>
+            <td>{% if object.gear %}{{ object.gear|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
         <tr>
             <th>{% trans "Itinerancy" %}</th>
             <td>

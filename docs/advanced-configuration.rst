@@ -1710,6 +1710,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "height",
             "length",
             "ratings",
+            "gear",
+            "duration"
+            "ratings_description",
+            "type"
         ],
     COLUMNS_LISTS["path_export"] = [
             "structure",
@@ -2103,6 +2107,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "height",
             "length",
             "ratings",
+            "gear",
+            "duration"
+            "ratings_description",
+            "type"
         ]
 
 **Hideable form fields**
@@ -2245,6 +2253,9 @@ An exhaustive list of form fields hideable in each module.
             "height",
             "children_course",
             "eid",
+            "gear",
+            "duration"
+            "ratings_description",
         ]
     HIDDEN_FORM_FIELDS["poi"] = [
             "review",

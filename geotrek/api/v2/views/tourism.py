@@ -12,7 +12,7 @@ from geotrek.tourism import models as tourism_models
 
 
 class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRelatedPortalTourismFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TouristicContentRelatedPortalFilter,)
     serializer_class = api_serializers.TouristicContentCategorySerializer
     queryset = tourism_models.TouristicContentCategory.objects \
         .prefetch_related('types') \
