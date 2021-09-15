@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('trekking', '0027_auto_20210121_0943'),
-        ('outdoor', '0024_site_pois_excluded'),
+        ('outdoor', '0024_auto_20210910_1002'),
     ]
 
     operations = [
@@ -15,5 +15,10 @@ class Migration(migrations.Migration):
             model_name='course',
             name='pois_excluded',
             field=models.ManyToManyField(blank=True, related_name='excluded_courses', to='trekking.POI', verbose_name='Excluded POIs'),
+        ),
+        migrations.AddField(
+            model_name='site',
+            name='pois_excluded',
+            field=models.ManyToManyField(blank=True, related_name='excluded_sites', to='trekking.POI', verbose_name='Excluded POIs'),
         ),
     ]
