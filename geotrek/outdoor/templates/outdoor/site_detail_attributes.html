@@ -109,16 +109,18 @@
             <th>{{ object|verbose:"advice" }}</th>
             <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
-        {% for rating in object.ratings_min.all %}
+        {% regroup  object.ratings.all by scale as scales_list %}
+        {% for scale in scales_list%}
             <tr>
-                <th>{{ rating.scale.name }} min</th>
-                <td>{{ rating.name }}</td>
-            </tr>
-        {% endfor %}
-        {% for rating in object.ratings_max.all %}
-            <tr>
-                <th>{{ rating.scale.name }} max</th>
-                <td>{{ rating.name }}</td>
+                <th>{{ scale.grouper.name }}</th>
+                <td>{% for rating in scale.list %}
+                        {% if not forloop.last %}
+                            {{ rating.name }}, 
+                        {% else %}
+                            {{ rating.name }}
+                        {% endif %}
+                    {% endfor %}
+                </td>
             </tr>
         {% endfor %}
         <tr>

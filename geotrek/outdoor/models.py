@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.core.validators import MinValueValidator
-from django.db.models import Q
+from django.db.models import Q, Min, Max
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
@@ -156,8 +156,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
                                 help_text=_("Main attraction and interest"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
-    ratings_min = models.ManyToManyField(Rating, related_name='sites_min', blank=True)
-    ratings_max = models.ManyToManyField(Rating, related_name='sites_max', blank=True)
+    ratings = models.ManyToManyField(Rating, related_name='sites', blank=True)
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
     orientation = models.JSONField(verbose_name=_("Orientation"), default=list, blank=True)
     wind = models.JSONField(verbose_name=_("Wind"), default=list, blank=True)
@@ -276,6 +275,15 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         ]
         qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
         return Intervention.objects.existing().filter(qs).distinct('pk')
+
+    # TODO aggregate by scale as well
+    # @property
+    # def ratings_min(self):
+    #     return self.ratings.aggregate(Min('order'))
+
+    # @property
+    # def ratings_max(self):
+    #     return self.ratings.aggregate(Max('order'))
 
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
