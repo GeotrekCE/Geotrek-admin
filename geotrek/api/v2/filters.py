@@ -696,9 +696,8 @@ class GeotrekSiteFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         root_sites_only = request.GET.get('root_sites_only')
         if root_sites_only:
-            for site in queryset:
-                if not site.is_root_node():
-                    queryset = queryset.exclude(pk=site.pk)
+            # Being a root node <=> having no parent
+            queryset = queryset.filter(parent=None)
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)
