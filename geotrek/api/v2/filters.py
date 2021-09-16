@@ -225,7 +225,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
         for obj in elems.split(','):
             o = model.objects.get(pk=obj)
             tmp = POI.outdoor_all_pois(o)
-            tmp.exclude(pk__in=o.pois_excluded.all())
+            tmp = tmp.exclude(pk__in=o.pois_excluded.all())
             list_pois |= tmp
         return list_pois.distinct()
 
