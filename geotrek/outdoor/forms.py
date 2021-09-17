@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from geotrek.common.forms import CommonForm
-from geotrek.outdoor.models import Site, Course, OrderedCourseChild
+from geotrek.outdoor.models import RatingScale, Site, Course, OrderedCourseChild
 
 
 class SiteForm(CommonForm):
@@ -53,18 +53,18 @@ class SiteForm(CommonForm):
         if self.instance.pk:
             descendants = self.instance.get_descendants(include_self=True).values_list('pk', flat=True)
             self.fields['parent'].queryset = Site.objects.exclude(pk__in=descendants)
-        if self.instance.practice:
-            for scale in self.instance.practice.rating_scales.all():
-                for bound in ('max', 'min'):
-                    ratings = getattr(self.instance, 'ratings_' + bound).filter(scale=scale)
-                    fieldname = 'rating_scale_{}{}'.format(bound, scale.pk)
-                    self.fields[fieldname] = forms.ModelChoiceField(
-                        label="{} {}".format(scale.name, bound),
-                        queryset=scale.ratings.all(),
-                        required=False,
-                        initial=ratings[0] if ratings else None
-                    )
-                    self.fieldslayout[0].insert(10, fieldname)
+        for scale in RatingScale.objects.all():
+            ratings = None
+            if self.instance.pk:
+                ratings = self.instance.ratings.filter(scale=scale)
+            fieldname = 'rating_scale_{}'.format(scale.pk)
+            self.fields[fieldname] = forms.ModelMultipleChoiceField(
+                label="{}".format(scale.name),
+                queryset=scale.ratings.all(),
+                required=False,
+                initial=ratings if ratings else None
+            )
+            self.fieldslayout[0].insert(10, fieldname)
         if self.instance.pk:
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
@@ -75,19 +75,19 @@ class SiteForm(CommonForm):
 
         # Save ratings
         if site.practice:
-            for bound in ('min', 'max'):
-                field = getattr(site, 'ratings_' + bound)
-                to_remove = list(field.exclude(scale__practice=site.practice).values_list('pk', flat=True))
-                to_add = []
-                for scale in site.practice.rating_scales.all():
-                    rating = self.cleaned_data.get('rating_scale_{}{}'.format(bound, scale.pk))
-                    if rating:
-                        to_remove += list(field.filter(scale=scale).exclude(pk=rating.pk).values_list('pk', flat=True))
+            field = getattr(site, 'ratings')
+            to_remove = list(field.exclude(scale__practice=site.practice).values_list('pk', flat=True))
+            to_add = []
+            for scale in site.practice.rating_scales.all():
+                ratings = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
+                needs_removal = field.filter(scale=scale)
+                if ratings is not None:
+                    for rating in ratings:
+                        needs_removal = needs_removal.exclude(pk=rating.pk)
                         to_add.append(rating.pk)
-                    else:
-                        to_remove += list(field.filter(scale=scale).values_list('pk', flat=True))
-                field.remove(*to_remove)
-                field.add(*to_add)
+                to_remove += list(needs_removal.values_list('pk', flat=True))
+            field.remove(*to_remove)
+            field.add(*to_add)
 
         return site
 
