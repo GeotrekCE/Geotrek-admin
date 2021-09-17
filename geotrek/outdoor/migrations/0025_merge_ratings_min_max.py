@@ -9,9 +9,10 @@ def merge_ratings_min_max(app, schema):
     site_model = apps.get_model('outdoor', 'Site')
     sites = site_model.objects.all()
     for site in sites:
-        for rating in site.ratings_max.all():
-            site.ratings_min.add(rating)
-        site.ratings_max.clear()
+        if hasattr(site, 'ratings_max') and hasattr(site, 'ratings_min'):
+            for rating in site.ratings_max.all():
+                site.ratings_min.add(rating)
+            site.ratings_max.clear()
 
 
 class Migration(migrations.Migration):
@@ -21,5 +22,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(merge_ratings_min_max),
+        migrations.RunPython(merge_ratings_min_max, reverse_code=migrations.RunPython.noop),
     ]

@@ -7,6 +7,14 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add filter on Outdoor Site route to only retrieve root sites from hierarchy
+- Add fields 'duration', 'type', 'gear', 'ratings_description' to Outdoor Course
+- Add fiields on APIv2 for Course model : 'min_elevation', 'max_elevation', 'children', 'parents', 'attachments'
+- Add excluded_pois on Course and Site models.
+- Add filter on APIVv2 POI endpoint to retrieve pois related to Course or Site
+- Replace Outdoor Site 'ratings_min' and 'ratings_max' fields with 'ratings'
+- Make Outdoor Site 'ratings' form fields dynamically change on practice selection
+
 
 2.64.0 (2021-09-14)
 ----------------------
@@ -17,8 +25,6 @@ CHANGELOG
 - Add endpoints for infrastructure and related types in APIv2
 - Add endpoints for signage and related types in APIv2
 - Filter TouristicContentTypes according to published content in APIv2 
-- APIv2 : Add filter on Outdoor Site route to only retrieve root sites from hierarchy
-- Add fields 'duration', 'type', 'gear', 'ratings_description' to Outdoor Course
 - Add Course Type management to admin site
 
 **Bug fixes**

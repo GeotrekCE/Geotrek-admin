@@ -9,7 +9,7 @@ from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
+from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin, PicturesMixin
 from geotrek.common.models import Organism
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
@@ -173,6 +173,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='sites',
                                     verbose_name=_("Source"))
+    pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_sites', verbose_name=_("Excluded POIs"),
+                                           blank=True)
     web_links = models.ManyToManyField('trekking.WebLink', related_name="sites", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
@@ -260,6 +262,10 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         sites = self.get_descendants(include_self=True)
         return Organism.objects.filter(site__in=sites)  # Sorted and unique
 
+    @property
+    def all_pois(self):
+        return POI.outdoor_all_pois(self)
+
     def site_interventions(self):
         # Interventions on sites
         site_content_type = ContentType.objects.get_for_model(Site)
@@ -318,8 +324,7 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-             AltimetryMixin, TimeStampedModelMixin):
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -337,6 +342,8 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
+    pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
+                                           blank=True)
 
     check_structure_in_forms = False
 
@@ -357,16 +364,29 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         return _("Add a new outdoor course")
 
     @property
-    def parents(self):
-        return Course.objects.filter(course_children__child=self)
-
-    @property
     def duration_pretty(self):
         return geotrek_tags.duration(self.duration)
 
     @property
+    def parents(self):
+        return Course.objects.filter(course_children__child=self)
+
+    def parents_id(self):
+        parents = self.course_parents.values_list('parent__id', flat=True)
+        return parents
+
+    @property
     def children(self):
         return Course.objects.filter(course_parents__parent=self).order_by('course_parents__order')
+
+    @property
+    def children_id(self):
+        children = self.course_children.values_list('child__id', flat=True)
+        return children
+
+    @property
+    def all_pois(self):
+        return POI.outdoor_all_pois(self)
 
     def course_interventions(self):
         # Interventions on courses
