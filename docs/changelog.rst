@@ -12,6 +12,8 @@ CHANGELOG
 - Add fiields on APIv2 for Course model : 'min_elevation', 'max_elevation', 'children', 'parents', 'attachments'
 - Add excluded_pois on Course and Site models.
 - Add filter on APIVv2 POI endpoint to retrieve pois related to Course or Site
+- Replace Outdoor Site 'ratings_min' and 'ratings_max' fields with 'ratings'
+- Make Outdoor Site 'ratings' form fields dynamically change on practice selection
 
 
 2.64.0 (2021-09-14)

@@ -919,7 +919,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'id', 'advice', 'ambiance', 'description', 'description_teaser',
                 'eid', 'geometry', 'information_desks', 'labels', 'managers',
                 'name', 'orientation', 'period', 'portal', 'practice',
-                'ratings_max', 'ratings_min', 'source', 'structure', 'themes',
+                'ratings', 'source', 'structure', 'themes',
                 'type', 'url', 'web_links', 'wind',
             )
 

@@ -130,7 +130,7 @@ RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'ambiance', 'description', 'description_teaser', 'eid', 'geometry', 'id',
     'information_desks', 'labels', 'name', 'period', 'portal', 'practice', 'source', 'managers',
-    'structure', 'themes', 'type', 'url', 'web_links', 'orientation', 'wind', 'ratings_min', 'ratings_max',
+    'structure', 'themes', 'type', 'url', 'web_links', 'orientation', 'wind', 'ratings',
 ])
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])

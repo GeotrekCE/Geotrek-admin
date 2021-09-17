@@ -156,8 +156,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
                                 help_text=_("Main attraction and interest"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
-    ratings_min = models.ManyToManyField(Rating, related_name='sites_min', blank=True)
-    ratings_max = models.ManyToManyField(Rating, related_name='sites_max', blank=True)
+    ratings = models.ManyToManyField(Rating, related_name='sites', blank=True)
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
     orientation = models.JSONField(verbose_name=_("Orientation"), default=list, blank=True)
     wind = models.JSONField(verbose_name=_("Wind"), default=list, blank=True)

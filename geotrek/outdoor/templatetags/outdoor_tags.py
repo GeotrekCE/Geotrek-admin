@@ -21,13 +21,7 @@ def site_practices():
                 for type in practice.site_types.all()
             },
             'scales': {
-                str(scale.pk): {
-                    'name': scale.name,
-                    'ratings': {
-                        str(rating.pk): rating.name
-                        for rating in scale.ratings.all()
-                    },
-                }
+                str(scale.pk): scale.name
                 for scale in practice.rating_scales.all()
             },
         }

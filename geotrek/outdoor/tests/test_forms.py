@@ -15,12 +15,11 @@ class SiteFormTest(TestCase):
             'name_en': 'Site',
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
             'practice': str(rating.scale.practice.pk),
-            'rating_scale_min{}'.format(rating.scale.pk): str(rating.pk),
+            'rating_scale_{}'.format(rating.scale.pk): [str(rating.pk)],
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(site.ratings_min.all(), ['<Rating: Rating>'])
-        self.assertQuerysetEqual(site.ratings_max.all(), [])
+        self.assertQuerysetEqual(site.ratings.all(), ['<Rating: Rating>'])
 
 
 class CourseFormTest(TestCase):
