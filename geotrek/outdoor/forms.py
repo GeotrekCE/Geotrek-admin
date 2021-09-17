@@ -1,4 +1,3 @@
-from django.forms.widgets import HiddenInput
 from crispy_forms.layout import Div
 from django import forms
 from django.core.exceptions import ValidationError
