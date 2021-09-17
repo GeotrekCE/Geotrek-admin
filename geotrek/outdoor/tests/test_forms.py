@@ -19,8 +19,7 @@ class SiteFormTest(TestCase):
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(site.ratings_min.all(), ['<Rating: Rating>'])
-        self.assertQuerysetEqual(site.ratings_max.all(), [])
+        self.assertQuerysetEqual(site.ratings.all(), ['<Rating: Rating>'])
 
 
 class CourseFormTest(TestCase):

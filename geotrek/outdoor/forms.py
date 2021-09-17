@@ -1,9 +1,10 @@
+from django.forms.widgets import HiddenInput
 from crispy_forms.layout import Div
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from geotrek.common.forms import CommonForm
-from geotrek.outdoor.models import Site, Course, OrderedCourseChild
+from geotrek.outdoor.models import RatingScale, Site, Course, OrderedCourseChild
 
 
 class SiteForm(CommonForm):
@@ -51,18 +52,18 @@ class SiteForm(CommonForm):
         self.fields['parent'].initial = site
         if self.instance.pk:
             descendants = self.instance.get_descendants(include_self=True).values_list('pk', flat=True)
-            self.fields['parent'].queryset = Site.objects.exclude(pk__in=descendants)
-        if self.instance.practice:
-            for scale in self.instance.practice.rating_scales.all():
-                ratings = getattr(self.instance, 'ratings').filter(scale=scale)
-                fieldname = 'rating_scale_{}'.format(scale.pk)
-                self.fields[fieldname] = forms.ModelMultipleChoiceField(
-                    label="{}".format(scale.name),
-                    queryset=scale.ratings.all(),
-                    required=False,
-                    initial=ratings if ratings else None
-                )
-                self.fieldslayout[0].insert(10, fieldname)
+        for scale in RatingScale.objects.all():
+            ratings = None
+            if self.instance.pk:
+                ratings = self.instance.ratings.filter(scale=scale)
+            fieldname = 'rating_scale_{}'.format(scale.pk)
+            self.fields[fieldname] = forms.ModelMultipleChoiceField(
+                label="{}".format(scale.name),
+                queryset=scale.ratings.all(),
+                required=False,
+                initial=ratings if ratings else None
+            )
+            self.fieldslayout[0].insert(10, fieldname)
 
     def save(self, *args, **kwargs):
         site = super().save(self, *args, **kwargs)

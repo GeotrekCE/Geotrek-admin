@@ -36,6 +36,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         // Refresh types by practice
         $('#id_practice').change(function () {
             update_site_types();
+            update_cotations();
         });
     $('#id_practice').trigger('change');
     if (data.modelname == 'course')
@@ -89,4 +90,17 @@ function update_course_types() {
 
     // Refresh options list for types, depending on site
     refresh_selector_with_types($select, types, selected);
+}
+
+function update_cotations() {
+    var practices = JSON.parse($('#practices-types').text());
+    var selected_practice = $('#id_practice').val();
+    // For each scale selector
+    for (var practice_id in practices) {
+        for (var scale_id in practices[practice_id]['scales']) {
+            // Hide selector for other practices' scales, show selector for selected practice's scales
+            $('#div_id_rating_scale_' + scale_id).prop('hidden', selected_practice != practice_id)
+            $('#id_rating_scale_' + scale_id + '_chosen').width(588)
+        }
+    }
 }
