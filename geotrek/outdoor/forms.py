@@ -34,6 +34,7 @@ class SiteForm(CommonForm):
             'web_links',
             'portal',
             'source',
+            'pois_excluded',
             'managers',
             'eid',
         )
@@ -43,7 +44,7 @@ class SiteForm(CommonForm):
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
                   'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
                   'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'eid',
-                  'orientation', 'wind', 'managers']
+                  'orientation', 'wind', 'managers', 'pois_excluded']
         model = Site
 
     def __init__(self, site=None, *args, **kwargs):
@@ -64,6 +65,10 @@ class SiteForm(CommonForm):
                         initial=ratings[0] if ratings else None
                     )
                     self.fieldslayout[0].insert(10, fieldname)
+        if self.instance.pk:
+            self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
+        else:
+            self.fieldslayout[0].remove('pois_excluded')
 
     def save(self, *args, **kwargs):
         site = super().save(self, *args, **kwargs)
@@ -112,6 +117,7 @@ class CourseForm(CommonForm):
             'equipment',
             'gear',
             'height',
+            'pois_excluded',
             'children_course',
             'eid',
             'hidden_ordered_children',
@@ -119,13 +125,14 @@ class CourseForm(CommonForm):
     ]
 
     class Meta:
-        fields = ['geom', 'structure', 'name', 'site', 'type', 'review', 'published', 'description', 'ratings_description', 'duration',
+        fields = ['geom', 'structure', 'name', 'site', 'type', 'review', 'published', 'description', 'ratings_description', 'duration', 'pois_excluded',
                   'advice', 'gear', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
         model = Course
 
     def __init__(self, site=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['site'].initial = site
+        self.fields['duration'].widget.attrs['min'] = '0'
         if self.instance.pk and self.instance.site and self.instance.site.practice:
             for scale in self.instance.site.practice.rating_scales.all():
                 ratings = self.instance.ratings.filter(scale=scale)
@@ -144,7 +151,10 @@ class CourseForm(CommonForm):
             self.fields['children_course'].initial = [c.child.pk for c in self.instance.course_children.all()]
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
-        self.fields['duration'].widget.attrs['min'] = '0'
+        if self.instance.pk:
+            self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
+        else:
+            self.fieldslayout[0].remove('pois_excluded')
 
     def clean_children_course(self):
         """

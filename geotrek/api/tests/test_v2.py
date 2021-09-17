@@ -151,8 +151,9 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 ])
 
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'description', 'duration', 'eid', 'equipment', 'gear', 'geometry', 'height', 'id',
-    'length', 'name', 'ratings', 'ratings_description', 'site', 'structure', 'type', 'url',
+    'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
+    'length', 'name', 'ratings', 'ratings_description', 'site', 'structure',
+    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'children', 'duration', 'gear'
 ])
 
 COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
@@ -1262,12 +1263,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          POI_PROPERTIES_GEOJSON_STRUCTURE)
 
-        response = self.get_poi_list({'types': self.poi_type.pk, 'trek': self.treks[0].pk})
+        response = self.get_poi_list({'types': self.poi_type.pk, 'trek': self.treks[0].pk, 'sites': self.site.pk, 'courses': self.course.pk})
         self.assertEqual(response.status_code, 200)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-    def test_poi_list_filter_trek(self):
-        response = self.get_poi_list({'trek': self.treks[0].pk})
+    def launch_tests_excluded_pois(self, obj, filter_name):
+        response = self.get_poi_list({filter_name: obj.pk})
         json_response = response.json()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -1276,15 +1276,29 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             trek_models.POI.objects.all().count()
         )
 
-        t = self.treks[0]
-        t.pois_excluded.add(self.poi)
-        t.save()
+        obj.pois_excluded.add(self.poi)
+        obj.save()
 
-        response = self.get_poi_list({'trek': t.pk})
+        response = self.get_poi_list({filter_name: obj.pk})
         json_response = response.json()
         #  test response code
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(json_response.get('results')), trek_models.POI.objects.all().count() - 1)
+        self.assertEqual(
+            len(json_response.get('results')),
+            trek_models.POI.objects.all().count() - 1
+        )
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_poi_list_filter_trek(self):
+        self.launch_tests_excluded_pois(self.treks[0], 'trek')
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_poi_list_filter_courses(self):
+        self.launch_tests_excluded_pois(self.course, 'courses')
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_poi_list_filter_sites(self):
+        self.launch_tests_excluded_pois(self.site, 'sites')
 
     def test_poi_list_filter_distance(self):
         """ Test POI list is filtered by reference point distance """
@@ -2228,17 +2242,19 @@ class TrekWebLinksTestCase(TestCase):
     def test_web_links_in_trek_list(self):
         response = self.client.get(reverse('apiv2:trek-list'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['results'][0]['id'], self.trek1.pk)
-        self.assertEqual(response.json()['results'][0]['web_links'][0]['name']['en'], "Web link")
-        self.assertEqual(response.json()['results'][0]['web_links'][0]['url'], "http://dummy.url")
-        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['label']['en'], "Category")
-        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['id'], self.web_link_cat.pk)
-        self.assertEqual(response.json()['results'][0]['web_links'][0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
-        self.assertEqual(response.json()['results'][0]['web_links'][1]['name']['en'], "Web link")
-        self.assertEqual(response.json()['results'][0]['web_links'][1]['url'], "http://dummy.url")
-        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['label']['en'], "Category")
-        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['id'], self.web_link_cat.pk)
-        self.assertEqual(response.json()['results'][0]['web_links'][1]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
+        json_result = response.json()['results'][0]
+        web_links = json_result['web_links']
+        self.assertEqual(json_result['id'], self.trek1.pk)
+        self.assertEqual(web_links[0]['name']['en'], "Web link")
+        self.assertEqual(web_links[0]['url'], "http://dummy.url")
+        self.assertEqual(web_links[0]['category']['label']['en'], "Category")
+        self.assertEqual(web_links[0]['category']['id'], self.web_link_cat.pk)
+        self.assertEqual(web_links[0]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
+        self.assertEqual(web_links[1]['name']['en'], "Web link")
+        self.assertEqual(web_links[1]['url'], "http://dummy.url")
+        self.assertEqual(web_links[1]['category']['label']['en'], "Category")
+        self.assertEqual(web_links[1]['category']['id'], self.web_link_cat.pk)
+        self.assertEqual(web_links[1]['category']['pictogram'], 'http://testserver/media/dummy_picto.png')
 
     def test_web_links_in_trek_detail(self):
         response = self.client.get(f"/api/v2/trek/{self.trek1.pk}/")

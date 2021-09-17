@@ -916,15 +916,19 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'geometry', 'url', 'structure', 'name', 'practice', 'description',
-                'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
-                'portal', 'source', 'information_desks', 'web_links', 'eid', 'type',
-                'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
+                'id', 'advice', 'ambiance', 'description', 'description_teaser',
+                'eid', 'geometry', 'information_desks', 'labels', 'managers',
+                'name', 'orientation', 'period', 'portal', 'practice',
+                'ratings_max', 'ratings_min', 'source', 'structure', 'themes',
+                'type', 'url', 'web_links', 'wind',
             )
 
     class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:course-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+        children = serializers.ReadOnlyField(source='children_id')
+        parents = serializers.ReadOnlyField(source='parents_id')
+        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         gear = serializers.SerializerMethodField(read_only=True)
         ratings_description = serializers.SerializerMethodField(read_only=True)
 
@@ -937,8 +941,10 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Course
             fields = (
-                'id', 'gear', 'geometry', 'url', 'structure', 'name', 'site', 'duration', 'description', 'type',
-                'advice', 'equipment', 'eid', 'height', 'length', 'ratings', 'ratings_description'
+                'id', 'advice', 'attachments', 'children', 'description', 'duration', 'eid',
+                'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
+                'min_elevation', 'name', 'parents', 'ratings', 'ratings_description',
+                'site', 'structure', 'type', 'url',
             )
 
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
