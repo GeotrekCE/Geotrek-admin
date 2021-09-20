@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('trekking', '0027_auto_20210121_0943'),
-        ('outdoor', '0024_auto_20210910_1002'),
+        ('outdoor', '0028_remove_site_ratings_min'),
     ]
 
     operations = [
