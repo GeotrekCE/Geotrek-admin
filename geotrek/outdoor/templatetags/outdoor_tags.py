@@ -1,7 +1,7 @@
 from django import template
 from django.conf import settings
 import json
-from geotrek.outdoor.models import Practice, Site
+from geotrek.outdoor.models import Practice, RatingScale, Site
 
 
 register = template.Library()
@@ -27,7 +27,6 @@ def site_practices():
         }
         for practice in Practice.objects.all()
     }
-
     return json.dumps(practices)
 
 
@@ -38,11 +37,24 @@ def course_sites():
             'types': {
                 str(type.pk): type.name
                 for type in site.practice.course_types.all()
-            }
-        } if not(site.practice is None) else {'types': {}}
+            },
+            'scales': {
+                str(scale.pk): scale.name
+                for scale in site.practice.rating_scales.all()
+            },
+        } if not(site.practice is None) else {'types': {}, 'scales': {}}
         for site in Site.objects.all()
     }
     return json.dumps(sites)
+
+
+@register.simple_tag
+def all_ratings_scales():
+    scales = {
+        str(scale.pk): scale.name
+        for scale in RatingScale.objects.all()
+    }
+    return json.dumps(scales)
 
 
 @register.filter
