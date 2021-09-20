@@ -59,12 +59,12 @@ class SiteForm(CommonForm):
                 ratings = self.instance.ratings.filter(scale=scale)
             fieldname = 'rating_scale_{}'.format(scale.pk)
             self.fields[fieldname] = forms.ModelMultipleChoiceField(
-                label="{}".format(scale.name),
+                label=scale.name,
                 queryset=scale.ratings.all(),
                 required=False,
                 initial=ratings if ratings else None
             )
-            self.fieldslayout[0].insert(10, fieldname)
+            self.fieldslayout[0].insert(7, fieldname)
         if self.instance.pk:
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
@@ -133,17 +133,18 @@ class CourseForm(CommonForm):
         super().__init__(*args, **kwargs)
         self.fields['site'].initial = site
         self.fields['duration'].widget.attrs['min'] = '0'
-        if self.instance.pk and self.instance.site and self.instance.site.practice:
-            for scale in self.instance.site.practice.rating_scales.all():
+        for scale in RatingScale.objects.all():
+            ratings = None
+            if self.instance.pk and self.instance.site and self.instance.site.practice:
                 ratings = self.instance.ratings.filter(scale=scale)
-                fieldname = 'rating_scale_{}'.format(scale.pk)
-                self.fields[fieldname] = forms.ModelChoiceField(
-                    label=scale.name,
-                    queryset=scale.ratings.all(),
-                    required=False,
-                    initial=ratings[0] if ratings else None
-                )
-                self.fieldslayout[0].insert(5, fieldname)
+            fieldname = 'rating_scale_{}'.format(scale.pk)
+            self.fields[fieldname] = forms.ModelChoiceField(
+                label=scale.name,
+                queryset=scale.ratings.all(),
+                required=False,
+                initial=ratings[0] if ratings else None
+            )
+            self.fieldslayout[0].insert(3, fieldname)
         if self.instance:
             queryset_children = OrderedCourseChild.objects.filter(parent__id=self.instance.pk).order_by('order')
             # init multiple children field with data
@@ -177,11 +178,11 @@ class CourseForm(CommonForm):
             to_add = []
             for scale in course.site.practice.rating_scales.all():
                 rating = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
+                needs_removal = course.site.ratings.filter(scale=scale)
                 if rating:
-                    to_remove += list(course.ratings.filter(scale=scale).exclude(pk=rating.pk).values_list('pk', flat=True))
+                    needs_removal = needs_removal.exclude(pk=rating.pk)
                     to_add.append(rating.pk)
-                else:
-                    to_remove += list(course.ratings.filter(scale=scale).values_list('pk', flat=True))
+                to_remove += list(needs_removal.values_list('pk', flat=True))
             course.ratings.remove(*to_remove)
             course.ratings.add(*to_add)
 

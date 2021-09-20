@@ -35,14 +35,13 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
     if (data.modelname == 'site')
         // Refresh types by practice
         $('#id_practice').change(function () {
-            update_site_types();
-            update_cotations();
+            update_site_types_and_cotations();
         });
     $('#id_practice').trigger('change');
     if (data.modelname == 'course')
         // Refresh types by practice
         $('#id_site').change(function () {
-            update_course_types();
+            update_course_types_and_cotations();
         });
     $('#id_site').trigger('change');
     return;
@@ -65,7 +64,17 @@ function refresh_selector_with_types($select, types, selected) {
     $select.trigger('chosen:updated');
 }
 
-function update_site_types() {
+function update_cotations(category) {
+    // For each scale rating
+    var scales = JSON.parse($('#all-ratings-scales').text());
+    for (var scale_id in scales) {
+        // Hide form field if scale not in list for this category
+        $('#div_id_rating_scale_' + scale_id).prop('hidden', !(scale_id in category['scales']));
+        $('#id_rating_scale_' + scale_id + '_chosen').width(588);
+    }
+}
+
+function update_site_types_and_cotations() {
     var practices = JSON.parse($('#practices-types').text());
     var practice = $('#id_practice').val();
     var $select = $('#id_type');
@@ -77,30 +86,24 @@ function update_site_types() {
 
     // Refresh options list for types, depending on practice
     refresh_selector_with_types($select, types, selected);
+
+    // Refresh cotation selectors
+    update_cotations(practices[practice]);
 }
 
-function update_course_types() {
+function update_course_types_and_cotations() {
     var sites = JSON.parse($('#site-practices-types').text());
     var site = $('#id_site').val();
     var $select = $('#id_type');
     var selected = $select.val() || [];
     var types = site ? sites[site]['types'] : {};
+
     // Hide type field if no values for this site
     $('#div_id_type').toggle(Object.keys(types).length > 0);
 
     // Refresh options list for types, depending on site
     refresh_selector_with_types($select, types, selected);
-}
 
-function update_cotations() {
-    var practices = JSON.parse($('#practices-types').text());
-    var selected_practice = $('#id_practice').val();
-    // For each scale selector
-    for (var practice_id in practices) {
-        for (var scale_id in practices[practice_id]['scales']) {
-            // Hide selector for other practices' scales, show selector for selected practice's scales
-            $('#div_id_rating_scale_' + scale_id).prop('hidden', selected_practice != practice_id)
-            $('#id_rating_scale_' + scale_id + '_chosen').width(588)
-        }
-    }
+    // Refresh cotation selectors
+    update_cotations(sites[site]);
 }
