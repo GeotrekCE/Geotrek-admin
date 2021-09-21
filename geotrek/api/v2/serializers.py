@@ -920,7 +920,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'eid', 'geometry', 'information_desks', 'labels', 'managers',
                 'name', 'orientation', 'period', 'portal', 'practice',
                 'ratings', 'source', 'structure', 'themes',
-                'type', 'url', 'web_links', 'wind',
+                'type', 'url', 'courses', 'web_links', 'wind',
             )
 
     class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
