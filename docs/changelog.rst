@@ -22,7 +22,6 @@ CHANGELOG
 - Make Outdoor Site and Course 'ratings' form fields dynamically change on practice selection
 - APIv2 : Add children courses to sites' serialization
 - Add Course Type management to admin site
-- APIv2 : Add filter on Outdoor Site route to only retrieve root sites from hierarchy
 
 
 2.64.0 (2021-09-14)
