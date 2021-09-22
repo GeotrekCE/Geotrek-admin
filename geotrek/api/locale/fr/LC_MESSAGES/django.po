@@ -281,7 +281,6 @@ msgstr "Filtrer par l'id d'un évènement touristique. Le filtre n'affichera que
 msgid "Filter by an touristic content id. It will only show the contents related to this touristic content."
 msgstr "Filtrer par l'id d'un contenu touristique. Le filtre n'affichera que les contenus liés à cet contenu touristique."
 
-
 msgid "Filter by one or more category id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de catégorie, séparés par des virgules."
 
@@ -302,7 +301,6 @@ msgstr "Filter par un pou plusieurs id de parcours outdoor, séparés par des vi
 
 msgid "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
 msgstr "Filter par un pou plusieurs id de site outdoor, séparés par des virgules."
-
 
 msgid "Portals"
 msgstr "Portails"
