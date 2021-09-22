@@ -7,6 +7,10 @@ CHANGELOG
 
 **New features**
 
+**Bug fixes**
+
+* Fix dynamic forms on outdoor cotations display all cotations when selector empty
+
 
 2.65.0 (2021-09-21)
 ----------------------
