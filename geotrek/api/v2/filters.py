@@ -316,14 +316,14 @@ class NearbyContentFilter(BaseFilterBackend):
                     name='near_outdoorsite', required=False, location='query',
                     schema=coreschema.Integer(
                         title=_("Near outdoor site"),
-                        description=_("Filter by an outdoor course id. It will only show the contents related to this outdoor site.")
+                        description=_("Filter by an outdoor site id. It will only show the contents related to this outdoor site.")
                     )
                 ),
                 Field(
                     name='near_outdoorcourse', required=False, location='query',
                     schema=coreschema.Integer(
                         title=_("Near outdoor course"),
-                        description=_("Filter by a touristic event id. It will only show the contents related to this outdoor course.")
+                        description=_("Filter by an outdoor course id. It will only show the contents related to this outdoor course.")
                     )
                 )
             )
