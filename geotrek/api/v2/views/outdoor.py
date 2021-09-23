@@ -30,6 +30,12 @@ class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
         .order_by('pk')  # Required for reliable pagination
 
 
+class SectorViewSet(api_viewsets.GeotrekGeometricViewset):
+    serializer_class = api_serializers.SectorSerializer
+    queryset = outdoor_models.Sector.objects \
+        .order_by('pk')  # Required for reliable pagination
+
+
 class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.SiteRelatedPortalFilter,

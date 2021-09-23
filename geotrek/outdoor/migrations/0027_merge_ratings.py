@@ -9,7 +9,7 @@ def merge_ratings(app, schema):
     site_model = apps.get_model('outdoor', 'Site')
     sites = site_model.objects.all()
     for site in sites:
-        if hasattr(site, 'ratings_max') and hasattr(site, 'ratings_min'):
+        if hasattr(site, 'ratings') and hasattr(site, 'ratings_min'):
             for rating in site.ratings_min.all():
                 site.ratings.add(rating)
             site.ratings_min.clear()

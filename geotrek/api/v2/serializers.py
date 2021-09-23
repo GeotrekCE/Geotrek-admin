@@ -887,7 +887,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
         class Meta:
             model = outdoor_models.Practice
-            fields = ('id', 'name')
+            fields = ('id', 'name', 'sector')
 
     class SiteTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
@@ -909,17 +909,34 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.CourseType
             fields = ('id', 'name', 'practice')
 
+    class SectorSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = outdoor_models.Practice
+            fields = ('id', 'name')
+
     class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:site-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+        attachments = AttachmentSerializer(many=True)
+        sector = serializers.SerializerMethodField(read_only=True)
+
+        def get_sector(self, obj):
+            if obj.practice and obj.practice.sector:
+                return obj.practice.sector_id
+            return None
 
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'advice', 'ambiance', 'description', 'description_teaser',
+                'id', 'advice', 'ambiance', 'attachments', 'description', 'description_teaser',
                 'eid', 'geometry', 'information_desks', 'labels', 'managers',
                 'name', 'orientation', 'period', 'portal', 'practice',
-                'ratings', 'source', 'structure', 'themes',
+                'ratings', 'sector', 'source', 'structure', 'themes',
                 'type', 'url', 'courses', 'web_links', 'wind',
             )
 

@@ -120,7 +120,7 @@ class CourseType(models.Model):
         return self.name
 
 
-class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            AltimetryMixin, TimeStampedModelMixin, MPTTModel):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),

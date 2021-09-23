@@ -11,6 +11,12 @@ CHANGELOG
 - APIv2 : Add filter by pratices in hierarchy on outdoor courses and sites
 - APIv2 : Add filter by ratings in hierarchy on outdoor courses and sites
 - Display children sites' ratings in site page
+- APIv2 : Add 'sector' and 'attachment' fields to Outdoor Site serialization
+
+
+**Bug fixes**
+
+* Fix dynamic forms on outdoor cotations display all cotations when selector empty
 
 
 2.65.0 (2021-09-21)
