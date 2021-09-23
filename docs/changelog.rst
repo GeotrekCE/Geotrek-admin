@@ -7,6 +7,9 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add 'sector' and 'attachment' fields to Outdoor Site serialization
+
+
 **Bug fixes**
 
 * Fix dynamic forms on outdoor cotations display all cotations when selector empty

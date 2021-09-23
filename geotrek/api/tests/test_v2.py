@@ -128,12 +128,14 @@ SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'pictogram', 'website']
 RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'ambiance', 'courses', 'description', 'description_teaser', 'eid', 'geometry', 'id',
+    'advice', 'ambiance', 'attachments', 'courses', 'description', 'description_teaser', 'eid', 'geometry', 'id',
     'information_desks', 'labels', 'managers', 'name', 'orientation', 'period', 'portal',
-    'practice', 'ratings', 'source', 'structure', 'themes', 'type', 'url', 'wind', 'web_links',
+    'practice', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'wind', 'web_links',
 ])
 
-OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
+OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector'])
+
+OUTDOOR_SECTOR_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 SITETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 
@@ -364,6 +366,9 @@ class BaseApiTest(TestCase):
             type=cls.signagetype,
             published=True
         )
+        cls.sector = outdoor_factory.SectorFactory()
+        cls.outdoor_practice = outdoor_factory.PracticeFactory(sector=cls.sector)
+        cls.site2 = outdoor_factory.SiteFactory(practice=None)
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -656,6 +661,12 @@ class BaseApiTest(TestCase):
 
     def get_signagedirection_detail(self, id_signagedirection, params=None):
         return self.client.get(reverse('apiv2:signage-direction-detail', args=(id_signagedirection,)), params)
+
+    def get_sector_list(self, params=None):
+        return self.client.get(reverse('apiv2:outdoor-sector-list'), params)
+
+    def get_sector_detail(self, id_sector, params=None):
+        return self.client.get(reverse('apiv2:outdoor-sector-detail', args=(id_sector,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -1015,6 +1026,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_number_elems_response(
             self.get_route_list(),
             trek_models.Route
+        )
+
+    def test_sector_detail(self):
+        self.check_structure_response(
+            self.get_sector_detail(self.sector.pk),
+            OUTDOOR_SECTOR_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_sector_list(self):
+        self.check_number_elems_response(
+            self.get_sector_list(),
+            outdoor_models.Sector
         )
 
     def test_route_detail(self):
