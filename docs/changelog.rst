@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add filter by ratings on outdoor courses and sites
+
 
 2.65.0 (2021-09-21)
 ----------------------

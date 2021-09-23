@@ -717,6 +717,22 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         )
 
 
+class OutdoorRatingsFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        ratings = request.GET.get('ratings')
+        if ratings:
+            queryset = queryset.filter(ratings__in=ratings.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return Field(
+            name='ratings', required=False, location='query', schema=coreschema.String(
+                title=_("Query string"),
+                description=_('Filter by one or more ratings id, comma-separated.')
+            )
+        )
+
+
 class GeotrekSiteFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         root_sites_only = request.GET.get('root_sites_only')

@@ -3150,3 +3150,87 @@ class CourseTypeFilterTestCase(BaseApiTest):
         self.assertNotIn(self.type_with_no_published_course.pk, all_ids)
         self.assertNotIn(self.type_with_published_and_not_deleted_course.pk, all_ids)
         self.assertIn(self.type_with_published_and_not_deleted_course_with_lang.pk, all_ids)
+
+
+class SiteFilterByRatingsTestCase(BaseApiTest):
+    """ Test filtering on ratings for outdoor course
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site1 = outdoor_factory.SiteFactory()
+        cls.site2 = outdoor_factory.SiteFactory()
+        cls.rating_scale = outdoor_factory.RatingScaleFactory(practice=cls.site1.practice)
+        cls.rating1 = outdoor_factory.RatingFactory(scale=cls.rating_scale)
+        cls.rating2 = outdoor_factory.RatingFactory(scale=cls.rating_scale)
+        cls.site1.ratings.set([cls.rating1])
+        cls.site2.ratings.set([cls.rating2])
+        cls.course1 = outdoor_factory.CourseFactory()
+        cls.course2 = outdoor_factory.CourseFactory()
+        cls.course1.ratings.set([cls.rating1])
+        cls.course2.ratings.set([cls.rating2])
+
+    def test_site_list_ratings_filter(self):
+        """ Assert API returns only sites with right ratings
+        """
+        response = self.get_site_list({'ratings': self.rating1.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for site in returned_sites:
+            all_ids.append(site['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertNotIn(self.site2.pk, all_ids)
+
+    def test_site_list_ratings_filter2(self):
+        """ Assert API returns only sites with right ratings
+        """
+        response = self.get_site_list({'ratings': self.rating2.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for site in returned_sites:
+            all_ids.append(site['id'])
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site1.pk, all_ids)
+
+    def test_site_list_ratings_filter3(self):
+        """ Assert API returns only sites with right ratings
+        """
+        response = self.get_site_list({'ratings': f"{self.rating1.pk},{self.rating2.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for site in returned_sites:
+            all_ids.append(site['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+
+    def test_course_list_ratings_filter(self):
+        """ Assert API returns only courses with right ratings
+        """
+        response = self.get_course_list({'ratings': f"{self.rating1.pk},{self.rating2.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for site in returned_sites:
+            all_ids.append(site['id'])
+        self.assertIn(self.course1.pk, all_ids)
+        self.assertIn(self.course2.pk, all_ids)
+
+    def test_course_list_ratings_filter2(self):
+        """ Assert API returns only courses with right ratings
+        """
+        response = self.get_course_list({'ratings': self.rating2.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for site in returned_sites:
+            all_ids.append(site['id'])
+        self.assertNotIn(self.course1.pk, all_ids)
+        self.assertIn(self.course2.pk, all_ids)
