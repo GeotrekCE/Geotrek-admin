@@ -64,7 +64,8 @@ class SiteForm(CommonForm):
                 required=False,
                 initial=ratings if ratings else None
             )
-            self.fieldslayout[0].insert(7, fieldname)
+            right_after_type_index = self.fieldslayout[0].fields.index('type') + 1
+            self.fieldslayout[0].insert(right_after_type_index, fieldname)
         if self.instance.pk:
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
@@ -144,7 +145,8 @@ class CourseForm(CommonForm):
                 required=False,
                 initial=ratings[0] if ratings else None
             )
-            self.fieldslayout[0].insert(3, fieldname)
+            right_after_type_index = self.fieldslayout[0].fields.index('type') + 1
+            self.fieldslayout[0].insert(right_after_type_index, fieldname)
         if self.instance:
             queryset_children = OrderedCourseChild.objects.filter(parent__id=self.instance.pk).order_by('order')
             # init multiple children field with data
