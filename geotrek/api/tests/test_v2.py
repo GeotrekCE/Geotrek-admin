@@ -368,6 +368,7 @@ class BaseApiTest(TestCase):
         )
         cls.sector = outdoor_factory.SectorFactory()
         cls.outdoor_practice = outdoor_factory.PracticeFactory(sector=cls.sector)
+        cls.site2 = outdoor_factory.SiteFactory(practice=None)
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
