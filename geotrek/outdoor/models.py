@@ -245,18 +245,6 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         return Rating.objects.filter(id__in=ratings_id)  # Sorted and unique
 
     @property
-    def super_ratings_display(self):
-        ratings = self.super_ratings
-        if not ratings:
-            return ""
-        verbose = [
-            str(rating) if rating in self.ratings else "<i>{}</i>".format(escape(rating))
-            for rating in ratings
-        ]
-        return ", ".join(verbose)
-    super_practices_verbose_name = _('Ratings')
-
-    @property
     def super_sectors(self):
         "Return sectors of itself and its descendants"
         sectors_id = self.get_descendants(include_self=True) \
