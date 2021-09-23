@@ -741,13 +741,21 @@ class GeotrekSiteFilter(BaseFilterBackend):
         if root_sites_only:
             # Being a root node <=> having no parent
             queryset = queryset.filter(parent=None)
-        practices_in_hierachy = request.GET.get('practices_in_hierarchy')
-        if practices_in_hierachy:
-            wanted_practices = practices_in_hierachy.split(',')
+        practices_in_hierarchy = request.GET.get('practices_in_hierarchy')
+        if practices_in_hierarchy:
+            wanted_practices = practices_in_hierarchy.split(',')
             for site in queryset:
                 # Exclude if practices in hierarchy don't match any wanted practices
                 matching_practices = site.super_practices.filter(id__in=wanted_practices)
                 if not matching_practices:
+                    queryset = queryset.exclude(id=site.pk)
+        ratings_in_hierarchy = request.GET.get('ratings_in_hierarchy')
+        if ratings_in_hierarchy:
+            wanted_ratings = ratings_in_hierarchy.split(',')
+            for site in queryset:
+                # Exclude if ratings in hierarchy don't match any wanted ratings
+                matching_ratings = site.super_ratings.filter(id__in=wanted_ratings)
+                if not matching_ratings:
                     queryset = queryset.exclude(id=site.pk)
         q = request.GET.get('q')
         if q:
@@ -766,6 +774,18 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 name='root_sites_only', required=False, location='query', schema=coreschema.String(
                     title=_("Root sites only"),
                     description=_('Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate.')
+                )
+            ),
+            Field(
+                name='practices_in_hierarchy', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Practices in hierarchy"),
+                    description=_('Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does.')
+                )
+            ),
+            Field(
+                name='ratings_in_hierarchy', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Ratings in hierarchy"),
+                    description=_('Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does.')
                 )
             ),
         )

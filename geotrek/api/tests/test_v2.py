@@ -3171,8 +3171,6 @@ class OutdoorFilterByRatingsTestCase(BaseApiTest):
         cls.course2.ratings.set([cls.rating2])
 
     def test_site_list_ratings_filter(self):
-        """ Assert API returns only sites with right ratings
-        """
         response = self.get_site_list({'ratings': self.rating1.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
@@ -3184,8 +3182,6 @@ class OutdoorFilterByRatingsTestCase(BaseApiTest):
         self.assertNotIn(self.site2.pk, all_ids)
 
     def test_site_list_ratings_filter2(self):
-        """ Assert API returns only sites with right ratings
-        """
         response = self.get_site_list({'ratings': self.rating2.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
@@ -3197,8 +3193,6 @@ class OutdoorFilterByRatingsTestCase(BaseApiTest):
         self.assertNotIn(self.site1.pk, all_ids)
 
     def test_site_list_ratings_filter3(self):
-        """ Assert API returns only sites with right ratings
-        """
         response = self.get_site_list({'ratings': f"{self.rating1.pk},{self.rating2.pk}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
@@ -3210,8 +3204,6 @@ class OutdoorFilterByRatingsTestCase(BaseApiTest):
         self.assertIn(self.site2.pk, all_ids)
 
     def test_course_list_ratings_filter(self):
-        """ Assert API returns only courses with right ratings
-        """
         response = self.get_course_list({'ratings': f"{self.rating1.pk},{self.rating2.pk}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
@@ -3223,8 +3215,6 @@ class OutdoorFilterByRatingsTestCase(BaseApiTest):
         self.assertIn(self.course2.pk, all_ids)
 
     def test_course_list_ratings_filter2(self):
-        """ Assert API returns only courses with right ratings
-        """
         response = self.get_course_list({'ratings': self.rating2.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
@@ -3237,7 +3227,7 @@ class OutdoorFilterByRatingsTestCase(BaseApiTest):
 
 
 class OutdoorFilterBySuperPracticesTestCase(BaseApiTest):
-    """ Test filtering depending on published, deleted content for outdoor course types
+    """ Test APIV2 filtering on ratings on sites
     """
 
     @classmethod
@@ -3253,8 +3243,6 @@ class OutdoorFilterBySuperPracticesTestCase(BaseApiTest):
         cls.site4 = outdoor_factory.SiteFactory(practice=cls.practice4, parent=cls.site2)
 
     def test_filter_practice_in_tree_hierarchy(self):
-        """ Assert API returns only types with published course
-        """
         response = self.get_site_list({'practices_in_hierarchy': self.practice1.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
@@ -3268,9 +3256,54 @@ class OutdoorFilterBySuperPracticesTestCase(BaseApiTest):
         self.assertNotIn(self.site4.pk, all_ids)
 
     def test_filter_practice_in_tree_hierarchy2(self):
-        """ Assert API returns only types with published course
-        """
         response = self.get_site_list({'practices_in_hierarchy': self.practice3.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 3)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertIn(self.site3.pk, all_ids)
+        self.assertNotIn(self.site4.pk, all_ids)
+
+
+class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
+    """ Test APIV2 filtering on ratings on sites in hierarchy
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site1 = outdoor_factory.SiteFactory()
+        cls.rating_scale = outdoor_factory.RatingScaleFactory(practice=cls.site1.practice)
+        cls.rating1 = outdoor_factory.RatingFactory(scale=cls.rating_scale)
+        cls.rating2 = outdoor_factory.RatingFactory(scale=cls.rating_scale)
+        cls.rating3 = outdoor_factory.RatingFactory(scale=cls.rating_scale)
+        cls.rating4 = outdoor_factory.RatingFactory(scale=cls.rating_scale)
+        cls.site2 = outdoor_factory.SiteFactory(parent=cls.site1)
+        cls.site3 = outdoor_factory.SiteFactory(parent=cls.site2)
+        cls.site4 = outdoor_factory.SiteFactory(parent=cls.site2)
+        cls.site1.ratings.set([cls.rating1])
+        cls.site2.ratings.set([cls.rating2])
+        cls.site3.ratings.set([cls.rating3])
+        cls.site4.ratings.set([cls.rating4])
+
+    def test_filter_ratings_in_tree_hierarchy(self):
+        response = self.get_site_list({'ratings_in_hierarchy': self.rating1.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertNotIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+        self.assertNotIn(self.site4.pk, all_ids)
+
+    def test_filter_ratings_in_tree_hierarchy2(self):
+        response = self.get_site_list({'ratings_in_hierarchy': self.rating3.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 3)
         returned_types = response.json()['results']

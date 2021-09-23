@@ -8,6 +8,9 @@ CHANGELOG
 **New features**
 
 - APIv2 : Add filter by ratings on outdoor courses and sites
+- APIv2 : Add filter by pratices in hierarchy on outdoor courses and sites
+- APIv2 : Add filter by ratings in hierarchy on outdoor courses and sites
+- Display children sites' ratings in site page
 
 
 2.65.0 (2021-09-21)
