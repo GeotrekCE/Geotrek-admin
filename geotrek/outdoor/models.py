@@ -237,6 +237,14 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     super_practices_verbose_name = _('Practices')
 
     @property
+    def super_ratings(self):
+        "Return ratings of itself and its descendants"
+        ratings_id = self.get_descendants(include_self=True) \
+            .exclude(ratings=None) \
+            .values_list('ratings_id', flat=True)
+        return Rating.objects.filter(id__in=ratings_id)  # Sorted and unique
+
+    @property
     def super_sectors(self):
         "Return sectors of itself and its descendants"
         sectors_id = self.get_descendants(include_self=True) \

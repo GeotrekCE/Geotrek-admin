@@ -725,11 +725,13 @@ class OutdoorRatingsFilter(BaseFilterBackend):
         return queryset
 
     def get_schema_fields(self, view):
-        return Field(
-            name='ratings', required=False, location='query', schema=coreschema.String(
-                title=_("Query string"),
-                description=_('Filter by one or more ratings id, comma-separated.')
-            )
+        return (
+            Field(
+                name='ratings', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Ratings"),
+                    description=_('Filter by one or more ratings id, comma-separated.')
+                )
+            ),
         )
 
 
@@ -739,6 +741,14 @@ class GeotrekSiteFilter(BaseFilterBackend):
         if root_sites_only:
             # Being a root node <=> having no parent
             queryset = queryset.filter(parent=None)
+        practices_in_hierachy = request.GET.get('practices_in_hierarchy')
+        if practices_in_hierachy:
+            wanted_practices = practices_in_hierachy.split(',')
+            for site in queryset:
+                # Exclude if practices in hierarchy don't match any wanted practices
+                matching_practices = site.super_practices.filter(id__in=wanted_practices)
+                if not matching_practices:
+                    queryset = queryset.exclude(id=site.pk)
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)

@@ -3152,7 +3152,7 @@ class CourseTypeFilterTestCase(BaseApiTest):
         self.assertIn(self.type_with_published_and_not_deleted_course_with_lang.pk, all_ids)
 
 
-class SiteFilterByRatingsTestCase(BaseApiTest):
+class OutdoorFilterByRatingsTestCase(BaseApiTest):
     """ Test filtering on ratings for outdoor course
     """
 
@@ -3234,3 +3234,50 @@ class SiteFilterByRatingsTestCase(BaseApiTest):
             all_ids.append(site['id'])
         self.assertNotIn(self.course1.pk, all_ids)
         self.assertIn(self.course2.pk, all_ids)
+
+
+class OutdoorFilterBySuperPracticesTestCase(BaseApiTest):
+    """ Test filtering depending on published, deleted content for outdoor course types
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice1 = outdoor_factory.PracticeFactory()
+        cls.practice2 = outdoor_factory.PracticeFactory()
+        cls.practice3 = outdoor_factory.PracticeFactory()
+        cls.practice3 = outdoor_factory.PracticeFactory()
+        cls.practice4 = outdoor_factory.PracticeFactory()
+        cls.site1 = outdoor_factory.SiteFactory(practice=cls.practice1)
+        cls.site2 = outdoor_factory.SiteFactory(practice=cls.practice2, parent=cls.site1)
+        cls.site3 = outdoor_factory.SiteFactory(practice=cls.practice3, parent=cls.site2)
+        cls.site4 = outdoor_factory.SiteFactory(practice=cls.practice4, parent=cls.site2)
+
+    def test_filter_practice_in_tree_hierarchy(self):
+        """ Assert API returns only types with published course
+        """
+        response = self.get_site_list({'practices_in_hierarchy': self.practice1.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertNotIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+        self.assertNotIn(self.site4.pk, all_ids)
+
+    def test_filter_practice_in_tree_hierarchy2(self):
+        """ Assert API returns only types with published course
+        """
+        response = self.get_site_list({'practices_in_hierarchy': self.practice3.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 3)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertIn(self.site3.pk, all_ids)
+        self.assertNotIn(self.site4.pk, all_ids)
