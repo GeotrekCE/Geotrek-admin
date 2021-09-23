@@ -70,7 +70,16 @@ function update_cotations(category) {
     for (var scale_id in scales) {
         // Hide form field if scale not in list for this category
         $('#div_id_rating_scale_' + scale_id).prop('hidden', !(scale_id in category['scales']));
-        $('#id_rating_scale_' + scale_id + '_chosen').width(588);
+        $('#id_rating_scale_' + scale_id + '_chosen').width('100%');
+    }
+}
+
+function hide_all_cotations() {
+    // For each scale rating
+    var scales = JSON.parse($('#all-ratings-scales').text());
+    for (var scale_id in scales) {
+        // Hide form fields
+        $('#div_id_rating_scale_' + scale_id).prop('hidden', true);
     }
 }
 
@@ -88,7 +97,11 @@ function update_site_types_and_cotations() {
     refresh_selector_with_types($select, types, selected);
 
     // Refresh cotation selectors
-    update_cotations(practices[practice]);
+    if (practice == "") {
+        hide_all_cotations();
+    } else {
+        update_cotations(practices[practice]);
+    }
 }
 
 function update_course_types_and_cotations() {
@@ -103,7 +116,10 @@ function update_course_types_and_cotations() {
 
     // Refresh options list for types, depending on site
     refresh_selector_with_types($select, types, selected);
-
     // Refresh cotation selectors
-    update_cotations(sites[site]);
+    if (site == "") {
+        hide_all_cotations();
+    } else {
+        update_cotations(sites[site]);
+    }
 }

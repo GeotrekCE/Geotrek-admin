@@ -29,6 +29,10 @@ select[multiple] {
     border-radius: 4px;
 }
 
+.controls .text-muted{
+    display: block;
+}
+
 /* Bootstrap style */
 
 .chosen-container .chosen-single {
@@ -727,18 +731,12 @@ label.requiredField .asteriskField {
         flex-shrink: 0;
         text-align: right;
     }
-    .form-panel .form-horizontal .form-group .controls:first-child {
-        margin-left: 95px;
-    }
 }
 
 @media (min-width: 1280px) {
 
     .form-panel .form-horizontal .col-form-label {
         width: 140px;
-    }
-    .form-panel .form-horizontal .form-group .controls:first-child {
-        margin-left: 140px;
     }
 }
 
@@ -774,8 +772,8 @@ label.requiredField .asteriskField {
 }
 
 .translatable .nav-pills {
-    margin-left: 145px;
-}
+    padding-left: 15px;
+} 
 
 .translatable .nav-link {
     padding: 0.15rem .5rem;
@@ -830,6 +828,10 @@ label.requiredField .asteriskField {
 #geomfield .controls {
     height: calc(100vh - 120px);
     margin-left: 0;
+}
+
+#geomfield .controls {
+    max-width: 100%;
 }
 
 #geomfield .form-group.error .help-block {

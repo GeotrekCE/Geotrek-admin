@@ -204,8 +204,8 @@ class MapEntityForm(TranslatedModelForm):
         self.helper.help_text_inline = True
         self.helper.form_class = 'form-horizontal'
         self.helper.form_style = "default"
-        self.helper.label_class = 'col-md-auto'
-        self.helper.field_class = 'controls col-md-auto'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'controls col-md-9'
         self.helper.layout = Layout(
             Div(
                 Div(
@@ -246,7 +246,7 @@ class MapEntityForm(TranslatedModelForm):
 
         layout = Div(
             HTML("""
-            <ul class="nav nav-pills">
+            <ul class="nav nav-pills offset-md-3">
             {{% for lang in TRANSLATED_LANGUAGES %}}
                 <li class="nav-item">
                     <a class="nav-link{{% if lang.0 == '{lang_code}'""" """ %}} active{{% endif %}}" href="#{field}_{{{{ lang.0 }}}}"
