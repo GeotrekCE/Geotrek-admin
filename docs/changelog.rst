@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add 'sector' and 'attachment' fields to Outdoor Site serialization
+
 
 2.65.0 (2021-09-21)
 ----------------------
