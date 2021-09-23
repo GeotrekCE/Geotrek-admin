@@ -58,6 +58,7 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('outdoor_site', api_views.SiteViewSet, basename='site')
     router.register('outdoor_practice', api_views.OutdoorPracticeViewSet, basename='outdoor-practice')
+    router.register('outdoor_sector', api_views.SectorViewSet, basename='outdoor-sector')
     router.register('outdoor_sitetype', api_views.SiteTypeViewSet, basename='sitetype')
     router.register('outdoor_coursetype', api_views.CourseTypeViewSet, basename='coursetype')
     router.register('outdoor_ratingscale', api_views.RatingScaleViewSet, basename='ratingscale')
