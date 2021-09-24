@@ -744,7 +744,6 @@ class GeotrekSiteFilter(BaseFilterBackend):
         practices_in_hierarchy = request.GET.get('practices_in_hierarchy')
         if practices_in_hierarchy:
             wanted_practices = set(map(int, practices_in_hierarchy.split(',')))
-            queryset = queryset.filter('super_practices__id_in=wabted')
             for site in queryset:
                 # Exclude if practices in hierarchy don't match any wanted practices
                 found_practices = site.super_practices_id
