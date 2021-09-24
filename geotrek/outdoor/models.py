@@ -1,3 +1,4 @@
+from geotrek.outdoor.mixins import ExcludedPOIsMixin
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -121,7 +122,7 @@ class CourseType(models.Model):
 
 
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           AltimetryMixin, TimeStampedModelMixin, MPTTModel):
+           AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -292,7 +293,6 @@ Intervention.add_property('sites', lambda self: intersecting(Site, self), _("Sit
 
 Site.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Site.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
-Site.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Site.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Site.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
 Site.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
@@ -324,7 +324,7 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin):
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -414,7 +414,6 @@ Intervention.add_property('courses', lambda self: intersecting(Course, self), _(
 
 Course.add_property('sites', lambda self: intersecting(Course, self), _("Sites"))
 Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
-Course.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Course.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
 Course.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
