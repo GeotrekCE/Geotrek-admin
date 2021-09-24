@@ -743,19 +743,20 @@ class GeotrekSiteFilter(BaseFilterBackend):
             queryset = queryset.filter(parent=None)
         practices_in_hierarchy = request.GET.get('practices_in_hierarchy')
         if practices_in_hierarchy:
-            wanted_practices = practices_in_hierarchy.split(',')
+            wanted_practices = set(map(int, practices_in_hierarchy.split(',')))
+            queryset = queryset.filter('super_practices__id_in=wabted')
             for site in queryset:
                 # Exclude if practices in hierarchy don't match any wanted practices
-                matching_practices = site.super_practices.filter(id__in=wanted_practices)
-                if not matching_practices:
+                found_practices = site.super_practices_id
+                if found_practices.isdisjoint(wanted_practices):
                     queryset = queryset.exclude(id=site.pk)
         ratings_in_hierarchy = request.GET.get('ratings_in_hierarchy')
         if ratings_in_hierarchy:
-            wanted_ratings = ratings_in_hierarchy.split(',')
+            wanted_ratings = set(map(int, ratings_in_hierarchy.split(',')))
             for site in queryset:
                 # Exclude if ratings in hierarchy don't match any wanted ratings
-                matching_ratings = site.super_ratings.filter(id__in=wanted_ratings)
-                if not matching_ratings:
+                found_ratings = site.super_ratings_id
+                if found_ratings.isdisjoint(wanted_ratings):
                     queryset = queryset.exclude(id=site.pk)
         q = request.GET.get('q')
         if q:

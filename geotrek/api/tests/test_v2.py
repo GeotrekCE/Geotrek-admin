@@ -3337,3 +3337,16 @@ class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
         self.assertNotIn(self.site4.pk, all_ids)
+
+    def test_filter_ratings_in_tree_hierarchy3(self):
+        response = self.get_site_list({'ratings_in_hierarchy': f"{self.rating3.pk}, {self.rating4.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 4)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertIn(self.site3.pk, all_ids)
+        self.assertIn(self.site4.pk, all_ids)
