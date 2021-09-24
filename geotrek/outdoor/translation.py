@@ -34,7 +34,7 @@ class RatingTO(TranslationOptions):
 
 
 class CourseTO(TranslationOptions):
-    fields = ('name', 'description', 'advice', 'gear', 'ratings_description') + (
+    fields = ('name', 'description', 'equipment', 'advice', 'gear', 'ratings_description') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
