@@ -362,6 +362,7 @@ API_SRID = 4326
 
 # SRID displayed for the user (screens / pdf ...)
 DISPLAY_SRID = 3857
+DISPLAY_COORDS_AS_DECIMALS = False
 
 # Extent in native projection (France area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)

@@ -117,22 +117,33 @@ def intersecting(qs, obj, distance=None, ordering=True, field='geom'):
 def format_coordinates(geom):
     if settings.DISPLAY_SRID in [4326, 3857]:  # WGS84 formatting
         location = geom.centroid.transform(4326, clone=True)
-        rounded_lat_sec = round(abs(location.y) * 3600)
-        rounded_lng_sec = round(abs(location.x) * 3600)
+        if settings.DISPLAY_COORDS_AS_DECIMALS:
+            if location.y > 0:
+                degreelong = "%0.6f°N" % location.y
+            else:
+                degreelong = "%0.6f°S" % - location.y
+            if location.x > 0:
+                degreelat = "%0.6f°E" % location.x
+            else:
+                degreelat = "%0.6f°W" % - location.x
+            result = "%s, %s" % (degreelong, degreelat)
 
-        result = (
-            "{lat_deg}°{lat_min:02d}'{lat_sec:02d}\" {lat_card} / "
-            + "{lng_deg}°{lng_min:02d}'{lng_sec:02d}\" {lng_card}"
-        ).format(
-            lat_deg=(rounded_lat_sec // 3600),
-            lat_min=((rounded_lat_sec // 60) % 60),
-            lat_sec=(rounded_lat_sec % 60),
-            lat_card=pgettext("North", "N") if location.y >= 0 else pgettext("South", "S"),
-            lng_deg=(rounded_lng_sec // 3600),
-            lng_min=((rounded_lng_sec // 60) % 60),
-            lng_sec=(rounded_lng_sec % 60),
-            lng_card=pgettext("East", "E") if location.x >= 0 else pgettext("West", "W"),
-        )
+        else:
+            rounded_lat_sec = round(abs(location.y) * 3600)
+            rounded_lng_sec = round(abs(location.x) * 3600)
+            result = (
+                "{lat_deg}°{lat_min:02d}'{lat_sec:02d}\" {lat_card} / "
+                + "{lng_deg}°{lng_min:02d}'{lng_sec:02d}\" {lng_card}"
+            ).format(
+                lat_deg=(rounded_lat_sec // 3600),
+                lat_min=((rounded_lat_sec // 60) % 60),
+                lat_sec=(rounded_lat_sec % 60),
+                lat_card=pgettext("North", "N") if location.y >= 0 else pgettext("South", "S"),
+                lng_deg=(rounded_lng_sec // 3600),
+                lng_min=((rounded_lng_sec // 60) % 60),
+                lng_sec=(rounded_lng_sec % 60),
+                lng_card=pgettext("East", "E") if location.x >= 0 else pgettext("West", "W"),
+            )
     else:
         location = geom.centroid.transform(settings.DISPLAY_SRID, clone=True)
         result = "X : {lat:07d} / Y : {lng:07d}".format(
