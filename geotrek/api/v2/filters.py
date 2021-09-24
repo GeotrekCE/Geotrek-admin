@@ -742,6 +742,7 @@ class GeotrekSiteFilter(BaseFilterBackend):
             # Being a root node <=> having no parent
             queryset = queryset.filter(parent=None)
         practices_in_hierarchy = request.GET.get('practices_in_hierarchy')
+        # TODO Optimize this filter by finding an alternative to queryset iterating
         if practices_in_hierarchy:
             wanted_practices = set(map(int, practices_in_hierarchy.split(',')))
             for site in queryset:
@@ -749,6 +750,7 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 found_practices = site.super_practices_id
                 if found_practices.isdisjoint(wanted_practices):
                     queryset = queryset.exclude(id=site.pk)
+        # TODO Optimize this filter by finding an alternative to queryset iterating
         ratings_in_hierarchy = request.GET.get('ratings_in_hierarchy')
         if ratings_in_hierarchy:
             wanted_ratings = set(map(int, ratings_in_hierarchy.split(',')))
