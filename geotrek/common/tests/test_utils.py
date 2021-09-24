@@ -74,6 +74,12 @@ class UtilsTest(TestCase):
 
     @override_settings(DISPLAY_SRID=4326)
     @override_settings(DISPLAY_COORDS_AS_DECIMALS=True)
+    def test_format_coordinates_as_decimals_negative(self):
+        geom = Point(x=-6.266479251980001, y=-44.079241580599906, srid=4326)
+        self.assertEqual(format_coordinates(geom), '44.079242°S, 6.266479°W')
+
+    @override_settings(DISPLAY_SRID=4326)
+    @override_settings(DISPLAY_COORDS_AS_DECIMALS=True)
     def test_format_coordinates_as_decimals_from_lambert(self):
         geom = Point(x=961553.0322000659, y=6336548.320195582, srid=2154)
         self.assertEqual(format_coordinates(geom), '44.079242°N, 6.266479°E')
