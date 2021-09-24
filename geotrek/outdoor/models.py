@@ -254,7 +254,6 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         "Return ratings of itself and its descendants as objects"
         return Rating.objects.filter(id__in=self.super_ratings_id)  # Sorted and unique
 
-
     @property
     def super_sectors(self):
         "Return sectors of itself and its descendants"
