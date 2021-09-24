@@ -416,3 +416,12 @@ msgstr "Ne retourner que les sites qui sont au sommet de la hiérarchie des site
 
 msgid "Root sites only"
 msgstr "Sites racine seulement"
+
+msgid "Filter by one or more ratings id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules."
+
+msgid "Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does."
+msgstr "Filtrer par un ou plusieurs id de pratique, séparés par des virgules. Retourne les sites qui ont ces pratiques OU des sites enfants avec ces pratiques."
+
+msgid "Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does."
+msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules. Retourne les sites qui ont ces cotations OU des sites enfants avec ces cotations."

@@ -218,12 +218,17 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         return self.children.filter(q)
 
     @property
-    def super_practices(self):
-        "Return practices of itself and its descendants"
+    def super_practices_id(self):
+        "Return practices of itself and its descendants as ids"
         practices_id = self.get_descendants(include_self=True) \
             .exclude(practice=None) \
             .values_list('practice_id', flat=True)
-        return Practice.objects.filter(id__in=practices_id)  # Sorted and unique
+        return set(practices_id)
+
+    @property
+    def super_practices(self):
+        "Return practices of itself and its descendants as objects"
+        return Practice.objects.filter(id__in=self.super_practices_id)  # Sorted and unique
 
     @property
     def super_practices_display(self):
@@ -236,6 +241,19 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         ]
         return ", ".join(verbose)
     super_practices_verbose_name = _('Practices')
+
+    @property
+    def super_ratings_id(self):
+        "Return ratings of itself and its descendants as ids"
+        ratings_id = self.get_descendants(include_self=True) \
+            .exclude(ratings=None) \
+            .values_list('ratings', flat=True)
+        return set(ratings_id)
+
+    @property
+    def super_ratings(self):
+        "Return ratings of itself and its descendants as objects"
+        return Rating.objects.filter(id__in=self.super_ratings_id)  # Sorted and unique
 
     @property
     def super_sectors(self):

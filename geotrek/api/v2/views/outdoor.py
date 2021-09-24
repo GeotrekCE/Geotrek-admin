@@ -12,7 +12,8 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.GeotrekSiteFilter,
         api_filters.NearbyContentFilter,
-        api_filters.UpdateOrCreateDateFilter
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.OutdoorRatingsFilter
     )
     serializer_class = api_serializers.SiteSerializer
 
@@ -71,7 +72,8 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.GeotrekCourseFilter,
         api_filters.NearbyContentFilter,
-        api_filters.UpdateOrCreateDateFilter
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.OutdoorRatingsFilter
     )
     serializer_class = api_serializers.CourseSerializer
 

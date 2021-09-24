@@ -717,12 +717,48 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         )
 
 
+class OutdoorRatingsFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        ratings = request.GET.get('ratings')
+        if ratings:
+            queryset = queryset.filter(ratings__in=ratings.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='ratings', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Ratings"),
+                    description=_('Filter by one or more ratings id, comma-separated.')
+                )
+            ),
+        )
+
+
 class GeotrekSiteFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         root_sites_only = request.GET.get('root_sites_only')
         if root_sites_only:
             # Being a root node <=> having no parent
             queryset = queryset.filter(parent=None)
+        practices_in_hierarchy = request.GET.get('practices_in_hierarchy')
+        # TODO Optimize this filter by finding an alternative to queryset iterating
+        if practices_in_hierarchy:
+            wanted_practices = set(map(int, practices_in_hierarchy.split(',')))
+            for site in queryset:
+                # Exclude if practices in hierarchy don't match any wanted practices
+                found_practices = site.super_practices_id
+                if found_practices.isdisjoint(wanted_practices):
+                    queryset = queryset.exclude(id=site.pk)
+        # TODO Optimize this filter by finding an alternative to queryset iterating
+        ratings_in_hierarchy = request.GET.get('ratings_in_hierarchy')
+        if ratings_in_hierarchy:
+            wanted_ratings = set(map(int, ratings_in_hierarchy.split(',')))
+            for site in queryset:
+                # Exclude if ratings in hierarchy don't match any wanted ratings
+                found_ratings = site.super_ratings_id
+                if found_ratings.isdisjoint(wanted_ratings):
+                    queryset = queryset.exclude(id=site.pk)
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)
@@ -740,6 +776,18 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 name='root_sites_only', required=False, location='query', schema=coreschema.String(
                     title=_("Root sites only"),
                     description=_('Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate.')
+                )
+            ),
+            Field(
+                name='practices_in_hierarchy', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Practices in hierarchy"),
+                    description=_('Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does.')
+                )
+            ),
+            Field(
+                name='ratings_in_hierarchy', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Ratings in hierarchy"),
+                    description=_('Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does.')
                 )
             ),
         )
