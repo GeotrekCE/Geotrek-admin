@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 - APIv2 : Add 'sector' and 'attachment' fields to Outdoor Site serialization
+- Add DISPLAY_COORDS_AS_DECIMALS setting to format coordinates as decimal degrees instead of degrees minutes seconds
 
 
 **Bug fixes**

@@ -66,6 +66,18 @@ class UtilsTest(TestCase):
         geom = Point(x=333958, y=5160979, srid=3857)
         self.assertEqual(format_coordinates(geom), 'X : 0500000 / Y : 4649776')
 
+    @override_settings(DISPLAY_SRID=4326)
+    @override_settings(DISPLAY_COORDS_AS_DECIMALS=True)
+    def test_format_coordinates_as_decimals(self):
+        geom = Point(x=6.266479251980001, y=44.079241580599906, srid=4326)
+        self.assertEqual(format_coordinates(geom), '44.079242°N, 6.266479°E')
+
+    @override_settings(DISPLAY_SRID=4326)
+    @override_settings(DISPLAY_COORDS_AS_DECIMALS=True)
+    def test_format_coordinates_as_decimals_from_lambert(self):
+        geom = Point(x=961553.0322000659, y=6336548.320195582, srid=2154)
+        self.assertEqual(format_coordinates(geom), '44.079242°N, 6.266479°E')
+
     @override_settings(DISPLAY_SRID=3857)
     def test_spatial_reference(self):
         self.assertEqual(spatial_reference(), 'WGS 84 / Pseudo-Mercator')
