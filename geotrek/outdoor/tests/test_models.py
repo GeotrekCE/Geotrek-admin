@@ -1,3 +1,7 @@
+from django.contrib.gis.geos.collections import GeometryCollection
+from geotrek.trekking.factories import POIFactory
+from django.contrib.gis.geos.point import Point
+from django.contrib.gis.geos import Polygon
 from geotrek.common.factories import OrganismFactory
 from geotrek.outdoor.factories import SiteFactory, RatingScaleFactory, SectorFactory
 from django.test import TestCase, override_settings
@@ -105,3 +109,22 @@ class RatingScaleTest(TestCase):
     def test_ratingscale_str(self):
         scale = RatingScaleFactory.create(name='Bar', practice__name='Foo')
         self.assertEqual(str(scale), 'Bar (Foo)')
+
+
+class ExcludedPOIsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.poi1 = POIFactory()
+        cls.poi1.geom = Point(0.5, 0.5, srid=2154)
+        cls.poi1.save()
+        cls.poi2 = POIFactory()
+        cls.poi2.geom = Point(0.5, 0.5, srid=2154)
+        cls.poi2.save()
+        cls.site = SiteFactory(geom=GeometryCollection(Polygon(((0, 0), (0, 1), (1, 0), (1, 1), (0, 0)), srid=2154)))
+
+    def test_no_poi_excluded(self):
+        self.assertEqual(self.site.pois.count(), 2)
+
+    def test_one_poi_excluded(self):
+        self.site.pois_excluded.set([self.poi1])
+        self.assertEqual(self.site.pois.count(), 1)

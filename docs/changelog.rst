@@ -14,7 +14,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix dynamic forms on outdoor cotations display all cotations when selector empty
-
+* Hide excluded POIs on Outdoor Site and Course detail pages
 
 2.65.0 (2021-09-21)
 ----------------------
