@@ -132,6 +132,7 @@ class CourseForm(CommonForm):
 
     def __init__(self, site=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['site'].queryset = Site.objects.only('name').order_by('name')
         self.fields['site'].initial = site
         self.fields['duration'].widget.attrs['min'] = '0'
         for scale in RatingScale.objects.all():
