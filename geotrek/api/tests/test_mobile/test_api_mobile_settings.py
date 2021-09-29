@@ -38,7 +38,7 @@ class SettingsMobileTest(TestCase):
         cls.route = trekking_factories.RouteFactory.create()
         cls.practice = trekking_factories.PracticeFactory.create()
         cls.theme = common_factories.ThemeFactory.create()
-        cls.trek = trekking_factories.TrekFactory.create(difficulty=cls.difficulty, practice=cls.practice,
+        cls.trek = trekking_factories.TrekFactory.create(difficulty=cls.difficulty, published_fr=True, practice=cls.practice,
                                                          route=cls.route)
         cls.trek.accessibilities.add(cls.accessibility_1, cls.accessibility_2)
         cls.trek.networks.add(cls.trek_network)
