@@ -24,6 +24,9 @@ msgstr "Retours utilisateurs"
 msgid "Feedback from {email}"
 msgstr "Signalement de {email}"
 
+msgid "New reports from Suricate"
+msgstr "Nouveaux signalements Suricate"
+
 msgid "Email"
 msgstr "Email"
 
@@ -41,6 +44,21 @@ msgstr "Amplitude du problème"
 
 msgid "Status"
 msgstr "Statut"
+
+msgid "Statuses"
+msgstr "Statuts"
+
+msgid "Text"
+msgstr "Texte"
+
+msgid "Author"
+msgstr "Auteur"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Message"
+msgstr "Message"
 
 msgid "Location"
 msgstr "Emplacement"
@@ -60,6 +78,9 @@ msgstr "Créer un signalement"
 msgid "Suricate id"
 msgstr "ID Suricate"
 
+msgid "Data to import from Suricate"
+msgstr "Données à importer depuis Suricate"
+
 msgid "Activities"
 msgstr "Activités"
 
@@ -72,8 +93,14 @@ msgstr "Amplitudes des problèmes"
 msgid "Attributes"
 msgstr "Informations"
 
-msgid "Map"
-msgstr "Carte"
+msgid "Creation date in Suricate"
+msgstr "Date de création dans Suricate"
+
+msgid "Last updated in Suricate"
+msgstr "Date de modification dans Suricate"
+
+msgid "Identifier"
+msgstr "Identifiant"
 
 #, python-format
 msgid "%(email)s has sent a feedback."
@@ -99,8 +126,44 @@ msgstr "Lien vers le signalement"
 msgid "Invalid geometry value."
 msgstr "Géométrie invalide"
 
+msgid "Non confirmé par les sentinelles"
+msgstr "Non confirmé par les sentinelles"
+
+msgid "Déposé"
+msgstr "Déposé"
+
+msgid "En cours de traitement"
+msgstr "En cours de traitement"
+
+msgid "Résolu"
+msgstr "Résolu"
+
+msgid "Classé sans suite"
+msgstr "Classé sans suite"
+
+msgid "A transmettre"
+msgstr "A transmettre"
+
+msgid "Nouveau"
+msgstr "Nouveau"
+
+msgid "Affecté"
+msgstr "Affecté"
+
+msgid "Intervention prévue"
+msgstr "Intervention prévue"
+
+msgid "Intervention terminée"
+msgstr "Intervention terminée"
+
 msgid "Geotrek : Signal a mistake"
 msgstr "Geotrek : signalement d'un problème"
+
+msgid "New reports have been imported from Suricate."
+msgstr "De nouveaux signalements ont été importés depuis Suricate."
+
+msgid "Please consult your reports in Geotrek-Admin."
+msgstr "Consultez vos signalements dans Geotrek-Admin."
 
 msgid ""
 "Hello,\n"

@@ -23,7 +23,10 @@
 	{% if form_without_file %}
 		{% crispy form_without_file form_without_file.helper%}
 	{% endif %}
-	{% if not form and not form_without_file %}
+	{% if form_suricate %}
+		{% crispy form_suricate form_suricate.helper%}
+	{% endif %}
+	{% if not form and not form_without_file and not form_suricate %}
 		<p>{% trans "No parser available." %}</p>
 	{% endif %}
 	{% endblock mainform %}

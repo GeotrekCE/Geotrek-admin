@@ -1,3 +1,4 @@
+from geotrek.common.mixins import CustomColumnsMixin
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
@@ -19,8 +20,9 @@ class SiteLayer(MapEntityLayer):
     queryset = Site.objects.all()
 
 
-class SiteList(MapEntityList):
-    columns = ['id', 'name', 'super_practices', 'lastmod']
+class SiteList(CustomColumnsMixin, MapEntityList):
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['super_practices', 'date_update']
     filterform = SiteFilterSet
     queryset = Site.objects.all()
 
@@ -100,24 +102,26 @@ class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
 
 
 class SiteFormatList(MapEntityFormat, SiteList):
-    columns = [
-        'id', 'structure', 'name', 'practice', 'description',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'practice', 'description',
         'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
         'portal', 'source', 'information_desks', 'web_links', 'eid',
-        'orientation', 'wind', 'ratings_min', 'ratings_max', 'managers',
+        'orientation', 'wind', 'ratings', 'managers',
     ]
 
 
 class CourseLayer(MapEntityLayer):
     properties = ['name']
     filterform = CourseFilterSet
-    queryset = Course.objects.all()
+    queryset = Course.objects.prefetch_related('type').all()
 
 
-class CourseList(MapEntityList):
-    columns = ['id', 'name', 'site', 'lastmod']
+class CourseList(CustomColumnsMixin, MapEntityList):
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['site', 'date_update']
     filterform = CourseFilterSet
-    queryset = Course.objects.all()
+    queryset = Course.objects.prefetch_related('type').all()
 
 
 class CourseJsonList(MapEntityJsonList, CourseList):
@@ -125,7 +129,7 @@ class CourseJsonList(MapEntityJsonList, CourseList):
 
 
 class CourseDetail(MapEntityDetail):
-    queryset = Course.objects.all()
+    queryset = Course.objects.prefetch_related('type').all()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -195,7 +199,8 @@ class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
 
 
 class CourseFormatList(MapEntityFormat, CourseList):
-    columns = [
-        'id', 'structure', 'name', 'site', 'description',
-        'advice', 'equipment', 'eid', 'height', 'length', 'ratings',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'site', 'description',
+        'advice', 'equipment', 'eid', 'height', 'length', 'ratings'
     ]

@@ -129,7 +129,6 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         title = _('Paths')
         if not self.target._meta.model_name == "topology":
             icon = self.target._meta.model_name
-
             title = self.target.name_display
         return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
                                                       icon,
@@ -339,6 +338,7 @@ class InterventionJob(StructureOrNoneRelated):
 
     job = models.CharField(max_length=128, verbose_name=_("Job"))
     cost = models.DecimalField(verbose_name=_("Cost"), default=1.0, decimal_places=2, max_digits=8)
+    active = models.BooleanField(verbose_name=_("Active"), default=True)
 
     class Meta:
         verbose_name = _("Intervention's job")

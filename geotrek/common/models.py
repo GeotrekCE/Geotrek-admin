@@ -110,7 +110,8 @@ class TargetPortal(models.Model):
     description = models.TextField(verbose_name=_("Description"), help_text=_("Description on Geotrek Rando"),
                                    default='')
     facebook_id = models.CharField(verbose_name=_("Facebook ID"), max_length=20,
-                                   help_text=_("Facebook ID for Geotrek Rando"), null=True, blank=True)
+                                   help_text=_("Facebook ID for Geotrek Rando"), null=True, blank=True,
+                                   default=settings.FACEBOOK_APP_ID)
     facebook_image_url = models.CharField(verbose_name=_("Facebook image url"), max_length=256,
                                           help_text=_("Url of the facebook image"), default=settings.FACEBOOK_IMAGE)
     facebook_image_width = models.IntegerField(verbose_name=_("Facebook image width"),

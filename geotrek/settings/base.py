@@ -217,6 +217,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
+                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
             'loaders': [
@@ -361,6 +362,7 @@ API_SRID = 4326
 
 # SRID displayed for the user (screens / pdf ...)
 DISPLAY_SRID = 3857
+DISPLAY_COORDS_AS_DECIMALS = False
 
 # Extent in native projection (France area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
@@ -546,6 +548,7 @@ DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
 MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)
+REPORT_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
 
@@ -649,7 +652,8 @@ TREK_WITH_POIS_PICTURES = False
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'APIS_SORTER': 'alpha',
-    'JSON_EDITOR': True
+    'JSON_EDITOR': True,
+    'API_V2_DESCRIPTION': "New Geotrek API"
 }
 
 API_IS_PUBLIC = True
@@ -773,7 +777,16 @@ SEND_REPORT_ACK = True
 
 SURICATE_REPORT_ENABLED = False
 
+SURICATE_MANAGEMENT_ENABLED = False
+
 SURICATE_REPORT_SETTINGS = {
+    'URL': '',
+    'ID_ORIGIN': '',
+    'PRIVATE_KEY_CLIENT_SERVER': '',
+    'PRIVATE_KEY_SERVER_CLIENT': '',
+}
+
+SURICATE_MANAGEMENT_SETTINGS = {
     'URL': '',
     'ID_ORIGIN': '',
     'PRIVATE_KEY_CLIENT_SERVER': '',
@@ -788,6 +801,9 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
+HIDDEN_FORM_FIELDS = {}
+COLUMNS_LISTS = {}
+ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
@@ -810,3 +826,9 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 USE_X_FORWARDED_HOST = False
+HIDDEN_FORM_FIELDS['report'] = {
+    "status",
+    "locked",
+    "uid",
+    "origin"
+}

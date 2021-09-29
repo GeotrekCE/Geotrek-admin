@@ -217,9 +217,12 @@ class Command(BaseCommand):
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_object_view(self, lang, obj, view, basename_fmt, zipfile=None, params={}, **kwargs):
+        translation.activate(lang)
         modelname = obj._meta.model_name
-        name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
+        name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk),
+                            basename_fmt.format(obj=obj))
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=obj.pk, **kwargs)
+        translation.deactivate()
 
     def sync_profile_json(self, lang, obj, zipfile=None):
         view = ElevationProfile.as_view(model=type(obj))
@@ -349,7 +352,6 @@ class Command(BaseCommand):
                 )
 
     def sync_pdf(self, lang, obj, view):
-        translation.activate(lang)
         if self.skip_pdf:
             return
         try:
@@ -361,11 +363,13 @@ class Command(BaseCommand):
             path = attachments[0].attachment_file.name
             modelname = obj._meta.model_name
             src = os.path.join(settings.MEDIA_ROOT, path)
-            dst = os.path.join(self.tmp_root, 'api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), obj.slug + '.pdf')
+            dst = os.path.join(self.tmp_root, 'api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk),
+                               obj.slug + '.pdf')
             self.mkdirs(dst)
             os.link(src, dst)
             if self.verbosity == 2:
-                self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{dst}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, dst=dst))
+                self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{dst}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang,
+                                                                                                           dst=dst))
         elif settings.ONLY_EXTERNAL_PUBLIC_PDF:
             return
         else:
@@ -374,7 +378,6 @@ class Command(BaseCommand):
                 params['source'] = self.source[0]
             self.get_params_portal(params)
             self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params, slug=obj.slug)
-        translation.deactivate()
 
     def sync(self):
         step_value = int(50 / len(settings.MODELTRANSLATION_LANGUAGES))

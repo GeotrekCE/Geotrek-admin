@@ -3,7 +3,6 @@ import logging
 import functools
 
 import simplekml
-
 from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
 

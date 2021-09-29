@@ -59,8 +59,7 @@ class SiteViewsTests(CommonTest):
                 'name': 'Site type'
             },
             'web_links': [],
-            'ratings_min': [],
-            'ratings_max': [],
+            'ratings': [],
             'wind': ['N'],
         }
 
@@ -94,9 +93,11 @@ class CourseViewsTests(CommonTest):
             'cities': [],
             'description': 'Blah',
             'districts': [],
+            'duration': 55.0,
             'eid': '43',
             'equipment': 'Rope',
             'filelist_url': '/paperclip/get/outdoor/course/{}/'.format(self.obj.pk),
+            'gear': 'Shoes mandatory',
             'height': 42,
             'map_image_url': '/image/course-{}.png'.format(self.obj.pk),
             'name': 'Course',
@@ -115,7 +116,9 @@ class CourseViewsTests(CommonTest):
                 'id': self.obj.structure.pk,
                 'name': 'My structure',
             },
+            'type': self.obj.type.pk,
             'ratings': [],
+            'ratings_description': 'Ths rating is ratable',
         }
 
     def get_bad_data(self):

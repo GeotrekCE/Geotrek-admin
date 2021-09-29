@@ -30,12 +30,14 @@ class TranslatedModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Track translated fields
+        self.orig_fields = list(self.fields.keys())
         self._translated = {}
-        self.replace_orig_fields()
-        self.populate_fields()
+
+        if 'modeltranslation' in settings.INSTALLED_APPS:
+            self.replace_orig_fields()
+            self.populate_fields()
 
     def replace_orig_fields(self):
-        self.orig_fields = list(self.fields.keys())
         # Expand i18n fields
         try:
             # Obtain model translation options
@@ -96,6 +98,7 @@ class MapEntityForm(TranslatedModelForm):
     fieldslayout = None
     geomfields = []
     leftpanel_scrollable = True
+    hidden_fields = []
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -201,8 +204,8 @@ class MapEntityForm(TranslatedModelForm):
         self.helper.help_text_inline = True
         self.helper.form_class = 'form-horizontal'
         self.helper.form_style = "default"
-        self.helper.label_class = 'col-md-auto'
-        self.helper.field_class = 'controls col-md-auto'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'controls col-md-9'
         self.helper.layout = Layout(
             Div(
                 Div(
@@ -223,8 +226,12 @@ class MapEntityForm(TranslatedModelForm):
                 field.fields = self.__replace_translatable_fields(field.fields)
                 newlayout.append(field)
             else:
+                # Add translated fields to layout
                 if field in self._translated:
-                    newlayout.append(self.__tabbed_layout_for_field(field))
+                    field_is_required = self.fields[f"{field}_{settings.MODELTRANSLATION_DEFAULT_LANGUAGE}"].required
+                    # Only if they are required or not hidden
+                    if field_is_required or field not in self.hidden_fields:
+                        newlayout.append(self.__tabbed_layout_for_field(field))
                 else:
                     newlayout.append(field)
         return newlayout
@@ -239,7 +246,7 @@ class MapEntityForm(TranslatedModelForm):
 
         layout = Div(
             HTML("""
-            <ul class="nav nav-pills">
+            <ul class="nav nav-pills offset-md-3">
             {{% for lang in TRANSLATED_LANGUAGES %}}
                 <li class="nav-item">
                     <a class="nav-link{{% if lang.0 == '{lang_code}'""" """ %}} active{{% endif %}}" href="#{field}_{{{{ lang.0 }}}}"

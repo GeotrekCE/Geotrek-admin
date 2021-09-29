@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db.models import F
+from django.utils.translation import activate
 
 from geotrek.api.v2 import serializers as api_serializers, \
     filters as api_filters, viewsets as api_viewsets
@@ -8,11 +9,19 @@ from geotrek.outdoor import models as outdoor_models
 
 
 class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekSiteFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.GeotrekSiteFilter,
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.OutdoorRatingsFilter
+    )
     serializer_class = api_serializers.SiteSerializer
-    queryset = outdoor_models.Site.objects \
-        .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-        .order_by('pk')  # Required for reliable pagination
+
+    def get_queryset(self):
+        activate(self.request.GET.get('language'))
+        return outdoor_models.Site.objects \
+            .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+            .order_by('name')  # Required for reliable pagination
 
 
 class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -21,9 +30,27 @@ class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
         .order_by('pk')  # Required for reliable pagination
 
 
+class SectorViewSet(api_viewsets.GeotrekGeometricViewset):
+    serializer_class = api_serializers.SectorSerializer
+    queryset = outdoor_models.Sector.objects \
+        .order_by('pk')  # Required for reliable pagination
+
+
 class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.SiteRelatedPortalFilter,
+    )
     serializer_class = api_serializers.SiteTypeSerializer
     queryset = outdoor_models.SiteType.objects \
+        .order_by('pk')  # Required for reliable pagination
+
+
+class CourseTypeViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.CourseRelatedPortalFilter,
+    )
+    serializer_class = api_serializers.CourseTypeSerializer
+    queryset = outdoor_models.CourseType.objects \
         .order_by('pk')  # Required for reliable pagination
 
 
@@ -42,8 +69,16 @@ class RatingViewSet(api_viewsets.GeotrekViewSet):
 
 
 class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekCourseFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.GeotrekCourseFilter,
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.OutdoorRatingsFilter
+    )
     serializer_class = api_serializers.CourseSerializer
-    queryset = outdoor_models.Course.objects \
-        .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-        .order_by('pk')  # Required for reliable pagination
+
+    def get_queryset(self):
+        activate(self.request.GET.get('language'))
+        return outdoor_models.Course.objects \
+            .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+            .order_by('name')  # Required for reliable pagination

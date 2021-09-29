@@ -1,15 +1,18 @@
+from geotrek.outdoor.mixins import ExcludedPOIsMixin
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
+from django.core.validators import MinValueValidator
 from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
+from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin, PicturesMixin
 from geotrek.common.models import Organism
+from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
@@ -92,7 +95,7 @@ class Rating(OptionalPictogramMixin, models.Model):
 
 class SiteType(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    practice = models.ForeignKey('Practice', related_name="types", on_delete=models.PROTECT,
+    practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)
 
     class Meta:
@@ -104,8 +107,22 @@ class SiteType(models.Model):
         return self.name
 
 
-class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           AltimetryMixin, TimeStampedModelMixin, MPTTModel):
+class CourseType(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.PROTECT,
+                                 verbose_name=_("Practice"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Course type")
+        verbose_name_plural = _("Course types")
+        ordering = ('name', )
+
+    def __str__(self):
+        return self.name
+
+
+class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+           AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -140,8 +157,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
                                 help_text=_("Main attraction and interest"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
-    ratings_min = models.ManyToManyField(Rating, related_name='sites_min', blank=True)
-    ratings_max = models.ManyToManyField(Rating, related_name='sites_max', blank=True)
+    ratings = models.ManyToManyField(Rating, related_name='sites', blank=True)
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
     orientation = models.JSONField(verbose_name=_("Orientation"), default=list, blank=True)
     wind = models.JSONField(verbose_name=_("Wind"), default=list, blank=True)
@@ -158,6 +174,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='sites',
                                     verbose_name=_("Source"))
+    pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_sites', verbose_name=_("Excluded POIs"),
+                                           blank=True)
     web_links = models.ManyToManyField('trekking.WebLink', related_name="sites", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
@@ -200,12 +218,17 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         return self.children.filter(q)
 
     @property
-    def super_practices(self):
-        "Return practices of itself and its descendants"
+    def super_practices_id(self):
+        "Return practices of itself and its descendants as ids"
         practices_id = self.get_descendants(include_self=True) \
             .exclude(practice=None) \
             .values_list('practice_id', flat=True)
-        return Practice.objects.filter(id__in=practices_id)  # Sorted and unique
+        return set(practices_id)
+
+    @property
+    def super_practices(self):
+        "Return practices of itself and its descendants as objects"
+        return Practice.objects.filter(id__in=self.super_practices_id)  # Sorted and unique
 
     @property
     def super_practices_display(self):
@@ -218,6 +241,19 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         ]
         return ", ".join(verbose)
     super_practices_verbose_name = _('Practices')
+
+    @property
+    def super_ratings_id(self):
+        "Return ratings of itself and its descendants as ids"
+        ratings_id = self.get_descendants(include_self=True) \
+            .exclude(ratings=None) \
+            .values_list('ratings', flat=True)
+        return set(ratings_id)
+
+    @property
+    def super_ratings(self):
+        "Return ratings of itself and its descendants as objects"
+        return Rating.objects.filter(id__in=self.super_ratings_id)  # Sorted and unique
 
     @property
     def super_sectors(self):
@@ -245,6 +281,10 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         sites = self.get_descendants(include_self=True)
         return Organism.objects.filter(site__in=sites)  # Sorted and unique
 
+    @property
+    def all_pois(self):
+        return POI.outdoor_all_pois(self)
+
     def site_interventions(self):
         # Interventions on sites
         site_content_type = ContentType.objects.get_for_model(Site)
@@ -271,7 +311,6 @@ Intervention.add_property('sites', lambda self: intersecting(Site, self), _("Sit
 
 Site.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Site.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
-Site.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Site.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Site.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
 Site.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
@@ -303,18 +342,26 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-             AltimetryMixin, TimeStampedModelMixin):
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
+    ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
+    gear = models.TextField(verbose_name=_("Gear"), blank=True)
+    duration = models.FloatField(verbose_name=_("Duration"), null=True, blank=True,
+                                 help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
+                                 validators=[MinValueValidator(0)])
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
     equipment = models.TextField(verbose_name=_("Equipment"), blank=True)
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
+                             verbose_name=_("Type"), null=True, blank=True)
+    pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
+                                           blank=True)
 
     check_structure_in_forms = False
 
@@ -335,12 +382,29 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         return _("Add a new outdoor course")
 
     @property
+    def duration_pretty(self):
+        return geotrek_tags.duration(self.duration)
+
+    @property
     def parents(self):
         return Course.objects.filter(course_children__child=self)
+
+    def parents_id(self):
+        parents = self.course_parents.values_list('parent__id', flat=True)
+        return parents
 
     @property
     def children(self):
         return Course.objects.filter(course_parents__parent=self).order_by('course_parents__order')
+
+    @property
+    def children_id(self):
+        children = self.course_children.values_list('child__id', flat=True)
+        return children
+
+    @property
+    def all_pois(self):
+        return POI.outdoor_all_pois(self)
 
     def course_interventions(self):
         # Interventions on courses
@@ -368,7 +432,6 @@ Intervention.add_property('courses', lambda self: intersecting(Course, self), _(
 
 Course.add_property('sites', lambda self: intersecting(Course, self), _("Sites"))
 Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
-Course.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Course.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
 Course.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))

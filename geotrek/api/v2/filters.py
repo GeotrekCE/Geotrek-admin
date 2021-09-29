@@ -1,9 +1,10 @@
-from datetime import date
+from datetime import date, datetime
+
 import coreschema
 
 from coreapi.document import Field
 from django.conf import settings
-from django.contrib.gis.db.models import Collect
+from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext as _
 from rest_framework.filters import BaseFilterBackend
@@ -11,8 +12,10 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-from geotrek.tourism.models import TouristicContentType
-from geotrek.trekking.models import Trek
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from geotrek.outdoor.models import Course, Site
+from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
+from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
 
 
@@ -60,6 +63,14 @@ class GeotrekInBBoxFilter(InBBOXFilter):
     """
     Override DRF gis InBBOXFilter with coreapi field descriptors
     """
+
+    def get_filter_bbox(self, request):
+        """ Transform bbox to internal SRID to get working """
+        bbox = super().get_filter_bbox(request)
+        if bbox:
+            bbox.srid = 4326
+            bbox.transform(settings.SRID)
+        return bbox
 
     def get_schema_fields(self, view):
         return (
@@ -198,8 +209,25 @@ class GeotrekPOIFilter(BaseFilterBackend):
             qs = qs.filter(type__in=types.split(','))
         trek = request.GET.get('trek', None)
         if trek is not None:
-            qs = Topology.overlapping(Trek.objects.get(pk=trek), qs)
+            t = Trek.objects.get(pk=trek)
+            qs = Topology.overlapping(t, qs)
+            qs = qs.exclude(pk__in=t.pois_excluded.all())
+        sites = request.GET.get('sites', None)
+        if sites is not None:
+            qs = qs.filter(pk__in=self.get_pois_to_filter_outdoor_objects(Site, sites))
+        courses = request.GET.get('courses', None)
+        if courses is not None:
+            qs = qs.filter(pk__in=self.get_pois_to_filter_outdoor_objects(Course, courses))
         return qs
+
+    def get_pois_to_filter_outdoor_objects(self, model, elems):
+        list_pois = POI.objects.none()
+        for obj in elems.split(','):
+            o = model.objects.get(pk=obj)
+            tmp = POI.outdoor_all_pois(o)
+            tmp = tmp.exclude(pk__in=o.pois_excluded.all())
+            list_pois |= tmp
+        return list_pois.distinct()
 
     def get_schema_fields(self, view):
         return (
@@ -213,35 +241,104 @@ class GeotrekPOIFilter(BaseFilterBackend):
                     title=_("Trek"),
                     description=_("Filter by a trek id. It will show only the POIs related to this trek.")
                 )
+            ), Field(
+                name='sites', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Sites"),
+                    description=_("Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas.")
+                )
+            ), Field(
+                name='courses', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Courses"),
+                    description=_("Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas.")
+                )
             ),
         )
 
 
-class GeotrekTouristicContentFilter(BaseFilterBackend):
+class NearbyContentFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        ordering = ("name",)
+        if queryset.model.__name__ == "SensitiveArea":
+            ordering = ("-area", "pk")
+        elif queryset.model.__name__ == "Service":
+            ordering = ("id",)
         qs = queryset
+        near_touristicevent = request.GET.get('near_touristicevent')
+        if near_touristicevent:
+            contents_intersecting = intersecting(qs, TouristicEvent.objects.get(pk=near_touristicevent))
+            qs = contents_intersecting.order_by(*ordering)
+        near_touristiccontent = request.GET.get('near_touristiccontent')
+        if near_touristiccontent:
+            contents_intersecting = intersecting(qs, TouristicContent.objects.get(pk=near_touristiccontent))
+            qs = contents_intersecting.order_by(*ordering)
         near_trek = request.GET.get('near_trek')
         if near_trek:
             contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
-            qs = contents_intersecting.order_by('id')
-        categories = request.GET.get('categories')
-        if categories:
-            qs = qs.filter(category__in=categories.split(','))
-        types = request.GET.get('types')
-        if types:
-            types_id = types.split(',')
-            if TouristicContentType.objects.filter(id__in=types_id, in_list=1).exists():
-                qs = qs.filter(Q(type1__in=types_id))
-            if TouristicContentType.objects.filter(id__in=types_id, in_list=2).exists():
-                qs = qs.filter(Q(type2__in=types_id))
+            qs = contents_intersecting.order_by(*ordering)
+        near_outdoorsite = request.GET.get('near_outdoorsite')
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            if near_outdoorsite:
+                contents_intersecting = intersecting(qs, Site.objects.get(pk=near_outdoorsite))
+                qs = contents_intersecting.order_by(*ordering)
+            near_outdoorcourse = request.GET.get('near_outdoorcourse')
+            if near_outdoorcourse:
+                contents_intersecting = intersecting(qs, Course.objects.get(pk=near_outdoorcourse))
+                qs = contents_intersecting.order_by(*ordering)
+        return qs
+
+    def get_schema_fields(self, view):
+        fields = (
+            Field(
+                name='near_trek', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near trek"),
+                    description=_("Filter by a trek id. It will only show the contents related to this trek.")
+                )
+            ),
+            Field(
+                name='near_touristiccontent', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near touristic content"),
+                    description=_("Filter by a touristic content id. It will only show the contents related to this touristic content.")
+                )
+            ),
+            Field(
+                name='near_touristicevent', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Near touristic event"),
+                    description=_("Filter by a touristic event id. It will only show the contents related to this touristic event.")
+                )
+            ),
+        )
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            fields = fields + (
+                Field(
+                    name='near_outdoorsite', required=False, location='query',
+                    schema=coreschema.Integer(
+                        title=_("Near outdoor site"),
+                        description=_("Filter by an outdoor site id. It will only show the contents related to this outdoor site.")
+                    )
+                ),
+                Field(
+                    name='near_outdoorcourse', required=False, location='query',
+                    schema=coreschema.Integer(
+                        title=_("Near outdoor course"),
+                        description=_("Filter by an outdoor course id. It will only show the contents related to this outdoor course.")
+                    )
+                )
+            )
+        return fields
+
+
+class GeotrekTouristicModelFilter(NearbyContentFilter):
+    def _filter_queryset(self, request, queryset, view):
+        qs = queryset
         cities = request.GET.get('cities')
         if cities:
-            cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=cities_geom) if cities_geom else qs.none()
+            qs = qs.filter(Exists(City.objects.filter(code__in=cities.split(","), geom__intersects=OuterRef('geom'))))
         districts = request.GET.get('districts')
         if districts:
-            districts_geom = District.objects.filter(id__in=districts.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=districts_geom) if districts_geom else qs.none()
+            qs = qs.filter(Exists(District.objects.filter(pk__in=districts.split(","), geom__intersects=OuterRef('geom'))))
         structures = request.GET.get('structures')
         if structures:
             qs = qs.filter(structure__in=structures.split(','))
@@ -258,24 +355,9 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
             )
         return qs
 
-    def get_schema_fields(self, view):
+    def _get_schema_fields(self, view):
         return (
             Field(
-                name='near_trek', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Near trek"),
-                    description=_("Filter by a trek id. It will show only the touristics contents related to this trek.")
-                )
-            ), Field(
-                name='categories', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Categories"),
-                    description=_("Filter by one or more category id, comma-separated.")
-                )
-            ), Field(
-                name='types', required=False, location='query', schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
-                )
-            ), Field(
                 name='cities', required=False, location='query', schema=coreschema.String(
                     title=_("Cities"),
                     description=_('Filter by one or more city id, comma-separated.')
@@ -309,6 +391,174 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
         )
 
 
+class GeotrekTouristicContentFilter(GeotrekTouristicModelFilter):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        categories = request.GET.get('categories')
+        if categories:
+            qs = qs.filter(category__in=categories.split(','))
+        types = request.GET.get('types')
+        if types:
+            types_id = types.split(',')
+            if TouristicContentType.objects.filter(id__in=types_id, in_list=1).exists():
+                qs = qs.filter(Q(type1__in=types_id))
+            if TouristicContentType.objects.filter(id__in=types_id, in_list=2).exists():
+                qs = qs.filter(Q(type2__in=types_id))
+        return self._filter_queryset(request, qs, view)
+
+    def get_schema_fields(self, view):
+        return self._get_schema_fields(view) + (
+            Field(
+                name='categories', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Categories"),
+                    description=_("Filter by one or more category id, comma-separated.")
+                )
+            ), Field(
+                name='types', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Types"),
+                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
+                )
+            )
+        )
+
+
+class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        # Don't filter on detail view
+        if 'pk' not in view.kwargs:
+            types = request.GET.get('types')
+            if types:
+                types_id = types.split(',')
+                if TouristicEventType.objects.filter(id__in=types_id).exists():
+                    qs = qs.filter(Q(type__in=types_id))
+            dates_before = request.GET.get('dates_before')
+            if dates_before:
+                dates_before = datetime.strptime(dates_before, "%Y-%m-%d").date()
+                qs = qs.filter(Q(begin_date__lte=dates_before))
+            dates_after = request.GET.get('dates_after')
+            if dates_after:
+                dates_after = datetime.strptime(dates_after, "%Y-%m-%d").date()
+            else:
+                # Filter out past events by default
+                dates_after = date.today()
+            qs = qs.filter(Q(end_date__gte=dates_after))
+        return self._filter_queryset(request, qs, view)
+
+    def get_schema_fields(self, view):
+        return (
+            *self._get_schema_fields(view),
+            Field(
+                name="types",
+                required=False,
+                location="query",
+                schema=coreschema.Integer(
+                    title=_("Types"),
+                    description=_(
+                        "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
+                    ),
+                ),
+            ), Field(
+                name='dates_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Dates before"),
+                    description=_("Filter events happening before or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='dates_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Dates after"),
+                    description=_("Filter events happening after or during date, format YYYY-MM-DD")
+                )
+            )
+        )
+
+
+class GeotrekServiceFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        types = request.GET.get('types')
+        if types:
+            types_id = types.split(',')
+            if ServiceType.objects.filter(id__in=types_id).exists():
+                qs = qs.filter(Q(type__in=types_id))
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='types', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Types"),
+                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
+                )
+            ),
+        )
+
+
+class UpdateOrCreateDateFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        updated_before = request.GET.get('updated_before')
+        if updated_before:
+            updated_before = datetime.strptime(updated_before, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_update__lte=updated_before))
+        updated_after = request.GET.get('updated_after')
+        if updated_after:
+            updated_after = datetime.strptime(updated_after, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_update__gte=updated_after))
+        created_before = request.GET.get('created_before')
+        if created_before:
+            created_before = datetime.strptime(created_before, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_insert__lte=created_before))
+        created_after = request.GET.get('created_after')
+        if created_after:
+            created_after = datetime.strptime(created_after, "%Y-%m-%d").date()
+            qs = qs.filter(Q(date_insert__gte=created_after))
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='updated_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Update date after"),
+                    description=_("Filter objects updated after or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='updated_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Update date before"),
+                    description=_("Filter objects updated before or during date, format YYYY-MM-DD")
+                )
+            ),
+            Field(
+                name='created_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Create date after"),
+                    description=_("Filter objects created after or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='created_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Create date before"),
+                    description=_("Filter objects created before or during date, format YYYY-MM-DD")
+                )
+            )
+        )
+
+
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
@@ -326,10 +576,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(length__lte=length_max)
         difficulty_min = request.GET.get('difficulty_min')
         if difficulty_min:
-            qs = qs.filter(difficulty__cirkwi_level__gte=difficulty_min)
+            qs = qs.filter(difficulty__id__gte=difficulty_min)
         difficulty_max = request.GET.get('difficulty_max')
         if difficulty_max:
-            qs = qs.filter(difficulty__cirkwi_level__lte=difficulty_max)
+            qs = qs.filter(difficulty__id__lte=difficulty_max)
         ascent_min = request.GET.get('ascent_min')
         if ascent_min:
             qs = qs.filter(ascent__gte=ascent_min)
@@ -338,12 +588,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(ascent__lte=ascent_max)
         cities = request.GET.get('cities')
         if cities:
-            cities_geom = City.objects.filter(code__in=cities.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=cities_geom) if cities_geom else qs.none()
+            qs = qs.filter(Exists(City.objects.filter(code__in=cities.split(","), geom__intersects=OuterRef('geom'))))
         districts = request.GET.get('districts')
         if districts:
-            districts_geom = District.objects.filter(id__in=districts.split(',')).aggregate(Collect('geom'))['geom__collect']
-            qs = qs.filter(geom__intersects=districts_geom) if districts_geom else qs.none()
+            qs = qs.filter(Exists(District.objects.filter(pk__in=districts.split(","), geom__intersects=OuterRef('geom'))))
         structures = request.GET.get('structures')
         if structures:
             qs = qs.filter(structure__in=structures.split(','))
@@ -469,8 +717,48 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         )
 
 
+class OutdoorRatingsFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        ratings = request.GET.get('ratings')
+        if ratings:
+            queryset = queryset.filter(ratings__in=ratings.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='ratings', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Ratings"),
+                    description=_('Filter by one or more ratings id, comma-separated.')
+                )
+            ),
+        )
+
+
 class GeotrekSiteFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        root_sites_only = request.GET.get('root_sites_only')
+        if root_sites_only:
+            # Being a root node <=> having no parent
+            queryset = queryset.filter(parent=None)
+        practices_in_hierarchy = request.GET.get('practices_in_hierarchy')
+        # TODO Optimize this filter by finding an alternative to queryset iterating
+        if practices_in_hierarchy:
+            wanted_practices = set(map(int, practices_in_hierarchy.split(',')))
+            for site in queryset:
+                # Exclude if practices in hierarchy don't match any wanted practices
+                found_practices = site.super_practices_id
+                if found_practices.isdisjoint(wanted_practices):
+                    queryset = queryset.exclude(id=site.pk)
+        # TODO Optimize this filter by finding an alternative to queryset iterating
+        ratings_in_hierarchy = request.GET.get('ratings_in_hierarchy')
+        if ratings_in_hierarchy:
+            wanted_ratings = set(map(int, ratings_in_hierarchy.split(',')))
+            for site in queryset:
+                # Exclude if ratings in hierarchy don't match any wanted ratings
+                found_ratings = site.super_ratings_id
+                if found_ratings.isdisjoint(wanted_ratings):
+                    queryset = queryset.exclude(id=site.pk)
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)
@@ -482,6 +770,24 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 name='q', required=False, location='query', schema=coreschema.String(
                     title=_("Query string"),
                     description=_('Filter by some case-insensitive text contained in name.')
+                )
+            ),
+            Field(
+                name='root_sites_only', required=False, location='query', schema=coreschema.String(
+                    title=_("Root sites only"),
+                    description=_('Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate.')
+                )
+            ),
+            Field(
+                name='practices_in_hierarchy', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Practices in hierarchy"),
+                    description=_('Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does.')
+                )
+            ),
+            Field(
+                name='ratings_in_hierarchy', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Ratings in hierarchy"),
+                    description=_('Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does.')
                 )
             ),
         )
@@ -505,7 +811,73 @@ class GeotrekCourseFilter(BaseFilterBackend):
         )
 
 
-class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
+class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
+
+    def filter_queryset_related_objects_published_not_deleted(self, qs, request, related_name, optional_query=Q()):
+        # Exclude if no related objects exist
+        qs = qs.exclude(**{'{}'.format(related_name): None})
+        # Ensure no deleted content is taken in consideration in the filter
+        related_field_name = '{}__deleted'.format(related_name)
+        optional_query &= Q(**{related_field_name: False})
+        return self.filter_queryset_related_objects_published(qs, request, related_name, optional_query)
+
+    def filter_queryset_related_objects_published(self, queryset, request, related_name, optional_query=Q()):
+        """
+        TODO : this method is not optimal. the API should have a route /object returning all objects and /object/used returning only used objects.
+        Return a queryset filtered by publication status or related objects.
+        For example for a queryset of DifficultyLevels it will check the publication status of related treks and return the queryset of difficulties that are used by published treks.
+        :param queryset: the queryset to filter
+        :param request: the request object to get to the potential language to filter by
+        :param related_name: the related_name used to fetch the related object in the filter method
+        :param optional_query: optional query Q to add to the filter method (used by portal filter)
+        """
+        qs = queryset
+        q = Q()
+        # check if the model of the queryset published field is translated
+        related_object = qs.model._meta.get_field(related_name).remote_field
+        fields_on_related_object = related_object.model._meta.get_fields()
+        associated_published_fields = [f.name for f in fields_on_related_object if f.name.startswith('published')]
+        if len(associated_published_fields) == 1:
+            related_field_name = '{}__published'.format(related_name)
+            q &= Q(**{related_field_name: True})
+        elif len(associated_published_fields) > 1:
+            language = request.GET.get('language')
+            if language:
+                # one language is specified
+                related_field_name = '{}__published_{}'.format(related_name, language)
+                q &= Q(**{related_field_name: True})
+            else:
+                # no language specified. Check for all.
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    related_field_name = '{}__published_{}'.format(related_name, lang)
+                    q |= Q(**{related_field_name: True})
+        q &= optional_query
+        qs = qs.filter(q)
+        return qs.distinct().order_by('pk')
+
+
+class RelatedObjectsPublishedNotDeletedByPortalFilter(RelatedObjectsPublishedNotDeletedFilter):
+
+    def filter_queryset_related_objects_by_portal(self, request, related_name):
+        portals = request.GET.get('portals')
+        query = Q()
+        if portals:
+            related_portal_in = '{}__portal__in'.format(related_name)
+            query = Q(**{related_portal_in: portals.split(',')})
+        return query
+
+    def filter_queryset_related_objects_published_not_deleted_by_portal(self, qs, request, related_name):
+        # Exclude if no related objects exist
+        qs = qs.exclude(**{'{}'.format(related_name): None})
+        portal_query = self.filter_queryset_related_objects_by_portal(request, related_name)
+        return self.filter_queryset_related_objects_published_not_deleted(qs, request, related_name, portal_query)
+
+    def filter_queryset_related_objects_published_by_portal(self, qs, request, related_name):
+        # Exclude if no related objects exist
+        qs = qs.exclude(**{'{}'.format(related_name): None})
+        portal_query = self.filter_queryset_related_objects_by_portal(request, related_name)
+        return self.filter_queryset_related_objects_published(qs, request, related_name, portal_query)
+
     def get_schema_fields(self, view):
         return (
             Field(
@@ -516,73 +888,54 @@ class GeotrekRelatedPortalGenericFilter(BaseFilterBackend):
             ),
         )
 
-    def filter_queryset_related_objects_published(self, queryset, request, prefix, optional_query=None):
-        """
-        TODO : this method is not optimal. the API should have a route /object returning all objects and /object/used returning only used objects.
-        Return a queryset filtered by publication status or related objects.
-        For example for a queryset of DifficultyLevels it will check the publication status of related treks and return the queryset of difficulties that are used by published treks.
-        :param queryset: the queryset to filter
-        :param request: the request object to get to the potential language to filter by
-        :param prefix: the prefix used to fetch the related object in the filter method
-        :param optional_query: optional query Q to add to the filter method (used by portal filter)
-        """
-        qs = queryset
-        language = request.GET.get('language', 'all')
-        q = Q()
-        if language == 'all':
-            # no language specified. Check for all.
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                related_field_name = '{}__published_{}'.format(prefix, lang)
-                q |= Q(**{related_field_name: True})
-        else:
-            # one language is specified
-            related_field_name = '{}__published_{}'.format(prefix, language)
-            q |= Q(**{related_field_name: True})
-        q &= optional_query
-        qs = qs.filter(q)
-        return qs.distinct()
 
-
-class GeotrekRelatedPortalTrekFilter(GeotrekRelatedPortalGenericFilter):
+class TrekRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
-        portals = request.GET.get('portals')
-        query = Q()
-        if portals:
-            query = Q(treks__portal__in=portals.split(','))
-        return self.filter_queryset_related_objects_published(qs, request, 'treks', query)
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
 
 
-class GeotrekRelatedPortalStructureOrReservationSystemFilter(GeotrekRelatedPortalGenericFilter):
+class SignageRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
-        portals = request.GET.get('portals')
-        query = Q()
-        if portals:
-            query = Q(Q(trek__portal__in=portals.split(',')) | Q(touristiccontent__portal__in=portals.split(',')))
-        set_1 = self.filter_queryset_related_objects_published(qs, request, 'trek', query)
-        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontent', query)
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'signages')
+
+
+class InfrastructureRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'infrastructures')
+
+
+class TouristicEventRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevent')
+
+
+class SiteRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+
+
+class CourseRelatedPortalFilter(RelatedObjectsPublishedNotDeletedFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published(qs, request, 'courses')
+
+
+class RelatedPortalStructureOrReservationSystemFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'trek')
+        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristiccontent')
         return (set_1 | set_2).distinct()
 
 
-class GeotrekRelatedPortalTourismFilter(GeotrekRelatedPortalGenericFilter):
+class TouristicContentRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
-        portals = request.GET.get('portals')
-        query = Q()
-        if portals:
-            query = Q(contents__portal__in=portals.split(','))
-        return self.filter_queryset_related_objects_published(qs, request, 'contents', query)
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'contents')
 
 
-class GeotrekRelatedPortalThemeFilter(GeotrekRelatedPortalGenericFilter):
+class TreksAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
-        portals = request.GET.get('portals')
-        query = Q()
-        if portals:
-            query = Q(treks__portal__in=portals.split(',')) \
-                | Q(touristiccontents__portal__in=portals.split(',')) \
-                | Q(touristic_events__portal__in=portals.split(','))
-        set_1 = self.filter_queryset_related_objects_published(qs, request, 'treks', query)
-        set_2 = self.filter_queryset_related_objects_published(qs, request, 'touristiccontents', query)
-        set_3 = self.filter_queryset_related_objects_published(qs, request, 'touristic_events', query)
+        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
+        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristiccontents')
+        set_3 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristic_events')
         return (set_1 | set_2 | set_3).distinct()
 
 

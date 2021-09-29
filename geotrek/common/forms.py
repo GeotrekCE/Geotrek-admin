@@ -2,10 +2,13 @@ from zipfile import is_zipfile
 from copy import deepcopy
 
 from django import forms
+from django.conf import settings
+from django.core.checks.messages import Error
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import FieldDoesNotExist
+from django.forms.widgets import HiddenInput
 from django.urls import reverse
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
@@ -20,11 +23,37 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit
 from crispy_forms.bootstrap import FormActions
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class CommonForm(MapEntityForm):
 
     class Meta:
         fields = []
+
+    MAP_SETTINGS = {
+        'PathForm': 'path',
+        'TrekForm': 'trek',
+        'TrailForm': 'trail',
+        'LandEdgeForm': 'landedge',
+        'InfrastructureForm': 'infrastructure',
+        'InterventionForm': 'intervention',
+        'SignageForm': 'signage',
+        'ProjectForm': 'project',
+        'SiteForm': 'site',
+        'CourseForm': 'course',
+        'TouristicContentForm': 'touristic_content',
+        'TouristicEventForm': 'touristic_event',
+        'POIForm': 'poi',
+        'ServiceForm': 'service',
+        'DiveForm': 'dive',
+        'SensitiveAreaForm': 'sensitivity_species',
+        'RegulatorySensitiveAreaForm': 'sensitivity_regulatory',
+        'BladeForm': 'blade',
+        'ReportForm': 'report',
+    }
 
     def deep_remove(self, fieldslayout, name):
         if isinstance(fieldslayout, list):
@@ -67,6 +96,13 @@ class CommonForm(MapEntityForm):
             field.queryset = field.queryset.filter(deleted=False)
 
     def __init__(self, *args, **kwargs):
+
+        # Get settings key for this Form
+        settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, None)
+        if settings_key is None:
+            logger.warning("No value set in MAP_SETTINGS dictonary for form class " + self.__class__.__name__)
+        self.hidden_fields = settings.HIDDEN_FORM_FIELDS.get(settings_key, [])
+
         self.fieldslayout = deepcopy(self.fieldslayout)
         super().__init__(*args, **kwargs)
         self.fields = self.fields.copy()
@@ -79,6 +115,18 @@ class CommonForm(MapEntityForm):
                 for name, field in self.fields.items():
                     self.filter_related_field(name, field)
                 del self.fields['structure']
+
+        # For each field listed in 'to hide' list for this Form
+        for field_to_hide in self.hidden_fields:
+            # Ignore if field was translated (handled in TranslatedModelForm)
+            if field_to_hide not in self._translated:
+                # Hide only if optional
+                if self.fields[field_to_hide].required:
+                    logger.warning(
+                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                    )
+                else:
+                    self.fields[field_to_hide].widget = HiddenInput()
 
     def clean(self):
         structure = self.cleaned_data.get('structure')
@@ -125,6 +173,21 @@ class CommonForm(MapEntityForm):
             self.instance.structure = default_structure()
         return super().save(commit)
 
+    @classmethod
+    def check_fields_to_hide(cls):
+        errors = []
+        for field_to_hide in settings.HIDDEN_FORM_FIELDS.get(cls.MAP_SETTINGS[cls.__name__], []):
+            if field_to_hide not in cls._meta.fields:
+                errors.append(
+                    Error(
+                        f"Cannot hide field '{field_to_hide}'",
+                        hint="Field not included in form",
+                        # Diplay dotted path only
+                        obj=str(cls).split(" ")[1].strip(">").strip("'"),
+                    )
+                )
+        return errors
+
 
 class ImportDatasetForm(forms.Form):
     parser = forms.TypedChoiceField(
@@ -146,6 +209,32 @@ class ImportDatasetForm(forms.Form):
                 ),
                 FormActions(
                     Submit('import-web', _("Import"), css_class='button white')
+                ),
+                css_class='file-attachment-form',
+            )
+        )
+
+
+class ImportSuricateForm(forms.Form):
+    parser = forms.TypedChoiceField(
+        label=_('Data to import from Suricate'),
+        widget=forms.RadioSelect,
+        required=True,
+    )
+
+    def __init__(self, choices=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['parser'].choices = choices
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'parser',
+                ),
+                FormActions(
+                    Submit('import-suricate', _("Import"), css_class='button white')
                 ),
                 css_class='file-attachment-form',
             )

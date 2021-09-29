@@ -57,7 +57,7 @@ be sent to the managers:
 
 ::
 
-    sudo geotrek test_managers_emails
+    sudo geotrek sendtestemail --managers
 
 
 Disable modules and components
@@ -94,8 +94,8 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
-Feedback settings
------------------
+Feedback reports settings
+-------------------------
 
 Send acknowledge email
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -104,44 +104,90 @@ Send acknowledge email
 
     SEND_REPORT_ACK = True
 
-If false, no mail will be sent to the sender of any feedback on Rando web site
+If false, no email will be sent to the sender of any feedback on Geotrek-rando website
 
 Suricate support
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
-It is possible to send report saved to Suricate API (deactivated by default).
+Geotrek reports can work together with Suricate API, using one of 3 modes:
 
-In order to activate suricate reports:
+**1** - No Suricate (default)
 
-1. Set your account settings in `custom.py`:
+This mode sends no report data to Suricate.
 
-    .. code-block :: python
+**2** - Suricate Reports
 
-        SURICATE_REPORT_ENABLED = True
+This mode simply forwards all reports to Suricate, using the Standard API to post reports.
 
-        SURICATE_REPORT_SETTINGS = {
-            'URL': '<Suricate API Url>',
-            'ID_ORIGIN': '<Suricate origin ID>',
-            'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
-            'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
-        }
+Set your account settings in ``custom.py``:
 
-2. Load lists for category, activity and problem magnitude :
+.. code-block :: python
 
-    .. code-block :: python
+    SURICATE_REPORT_ENABLED = True
 
-        geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
+    SURICATE_REPORT_SETTINGS = {
+        'URL': '<Suricate Standard API Url>',
+        'ID_ORIGIN': '<Suricate origin ID>',
+        'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
+        'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
+    }
 
-3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization-section>`)
+Then load lists for categories, activities, statuses and problem magnitude:
+
+.. code-block :: python
+
+    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
+
+To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
+
+
+**3**. Suricate Management
+
+This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It requires enabling the Suricate Report mode as well.
+
+Set your account settings in ``custom.py``:
+
+.. code-block :: python
+
+    SURICATE_MANAGEMENT_ENABLED = True
+
+    SURICATE_MANAGEMENT_SETTINGS = {
+        'URL': '<Suricate Management API Url>',
+        'ID_ORIGIN': '<Suricate origin ID>',
+        'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
+        'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
+    }
+
+You can use the following command to test your connection settings:
+
+.. code-block :: python
+
+    geotrek sync_suricate -v 2 --connection-test
+
+Load lists for activities and/or report statuses:
+
+.. code-block :: python
+
+    geotrek sync_suricate --activities --statuses -v 2
+
+Load alerts from Suricate (located in your bounding box) :
+
+.. code-block :: python
+
+    geotrek sync_suricate -v 2
+
+To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
+
+Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**. Reports are only saved when synchronized back from Suricate. Therefore, in this mode, you should run the synchronization command **directly after** creating a report and **before and after** updating a report.
 
 
 Anonymize feedback reports
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To be compliant to GDPR, you cannot keep personnal data infinitely,
 and should notice your users on how many time you keep their email.
 
-A django command is available to anonymize reports, by default older
+A Django command is available to anonymize reports, by default older
 than 365 days.
 
 .. code-block :: bash
@@ -669,6 +715,46 @@ By default, the application runs on 4 processes, and timeouts after 30 seconds.
 To control those values, edit and fix your ``docker-compose.yml`` file in web and api section.
 
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
+
+
+Configure columns displayed in lists views and exports
+----------------------------------------------
+
+For each module, use the following syntax to configure columns to display in the main table.
+
+::
+
+    COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
+
+
+For each module, use the following syntax to configure columns to export as CSV or SHP.
+
+::
+
+    COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
+
+
+Please refer to the "settings detail" section for a complete list of modules and available columms.
+
+Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
+
+::
+
+    ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
+
+
+
+Configure form fields in creation views
+----------------------------------------------
+
+For each module, use the following syntax to configure fields to hide in the creation form.
+
+::
+
+    HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
+
+
+Please refer to the "settings detail" section for a complete list of modules and hideable fields.
 
 
 ================
@@ -1341,6 +1427,975 @@ List of all the filters enabled on mobile.
 
     *Remove any of the filters if you don't want one of them. It's useless to add other one.*
 
+
+|
+
+**Custom columns available**
+
+A (nearly?) exhaustive list of attributes available for display and export as columns in each module.
+
+::
+
+    COLUMNS_LISTS["path_view"] = [
+            "length_2d",
+            "valid",
+            "structure",
+            "visible",
+            "min_elevation",
+            "max_elevation",
+            "date_update",
+            "date_insert",
+            "stake",
+            "networks",
+            "comments",
+            "departure",
+            "arrival",
+            "comfort",
+            "source",
+            "usages",
+            "draft",
+            "trails",
+        ],
+    COLUMNS_LISTS["trail_view"] = [
+            "departure",
+            "arrival",
+            "length",
+            "structure",
+            "min_elevation",
+            "max_elevation",
+            "date_update",
+            "length_2d",
+            "date_insert",
+            "comments",
+        ],
+    COLUMNS_LISTS["landedge_view"] = [
+            "land_type",
+            "min_elevation",
+            "max_elevation",
+            "date_update",
+            "length_2d",
+            "date_insert",
+            "owner",
+            "agreement",
+        ],
+    COLUMNS_LISTS["infrastructure_view"] = [
+            "condition",
+            "cities",
+            "structure",
+            "type",
+            "description",
+            "date_update",
+            "date_insert",
+            "date_insert",
+            "implantation_year",
+            "usage_difficulty",
+            "maintenance_difficulty"
+            "published",
+        ],
+    COLUMNS_LISTS["signage_view"] = [
+            "code",
+            "type",
+            "condition",
+            "structure",
+            "min_elevation",
+            "description",
+            "date_update",
+            "min_elevation",
+            "date_insert",
+            "implantation_year",
+            "printed_elevation",
+            "coordinates",
+            "sealing",
+            "manager",
+            "published",
+        ],
+    COLUMNS_LISTS["intervention_view"] = [
+            "date",
+            "type",
+            "target",
+            "status",
+            "stake",
+            "structure",
+            "subcontracting",
+            "status",
+            "disorders",
+            "length",
+            "material_cost",
+            "min_elevation",
+            "max_elevation",
+            "heliport_cost",
+            "subcontract_cost",
+            "date_update",
+            "date_insert",
+            "description",
+        ],
+    COLUMNS_LISTS["project_view"] = [
+            "structure",
+            "begin_year",
+            "end_year",
+            "constraint",
+            "global_cost",
+            "type",
+            "date_update",
+            "domain",
+            "contractors",
+            "project_owner",
+            "project_manager",
+            "founders",
+            "date_insert",
+            "comments",
+        ],
+    COLUMNS_LISTS["trek_view"] = [
+            "structure",
+            "departure",
+            "arrival",
+            "duration",
+            "description_teaser",
+            "description",
+            "route",
+            "difficulty",
+            "ambiance",
+            "access",
+            "disabled_infrastructure",
+            "advised_parking",
+            "parking_location",
+            "public_transport",
+            "themes",
+            "practice",
+            "min_elevation",
+            "max_elevation",
+            "length_2d",
+            "date_update",
+            "date_insert",
+            "accessibilities",
+            "points_reference",
+            "source",
+            "reservation_system",
+            "reservation_id",
+            "portal",
+        ],
+    COLUMNS_LISTS["poi_view"] = ["structure", "description", "type", "min_elevation", "date_update", "date_insert"],
+    COLUMNS_LISTS["service_view"] = ["structure", "min_elevation", "type", "length_2d", "date_update", "date_insert"],
+    COLUMNS_LISTS["dive_view"] = [
+            "structure",
+            "description_teaser",
+            "description",
+            "owner",
+            "practice",
+            "departure",
+            "disabled_sport",
+            "facilities",
+            "difficulty",
+            "levels",
+            "depth",
+            "advice",
+            "themes",
+            "source",
+            "portal",
+            "date_update",
+            "date_insert",
+        ],
+    COLUMNS_LISTS["touristic_content_view"] = [
+            "structure",
+            "description_teaser",
+            "description",
+            "category",
+            "contact",
+            "email",
+            "website",
+            "practical_info",
+            "type1",
+            "type2",
+            "source",
+            "reservation_system",
+            "reservation_id",
+            "date_update",
+            "date_insert",
+        ],
+    COLUMNS_LISTS["touristic_event_view"] = [
+            "structure",
+            "themes",
+            "description_teaser",
+            "description",
+            "meeting_point",
+            "meeting_time",
+            "duration",
+            "begin_date",
+            "contact",
+            "email",
+            "website",
+            "end_date",
+            "organizer",
+            "speaker",
+            "type",
+            "accessibility",
+            "participant_number",
+            "portal",
+            "source",
+            "practical_info",
+            "target_audience",
+            "booking",
+            "date_update",
+            "date_insert",
+        ],
+    COLUMNS_LISTS["feedback_view"] = [
+            "email",
+            "comment",
+            "activity",
+            "category",
+            "problem_magnitude",
+            "status",
+            "related_trek",
+            "date_update",
+            "date_insert",
+        ],
+    COLUMNS_LISTS["sensitivity_view"] = [
+            "structure",
+            "species",
+            "published",
+            "publication_date",
+            "contact",
+            "pretty_period",
+            "category",
+            "pretty_practices",
+            "description",
+            "date_update",
+            "date_insert",
+        ],
+    COLUMNS_LISTS["outdoor_site_view"] = [
+            "structure",
+            "name",
+            "practice",
+            "description",
+            "description_teaser",
+            "ambiance",
+            "advice",
+            "period",
+            "labels",
+            "themes",
+            "portal",
+            "source",
+            "information_desks",
+            "web_links",
+            "eid",
+            "orientation",
+            "wind",
+            "ratings",
+            "managers",
+            "type",
+            "description",
+            "description_teaser",
+            "ambiance",
+            "period",
+            "orientation",
+            "wind",
+            "labels",
+            "themes",
+            "portal",
+            "source",
+            "managers",
+            "min_elevation",
+            "date_insert",
+            "date_update",
+        ],
+    COLUMNS_LISTS["outdoor_course_view"] = [
+            "structure",
+            "name",
+            "site",
+            "description",
+            "advice",
+            "equipment",
+            "eid",
+            "height",
+            "length",
+            "ratings",
+            "gear",
+            "duration"
+            "ratings_description",
+            "type"
+        ],
+    COLUMNS_LISTS["path_export"] = [
+            "structure",
+            "valid",
+            "visible",
+            "name",
+            "comments",
+            "departure",
+            "arrival",
+            "comfort",
+            "source",
+            "stake",
+            "usages",
+            "networks",
+            "date_insert",
+            "date_update",
+            "length_2d",
+            "length",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+            "slope",
+        ],
+    COLUMNS_LISTS["trail_export"] = [
+            "structure",
+            "name",
+            "comments",
+            "departure",
+            "arrival",
+            "date_insert",
+            "date_update",
+            "cities",
+            "districts",
+            "areas",
+            "length",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+            "slope",
+        ],
+    COLUMNS_LISTS["landedge_export"] = [
+            "land_type",
+            "owner",
+            "agreement",
+            "date_insert",
+            "date_update",
+            "cities",
+            "districts",
+            "areas",
+            "length",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+            "slope",
+        ],
+    COLUMNS_LISTS["infrastructure_export"] = [
+            "name",
+            "type",
+            "condition",
+            "description",
+            "implantation_year",
+            "published",
+            "publication_date",
+            "structure",
+            "date_insert",
+            "date_update",
+            "cities",
+            "districts",
+            "areas",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+            "slope",
+            "usage_difficulty",
+            "maintenance_difficulty"
+        ],
+    COLUMNS_LISTS["signage_export"] = [
+            "structure",
+            "name",
+            "code",
+            "type",
+            "condition",
+            "description",
+            "implantation_year",
+            "published",
+            "date_insert",
+            "date_update",
+            "cities",
+            "districts",
+            "areas",
+            "lat_value",
+            "lng_value",
+            "printed_elevation",
+            "sealing",
+            "manager",
+            "length",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+        ],
+    COLUMNS_LISTS["intervention_export"] = [
+            "name",
+            "date",
+            "type",
+            "target",
+            "status",
+            "stake",
+            "disorders",
+            "total_manday",
+            "project",
+            "subcontracting",
+            "width",
+            "height",
+            "length",
+            "area",
+            "structure",
+            "description",
+            "date_insert",
+            "date_update",
+            "material_cost",
+            "heliport_cost",
+            "subcontract_cost",
+            "total_cost_mandays",
+            "total_cost",
+            "cities",
+            "districts",
+            "areas",
+            "length",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+            "slope",
+        ],
+    COLUMNS_LISTS["project_export"] = [
+            "structure",
+            "name",
+            "period",
+            "type",
+            "domain",
+            "constraint",
+            "global_cost",
+            "interventions",
+            "interventions_total_cost",
+            "comments",
+            "contractors",
+            "project_owner",
+            "project_manager",
+            "founders",
+            "date_insert",
+            "date_update",
+            "cities",
+            "districts",
+            "areas",
+        ],
+    COLUMNS_LISTS["trek_export"] = [
+            "eid",
+            "eid2",
+            "structure",
+            "name",
+            "departure",
+            "arrival",
+            "duration",
+            "duration_pretty",
+            "description",
+            "description_teaser",
+            "networks",
+            "advice",
+            "ambiance",
+            "difficulty",
+            "information_desks",
+            "themes",
+            "practice",
+            "accessibilities",
+            "access",
+            "route",
+            "public_transport",
+            "advised_parking",
+            "web_links",
+            "labels",
+            "disabled_infrastructure",
+            "parking_location",
+            "points_reference",
+            "related",
+            "children",
+            "parents",
+            "pois",
+            "review",
+            "published",
+            "publication_date",
+            "date_insert",
+            "date_update",
+            "cities",
+            "districts",
+            "areas",
+            "source",
+            "portal",
+            "length_2d",
+            "length",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+            "slope",
+        ],
+    COLUMNS_LISTS["poi_export"] = [
+            "structure",
+            "eid",
+            "name",
+            "type",
+            "description",
+            "treks",
+            "review",
+            "published",
+            "publication_date",
+            "structure",
+            "date_insert",
+            "date_update",
+            "cities",
+            "districts",
+            "areas",
+            "length",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+            "slope",
+        ],
+    COLUMNS_LISTS["service_export"] = [
+            "eid",
+            "type",
+            "length",
+            "ascent",
+            "descent",
+            "min_elevation",
+            "max_elevation",
+            "slope",
+        ],
+    COLUMNS_LISTS["dive_export"] = [
+            "eid",
+            "structure",
+            "name",
+            "departure",
+            "description",
+            "description_teaser",
+            "advice",
+            "difficulty",
+            "levels",
+            "themes",
+            "practice",
+            "disabled_sport",
+            "published",
+            "publication_date",
+            "date_insert",
+            "date_update",
+            "areas",
+            "source",
+            "portal",
+            "review",
+        ],
+    COLUMNS_LISTS["touristic_content_export"] = [
+            "structure",
+            "eid",
+            "name",
+            "category",
+            "type1",
+            "type2",
+            "description_teaser",
+            "description",
+            "themes",
+            "contact",
+            "email",
+            "website",
+            "practical_info",
+            "review",
+            "published",
+            "publication_date",
+            "source",
+            "portal",
+            "date_insert",
+            "date_update",
+            "cities",
+            "districts",
+            "areas",
+            "approved",
+        ],
+    COLUMNS_LISTS["touristic_event_export"] = [
+            "structure",
+            "eid",
+            "name",
+            "type",
+            "description_teaser",
+            "description",
+            "themes",
+            "begin_date",
+            "end_date",
+            "duration",
+            "meeting_point",
+            "meeting_time",
+            "contact",
+            "email",
+            "website",
+            "organizer",
+            "speaker",
+            "accessibility",
+            "participant_number",
+            "booking",
+            "target_audience",
+            "practical_info",
+            "date_insert",
+            "date_update",
+            "source",
+            "portal",
+            "review",
+            "published",
+            "publication_date",
+            "cities",
+            "districts",
+            "areas",
+            "approved",
+        ],
+    COLUMNS_LISTS["feedback_export"] = [
+            "email",
+            "activity",
+            "comment",
+            "category",
+            "problem_magnitude",
+            "status",
+            "related_trek",
+            "date_insert",
+            "date_update",
+        ],
+    COLUMNS_LISTS["sensitivity_export"] = [
+            "species",
+            "published",
+            "description",
+            "contact",
+            "pretty_period",
+            "pretty_practices",
+        ],
+    COLUMNS_LISTS["outdoor_site_export"] = [
+            "structure",
+            "name",
+            "practice",
+            "description",
+            "description_teaser",
+            "ambiance",
+            "advice",
+            "period",
+            "labels",
+            "themes",
+            "portal",
+            "source",
+            "information_desks",
+            "web_links",
+            "eid",
+            "orientation",
+            "wind",
+            "ratings",
+            "managers",
+            "type",
+            "description",
+            "description_teaser",
+            "ambiance",
+            "period",
+            "orientation",
+            "wind",
+            "labels",
+            "themes",
+            "portal",
+            "source",
+            "managers",
+            "min_elevation",
+            "date_insert",
+            "date_update",
+        ],
+    COLUMNS_LISTS["outdoor_course_export"] = [
+            "structure",
+            "name",
+            "site",
+            "description",
+            "advice",
+            "equipment",
+            "eid",
+            "height",
+            "length",
+            "ratings",
+            "gear",
+            "duration"
+            "ratings_description",
+            "type"
+        ]
+
+**Hideable form fields**
+
+An exhaustive list of form fields hideable in each module.
+
+::
+
+    HIDDEN_FORM_FIELDS["path"] = [
+            "departure",
+            "name",
+            "stake",
+            "comfort",
+            "arrival",
+            "comments",
+            "source",
+            "networks",
+            "usages",
+            "valid",
+            "draft",
+            "reverse_geom",
+        ],
+    HIDDEN_FORM_FIELDS["trek"] = [
+            "structure",
+            "name",
+            "review",
+            "published",
+            "labels",
+            "departure",
+            "arrival",
+            "duration",
+            "difficulty",
+            "route",
+            "ambiance",
+            "access",
+            "description_teaser",
+            "description",
+            "points_reference",
+            "disabled_infrastructure",
+            "advised_parking",
+            "parking_location",
+            "public_transport",
+            "advice",
+            "themes",
+            "networks",
+            "practice",
+            "accessibilities",
+            "web_links",
+            "information_desks",
+            "source",
+            "portal",
+            "children_trek",
+            "eid",
+            "eid2",
+            "reservation_system",
+            "reservation_id",
+            "pois_excluded",
+            "hidden_ordered_children",
+        ],
+    HIDDEN_FORM_FIELDS["trail"] = [
+            "departure",
+            "arrival",
+            "comments"
+        ],
+    HIDDEN_FORM_FIELDS["landedge"] = [
+            "owner",
+            "agreement"
+        ],
+    HIDDEN_FORM_FIELDS["infrastructure"] = [
+            "condition",
+            "description",
+            "published",
+            "implantation_year",
+            "usage_difficulty",
+            "maintenance_difficulty"
+        ],
+    HIDDEN_FORM_FIELDS["signage"] = [
+            "condition",
+            "description",
+            "published",
+            "implantation_year",
+            "code",
+            "printed_elevation",
+            "manager",
+            "sealing"
+        ],
+    HIDDEN_FORM_FIELDS["intervention"] = [
+            "disorders",
+            "description",
+            "type",
+            "subcontracting",
+            "length",
+            "width",
+            "height",
+            "stake",
+            "project",
+            "material_cost",
+            "heliport_cost",
+            "subcontract_cost",
+        ],
+    HIDDEN_FORM_FIELDS["project"] = [
+            "type",
+            "type",
+            "domain",
+            "end_year",
+            "constraint",
+            "global_cost",
+            "comments",
+            "project_owner",
+            "project_manager",
+            "contractors",
+        ],
+    HIDDEN_FORM_FIELDS["site"] = [
+            "parent",
+            "review",
+            "published",
+            "practice",
+            "description_teaser",
+            "description",
+            "ambiance",
+            "advice",
+            "period",
+            "orientation",
+            "wind",
+            "labels",
+            "themes",
+            "information_desks",
+            "web_links",
+            "portal",
+            "source",
+            "managers",
+            "eid"
+        ],
+    HIDDEN_FORM_FIELDS["course"] = [
+            "review",
+            "published",
+            "description",
+            "advice",
+            "equipment",
+            "height",
+            "children_course",
+            "eid",
+            "gear",
+            "duration"
+            "ratings_description",
+        ]
+    HIDDEN_FORM_FIELDS["poi"] = [
+            "review",
+            "published",
+            "description",
+            "eid",
+        ],
+    HIDDEN_FORM_FIELDS["service"] = [
+            "eid",
+        ],
+    HIDDEN_FORM_FIELDS["dive"] = [
+            "review",
+            "published",
+            "practice",
+            "advice",
+            "description_teaser",
+            "description",
+            "difficulty",
+            "levels",
+            "themes",
+            "owner",
+            "depth",
+            "facilities",
+            "departure",
+            "disabled_sport",
+            "source",
+            "portal",
+            "eid",
+        ],
+    HIDDEN_FORM_FIELDS["touristic_content"] = [
+            'type1',
+            'type2',
+            'review',
+            'published',
+            'description_teaser',
+            'description',
+            'themes',
+            'contact',
+            'email',
+            'website',
+            'practical_info',
+            'approved',
+            'source',
+            'portal',
+            'eid',
+            'reservation_system',
+            'reservation_id'
+        ],
+    HIDDEN_FORM_FIELDS["touristic_event"] = [
+            'review',
+            'published',
+            'description_teaser',
+            'description',
+            'themes',
+            'begin_date',
+            'end_date',
+            'duration',
+            'meeting_point',
+            'meeting_time',
+            'contact',
+            'email',
+            'website',
+            'organizer',
+            'speaker',
+            'type',
+            'accessibility',
+            'participant_number',
+            'booking',
+            'target_audience',
+            'practical_info',
+            'approved',
+            'source',
+            'portal',
+            'eid',
+        ],
+    HIDDEN_FORM_FIELDS["report"] = [
+            'review',
+            'published',
+            'description_teaser',
+            'description',
+            'themes',
+            'begin_date',
+            'end_date',
+            'duration',
+            'meeting_point',
+            'meeting_time',
+            'contact',
+            'email',
+            'website',
+            'organizer',
+            'speaker',
+            'type',
+            'accessibility',
+            'participant_number',
+            'booking',
+            'target_audience',
+            'practical_info',
+            'approved',
+            'source',
+            'portal',
+            'eid',
+        ],
+    HIDDEN_FORM_FIELDS["sensitivity_species"] = [
+            "contact",
+            "published",
+            "description",
+        ],
+    HIDDEN_FORM_FIELDS["sensitivity_regulatory"] = [
+            "contact",
+            "published",
+            "description",
+            "pictogram",
+            "elevation",
+            "url",
+            "period01",
+            "period02",
+            "period03",
+            "period04",
+            "period05",
+            "period06",
+            "period07",
+            "period08",
+            "period09",
+            "period10",
+            "period11",
+            "period12",
+        ],
+    HIDDEN_FORM_FIELDS["blade"] = [
+            "condition",
+            "color",
+        ],
+    HIDDEN_FORM_FIELDS["report"] = [
+            "comment",
+            "activity",
+            "category",
+            "problem_magnitude",
+            "related_trek",
+            "status",
+            "locked",
+            "uid",
+            "origin"
+        ]
 
 
 **Other settings**

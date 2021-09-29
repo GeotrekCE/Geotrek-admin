@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 
 from django.utils.safestring import mark_safe
+from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import slugify
 
@@ -44,10 +45,14 @@ class TimeStampedModelMixin(models.Model):
         return self
 
     @property
-    def lastmod_display(self):
-        return self.date_update.strftime("%Y-%m-%y %H:%M")
+    def date_insert_display(self):
+        return date_format(self.date_insert, "SHORT_DATETIME_FORMAT")
 
-    lastmod_verbose_name = _("Modification")
+    @property
+    def date_update_display(self):
+        return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
+
+    date_update_verbose_name = _("Update date")
 
 
 class NoDeleteQuerySet(models.QuerySet):
@@ -250,6 +255,10 @@ class PicturesMixin:
                 'url': att.attachment_file.url,
             })
         return serialized
+
+    @property
+    def sorted_attachments(self):
+        return self.attachments.order_by('-starred', 'date_insert')
 
 
 class BasePublishableMixin(models.Model):
@@ -470,3 +479,101 @@ apply_merge.short_description = _('Merge')
 
 class MergeActionMixin:
     actions = [apply_merge]
+
+
+class CustomColumnsMixin:
+    """
+    Customize columns in List views
+    """
+
+    MAP_SETTINGS = {
+        'PathList': 'path_view',
+        'PathJsonList': 'path_view',
+        'PathFormatList': 'path_export',
+        'TrailList': 'trail_view',
+        'TrailJsonList': 'trail_view',
+        'TrailFormatList': 'trail_export',
+        'LandEdgeList': 'landedge_view',
+        'LandEdgeJsonList': 'landedge_view',
+        'LandEdgeFormatList': 'landedge_export',
+        'InfrastructureList': 'infrastructure_view',
+        'InfrastructureJsonList': 'infrastructure_view',
+        'InfrastructureFormatList': 'infrastructure_export',
+        'SignageList': 'signage_view',
+        'SignageJsonList': 'signage_view',
+        'SignageFormatList': 'signage_export',
+        'InterventionList': 'intervention_view',
+        'InterventionJsonList': 'intervention_view',
+        'InterventionFormatList': 'intervention_export',
+        'ProjectList': 'project_view',
+        'ProjectJsonList': 'project_view',
+        'ProjectFormatList': 'project_export',
+        'TrekList': 'trek_view',
+        'TrekJsonList': 'trek_view',
+        'TrekFormatList': 'trek_export',
+        'POIList': 'poi_view',
+        'POIJsonList': 'poi_view',
+        'POIFormatList': 'poi_export',
+        'ServiceList': 'service_view',
+        'ServiceJsonList': 'service_view',
+        'ServiceFormatList': 'service_export',
+        'DiveList': 'dive_view',
+        'DiveJsonList': 'dive_view',
+        'DiveFormatList': 'dive_export',
+        'TouristicContentList': 'touristic_content_view',
+        'TouristicContentJsonList': 'touristic_content_view',
+        'TouristicContentFormatList': 'touristic_content_export',
+        'TouristicEventList': 'touristic_event_view',
+        'TouristicEventJsonList': 'touristic_event_view',
+        'TouristicEventFormatList': 'touristic_event_export',
+        'ReportList': 'feedback_view',
+        'ReportJsonList': 'feedback_view',
+        'ReportFormatList': 'feedback_export',
+        'SensitiveAreaList': 'sensitivity_view',
+        'SensitiveAreaJsonList': 'sensitivity_view',
+        'SensitiveAreaFormatList': 'sensitivity_export',
+        'SiteList': 'outdoor_site_view',
+        'SiteJsonList': 'outdoor_site_view',
+        'SiteFormatList': 'outdoor_site_export',
+        'CourseList': 'outdoor_course_view',
+        'CourseJsonList': 'outdoor_course_view',
+        'CourseFormatList': 'outdoor_course_export',
+    }
+
+    def get_mandatory_columns(self):
+        mandatory_cols = getattr(self, 'mandatory_columns', None)
+        if (mandatory_cols is None):
+            logger.error(
+                f"Cannot build columns for class {self.__class__.__name__}.\n"
+                + "Please define on this class either : \n"
+                + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
+                + "OR \n"
+                + "  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+            )
+        return mandatory_cols
+
+    def get_default_extra_columns(self):
+        default_extra_columns = getattr(self, 'default_extra_columns', None)
+        if (default_extra_columns is None):
+            logger.error(
+                f"Cannot build columns for class {self.__class__.__name__}.\n"
+                + "Please define on this class either : \n"
+                + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
+                + "OR \n"
+                + "  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+            )
+        return default_extra_columns
+
+    @property
+    def columns(self):
+        mandatory_cols = self.get_mandatory_columns()
+        default_extra_cols = self.get_default_extra_columns()
+        settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, '')
+        if (mandatory_cols is None or default_extra_cols is None):
+            return []
+        else:
+            # Get extra columns names from instance settings, or use default extra columns
+            extra_columns = settings.COLUMNS_LISTS.get(settings_key, default_extra_cols)
+            # Some columns are mandatory to prevent crashes
+            columns = mandatory_cols + extra_columns
+            return columns

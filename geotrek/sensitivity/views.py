@@ -1,3 +1,4 @@
+
 import json
 import logging
 from datetime import datetime
@@ -17,6 +18,7 @@ from geotrek.common.views import PublicOrReadPermMixin
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
 
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
@@ -37,15 +39,17 @@ class SensitiveAreaLayer(MapEntityLayer):
     properties = ['species', 'radius', 'published']
 
 
-class SensitiveAreaList(MapEntityList):
+class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
     queryset = SensitiveArea.objects.existing()
     filterform = SensitiveAreaFilterSet
-    columns = ['id', 'species', 'category']
+    mandatory_columns = ['id', 'species']
+    default_extra_columns = ['category']
 
 
 class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
-    columns = [
-        'id', 'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
     ]
 
 

@@ -41,7 +41,7 @@ class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Translat
         fields = ('id', 'structure', 'name', 'practice', 'description', 'description_teaser',
                   'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
                   'information_desks', 'web_links', 'type', 'parent', 'children', 'eid',
-                  'orientation', 'wind', 'ratings_min', 'ratings_max') + \
+                  'orientation', 'wind', 'ratings') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields
 
@@ -60,8 +60,8 @@ class CourseSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Transl
 
     class Meta:
         model = Course
-        fields = ('id', 'structure', 'name', 'site', 'description', 'advice',
-                  'equipment', 'height', 'eid', 'ratings') + \
+        fields = ('id', 'structure', 'name', 'site', 'description', 'duration', 'advice',
+                  'equipment', 'height', 'eid', 'ratings', 'ratings_description', 'gear', 'type') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields
 

@@ -21,10 +21,11 @@ from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
                                    PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
 from geotrek.common.models import Theme, ReservationSystem
+from geotrek.common.templatetags import geotrek_tags
+
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
 
-from .templatetags import trekking_tags
 
 from colorfield.fields import ColorField
 
@@ -199,7 +200,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     @property
     def length_kilometer(self):
-        return "%.1f" % (self.length_2d / 1000.0)
+        return "%.1f" % (self.length_2d / 1000.0) if self.length_2d else None
 
     @property
     def networks_display(self):
@@ -256,7 +257,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     @property
     def duration_pretty(self):
-        return trekking_tags.duration(self.duration)
+        return geotrek_tags.duration(self.duration)
 
     @classproperty
     def duration_pretty_verbose_name(cls):
@@ -709,6 +710,13 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
                                                         Transform(F('geom'), settings.SRID)))
                 qs = qs.order_by('locate')
 
+        return qs
+
+    @classmethod
+    def outdoor_all_pois(cls, obj):
+        object_geom = obj.geom.transform(settings.SRID, clone=True).buffer(settings.OUTDOOR_INTERSECTION_MARGIN)
+        qs = cls.objects.existing().filter(geom__intersects=object_geom)
+        qs = qs.order_by('pk')
         return qs
 
     @classmethod

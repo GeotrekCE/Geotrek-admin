@@ -2,8 +2,166 @@
 CHANGELOG
 =========
 
-2.58.0+dev
+2.66.0+dev (XXXX-XX-XX)
+----------------------
+
+**New features**
+
+
+2.66.0 (2021-09-27)
+----------------------
+
+**New features**
+
+- APIv2 : Add filter by ratings on outdoor courses and sites
+- APIv2 : Add filter by pratices in hierarchy on outdoor courses and sites
+- APIv2 : Add filter by ratings in hierarchy on outdoor courses and sites
+- Display children sites' ratings in site page
+- APIv2 : Add 'sector' and 'attachment' fields to Outdoor Site serialization
+- Add DISPLAY_COORDS_AS_DECIMALS setting to format coordinates as decimal degrees instead of degrees minutes seconds
+- Enable translations on 'equipment' field on Outdoor Course
+
+
+**Bug fixes**
+
+- Fix dynamic forms on outdoor cotations display all cotations when selector empty
+- Hide excluded POIs on Outdoor Site and Course detail pages
+
+
+**User Interface**
+
+- Sort sites by alphabetical order in outdoor course forms
+
+
+2.65.0 (2021-09-21)
+----------------------
+
+**New features**
+
+- APIv2 : Add filter on Outdoor Site route to only retrieve root sites from hierarchy
+- Add fields 'duration', 'type', 'gear', 'ratings_description' to Outdoor Course
+- Add fields on APIv2 for Course model : 'min_elevation', 'max_elevation', 'children', 'parents', 'attachments'
+- Add excluded_pois on Course and Site models.
+- Add filter on APIVv2 POI endpoint to retrieve pois related to Course or Site
+- Replace Outdoor Site 'ratings_min' and 'ratings_max' fields with 'ratings'
+- Make Outdoor Site and Course 'ratings' form fields dynamically change on practice selection
+- APIv2 : Add children courses to sites' serialization
+- Add Course Type management to admin site
+
+
+2.64.0 (2021-09-14)
+----------------------
+
+**New features**
+
+- Add endpoints for infrastructure and related types in APIv2
+- Add endpoints for signage and related types in APIv2
+- Filter TouristicContentTypes according to published content in APIv2 
+
+**Bug fixes**
+
+* Fix missing translations for infrastructure difficulty levels in admin
+* Fix impossible import of uninstalled module 'sensitivity' in 'dive'
+
+
+2.63.0 (2021-09-03)
+----------------------
+
+**New features**
+
+- Add difficulty level fields (usage and maintenance) to infrastructure
+- Add 'active' field to job model, and hide inactive jobs in forms
+- Add detailed jobs costs to interventions exports, with a new column for each job
+- Add SURICATE_MANAGEMENT_ENABLED setting
+- Add SURICATE_MANAGEMENT_SETTINGS setting to configure second Suricate API
+- Add helper to make requests to Suricate
+- Add parser to retrieve statuses, activities, and reports (in bounding box) from Suricate
+- Add sync_suricate command to retrieve Suricate data
+- Change Report model to use one of 3 modes : No Suricate, Suricate Report or Suricate Management (SURICATE_REPORT_ENABLED and SURICATE_MANAGEMENT_ENABLED settings)
+- Generalize existing filters in APIv2
+- Add 'near_outdoorsite' and 'near_outdoorcourse' filters in APIv2
+- Add 'created_before', 'updated_before', 'created_after' and 'updated_after' filters in APIv2
+- Add route to APIv2 to retrieve Geotrek version
+- Add API_V2_DESCRIPTION setting to change description text in API v2 Swagger page
+- Add endpoints for services in APIv2 : service, service type
+- Add link between reports and interventions
+
+
+**Bug fixes**
+
+* Fix length_kilometer attribute computation in treks
+* Fix date update format in lists
+* Add CORS header to access medias
+* Change geographic intersection calculation from annoted queries to optimized build-in method
+
+
+2.62.0 (2021-07-06)
+----------------------
+
+**New features**
+
+- Add custom columns configuration to list views
+- Add custom columns configuration to list CSV exports
+- Add custom form fields configuration to creation views
+
+**Bug fixes**
+
+* Fix filter difficulty in API v2
+
+
+2.61.1 (2021-06-28)
 -------------------
+
+**Bug fixes**
+
+* Fix filter in_bbox in API v2
+
+
+2.61.0 (2021-06-25)
+-------------------
+
+**New features**
+
+- Add Web Links to Trek endpoints in APIv2
+- Add endpoints for Web Links categories in APIv2
+- Ensure APIv2 returns outdoor sites list and outdoor courses list as ordered by localized name
+
+
+2.60.0 (2021-06-25)
+-------------------
+
+**New features**
+
+- Add endpoints for user feedback in APIv2 : report category, report activity, report problem magnitude, and report status
+- Ensure APIv2 returns treks list and touristic contents list as ordered by localized name
+
+**Bug fixes**
+
+- Fix confirm delete attachment modal not visible
+- Fix required '*geom' position
+- Fix scroll unwanted when list is full
+- Fix responsive on dataTables
+- Remove excluded POIs from results in POI endpoint on api v2 when filtering by trek id
+- Sort attachments listed in api v2 endpoints for Trek, TouristicContent, POI
+- Ensure content is displayed only when a related object is published on api v2
+- Exclude deleted content of portal filters in api v2
+
+**Maintenance**
+
+- Update to paperclip 2.3.2
+
+
+2.59.0 (2021-06-07)
+-------------------
+
+**Breaking Change**
+
+- Template nginx.conf.in was changed to work with multiple rando portals (#2670).
+
+First, if you changed file `/opt/geotrek-admin/var/conf/nginx.conf.in`, back it up somewhere.
+1 - While installing, choose 'Y' to get the new version.
+2 - Copy your changes from the backed up file to the new version.
+3 - Execute : `dpkg-reconfigure geotrek-admin` to reapply your customization.
 
 **User Interface**
 
@@ -18,10 +176,11 @@ CHANGELOG
 - Upgrade Chosen to 1.2.0
 - Move to vendor folder updated JS Libraries used by Mapentity
 - Update HTML markup in many templates, and update tests too
+- Expired sessions stored in database are now deleted at each update
 
 **Bug fixes**
 
--
+- Fix gpx/kml are not generated on all languages (The first object was working).
 
 
 2.58.0 (2021-05-20)
