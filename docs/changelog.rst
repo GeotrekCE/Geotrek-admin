@@ -7,6 +7,9 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add filter by pratices on outdoor courses
+
+
 
 2.66.0 (2021-09-27)
 ----------------------
