@@ -3350,3 +3350,61 @@ class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
         self.assertIn(self.site4.pk, all_ids)
+
+
+class OutdoorSiteHierarchySerializingTestCase(BaseApiTest):
+    """ Test APIV2 serialzing of parents and children in site detail
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site_root = outdoor_factory.SiteFactory(published=True)
+        cls.site_node = outdoor_factory.SiteFactory(published=True, parent=cls.site_root)
+        cls.site_leaf_published = outdoor_factory.SiteFactory(published=True, parent=cls.site_node)
+        cls.site_leaf_published_2 = outdoor_factory.SiteFactory(published=True, parent=cls.site_node)
+        cls.site_leaf_unpublished = outdoor_factory.SiteFactory(published=False, parent=cls.site_node)
+
+        cls.site_root_unpublished = outdoor_factory.SiteFactory(published=False)
+        cls.site_node_parent_unpublished = outdoor_factory.SiteFactory(published=True, parent=cls.site_root_unpublished)
+
+        cls.site_root_fr = outdoor_factory.SiteFactory(published_fr=True)
+        cls.site_node_fr = outdoor_factory.SiteFactory(published_fr=True, parent=cls.site_root_fr)
+        cls.site_leaf_published_fr = outdoor_factory.SiteFactory(published_fr=True, parent=cls.site_node_fr)
+        cls.site_leaf_published_not_fr = outdoor_factory.SiteFactory(published=True, published_fr=False, published_en=True, parent=cls.site_node_fr)
+        cls.site_leaf_unpublished_fr = outdoor_factory.SiteFactory(published_fr=False, parent=cls.site_node_fr)
+
+    def test_site_parent_published_serializing(self):
+        response = self.get_site_detail(self.site_node.pk)
+        self.assertEqual(response.status_code, 200)
+        parent = response.json()['parent']
+        self.assertEqual(parent, self.site_root.pk)
+
+    def test_site_children_published_serializing(self):
+        response = self.get_site_detail(self.site_node.pk)
+        self.assertEqual(response.status_code, 200)
+        children = response.json()['children']
+        self.assertEqual(2, len(children))
+        self.assertIn(self.site_leaf_published.pk, children)
+        self.assertIn(self.site_leaf_published_2.pk, children)
+        self.assertNotIn(self.site_leaf_unpublished.pk, children)
+
+    def test_site_parent_unpublished_serializing(self):
+        response = self.get_site_detail(self.site_node_parent_unpublished.pk)
+        self.assertEqual(response.status_code, 200)
+        parent = response.json()['parent']
+        self.assertEqual(parent, None)
+        self.assertIsNotNone(self.site_node_parent_unpublished.parent)
+
+    def test_site_parent_and_children_serializing_by_lang(self):
+        response = self.get_site_list({'language': 'fr'})
+        self.assertEqual(response.status_code, 200)
+        returned_sites = response.json()['results']
+        site_published_fr = next((site for site in returned_sites if site['id'] == self.site_node_fr.pk), None)
+        self.assertIsNotNone(site_published_fr)
+        children = site_published_fr['children']
+        self.assertEqual(1, len(children))
+        self.assertIn(self.site_leaf_published_fr.pk, children)
+        self.assertNotIn(self.site_leaf_published_not_fr.pk, children)
+        self.assertNotIn(self.site_leaf_unpublished_fr.pk, children)
+        parent = site_published_fr['parent']
+        self.assertEqual(parent, self.site_root_fr.pk)

@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add 'children' and 'parent' fields to Outdoor Site serialization
+
 
 2.66.0 (2021-09-27)
 ----------------------
