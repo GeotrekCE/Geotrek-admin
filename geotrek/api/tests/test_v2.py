@@ -3408,3 +3408,33 @@ class OutdoorSiteHierarchySerializingTestCase(BaseApiTest):
         self.assertNotIn(self.site_leaf_unpublished_fr.pk, children)
         parent = site_published_fr['parent']
         self.assertEqual(parent, self.site_root_fr.pk)
+
+
+class OutdoorFilterByPracticesTestCase(BaseApiTest):
+    """ Test APIV2 filtering by practices on courses
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice = outdoor_factory.PracticeFactory()
+        cls.site_practice = outdoor_factory.SiteFactory(practice=cls.practice)
+        cls.course_practice = outdoor_factory.CourseFactory(site=cls.site_practice)
+
+        cls.other_practice = outdoor_factory.PracticeFactory()
+        cls.site_other_practice = outdoor_factory.SiteFactory(practice=cls.other_practice)
+        cls.course_other_practice = outdoor_factory.CourseFactory(site=cls.site_other_practice)
+
+        cls.site_no_practice = outdoor_factory.SiteFactory(practice=None)
+        cls.course_site_no_practice = outdoor_factory.CourseFactory(site=cls.site_no_practice)
+
+    def test_filter_practices_on_courses(self):
+        response = self.get_course_list({'practices': self.practice.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.course_practice.pk, all_ids)
+        self.assertNotIn(self.course_site_no_practice.pk, all_ids)
+        self.assertNotIn(self.course_other_practice.pk, all_ids)

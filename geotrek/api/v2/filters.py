@@ -795,6 +795,11 @@ class GeotrekSiteFilter(BaseFilterBackend):
 
 class GeotrekCourseFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        practices = request.GET.get('practices')
+        if practices:
+            queryset = queryset.filter(site__isnull=False)
+            queryset = queryset.filter(site__practice__isnull=False)
+            queryset = queryset.filter(site__practice__in=practices.split(','))
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)
@@ -802,6 +807,12 @@ class GeotrekCourseFilter(BaseFilterBackend):
 
     def get_schema_fields(self, view):
         return (
+            Field(
+                name='practices', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Practices"),
+                    description=_('Filter by one or more practice id, comma-separated.')
+                )
+            ),
             Field(
                 name='q', required=False, location='query', schema=coreschema.String(
                     title=_("Query string"),
