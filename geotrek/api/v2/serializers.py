@@ -924,6 +924,20 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         attachments = AttachmentSerializer(many=True)
         sector = serializers.SerializerMethodField(read_only=True)
+        courses = serializers.SerializerMethodField(read_only=True)
+
+        def get_courses(self, obj):
+            courses = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            for course in obj.children_courses.all():
+                if language:
+                    if getattr(course, f"published_{language}"):
+                        courses.append(course.pk)
+                else:
+                    if course.published:
+                        courses.append(course.pk)
+            return courses
 
         def get_sector(self, obj):
             if obj.practice and obj.practice.sector:
