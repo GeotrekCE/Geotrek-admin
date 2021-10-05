@@ -925,6 +925,8 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True)
         sector = serializers.SerializerMethodField(read_only=True)
         courses = serializers.SerializerMethodField(read_only=True)
+        children = serializers.SerializerMethodField(read_only=True)
+        parent = serializers.SerializerMethodField(read_only=True)
 
         def get_courses(self, obj):
             courses = []
@@ -939,6 +941,33 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                         courses.append(course.pk)
             return courses
 
+        def get_parent(self, obj):
+            parent = None
+            request = self.context['request']
+            language = request.GET.get('language')
+            if obj.parent:
+                if language:
+                    if getattr(obj.parent, f"published_{language}"):
+                        parent = obj.parent.pk
+                else:
+                    if obj.parent.published:
+                        parent = obj.parent.pk
+            return parent
+
+        def get_children(self, obj):
+            children = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            if language:
+                for site in obj.get_children():
+                    if getattr(site, f"published_{language}"):
+                        children.append(site.pk)
+            else:
+                for site in obj.get_children():
+                    if site.published:
+                        children.append(site.pk)
+            return children
+
         def get_sector(self, obj):
             if obj.practice and obj.practice.sector:
                 return obj.practice.sector_id
@@ -947,9 +976,9 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'advice', 'ambiance', 'attachments', 'description', 'description_teaser',
+                'id', 'advice', 'ambiance', 'attachments', 'children', 'description', 'description_teaser',
                 'eid', 'geometry', 'information_desks', 'labels', 'managers',
-                'name', 'orientation', 'period', 'portal', 'practice',
+                'name', 'orientation', 'period', 'parent', 'portal', 'practice',
                 'ratings', 'sector', 'source', 'structure', 'themes',
                 'type', 'url', 'courses', 'web_links', 'wind',
             )
