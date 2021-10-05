@@ -10,9 +10,14 @@ CHANGELOG
 - APIv2 : Add 'children' and 'parent' fields to Outdoor Site serialization
 - APIv2 : Add filter by pratices on outdoor courses
 
+**User Interface**
+
+- Distinguish Sites from Courses in Outdoor tree display thanks to bullets 
+
 **Bug fixes**
 
 - Fix nearby Courses and nearby Sites display in Outdoor detail pages
+
 
 2.66.0 (2021-09-27)
 ----------------------
