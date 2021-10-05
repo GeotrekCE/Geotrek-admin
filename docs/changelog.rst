@@ -14,6 +14,10 @@ CHANGELOG
 
 - Distinguish Sites from Courses in Outdoor tree display thanks to bullets 
 
+**Bug fixes**
+
+- Fix nearby Courses and nearby Sites display in Outdoor detail pages
+
 
 2.66.0 (2021-09-27)
 ----------------------
