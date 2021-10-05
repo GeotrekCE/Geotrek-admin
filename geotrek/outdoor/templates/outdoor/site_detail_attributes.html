@@ -17,7 +17,7 @@
                                     <a href="{% url 'outdoor:site_detail' child.pk %}">{{ child }}</a>
                                 </li>
                             {% endfor %}
-                            {% for course in object.courses.all %}
+                            {% for course in object.children_courses.all %}
                                 <li>
                                     <a href="{% url 'outdoor:course_detail' course.pk %}">{{ course }}</a>
                                 </li>

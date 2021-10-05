@@ -310,6 +310,7 @@ Blade.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Intervention.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 
 Site.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Site.add_property('courses', lambda self: intersecting(Course, self), _("Parcours"))
 Site.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Site.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Site.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
@@ -344,7 +345,7 @@ class OrderedCourseChild(models.Model):
 
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
-    site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
+    site = models.ForeignKey(Site, related_name="children_courses", on_delete=models.PROTECT, verbose_name=_("Site"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
@@ -430,7 +431,8 @@ TouristicEvent.add_property('courses', lambda self: intersecting(Course, self), 
 Blade.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
-Course.add_property('sites', lambda self: intersecting(Course, self), _("Sites"))
+Course.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Course.add_property('courses', lambda self: intersecting(Course, self), _("Parcours"))
 Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Course.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
