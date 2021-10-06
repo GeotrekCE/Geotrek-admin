@@ -5,17 +5,17 @@
     <h3>{% trans "Tree view" %}</h3>
     {% for ancestor in object.site.get_ancestors %}
         <ul>
-            <li>
+            <li style="list-style-type: circle">
                 <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
     {% endfor %}
                 <ul>
                     <li>
                         <a href="{% url 'outdoor:site_detail' object.site.pk %}">{{ object.site }}</a>
                         <ul>
-                            <li>
+                            <li style="list-style-type: disc">
                                 <b>{{ object }}</b>
                             </li>
-                            <li>
+                            <li style="list-style-type: disc">
                                 <a href="{% url 'outdoor:course_add' %}?site={{ object.site.pk }}">
                                     + <i>{% trans "Add a course" %}</i>
                                 </a>
