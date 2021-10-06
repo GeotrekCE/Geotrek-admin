@@ -9,10 +9,12 @@ CHANGELOG
 
 - APIv2 : Add 'children' and 'parent' fields to Outdoor Site serialization
 - APIv2 : Add filter by pratices on outdoor courses
+- Filter interventions by Outdoor model targets in Intervention module's list view
 
 **Bug fixes**
 
 - Fix nearby Courses and nearby Sites display in Outdoor detail pages
+- Fix Outdoor migrations fail on empty database
 
 2.66.0 (2021-09-27)
 ----------------------
