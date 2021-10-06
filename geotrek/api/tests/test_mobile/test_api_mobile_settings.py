@@ -124,6 +124,9 @@ class SettingsMobileTest(TestCase):
 
     def test_settings_route(self):
         trekking_factories.RouteFactory()
+        route_unpublished = trekking_factories.RouteFactory()
+        self.trek_unpublished = trekking_factories.TrekFactory.create(route=route_unpublished, published=False)
+
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -153,6 +156,9 @@ class SettingsMobileTest(TestCase):
 
     def test_settings_practice(self):
         trekking_factories.PracticeFactory()
+        practice_unpublished = trekking_factories.PracticeFactory()
+        self.trek_unpublished = trekking_factories.TrekFactory.create(practice=practice_unpublished, published=False)
+
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -202,6 +208,9 @@ class SettingsMobileTest(TestCase):
 
     def test_settings_difficulty(self):
         trekking_factories.DifficultyLevelFactory()
+        difficulty_unpublished = trekking_factories.DifficultyLevelFactory()
+        self.trek_unpublished = trekking_factories.TrekFactory.create(difficulty=difficulty_unpublished, published=False)
+
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
