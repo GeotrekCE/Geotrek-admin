@@ -102,9 +102,9 @@ class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFil
 class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
-                  ('trail', _("Trail")), ('course', _("Course")), ('site', _("Site"))) \
-        if 'geotrek.outdoor' in settings.INSTALLED_APPS else \
-                 (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
+                  ('trail', _("Trail")))
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            ON_CHOICES += (('course', _("Course")), ('site', _("Site")), )
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
                   ('trail', _("Trail")))
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
