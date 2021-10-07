@@ -13,6 +13,7 @@ CHANGELOG
 **User Interface**
 
 - Distinguish Sites from Courses in Outdoor tree display thanks to bullets 
+- Display full Sites hierarchy in Outdoor detail views
 
 **Bug fixes**
 
