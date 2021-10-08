@@ -3,31 +3,9 @@
 
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
-    {% for ancestor in object.site.get_ancestors %}
-        <ul>
-            <li style="list-style-type: circle">
-                <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
-    {% endfor %}
-                <ul>
-                    <li>
-                        <a href="{% url 'outdoor:site_detail' object.site.pk %}">{{ object.site }}</a>
-                        <ul>
-                            <li style="list-style-type: disc">
-                                <b>{{ object }}</b>
-                            </li>
-                            <li style="list-style-type: disc">
-                                <a href="{% url 'outdoor:course_add' %}?site={{ object.site.pk }}">
-                                    + <i>{% trans "Add a course" %}</i>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-    {% for ancestor in object.site.get_ancestors %}
-            </li>
-        </ul>
-    {% endfor %}
-
+            {% site_as_list course.site.get_root as root_as_list %}
+            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=root_as_list original_course=object %}    
+    </ul>
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>

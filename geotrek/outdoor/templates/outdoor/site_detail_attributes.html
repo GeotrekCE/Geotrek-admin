@@ -3,50 +3,8 @@
 
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
-    {% for ancestor in object.get_ancestors %}
-        <ul>
-            <li style="list-style-type: circle">
-                <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
-    {% endfor %}
-                <ul>
-                    <li style="list-style-type: circle">
-                        <b>{{ object }}</b>
-                        <ul>
-                            {% for child in object.children.all %}
-                                <li style="list-style-type: circle">
-                                    <a href="{% url 'outdoor:site_detail' child.pk %}">{{ child }}</a>
-                                </li>
-                            {% endfor %}
-                            {% for course in object.children_courses.all %}
-                                <li style="list-style-type: disc">
-                                    <a href="{% url 'outdoor:course_detail' course.pk %}">{{ course }}</a>
-                                </li>
-                            {% endfor %}
-                            <li style="list-style-type: circle">
-                                <a href="{% url 'outdoor:site_add' %}?site={{ object.pk }}">
-                                    + <i>{% trans "Add a child site" %}</i>
-                                </a>
-                            </li>
-                            <li style="list-style-type: disc">
-                                <a href="{% url 'outdoor:course_add' %}?site={{ object.pk }}">
-                                    + <i>{% trans "Add a course" %}</i>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    {% if object.parent %}
-                    <li>
-                        <a href="{% url 'outdoor:site_add' %}?site={{ object.parent.pk }}">
-                            + <i>{% trans "Add a brother site" %}</i>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-    {% for ancestor in object.get_ancestors %}
-            </li>
-        </ul>
-    {% endfor %}
-
+        {% site_as_list site.get_root as root_as_list %}
+        {% include "outdoor/recursive_sites_tree.html" with sites_at_level=root_as_list original_site=object %}
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>

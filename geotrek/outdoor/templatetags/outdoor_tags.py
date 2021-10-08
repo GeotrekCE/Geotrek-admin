@@ -57,6 +57,11 @@ def all_ratings_scales():
     return json.dumps(scales)
 
 
+@register.simple_tag
+def site_as_list(site):
+    return [site]
+
+
 @register.filter
 def orientation_display(orientation):
     return dict(Site.ORIENTATION_CHOICES)[orientation]

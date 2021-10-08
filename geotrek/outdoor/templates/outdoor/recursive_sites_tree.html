@@ -1,0 +1,45 @@
+{% load i18n %}
+{% for site in sites_at_level %}
+    <ul>
+        <li style="list-style-type: circle">
+            {% if site == original_site %}
+                <b>{{ site }}</b>
+            {% else %}
+                <a href="{% url 'outdoor:site_detail' site.pk %}">{{ site }}</a>
+            {% endif %}
+            <ul>
+                {% for course in site.children_courses.all %}
+                        <li style="list-style-type: disc">
+                            <a href="{% url 'outdoor:course_detail' course.pk %}">{{ course }}</a>
+                        </li>
+                {% endfor %}
+                {% if site == original_site %}
+                    <li style="list-style-type: disc">
+                        <a href="{% url 'outdoor:course_add' %}?site={{ site.pk }}">
+                            + <i>{% trans "Add a course" %}</i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            {% if site.children.all|length %}
+                {% include "outdoor/recursive_sites_tree.html" with sites_at_level=site.children.all original_site=original_site %}
+            {% endif %}
+            {% if site == original_site %}
+                <ul>
+                    <li style="list-style-type: circle">
+                        <a href="{% url 'outdoor:site_add' %}?site={{ site.pk }}">
+                            + <i>{% trans "Add a child site" %}</i>
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
+        </li>
+        {% if site == original_site and not site.is_root_node %}
+            <li style="list-style-type: circle">
+                <a href="{% url 'outdoor:site_add' %}?site={{ site.parent.pk }}">
+                    + <i>{% trans "Add a brother site" %}</i>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+{% endfor %}
