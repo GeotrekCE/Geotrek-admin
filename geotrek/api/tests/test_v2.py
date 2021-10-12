@@ -2640,8 +2640,8 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         cls.course = outdoor_factory.CourseFactory(
             published_fr=True,
             geom=GeometryCollection(Point(100, 100, srid=2154)),
+            parent_sites=[cls.site]
         )
-        cls.course.parent_sites.set([cls.site])
         # trek1 is nearby
         cls.path1 = core_factory.PathFactory.create(geom=LineString((0.0, 0.0), (1.0, 1.0), srid=2154))
         cls.trek1 = trek_factory.TrekFactory.create(
@@ -2690,14 +2690,15 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         cls.course1 = outdoor_factory.CourseFactory(
             published_fr=True,
             geom=GeometryCollection(Point(100.5, 100.5, srid=2154)),
+            parent_sites=[cls.site1]
         )
-        cls.course1.parent_sites.set([cls.site1])
         # course2 is far away
         cls.course2 = outdoor_factory.CourseFactory(
             published_fr=True,
             geom=GeometryCollection(Point(9999.5, 9999.5, srid=2154)),
+            parent_sites=[cls.site2]
+
         )
-        cls.course2.parent_sites.set([cls.site2])
         # poi 1 is nearby
         cls.poi1 = trek_factory.POIFactory(
             paths=[(cls.path1, 0, 0)],
@@ -2781,22 +2782,14 @@ class NearOutdoorFilterTestCase(BaseApiTest):
 
     def test_outdoorsite_near_outdoorcourse(self):
         response = self.get_site_list({'near_outdoorcourse': self.course.pk})
-        #self.assertEqual(response.json()["count"], 2)
-        #self.assertEqual(response.json()["results"][0]["id"], self.site.pk)
-        #self.assertEqual(response.json()["results"][1]["id"], self.site1.pk)
-        print(response.json()["results"][0]["id"])
-        print(response.json()["results"][1]["id"])
-        print(response.json()["results"][3]["id"])
-        print(response.json()["results"][4]["id"])
         self.assertEqual(response.json()["count"], 2)
+        self.assertEqual(response.json()["results"][0]["id"], self.site.pk)
+        self.assertEqual(response.json()["results"][1]["id"], self.site1.pk)
 
     def test_outdoorsite_near_outdoorsite(self):
         response = self.get_site_list({'near_outdoorsite': self.site.pk})
-        #self.assertEqual(response.json()["count"], 1)
-        self.assertEqual(response.json()["results"][0]["id"], self.site1.pk)
-        print(response.json()["results"][1]["id"])
-        print(response.json()["results"][2]["id"])
         self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.site1.pk)
 
     def test_poi_near_outdoorcourse(self):
         response = self.get_poi_list({'near_outdoorcourse': self.course.pk})
