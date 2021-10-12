@@ -327,8 +327,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
     def test_sync_settings_with_picto_svg(self):
         output = StringIO()
         practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
-        TrekFactory.create(practice=practice)
-
+        self.trek = TrekFactory.create(practice=practice, published_fr=True, published_it=True, published_es=True, published_en=True)
         information_desk_type = InformationDeskTypeFactory.create(pictogram=get_dummy_uploaded_image())
         InformationDeskFactory.create(type=information_desk_type)
         pictogram_png = practice.pictogram.url.replace('.svg', '.png')
