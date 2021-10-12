@@ -95,7 +95,6 @@ class CourseFactory(StructureRelatedDefaultFactory):
         model = Course
 
     name = "Course"
-    site = factory.SubFactory(SiteFactory)
     description = "Blah"
     advice = "Warning!"
     equipment = "Rope"
@@ -107,3 +106,11 @@ class CourseFactory(StructureRelatedDefaultFactory):
     type = factory.SubFactory(CourseTypeFactory)
     ratings_description = 'Ths rating is ratable'
     gear = 'Shoes mandatory'
+
+    @factory.post_generation
+    def parent_sites(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                obj.parent_sites.set(extracted)
+            else:
+                obj.parent_sites.add(SiteFactory.create().pk)

@@ -119,9 +119,9 @@ class CourseLayer(MapEntityLayer):
 
 class CourseList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['site', 'date_update']
+    default_extra_columns = ['parent_sites', 'date_update']
     filterform = CourseFilterSet
-    queryset = Course.objects.prefetch_related('type').all()
+    queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
 
 
 class CourseJsonList(MapEntityJsonList, CourseList):
@@ -143,7 +143,7 @@ class CourseCreate(MapEntityCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['site'] = self.request.GET.get('site')
+        kwargs['parent_sites'] = self.request.GET.get('parent_sites')
         return kwargs
 
 
@@ -173,9 +173,9 @@ class CourseViewSet(MapEntityViewSet):
     def get_queryset(self):
         qs = Course.objects.filter(published=True)
         if 'source' in self.request.GET:
-            qs = qs.filter(site__source__name__in=self.request.GET['source'].split(','))
+            qs = qs.filter(parent_sites__source__name__in=self.request.GET['source'].split(','))
         if 'portal' in self.request.GET:
-            qs = qs.filter(Q(site__portal__name=self.request.GET['portal']) | Q(site__portal=None))
+            qs = qs.filter(Q(parent_sites__portal__name=self.request.GET['portal']) | Q(parent_sites__portal=None))
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
@@ -201,6 +201,6 @@ class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
 class CourseFormatList(MapEntityFormat, CourseList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'structure', 'name', 'site', 'description',
-        'advice', 'equipment', 'eid', 'height', 'length', 'ratings'
+        'structure', 'name', 'parent_sites', 'description',
+        'advice', 'equipment', 'eid', 'height', 'ratings'
     ]

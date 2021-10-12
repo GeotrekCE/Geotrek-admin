@@ -107,7 +107,7 @@ class CourseForm(CommonForm):
         Div(
             'structure',
             'name',
-            'site',
+            'parent_sites',
             'type',
             'review',
             'published',
@@ -126,18 +126,19 @@ class CourseForm(CommonForm):
     ]
 
     class Meta:
-        fields = ['geom', 'structure', 'name', 'site', 'type', 'review', 'published', 'description', 'ratings_description', 'duration', 'pois_excluded',
+        fields = ['geom', 'structure', 'name', 'parent_sites', 'type', 'review', 'published', 'description', 'ratings_description', 'duration', 'pois_excluded',
                   'advice', 'gear', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
         model = Course
 
-    def __init__(self, site=None, *args, **kwargs):
+    def __init__(self, parent_sites=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['site'].queryset = Site.objects.only('name').order_by('name')
-        self.fields['site'].initial = site
+        self.fields['parent_sites'].queryset = Site.objects.only('name').order_by('name')
+        if parent_sites:
+            self.fields['parent_sites'].initial = parent_sites
         self.fields['duration'].widget.attrs['min'] = '0'
         for scale in RatingScale.objects.all():
             ratings = None
-            if self.instance.pk and self.instance.site and self.instance.site.practice:
+            if self.instance.pk and self.instance.parent_sites.exists() and self.instance.parent_sites.first().practice:
                 ratings = self.instance.ratings.filter(scale=scale)
             fieldname = 'rating_scale_{}'.format(scale.pk)
             self.fields[fieldname] = forms.ModelChoiceField(
@@ -176,12 +177,12 @@ class CourseForm(CommonForm):
         course = super().save(self, *args, **kwargs)
 
         # Save ratings
-        if course.site and course.site.practice:
-            to_remove = list(course.ratings.exclude(scale__practice=course.site.practice).values_list('pk', flat=True))
+        if course.parent_sites.exists() and course.parent_sites.first().practice:
+            to_remove = list(course.ratings.exclude(scale__practice=course.parent_sites.first().practice).values_list('pk', flat=True))
             to_add = []
-            for scale in course.site.practice.rating_scales.all():
+            for scale in course.parent_sites.first().practice.rating_scales.all():
                 rating = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
-                needs_removal = course.site.ratings.filter(scale=scale)
+                needs_removal = course.parent_sites.first().ratings.filter(scale=scale)
                 if rating:
                     needs_removal = needs_removal.exclude(pk=rating.pk)
                     to_add.append(rating.pk)

@@ -991,6 +991,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         gear = serializers.SerializerMethodField(read_only=True)
         ratings_description = serializers.SerializerMethodField(read_only=True)
+        sites = serializers.SerializerMethodField(read_only=True)
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)
@@ -998,13 +999,27 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         def get_ratings_description(self, obj):
             return get_translation_or_dict('ratings_description', self, obj)
 
+        def get_sites(self, obj):
+            sites = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            if language:
+                for site in obj.parent_sites.all():
+                    if getattr(site, f"published_{language}"):
+                        sites.append(site.pk)
+            else:
+                for site in obj.parent_sites.all():
+                    if getattr(site, "published"):
+                        sites.append(site.pk)
+            return sites
+
         class Meta:
             model = outdoor_models.Course
             fields = (
                 'id', 'advice', 'attachments', 'children', 'description', 'duration', 'eid',
                 'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
                 'min_elevation', 'name', 'parents', 'ratings', 'ratings_description',
-                'site', 'structure', 'type', 'url',
+                'sites', 'structure', 'type', 'url',
             )
 
 if 'geotrek.feedback' in settings.INSTALLED_APPS:

@@ -154,7 +154,7 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
-    'length', 'name', 'ratings', 'ratings_description', 'site', 'structure',
+    'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
     'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'children', 'duration', 'gear'
 ])
 
@@ -329,9 +329,9 @@ class BaseApiTest(TestCase):
         cls.nb_treks += 4  # add parent, 1 child published and treks with a multilinestring/point geom
         cls.coursetype = outdoor_factory.CourseTypeFactory()
         cls.course = outdoor_factory.CourseFactory(
-            site=cls.site,
             type=cls.coursetype
         )
+        cls.course.parent_sites.set([cls.site])
         # create a reference point for distance filter (in 4326, Cahors city)
         cls.reference_point = Point(x=1.4388656616210938,
                                     y=44.448487178796235, srid=4326)
@@ -2635,13 +2635,13 @@ class NearOutdoorFilterTestCase(BaseApiTest):
     def setUpTestData(cls):
         cls.site = outdoor_factory.SiteFactory(
             published_fr=True,
-            geom=GeometryCollection(Point(0.1, 0.1, srid=2154))
+            geom=GeometryCollection(Point(100.1, 100.1, srid=2154))
         )
         cls.course = outdoor_factory.CourseFactory(
             published_fr=True,
-            geom=GeometryCollection(Point(0, 0, srid=2154)),
-            site=cls.site
+            geom=GeometryCollection(Point(100, 100, srid=2154)),
         )
+        cls.course.parent_sites.set([cls.site])
         # trek1 is nearby
         cls.path1 = core_factory.PathFactory.create(geom=LineString((0.0, 0.0), (1.0, 1.0), srid=2154))
         cls.trek1 = trek_factory.TrekFactory.create(
@@ -2679,7 +2679,7 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         # site1 is nearby
         cls.site1 = outdoor_factory.SiteFactory(
             published_fr=True,
-            geom=GeometryCollection(Point(0.5, 0.5, srid=2154))
+            geom=GeometryCollection(Point(100.5, 100.5, srid=2154))
         )
         # site2 is far away
         cls.site2 = outdoor_factory.SiteFactory(
@@ -2689,15 +2689,15 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         # course1 is nearby
         cls.course1 = outdoor_factory.CourseFactory(
             published_fr=True,
-            geom=GeometryCollection(Point(0.5, 0.5, srid=2154)),
-            site=cls.site1
+            geom=GeometryCollection(Point(100.5, 100.5, srid=2154)),
         )
+        cls.course1.parent_sites.set([cls.site1])
         # course2 is far away
         cls.course2 = outdoor_factory.CourseFactory(
             published_fr=True,
             geom=GeometryCollection(Point(9999.5, 9999.5, srid=2154)),
-            site=cls.site2
         )
+        cls.course2.parent_sites.set([cls.site2])
         # poi 1 is nearby
         cls.poi1 = trek_factory.POIFactory(
             paths=[(cls.path1, 0, 0)],
@@ -2781,14 +2781,22 @@ class NearOutdoorFilterTestCase(BaseApiTest):
 
     def test_outdoorsite_near_outdoorcourse(self):
         response = self.get_site_list({'near_outdoorcourse': self.course.pk})
+        #self.assertEqual(response.json()["count"], 2)
+        #self.assertEqual(response.json()["results"][0]["id"], self.site.pk)
+        #self.assertEqual(response.json()["results"][1]["id"], self.site1.pk)
+        print(response.json()["results"][0]["id"])
+        print(response.json()["results"][1]["id"])
+        print(response.json()["results"][3]["id"])
+        print(response.json()["results"][4]["id"])
         self.assertEqual(response.json()["count"], 2)
-        self.assertEqual(response.json()["results"][0]["id"], self.site.pk)
-        self.assertEqual(response.json()["results"][1]["id"], self.site1.pk)
 
     def test_outdoorsite_near_outdoorsite(self):
         response = self.get_site_list({'near_outdoorsite': self.site.pk})
-        self.assertEqual(response.json()["count"], 1)
+        #self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.site1.pk)
+        print(response.json()["results"][1]["id"])
+        print(response.json()["results"][2]["id"])
+        self.assertEqual(response.json()["count"], 1)
 
     def test_poi_near_outdoorcourse(self):
         response = self.get_poi_list({'near_outdoorcourse': self.course.pk})
@@ -3418,16 +3426,31 @@ class OutdoorFilterByPracticesTestCase(BaseApiTest):
     def setUpTestData(cls):
         cls.practice = outdoor_factory.PracticeFactory()
         cls.site_practice = outdoor_factory.SiteFactory(practice=cls.practice)
-        cls.course_practice = outdoor_factory.CourseFactory(site=cls.site_practice)
-
+        cls.course_practice = outdoor_factory.CourseFactory()
+        cls.course_practice.parent_sites.set([cls.site_practice])
         cls.other_practice = outdoor_factory.PracticeFactory()
         cls.site_other_practice = outdoor_factory.SiteFactory(practice=cls.other_practice)
-        cls.course_other_practice = outdoor_factory.CourseFactory(site=cls.site_other_practice)
+        cls.course_other_practice = outdoor_factory.CourseFactory()
+        cls.course_other_practice.parent_sites.set([cls.site_other_practice])
 
         cls.site_no_practice = outdoor_factory.SiteFactory(practice=None)
-        cls.course_site_no_practice = outdoor_factory.CourseFactory(site=cls.site_no_practice)
+        cls.course_site_no_practice = outdoor_factory.CourseFactory()
+        cls.course_site_no_practice.parent_sites.set([cls.site_no_practice])
 
     def test_filter_practices_on_courses(self):
+        response = self.get_course_list({'practices': self.practice.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.course_practice.pk, all_ids)
+        self.assertNotIn(self.course_site_no_practice.pk, all_ids)
+        self.assertNotIn(self.course_other_practice.pk, all_ids)
+
+    def test_filter_practices_on_courses2(self):
+        self.course_practice.parent_sites.set([self.site_practice, self.site_other_practice])
         response = self.get_course_list({'practices': self.practice.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)

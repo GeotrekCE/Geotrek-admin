@@ -15,9 +15,9 @@
 
                     </li>
                 {% endfor %}
-                {% if site == original_course.site %}
+                {% if original_course in site.children_courses.all %}
                     <li style="list-style-type: disc">
-                        <a href="{% url 'outdoor:course_add' %}?site={{ site.pk }}">
+                        <a href="{% url 'outdoor:course_add' %}?parent_sites={{ site.pk }}">
                             + <i>{% trans "Add a course" %}</i>
                         </a>
                     </li>

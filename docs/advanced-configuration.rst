@@ -1701,13 +1701,12 @@ A (nearly?) exhaustive list of attributes available for display and export as co
     COLUMNS_LISTS["outdoor_course_view"] = [
             "structure",
             "name",
-            "site",
+            "parent_sites",
             "description",
             "advice",
             "equipment",
             "eid",
             "height",
-            "length",
             "ratings",
             "gear",
             "duration"
@@ -2097,13 +2096,12 @@ A (nearly?) exhaustive list of attributes available for display and export as co
     COLUMNS_LISTS["outdoor_course_export"] = [
             "structure",
             "name",
-            "site",
+            "parent_sites",
             "description",
             "advice",
             "equipment",
             "eid",
             "height",
-            "length",
             "ratings",
             "gear",
             "duration"
