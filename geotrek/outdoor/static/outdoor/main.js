@@ -32,18 +32,22 @@ $(window).on('entity:map', function (e, data) {
 
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    if (data.modelname == 'site')
+    if (data.modelname == 'site') {
         // Refresh types by practice
         $('#id_practice').change(function () {
             update_site_types_and_cotations();
         });
-    $('#id_practice').trigger('change');
-    if (data.modelname == 'course')
+        $('#id_practice').trigger('change');
+    }
+    if (data.modelname == 'course') {
         // Refresh types by practice
-        $('#id_site').change(function () {
+        $('#id_parent_sites').change(function () {
             update_course_types_and_cotations();
         });
-    $('#id_site').trigger('change');
+        $('#id_parent_sites').trigger('change');
+        await new Promise(r => setTimeout(() => r(), 2000));
+        update_course_types_and_cotations();
+    }
     return;
 });
 
@@ -105,21 +109,69 @@ function update_site_types_and_cotations() {
 }
 
 function update_course_types_and_cotations() {
+    console.log("updatin'")
+    //JSON data on all sites
     var sites = JSON.parse($('#site-practices-types').text());
-    var site = $('#id_site').val();
+    // Parent sites selected in form
+    var parent_sites = $('#id_parent_sites').val();
+    // Init types with empty
+    var types = {}
+    // Get all possible sites in selector as list of elements
+    options = $('#id_parent_sites_chosen .chosen-drop .chosen-results li')
+    // If there is (are) selected parent site(s)
+    if (parent_sites && parent_sites.length > 0) {
+        // We use the first selected site as our reference for practices
+        site = parent_sites[0]
+        // Set types accordingly
+        types = sites[site]['types']
+        // Extract corresponding practice
+        practice = sites[site]['practice']
+        // For each Site in selectors
+        for (var i = 0, len = options.length; i < len; i++) {
+            // Extract index in stylish selector
+            array_index = options[i].getAttribute('data-option-array-index')
+            // Extract hidden form element for this stylish selector
+            form_element = $('#id_parent_sites option').eq(array_index)
+            // Extract site id
+            site_id = form_element.attr('value')
+            // If selector is enabled
+            if (1 | options.eq(i).hasClass('active-result')) {
+                // If selector is not selected and has a different practice than first selected site (or null practice)
+                is_selected = options.eq(i).hasClass('result-selected')
+                if (!(is_selected) && (practice != sites[site_id]['practice'] || (practice == null))) {
+                    // Hide it away
+                    form_element.prop("disabled", true)
+                    $('#id_parent_sites').trigger("chosen:updated");
+                } else {
+                    // Else show it
+                    form_element.prop("disabled", false)
+                    $('#id_parent_sites').trigger("chosen:updated");
+                }
+
+            }
+        }
+
+        // Hide type field if no values for this site
+        $('#div_id_type').toggle(Object.keys(types).length > 0);
+
+        // Refresh cotation selectors
+        update_cotations(sites[site]);
+        // If no parent site is selected
+    } else {
+        //Re-activate all site selectors
+        for (var i = 0, len = options.length; i < len; i++) {
+            array_index = options[i].getAttribute('data-option-array-index')
+            form_element = $('#id_parent_sites option').eq(array_index)
+            form_element.prop("disabled", false)
+            $('#id_parent_sites').trigger("chosen:updated");
+        }
+        // Hide cotation form fields
+        hide_all_cotations();
+    }
+
+    // Finally refresh types
     var $select = $('#id_type');
     var selected = $select.val() || [];
-    var types = site ? sites[site]['types'] : {};
-
-    // Hide type field if no values for this site
-    $('#div_id_type').toggle(Object.keys(types).length > 0);
-
     // Refresh options list for types, depending on site
     refresh_selector_with_types($select, types, selected);
-    // Refresh cotation selectors
-    if (site == "") {
-        hide_all_cotations();
-    } else {
-        update_cotations(sites[site]);
-    }
 }
