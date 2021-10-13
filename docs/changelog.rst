@@ -7,6 +7,10 @@ CHANGELOG
 
 **New features**
 
+**Bug fixes**
+
+- Fix translations for Site and Course filters in Interventions list view
+
 
 2.67.0 (2021-10-12)
 ----------------------
