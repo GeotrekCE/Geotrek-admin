@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.contrib.gis.geos.collections import MultiPoint
+from django.contrib.gis.geos.point import Point
 from geotrek.common.tests import CommonTest
 from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
@@ -102,6 +105,7 @@ class CourseViewsTests(CommonTest):
             'map_image_url': '/image/course-{}.png'.format(self.obj.pk),
             'name': 'Course',
             'parent_sites': [self.obj.parent_sites.first().pk],
+            'points_reference': None,
             'printable': '/api/en/courses/{}/course.pdf'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,

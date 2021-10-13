@@ -52,6 +52,17 @@ class CourseFormTest(TestCase):
         form.save()
         self.assertQuerysetEqual(self.course.ratings.all(), [])
 
+    def test_points_reference(self):
+        form = CourseForm(user=self.user, instance=self.course, data={
+            'name_en': 'Course',
+            'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
+            'points_reference': "{\"type\":\"MultiPoint\",\"coordinates\":[[5.82618713378906,43.767622885160975]]}",
+            'parent_sites': [str(self.course.parent_sites.first().pk)],
+        })
+        self.assertTrue(form.is_valid())
+        created = form.save()
+        self.assertEqual(len(created.points_reference), 1)
+
 
 class CourseItinerancyTestCase(TestCase):
 

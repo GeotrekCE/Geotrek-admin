@@ -992,6 +992,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         gear = serializers.SerializerMethodField(read_only=True)
         ratings_description = serializers.SerializerMethodField(read_only=True)
         sites = serializers.SerializerMethodField(read_only=True)
+        points_reference = serializers.SerializerMethodField(read_only=True)
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)
@@ -1013,12 +1014,18 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                         sites.append(site.pk)
             return sites
 
+        def get_points_reference(self, obj):
+            if not obj.points_reference:
+                return None
+            geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
+            return json.loads(geojson)
+
         class Meta:
             model = outdoor_models.Course
             fields = (
                 'id', 'advice', 'attachments', 'children', 'description', 'duration', 'eid',
                 'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
-                'min_elevation', 'name', 'parents', 'ratings', 'ratings_description',
+                'min_elevation', 'name', 'parents', 'points_reference', 'ratings', 'ratings_description',
                 'sites', 'structure', 'type', 'url',
             )
 

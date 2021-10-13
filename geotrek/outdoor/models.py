@@ -363,6 +363,8 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
                              verbose_name=_("Type"), null=True, blank=True)
     pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
                                            blank=True)
+    points_reference = models.MultiPointField(verbose_name=_("Points of reference"),
+                                              srid=settings.SRID, spatial_index=False, blank=True, null=True)
 
     check_structure_in_forms = False
 

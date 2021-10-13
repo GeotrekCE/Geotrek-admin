@@ -155,7 +155,8 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
     'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
-    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'children', 'duration', 'gear'
+    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents',
+    'points_reference', 'children', 'duration', 'gear'
 ])
 
 COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
