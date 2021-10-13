@@ -2,7 +2,13 @@
 CHANGELOG
 =========
 
-2.66.0+dev (XXXX-XX-XX)
+2.67.0+dev (XXXX-XX-XX)
+----------------------
+
+**New features**
+
+
+2.67.0 (2021-10-12)
 ----------------------
 
 **New features**
@@ -20,6 +26,7 @@ CHANGELOG
 
 - Fix nearby Courses and nearby Sites display in Outdoor detail pages
 - Fix Outdoor migrations fail on empty database
+- Fix sync_mobile does not check for published or unpublished treks
 
 
 2.66.0 (2021-09-27)
