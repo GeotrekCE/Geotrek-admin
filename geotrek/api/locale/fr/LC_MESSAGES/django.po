@@ -139,9 +139,6 @@ msgstr "Types de contenu touristique"
 msgid "Touristic event types"
 msgstr "Types d'événements touristiques"
 
-msgid "Launch Sync"
-msgstr "Lancer la synchro mobile"
-
 msgid "Sync verifications"
 msgstr "Vérification de la synchronisation"
 
