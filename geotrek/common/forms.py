@@ -20,7 +20,7 @@ from geotrek.authent.models import default_structure, StructureRelated, Structur
 from .mixins import NoDeleteMixin
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Submit
+from crispy_forms.layout import Layout, Div, Submit, Button
 from crispy_forms.bootstrap import FormActions
 
 import logging
@@ -291,7 +291,8 @@ class SyncRandoForm(forms.Form):
         helper.form_action = reverse('common:sync_randos')
         helper.form_class = 'search'
         # submit button with boostrap attributes, disabled by default
-        helper.add_input(Submit('sync-web', _("Launch Sync"),
+        helper.add_input(Button('sync-web', _("Launch Sync"),
+                                css_class="btn-primary",
                                 **{'data-toggle': "modal",
                                    'data-target': "#confirm-submit",
                                    'disabled': 'disabled'}))
