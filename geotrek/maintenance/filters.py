@@ -105,7 +105,7 @@ class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
                   ('trail', _("Trail")))
 
     if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-        ON_CHOICES += (('course', _("Course")), ('site', _("Site")),)
+        ON_CHOICES += (('course', _("Outdoor Course")), ('site', _("Outdoor Site")),)
 
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
     year = MultipleChoiceFilter(choices=Intervention.objects.year_choices(),

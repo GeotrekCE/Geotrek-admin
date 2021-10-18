@@ -7,11 +7,17 @@ CHANGELOG
 
 **New features**
 
+<<<<<<< HEAD
 - Link an Outdoor Course to multiple parent Sites instead of one
 
 **Breaking change**
 
 - APIv2 serialisation for Courses now exposes `sites` instead of `site`
+=======
+**Bug fixes**
+
+- Fix translations for Site and Course filters in Interventions list view
+>>>>>>> master
 
 
 2.67.0 (2021-10-12)
