@@ -296,6 +296,12 @@ msgstr "l:"
 msgid "Add"
 msgstr "Ajouter"
 
+msgid "Outdoor Course"
+msgstr "Parcours Outdoor"
+
+msgid "Outdoor Site"
+msgstr "Site Outdoor"
+
 msgid "Remove"
 msgstr "Supprimer"
 
