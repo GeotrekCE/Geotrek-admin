@@ -2,7 +2,7 @@ from django.utils.translation import gettext as _
 from django import forms
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Button
 
 from django.urls import reverse
 
@@ -19,7 +19,8 @@ class SyncMobileForm(forms.Form):
         helper.form_action = reverse('apimobile:sync_mobiles')
         helper.form_class = 'search'
         # submit button with boostrap attributes, disabled by default
-        helper.add_input(Submit('sync-web', _("Launch Sync Mobile"),
+        helper.add_input(Button('sync-web', _("Launch Sync Mobile"),
+                                css_class="btn-primary",
                                 **{'data-toggle': "modal",
                                    'data-target': "#confirm-submit",
                                    'disabled': 'disabled'}))

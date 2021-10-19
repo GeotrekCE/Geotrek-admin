@@ -46,7 +46,7 @@ class CourseFormTest(TestCase):
         form = CourseForm(user=self.user, instance=self.course, data={
             'name_en': 'Course',
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
-            'parent_sites': [str(self.course.parent_sites.first().pk)],
+            'parent_sites': [str(self.site.pk)],
         })
         self.assertTrue(form.is_valid())
         form.save()
@@ -62,6 +62,13 @@ class CourseFormTest(TestCase):
         self.assertTrue(form.is_valid())
         created = form.save()
         self.assertEqual(len(created.points_reference), 1)
+
+    def test_form_init(self):
+        site = SiteFactory()
+        course = CourseFactory()
+        course.parent_sites.set([site])
+        form = CourseForm(user=self.user, instance=course)
+        self.assertEqual(form.initial['parent_sites'], [site])
 
 
 class CourseItinerancyTestCase(TestCase):
