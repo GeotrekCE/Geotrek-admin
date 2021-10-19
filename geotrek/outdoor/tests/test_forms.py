@@ -55,9 +55,8 @@ class CourseFormTest(TestCase):
     def test_form_init(self):
         site = SiteFactory()
         course = CourseFactory()
-        course.parent_sites.set([site])
-        form = CourseForm(user=self.user, instance=course)
-        self.assertEqual(form.initial['parent_sites'], [site])
+        form = CourseForm(user=self.user, instance=course, parent_sites=site.pk)
+        self.assertEqual(form.initial['parent_sites'], site)
 
 
 class CourseItinerancyTestCase(TestCase):
