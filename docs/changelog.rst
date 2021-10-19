@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- Display children Sites above parent Sites in Outdoor Sites list view
+
 **Bug fixes**
 
 - Fix translations for Site and Course filters in Interventions list view
