@@ -7,12 +7,14 @@ CHANGELOG
 
 **New features**
 
-- Display children Sites above parent Sites in Outdoor Sites list view
-
 **Bug fixes**
 
 - Fix translations for Site and Course filters in Interventions list view
 - Fix bug that auto-confirms the modal when launching a synchronization (bug introduced with bootstrap migration)
+
+**User Interface**
+
+- Display children Sites above parent Sites in Outdoor Sites list view
 
 
 2.67.0 (2021-10-12)
