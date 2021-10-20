@@ -155,7 +155,8 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
     'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
-    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'children', 'duration', 'gear'
+    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents',
+    'points_reference', 'children', 'duration', 'gear'
 ])
 
 COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
@@ -329,7 +330,8 @@ class BaseApiTest(TestCase):
         cls.nb_treks += 4  # add parent, 1 child published and treks with a multilinestring/point geom
         cls.coursetype = outdoor_factory.CourseTypeFactory()
         cls.course = outdoor_factory.CourseFactory(
-            type=cls.coursetype
+            type=cls.coursetype,
+            points_reference=MultiPoint(Point(12, 12))
         )
         cls.course.parent_sites.set([cls.site])
         # create a reference point for distance filter (in 4326, Cahors city)

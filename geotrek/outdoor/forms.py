@@ -1,3 +1,4 @@
+from django.conf import settings
 from crispy_forms.layout import Div
 from django import forms
 from django.core.exceptions import ValidationError
@@ -105,6 +106,7 @@ class CourseForm(CommonForm):
 
     fieldslayout = [
         Div(
+            'points_reference',
             'structure',
             'name',
             'parent_sites',
@@ -127,7 +129,7 @@ class CourseForm(CommonForm):
 
     class Meta:
         fields = ['geom', 'structure', 'name', 'parent_sites', 'type', 'review', 'published', 'description', 'ratings_description', 'duration', 'pois_excluded',
-                  'advice', 'gear', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
+                  'points_reference', 'advice', 'gear', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
         model = Course
 
     def __init__(self, parent_sites=None, *args, **kwargs):
@@ -160,6 +162,13 @@ class CourseForm(CommonForm):
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0].remove('pois_excluded')
+        if not settings.OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop('points_reference')
+        else:
+            # Edit points of reference with custom edition JavaScript class
+            self.fields['points_reference'].label = ''
+            self.fields['points_reference'].widget.target_map = 'geom'
+            self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
 
     def clean_children_course(self):
         """

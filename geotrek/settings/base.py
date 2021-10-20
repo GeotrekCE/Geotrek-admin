@@ -447,7 +447,7 @@ LEAFLET_CONFIG = {
     'PLUGINS': {
         'geotrek': {'js': ['core/leaflet.lineextremities.js',
                            'core/leaflet.textpath.js',
-                           'trekking/points_reference.js',
+                           'common/points_reference.js',
                            'trekking/parking_location.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
@@ -553,6 +553,7 @@ REPORT_INTERSECTION_MARGIN = 500  # meters (always used)
 SIGNAGE_LINE_ENABLED = False
 
 TREK_POINTS_OF_REFERENCE_ENABLED = True
+OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
 TREK_EXPORT_POI_LIST_LIMIT = 14
 TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
 

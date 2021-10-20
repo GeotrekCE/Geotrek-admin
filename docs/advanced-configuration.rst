@@ -1034,6 +1034,14 @@ Points of reference are enabled on form of treks.
 
 ::
 
+    OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
+
+Points of reference are enabled on form of otudoor courses.
+
+|
+
+::
+
     TOPOLOGY_STATIC_OFFSETS = {'land': -5, 'physical': 0, 'competence': 5, 'signagemanagement': -10, 'workmanagement': 10}
 
 Land objects are added on other objects (path for example) with offset, avoiding overlay.
@@ -1711,7 +1719,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "gear",
             "duration"
             "ratings_description",
-            "type"
+            "type",
+            "points_reference",
         ],
     COLUMNS_LISTS["path_export"] = [
             "structure",
@@ -2106,7 +2115,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "gear",
             "duration"
             "ratings_description",
-            "type"
+            "type",
+            "points_reference",
         ]
 
 **Hideable form fields**
