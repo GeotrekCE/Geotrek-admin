@@ -283,7 +283,6 @@ class BaseApiTest(TestCase):
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
         cls.site = outdoor_factory.SiteFactory(managers=[cls.organism])
-        cls.site.points_reference = MultiPoint((12, 12))
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         cls.content2.category = cls.category
         cls.content2.portal.add(cls.portal)
@@ -331,7 +330,8 @@ class BaseApiTest(TestCase):
         cls.nb_treks += 4  # add parent, 1 child published and treks with a multilinestring/point geom
         cls.coursetype = outdoor_factory.CourseTypeFactory()
         cls.course = outdoor_factory.CourseFactory(
-            type=cls.coursetype
+            type=cls.coursetype,
+            points_reference=MultiPoint(Point(12, 12))
         )
         cls.course.parent_sites.set([cls.site])
         # create a reference point for distance filter (in 4326, Cahors city)
