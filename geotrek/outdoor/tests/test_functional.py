@@ -1,6 +1,3 @@
-from django.conf import settings
-from django.contrib.gis.geos.collections import MultiPoint
-from django.contrib.gis.geos.point import Point
 from geotrek.common.tests import CommonTest
 from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
