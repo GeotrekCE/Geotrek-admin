@@ -27,13 +27,15 @@ class CourseFormTest(TestCase):
     def setUpTestData(cls):
         cls.user = UserFactory()
         cls.rating = RatingFactory()
-        cls.course = CourseFactory(site__practice=cls.rating.scale.practice)
+        cls.site = SiteFactory(practice=cls.rating.scale.practice)
+        cls.course = CourseFactory()
+        cls.course.parent_sites.set([cls.site])
 
     def test_rating_save(self):
         form = CourseForm(user=self.user, instance=self.course, data={
             'name_en': 'Course',
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
-            'site': str(self.course.site.pk),
+            'parent_sites': [str(self.course.parent_sites.first().pk)],
             'rating_scale_{}'.format(self.rating.scale.pk): str(self.rating.pk),
         })
         self.assertTrue(form.is_valid())
@@ -44,11 +46,18 @@ class CourseFormTest(TestCase):
         form = CourseForm(user=self.user, instance=self.course, data={
             'name_en': 'Course',
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
-            'site': str(self.course.site.pk),
+            'parent_sites': [str(self.site.pk)],
         })
         self.assertTrue(form.is_valid())
         form.save()
         self.assertQuerysetEqual(self.course.ratings.all(), [])
+
+    def test_form_init(self):
+        site = SiteFactory()
+        course = CourseFactory()
+        course.parent_sites.set([site])
+        form = CourseForm(user=self.user, instance=course, parent_sites=site.pk)
+        self.assertEqual(form.initial['parent_sites'], [site])
 
 
 class CourseItinerancyTestCase(TestCase):

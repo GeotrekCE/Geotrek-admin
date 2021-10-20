@@ -797,9 +797,9 @@ class GeotrekCourseFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         practices = request.GET.get('practices')
         if practices:
-            queryset = queryset.filter(site__isnull=False)
-            queryset = queryset.filter(site__practice__isnull=False)
-            queryset = queryset.filter(site__practice__in=practices.split(','))
+            queryset = queryset.filter(parent_sites__isnull=False).distinct()
+            queryset = queryset.filter(parent_sites__practice__isnull=False).distinct()
+            queryset = queryset.filter(parent_sites__practice__in=practices.split(',')).distinct()
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(name__icontains=q)

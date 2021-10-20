@@ -345,7 +345,7 @@ class OrderedCourseChild(models.Model):
 
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
-    site = models.ForeignKey(Site, related_name="children_courses", on_delete=models.PROTECT, verbose_name=_("Site"))
+    parent_sites = models.ManyToManyField(Site, related_name="children_courses", verbose_name=_("Sites"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
@@ -407,6 +407,16 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     def all_pois(self):
         return POI.outdoor_all_pois(self)
 
+    @property
+    def all_hierarchy_roots(self):
+        """ Since a course has multiple parent sites, it belongs in multiple hierarchy trees.
+            This method returns all hierarchy roots the course is a descendant of.
+        """
+        roots = []
+        for site in self.parent_sites.all():
+            roots.append(site.get_root())
+        return list(set(roots))
+
     def course_interventions(self):
         # Interventions on courses
         course_content_type = ContentType.objects.get_for_model(Course)
@@ -422,6 +432,10 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         ]
         qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
         return Intervention.objects.existing().filter(qs).distinct('pk')
+
+    @property
+    def parent_sites_display(self):
+        return ", ".join(list(self.parent_sites.values_list("name", flat=True)))
 
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))

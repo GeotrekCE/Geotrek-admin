@@ -48,18 +48,17 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
                                        label=_("Orientation"))
     wind = MultipleChoiceFilter(choices=Site.WIND_CHOICES, method='filter_orientation',
                                 label=_("Wind"))
-    site = ModelMultipleChoiceFilter(queryset=Site.objects.only('name').order_by('name'))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'site', 'site__practice__sector', 'site__practice', 'site__labels', 'site__themes',
-            'site__portal', 'site__source', 'site__type', 'orientation', 'wind',
+            'parent_sites', 'parent_sites__practice__sector', 'parent_sites__practice', 'parent_sites__labels', 'parent_sites__themes',
+            'parent_sites__portal', 'parent_sites__source', 'parent_sites__type', 'orientation', 'wind',
             'height',
         ]
 
     def filter_orientation(self, qs, name, values):
         q = Q()
         for value in values:
-            q |= Q(**{'site__{}__contains'.format(name): value})
+            q |= Q(**{'parent_sites__{}__contains'.format(name): value})
         return qs.filter(q)

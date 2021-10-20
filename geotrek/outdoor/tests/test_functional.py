@@ -101,7 +101,7 @@ class CourseViewsTests(CommonTest):
             'height': 42,
             'map_image_url': '/image/course-{}.png'.format(self.obj.pk),
             'name': 'Course',
-            'site': self.obj.site.pk,
+            'parent_sites': [self.obj.parent_sites.first().pk],
             'printable': '/api/en/courses/{}/course.pdf'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,
@@ -129,7 +129,7 @@ class CourseViewsTests(CommonTest):
     def get_good_data(self):
         return {
             'structure': StructureFactory.create().pk,
-            'site': SiteFactory.create().pk,
+            'parent_sites': [SiteFactory.create().pk],
             'name_en': 'test en',
             'name_fr': 'test fr',
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates":[0, 0]}]}',

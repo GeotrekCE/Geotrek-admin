@@ -53,8 +53,8 @@ class CourseCustomViewTests(TestCase):
         CourseFactory.create(name='course1', published=False)
         CourseFactory.create(name='course2', published=True)
         course3 = CourseFactory.create(name='course3', published=True)
-        course3.site.source.add(RecordSourceFactory.create(name='source1'))
-        course3.site.portal.add(TargetPortalFactory.create(name='portal1'))
+        course3.parent_sites.first().source.add(RecordSourceFactory.create(name='source1'))
+        course3.parent_sites.first().portal.add(TargetPortalFactory.create(name='portal1'))
 
         response1 = self.client.get('/api/en/courses.json')
         self.assertEqual(len(response1.json()), 2)

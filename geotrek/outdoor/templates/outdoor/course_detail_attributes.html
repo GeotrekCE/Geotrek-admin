@@ -3,8 +3,7 @@
 
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
-            {% site_as_list course.site.get_root as root_as_list %}
-            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=root_as_list original_course=object %}    
+            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=course.all_hierarchy_roots original_course=object %}    
     </ul>
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
@@ -17,16 +16,20 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
-            <th>{% trans "Site" %}</th>
-            <td>{% if object.site %}{% valuelist object.site.get_ancestors field='name_display' %}{{ object.site.name_display|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{% trans "Sites" %}</th>
+            <td>
+                {% for site in object.parent_sites.all %}
+                    {{ site.name_display|safe }}<br>
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Sector" %}</th>
-            <td>{% if object.site.practice.sector %}{{ object.site.practice.sector }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.parent_sites.first.practice.sector %}{{ object.parent_sites.first.practice.sector }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
-            <th>{{ object.site|verbose:"practice" }}</th>
-            <td>{% if object.site.practice %}{{ object.site.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{{ object.parent_sites.first|verbose:"practice" }}</th>
+            <td>{% if object.parent_sites.first.practice %}{{ object.parent_sites.first.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"type" }}</th>

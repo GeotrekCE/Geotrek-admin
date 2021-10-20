@@ -32,18 +32,33 @@ $(window).on('entity:map', function (e, data) {
 
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    if (data.modelname == 'site')
-        // Refresh types by practice
+    if (data.modelname == 'site') {
+        // Refresh site types by practice
         $('#id_practice').change(function () {
             update_site_types_and_cotations();
         });
-    $('#id_practice').trigger('change');
-    if (data.modelname == 'course')
-        // Refresh types by practice
-        $('#id_site').change(function () {
-            update_course_types_and_cotations();
+        $('#id_practice').trigger('change');
+    }
+    if (data.modelname == 'course') {
+        // Important : course must inherit practice form parent site(s). Cotations and types and practice-dependent.
+        // Refresh course types and course cotations by practice on site change
+        $('#id_parent_sites').change(function () {
+            update_course_sites();
+            update_course_types();
+            update_course_cotations();
         });
-    $('#id_site').trigger('change');
+        // Init cotations and types properly, at form load, when editing existing courses with existing parent(s)
+        // This is because Chosen plugin is tricky
+        $(document).ready(function () {
+            update_course_cotations()
+            update_course_types();
+        });
+        // Init sites properly, on selector first click, when editing existing courses with existing parent(s)
+        // This is because Chosen plugin is tricky
+        $(document).on("click", "#id_parent_sites_chosen", function () {
+            update_course_sites();
+        });
+    }
     return;
 });
 
@@ -104,22 +119,87 @@ function update_site_types_and_cotations() {
     }
 }
 
-function update_course_types_and_cotations() {
+function update_course_cotations() {
+    // Important : course must inherit practice form parent site(s). Cotations and types and practice-dependent.
+    // JSON data mapping sites to practices and cotations and types
     var sites = JSON.parse($('#site-practices-types').text());
-    var site = $('#id_site').val();
-    var $select = $('#id_type');
-    var selected = $select.val() || [];
-    var types = site ? sites[site]['types'] : {};
-
-    // Hide type field if no values for this site
-    $('#div_id_type').toggle(Object.keys(types).length > 0);
-
-    // Refresh options list for types, depending on site
-    refresh_selector_with_types($select, types, selected);
-    // Refresh cotation selectors
-    if (site == "") {
-        hide_all_cotations();
-    } else {
+    // Parent sites selected in form
+    var parent_sites = $('#id_parent_sites').val();
+    // IF there is (are) selected parent site(s)
+    if (parent_sites && parent_sites.length > 0) {
+        // We use the first selected site as our reference for cotations
+        site = parent_sites[0]
+        // Update cotations according to mapping between sites and cotations
         update_cotations(sites[site]);
+    } else {
+        //ELSE there is no selected parent site, then hide all cotations
+        hide_all_cotations();
     }
+}
+
+function update_course_sites() {
+    // Important : course must inherit practice form parent site(s). Cotations and types and practice-dependent.
+    //JSON data mapping sites to practices and cotations and types
+    var sites = JSON.parse($('#site-practices-types').text());
+    // Parent sites selected in form
+    var parent_sites = $('#id_parent_sites').val();
+    // Get all possible sites in selector as list of elements
+    options = $('#id_parent_sites_chosen .chosen-drop .chosen-results li')
+    // IF there is at least one selected parent site
+    if (parent_sites && parent_sites.length > 0) {
+        // We use the first selected site as our reference for practices
+        selected_site = parent_sites[0]
+        selected_practice = sites[selected_site]['practice']
+        // For each Site available in selector
+        for (var i = 0, len = options.length; i < len; i++) {
+            // Extract site's django ID to find this site's practice in JSON mapping data
+            array_index = options[i].getAttribute('data-option-array-index')
+            form_element = $('#id_parent_sites option').eq(array_index)
+            site_id = form_element.attr('value')
+            site_practice = sites[site_id]['practice']
+            // If selector for this site is activated right now
+            if (1 | options.eq(i).hasClass('active-result')) {
+                // Disable selector for this site IF it is not selected and has a different practice, or if selected site has null practice, because no practice should match null practice (even null practice itself)
+                // ELSE show and activate this selector
+                is_selected = options.eq(i).hasClass('result-selected')
+                if (!(is_selected) && (selected_practice != site_practice || (selected_practice == null))) {
+                    form_element.prop("disabled", true)
+                } else {
+                    form_element.prop("disabled", false)
+                }
+                $('#id_parent_sites').trigger("chosen:updated");
+            }
+        }
+    } else { // ELSE no parent site is selected
+        // Then re-activate all site selectors
+        for (var i = 0, len = options.length; i < len; i++) {
+            array_index = options[i].getAttribute('data-option-array-index')
+            form_element = $('#id_parent_sites option').eq(array_index)
+            form_element.prop("disabled", false)
+            $('#id_parent_sites').trigger("chosen:updated");
+        }
+    }
+}
+
+function update_course_types() {
+    // Important : course must inherit practice form parent site(s). Cotations and types and practice-dependent.
+    //JSON data mapping sites to practices and cotations and types
+    var sites = JSON.parse($('#site-practices-types').text());
+    // Parent sites selected in form
+    var parent_sites = $('#id_parent_sites').val();
+    // Init types with empty
+    var types = {}
+    // IF there is at least one selected parent site
+    if (parent_sites && parent_sites.length > 0) {
+        // We use the first selected site as our reference for practices and their types
+        selected_site = parent_sites[0]
+        selected_practice = sites[selected_site]['practice']
+        types = sites[selected_site]['types']
+        // Refresh type selector accordingly
+        var $select = $('#id_type');
+        var selected = $select.val() || [];
+        refresh_selector_with_types($select, types, selected);
+    }
+    // Hide type field if there exists no type for this site's practice
+    $('#div_id_type').toggle(Object.keys(types).length > 0);
 }

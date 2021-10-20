@@ -15,7 +15,7 @@
                 {% endfor %}
                 {% if site == original_site %}
                     <li style="list-style-type: disc">
-                        <a href="{% url 'outdoor:course_add' %}?site={{ site.pk }}">
+                        <a href="{% url 'outdoor:course_add' %}?parent_sites={{ site.pk }}">
                             + <i>{% trans "Add a course" %}</i>
                         </a>
                     </li>
@@ -27,7 +27,7 @@
             {% if site == original_site %}
                 <ul>
                     <li style="list-style-type: circle">
-                        <a href="{% url 'outdoor:site_add' %}?site={{ site.pk }}">
+                        <a href="{% url 'outdoor:site_add' %}?parent_sites={{ site.pk }}">
                             + <i>{% trans "Add a child site" %}</i>
                         </a>
                     </li>
@@ -36,7 +36,7 @@
         </li>
         {% if site == original_site and not site.is_root_node %}
             <li style="list-style-type: circle">
-                <a href="{% url 'outdoor:site_add' %}?site={{ site.parent.pk }}">
+                <a href="{% url 'outdoor:site_add' %}?parent_sites={{ site.parent.pk }}">
                     + <i>{% trans "Add a brother site" %}</i>
                 </a>
             </li>
