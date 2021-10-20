@@ -1,15 +1,13 @@
-import json
+from unittest import mock
 
-from django.test.utils import override_settings
-from mapentity.settings import API_SRID
-from django.conf import settings
 from django.contrib.gis.geos.collections import MultiPoint
 from django.contrib.gis.geos.point import Point
 from django.test import TestCase
+from django.test.utils import override_settings
+
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
-from geotrek.outdoor.factories import SiteFactory, CourseFactory
+from geotrek.outdoor.factories import CourseFactory, SiteFactory
 from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
-from unittest import mock
 
 
 class SiteCustomViewTests(TestCase):
