@@ -1,3 +1,9 @@
+geotrek-admin (2.68.0+dev) UNRELEASED; urgency=medium
+
+  *
+
+ -- Bastien POTIRON <bastien.potiron@makina-corpus.com>  Wed, 20 Oct 2021 16:58:01 +0200
+
 geotrek-admin (2.68.0) RELEASED; urgency=medium
 
   * New package release
