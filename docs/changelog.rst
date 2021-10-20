@@ -7,6 +7,7 @@ CHANGELOG
 
 **New features**
 
+- Add public PDFs to Outdoor Course, with templates
 - Link an Outdoor Course to multiple parent Sites instead of one
 - Added notion of points of reference for Outdoor Courses. (Can be disabled with ``OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = False``)
 
