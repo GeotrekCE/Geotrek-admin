@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.test.utils import override_settings
 from geotrek.authent.factories import UserFactory
 from geotrek.outdoor.factories import SiteFactory, RatingFactory, CourseFactory
 from geotrek.outdoor.forms import SiteForm, CourseForm
@@ -69,6 +70,18 @@ class CourseFormTest(TestCase):
         course.parent_sites.set([site])
         form = CourseForm(user=self.user, instance=course, parent_sites=site.pk)
         self.assertEqual(form.initial['parent_sites'], [site])
+
+    @override_settings(OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED=False)
+    def test_no_points_reference(self):
+        form = CourseForm(user=self.user, instance=self.course, data={
+            'name_en': 'Course',
+            'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
+            'points_reference': "{\"type\":\"MultiPoint\",\"coordinates\":[[5.82618713378906,43.767622885160975]]}",
+            'parent_sites': [str(self.course.parent_sites.first().pk)],
+        })
+        self.assertTrue(form.is_valid())
+        created = form.save()
+        self.assertIsNone(created.points_reference)
 
 
 class CourseItinerancyTestCase(TestCase):

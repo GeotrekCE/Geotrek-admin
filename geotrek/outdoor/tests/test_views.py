@@ -1,3 +1,10 @@
+import json
+
+from django.test.utils import override_settings
+from mapentity.settings import API_SRID
+from django.conf import settings
+from django.contrib.gis.geos.collections import MultiPoint
+from django.contrib.gis.geos.point import Point
 from django.test import TestCase
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.outdoor.factories import SiteFactory, CourseFactory
@@ -19,6 +26,7 @@ class SiteCustomViewTests(TestCase):
         SiteFactory.create(name='site1', published=False)
         SiteFactory.create(name='site2', published=True)
         site3 = SiteFactory.create(name='site3', published=True)
+
         site3.source.add(RecordSourceFactory.create(name='source1'))
         site3.portal.add(TargetPortalFactory.create(name='portal1'))
 
@@ -71,3 +79,12 @@ class CourseCustomViewTests(TestCase):
         response4 = self.client.get('/api/en/courses.json?portal=portalX')
         self.assertEqual(len(response4.json()), 1)
         self.assertEqual(response4.json()[0]['name'], 'course2')
+
+    @override_settings(API_SRID=2154)
+    def test_serialize_ref_points(self):
+        CourseFactory.create(name='course_with_ref_points', published=True, points_reference=MultiPoint(Point(12, 12)))
+        response = self.client.get('/api/en/courses.json')
+        self.assertEqual(len(response.json()), 1)
+        self.assertEqual(response.json()[0]['name'], 'course_with_ref_points')
+        data = "{'type': 'MultiPoint', 'coordinates': [[12.0, 12.0]]}"
+        self.assertEqual(str(response.json()[0]['points_reference']), data)

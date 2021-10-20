@@ -283,6 +283,7 @@ class BaseApiTest(TestCase):
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
         cls.site = outdoor_factory.SiteFactory(managers=[cls.organism])
+        cls.site.points_reference = MultiPoint((12, 12))
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         cls.content2.category = cls.category
         cls.content2.portal.add(cls.portal)
