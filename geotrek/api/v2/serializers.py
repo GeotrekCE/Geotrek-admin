@@ -6,7 +6,6 @@ from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin

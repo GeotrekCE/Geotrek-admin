@@ -1,9 +1,7 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from rest_framework import serializers
 
-from geotrek.api.v2.utils import build_url
 from geotrek.common import models as common_models
 
 
