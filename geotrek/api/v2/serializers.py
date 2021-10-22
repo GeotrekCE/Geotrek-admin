@@ -336,15 +336,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         def get_description_teaser(self, obj):
             return get_translation_or_dict('description_teaser', self, obj)
 
-        def get_url(self, obj):
-            if obj.attachment_file:
-                return build_url(self, obj.attachment_file.url)
-            if obj.attachment_video:
-                return obj.attachment_video
-            if obj.attachment_link:
-                return obj.attachment_link
-            return ""
-
     class TouristicContentSerializer(TouristicModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
         types = serializers.SerializerMethodField(read_only=True)
