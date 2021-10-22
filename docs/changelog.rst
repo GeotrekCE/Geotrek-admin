@@ -2,10 +2,12 @@
 CHANGELOG
 =========
 
-2.68.1+dev (XXXX-XX-XX)
+2.69.0 (2021-10-22)
 ----------------------
 
 **New features**
+
+- Add public PDFs to Outdoor Course and Outdoor Site, with templates
 
 
 2.68.1 (2021-10-21)
@@ -23,7 +25,6 @@ CHANGELOG
 
 **New features**
 
-- Add public PDFs to Outdoor Course and Outdoor Site, with templates
 - Link an Outdoor Course to multiple parent Sites instead of one
 - Added notion of points of reference for Outdoor Courses. (Can be disabled with ``OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = False``)
 
