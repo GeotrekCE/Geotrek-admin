@@ -1,5 +1,6 @@
 import os
 import logging
+import uuid 
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -298,6 +299,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     class Meta:
         verbose_name = _("Touristic content")
@@ -405,6 +407,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     id_prefix = 'E'
 

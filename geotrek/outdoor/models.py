@@ -1,3 +1,5 @@
+import uuid
+
 from geotrek.outdoor.mixins import ExcludedPOIsMixin
 from colorfield.fields import ColorField
 from django.conf import settings
@@ -182,6 +184,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
 
@@ -365,6 +368,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
                                            blank=True)
     points_reference = models.MultiPointField(verbose_name=_("Points of reference"),
                                               srid=settings.SRID, spatial_index=False, blank=True, null=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
 

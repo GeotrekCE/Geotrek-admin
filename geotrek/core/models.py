@@ -1,6 +1,7 @@
 import json
 import logging
 import functools
+import uuid 
 
 import simplekml
 from modelcluster.models import ClusterableModel
@@ -97,6 +98,7 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                                       verbose_name=_("Networks"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     objects = PathManager()
     include_invisible = PathInvisibleManager()
@@ -384,6 +386,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
                                 default=None, spatial_index=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
