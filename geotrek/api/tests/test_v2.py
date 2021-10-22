@@ -172,8 +172,8 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'attachments', 'condition', 'description', 'eid', 'geometry', 
-    'implantation_year', 'maintenance_difficulty', 'name', 'structure', 
+    'id', 'attachments', 'condition', 'description', 'eid', 'geometry',
+    'implantation_year', 'maintenance_difficulty', 'name', 'structure',
     'type', 'usage_difficulty', 'uuid'
 ])
 

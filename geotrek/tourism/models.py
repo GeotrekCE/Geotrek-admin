@@ -1,6 +1,6 @@
 import os
 import logging
-import uuid 
+import uuid
 
 from django.conf import settings
 from django.contrib.gis.db import models

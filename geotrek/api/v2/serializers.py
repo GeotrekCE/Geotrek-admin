@@ -1072,7 +1072,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
         class Meta:
             model = infrastructure_models.Infrastructure
-            fields = ('id', 'attachments', 'condition', 'description', 'eid', 'geometry', 'name', 'implantation_year', 
+            fields = ('id', 'attachments', 'condition', 'description', 'eid', 'geometry', 'name', 'implantation_year',
                       'maintenance_difficulty', 'structure', 'type', 'usage_difficulty', 'uuid')
 
     class InfrastructureConditionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -1117,7 +1117,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
         class Meta:
             model = signage_models.Signage
-            fields = ('id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid', 
+            fields = ('id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
                       'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
                       'structure', 'type', 'uuid')
 

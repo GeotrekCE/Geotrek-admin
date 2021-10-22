@@ -5,7 +5,8 @@ CHANGELOG
 2.69.0+dev (XXXX-XX-XX)
 ----------------------
 
-**New features**
+- Add UUIDS to the following objects, and to APIv2 serialization for those included
+  Path, TouristicContent, TouristicEvent, Outdoor Site, Outdoor Course, and Topology (inherited by POI, Trek, Service, Trail, Signage, Infrastructure, PhysicalEdge, CompetenceEdge, LandEdge)
 
 
 2.69.0 (2021-10-22)

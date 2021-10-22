@@ -1,7 +1,7 @@
 import json
 import logging
 import functools
-import uuid 
+import uuid
 
 import simplekml
 from modelcluster.models import ClusterableModel
