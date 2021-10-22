@@ -6,7 +6,6 @@ from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
@@ -16,6 +15,7 @@ from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.v2.functions import Length, Length3D, Transform
+from geotrek.api.v2.mixins import PDFSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
@@ -309,7 +309,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             model = tourism_models.TouristicEventType
             fields = ('id', 'pictogram', 'type')
 
-    class TouristicModelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class TouristicModelSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         create_datetime = serializers.DateTimeField(source='date_insert')
         update_datetime = serializers.DateTimeField(source='date_update')
@@ -335,28 +335,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_description_teaser(self, obj):
             return get_translation_or_dict('description_teaser', self, obj)
-
-        def _get_pdf_url_lang(self, obj, lang):
-            if settings.ONLY_EXTERNAL_PUBLIC_PDF:
-                file_type = get_object_or_404(common_models.FileType, type="Topoguide")
-                if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
-                    return None
-            urlname = 'tourism:touristiccontent_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else '')
-            url = reverse(urlname, kwargs={'lang': lang, 'pk': obj.pk, 'slug': obj.slug})
-            request = self.context.get('request')
-            if request:
-                url = request.build_absolute_uri(url)
-            return url
-
-        def get_pdf_url(self, obj):
-            lang = self.context.get('request').GET.get('language', 'all') if self.context.get('request') else 'all'
-            if lang != 'all':
-                data = self._get_pdf_url_lang(obj, lang)
-            else:
-                data = {}
-                for language in settings.MODELTRANSLATION_LANGUAGES:
-                    data[language] = self._get_pdf_url_lang(obj, language)
-            return data
 
     class TouristicContentSerializer(TouristicModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
@@ -467,7 +445,7 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class TrekSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
         published = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
@@ -560,28 +538,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_kml_url(self, obj):
             return build_url(self, reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug}))
-
-        def _get_pdf_url_lang(self, obj, lang):
-            if settings.ONLY_EXTERNAL_PUBLIC_PDF:
-                file_type = get_object_or_404(common_models.FileType, type="Topoguide")
-                if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
-                    return None
-            urlname = 'trekking:trek_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else '')
-            url = reverse(urlname, kwargs={'lang': lang, 'pk': obj.pk, 'slug': obj.slug})
-            request = self.context.get('request')
-            if request:
-                url = request.build_absolute_uri(url)
-            return url
-
-        def get_pdf_url(self, obj):
-            lang = self.context.get('request').GET.get('language', 'all') if self.context.get('request') else 'all'
-            if lang != 'all':
-                data = self._get_pdf_url_lang(obj, lang)
-            else:
-                data = {}
-                for language in settings.MODELTRANSLATION_LANGUAGES:
-                    data[language] = self._get_pdf_url_lang(obj, language)
-            return data
 
         def get_advice(self, obj):
             return get_translation_or_dict('advice', self, obj)
@@ -919,7 +875,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.Practice
             fields = ('id', 'name')
 
-    class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class SiteSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:site-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         attachments = AttachmentSerializer(many=True)
@@ -927,6 +883,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         courses = serializers.SerializerMethodField(read_only=True)
         children = serializers.SerializerMethodField(read_only=True)
         parent = serializers.SerializerMethodField(read_only=True)
+        pdf = serializers.SerializerMethodField('get_pdf_url')
 
         def get_courses(self, obj):
             courses = []
@@ -978,12 +935,12 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'advice', 'ambiance', 'attachments', 'children', 'description', 'description_teaser',
                 'eid', 'geometry', 'information_desks', 'labels', 'managers',
-                'name', 'orientation', 'period', 'parent', 'portal', 'practice',
+                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice',
                 'ratings', 'sector', 'source', 'structure', 'themes',
                 'type', 'url', 'courses', 'web_links', 'wind',
             )
 
-    class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class CourseSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:course-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         children = serializers.ReadOnlyField(source='children_id')
@@ -993,6 +950,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         ratings_description = serializers.SerializerMethodField(read_only=True)
         sites = serializers.SerializerMethodField(read_only=True)
         points_reference = serializers.SerializerMethodField(read_only=True)
+        pdf = serializers.SerializerMethodField('get_pdf_url')
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)
@@ -1025,7 +983,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'advice', 'attachments', 'children', 'description', 'duration', 'eid',
                 'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
-                'min_elevation', 'name', 'parents', 'points_reference', 'ratings', 'ratings_description',
+                'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'ratings', 'ratings_description',
                 'sites', 'structure', 'type', 'url',
             )
 

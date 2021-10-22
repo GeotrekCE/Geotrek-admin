@@ -36,9 +36,9 @@
         </div>
       </header>
       <div class="gray">
-        {% if object.site.practice.pictogram %}
-          <div class="main-icon category-S{{ object.site.practice.pk }}">
-            <img src="file://{{ object.site.practice.pictogram.path }}" alt="">
+        {% if object.parent_sites.first.practice.pictogram %}
+          <div class="main-icon category-S{{ object.parent_sites.first.practice.pk }}">
+            <img src="file://{{ object.parent_sites.first.practice.pictogram.path }}" alt="">
           </div>
         {% endif %}
         <div class="main-title">
@@ -66,12 +66,30 @@
         <div class="meta-items">
           <div class="meta-items-title">{% trans "Useful information" %}</div>
           <section class="meta-items-list">
-            {% if object.site.practice %}
+            {% if object.parent_sites.first.practice.sector %}
               <span class="meta-item">
-                <span class="meta-item-label">{% trans "Practice" %}</span>
-                <span class="meta-item-value">{{ object.site.practice }}</span>
+                <span class="meta-item-label">{% trans "Sector" %}</span>
+                <span class="meta-item-value">{{ object.parent_sites.first.practice.sector }}</span>
               </span>
             {% endif %}
+            {% if object.parent_sites.first.practice %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Practice" %}</span>
+                <span class="meta-item-value">{{ object.parent_sites.first.practice }}</span>
+              </span>
+            {% endif %}
+            {% if object.type %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Type" %}</span>
+                <span class="meta-item-value">{{ object.type }}</span>
+              </span>
+            {% endif %}
+            {% for rating in object.ratings.all%}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans rating.scale.name %}</span>
+                <span class="meta-item-value">{% trans rating.name %}</span>
+              </span>
+            {% endfor %}
           </section>
         </div>
       </div>
