@@ -1,7 +1,6 @@
 import functools
 import json
 import logging
-import uuid
 
 import simplekml
 from django.conf import settings
