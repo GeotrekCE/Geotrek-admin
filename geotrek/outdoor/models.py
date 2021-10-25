@@ -1,30 +1,32 @@
-import uuid
-
-from geotrek.outdoor.mixins import ExcludedPOIsMixin
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
+from django.contrib.postgres.functions import RandomUUID
 from django.core.validators import MinValueValidator
 from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
+from mptt.models import MPTTModel, TreeForeignKey
+
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin, PicturesMixin
+from geotrek.common.mixins import (AddPropertyMixin, OptionalPictogramMixin,
+                                   PicturesMixin, PublishableMixin,
+                                   TimeStampedModelMixin)
 from geotrek.common.models import Organism
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.maintenance.models import Intervention
-from geotrek.signage.models import Signage, Blade
+from geotrek.outdoor.mixins import ExcludedPOIsMixin
+from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.trekking.models import Trek, POI, Service
+from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
-from mptt.models import MPTTModel, TreeForeignKey
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -184,7 +186,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    uuid = models.UUIDField(default=RandomUUID(), editable=False, unique=True)
 
     check_structure_in_forms = False
 
@@ -368,7 +370,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
                                            blank=True)
     points_reference = models.MultiPointField(verbose_name=_("Points of reference"),
                                               srid=settings.SRID, spatial_index=False, blank=True, null=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    uuid = models.UUIDField(default=RandomUUID, editable=False, unique=True)
 
     check_structure_in_forms = False
 

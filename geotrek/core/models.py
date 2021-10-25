@@ -1,33 +1,29 @@
+import functools
 import json
 import logging
-import functools
 import uuid
 
 import simplekml
-from modelcluster.models import ClusterableModel
-from modelcluster.fields import ParentalKey
-
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
-from django.conf import settings
+from django.contrib.gis.geos import GEOSGeometry, LineString, Point, fromstr
+from django.contrib.postgres.functions import RandomUUID
+from django.db import DEFAULT_DB_ALIAS, connection, connections
+from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
-from django.contrib.gis.geos import fromstr, LineString, GEOSGeometry
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 
-from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text
-
-from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
-                                   AddPropertyMixin)
+from geotrek.altimetry.models import AltimetryMixin
+from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
+from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
+                                   TimeStampedModelMixin)
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
-from geotrek.altimetry.models import AltimetryMixin
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-
-from django.db import connection, connections, DEFAULT_DB_ALIAS
-from django.db.models.query import QuerySet
-
-from django.contrib.gis.geos import Point
+from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +94,7 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                                       verbose_name=_("Networks"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    uuid = models.UUIDField(default=RandomUUID(), editable=False, unique=True)
 
     objects = PathManager()
     include_invisible = PathInvisibleManager()
@@ -386,7 +382,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
                                 default=None, spatial_index=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    uuid = models.UUIDField(default=RandomUUID(), editable=False, unique=True)
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
