@@ -57,6 +57,7 @@ if [ "$MANAGE_DB" = "true" ] && [ "$2" = "" ]; then
 	su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis;'" || true
 	# postgis_raster is only useful on postgis 3, it fails on postgis 2 but this is harmless
 	su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis_raster;'" || true
+	su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'" || true
 fi
 
 # Generate secret key
