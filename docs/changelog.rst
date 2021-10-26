@@ -5,8 +5,20 @@ CHANGELOG
 2.69.0+dev (XXXX-XX-XX)
 ----------------------
 
-- Add UUIDS to the following objects, and to APIv2 serialization for those included
-  Path, TouristicContent, TouristicEvent, Outdoor Site, Outdoor Course, and Topology (inherited by POI, Trek, Service, Trail, Signage, Infrastructure, PhysicalEdge, CompetenceEdge, LandEdge)
+**New features**
+
+- Add UUIDS to the following objects, and to APIv2 serialization for those included :
+  Path, TouristicContent, TouristicEvent, Outdoor Site, Outdoor Course, Attachment, and Topology (inherited by POI, Trek, Service, Trail, Signage, Infrastructure, PhysicalEdge, CompetenceEdge, LandEdge)
+
+
+**Breaking changes**
+
+- Geotrek now needs Postgres' extension 'pcrypto'.
+
+
+**WARNING!**
+
+When upgrading to this version make sure to run ``CREATE EXTENSION IF NOT EXISTS "pgcrypto";`` in database.
 
 
 2.69.0 (2021-10-22)
