@@ -2,8 +2,6 @@ import json
 import logging
 import functools
 from django.contrib.postgres.functions import RandomUUID
-from django.db.models.fields import UUIDField
-from django.db.models import Func
 
 import simplekml
 from modelcluster.models import ClusterableModel
