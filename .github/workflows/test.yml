@@ -266,7 +266,7 @@ jobs:
       - name: E2E test
         run: |
           ./node_modules/.bin/cypress run
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v2
@@ -345,7 +345,7 @@ jobs:
       - name: E2E test
         run: |
           ./node_modules/.bin/cypress run
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v2
@@ -422,7 +422,7 @@ jobs:
       - name: E2E test
         run: |
           ./node_modules/.bin/cypress run
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v2
