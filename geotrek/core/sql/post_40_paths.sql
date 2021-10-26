@@ -23,6 +23,9 @@ CREATE TRIGGER core_path_date_update_tgr
     BEFORE INSERT OR UPDATE ON core_path
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
+CREATE TRIGGER core_path_uuid_insert_tgr
+    BEFORE INSERT ON core_path
+    FOR EACH ROW EXECUTE PROCEDURE ft_uuid_insert();
 
 -------------------------------------------------------------------------------
 -- Check overlapping paths

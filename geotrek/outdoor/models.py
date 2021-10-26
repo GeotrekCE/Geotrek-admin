@@ -370,7 +370,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
                                            blank=True)
     points_reference = models.MultiPointField(verbose_name=_("Points of reference"),
                                               srid=settings.SRID, spatial_index=False, blank=True, null=True)
-    uuid = models.UUIDField(default=RandomUUID, editable=False, unique=True)
+    uuid = models.UUIDField(default=RandomUUID(), editable=False, unique=True)
 
     check_structure_in_forms = False
 

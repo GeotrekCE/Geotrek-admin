@@ -1,28 +1,35 @@
-import functools
 import json
 import logging
+import functools
+from django.contrib.postgres.functions import RandomUUID
+from django.db.models.fields import UUIDField
+from django.db.models import Func
 
 import simplekml
-from django.conf import settings
+from modelcluster.models import ClusterableModel
+from modelcluster.fields import ParentalKey
+
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import GEOSGeometry, LineString, Point, fromstr
-from django.contrib.postgres.functions import RandomUUID
-from django.db import DEFAULT_DB_ALIAS, connection, connections
-from django.db.models.query import QuerySet
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey
-from modelcluster.models import ClusterableModel
+from django.contrib.gis.geos import fromstr, LineString, GEOSGeometry
 
-from geotrek.altimetry.models import AltimetryMixin
-from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
-from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
-                                   TimeStampedModelMixin)
-from geotrek.common.utils import classproperty, sqlfunction, uniquify
-from geotrek.common.utils.postgresql import debug_pg_notices
-from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
+
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
+                                   AddPropertyMixin)
+from geotrek.common.utils import classproperty, sqlfunction, uniquify
+from geotrek.common.utils.postgresql import debug_pg_notices
+from geotrek.altimetry.models import AltimetryMixin
+from geotrek.zoning.mixins import ZoningPropertiesMixin
+
+from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db.models.query import QuerySet
+
+from django.contrib.gis.geos import Point
 
 logger = logging.getLogger(__name__)
 

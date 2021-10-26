@@ -252,7 +252,7 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         model = common_models.Attachment
         fields = (
             'author', 'backend', 'thumbnail',
-            'legend', 'title', 'url', "type"
+            'legend', 'title', 'url', 'uuid', "type"
         )
 
 
