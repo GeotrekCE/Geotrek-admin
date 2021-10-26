@@ -1,8 +1,9 @@
 import os
+import uuid
+
 from PIL import Image
 
 from django.conf import settings
-from django.contrib.postgres.functions import RandomUUID
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -50,7 +51,7 @@ class FileType(StructureOrNoneRelated, BaseFileType):
 class Attachment(BaseAttachment):
 
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
-    uuid = models.UUIDField(default=RandomUUID(), editable=False, unique=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 
 class Theme(PictogramMixin):
