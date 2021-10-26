@@ -308,9 +308,6 @@ jobs:
 
       - name: Simulate install.sh procedure
         run: |
-          sudo apt install -y nginx
-          sudo systemctl start nginx
-          sudo systemctl status nginx
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
@@ -323,6 +320,7 @@ jobs:
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo sed -i 's/# server_names_hash_bucket_size 64;/server_names_hash_bucket_size 64;/' /etc/nginx/nginx.conf
           sudo systemctl status nginx
           sudo systemctl restart nginx
 
