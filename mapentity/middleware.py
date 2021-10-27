@@ -14,8 +14,8 @@ from .settings import app_settings
 logger = logging.getLogger(__name__)
 
 
-CONVERSION_SERVER_HOST = urlparse(settings.MAPENTITY_CONFIG['CONVERSION_SERVER']).hostname
-CAPTURE_SERVER_HOST = urlparse(settings.MAPENTITY_CONFIG['CAPTURE_SERVER']).hostname
+CONVERSION_SERVER_HOST = urlparse(app_settings['CONVERSION_SERVER']).hostname
+CAPTURE_SERVER_HOST = urlparse(app_settings['CAPTURE_SERVER']).hostname
 AUTOLOGIN_IPS = [
     socket.gethostbyname(CONVERSION_SERVER_HOST),
     socket.gethostbyname(CAPTURE_SERVER_HOST),
