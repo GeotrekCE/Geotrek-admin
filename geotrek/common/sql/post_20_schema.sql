@@ -1,5 +1,3 @@
-ALTER TABLE common_attachment ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
-
 CREATE SCHEMA IF NOT EXISTS {# django #};
 
 DO $$
