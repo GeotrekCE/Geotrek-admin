@@ -885,6 +885,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         parent = serializers.SerializerMethodField(read_only=True)
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField(read_only=True)
+        web_links = WebLinkSerializer(many=True)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]

@@ -12,6 +12,7 @@ CHANGELOG
 - APIv2 : Add pictograms to outdoor practice routes
 - APIv2 : Add cities to outdoor sites and outdoor courses routes
 - APIv2 : Add filter by themes, cities, districts, types, and structures to outdoor sites and outdoor courses routes
+- APIv2 : Change Web Links serialization on outdoor sites routes, to detailed instead of just an id
 
 **Breaking changes**
 
