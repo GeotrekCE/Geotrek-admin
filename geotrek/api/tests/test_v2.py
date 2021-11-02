@@ -128,7 +128,7 @@ SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'pictogram', 'website']
 RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'ambiance', 'attachments', 'children', 'courses', 'description', 'description_teaser', 'eid', 'geometry', 'id',
+    'advice', 'ambiance', 'attachments', 'children', 'cities', 'courses', 'description', 'description_teaser', 'eid', 'geometry', 'id',
     'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent', 'period', 'portal',
     'practice', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid', 'wind', 'web_links',
 ])
@@ -153,7 +153,7 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 ])
 
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
+    'advice', 'cities', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
     'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
     'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents',
     'pdf', 'points_reference', 'children', 'duration', 'gear', 'uuid'
