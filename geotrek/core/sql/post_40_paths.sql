@@ -6,6 +6,7 @@
 
 ALTER TABLE core_path ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE core_path ALTER COLUMN date_update SET DEFAULT now();
+ALTER TABLE core_path ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 ALTER TABLE core_path ALTER COLUMN departure SET DEFAULT '';
 ALTER TABLE core_path ALTER COLUMN arrival SET DEFAULT '';
 ALTER TABLE core_path ALTER COLUMN valid SET DEFAULT false;
@@ -23,6 +24,9 @@ CREATE TRIGGER core_path_date_update_tgr
     BEFORE INSERT OR UPDATE ON core_path
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
+CREATE TRIGGER core_path_uuid_insert_tgr
+    BEFORE INSERT ON core_path
+    FOR EACH ROW EXECUTE PROCEDURE ft_uuid_insert();
 
 -------------------------------------------------------------------------------
 -- Check overlapping paths

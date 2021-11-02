@@ -1,30 +1,29 @@
-import os
 import logging
+import os
+import uuid
 
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models.query_utils import Q
-from django.utils.translation import gettext_lazy as _
 from django.utils.formats import date_format
-
-from colorfield.fields import ColorField
+from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text
+from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Topology
-from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
-                                   PictogramMixin, OptionalPictogramMixin,
-                                   PublishableMixin, PicturesMixin,
-                                   AddPropertyMixin)
-from geotrek.common.models import Theme, ReservationSystem
+from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
+                                   OptionalPictogramMixin, PictogramMixin,
+                                   PicturesMixin, PublishableMixin,
+                                   TimeStampedModelMixin)
+from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.utils import intersecting
+from geotrek.core.models import Topology
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-
-from extended_choices import Choices
+from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.manager import MultilingualManager
@@ -298,6 +297,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     class Meta:
         verbose_name = _("Touristic content")
@@ -405,6 +405,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     id_prefix = 'E'
 

@@ -66,16 +66,16 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
     'portal', 'practice', 'previous', 'public_transport', 'published',
     'reservation_system', 'route', 'second_external_id', 'source', 'structure',
-    'themes', 'update_datetime', 'url', 'web_links'
+    'themes', 'update_datetime', 'url', 'uuid', 'web_links'
 ])
 
-PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
+PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url', 'uuid'])
 
 TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + ['count_children', 'steps'])
 
 POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id',
-    'name', 'attachments', 'published', 'type', 'update_datetime', 'url'
+    'name', 'attachments', 'published', 'type', 'update_datetime', 'url', 'uuid'
 ])
 
 TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
@@ -86,7 +86,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
     'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
     'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'name', 'pdf',
     'portal', 'practical_info', 'published', 'reservation_id', 'reservation_system',
-    'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'website',
+    'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'uuid', 'website',
 ])
 
 CITY_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -130,7 +130,7 @@ RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'ambiance', 'attachments', 'children', 'courses', 'description', 'description_teaser', 'eid', 'geometry', 'id',
     'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent', 'period', 'portal',
-    'practice', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'wind', 'web_links',
+    'practice', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid', 'wind', 'web_links',
 ])
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector'])
@@ -156,7 +156,7 @@ COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
     'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
     'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents',
-    'pdf', 'points_reference', 'children', 'duration', 'gear'
+    'pdf', 'points_reference', 'children', 'duration', 'gear', 'uuid'
 ])
 
 COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
@@ -164,7 +164,7 @@ COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 ORGANISM_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 SERVICE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'eid', 'geometry', 'structure', 'type'
+    'id', 'eid', 'geometry', 'structure', 'type', 'uuid'
 ])
 
 SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -172,7 +172,9 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'attachments', 'condition', 'description', 'eid', 'geometry', 'implantation_year', 'maintenance_difficulty', 'name', 'structure', 'type', 'usage_difficulty'
+    'id', 'attachments', 'condition', 'description', 'eid', 'geometry',
+    'implantation_year', 'maintenance_difficulty', 'name', 'structure',
+    'type', 'usage_difficulty', 'uuid'
 ])
 
 INFRASTRUCTURE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -196,7 +198,7 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
     'meeting_point', 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
     'practical_info', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
-    'type', 'update_datetime', 'url', 'website'
+    'type', 'update_datetime', 'url', 'uuid', 'website'
 ])
 
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -206,7 +208,7 @@ TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 SIGNAGE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
     'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
-    'structure', 'type'
+    'structure', 'type', 'uuid'
 ])
 
 SIGNAGE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
