@@ -350,7 +350,7 @@ class GeotrekZoningAndThemeFilter(NearbyContentFilter):
             qs = qs.filter(portal__in=portals.split(','))
         q = request.GET.get('q')
         if q:
-            if queryset.model.__name__ == "Course":
+            if queryset.model.__name__ != "Course":
                 qs = qs.filter(
                     Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
                 )
