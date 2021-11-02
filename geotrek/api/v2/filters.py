@@ -330,7 +330,7 @@ class NearbyContentFilter(BaseFilterBackend):
         return fields
 
 
-class GeotrekTouristicModelFilter(NearbyContentFilter):
+class GeotrekZoningAndThemeFilter(NearbyContentFilter):
     def _filter_queryset(self, request, queryset, view):
         qs = queryset
         cities = request.GET.get('cities')
@@ -350,9 +350,12 @@ class GeotrekTouristicModelFilter(NearbyContentFilter):
             qs = qs.filter(portal__in=portals.split(','))
         q = request.GET.get('q')
         if q:
-            qs = qs.filter(
-                Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
-            )
+            if queryset.model.__name__ == "Course":
+                qs = qs.filter(
+                    Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
+                )
+            else:
+                qs = qs.filter(Q(name__icontains=q) | Q(description__icontains=q))
         return qs
 
     def _get_schema_fields(self, view):
@@ -391,7 +394,7 @@ class GeotrekTouristicModelFilter(NearbyContentFilter):
         )
 
 
-class GeotrekTouristicContentFilter(GeotrekTouristicModelFilter):
+class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
         categories = request.GET.get('categories')
@@ -422,7 +425,7 @@ class GeotrekTouristicContentFilter(GeotrekTouristicModelFilter):
         )
 
 
-class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
+class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
         # Don't filter on detail view
@@ -735,7 +738,7 @@ class OutdoorRatingsFilter(BaseFilterBackend):
         )
 
 
-class GeotrekSiteFilter(GeotrekTouristicModelFilter):
+class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         root_sites_only = request.GET.get('root_sites_only')
         if root_sites_only:
@@ -792,7 +795,7 @@ class GeotrekSiteFilter(GeotrekTouristicModelFilter):
         )
 
 
-class GeotrekCourseFilter(GeotrekTouristicModelFilter):
+class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         practices = request.GET.get('practices')
         if practices:
