@@ -133,7 +133,7 @@ SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'practice', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid', 'wind', 'web_links',
 ])
 
-OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector'])
+OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector', 'pictogram'])
 
 OUTDOOR_SECTOR_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 

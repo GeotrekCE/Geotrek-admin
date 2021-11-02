@@ -843,7 +843,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
         class Meta:
             model = outdoor_models.Practice
-            fields = ('id', 'name', 'sector')
+            fields = ('id', 'name', 'sector', 'pictogram')
 
     class SiteTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)

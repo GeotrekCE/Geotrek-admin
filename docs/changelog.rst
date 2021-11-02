@@ -9,7 +9,7 @@ CHANGELOG
 
 - Add UUIDS to the following objects, and to APIv2 serialization for those included :
   Path, TouristicContent, TouristicEvent, Outdoor Site, Outdoor Course, Attachment, and Topology (inherited by POI, Trek, Service, Trail, Signage, Infrastructure, PhysicalEdge, CompetenceEdge, LandEdge)
-
+- APIv2 : Add pictograms to outdoor practice routes
 
 **Breaking changes**
 
