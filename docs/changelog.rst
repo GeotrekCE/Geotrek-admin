@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.69.0+dev (XXXX-XX-XX)
+2.70.0 (2021-11-02)
 ----------------------
 
 **New features**
@@ -13,15 +13,6 @@ CHANGELOG
 - APIv2 : Add cities to outdoor sites and outdoor courses routes
 - APIv2 : Add filter by themes, cities, districts, types, and structures to outdoor sites and outdoor courses routes
 - APIv2 : Change Web Links serialization on outdoor sites routes, to detailed instead of just an id
-
-**Breaking changes**
-
-- Geotrek now needs Postgres' extension 'pcrypto'.
-
-
-**WARNING!**
-
-When upgrading to this version make sure to run ``CREATE EXTENSION IF NOT EXISTS "pgcrypto";`` in database.
 
 
 2.69.0 (2021-10-22)
