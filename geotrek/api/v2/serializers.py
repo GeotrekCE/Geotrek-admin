@@ -843,7 +843,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
         class Meta:
             model = outdoor_models.Practice
-            fields = ('id', 'name', 'sector')
+            fields = ('id', 'name', 'sector', 'pictogram')
 
     class SiteTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
@@ -884,6 +884,11 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         children = serializers.SerializerMethodField(read_only=True)
         parent = serializers.SerializerMethodField(read_only=True)
         pdf = serializers.SerializerMethodField('get_pdf_url')
+        cities = serializers.SerializerMethodField(read_only=True)
+        web_links = WebLinkSerializer(many=True)
+
+        def get_cities(self, obj):
+            return [city.code for city in obj.published_cities]
 
         def get_courses(self, obj):
             courses = []
@@ -933,7 +938,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'advice', 'ambiance', 'attachments', 'children', 'description', 'description_teaser',
+                'id', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description', 'description_teaser',
                 'eid', 'geometry', 'information_desks', 'labels', 'managers',
                 'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice',
                 'ratings', 'sector', 'source', 'structure', 'themes',
@@ -951,6 +956,10 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         sites = serializers.SerializerMethodField(read_only=True)
         points_reference = serializers.SerializerMethodField(read_only=True)
         pdf = serializers.SerializerMethodField('get_pdf_url')
+        cities = serializers.SerializerMethodField(read_only=True)
+
+        def get_cities(self, obj):
+            return [city.code for city in obj.published_cities]
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)
@@ -981,7 +990,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Course
             fields = (
-                'id', 'advice', 'attachments', 'children', 'description', 'duration', 'eid',
+                'id', 'advice', 'attachments', 'children', 'cities', 'description', 'duration', 'eid',
                 'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
                 'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'ratings', 'ratings_description',
                 'sites', 'structure', 'type', 'url', 'uuid'

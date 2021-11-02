@@ -330,7 +330,7 @@ class NearbyContentFilter(BaseFilterBackend):
         return fields
 
 
-class GeotrekTouristicModelFilter(NearbyContentFilter):
+class GeotrekZoningAndThemeFilter(NearbyContentFilter):
     def _filter_queryset(self, request, queryset, view):
         qs = queryset
         cities = request.GET.get('cities')
@@ -350,9 +350,12 @@ class GeotrekTouristicModelFilter(NearbyContentFilter):
             qs = qs.filter(portal__in=portals.split(','))
         q = request.GET.get('q')
         if q:
-            qs = qs.filter(
-                Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
-            )
+            if queryset.model.__name__ != "Course":
+                qs = qs.filter(
+                    Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
+                )
+            else:
+                qs = qs.filter(Q(name__icontains=q) | Q(description__icontains=q))
         return qs
 
     def _get_schema_fields(self, view):
@@ -391,7 +394,7 @@ class GeotrekTouristicModelFilter(NearbyContentFilter):
         )
 
 
-class GeotrekTouristicContentFilter(GeotrekTouristicModelFilter):
+class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
         categories = request.GET.get('categories')
@@ -422,7 +425,7 @@ class GeotrekTouristicContentFilter(GeotrekTouristicModelFilter):
         )
 
 
-class GeotrekTouristicEventFilter(GeotrekTouristicModelFilter):
+class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
         # Don't filter on detail view
@@ -735,7 +738,7 @@ class OutdoorRatingsFilter(BaseFilterBackend):
         )
 
 
-class GeotrekSiteFilter(BaseFilterBackend):
+class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         root_sites_only = request.GET.get('root_sites_only')
         if root_sites_only:
@@ -759,19 +762,13 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 found_ratings = site.super_ratings_id
                 if found_ratings.isdisjoint(wanted_ratings):
                     queryset = queryset.exclude(id=site.pk)
-        q = request.GET.get('q')
-        if q:
-            queryset = queryset.filter(name__icontains=q)
-        return queryset
+        types = request.GET.get('types')
+        if types:
+            queryset = queryset.filter(type__in=types.split(','))
+        return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
-        return (
-            Field(
-                name='q', required=False, location='query', schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_('Filter by some case-insensitive text contained in name.')
-                )
-            ),
+        return self._get_schema_fields(view) + (
             Field(
                 name='root_sites_only', required=False, location='query', schema=coreschema.String(
                     title=_("Root sites only"),
@@ -783,6 +780,11 @@ class GeotrekSiteFilter(BaseFilterBackend):
                     title=_("Practices in hierarchy"),
                     description=_('Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does.')
                 )
+            ), Field(
+                name='types', required=False, location='query', schema=coreschema.String(
+                    title=_("Types"),
+                    description=_('Filter by one or more site type id, comma-separated.')
+                )
             ),
             Field(
                 name='ratings_in_hierarchy', required=False, location='query', schema=coreschema.Integer(
@@ -793,30 +795,29 @@ class GeotrekSiteFilter(BaseFilterBackend):
         )
 
 
-class GeotrekCourseFilter(BaseFilterBackend):
+class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         practices = request.GET.get('practices')
         if practices:
             queryset = queryset.filter(parent_sites__isnull=False).distinct()
             queryset = queryset.filter(parent_sites__practice__isnull=False).distinct()
             queryset = queryset.filter(parent_sites__practice__in=practices.split(',')).distinct()
-        q = request.GET.get('q')
-        if q:
-            queryset = queryset.filter(name__icontains=q)
-        return queryset
+        types = request.GET.get('types')
+        if types:
+            queryset = queryset.filter(type__in=types.split(','))
+        return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
-        return (
+        return self._get_schema_fields(view) + (
             Field(
                 name='practices', required=False, location='query', schema=coreschema.Integer(
                     title=_("Practices"),
                     description=_('Filter by one or more practice id, comma-separated.')
                 )
-            ),
-            Field(
-                name='q', required=False, location='query', schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_('Filter by some case-insensitive text contained in name.')
+            ), Field(
+                name='types', required=False, location='query', schema=coreschema.String(
+                    title=_("Types"),
+                    description=_('Filter by one or more course type id, comma-separated.')
                 )
             ),
         )
