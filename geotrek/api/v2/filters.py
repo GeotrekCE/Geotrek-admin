@@ -735,7 +735,7 @@ class OutdoorRatingsFilter(BaseFilterBackend):
         )
 
 
-class GeotrekSiteFilter(BaseFilterBackend):
+class GeotrekSiteFilter(GeotrekTouristicModelFilter):
     def filter_queryset(self, request, queryset, view):
         root_sites_only = request.GET.get('root_sites_only')
         if root_sites_only:
@@ -759,19 +759,10 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 found_ratings = site.super_ratings_id
                 if found_ratings.isdisjoint(wanted_ratings):
                     queryset = queryset.exclude(id=site.pk)
-        q = request.GET.get('q')
-        if q:
-            queryset = queryset.filter(name__icontains=q)
-        return queryset
+        return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
-        return (
-            Field(
-                name='q', required=False, location='query', schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_('Filter by some case-insensitive text contained in name.')
-                )
-            ),
+        return self._get_schema_fields(view) + (
             Field(
                 name='root_sites_only', required=False, location='query', schema=coreschema.String(
                     title=_("Root sites only"),
@@ -793,30 +784,21 @@ class GeotrekSiteFilter(BaseFilterBackend):
         )
 
 
-class GeotrekCourseFilter(BaseFilterBackend):
+class GeotrekCourseFilter(GeotrekTouristicModelFilter):
     def filter_queryset(self, request, queryset, view):
         practices = request.GET.get('practices')
         if practices:
             queryset = queryset.filter(parent_sites__isnull=False).distinct()
             queryset = queryset.filter(parent_sites__practice__isnull=False).distinct()
             queryset = queryset.filter(parent_sites__practice__in=practices.split(',')).distinct()
-        q = request.GET.get('q')
-        if q:
-            queryset = queryset.filter(name__icontains=q)
-        return queryset
+        return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
-        return (
+        return self._get_schema_fields(view) + (
             Field(
                 name='practices', required=False, location='query', schema=coreschema.Integer(
                     title=_("Practices"),
                     description=_('Filter by one or more practice id, comma-separated.')
-                )
-            ),
-            Field(
-                name='q', required=False, location='query', schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_('Filter by some case-insensitive text contained in name.')
                 )
             ),
         )

@@ -11,6 +11,7 @@ CHANGELOG
   Path, TouristicContent, TouristicEvent, Outdoor Site, Outdoor Course, Attachment, and Topology (inherited by POI, Trek, Service, Trail, Signage, Infrastructure, PhysicalEdge, CompetenceEdge, LandEdge)
 - APIv2 : Add pictograms to outdoor practice routes
 - APIv2 : Add cities to outdoor sites and outdoor courses routes
+- APIv2 : Add filter by themes, cities, districts, and structures to outdoor sites and outdoor courses routes
 
 **Breaking changes**
 
