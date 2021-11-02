@@ -2912,6 +2912,72 @@ class RootSitesOnlyFilterTestCase(BaseApiTest):
         self.assertNotIn(self.site_child2.pk, all_ids)
 
 
+class SitesTypesFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site1 = outdoor_factory.SiteFactory()
+        cls.site2 = outdoor_factory.SiteFactory()
+        cls.site3 = outdoor_factory.SiteFactory()
+
+    def test_sites_type_filter_1(self):
+        response = self.get_site_list({'types': self.site1.type.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertNotIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+
+    def test_sites_type_filter_2(self):
+        response = self.get_site_list({'types': f"{self.site2.type.pk},{self.site3.type.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertIn(self.site3.pk, all_ids)
+
+
+class CoursesTypesFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.course1 = outdoor_factory.CourseFactory()
+        cls.course2 = outdoor_factory.CourseFactory()
+        cls.course3 = outdoor_factory.CourseFactory()
+
+    def test_courses_type_filter_1(self):
+        response = self.get_course_list({'types': self.course1.type.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_courses = response.json()['results']
+        all_ids = []
+        for type in returned_courses:
+            all_ids.append(type['id'])
+        self.assertIn(self.course1.pk, all_ids)
+        self.assertNotIn(self.course2.pk, all_ids)
+        self.assertNotIn(self.course3.pk, all_ids)
+
+    def test_courses_type_filter_2(self):
+        response = self.get_course_list({'types': f"{self.course2.type.pk},{self.course3.type.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_courses = response.json()['results']
+        all_ids = []
+        for type in returned_courses:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.course1.pk, all_ids)
+        self.assertIn(self.course2.pk, all_ids)
+        self.assertIn(self.course3.pk, all_ids)
+
+
 class TouristicContentTypeFilterTestCase(BaseApiTest):
 
     @classmethod

@@ -759,6 +759,9 @@ class GeotrekSiteFilter(GeotrekTouristicModelFilter):
                 found_ratings = site.super_ratings_id
                 if found_ratings.isdisjoint(wanted_ratings):
                     queryset = queryset.exclude(id=site.pk)
+        types = request.GET.get('types')
+        if types:
+            queryset = queryset.filter(type__in=types.split(','))
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
@@ -773,6 +776,11 @@ class GeotrekSiteFilter(GeotrekTouristicModelFilter):
                 name='practices_in_hierarchy', required=False, location='query', schema=coreschema.Integer(
                     title=_("Practices in hierarchy"),
                     description=_('Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does.')
+                )
+            ), Field(
+                name='types', required=False, location='query', schema=coreschema.String(
+                    title=_("Types"),
+                    description=_('Filter by one or more site type id, comma-separated.')
                 )
             ),
             Field(
@@ -791,6 +799,9 @@ class GeotrekCourseFilter(GeotrekTouristicModelFilter):
             queryset = queryset.filter(parent_sites__isnull=False).distinct()
             queryset = queryset.filter(parent_sites__practice__isnull=False).distinct()
             queryset = queryset.filter(parent_sites__practice__in=practices.split(',')).distinct()
+        types = request.GET.get('types')
+        if types:
+            queryset = queryset.filter(type__in=types.split(','))
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
@@ -799,6 +810,11 @@ class GeotrekCourseFilter(GeotrekTouristicModelFilter):
                 name='practices', required=False, location='query', schema=coreschema.Integer(
                     title=_("Practices"),
                     description=_('Filter by one or more practice id, comma-separated.')
+                )
+            ), Field(
+                name='types', required=False, location='query', schema=coreschema.String(
+                    title=_("Types"),
+                    description=_('Filter by one or more course type id, comma-separated.')
                 )
             ),
         )
