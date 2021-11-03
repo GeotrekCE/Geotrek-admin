@@ -1718,9 +1718,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
     def test_outdoorpractice_list(self):
-        self.check_number_elems_response(
-            self.get_outdoorpractice_list(),
-            outdoor_models.Practice
+        response = self.get_outdoorpractice_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            len(json_response['results']),
+            outdoor_models.Practice.objects.filter(sites__published=True).distinct().count()
         )
 
     def test_outdoorpractice_detail(self):
@@ -1873,6 +1876,8 @@ class RatingScaleTestCase(TestCase):
     def setUpTestData(cls):
         cls.practice1 = outdoor_factory.PracticeFactory()
         cls.practice2 = outdoor_factory.PracticeFactory()
+        cls.practice1.sites.set([outdoor_factory.SiteFactory()])
+        cls.practice2.sites.set([outdoor_factory.SiteFactory()])
         cls.scale1 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice1)
         cls.scale2 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice2)
         cls.scale3 = outdoor_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
@@ -1931,6 +1936,9 @@ class RatingTestCase(TestCase):
         cls.rating1 = outdoor_factory.RatingFactory(name='AAA', scale=cls.scale1)
         cls.rating2 = outdoor_factory.RatingFactory(name='AAA', scale=cls.scale2)
         cls.rating3 = outdoor_factory.RatingFactory(name='BBB', scale=cls.scale2)
+        cls.rating1.sites.set([outdoor_factory.SiteFactory()])
+        cls.rating2.sites.set([outdoor_factory.SiteFactory()])
+        cls.rating3.sites.set([outdoor_factory.SiteFactory()])
 
     def test_list(self):
         response = self.client.get('/api/v2/outdoor_rating/')

@@ -7,6 +7,12 @@ CHANGELOG
 
 **New features**
 
+- APIv2 : Add filter by portal on outdoor practices and ratings
+
+**Bug fixes**
+
+- APIv2 : Fix exceptions on filter by portals or themes in Outdoor Course route
+
 
 2.70.0 (2021-11-02)
 ----------------------
