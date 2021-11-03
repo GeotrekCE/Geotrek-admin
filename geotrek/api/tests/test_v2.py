@@ -3543,10 +3543,10 @@ class OutdoorFilterByPortal(BaseApiTest):
         cls.portal = common_factory.TargetPortalFactory()
         cls.theme = common_factory.ThemeFactory()
         cls.site = outdoor_factory.SiteFactory()
-        cls.site.portal.set([cls.portal])
-        cls.site.themes.set([cls.theme])
+        cls.site.portal.set([cls.portal.pk])
+        cls.site.themes.set([cls.theme.pk])
         cls.course = outdoor_factory.CourseFactory()
-        cls.course.parent_sites.set([cls.course.pk])
+        cls.course.parent_sites.set([cls.site.pk])
         cls.course2 = outdoor_factory.CourseFactory()
 
     def test_filter_courses_by_portal(self):
