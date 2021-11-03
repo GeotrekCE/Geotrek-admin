@@ -25,6 +25,9 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.SiteRelatedPortalFilter,
+    )
     serializer_class = api_serializers.OutdoorPracticeSerializer
     queryset = outdoor_models.Practice.objects \
         .order_by('pk')  # Required for reliable pagination
@@ -62,6 +65,9 @@ class RatingScaleViewSet(api_viewsets.GeotrekViewSet):
 
 
 class RatingViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.SiteRelatedPortalFilter,
+    )
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRatingFilter, )
     serializer_class = api_serializers.RatingSerializer
     queryset = outdoor_models.Rating.objects \
