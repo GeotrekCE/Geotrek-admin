@@ -22,13 +22,13 @@ CHANGELOG
 
 **Breaking changes**
 
-- Geotrek now needs Postgres' extension 'pcrypto'.
+- Geotrek now needs PostgreSQL extension 'pgrypto'.
 
 **WARNING!**
 
-**Before** upgrading to this version make sure to run ``CREATE EXTENSION IF NOT EXISTS "pgcrypto";``  from `postgres` user in database.
+**Before** upgrading to this version make sure to run ``CREATE EXTENSION IF NOT EXISTS "pgcrypto";``  from ``postgres`` user in database.
 
-`su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'"`
+``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'"``
 
 
 2.69.0 (2021-10-22)

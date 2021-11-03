@@ -147,19 +147,20 @@ Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.
 
 
 From Geotrek-admin <= 2.69.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **WARNING!**
 
-Starting from version 2.70.0, Geotrek now needs Postgres' extension 'pcrypto'.
+Starting from version 2.70.0, Geotrek now needs PostgreSQL extension 'pgrypto'.
 
-Make sure to run the following command **BEFORE** upgrading :
+Make sure to run the following command **BEFORE** upgrading:
 
-`su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'"`
+``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'"``
 
 
 Server migration
 ----------------
+
 It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration). These commands apply to versions >= 2.33. If your version is below 2.33, please check the doc of your version. 
 
 Backup settings, media files and database on the old server:
