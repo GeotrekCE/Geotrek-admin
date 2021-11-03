@@ -343,19 +343,24 @@ class GeotrekZoningAndThemeFilter(NearbyContentFilter):
         if structures:
             qs = qs.filter(structure__in=structures.split(','))
         themes = request.GET.get('themes')
-        if themes:
-            qs = qs.filter(themes__in=themes.split(','))
         portals = request.GET.get('portals')
-        if portals:
-            qs = qs.filter(portal__in=portals.split(','))
         q = request.GET.get('q')
-        if q:
-            if queryset.model.__name__ != "Course":
+        if queryset.model.__name__ == "Course":
+            if themes:
+                qs = qs.filter(parent_sites__themes__in=themes.split(','))
+            if portals:
+                qs = qs.filter(parent_sites__portal__in=portals.split(','))
+            if q:
                 qs = qs.filter(
-                    Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
+                    Q(name__icontains=q) | Q(description__icontains=q)
                 )
-            else:
-                qs = qs.filter(Q(name__icontains=q) | Q(description__icontains=q))
+        else:
+            if themes:
+                qs = qs.filter(themes__in=themes.split(','))
+            if portals:
+                qs = qs.filter(portal__in=portals.split(','))
+            if q:
+                qs = qs.filter(Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q))
         return qs
 
     def _get_schema_fields(self, view):

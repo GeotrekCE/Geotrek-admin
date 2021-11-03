@@ -1718,9 +1718,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
     def test_outdoorpractice_list(self):
-        self.check_number_elems_response(
-            self.get_outdoorpractice_list(),
-            outdoor_models.Practice
+        response = self.get_outdoorpractice_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            len(json_response['results']),
+            outdoor_models.Practice.objects.filter(sites__published=True).distinct().count()
         )
 
     def test_outdoorpractice_detail(self):
@@ -1873,6 +1876,8 @@ class RatingScaleTestCase(TestCase):
     def setUpTestData(cls):
         cls.practice1 = outdoor_factory.PracticeFactory()
         cls.practice2 = outdoor_factory.PracticeFactory()
+        cls.practice1.sites.set([outdoor_factory.SiteFactory()])
+        cls.practice2.sites.set([outdoor_factory.SiteFactory()])
         cls.scale1 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice1)
         cls.scale2 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice2)
         cls.scale3 = outdoor_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
@@ -1931,6 +1936,9 @@ class RatingTestCase(TestCase):
         cls.rating1 = outdoor_factory.RatingFactory(name='AAA', scale=cls.scale1)
         cls.rating2 = outdoor_factory.RatingFactory(name='AAA', scale=cls.scale2)
         cls.rating3 = outdoor_factory.RatingFactory(name='BBB', scale=cls.scale2)
+        cls.rating1.sites.set([outdoor_factory.SiteFactory()])
+        cls.rating2.sites.set([outdoor_factory.SiteFactory()])
+        cls.rating3.sites.set([outdoor_factory.SiteFactory()])
 
     def test_list(self):
         response = self.client.get('/api/v2/outdoor_rating/')
@@ -3524,3 +3532,41 @@ class OutdoorFilterByPracticesTestCase(BaseApiTest):
         self.assertIn(self.course_practice.pk, all_ids)
         self.assertNotIn(self.course_site_no_practice.pk, all_ids)
         self.assertNotIn(self.course_other_practice.pk, all_ids)
+
+
+class OutdoorFilterByPortal(BaseApiTest):
+    """ Test APIV2 filtering on ratings on sites in hierarchy
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.portal = common_factory.TargetPortalFactory()
+        cls.theme = common_factory.ThemeFactory()
+        cls.site = outdoor_factory.SiteFactory()
+        cls.site.portal.set([cls.portal.pk])
+        cls.site.themes.set([cls.theme.pk])
+        cls.course = outdoor_factory.CourseFactory()
+        cls.course.parent_sites.set([cls.site.pk])
+        cls.course2 = outdoor_factory.CourseFactory()
+
+    def test_filter_courses_by_portal(self):
+        response = self.get_course_list({'portals': self.portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.course.pk, all_ids)
+        self.assertNotIn(self.course2.pk, all_ids)
+
+    def test_filter_courses_by_themes(self):
+        response = self.get_course_list({'themes': self.theme.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.course.pk, all_ids)
+        self.assertNotIn(self.course2.pk, all_ids)
