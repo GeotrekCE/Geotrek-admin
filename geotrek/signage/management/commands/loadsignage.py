@@ -25,20 +25,22 @@ class Command(BaseCommand):
                             help='Allow to use structure for condition and type of infrastructures')
         parser.add_argument('--encoding', '-e', action='store', dest='encoding', default='utf-8',
                             help='File encoding, default utf-8')
-        parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Base url')
-        parser.add_argument('--type-field', '-t', action='store', dest='type_field', help='Base url')
-        parser.add_argument('--condition-field', '-c', action='store', dest='condition_field', help='Base url')
-        parser.add_argument('--structure-field', '-s', action='store', dest='structure_field', help='Base url')
-        parser.add_argument('--description-field', '-d', action='store', dest='description_field', help='Base url')
-        parser.add_argument('--year-field', '-y', action='store', dest='year_field', help='Base url')
-        parser.add_argument('--type-default', action='store', dest='type_default', help='Base url')
-        parser.add_argument('--name-default', action='store', dest='name_default', help='Base url')
-        parser.add_argument('--condition-default', action='store', dest='condition_default', help='Base url')
-        parser.add_argument('--structure-default', action='store', dest='structure_default', help='Base url')
+        parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Name of the field that will be mapped to the Name field in Geotrek')
+        parser.add_argument('--type-field', '-t', action='store', dest='type_field', help='Name of the field that will be mapped to the Type field in Geotrek')
+        parser.add_argument('--condition-field', '-c', action='store', dest='condition_field', help='Name of the field that will be mapped to the Condition field in Geotrek')
+        parser.add_argument('--structure-field', '-s', action='store', dest='structure_field', help='Name of the field that will be mapped to the Structure field in Geotrek')
+        parser.add_argument('--description-field', '-d', action='store', dest='description_field', help='Name of the field that will be mapped to the Description field in Geotrek')
+        parser.add_argument('--year-field', '-y', action='store', dest='year_field', help='Name of the field that will be mapped to the Year field in Geotrek')
+        parser.add_argument('--code-field', action='store', dest='code_field', help='Name of the field that will be mapped to the Code field in Geotrek')
+        parser.add_argument('--type-default', action='store', dest='type_default', help='Default value for Type field')
+        parser.add_argument('--name-default', action='store', dest='name_default', help='Default value for Name field')
+        parser.add_argument('--condition-default', action='store', dest='condition_default', help='Default value for Condition field')
+        parser.add_argument('--structure-default', action='store', dest='structure_default', help='Default value for Structure field')
         parser.add_argument('--description-default', action='store', dest='description_default', default="",
-                            help='Base url')
+                            help='Default value for Description field')
         parser.add_argument('--eid-field', action='store', dest='eid_field', help='External ID field')
-        parser.add_argument('--year-default', action='store', dest='year_default', help='Base url')
+        parser.add_argument('--year-default', action='store', dest='year_default', help='Default value for Year field')
+        parser.add_argument('--code-default', action='store', dest='code_default', default="", help='Default value for Code field')
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
@@ -57,6 +59,7 @@ class Command(BaseCommand):
         field_structure_type = options.get('structure_field')
         field_description = options.get('description_field')
         field_implantation_year = options.get('year_field')
+        field_code = options.get('code_field')
         field_eid = options.get('eid_field')
 
         sid = transaction.savepoint()
@@ -124,6 +127,13 @@ class Command(BaseCommand):
                         "Change your --eid-field option"))
                     break
 
+                if field_code and field_code not in available_fields:
+                    self.stdout.write(
+                        self.style.ERROR("Field '{}' not found in data source.".format(field_code)))
+                    self.stdout.write(self.style.ERROR(
+                        "Change your --code-field option"))
+                    break
+
                 for feature in layer:
                     feature_geom = feature.geom
                     name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
@@ -149,9 +159,10 @@ class Command(BaseCommand):
                         field_implantation_year)) if field_implantation_year in available_fields and feature.get(
                         field_implantation_year).isdigit() else options.get('year_default')
                     eid = feature.get(field_eid) if field_eid in available_fields else None
+                    code = feature.get(field_code) if field_code in available_fields else options.get('code_default')
 
                     self.create_signage(feature_geom, name, type, condition, structure, description, year,
-                                        verbosity, eid, use_structure)
+                                        verbosity, eid, use_structure, code)
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
@@ -163,7 +174,7 @@ class Command(BaseCommand):
             raise
 
     def create_signage(self, geometry, name, type,
-                       condition, structure, description, year, verbosity, eid, use_structure):
+                       condition, structure, description, year, verbosity, eid, use_structure, code):
 
         infra_type, created = SignageType.objects.get_or_create(label=type,
                                                                 structure=structure if use_structure else None)
@@ -186,7 +197,8 @@ class Command(BaseCommand):
                 'condition': condition_type,
                 'structure': structure,
                 'description': description,
-                'implantation_year': year
+                'implantation_year': year,
+                'code': code,
             }
             if eid:
                 infra, created = Signage.objects.update_or_create(
