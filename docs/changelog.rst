@@ -5,6 +5,10 @@ CHANGELOG
 2.71.0+dev (XXXX-XX-XX)
 ----------------------
 
+**Minor improvements**
+
+- Add possibility to fill 'code' Field in Signage model when using loadsignage command. Two parameters added : code_field and code_default
+
 
 2.71.0 (2021-11-03)
 ----------------------
