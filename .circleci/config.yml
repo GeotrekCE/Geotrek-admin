@@ -23,8 +23,8 @@ jobs:
     steps:
       - checkout
       - run: |
-          pip install -r docs/requirements.txt
           cd docs/
+          pip install -r ./requirements.txt
           make html
 
   docker_image:
