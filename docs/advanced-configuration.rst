@@ -718,7 +718,7 @@ To know how many workers you should set, please refer to `gunicorn documentation
 
 
 Configure columns displayed in lists views and exports
-----------------------------------------------
+------------------------------------------------------
 
 For each module, use the following syntax to configure columns to display in the main table.
 
@@ -745,7 +745,7 @@ Another setting exists to enable a more detailed export of jobs costs in the int
 
 
 Configure form fields in creation views
-----------------------------------------------
+---------------------------------------
 
 For each module, use the following syntax to configure fields to hide in the creation form.
 
