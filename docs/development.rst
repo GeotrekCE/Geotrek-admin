@@ -39,8 +39,8 @@ Definition of done
 
 * ``docs/changelog.rst`` is up-to-date
 * A unit-test covers the bugfix or the new feature
-* A frontend test (:path:jstests/nav-*.js) covers the navigation bug fix or feature
-* A JS *Mocha* test (:path:jstests/tests.*.js) covers the JavaScript bug fix or feature
+* A frontend test (:path:jstests/nav-\*.js) covers the navigation bug fix or feature
+* A JS *Mocha* test (:path:jstests/tests.\*.js) covers the JavaScript bug fix or feature
 * Unit-tests coverage is above or at least equal with previous commits
 * Settings have default value in ``settings/base.py`` or ``conf/settings-default.ini``
 * Installation instructions are up-to-date
@@ -84,9 +84,9 @@ Model modification
 .. note ::
 
     Add migration file to source control.
-    
+
 Model modification - Definition of Done for new model fields
-------------------
+------------------------------------------------------------
 
 When adding a new field ``my_field`` to a model ``MyModel``, please proceed with the following changes to ensure this field is included in existing functionalities.
 
@@ -100,7 +100,7 @@ When adding a new field ``my_field`` to a model ``MyModel``, please proceed with
 
 - Look for form class ``MyModelForm(CommonForm)`` :
 
-    - If it exists, and field needs to be included in form, add ``my_field`` to form attributes (``fields`` on the ``Meta`` class, sometimes ``fieldslayout`` as well). 
+    - If it exists, and field needs to be included in form, add ``my_field`` to form attributes (``fields`` on the ``Meta`` class, sometimes ``fieldslayout`` as well).
 
     - If field is added to the form **and is optional**, please add ``my_field`` to the documentation for hideable form fields : in ``docs/advanced-configuration.rst`` look for ``HIDDEN_FORM_FIELDS['mymodel']`` and add your field to the list.
 

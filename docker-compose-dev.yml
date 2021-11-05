@@ -61,7 +61,7 @@ services:
     volumes:
       - ./docs:/docs
     ports:
-      - 8800:8800
+      - "8800:8800"
 
 volumes:
   postgres:
