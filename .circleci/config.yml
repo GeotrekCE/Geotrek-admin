@@ -22,10 +22,10 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
-      - run: pip install -r docs/requirements.txt
-      - run: cd docs
-      - run: ls -als
-      - run: make html
+      - run: |
+          pip install -r docs/requirements.txt
+          cd docs/
+          make html
 
   docker_image:
     machine: true
