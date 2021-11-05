@@ -236,7 +236,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix confirm delete attachment modal not visible
-- Fix required '*geom' position
+- Fix required '\*geom' position
 - Fix scroll unwanted when list is full
 - Fix responsive on dataTables
 - Remove excluded POIs from results in POI endpoint on api v2 when filtering by trek id
