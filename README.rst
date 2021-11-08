@@ -2,7 +2,7 @@
 
 .. image:: http://geotrek.fr/assets/img/logo.svg
 
-:master: |master-status| |master-coverage| |master-e2e|
+:master: |master-status| |master-coverage| |master-e2e| |master-rtd|
 
 .. |master-status| image::
     https://circleci.com/gh/GeotrekCE/Geotrek-admin.svg?style=shield
@@ -18,6 +18,11 @@
     https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/ktpy7v/master&style=flat&logo=cypress
     :alt: End to End
     :target: https://dashboard.cypress.io/projects/ktpy7v/runs
+
+.. |master-rtd| image::
+    https://readthedocs.org/projects/geotrek/badge/?version=latest&style=flat
+    :alt: Documentation
+    :target: https://geotrek.readthedocs.io
 
 
 In brief
