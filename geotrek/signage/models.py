@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 
 from django.db import models
@@ -122,6 +123,16 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     def distance(self, to_cls):
         """Distance to associate this signage to another class"""
         return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for trek in self.treks.all():
+            trek.save()
+
+    def delete(self, *args, **kwargs):
+        for trek in self.treks.all():
+            trek.save()
+        super().delete(*args, **kwargs)
 
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
