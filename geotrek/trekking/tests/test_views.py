@@ -1562,7 +1562,7 @@ class TestDepublishSignagesRemovedFromPDF(TestCase):
 
     @mock.patch('mapentity.helpers.requests.get')
     def test_depublish_signage_refreshes_pdf(self, mock_get):
-        #Mock map screenshot
+        # Mock map screenshot
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
