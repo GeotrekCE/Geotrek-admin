@@ -4,18 +4,19 @@
 
 DO LANGUAGE plpgsql $$
 DECLARE
-    fk_name varchar;
+    row record;
 BEGIN
     -- Obtain FK name (which is dynamically generated when table is created)
-    SELECT c.conname INTO fk_name
-        FROM pg_class t1, pg_class t2, pg_constraint c
-        WHERE t1.relname = 'e_r_evenement_troncon' AND c.conrelid = t1.oid
-          AND t2.relname = 'l_t_troncon' AND c.confrelid = t2.oid
-          AND c.contype = 'f';
+    -- Use loop to delete all FK generated in previous migrate (bug fix)
+    FOR row IN SELECT c.conname
+               FROM pg_class t1, pg_class t2, pg_constraint c
+               WHERE t1.relname = 'core_pathaggregation' AND c.conrelid = t1.oid
+                 AND t2.relname = 'core_path' AND c.confrelid = t2.oid
+                 AND c.contype = 'f'
     -- Use a dynamic SQL statement with the name found
-    IF fk_name IS NOT NULL THEN
-        EXECUTE 'ALTER TABLE e_r_evenement_troncon DROP CONSTRAINT IF EXISTS ' || quote_ident(fk_name);
-    END IF;
+    LOOP
+        EXECUTE 'ALTER TABLE core_pathaggregation DROP CONSTRAINT IF EXISTS ' || quote_ident(row.conname);
+    END LOOP;
 END;
 $$;
 
@@ -45,7 +46,7 @@ ALTER TABLE core_pathaggregation ADD FOREIGN KEY (path_id) REFERENCES core_path(
 -------------------------------------------------------------------------------
 
 CREATE FUNCTION {# geotrek.core #}.ft_path_interpolate(path integer, point geometry) RETURNS RECORD AS $$
-DECLARE 
+DECLARE
   line GEOMETRY;
   result RECORD;
 BEGIN
@@ -111,7 +112,7 @@ DECLARE
     junction geometry;
     t_count integer;
 BEGIN
-    -- Deal with previously connected paths in the case of an UDPATE action
+    -- Deal with previously connected paths in the case of an UPDATE action
     IF TG_OP = 'UPDATE' THEN
         -- There were connected paths only if it was a junction point
         IF OLD.start_position = OLD.end_position AND OLD.start_position IN (0.0, 1.0) THEN
@@ -125,7 +126,7 @@ BEGIN
         RETURN NULL;
     END IF;
 
-    -- Don't proceed for intermediate markers (forced passage) : if this 
+    -- Don't proceed for intermediate markers (forced passage) : if this
     -- is not the only path aggregation, then it's an intermediate marker.
     SELECT count(*)
         INTO t_count
