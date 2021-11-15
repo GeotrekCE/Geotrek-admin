@@ -9,6 +9,10 @@ CHANGELOG
 
 - Add possibility to fill 'code' Field in Signage model when using loadsignage command. Two parameters added : code_field and code_default
 
+**Bug fixes**
+
+- Database: fix sql cleanup that delete foreign key on core_pathaggregation.path_id -> core_path.id. (#2819)
+
 
 2.71.0 (2021-11-03)
 ----------------------
