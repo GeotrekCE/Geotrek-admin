@@ -20,23 +20,6 @@ BEGIN
 END;
 $$;
 
-DO LANGUAGE plpgsql $$
-DECLARE
-    fk_name varchar;
-BEGIN
-    -- Obtain FK name (which is dynamically generated when table is created)
-    SELECT c.conname INTO fk_name
-        FROM pg_class t1, pg_class t2, pg_constraint c
-        WHERE t1.relname = 'core_pathaggregation' AND c.conrelid = t1.oid
-          AND t2.relname = 'core_path' AND c.confrelid = t2.oid
-          AND c.contype = 'f';
-    -- Use a dynamic SQL statement with the name found
-    IF fk_name IS NOT NULL THEN
-        EXECUTE 'ALTER TABLE core_pathaggregation DROP CONSTRAINT IF EXISTS ' || quote_ident(fk_name);
-    END IF;
-END;
-$$;
-
 -- Now re-create the FK with cascade option
 ALTER TABLE core_pathaggregation ADD FOREIGN KEY (path_id) REFERENCES core_path(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
