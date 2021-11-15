@@ -366,6 +366,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return city.code if city else None
 
     class TouristicEventSerializer(TouristicModelSerializer):
+        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
         end_date = serializers.DateField()
@@ -380,7 +381,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         class Meta:
             model = tourism_models.TouristicEvent
             fields = (
-                'id', 'accessibility', 'approved', 'begin_date', 'booking',
+                'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking',
                 'cities', 'contact', 'create_datetime', 'description', 'description_teaser',
                 'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
                 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
