@@ -190,6 +190,16 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
     def published_topology_infrastructure(cls, topology):
         return cls.topology_infrastructures(topology).filter(published=True)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for trek in self.treks.all():
+            trek.save()
+
+    def delete(self, *args, **kwargs):
+        for trek in self.treks.all():
+            trek.save()
+        super().delete(*args, **kwargs)
+
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))
 Topology.add_property('infrastructures', Infrastructure.topology_infrastructures, _("Infrastructures"))
