@@ -16,6 +16,7 @@ CHANGELOG
 **Bug fixes**
 
 - Prevent Signages and Infrastructures from being displayed on PDFs when unpublished
+- Database: fix sql cleanup that delete foreign key on core_pathaggregation.path_id -> core_path.id. (#2819)
 
 
 2.71.0 (2021-11-03)
