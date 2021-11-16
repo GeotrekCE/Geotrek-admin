@@ -13,6 +13,10 @@ CHANGELOG
 
 - Add possibility to fill 'code' Field in Signage model when using loadsignage command. Two parameters added : code_field and code_default
 
+**Bug fixes**
+
+- Prevent Signages and Infrastructures from being displayed on PDFs when unpublished
+
 
 2.71.0 (2021-11-03)
 ----------------------
