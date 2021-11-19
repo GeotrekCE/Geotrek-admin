@@ -36,6 +36,7 @@ setup(
         'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@backport_geotrek#egg=mapentity',
         'env_file',
         # pinned by requirements.txt
+        'python-memcached',
         'psycopg2',
         'pdfimpose',
         'docutils',
@@ -55,6 +56,8 @@ setup(
         'drf-extensions',
         'django-colorfield',
         'Fiona',
+        'raven',
+        'sentry-sdk',
         # tests
         'freezegun',
         'coverage',
