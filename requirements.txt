@@ -188,7 +188,7 @@ packaging==21.3
     # via drf-yasg
 paperclip==2.3.2
     # via mapentity
-papersize==1.2.0
+papersize==1.0.1
     # via pdfimpose
 pdfimpose==1.1.0
     # via geotrek (setup.py)
