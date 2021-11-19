@@ -137,8 +137,6 @@ jobs:
       - run: make load_data
       - run: make load_test_integration
       - run: docker-compose up -d
-      - run: sleep 10
-      - run: docker-compose logs web
       - run: sudo mkdir /var/www/geotrek -p
       - run: sudo ln -s /home/circleci/project/var/media /var/www/geotrek
       - run: sudo ln -s /home/circleci/project/var/static /var/www/geotrek

@@ -71,7 +71,6 @@ django==3.1.13
     #   django-appypod
     #   django-debug-toolbar
     #   django-embed-video
-    #   django-extensions
     #   django-filter
     #   django-geojson
     #   django-leaflet
@@ -164,6 +163,8 @@ geojson==2.3.0
     #   tif2geojson
 gpxpy==1.4.0
     # via mapentity
+gunicorn==20.1.0
+    # via geotrek (setup.py)
 html5lib==1.0.1
     # via weasyprint
 idna==2.8
@@ -257,6 +258,7 @@ six==1.16.0
     # via
     #   django-appconf
     #   django-compressor
+    #   django-extensions
     #   django-modeltranslation
     #   fiona
     #   html5lib

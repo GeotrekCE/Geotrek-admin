@@ -56,6 +56,8 @@ setup(
         'drf-extensions',
         'django-colorfield',
         'Fiona',
+        # prod,
+        'gunicorn',
         'raven',
         'sentry-sdk',
         # tests
