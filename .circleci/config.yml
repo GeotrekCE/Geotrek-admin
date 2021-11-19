@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run: pip3 install flake8
       - run: flake8 --exclude "" --ignore=E501,F821 geotrek/settings
-      - run: flake8 geotrek mapentity
+      - run: flake8 geotrek
       - run: test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
   doc:
     docker:
