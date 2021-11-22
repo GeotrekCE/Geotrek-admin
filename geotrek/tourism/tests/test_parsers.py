@@ -16,8 +16,8 @@ from geotrek.tourism.factories import (TouristicContentCategoryFactory, Touristi
                                        TouristicContentType2Factory, TouristicEventTypeFactory)
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEventApidaeParser, EspritParcParser,
-                                    TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
-                                    TouristicContentTourInSoftParser, TouristicEventTourInSoftParser)
+                                     TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
+                                     TouristicContentTourInSoftParser, TouristicEventTourInSoftParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
