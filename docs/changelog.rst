@@ -7,6 +7,8 @@ CHANGELOG
 
 **New features**
 
+- Improve support for Tourinsoft v3 with new medias management
+
 
 2.72.0 (2021-11-16)
 -----------------------

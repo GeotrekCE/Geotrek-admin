@@ -16,8 +16,8 @@ from geotrek.tourism.factories import (TouristicContentCategoryFactory, Touristi
                                        TouristicContentType2Factory, TouristicEventTypeFactory)
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEventApidaeParser, EspritParcParser,
-                                     TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParser,
-                                     TouristicEventTourInSoftParser)
+                                    TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
+                                    TouristicContentTourInSoftParser, TouristicEventTourInSoftParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
@@ -62,6 +62,15 @@ class HOT28(TouristicContentTourInSoftParser):
 
 
 class HOT28v3(TouristicContentTourInSoftParserV3):
+    url = "http://wcf.tourinsoft.com/Syndication/3.0/cdt28/xxx/Objects"
+    source = "CDT 28"
+    category = "Où dormir"
+    type1 = "Hôtels"
+    type2 = "****"
+    portal = "Itinérance"
+
+
+class HOT28v3withMedias(TouristicContentTourInSoftParserV3withMedias):
     url = "http://wcf.tourinsoft.com/Syndication/3.0/cdt28/xxx/Objects"
     source = "CDT 28"
     category = "Où dormir"
@@ -507,6 +516,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.type2.get().label, "****")
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(Attachment.objects.first().content_object, content)
+        call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28v3withMedias', verbosity=0)
+        self.assertEqual(Attachment.objects.filter(author="Mairie de Briouze", legend="SteCath800").count(), 1)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_tourinsoft(self, mocked):
