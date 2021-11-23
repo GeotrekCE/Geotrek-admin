@@ -5,7 +5,9 @@ CHANGELOG
 2.72.0+dev (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**Minor improvements**
+
+- Make targets display more specific in Interventions exports
 
 
 2.72.0 (2021-11-16)
