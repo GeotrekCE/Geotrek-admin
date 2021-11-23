@@ -11,3 +11,5 @@ data_file = var/.coverage
 
 [report]
 ignore_errors = true
+exclude_lines =
+    if settings.DEBUG or settings.TEST:
