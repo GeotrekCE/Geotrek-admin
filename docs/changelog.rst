@@ -7,7 +7,7 @@ CHANGELOG
 
 **Minor improvements**
 
-- Merge tabs in Intervention forms 
+- Merge tabs in Intervention forms (#2712)
 
 
 2.72.0 (2021-11-16)
