@@ -69,44 +69,23 @@ class InterventionForm(CommonForm):
 
     fieldslayout = [
         Div(
-            HTML(
-                """<ul class="nav nav-tabs">
-    <li id="tab-main" class="nav-item">
-        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {0}</a>
-    </li>
-    <li id="tab-advanced" class="nav-item">
-        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
-    </li>
-</ul>""".format(_("Main"), _("Advanced"))),
-            Div(
-                Div(
-                    'structure',
-                    'name',
-                    'date',
-                    'status',
-                    'disorders',
-                    'type',
-                    'subcontracting',
-                    'length',
-                    'width',
-                    'height',
-                    'stake',
-                    'project',
-                    'description',
-                    css_id="main",
-                    css_class="tab-pane active"
-                ),
-                Div(
-                    'material_cost',
-                    'heliport_cost',
-                    'subcontract_cost',
-                    Fieldset(_("Mandays")),
-                    css_id="advanced",  # used in Javascript for activating tab if error
-                    css_class="tab-pane"
-                ),
-                css_class="scrollable tab-content"
-            ),
-            css_class="tabbable"
+            'structure',
+            'name',
+            'date',
+            'status',
+            'disorders',
+            'type',
+            'subcontracting',
+            'length',
+            'width',
+            'height',
+            'stake',
+            'project',
+            'description',
+            'material_cost',
+            'heliport_cost',
+            'subcontract_cost',
+            Fieldset(_("Mandays")),
         ),
     ]
 

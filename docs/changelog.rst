@@ -5,7 +5,9 @@ CHANGELOG
 2.72.0+dev (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**Minor improvements**
+
+- Merge tabs in Intervention forms 
 
 
 2.72.0 (2021-11-16)
