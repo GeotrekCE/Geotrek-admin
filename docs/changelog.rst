@@ -5,7 +5,9 @@ CHANGELOG
 2.72.0+dev (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**User interface**
+
+- Clarify Land Edge module browsing (#1404)
 
 
 2.72.0 (2021-11-16)
