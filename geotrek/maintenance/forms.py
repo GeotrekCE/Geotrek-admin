@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.forms.models import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Fieldset, Layout, Div, HTML
+from crispy_forms.layout import Fieldset, Layout, Div
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
