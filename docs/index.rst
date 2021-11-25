@@ -1,13 +1,45 @@
 Welcome to Geotrek's documentation!
 ===================================
 
-Contents:
+.. _contents:
 
-.. include:: toc-user.rst
+.. toctree::
+    :caption: User manual
+    :maxdepth: 2
 
-.. include:: toc-install.rst
+    user-manual/overview.rst
+    user-manual/screencasts.rst
+    user-manual/editing-objet.rst
+    user-manual/management-modules.rst
+    user-manual/promotion-modules.rst
+    user-manual/static-pages.rst
+    user-manual/administrator-manual.rst
+    user-manual/externals-apis.rst
+    faq.rst
 
-.. include:: toc-contribute.rst
+.. toctree::
+    :caption: Installation & configuration
+    :maxdepth: 2
+
+    installation
+    loading-data
+    configuration
+    advanced-configuration
+    maintenance
+    synchronization
+    import
+    docker
+    sensitivity
+
+.. toctree::
+    :caption: Contribute
+    :maxdepth: 2
+
+    translating
+    development
+    design
+    authors
+    changelog
 
 Indices and tables
 ------------------
