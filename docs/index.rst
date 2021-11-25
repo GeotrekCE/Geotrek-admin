@@ -7,14 +7,14 @@ Welcome to Geotrek's documentation!
     :caption: User manual
     :maxdepth: 2
 
-    user-manual/overview.rst
-    user-manual/screencasts.rst
-    user-manual/editing-objet.rst
-    user-manual/management-modules.rst
-    user-manual/promotion-modules.rst
-    user-manual/static-pages.rst
-    user-manual/administrator-manual.rst
-    user-manual/externals-apis.rst
+    usage/overview.rst
+    usage/screencasts.rst
+    usage/editing-objet.rst
+    usage/management-modules.rst
+    usage/promotion-modules.rst
+    usage/static-pages.rst
+    usage/administrator-manual.rst
+    usage/externals-apis.rst
     faq.rst
 
 .. toctree::
