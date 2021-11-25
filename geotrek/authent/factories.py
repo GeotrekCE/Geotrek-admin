@@ -3,7 +3,7 @@ import factory
 from django.conf import settings
 from django.contrib.auth.models import Group
 
-from mapentity.factories import UserFactory
+from mapentity.tests.factories import UserFactory
 from . import models as core_models
 
 

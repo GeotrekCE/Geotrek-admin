@@ -6,7 +6,7 @@ from django.test.utils import override_settings
 from django.conf import settings
 from django.urls import reverse
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 
 @override_settings(LOGIN_URL='/login/')

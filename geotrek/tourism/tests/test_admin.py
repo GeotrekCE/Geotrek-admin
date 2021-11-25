@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.authent.tests import AuthentFixturesTest
 

@@ -10,7 +10,7 @@ from geotrek.infrastructure.factories import InfrastructureMaintenanceDifficulty
 from geotrek.infrastructure.models import InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
 from geotrek.authent.factories import StructureFactory
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class InfrastructureTypeAdminNoBypassTest(TestCase):

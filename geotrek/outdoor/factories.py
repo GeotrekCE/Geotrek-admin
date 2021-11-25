@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from geotrek.authent.factories import StructureRelatedDefaultFactory
 from geotrek.outdoor.models import Site, Practice, SiteType, CourseType, RatingScale, Rating, Sector, Course
-from mapentity.factories import UserFactory
+from mapentity.tests.factories import UserFactory
 
 
 class SectorFactory(factory.django.DjangoModelFactory):

@@ -8,7 +8,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from geotrek.api.mobile.tasks import launch_sync_mobile
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class SyncMobileViewTest(TestCase):

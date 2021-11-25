@@ -12,7 +12,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.models import DifficultyLevel, POI, Trek
 from geotrek.trekking.factories import DifficultyLevelFactory, POIFactory, TrekFactory
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 
 @override_settings(MEDIA_ROOT='/tmp/mapentity-media')

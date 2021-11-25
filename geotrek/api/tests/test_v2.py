@@ -38,7 +38,7 @@ from geotrek.zoning import factories as zoning_factory
 from geotrek.zoning import models as zoning_models
 from geotrek.signage import factories as signage_factory
 from geotrek.signage import models as signage_models
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',

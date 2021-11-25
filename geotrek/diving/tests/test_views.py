@@ -7,7 +7,7 @@ from geotrek.common.tests import CommonLiveTest, CommonTest
 from geotrek.diving.models import Dive, Level
 from geotrek.diving.factories import DiveWithLevelsFactory, DiveFactory, DivingManagerFactory, PracticeFactory
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 
 class DiveViewsTests(CommonTest):

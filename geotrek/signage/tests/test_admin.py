@@ -11,7 +11,7 @@ from geotrek.signage.factories import (SealingFactory, SignageTypeFactory, Blade
 from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType
 from geotrek.authent.factories import StructureFactory
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class SignageTypeAdminNoBypassTest(TestCase):

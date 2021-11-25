@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.flatpages.factories import FlatPageFactory
 

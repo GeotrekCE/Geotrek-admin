@@ -25,7 +25,7 @@ from django.utils import translation
 from django.utils.timezone import utc, make_aware
 from unittest import util as testutil
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.common.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
                                       RecordSourceFactory, TargetPortalFactory)

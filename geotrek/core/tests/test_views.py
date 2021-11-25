@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
 from django.test import TestCase
 
-from mapentity.factories import UserFactory
+from mapentity.tests.factories import UserFactory
 
 from geotrek.common.tests import CommonTest
 

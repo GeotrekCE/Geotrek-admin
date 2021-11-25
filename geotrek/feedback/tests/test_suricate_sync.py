@@ -1,5 +1,5 @@
 from geotrek.common.models import Attachment
-from mapentity.factories import UserFactory
+from mapentity.tests.factories import UserFactory
 import os
 import io
 from unittest import mock

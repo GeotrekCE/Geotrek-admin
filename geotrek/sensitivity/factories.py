@@ -7,7 +7,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from . import models
 
-from mapentity.factories import UserFactory
+from mapentity.tests.factories import UserFactory
 
 
 class SportPracticeFactory(factory.django.DjangoModelFactory):

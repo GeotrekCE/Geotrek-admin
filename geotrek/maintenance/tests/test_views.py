@@ -14,7 +14,7 @@ from django.test.utils import override_settings
 from django.utils.translation import activate, deactivate_all
 
 from geotrek.common.tests import CommonTest
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory

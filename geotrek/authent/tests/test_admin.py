@@ -1,4 +1,4 @@
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 from .base import AuthentFixturesTest
 from .. import factories
