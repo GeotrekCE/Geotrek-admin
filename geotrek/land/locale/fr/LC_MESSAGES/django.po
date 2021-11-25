@@ -45,10 +45,10 @@ msgid "External id"
 msgstr "ID externe"
 
 msgid "Physical edge"
-msgstr "Tronçon physique"
+msgstr "Type de voie"
 
 msgid "Physical edges"
-msgstr "Tronçons physique"
+msgstr "Types de voies"
 
 msgid "Right of way"
 msgstr "Droit de passage"
@@ -72,22 +72,22 @@ msgid "Organism"
 msgstr "Organisme"
 
 msgid "Competence edge"
-msgstr "Tronçon de compétence"
+msgstr "Compétence sentiers"
 
 msgid "Competence edges"
-msgstr "Tronçons de compétence"
+msgstr "Compétences sentiers"
 
 msgid "Work management edge"
-msgstr "Tronçon de gestion de travaux"
+msgstr "Gestionnaire travaux"
 
 msgid "Work management edges"
-msgstr "Tronçons de gestion de travaux"
+msgstr "Gestionnaires travaux"
 
 msgid "Signage management edge"
-msgstr "Tronçon de gestion signalétique"
+msgstr "Gestionnaire signalétique"
 
 msgid "Signage management edges"
-msgstr "Tronçons de gestion signalétique"
+msgstr "Gestionnaires signalétique"
 
 msgid "Add a new land edge"
 msgstr "Renseigner la nature foncière"
