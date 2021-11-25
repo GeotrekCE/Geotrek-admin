@@ -20,7 +20,6 @@ class BuildCommand(distutils.command.build.build):
                 copy(path, os.path.join(curdir, self.build_lib, subdir, path))
             os.chdir(curdir)
 
-
 setup(
     name='geotrek',
     version=open(os.path.join(here, 'VERSION')).read().strip(),
@@ -33,7 +32,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.1.*',
-        'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@backport_geotrek#egg=mapentity',
+        'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@master#egg=mapentity',
         'env_file',
         # pinned by requirements.txt
         'python-memcached',

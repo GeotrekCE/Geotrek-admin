@@ -181,7 +181,7 @@ landez==2.5.0
     # via geotrek (setup.py)
 lxml==4.6.3
     # via mapentity
-mapentity @ git+https://github.com/makinacorpus/django-mapentity.git@backport_geotrek
+mapentity @ git+https://github.com/makinacorpus/django-mapentity.git@master
     # via geotrek (setup.py)
 markupsafe==1.1.1
     # via jinja2
