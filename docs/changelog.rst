@@ -7,9 +7,10 @@ CHANGELOG
 
 **Minor improvements**
 
+- Merge tabs in Intervention forms (#2712)
 - Make targets display more specific in Interventions exports (#2711)
-
 - Improve support for Tourinsoft v3 with new medias management
+
 
 
 2.72.0 (2021-11-16)

@@ -24,3 +24,8 @@
 .details-panel th.total_cost {
     width: 60px;
 }
+
+.formset {
+    padding: 5px;
+    padding-bottom: 10%;
+}
