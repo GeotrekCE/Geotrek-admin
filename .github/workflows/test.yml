@@ -330,6 +330,8 @@ jobs:
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl status nginx
           sudo systemctl restart nginx
+          sleep 2
+          sudo systemctl status geotrek
 
       - name: Load Data
         run: |
