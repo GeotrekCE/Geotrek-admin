@@ -287,7 +287,7 @@ jobs:
     needs: [ build_deb_18_04 ]
 
     env:
-      CYPRESS_BASE_URL: http://localhost
+      CYPRESS_BASE_URL: http://geotrek.local
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
 
     services:
@@ -324,18 +324,13 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/SERVER_NAME string localhost" >> .debian_settings
+          echo "geotrek-admin geotrek-admin/SERVER_NAME string geotrek.local" >> .debian_settings
           cat .debian_settings
           sudo debconf-set-selections .debian_settings
 
       - name: Install package
         run: |
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          sudo printenv
-          sudo systemctl restart geotrek
-          sudo systemctl status geotrek
-          sudo cat /etc/nginx/sites-available/geotrek.conf
-          sudo cat /etc/nginx/sites-enabled/geotrek.conf
           sudo systemctl status nginx
           sudo systemctl restart nginx
 
