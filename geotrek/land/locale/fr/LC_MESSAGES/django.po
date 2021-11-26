@@ -20,6 +20,9 @@ msgstr ""
 msgid "Land"
 msgstr "Statuts"
 
+msgid "Status"
+msgstr "Statuts"
+
 msgid "Physical type"
 msgstr "Type de voie"
 

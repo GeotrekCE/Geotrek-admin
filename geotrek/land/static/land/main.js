@@ -29,7 +29,7 @@ $(window).on('entity:map', function (e, data) {
             nameHTML += ('<span style="color: ' + colorspool[j] + ';">|</span>');
         }
         nameHTML += ('&nbsp;' + managementLayer.name);
-        map.layerscontrol.addOverlay(layer, nameHTML, tr('Land'));
+        map.layerscontrol.addOverlay(layer, nameHTML, tr('Status'));
     };
     map.on('layeradd', function (e) {
         var options = e.layer.options || { 'modelname': 'None' };
