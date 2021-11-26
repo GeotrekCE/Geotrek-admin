@@ -11,6 +11,11 @@ CHANGELOG
 - Renamed "Tronçons physique" to "Types de voie", "Tronçons de compétence" to "Compétence sentiers",
   "Tronçons de gestion de travaux" to "Gestionnaire travaux", "Tronçons de gestion signalétique" to "Gestionnaire signalétique" (#1301)
 
+**Minor improvements**
+
+- Make targets display more specific in Interventions exports (#2711)
+- Improve support for Tourinsoft v3 with new medias management
+
 
 2.72.0 (2021-11-16)
 -----------------------
