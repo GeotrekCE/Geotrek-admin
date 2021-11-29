@@ -5,6 +5,12 @@ CHANGELOG
 2.72.0+dev (XXXX-XX-XX)
 -----------------------
 
+*New features**
+
+- Add BLADE_ENABLED setting to hide Blade in Signage forms and in Signage detail page
+- Add LINE_ENABLED setting to hide Line in Blade forms and in Blade detail page
+
+
 **Minor improvements**
 
 - Merge tabs in Intervention forms (#2712)

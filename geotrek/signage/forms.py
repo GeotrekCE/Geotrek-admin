@@ -50,6 +50,14 @@ class BaseBladeForm(CommonForm):
             'color',
             Fieldset(_('Lines')),
         )
+    ] if settings.LINE_ENABLED else [
+        Div(
+            'number',
+            'direction',
+            'type',
+            'condition',
+            'color',
+        )
     ]
 
     def __init__(self, *args, **kwargs):
@@ -104,6 +112,14 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 'condition',
                 'color',
                 Fieldset(_('Lines')),
+            )
+        ] if settings.LINE_ENABLED else [ 
+            Div(
+                'number',
+                'direction',
+                'type',
+                'condition',
+                'color',
             )
         ]
 
