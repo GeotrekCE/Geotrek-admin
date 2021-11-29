@@ -321,7 +321,7 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/SERVER_NAME string geotrek.local" >> .debian_settings
+          echo "geotrek-admin geotrek-admin/SERVER_NAME string localhost" >> .debian_settings
           cat .debian_settings
           sudo debconf-set-selections .debian_settings
 
@@ -331,6 +331,7 @@ jobs:
           sudo systemctl status nginx
           sudo systemctl restart nginx
           sleep 2
+          curl "localhost"
           sudo systemctl status geotrek
           sudo journalctl -xe
 
