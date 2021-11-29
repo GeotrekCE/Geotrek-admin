@@ -335,6 +335,7 @@ jobs:
           sudo systemctl restart nginx
           sleep 2
           sudo systemctl status geotrek
+          sudo journalctl -xe
 
       - name: Load Data
         run: |
