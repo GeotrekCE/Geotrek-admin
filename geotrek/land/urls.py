@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.utils.translation import gettext as _
 from mapentity.registry import registry, MapEntityOptions
 
 from . import models
