@@ -308,6 +308,9 @@ jobs:
 
       - name: Simulate install.sh procedure
         run: |
+          sudo service apache2 stop
+          sudo apt-get purge apache2 apache2-utils apache2.2-bin apache2-common
+          sudo apt-get autoremove
           sudo apt install -q -y nginx
           sudo systemctl start nginx
           sudo systemctl status nginx
