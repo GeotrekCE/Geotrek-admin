@@ -7,7 +7,7 @@ app_name = 'land'
 
 
 class LandEdgeOptions(MapEntityOptions):
-    """ 
+    """
     Overwrite options for Statuses module to redirect to LandEdge objects
     """
     def __init__(self, model):
