@@ -113,7 +113,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 'color',
                 Fieldset(_('Lines')),
             )
-        ] if settings.LINE_ENABLED else [ 
+        ] if settings.LINE_ENABLED else [
             Div(
                 'number',
                 'direction',
