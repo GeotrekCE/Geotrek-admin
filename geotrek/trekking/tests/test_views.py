@@ -27,28 +27,28 @@ from unittest import util as testutil
 
 from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.common.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
-                                      RecordSourceFactory, TargetPortalFactory)
+from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
+                                            RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
+from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
-from geotrek.core.factories import PathFactory
+from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
-from geotrek.zoning.factories import DistrictFactory, CityFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
-from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
-                                        TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
-                                        TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
-                                        TrekWithServicesFactory, TrekWithInfrastructuresFactory,
-                                        TrekWithSignagesFactory)
+from geotrek.trekking.tests.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
+                                              TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
+                                              TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
+                                              TrekWithServicesFactory, TrekWithInfrastructuresFactory,
+                                              TrekWithSignagesFactory)
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
-from geotrek.tourism import factories as tourism_factories
+from geotrek.tourism.tests import factories as tourism_factories
 
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA

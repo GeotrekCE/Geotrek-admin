@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.flatpages.factories import FlatPageFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory
 
 
 class AdminSiteTest(TestCase):

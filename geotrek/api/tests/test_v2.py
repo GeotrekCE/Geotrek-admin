@@ -13,30 +13,30 @@ from django.utils import timezone
 from freezegun.api import freeze_time
 
 from geotrek import __version__
-from geotrek.authent import factories as authent_factory
+from geotrek.authent.tests import factories as authent_factory
 from geotrek.authent import models as authent_models
-from geotrek.common import factories as common_factory
+from geotrek.common.tests import factories as common_factory
 from geotrek.common import models as common_models
 from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_file,
                                            get_dummy_uploaded_image)
-from geotrek.core import factories as core_factory
+from geotrek.core.tests import factories as core_factory
 from geotrek.core import models as path_models
-from geotrek.feedback import factories as feedback_factory
-from geotrek.flatpages import factories as flatpages_factory
-from geotrek.infrastructure import factories as infrastructure_factory
+from geotrek.feedback.tests import factories as feedback_factory
+from geotrek.flatpages.tests import factories as flatpages_factory
+from geotrek.infrastructure.tests import factories as infrastructure_factory
 from geotrek.infrastructure import models as infrastructure_models
-from geotrek.outdoor import factories as outdoor_factory
+from geotrek.outdoor.tests import factories as outdoor_factory
 from geotrek.outdoor import models as outdoor_models
-from geotrek.sensitivity import factories as sensitivity_factory
+from geotrek.sensitivity.tests import factories as sensitivity_factory
 from geotrek.sensitivity import models as sensitivity_models
-from geotrek.tourism import factories as tourism_factory
+from geotrek.tourism.tests import factories as tourism_factory
 from geotrek.tourism import models as tourism_models
-from geotrek.trekking import factories as trek_factory
+from geotrek.trekking.tests import factories as trek_factory
 from geotrek.trekking import models as trek_models
-from geotrek.zoning import factories as zoning_factory
+from geotrek.zoning.tests import factories as zoning_factory
 from geotrek.zoning import models as zoning_models
-from geotrek.signage import factories as signage_factory
+from geotrek.signage.tests import factories as signage_factory
 from geotrek.signage import models as signage_models
 from mapentity.tests.factories import SuperUserFactory
 

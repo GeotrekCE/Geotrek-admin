@@ -3,11 +3,11 @@ from freezegun import freeze_time
 from django.contrib.auth.models import User, Permission
 from django.test import TestCase
 
-from geotrek.authent.factories import StructureFactory, UserProfileFactory
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.sensitivity.factories import RegulatorySensitiveAreaFactory, SensitiveAreaFactory, MultiPolygonSensitiveAreaFactory
+from geotrek.sensitivity.tests.factories import RegulatorySensitiveAreaFactory, SensitiveAreaFactory, MultiPolygonSensitiveAreaFactory
 from geotrek.sensitivity.models import SportPractice
 
 

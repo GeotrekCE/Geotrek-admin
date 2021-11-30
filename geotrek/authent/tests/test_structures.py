@@ -3,8 +3,8 @@
 """
 from .base import AuthentFixturesTest
 
-from geotrek.authent.factories import StructureFactory, PathManagerFactory
-from geotrek.core.factories import PathFactory
+from geotrek.authent.tests.factories import StructureFactory, PathManagerFactory
+from geotrek.core.tests.factories import PathFactory
 
 
 class StructureTest(AuthentFixturesTest):

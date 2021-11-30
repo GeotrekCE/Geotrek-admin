@@ -2,13 +2,13 @@ import factory
 import os
 from zipfile import ZipFile
 
-from geotrek.authent.factories import UserFactory
+from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.models import Attachment
 from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
                                            get_dummy_uploaded_image,
                                            get_dummy_uploaded_file)
 
-from . import models
+from .. import models
 
 from geotrek.common.management.commands.sync_rando import Command
 

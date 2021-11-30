@@ -2,11 +2,11 @@ from django.contrib.gis.geos import Point
 
 import factory
 
-from geotrek.authent.factories import StructureRelatedDefaultFactory
-from geotrek.common.factories import ReservationSystemFactory, TargetPortalFactory, ThemeFactory
+from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
+from geotrek.common.tests.factories import ReservationSystemFactory, TargetPortalFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
-from . import models
+from .. import models
 
 
 class InformationDeskTypeFactory(factory.django.DjangoModelFactory):

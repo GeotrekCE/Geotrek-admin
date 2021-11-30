@@ -2,10 +2,10 @@ import factory
 
 from django.contrib.contenttypes.models import ContentType
 
-from geotrek.authent.factories import StructureRelatedDefaultFactory
+from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
-from . import models
+from .. import models
 
 from mapentity.tests.factories import UserFactory
 

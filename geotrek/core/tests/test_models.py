@@ -7,9 +7,9 @@ from django.contrib.gis.geos import LineString, Point
 from django.db import IntegrityError
 
 from geotrek.common.utils import dbnow
-from geotrek.authent.factories import StructureFactory, UserFactory
+from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
-from geotrek.core.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
+from geotrek.core.tests.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
 from geotrek.core.models import Path
 
 

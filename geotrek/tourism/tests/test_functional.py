@@ -3,16 +3,16 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 import filecmp
-from geotrek.authent.factories import StructureFactory
-from geotrek.authent.factories import TrekkingManagerFactory
-from geotrek.common.factories import AttachmentFactory
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.authent.tests.factories import TrekkingManagerFactory
+from geotrek.common.tests.factories import AttachmentFactory
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.tourism.factories import (TouristicContentFactory,
-                                       TouristicContentCategoryFactory,
-                                       TouristicEventFactory)
-from geotrek.zoning.factories import CityFactory
+from geotrek.tourism.tests.factories import (TouristicContentFactory,
+                                             TouristicContentCategoryFactory,
+                                             TouristicEventFactory)
+from geotrek.zoning.tests.factories import CityFactory
 
 from unittest.mock import patch
 import os

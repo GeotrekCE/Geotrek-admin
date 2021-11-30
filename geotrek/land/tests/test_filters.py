@@ -6,8 +6,8 @@ from django.test import TestCase
 # Make sure dynamic filters are set up when testing
 from geotrek.land import filters  # noqa
 
-from geotrek.core.factories import PathFactory, getRandomLineStringInBounds
-from geotrek.land.factories import (
+from geotrek.core.tests.factories import PathFactory, getRandomLineStringInBounds
+from geotrek.land.tests.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )

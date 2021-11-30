@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Polygon, MultiPolygon
 
 
-from . import models
+from .. import models
 
 
 def bbox_split(bbox, by_x=2, by_y=2, cycle=False):

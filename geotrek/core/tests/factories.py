@@ -5,9 +5,9 @@ import math
 from django.contrib.gis.geos import Point, LineString, Polygon
 from django.conf import settings
 
-from geotrek.authent.factories import StructureRelatedDefaultFactory
+from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils import dbnow
-from . import models
+from .. import models
 
 
 class PathSourceFactory(factory.django.DjangoModelFactory):

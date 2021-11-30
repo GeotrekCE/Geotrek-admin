@@ -16,7 +16,7 @@ from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.registry import app_settings
 from mapentity.tests import MapEntityTest, MapEntityLiveTest
 
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
 

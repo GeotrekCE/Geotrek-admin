@@ -1,7 +1,7 @@
 from geotrek.common.tests import TranslationResetMixin
 
-from geotrek.diving.factories import DiveFactory, LevelFactory
-from geotrek.diving.factories import PracticeFactory
+from geotrek.diving.tests.factories import DiveFactory, LevelFactory
+from geotrek.diving.tests.factories import PracticeFactory
 
 from django.test import TestCase, override_settings
 

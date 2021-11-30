@@ -2,11 +2,11 @@ import factory
 
 from django.conf import settings
 
-from geotrek.core.factories import PathFactory, StakeFactory, TopologyFactory
-from geotrek.common.factories import OrganismFactory
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
-from . import models
+from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
+from geotrek.common.tests.factories import OrganismFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
+from .. import models
 
 
 class InterventionStatusFactory(factory.django.DjangoModelFactory):

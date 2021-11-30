@@ -6,10 +6,10 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 
 from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.signage.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
-                                       BladeDirectionFactory, BladeTypeFactory)
+from geotrek.signage.tests.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
+                                             BladeDirectionFactory, BladeTypeFactory)
 from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 

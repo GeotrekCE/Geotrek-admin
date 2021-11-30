@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from geotrek.signage.factories import BladeFactory, BladeTypeFactory, SealingFactory, SignageFactory
-from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import BladeFactory, BladeTypeFactory, SealingFactory, SignageFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
 
 
 class SealingModelTest(TestCase):

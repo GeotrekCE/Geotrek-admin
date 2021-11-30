@@ -1,5 +1,5 @@
 from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import TrekkingManagerFactory
+from geotrek.authent.tests.factories import TrekkingManagerFactory
 
 
 class TrekkingManagerTest(AuthentFixturesTest):

@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.utils.translation import get_language
 
-from geotrek.trekking.factories import TrekFactory
+from geotrek.trekking.factories.tests import TrekFactory
 from geotrek.trekking.models import Trek
 
 

@@ -9,11 +9,11 @@ from django.test import TestCase, override_settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
+from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.tourism.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
-                                       TouristicContentType2Factory, TouristicEventTypeFactory)
+from geotrek.tourism.tests.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
+                                             TouristicContentType2Factory, TouristicEventTypeFactory)
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEventApidaeParser, EspritParcParser,
                                      TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParser,

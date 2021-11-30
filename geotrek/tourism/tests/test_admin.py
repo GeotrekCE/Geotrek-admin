@@ -5,7 +5,7 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
 from geotrek.tourism.models import InformationDesk
-from geotrek.tourism.factories import InformationDeskTypeFactory
+from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 
 
 class InformationDeskTest(AuthentFixturesTest):

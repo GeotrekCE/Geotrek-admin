@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
 from geotrek.zoning.models import City, District, RestrictedArea
 
 

@@ -17,24 +17,24 @@ from geotrek.common.tests import CommonTest
 from mapentity.tests.factories import SuperUserFactory
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
-from geotrek.authent.factories import PathManagerFactory, StructureFactory
-from geotrek.core.factories import StakeFactory
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.core.tests.factories import StakeFactory
 from geotrek.core.models import PathAggregation
-from geotrek.common.factories import OrganismFactory
+from geotrek.common.tests.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import InterventionFormatList, ProjectFormatList
-from geotrek.core.factories import PathFactory, TopologyFactory
+from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import BladeFactory, SignageFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 from geotrek.signage.models import Signage
-from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
-                                           InterventionDisorderFactory, InterventionStatusFactory, ManDayFactory,
-                                           ProjectFactory, ContractorFactory, InterventionJobFactory,
-                                           SignageInterventionFactory, ProjectWithInterventionFactory)
-from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
+from geotrek.maintenance.tests.factories import (InterventionFactory, InfrastructureInterventionFactory,
+                                                 InterventionDisorderFactory, InterventionStatusFactory, ManDayFactory,
+                                                 ProjectFactory, ContractorFactory, InterventionJobFactory,
+                                                 SignageInterventionFactory, ProjectWithInterventionFactory)
+from geotrek.trekking.tests.factories import POIFactory, TrekFactory, ServiceFactory
 
 
 class InterventionViewsTest(CommonTest):

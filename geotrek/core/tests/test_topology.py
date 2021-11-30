@@ -8,8 +8,8 @@ from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import Point, LineString
 
 from geotrek.common.utils import dbnow
-from geotrek.core.factories import (PathFactory, PathAggregationFactory,
-                                    TopologyFactory)
+from geotrek.core.tests.factories import (PathFactory, PathAggregationFactory,
+                                          TopologyFactory)
 from geotrek.core.models import Path, Topology, PathAggregation
 
 

@@ -1,10 +1,10 @@
 import factory
 
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.core.factories import PointTopologyFactory
-from geotrek.infrastructure.factories import InfrastructureConditionFactory
+from geotrek.core.tests.factories import PointTopologyFactory
+from geotrek.infrastructure.tests.factories import InfrastructureConditionFactory
 
-from . import models
+from .. import models
 
 
 class SignageTypeFactory(factory.django.DjangoModelFactory):

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from geotrek.maintenance.factories import InterventionJobFactory, LightInterventionFactory, ManDayFactory
+from geotrek.maintenance.tests.factories import InterventionJobFactory, LightInterventionFactory, ManDayFactory
 from geotrek.maintenance.forms import ManDayForm
 
 

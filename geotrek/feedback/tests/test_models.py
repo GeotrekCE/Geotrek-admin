@@ -1,7 +1,7 @@
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 
-from geotrek.feedback.factories import ReportFactory
+from geotrek.feedback.tests.factories import ReportFactory
 
 
 class TestFeedbackModel(TestCase):

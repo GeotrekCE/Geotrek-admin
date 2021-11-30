@@ -7,7 +7,7 @@ from django.contrib.gis.geos import LineString
 from django.urls import reverse
 
 from mapentity.tests.factories import UserFactory
-from geotrek.core.factories import PathFactory, ComfortFactory
+from geotrek.core.tests.factories import PathFactory, ComfortFactory
 from geotrek.core.models import Path
 
 

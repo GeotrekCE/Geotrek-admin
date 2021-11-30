@@ -6,10 +6,10 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
 
-from geotrek.core.factories import PathFactory
-from geotrek.signage.factories import SignageFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.signage.tests.factories import SignageFactory
 from geotrek.signage.models import Signage
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 
 
 class SignageCommandTest(TestCase):

@@ -5,13 +5,13 @@ from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
 from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory
-from geotrek.maintenance.factories import InterventionFactory
+from geotrek.authent.tests.factories import PathManagerFactory
+from geotrek.maintenance.tests.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureCondition, INFRASTRUCTURE_TYPES)
-from geotrek.core.factories import PathFactory
-from geotrek.infrastructure.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
-                                              InfrastructureTypeFactory, InfrastructureConditionFactory,
-                                              PointInfrastructureFactory)
+from geotrek.core.tests.factories import PathFactory
+from geotrek.infrastructure.tests.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
+                                                    InfrastructureTypeFactory, InfrastructureConditionFactory,
+                                                    PointInfrastructureFactory)
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 
 

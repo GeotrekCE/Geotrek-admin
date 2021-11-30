@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 
 from mapentity.tests.factories import UserFactory
-from . import models as core_models
+from .. import models as core_models
 
 
 class PathManagerFactory(UserFactory):

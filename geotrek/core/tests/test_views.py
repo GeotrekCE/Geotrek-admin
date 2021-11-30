@@ -16,18 +16,18 @@ from mapentity.tests.factories import UserFactory
 
 from geotrek.common.tests import CommonTest
 
-from geotrek.authent.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
 from geotrek.core.views import PathFormatList, PathList
 from geotrek.core.models import Path, Trail, PathSource
 
-from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
-from geotrek.maintenance.factories import InterventionFactory
-from geotrek.core.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
+from geotrek.trekking.tests.factories import POIFactory, TrekFactory, ServiceFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.maintenance.tests.factories import InterventionFactory
+from geotrek.core.tests.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 from unittest.mock import patch
 

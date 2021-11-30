@@ -7,7 +7,7 @@ from django.contrib.gis.geos import MultiLineString, LineString, Point
 from django.utils import translation
 
 from geotrek.core.models import Path, Topology
-from geotrek.core.factories import TopologyFactory
+from geotrek.core.factories.tests import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
 
 

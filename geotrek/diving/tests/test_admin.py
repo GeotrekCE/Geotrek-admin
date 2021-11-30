@@ -3,7 +3,7 @@ from django.urls import reverse
 from geotrek.authent.tests import AuthentFixturesTest
 
 from ..models import Dive
-from ..factories import DifficultyFactory, DiveFactory, DivingManagerFactory, LevelFactory
+from .factories import DifficultyFactory, DiveFactory, DivingManagerFactory, LevelFactory
 
 
 class DifficultyTest(AuthentFixturesTest):

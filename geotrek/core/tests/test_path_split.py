@@ -4,7 +4,7 @@ from django.conf import settings
 
 from unittest import skipIf
 
-from geotrek.core.factories import PathFactory, TopologyFactory, NetworkFactory, UsageFactory
+from geotrek.core.tests.factories import PathFactory, TopologyFactory, NetworkFactory, UsageFactory
 from geotrek.core.models import Path, Topology
 
 

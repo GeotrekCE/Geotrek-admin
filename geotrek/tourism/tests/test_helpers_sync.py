@@ -6,9 +6,9 @@ from io import StringIO
 from django.test import TestCase
 from django.conf import settings
 
-from geotrek.common.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory, AttachmentFactory
+from geotrek.common.tests.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
+from geotrek.tourism.tests.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
 
 from geotrek.tourism.helpers_sync import SyncRando
 

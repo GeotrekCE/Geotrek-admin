@@ -2,12 +2,12 @@ import factory
 from django.conf import settings
 from django.contrib.gis.geos import Point
 
-from . import models
-from geotrek.core.factories import TopologyFactory, PointTopologyFactory
-from geotrek.common.factories import ReservationSystemFactory
+from .. import models
+from geotrek.core.tests.factories import TopologyFactory, PointTopologyFactory
+from geotrek.common.tests.factories import ReservationSystemFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
 
 
 class TrekNetworkFactory(factory.django.DjangoModelFactory):
