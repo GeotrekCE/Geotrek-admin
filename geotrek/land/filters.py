@@ -93,11 +93,11 @@ class TopologyFilterWorkManagementEdge(TopologyFilter):
 
 def add_edge_filters(filter_set):
     filter_set.add_filters({
-        'physical_type': TopologyFilterPhysicalType(label=_('Physical type'), required=False),
-        'land_type': TopologyFilterLandType(label=_('Land type'), required=False),
-        'competence': TopologyFilterCompetenceEdge(label=_('Competence'), required=False),
-        'signage': TopologyFilterSignageManagementEdge(label=_('Signage management'), required=False),
-        'work': TopologyFilterWorkManagementEdge(label=_('Work management'), required=False),
+        'land_type': TopologyFilterLandType(label=_('Land edge'), required=False),
+        'physical_type': TopologyFilterPhysicalType(label=_('Physical edge'), required=False),
+        'competence': TopologyFilterCompetenceEdge(label=_('Competence edge'), required=False),
+        'signage': TopologyFilterSignageManagementEdge(label=_('Signage management edge'), required=False),
+        'work': TopologyFilterWorkManagementEdge(label=_('Work management edge'), required=False),
     })
 
 

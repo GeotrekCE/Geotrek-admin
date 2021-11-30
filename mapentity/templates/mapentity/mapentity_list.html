@@ -32,6 +32,8 @@
 
         <div class="btn-toolbar">
           <h1 class="list-title">{{ objectsname }}</h1>
+          {% smart_include "preactions" %}
+
           {% block mainactions %}
           <div class="btn-group mr-2">
             {% if can_add %}
