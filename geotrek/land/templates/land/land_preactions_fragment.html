@@ -1,0 +1,22 @@
+{% load i18n %}
+
+{% if appname == "land" %}
+<div class="btn-group mr-2">
+    <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
+        <strong>
+            {% if modelname == 'landedge' %}{% trans "Land edges" %}{% endif %}
+            {% if modelname == 'physicaledge' %}{% trans "Physical edges" %}{% endif %}
+            {% if modelname == 'competenceedge' %}{% trans "Competence edges" %}{% endif %}
+            {% if modelname == 'signagemanagementedge' %}{% trans "Signage management edges" %}{% endif %}
+            {% if modelname == 'workmanagementedge' %}{% trans "Work management edges" %}{% endif %}
+        </strong>
+    </a>
+    <ul class="dropdown-menu">
+        {% if modelname != 'landedge' %}<li class="dropdown-item"><a href="{% url 'land:landedge_list' %}">{% trans "Land edges" %}</a></li>{% endif %}
+        {% if modelname != 'physicaledge' %}<li class="dropdown-item"><a href="{% url 'land:physicaledge_list' %}">{% trans "Physical edges" %}</a></li>{% endif %}
+        {% if modelname != 'competenceedge' %}<li class="dropdown-item"><a href="{% url 'land:competenceedge_list' %}">{% trans "Competence edges" %}</a></li>{% endif %}
+        {% if modelname != 'signagemanagementedge' %}<li class="dropdown-item"><a href="{% url 'land:signagemanagementedge_list' %}">{% trans "Signage management edges" %}</a></li>{% endif %}
+        {% if modelname != 'workmanagementedge' %}<li class="dropdown-item"><a href="{% url 'land:workmanagementedge_list' %}">{% trans "Work management edges" %}</a></li>{% endif %}
+    </ul>
+</div>
+{% endif %}

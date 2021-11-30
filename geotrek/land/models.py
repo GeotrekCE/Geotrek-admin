@@ -14,6 +14,15 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
+class Status(MapEntityMixin):
+    """
+    Model with a verbose name to represent this module (meta-class)
+    """
+    class Meta:
+        verbose_name = _("Status")
+        verbose_name_plural = _("Statuses")
+
+
 class PhysicalType(StructureOrNoneRelated):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
 
