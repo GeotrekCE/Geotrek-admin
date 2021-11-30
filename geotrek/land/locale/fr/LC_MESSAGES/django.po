@@ -18,10 +18,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 msgid "Land"
-msgstr "Foncier"
+msgstr "Statuts"
+
+msgid "Status"
+msgstr "Statuts"
 
 msgid "Physical type"
-msgstr "Type physique"
+msgstr "Type de voie"
 
 msgid "Land type"
 msgstr "Type foncier"
@@ -29,32 +32,26 @@ msgstr "Type foncier"
 msgid "Competence"
 msgstr "Compétence"
 
-msgid "Signage management"
-msgstr "Gestion signalétique"
-
-msgid "Work management"
-msgstr "Gestion de travaux"
-
 msgid "Name"
 msgstr "Nom"
 
 msgid "Physical types"
-msgstr "Types physique"
+msgstr "Types de voie"
 
 msgid "External id"
 msgstr "ID externe"
 
 msgid "Physical edge"
-msgstr "Tronçon physique"
+msgstr "Type de voie"
 
 msgid "Physical edges"
-msgstr "Tronçons physique"
+msgstr "Types de voie"
 
 msgid "Right of way"
 msgstr "Droit de passage"
 
 msgid "Land types"
-msgstr "Types foncier"
+msgstr "Types fonciers"
 
 msgid "Owner"
 msgstr "Propriétaire"
@@ -63,52 +60,46 @@ msgid "Agreement"
 msgstr "Conventionné"
 
 msgid "Land edge"
-msgstr "Statut"
+msgstr "Type foncier"
 
 msgid "Land edges"
-msgstr "Statuts"
+msgstr "Types fonciers"
 
 msgid "Organism"
 msgstr "Organisme"
 
 msgid "Competence edge"
-msgstr "Tronçon de compétence"
+msgstr "Compétence sentiers"
 
 msgid "Competence edges"
-msgstr "Tronçons de compétence"
+msgstr "Compétences sentiers"
 
 msgid "Work management edge"
-msgstr "Tronçon de gestion de travaux"
+msgstr "Gestionnaire travaux"
 
 msgid "Work management edges"
-msgstr "Tronçons de gestion de travaux"
+msgstr "Gestionnaires travaux"
 
 msgid "Signage management edge"
-msgstr "Tronçon de gestion signalétique"
+msgstr "Gestionnaire signalétique"
 
 msgid "Signage management edges"
-msgstr "Tronçons de gestion signalétique"
+msgstr "Gestionnaires signalétique"
 
 msgid "Add a new land edge"
-msgstr "Renseigner la nature foncière"
+msgstr "Ajouter un type foncier"
 
 msgid "Add a new physical edge"
-msgstr "Renseigner la nature physique"
+msgstr "Ajouter un type de voie"
 
 msgid "Add a new competence edge"
-msgstr "Renseigner l'organisme compétent"
+msgstr "Ajouter une compétence sentier"
 
 msgid "Add a new work management edge"
-msgstr "Renseigner le gestionnaire travaux"
+msgstr "Ajouter un gestionnaire travaux"
 
 msgid "Add a new signage management edge"
-msgstr "Renseigner le gestionnaire signalétique"
-
-msgid "Competence zones"
-msgstr "Zones de compétence"
-
-msgid "Competence paths"
-msgstr "Compétence sentiers"
+msgstr "Ajouter un gestionnaire signalétique"
 
 msgid "Yes"
 msgstr "Oui"
