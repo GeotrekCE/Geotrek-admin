@@ -5,6 +5,10 @@ CHANGELOG
 2.72.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix formset item deletion raises error in forms #2693
+
 **Minor improvements**
 
 - Merge tabs in Intervention forms (#2712)
