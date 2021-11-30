@@ -111,7 +111,7 @@ django-geojson==3.1.0
     # via mapentity
 django-js-asset==1.2.2
     # via django-mptt
-django-leaflet @ git+https://github.com/GeotrekCE/django-leaflet.git@0.19+geotrek8
+django-leaflet==0.19.post9
     # via mapentity
 django-modelcluster==5.1
     # via mapentity
@@ -181,7 +181,7 @@ landez==2.5.0
     # via geotrek (setup.py)
 lxml==4.6.3
     # via mapentity
-mapentity @ git+https://github.com/makinacorpus/django-mapentity.git@master
+mapentity==7.0.1
     # via geotrek (setup.py)
 markupsafe==1.1.1
     # via jinja2
