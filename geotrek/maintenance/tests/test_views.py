@@ -695,3 +695,24 @@ class TestDetailedJobCostsExports(TestCase):
         for row in reader:
             self.assertEqual(Decimal(row[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
             self.assertEqual(Decimal(row[self.job2_column_name]), self.job2.cost * self.manday2.nb_days)
+
+
+@override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
+class TestInterventionTargetExports(TestCase):
+
+    def setUp(self):
+        self.user = SuperUserFactory.create()
+        self.client.force_login(self.user)
+
+        self.path = PathFactory(name="mypath")
+        self.interv = InterventionFactory(target=self.path)
+
+    def test_csv_target_content(self):
+        response = self.client.get('/intervention/list/export/', params={'format': 'csv'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+
+        # Assert right format in CSV
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        for row in reader:
+            self.assertEqual(row["On"], f"Path: {self.path.name} ({self.path.pk})")

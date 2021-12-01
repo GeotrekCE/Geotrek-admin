@@ -5,7 +5,18 @@ CHANGELOG
 2.72.0+dev (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**User interface**
+
+- Clarify Land Edge module browsing (#1404)
+- Renamed "Tronçons physique" to "Types de voie", "Tronçons de compétence" to "Compétence sentiers",
+  "Tronçons de gestion de travaux" to "Gestionnaire travaux", "Tronçons de gestion signalétique" to "Gestionnaire signalétique" (#1301)
+
+**Minor improvements**
+
+- Merge tabs in Intervention forms (#2712)
+- Make targets display more specific in Interventions exports (#2711)
+- Improve support for Tourinsoft v3 with new medias management
+
 
 
 2.72.0 (2021-11-16)
