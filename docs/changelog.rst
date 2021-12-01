@@ -9,6 +9,11 @@ CHANGELOG
 
 - Fix formset item deletion raises error in forms (#2693)
 
+**New features**
+
+- Add BLADE_ENABLED setting to hide Blade in Signage forms and in Signage detail page
+- Add LINE_ENABLED setting to hide Line in Blade forms and in Blade detail page
+
 **User interface**
 
 - Clarify Land Edge module browsing (#1404)
