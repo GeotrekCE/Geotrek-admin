@@ -1,5 +1,6 @@
 import csv
 from io import StringIO
+from mapentity.helpers import is_file_uptodate
 import os
 import datetime
 from collections import OrderedDict
@@ -44,7 +45,7 @@ from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
                                         TrekWithSignagesFactory)
-from geotrek.trekking.templatetags import trekking_tags
+from geotrek.common.templatetags import geotrek_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
 from geotrek.tourism import factories as tourism_factories
@@ -347,7 +348,7 @@ class TrekViewsTest(CommonTest):
 
     def test_status(self):
         TrekFactory.create(duration=float('nan'))
-        super(TrekViewsTest, self).test_status()
+        super().test_status()
 
     def test_badfield_goodgeom(self):
         self.login()
@@ -362,7 +363,7 @@ class TrekViewsTest(CommonTest):
         self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
 
     def test_basic_format(self):
-        super(TrekViewsTest, self).test_basic_format()
+        super().test_basic_format()
         self.modelfactory.create(name="ukélélé")  # trek with utf8
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
@@ -1176,20 +1177,20 @@ class TrekViewTranslationTest(TrekkingManagerTest):
 
 class TemplateTagsTest(TestCase):
     def test_duration(self):
-        self.assertEqual("15 min", trekking_tags.duration(0.25))
-        self.assertEqual("30 min", trekking_tags.duration(0.5))
-        self.assertEqual("1 h", trekking_tags.duration(1))
-        self.assertEqual("1 h 45", trekking_tags.duration(1.75))
-        self.assertEqual("3 h 30", trekking_tags.duration(3.5))
-        self.assertEqual("4 h", trekking_tags.duration(4))
-        self.assertEqual("6 h", trekking_tags.duration(6))
-        self.assertEqual("10 h", trekking_tags.duration(10))
-        self.assertEqual("1 days", trekking_tags.duration(24))
-        self.assertEqual("2 days", trekking_tags.duration(32))
-        self.assertEqual("2 days", trekking_tags.duration(48))
-        self.assertEqual("3 days", trekking_tags.duration(49))
-        self.assertEqual("8 days", trekking_tags.duration(24 * 8))
-        self.assertEqual("9 days", trekking_tags.duration(24 * 9))
+        self.assertEqual("15 min", geotrek_tags.duration(0.25))
+        self.assertEqual("30 min", geotrek_tags.duration(0.5))
+        self.assertEqual("1 h", geotrek_tags.duration(1))
+        self.assertEqual("1 h 45", geotrek_tags.duration(1.75))
+        self.assertEqual("3 h 30", geotrek_tags.duration(3.5))
+        self.assertEqual("4 h", geotrek_tags.duration(4))
+        self.assertEqual("6 h", geotrek_tags.duration(6))
+        self.assertEqual("10 h", geotrek_tags.duration(10))
+        self.assertEqual("1 days", geotrek_tags.duration(24))
+        self.assertEqual("2 days", geotrek_tags.duration(32))
+        self.assertEqual("2 days", geotrek_tags.duration(48))
+        self.assertEqual("3 days", geotrek_tags.duration(49))
+        self.assertEqual("8 days", geotrek_tags.duration(24 * 8))
+        self.assertEqual("9 days", geotrek_tags.duration(24 * 9))
 
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):
@@ -1211,27 +1212,30 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         url = "/trek/{pk}/".format(pk=self.content1.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<a class="btn btn-primary pull-right" '
+                            '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
-                            'Update</a>'.format(pk=self.content1.pk))
+                            '<i class="bi bi-pencil-square"></i> '
+                            'Update</a>'.format(pk=self.content1.pk),
+                            html=True)
 
     def test_edit_button_other_structure(self):
         url = "/trek/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<span class="btn disabled pull-right" href="#">'
-                            '<i class="icon-pencil"></i> Update</span>')
+                            '<span class="btn ml-auto disabled" href="#">'
+                            '<i class="bi bi-pencil-square"></i> Update</span>',
+                            html=True)
 
     def test_edit_button_bypass_structure(self):
         self.add_bypass_perm()
         url = "/trek/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<a class="btn btn-primary pull-right" '
+                            '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
-                            'Update</a>'.format(pk=self.content2.pk))
+                            '<i class="bi bi-pencil-square"></i> '
+                            'Update</a>'.format(pk=self.content2.pk),
+                            html=True)
 
     def test_can_edit_same_structure(self):
         url = "/trek/edit/{pk}/".format(pk=self.content1.pk)
@@ -1549,3 +1553,81 @@ class ServiceJSONTest(TrekkingManagerTest):
                               'name': self.service.type.name,
                               'pictogram': os.path.join(settings.MEDIA_URL, self.service.type.pictogram.name),
                               })
+
+
+class TestDepublishSignagesRemovedFromPDF(TestCase):
+
+    def setUp(self):
+        self.trek = TrekWithSignagesFactory.create()
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_depublish_signage_refreshes_pdf(self, mock_get):
+        # Mock map screenshot
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        # Assert first access to PDF will trigger screenshot
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        # Assert second access to PDF will not trigger screenshot
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        # Assert access to PDF if signages were changed will trigger screenshot
+        trek.signages[0].published = False
+        trek.signages[0].save()
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_delete_signage_refreshes_pdf(self, mock_get):
+        # Mock map screenshot
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        # Assert first access to PDF will trigger screenshot
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        # Assert second access to PDF will not trigger screenshot
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        # Assert access to PDF if signage was deleted will trigger screenshot
+        trek.signages[0].delete()
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+
+
+class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
+
+    def setUp(self):
+        self.trek = TrekWithInfrastructuresFactory.create()
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_depublish_infrastructure_refreshes_pdf(self, mock_get):
+        # Mock map screenshot
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        # Assert first access to PDF will trigger screenshot
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        # Assert second access to PDF will not trigger screenshot
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        # Assert access to PDF if signages were changed will trigger screenshot
+        trek.infrastructures[0].published = False
+        trek.infrastructures[0].save()
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_delete_infrastructure_refreshes_pdf(self, mock_get):
+        # Mock map screenshot
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        # Assert first access to PDF will trigger screenshot
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        # Assert second access to PDF will not trigger screenshot
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        # Assert access to PDF if signage was deleted will trigger screenshot
+        trek.infrastructures[0].delete()
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))

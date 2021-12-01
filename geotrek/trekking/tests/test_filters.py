@@ -13,6 +13,6 @@ class TrekFilterLandTest(LandFiltersTest):
         self.assertIn('work', filterset.filters)
 
     def create_pair_of_distinct_path(self):
-        useless_path, seek_path = super(TrekFilterLandTest, self).create_pair_of_distinct_path()
+        useless_path, seek_path = super().create_pair_of_distinct_path()
         self.create_pair_of_distinct_topologies(TrekFactory, useless_path, seek_path)
         return useless_path, seek_path

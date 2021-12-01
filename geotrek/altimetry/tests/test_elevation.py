@@ -230,6 +230,52 @@ class ElevationOtherGeomAreaTest(AreaTestCase):
         self.assertEqual(area['size']['y'], 1300.0)
 
 
+class ElevationRightOrderAreaTest(AreaTestCase):
+    def _fill_raster(self):
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(250, 250, 0, 250, 25, -25, 0, 0, %s))', [settings.SRID])
+            cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
+            demvalues = []
+            for x in range(0, 10):
+                demvalues.append(list(range(x * 2, x * 2 + 10)))
+
+            for y in range(0, 10):
+                for x in range(0, 10):
+                    cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+
+    def setUp(self):
+        self._fill_raster()
+
+    def test_area_order_lines_columns(self):
+        """
+        We check that the order is always the same not depending on the database.
+        Firstly we iterate on lines then columns. And it should be always the same order.
+        """
+        geom = LineString((125, 240), (125, 50), srid=settings.SRID)
+        area_1 = AltimetryHelper.elevation_area(geom)
+
+        self.assertEqual(area_1['altitudes'], [[18, 19, 20, 21, 22, 23, 24],
+                                               [16, 17, 18, 19, 20, 21, 22],
+                                               [14, 15, 16, 17, 18, 19, 20],
+                                               [12, 13, 14, 15, 16, 17, 18],
+                                               [10, 11, 12, 13, 14, 15, 16],
+                                               [8, 9, 10, 11, 12, 13, 14],
+                                               [6, 7, 8, 9, 10, 11, 12],
+                                               [4, 5, 6, 7, 8, 9, 10],
+                                               [2, 3, 4, 5, 6, 7, 8],
+                                               [0, 1, 2, 3, 4, 5, 6]])
+
+        geom = LineString((240, 125), (50, 125), srid=settings.SRID)
+        area_2 = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area_2['altitudes'], [[12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+                                               [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                                               [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+                                               [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                                               [4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                                               [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                                               [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])
+
+
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class LengthTest(TestCase):
 

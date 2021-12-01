@@ -13,7 +13,7 @@ from geotrek.signage.helpers_sync import SyncRando
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.signage = SignageFactory.create(published=True)
 
     @patch('sys.stdout', new_callable=StringIO)

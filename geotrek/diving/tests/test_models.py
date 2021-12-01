@@ -9,7 +9,7 @@ from django.test import TestCase, override_settings
 class DiveModelTest(TranslationResetMixin, TestCase):
     @classmethod
     def setUpClass(cls):
-        super(DiveModelTest, cls).setUpClass()
+        super().setUpClass()
         cls.dive = DiveFactory.create(practice=None)
 
     def test_levels_display(self):

@@ -1,4 +1,4 @@
-{% load i18n outdoor_tags %}
+{% load i18n geojson_tags outdoor_tags %}
 
 {% is_outdoor_enabled as enabled %}
 {% if enabled %}
@@ -6,8 +6,10 @@
 <script type="text/javascript">
     MapEntity.i18n['Outdoor'] = "{% trans "Outdoor" %}";
     MapEntity.i18n['site'] = "{% trans "Outdoor site" %}";
+    MapEntity.i18n['course'] = "{% trans "Outdoor course" %}";
 
     window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site_layer" %}";
+    window.SETTINGS.urls['course_layer'] = "{% url "outdoor:course_layer" %}";
 </script>
 
 {% if modelname == "site" %}
@@ -16,5 +18,40 @@
         {{ practices|safe }}
     </script>
 {% endif %}
+{% if modelname == "course" %}
+    <script type="application/json" id="site-practices-types">
+        {% course_sites as sites %}
+        {{ sites|safe }}
+    </script>
+    <script type="text/javascript">
+        $(window).on('detailmap:ready', function (e, data) {
+            var map = data.map;
+            //
+            // Points of reference
+            (function (map) {
+                var data = {{ object.points_reference|geojsonfeature|safe }};
+                L.geoJson(data, {
+                    pointToLayer: (function () {
+                        var counter = 1;
+                        return function (featureData, latlng) {
+                            var icon = L.divIcon({html: counter++,
+                                                    className: 'point-reference'});
+                            return L.marker(latlng, {
+                                clickable: false,
+                                icon: icon,
+                                zIndexOffset: 9999
+                            }).addTo(map);
+                        };
+                    })()
+                }).addTo(map);
+                $('.map-panel').addClass('ref_points_loaded');
+            })(map);
 
+        });
+    </script>
+{% endif %}
+    <script type="application/json" id="all-ratings-scales">
+        {% all_ratings_scales as scales %}
+        {{ scales|safe }}
+    </script>
 {% endif %}

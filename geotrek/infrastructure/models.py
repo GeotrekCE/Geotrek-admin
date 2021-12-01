@@ -7,11 +7,10 @@ from django.conf import settings
 from extended_choices import Choices
 from mapentity.models import MapEntityMixin
 
-from geotrek.common.utils import classproperty
-from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.common.utils import classproperty
 from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin, NoDeleteManager
-
+from geotrek.core.models import Topology, Path
 
 INFRASTRUCTURE_TYPES = Choices(
     ('BUILDING', 'A', _("Building")),
@@ -35,7 +34,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         return self.label
 
     def get_pictogram_url(self):
-        pictogram_url = super(InfrastructureType, self).get_pictogram_url()
+        pictogram_url = super().get_pictogram_url()
         if pictogram_url:
             return pictogram_url
         return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
@@ -48,6 +47,36 @@ class InfrastructureCondition(StructureOrNoneRelated):
         verbose_name = _("Infrastructure Condition")
         verbose_name_plural = _("Infrastructure Conditions")
         ordering = ('label',)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+
+class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
+    label = models.CharField(verbose_name=_("Label"), max_length=250)
+
+    class Meta:
+        verbose_name = _("Maintenance difficulty")
+        verbose_name_plural = _("Maintenance difficulty levels")
+        ordering = ('label',)
+        unique_together = ('label', 'structure')
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+
+class InfrastructureUsageDifficultyLevel(StructureOrNoneRelated):
+    label = models.CharField(verbose_name=_("Label"), unique=True, max_length=250)
+
+    class Meta:
+        verbose_name = _("Usage difficulty")
+        verbose_name_plural = _("Usage difficulty levels")
+        ordering = ('label',)
+        unique_together = ('label', 'structure')
 
     def __str__(self):
         if self.structure:
@@ -105,6 +134,10 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     def cities_verbose_name(cls):
         return _("Cities")
 
+    def distance(self, to_cls):
+        """Distance to associate this site to another class"""
+        return settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN
+
 
 class InfrastructureGISManager(NoDeleteManager):
     """ Overide default typology mixin manager"""
@@ -117,8 +150,20 @@ class InfrastructureGISManager(NoDeleteManager):
 
 class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
-    type = models.ForeignKey(InfrastructureType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(InfrastructureType, related_name="infrastructures", verbose_name=_("Type"), on_delete=models.CASCADE)
     objects = InfrastructureGISManager()
+    maintenance_difficulty = models.ForeignKey(InfrastructureMaintenanceDifficultyLevel,
+                                               verbose_name=_("Maintenance difficulty"),
+                                               help_text=_("Danger level of infrastructure maintenance"),
+                                               blank=True, null=True,
+                                               on_delete=models.SET_NULL,
+                                               related_name='infrastructures_set')
+    usage_difficulty = models.ForeignKey(InfrastructureUsageDifficultyLevel,
+                                         verbose_name=_("Usage difficulty"),
+                                         help_text=_("Danger level of end users' infrastructure usage"),
+                                         blank=True, null=True,
+                                         on_delete=models.SET_NULL,
+                                         related_name='infrastructures_set')
 
     class Meta:
         verbose_name = _("Infrastructure")
@@ -144,6 +189,16 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
     @classmethod
     def published_topology_infrastructure(cls, topology):
         return cls.topology_infrastructures(topology).filter(published=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for trek in self.treks.all():
+            trek.save()
+
+    def delete(self, *args, **kwargs):
+        for trek in self.treks.all():
+            trek.save()
+        super().delete(*args, **kwargs)
 
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))

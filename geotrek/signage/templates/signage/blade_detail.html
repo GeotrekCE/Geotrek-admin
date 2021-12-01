@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n signage_tags mapentity_tags %}
+{% load i18n signage_tags mapentity_tags signage_tags %}
 
 {% block detailspanel %}
     <table class="table-striped table-bordered table">
@@ -34,29 +34,30 @@
             <td>{% if object.structure %}{{ object.structure }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
     </table>
-
-    <h3>{% trans "Lines" %}</h3>
-    <table class="table blades">
-        <!-- TODO: with order-lines -->
-        {% if object.order_lines.exists %}
-            <tr>
-                <th>{% trans "Code" %}</th>
-                <th>{% trans "Text" %}</th>
-                <th>{% trans "Picto" %}</th>
-                <th>{% trans "Distance" %}</th>
-                <th>{% trans "Time" context "duration" %}</th>
-            </tr>
-        {% endif %}
-        {% for line in object.order_lines.all %}
-            <tr>
-                <td>{{ line }}</td>
-                <td>{{ line.text }}</td>
-                <td>{{ line.pictogram_name|default_if_none:"" }}</td>
-                <td>{{ line.distance_pretty }}</td>
-                <td>{{ line.time_pretty }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-
+    {% lines_enabled as lines_enabled %}
+    {% if lines_enabled %}
+        <h3>{% trans "Lines" %}</h3>
+        <table class="table blades">
+            <!-- TODO: with order-lines -->
+            {% if object.order_lines.exists %}
+                <tr>
+                    <th>{% trans "Code" %}</th>
+                    <th>{% trans "Text" %}</th>
+                    <th>{% trans "Picto" %}</th>
+                    <th>{% trans "Distance" %}</th>
+                    <th>{% trans "Time" context "duration" %}</th>
+                </tr>
+            {% endif %}
+            {% for line in object.order_lines.all %}
+                <tr>
+                    <td>{{ line }}</td>
+                    <td>{{ line.text }}</td>
+                    <td>{{ line.pictogram_name|default_if_none:"" }}</td>
+                    <td>{{ line.distance_pretty }}</td>
+                    <td>{{ line.time_pretty }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
     {{ block.super }}
 {% endblock detailspanel %}

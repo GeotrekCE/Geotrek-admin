@@ -21,6 +21,7 @@ Makina Corpus
 * Timothée de Montety
 * Bastien Potiron
 * Emmanuelle Helly
+* Célia Prat
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
@@ -36,6 +37,7 @@ Others
 * Michaël Viadere
 * Guillaume Boitel
 * Jean Lenormand
+* Claude Paroz
 
 Credits
 -------
@@ -51,3 +53,4 @@ Credits
 * *Box Office* designed by Alessio Damiano from the Noun Project
 * *Steep Descent* designed by Sergey Patutin from the Noun Project
 * *Landscape* by Adrien Coquet from the Noun Project
+* *Ski course* by Sahua D from the Noun Project

@@ -256,8 +256,9 @@ $(window).on('entity:map:list', function (e, data) {
         }
     });
     objectsLayer.on('highlight select', function (e) {
-        if (e.layer._map !== null) e.layer.bringToFront();
+        if (data.modelname != 'site' && e.layer._map !== null) e.layer.bringToFront();
     });
+
     map.addLayer(objectsLayer);
     objectsLayer.load(window.SETTINGS.urls.layer.replace(new RegExp('modelname', 'g'), data.modelname));
 

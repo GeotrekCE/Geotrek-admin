@@ -27,7 +27,7 @@ from paperclip.settings import get_attachment_model
 logger = logging.getLogger(__name__)
 
 
-class MapEntityOptions(object):
+class MapEntityOptions:
     menu = True
     label = ''
     modelname = ''
@@ -194,7 +194,7 @@ class MapEntityOptions(object):
         return '%s:%s' % (self.app_label, self.url_shortname(kind))
 
 
-class Registry(object):
+class Registry:
     def __init__(self):
         self.registry = OrderedDict()
         self.apps = {}

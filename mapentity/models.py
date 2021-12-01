@@ -84,7 +84,7 @@ class BaseMapEntityMixin(models.Model):
         if hasattr(name, '_proxy____args'):
             name = name._proxy____args[0]  # untranslated
         # Whole "add" phrase translatable, but not catched  by makemessages
-        return _(u"Add a new %s" % name.lower())
+        return _("Add a new %s" % name.lower())
 
     @classmethod
     def get_entity_kind_permission(cls, entity_kind):
@@ -294,7 +294,7 @@ class LogEntry(BaseMapEntityMixin, BaseLogEntry):
 
     @property
     def object_display(self):
-        model_str = u"{}".format(self.content_type)
+        model_str = str(self.content_type)
         try:
             obj = self.get_edited_object()
             assert obj._entity, 'Unregistered model %s' % model_str

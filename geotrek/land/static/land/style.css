@@ -1,0 +1,8 @@
+/* Land labels */
+.leaflet-label.landlabel {
+    font-weight: normal;
+    font: 10px/12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.leaflet-label.landlabel:before {
+    top: 0px;
+}

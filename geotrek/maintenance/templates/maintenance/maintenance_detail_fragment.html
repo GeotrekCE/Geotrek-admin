@@ -1,6 +1,6 @@
 {% load i18n geotrek_tags mapentity_tags %}
 
-{% if modelname != "intervention" and appname != "outdoor" %}
+{% if modelname != "intervention" %}
 
 <h3>{% trans "Works" %}</h3>
 <table class="table">
@@ -19,9 +19,13 @@
 
             {% is_topology_model model as is_topology_model %}
             {% is_blade_model model as is_blade_model %}
+            {% is_site_model model as is_site_model %}
+            {% is_course_model model as is_course_model %}
             {% if perms.maintenance.add_intervention %}
-            <p class="autohide"><a href="{% url 'maintenance:intervention_add' %}{% if is_topology_model or is_blade_model %}?target_id={{ object.pk }}&target_type={{ object.get_content_type_id }}{% endif %}" class="btn btn-mini btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new intervention" %}</a>
+            <p class="autohide">
+                <a href="{% url 'maintenance:intervention_add' %}{% if is_topology_model or is_blade_model or is_site_model or is_course_model %}?target_id={{ object.pk }}&target_type={{ object.get_content_type_id }}{% endif %}"
+                   class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
             </p>
             {% endif %}
 

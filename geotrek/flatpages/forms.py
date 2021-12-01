@@ -18,7 +18,7 @@ class FlatPageForm(CommonForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs['user']
-        super(FlatPageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Revert widget modifications done by MapentityForm.__init__()
         for fieldname in self.fields.keys():
             if fieldname.startswith('content_'):
@@ -44,7 +44,7 @@ class FlatPageForm(CommonForm):
         )
 
     def clean(self):
-        cleaned_data = super(FlatPageForm, self).clean()
+        cleaned_data = super().clean()
         for lang in AVAILABLE_LANGUAGES:
             external_url = cleaned_data.get('external_url_' + lang, None)
             if external_url is not None and len(external_url) > 0:

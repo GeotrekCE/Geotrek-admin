@@ -2,7 +2,7 @@
 
 .. image:: http://geotrek.fr/assets/img/logo.svg
 
-:master: |master-status| |master-coverage| |master-e2e|
+:master: |master-status| |master-coverage| |master-e2e| |master-rtd|
 
 .. |master-status| image::
     https://circleci.com/gh/GeotrekCE/Geotrek-admin.svg?style=shield
@@ -18,6 +18,11 @@
     https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/ktpy7v/master&style=flat&logo=cypress
     :alt: End to End
     :target: https://dashboard.cypress.io/projects/ktpy7v/runs
+
+.. |master-rtd| image::
+    https://readthedocs.org/projects/geotrek/badge/?version=latest&style=flat
+    :alt: Documentation
+    :target: https://geotrek.readthedocs.io
 
 
 In brief
@@ -47,12 +52,10 @@ License
 * OpenSource - BSD
 * Copyright (c) 2012-2018 - Makina Corpus / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
 
-.. image:: http://depot.makina-corpus.org/public/logo.gif
+.. image:: https://geotrek.fr/assets/img/logo_makina.svg
     :target: http://www.makina-corpus.com
-    :align: right
 
-
-----------
+----
 
 .. image:: http://geotrek.fr/assets/img/parc_ecrins.png
     :target: http://www.ecrins-parcnational.fr

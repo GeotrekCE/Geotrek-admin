@@ -82,12 +82,12 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         verbose_name_plural = _("Interventions")
 
     def __init__(self, *args, **kwargs):
-        super(Intervention, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._geom = None
 
     def default_stake(self):
         stake = None
-        if self.target:
+        if self.target and isinstance(self.target, Topology):
             for path in self.target.paths.exclude(stake=None):
                 if path.stake > stake:
                     stake = path.stake
@@ -108,7 +108,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         if self.stake is None:
             self.stake = self.default_stake()
 
-        super(Intervention, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # Invalidate project map
         if self.project:
@@ -129,7 +129,6 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         title = _('Paths')
         if not self.target._meta.model_name == "topology":
             icon = self.target._meta.model_name
-
             title = self.target.name_display
         return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
                                                       icon,
@@ -137,6 +136,10 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     @property
     def target_csv_display(self):
+        if self.target._meta.model_name == "topology":
+            path = self.target.paths.first()
+            title = _('Path')
+            return "%s: %s (%s)" % (title, path, path.pk)
         return "%s: %s (%s)" % (
             _(self.target._meta.verbose_name),
             self.target,
@@ -179,9 +182,9 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     @property
     def total_cost(self):
         return self.total_cost_mandays + \
-            self.material_cost or 0 + \
-            self.heliport_cost or 0 + \
-            self.subcontract_cost or 0
+            (self.material_cost or 0) + \
+            (self.heliport_cost or 0) + \
+            (self.subcontract_cost or 0)
 
     @classproperty
     def total_cost_verbose_name(cls):
@@ -225,12 +228,18 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     @classmethod
     def get_interventions(cls, obj):
         blade_content_type = ContentType.objects.get_for_model(Blade)
+        non_topology_content_types = [blade_content_type]
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            non_topology_content_types += [
+                ContentType.objects.get_by_natural_key('outdoor', 'site'),
+                ContentType.objects.get_by_natural_key('outdoor', 'course'),
+            ]
         if settings.TREKKING_TOPOLOGY_ENABLED:
             topologies = list(Topology.overlapping(obj).values_list('pk', flat=True))
         else:
             area = obj.geom.buffer(settings.INTERVENTION_INTERSECTION_MARGIN)
             topologies = list(Topology.objects.existing().filter(geom__intersects=area).values_list('pk', flat=True))
-        qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
+        qs = Q(target_id__in=topologies) & ~Q(target_type__in=non_topology_content_types)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
             qs |= Q(target_id__in=blades, target_type=blade_content_type)
@@ -239,8 +248,14 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     @classmethod
     def path_interventions(cls, path):
         blade_content_type = ContentType.objects.get_for_model(Blade)
+        non_topology_content_types = [blade_content_type]
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            non_topology_content_types += [
+                ContentType.objects.get_by_natural_key('outdoor', 'site'),
+                ContentType.objects.get_by_natural_key('outdoor', 'course'),
+            ]
         topologies = list(Topology.objects.filter(aggregations__path=path).values_list('pk', flat=True))
-        qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
+        qs = Q(target_id__in=topologies) & ~Q(target_type__in=non_topology_content_types)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
             qs |= Q(target_id__in=blades, target_type=blade_content_type)
@@ -265,6 +280,10 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         if self.target_type == ContentType.objects.get_for_model(Infrastructure):
             return [self.target]
         return []
+
+    def distance(self, to_cls):
+        """Distance to associate this intervention to another class"""
+        return settings.MAINTENANCE_INTERSECTION_MARGIN
 
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))
@@ -323,6 +342,7 @@ class InterventionJob(StructureOrNoneRelated):
 
     job = models.CharField(max_length=128, verbose_name=_("Job"))
     cost = models.DecimalField(verbose_name=_("Cost"), default=1.0, decimal_places=2, max_digits=8)
+    active = models.BooleanField(verbose_name=_("Active"), default=True)
 
     class Meta:
         verbose_name = _("Intervention's job")
@@ -394,7 +414,7 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStamp
         ordering = ['-begin_year', 'name']
 
     def __init__(self, *args, **kwargs):
-        super(Project, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._geom = None
 
     @property

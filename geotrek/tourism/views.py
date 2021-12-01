@@ -1,3 +1,4 @@
+
 import logging
 import os
 
@@ -19,6 +20,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
 from django.shortcuts import get_object_or_404
@@ -44,10 +46,11 @@ class TouristicContentLayer(MapEntityLayer):
     properties = ['name']
 
 
-class TouristicContentList(MapEntityList):
+class TouristicContentList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
-    columns = ['id', 'name', 'category']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['category']
 
     @property
     def categories_list(self):
@@ -60,8 +63,9 @@ class TouristicContentJsonList(MapEntityJsonList, TouristicContentList):
 
 
 class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
-    columns = [
-        'id', 'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
         'review', 'published', 'publication_date', 'source', 'portal', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'approved'
@@ -72,7 +76,7 @@ class TouristicContentDetail(MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TouristicContentDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -85,7 +89,7 @@ class TouristicContentCreate(MapEntityCreate):
         """
         Returns the initial data to use for forms on this view.
         """
-        initial = super(TouristicContentCreate, self).get_initial()
+        initial = super().get_initial()
         try:
             category = int(self.request.GET.get('category'))
             initial['category'] = category
@@ -100,7 +104,7 @@ class TouristicContentUpdate(MapEntityUpdate):
 
     @same_structure_required('tourism:touristiccontent_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TouristicContentUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TouristicContentDelete(MapEntityDelete):
@@ -108,18 +112,18 @@ class TouristicContentDelete(MapEntityDelete):
 
     @same_structure_required('tourism:touristiccontent_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TouristicContentDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TouristicContentDocument(MapEntityDocument):
     queryset = TouristicContent.objects.existing()
 
 
-class TouristicContentDocumentPublicMixin(object):
+class TouristicContentDocumentPublicMixin:
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TouristicContentDocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         content = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
@@ -160,10 +164,11 @@ class TouristicEventLayer(MapEntityLayer):
     properties = ['name']
 
 
-class TouristicEventList(MapEntityList):
+class TouristicEventList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
-    columns = ['id', 'name', 'type', 'begin_date', 'end_date']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['type', 'begin_date', 'end_date']
 
 
 class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
@@ -171,8 +176,9 @@ class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
 
 
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
-    columns = [
-        'id', 'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
         'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
         'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
         'participant_number', 'booking', 'target_audience', 'practical_info',
@@ -186,7 +192,7 @@ class TouristicEventDetail(MapEntityDetail):
     queryset = TouristicEvent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TouristicEventDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -202,7 +208,7 @@ class TouristicEventUpdate(MapEntityUpdate):
 
     @same_structure_required('tourism:touristicevent_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TouristicEventUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TouristicEventDelete(MapEntityDelete):
@@ -210,18 +216,18 @@ class TouristicEventDelete(MapEntityDelete):
 
     @same_structure_required('tourism:touristicevent_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TouristicEventDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TouristicEventDocument(MapEntityDocument):
     queryset = TouristicEvent.objects.existing()
 
 
-class TouristicEventDocumentPublicMixin(object):
+class TouristicEventDocumentPublicMixin:
     queryset = TouristicEvent.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TouristicEventDocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         event = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristicevent']
@@ -305,7 +311,7 @@ class InformationDeskViewSet(viewsets.ModelViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        qs = super(InformationDeskViewSet, self).get_queryset()
+        qs = super().get_queryset()
         if self.kwargs.get('type'):
             qs = qs.filter(type_id=self.kwargs['type'])
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))

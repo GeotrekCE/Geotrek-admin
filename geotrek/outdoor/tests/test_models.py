@@ -1,3 +1,8 @@
+from django.contrib.gis.geos.collections import GeometryCollection
+from geotrek.trekking.factories import POIFactory
+from django.contrib.gis.geos.point import Point
+from django.contrib.gis.geos import Polygon
+from geotrek.common.factories import OrganismFactory
 from geotrek.outdoor.factories import SiteFactory, RatingScaleFactory, SectorFactory
 from django.test import TestCase, override_settings
 
@@ -21,12 +26,16 @@ class SiteTest(TestCase):
 class SiteSuperTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        org_a = OrganismFactory(organism='a')
+        org_b = OrganismFactory(organism='b')
+        org_c = OrganismFactory(organism='c')
         cls.alone = SiteFactory(
             practice=None
         )
         cls.parent = SiteFactory(
             practice__name='Bbb',
             practice__sector__name='Bxx',
+            managers=[org_a, org_b],
             orientation=['N', 'S'],
             wind=['N', 'S']
         )
@@ -34,6 +43,7 @@ class SiteSuperTest(TestCase):
             parent=cls.parent,
             practice__name='Aaa',
             practice__sector__name='Axx',
+            managers=[org_b, org_c],
             orientation=['E', 'S'],
             wind=['E', 'S']
         )
@@ -74,6 +84,13 @@ class SiteSuperTest(TestCase):
     def test_super_wind_ascendants(self):
         self.assertEqual(self.grandchild2.super_wind, [])
 
+    def test_super_managers_descendants(self):
+        self.assertQuerysetEqual(self.parent.super_managers,
+                                 ['<Organism: a>', '<Organism: b>', '<Organism: b>', '<Organism: c>'])
+
+    def test_super_managers_ascendants(self):
+        self.assertQuerysetEqual(self.grandchild2.super_managers, [])
+
     def test_super_practices_display(self):
         self.assertEqual(self.alone.super_practices_display, "")
         self.assertEqual(self.parent.super_practices_display, "<i>Aaa</i>, Bbb")
@@ -92,3 +109,22 @@ class RatingScaleTest(TestCase):
     def test_ratingscale_str(self):
         scale = RatingScaleFactory.create(name='Bar', practice__name='Foo')
         self.assertEqual(str(scale), 'Bar (Foo)')
+
+
+class ExcludedPOIsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.poi1 = POIFactory()
+        cls.poi1.geom = Point(0.5, 0.5, srid=2154)
+        cls.poi1.save()
+        cls.poi2 = POIFactory()
+        cls.poi2.geom = Point(0.5, 0.5, srid=2154)
+        cls.poi2.save()
+        cls.site = SiteFactory(geom=GeometryCollection(Polygon(((0, 0), (0, 1), (1, 0), (1, 1), (0, 0)), srid=2154)))
+
+    def test_no_poi_excluded(self):
+        self.assertEqual(self.site.pois.count(), 2)
+
+    def test_one_poi_excluded(self):
+        self.site.pois_excluded.set([self.poi1])
+        self.assertEqual(self.site.pois.count(), 1)

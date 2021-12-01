@@ -198,3 +198,12 @@ class InterventionTest(TestCase):
         self.assertIn('signage-16.png', interv.target_display)
         name = interv.target.name
         self.assertIn(name, interv.target_display)
+
+    def test_total_cost(self):
+        interv = InfrastructureInterventionFactory.create(
+            material_cost=1,
+            heliport_cost=2,
+            subcontract_cost=4
+            # implicit 1 manday x 500 €
+        )
+        self.assertEqual(interv.total_cost, 507)

@@ -68,7 +68,7 @@ class Difficulty(OptionalPictogramMixin):
                 self.id = last.id + 1
             except IndexError:
                 self.id = 1
-        super(Difficulty, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class Level(OptionalPictogramMixin):
@@ -96,7 +96,7 @@ class Level(OptionalPictogramMixin):
                 self.id = last.id + 1
             except IndexError:
                 self.id = 1
-        super(Level, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,

@@ -21,10 +21,11 @@ from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
                                    PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
 from geotrek.common.models import Theme, ReservationSystem
+from geotrek.common.templatetags import geotrek_tags
+
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
 
-from .templatetags import trekking_tags
 
 from colorfield.fields import ColorField
 
@@ -40,7 +41,7 @@ class TrekOrderedChildManager(models.Manager):
 
     def get_queryset(self):
         # Select treks foreign keys by default
-        qs = super(TrekOrderedChildManager, self).get_queryset().select_related('parent', 'child')
+        qs = super().get_queryset().select_related('parent', 'child')
         # Exclude deleted treks
         return qs.exclude(parent__deleted=True).exclude(child__deleted=True)
 
@@ -147,7 +148,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
         return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, get_language()))
 
     def get_map_image_extent(self, srid=settings.API_SRID):
-        extent = list(super(Trek, self).get_map_image_extent(srid))
+        extent = list(super().get_map_image_extent(srid))
         if self.parking_location:
             self.parking_location.transform(srid)
             extent[0] = min(extent[0], self.parking_location.x)
@@ -199,7 +200,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     @property
     def length_kilometer(self):
-        return "%.1f" % (self.length_2d / 1000.0)
+        return "%.1f" % (self.length_2d / 1000.0) if self.length_2d else None
 
     @property
     def networks_display(self):
@@ -252,11 +253,11 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     def has_geom_valid(self):
         """A trek should be a LineString, even if it's a loop.
         """
-        return super(Trek, self).has_geom_valid() and self.geom.geom_type.lower() == 'linestring'
+        return super().has_geom_valid() and self.geom.geom_type.lower() == 'linestring'
 
     @property
     def duration_pretty(self):
-        return trekking_tags.duration(self.duration)
+        return geotrek_tags.duration(self.duration)
 
     @classproperty
     def duration_pretty_verbose_name(cls):
@@ -372,7 +373,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     @property
     def picture_print(self):
-        picture = super(Trek, self).picture_print
+        picture = super().picture_print
         if picture:
             return picture
         for poi in self.published_pois:
@@ -391,8 +392,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                 field_names.remove('geom')
             if self.geom_3d is not None and old_trek.geom_3d.equals_exact(self.geom_3d, tolerance=0.00001):
                 field_names.remove('geom_3d')
-            return super(Trek, self).save(update_fields=field_names, *args, **kwargs)
-        super(Trek, self).save(*args, **kwargs)
+            return super().save(update_fields=field_names, *args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def portal_display(self):
@@ -457,7 +458,7 @@ class TrekRelationshipManager(models.Manager):
 
     def get_queryset(self):
         # Select treks foreign keys by default
-        qs = super(TrekRelationshipManager, self).get_queryset().select_related('trek_a', 'trek_b')
+        qs = super().get_queryset().select_related('trek_a', 'trek_b')
         # Exclude deleted treks
         return qs.exclude(trek_a__deleted=True).exclude(trek_b__deleted=True)
 
@@ -605,12 +606,12 @@ class DifficultyLevel(OptionalPictogramMixin):
                 self.id = last.id + 1
             except IndexError:
                 self.id = 1
-        super(DifficultyLevel, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class WebLinkManager(models.Manager):
     def get_queryset(self):
-        return super(WebLinkManager, self).get_queryset().select_related('category')
+        return super().get_queryset().select_related('category')
 
 
 class WebLink(models.Model):
@@ -675,7 +676,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         return "%s (%s)" % (self.name, self.type)
 
     def save(self, *args, **kwargs):
-        super(POI, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         # Invalidate treks map
         for trek in self.treks.all():
             try:
@@ -709,6 +710,13 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
                                                         Transform(F('geom'), settings.SRID)))
                 qs = qs.order_by('locate')
 
+        return qs
+
+    @classmethod
+    def outdoor_all_pois(cls, obj):
+        object_geom = obj.geom.transform(settings.SRID, clone=True).buffer(settings.OUTDOOR_INTERSECTION_MARGIN)
+        qs = cls.objects.existing().filter(geom__intersects=object_geom)
+        qs = qs.order_by('pk')
         return qs
 
     @classmethod

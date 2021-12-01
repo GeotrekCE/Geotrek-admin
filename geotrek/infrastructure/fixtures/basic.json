@@ -257,38 +257,80 @@
         }
     },
     {
-        "pk": 1, 
-        "model": "infrastructure.infrastructurecondition", 
+        "pk": 1,
+        "model": "infrastructure.infrastructurecondition",
         "fields": {
             "label": "Neuf"
         }
     },
     {
-        "pk": 2, 
-        "model": "infrastructure.infrastructurecondition", 
+        "pk": 2,
+        "model": "infrastructure.infrastructurecondition",
         "fields": {
             "label": "Bon \u00e9tat"
         }
     },
     {
-        "pk": 3, 
-        "model": "infrastructure.infrastructurecondition", 
+        "pk": 3,
+        "model": "infrastructure.infrastructurecondition",
         "fields": {
             "label": "D\u00e9grad\u00e9"
         }
     },
     {
-        "pk": 4, 
-        "model": "infrastructure.infrastructurecondition", 
+        "pk": 4,
+        "model": "infrastructure.infrastructurecondition",
         "fields": {
             "label": "En ruines"
         }
     },
     {
-        "pk": 5, 
-        "model": "infrastructure.infrastructurecondition", 
+        "pk": 5,
+        "model": "infrastructure.infrastructurecondition",
         "fields": {
             "label": "Tagu\u00e9"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "infrastructure.infrastructureusagedifficultylevel",
+        "fields": {
+            "label": "Familial"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "infrastructure.infrastructureusagedifficultylevel",
+        "fields": {
+            "label": "Randonneurs moyens"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "infrastructure.infrastructureusagedifficultylevel",
+        "fields": {
+            "label": "Randonneurs sportifs, signal\u00e9tique de prudence au besoin"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "infrastructure.infrastructuremaintenancedifficultylevel",
+        "fields": {
+            "label": "Prudence habituelle"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "infrastructure.infrastructuremaintenancedifficultylevel",
+        "fields": {
+            "label": "Protection recommand\u00e9e"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "infrastructure.infrastructuremaintenancedifficultylevel",
+        "fields": {
+            "label": "Agents form\u00e9s seulement"
         }
     }
 ]

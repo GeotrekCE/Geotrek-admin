@@ -1,10 +1,10 @@
 from django.core.exceptions import PermissionDenied
 
 
-class PublicOrReadPermMixin(object):
+class PublicOrReadPermMixin:
 
     def get_object(self, queryset=None):
-        obj = super(PublicOrReadPermMixin, self).get_object(queryset)
+        obj = super().get_object(queryset)
         if not obj.is_public():
             if not self.request.user.is_authenticated:
                 raise PermissionDenied

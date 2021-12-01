@@ -1,0 +1,94 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n geotrek_tags mapentity_tags outdoor_tags %}
+{% block attributes %}
+    <h3>{% trans "Tree view" %}</h3>
+            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=course.all_hierarchy_roots original_course=object %}    
+    </ul>
+    <h3>{% trans "Attributes" %}</h3>
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Sites" %}</th>
+            <td>
+                {% for site in object.parent_sites.all %}
+                    {{ site.name_display|safe }}<br>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Sector" %}</th>
+            <td>{% if object.parent_sites.first.practice.sector %}{{ object.parent_sites.first.practice.sector }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object.parent_sites.first|verbose:"practice" }}</th>
+            <td>{% if object.parent_sites.first.practice %}{{ object.parent_sites.first.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"advice" }}</th>
+            <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"equipment" }}</th>
+            <td>{% if object.equipment %}{{ object.equipment|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"height" }}</th>
+            <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        {% for rating in object.ratings.all %}
+            <tr>
+                <th>{{ rating.scale.name }}</th>
+                <td>{{ rating.name }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th>{{ object|verbose:"duration" }}</th>
+            <td>{{ object.duration|duration }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"ratings_description" }}</th>
+            <td>{% if object.ratings_description %}{{ object.ratings_description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"gear" }}</th>
+            <td>{% if object.gear %}{{ object.gear|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Itinerancy" %}</th>
+            <td>
+                {% if object.parents %}
+                    {% trans "Child of:" %}<br/>
+                    {% valuelist object.parents field='name_display' %}
+                {% endif %}
+                {% if object.children %}
+                    {% trans "Parent of:" %}<br/>
+                    {% valuelist object.children field='name_display' %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        {% include "common/publication_info_fragment.html" %}
+        {% include "altimetry/elevationinfo_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+
+    {{ block.super }}
+{% endblock attributes %}

@@ -26,12 +26,12 @@ class TopologyForm(CommonForm):
         fields = CommonForm.Meta.fields + ['topology']
 
     def __init__(self, *args, **kwargs):
-        super(TopologyForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields['topology'].initial = self.instance
 
     def clean(self, *args, **kwargs):
-        data = super(TopologyForm, self).clean()
+        data = super().clean()
         # geom is computed at db-level and never edited
         if 'geom' in self.errors:
             del self.errors['geom']
@@ -39,7 +39,7 @@ class TopologyForm(CommonForm):
 
     def save(self, *args, **kwargs):
         topology = self.cleaned_data.pop('topology')
-        instance = super(TopologyForm, self).save(*args, **kwargs)
+        instance = super().save(*args, **kwargs)
         was_edited = instance.pk != topology.pk
         if was_edited:
             instance.mutate(topology)
@@ -62,7 +62,7 @@ class PathForm(CommonForm):
              'source', 'networks', 'usages', 'valid', 'draft', 'reverse_geom', 'geom']
 
     def __init__(self, *args, **kwargs):
-        super(PathForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.instance.pk:
             if not self.instance.draft:
                 # Prevent to set a path as draft again (it could be used by a topology)
@@ -86,7 +86,7 @@ class PathForm(CommonForm):
         return geom
 
     def save(self, commit=True):
-        path = super(PathForm, self).save(commit=False)
+        path = super().save(commit=False)
         if not self.instance.pk:
             if self.user.has_perm('core.add_draft_path') and not self.user.has_perm('core.add_path'):
                 path.draft = True
@@ -109,7 +109,7 @@ class TrailForm(TopologyForm):
         fields = CommonForm.Meta.fields + ['structure', 'name', 'departure', 'arrival', 'comments']
 
     def __init__(self, *args, **kwargs):
-        super(TrailForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         modifiable = self.fields['topology'].widget.modifiable
         self.fields['topology'].widget = LineTopologyWidget()
         self.fields['topology'].widget.modifiable = modifiable

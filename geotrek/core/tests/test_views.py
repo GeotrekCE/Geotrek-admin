@@ -1,9 +1,12 @@
+from mapentity.views.generic import MapEntityList
+from geotrek.common.mixins import CustomColumnsMixin
 import re
 from unittest import skipIf, mock
 
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
@@ -16,6 +19,7 @@ from geotrek.common.tests import CommonTest
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
+from geotrek.core.views import PathFormatList, PathList
 from geotrek.core.models import Path, Trail, PathSource
 
 from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
@@ -24,6 +28,8 @@ from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
 from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
+
+from unittest.mock import patch
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -134,7 +140,7 @@ class PathViewsTest(CommonTest):
         # Avoid overlap, delete all !
         for p in Path.objects.all():
             p.delete()
-        super(PathViewsTest, self)._post_add_form()
+        super()._post_add_form()
 
     def test_draft_permission_detail(self):
         path = PathFactory(name="DRAFT_PATH", draft=True)
@@ -223,7 +229,7 @@ class PathViewsTest(CommonTest):
     def test_basic_format(self):
         self.modelfactory.create()
         self.modelfactory.create(name="ãéè")
-        super(CommonTest, self).test_basic_format()
+        super().test_basic_format()
 
     def test_path_form_is_not_valid_if_no_geometry_provided(self):
         self.login()
@@ -595,11 +601,34 @@ class PathViewsTest(CommonTest):
         response = self.client.get(obj.get_layer_url(), {"no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 2)
 
+    @override_settings(COLUMNS_LISTS={'path_view': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatoy columns plus custom extra columns
+        self.assertEqual(PathList().columns, ['id', 'checkbox', 'name', 'length', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+
+    @override_settings(COLUMNS_LISTS={'path_export': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatoy columns plus custom extra columns
+        self.assertEqual(PathFormatList().columns, ['id', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+
+    @override_settings(COLUMNS_LISTS={})
+    @patch('geotrek.common.mixins.logger')
+    def test_custom_columns_mixin_error_log(self, mock_logger):
+        # Create view where columns fields are omitted
+        class MissingColumns(CustomColumnsMixin, MapEntityList):
+            model = Path
+            # columns = None
+
+        MissingColumns()
+        # Assert logger raises error message
+        message = "Cannot build columns for class MissingColumns.\nPlease define on this class either : \n  - a field 'columns'\nOR \n  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+        mock_logger.error.assert_called_with(message)
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
     def setUp(self):
-        super(PathKmlGPXTest, self).setUp()
+        super().setUp()
         self.user = UserFactory.create(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 
@@ -725,7 +754,7 @@ class TrailViewsTest(CommonTest):
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):
     def setUp(self):
-        super(TrailKmlGPXTest, self).setUp()
+        super().setUp()
         self.user = UserFactory.create(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 

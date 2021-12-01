@@ -5,6 +5,7 @@ set -e
 cd /opt/geotrek-admin
 
 ./manage.py migrate --noinput
+./manage.py clearsessions
 pushd var/conf/extra_locale && ../../../manage.py compilemessages && popd
 ./manage.py collectstatic --clear --noinput --verbosity=0
 ./manage.py sync_translation_fields --noinput

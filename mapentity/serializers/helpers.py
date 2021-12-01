@@ -1,3 +1,4 @@
+from decimal import Decimal
 from functools import partial
 import html
 import json
@@ -21,7 +22,7 @@ def field_as_string(obj, field, ascii=False):
             value = getattr(obj, field)
         if isinstance(value, bool):
             value = (_('no'), _('yes'))[value]
-        if isinstance(value, float) or isinstance(value, int):
+        if isinstance(value, float) or isinstance(value, int) or isinstance(value, Decimal):
             value = number_format(value)
         if isinstance(value, list) or isinstance(value, QuerySet):
             value = ", ".join([str(val) for val in value])
@@ -37,7 +38,7 @@ def smart_plain_text(s, ascii=False):
         return ''
     try:
         # Converts to unicode, remove HTML tags, convert HTML entities
-        us = plain_text(u"{}".format(s))
+        us = plain_text(str(s))
         if ascii:
             return smart_str(us)
         return us

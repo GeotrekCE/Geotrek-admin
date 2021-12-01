@@ -20,7 +20,7 @@ class AltimetryEntityOptions(MapEntityOptions):
     def scan_views(self, *args, **kwargs):
         """ Adds the URLs of all views provided by ``AltimetryMixin`` models.
         """
-        views = super(AltimetryEntityOptions, self).scan_views(*args, **kwargs)
+        views = super().scan_views(*args, **kwargs)
         altimetry_views = [
             path('api/<lang:lang>/{modelname}s/<int:pk>/profile.json'.format(modelname=self.modelname),
                  self.elevation_profile_view.as_view(model=self.model),

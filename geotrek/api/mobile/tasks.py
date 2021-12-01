@@ -1,5 +1,3 @@
-# -*- encoding: UTF-8 -
-
 import os
 
 from celery import shared_task, current_task
@@ -27,7 +25,7 @@ def launch_sync_mobile(*args, **kwargs):
                 'name': current_task.name,
                 'current': 5,
                 'total': 100,
-                'infos': u"{}".format(_(u"Init sync ..."))
+                'infos': _("Init sync ..."),
             }
         )
         sync_mobile_options = {

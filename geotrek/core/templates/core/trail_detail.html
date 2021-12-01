@@ -6,6 +6,6 @@
   </div>
 
   <div class="btn-group pull-right">
-    <a class="btn btn-mini" href="{% url 'core:trail_gpx_detail' LANGUAGE_CODE object.pk object.pk %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
-    <a class="btn btn-mini" href="{% url 'core:trail_kml_detail' LANGUAGE_CODE object.pk object.pk %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'core:trail_gpx_detail' LANGUAGE_CODE object.pk object.pk %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'core:trail_kml_detail' LANGUAGE_CODE object.pk object.pk %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
 {% endblock download %}

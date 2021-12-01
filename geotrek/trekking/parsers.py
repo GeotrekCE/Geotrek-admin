@@ -5,7 +5,7 @@ from geotrek.common.parsers import ShapeParser, AttachmentParserMixin
 from geotrek.trekking.models import Trek
 
 
-class DurationParserMixin(object):
+class DurationParserMixin:
     def filter_duration(self, src, val):
         val = val.upper().replace(',', '.')
         try:

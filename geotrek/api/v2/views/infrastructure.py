@@ -1,0 +1,43 @@
+from django.conf import settings
+from django.db.models import F
+from geotrek.api.v2 import serializers as api_serializers, \
+    viewsets as api_viewsets, filters as api_filters
+from geotrek.infrastructure import models as infra_models
+from geotrek.api.v2.functions import Transform
+
+
+class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter,
+    )
+    serializer_class = api_serializers.InfrastructureSerializer
+    queryset = infra_models.Infrastructure.objects.existing() \
+        .select_related('topo_object', 'type', ) \
+        .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
+        .prefetch_related('topo_object__aggregations', 'attachments') \
+        .order_by('pk')
+
+
+class InfrastructureTypeViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.InfrastructureRelatedPortalFilter, )
+    serializer_class = api_serializers.InfrastructureTypeSerializer
+    queryset = infra_models.InfrastructureType.objects.all().order_by('pk')
+
+
+class InfrastructureUsageDifficultyLevelViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
+    serializer_class = api_serializers.InfrastructureUsageDifficultyLevelSerializer
+    queryset = infra_models.InfrastructureUsageDifficultyLevel.objects.all().order_by('pk')
+
+
+class InfrastructureConditionViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
+    serializer_class = api_serializers.InfrastructureConditionSerializer
+    queryset = infra_models.InfrastructureCondition.objects.all().order_by('pk')
+
+
+class InfrastructureMaintenanceDifficultyLevelViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
+    serializer_class = api_serializers.InfrastructureMaintenanceDifficultyLevelSerializer
+    queryset = infra_models.InfrastructureMaintenanceDifficultyLevel.objects.all().order_by('pk')

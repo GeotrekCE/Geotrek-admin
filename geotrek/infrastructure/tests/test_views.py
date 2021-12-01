@@ -87,7 +87,7 @@ class InfrastructureViewsTest(CommonTest):
 
     def test_no_pictogram(self):
         self.modelfactory = InfrastructureNoPictogramFactory
-        super(InfrastructureViewsTest, self).test_api_detail_for_model()
+        super().test_api_detail_for_model()
 
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):

@@ -17,7 +17,7 @@ def get_language_from_path(path):
         return None
 
 
-class APILocaleMiddleware(object):
+class APILocaleMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 

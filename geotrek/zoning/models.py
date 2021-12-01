@@ -21,7 +21,7 @@ class RestrictedAreaType(models.Model):
 
 class RestrictedAreaManager(models.Manager):
     def get_queryset(self):
-        return super(RestrictedAreaManager, self).get_queryset().select_related('area_type')
+        return super().get_queryset().select_related('area_type')
 
 
 class RestrictedArea(models.Model):

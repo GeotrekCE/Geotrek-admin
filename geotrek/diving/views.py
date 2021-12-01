@@ -1,3 +1,4 @@
+
 from django.conf import settings
 from django.db.models import Q
 from django.contrib.gis.db.models.functions import Transform
@@ -12,6 +13,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
 
@@ -30,10 +32,11 @@ class DiveLayer(MapEntityLayer):
     queryset = Dive.objects.existing()
 
 
-class DiveList(FlattenPicturesMixin, MapEntityList):
+class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = DiveFilterSet
-    columns = ['id', 'name', 'levels', 'thumbnail']
     queryset = Dive.objects.existing()
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['levels', 'thumbnail']
 
 
 class DiveJsonList(MapEntityJsonList, DiveList):
@@ -41,8 +44,9 @@ class DiveJsonList(MapEntityJsonList, DiveList):
 
 
 class DiveFormatList(MapEntityFormat, DiveList):
-    columns = [
-        'id', 'eid', 'structure', 'name', 'departure',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'eid', 'structure', 'name', 'departure',
         'description', 'description_teaser',
         'advice', 'difficulty', 'levels',
         'themes', 'practice', 'disabled_sport',
@@ -59,10 +63,10 @@ class DiveDetail(MapEntityDetail):
         if lang:
             translation.activate(lang)
             self.request.LANGUAGE_CODE = lang
-        return super(DiveDetail, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(DiveDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -75,18 +79,18 @@ class DiveMapImage(MapEntityMapImage):
         if lang:
             translation.activate(lang)
             self.request.LANGUAGE_CODE = lang
-        return super(DiveMapImage, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class DiveDocument(MapEntityDocument):
     queryset = Dive.objects.existing()
 
 
-class DiveDocumentPublicMixin(object):
+class DiveDocumentPublicMixin:
     queryset = Dive.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(DiveDocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         dive = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['dive']
@@ -126,7 +130,7 @@ class DiveUpdate(MapEntityUpdate):
 
     @same_structure_required('diving:dive_detail')
     def dispatch(self, *args, **kwargs):
-        return super(DiveUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class DiveDelete(MapEntityDelete):
@@ -134,7 +138,7 @@ class DiveDelete(MapEntityDelete):
 
     @same_structure_required('diving:dive_detail')
     def dispatch(self, *args, **kwargs):
-        return super(DiveDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class DiveMeta(MetaMixin, DetailView):

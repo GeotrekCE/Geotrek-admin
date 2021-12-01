@@ -33,9 +33,7 @@ urlpatterns = [
 
 class PathEntityOptions(AltimetryEntityOptions):
     def get_queryset(self):
-        qs = super(PathEntityOptions, self).get_queryset()
-        qs = qs.prefetch_related('networks', 'usages')
-        return qs
+        return super().get_queryset().prefetch_related('networks', 'usages')
 
 
 urlpatterns += registry.register(Path, PathEntityOptions, menu=(settings.PATH_MODEL_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED))

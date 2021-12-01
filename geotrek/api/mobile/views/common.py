@@ -115,42 +115,42 @@ class SettingsView(APIView):
                     'id': 'difficulty',
                     'name': _('Difficulty'),
                     'values': api_serializers.DifficultySerializer(DifficultyLevel.objects.filter(
-                        pk__in=Trek.objects.existing().values_list('difficulty_id', flat=True)
+                        pk__in=Trek.objects.existing().filter(published=True).values_list('difficulty_id', flat=True)
                     ).order_by('pk'), many=True, context={'request': request}).data
                 },
                 {
                     'id': 'practice',
                     'name': _('Practice'),
                     'values': api_serializers.PracticeSerializer(Practice.objects.filter(
-                        pk__in=Trek.objects.existing().values_list('practice_id', flat=True)
+                        pk__in=Trek.objects.existing().filter(published=True).values_list('practice_id', flat=True)
                     ).order_by('order', 'name'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'accessibilities',
                     'name': _('Accessibilities'),
                     'values': api_serializers.AccessibilitySerializer(Accessibility.objects.filter(
-                        pk__in=Trek.objects.existing().values_list('accessibilities', flat=True)
+                        pk__in=Trek.objects.existing().filter(published=True).values_list('accessibilities', flat=True)
                     ).order_by('name'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'route',
                     'name': _('Route'),
                     'values': api_serializers.RouteSerializer(Route.objects.filter(
-                        pk__in=Trek.objects.existing().values_list('route_id', flat=True)
+                        pk__in=Trek.objects.existing().filter(published=True).values_list('route_id', flat=True)
                     ).order_by('route'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'themes',
                     'name': _('Themes'),
                     'values': api_serializers.ThemeSerializer(Theme.objects.filter(
-                        pk__in=Trek.objects.existing().values_list('themes', flat=True)
+                        pk__in=Trek.objects.existing().filter(published=True).values_list('themes', flat=True)
                     ).order_by('label'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'networks',
                     'name': _('Networks'),
                     'values': api_serializers.NetworkSerializer(TrekNetwork.objects.filter(
-                        pk__in=Trek.objects.existing().values_list('networks', flat=True)
+                        pk__in=Trek.objects.existing().filter(published=True).values_list('networks', flat=True)
                     ).order_by('network'), many=True, context={'request': request}).data,
                 },
                 {
