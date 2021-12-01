@@ -1,17 +1,20 @@
+import logging
 import os
 import uuid
-
-from PIL import Image
+from io import BytesIO
 
 from django.conf import settings
+from django.core.files import File
+from django.core.files.base import ContentFile
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-
-from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
+from paperclip.models import Attachment as BaseAttachment
+from paperclip.models import FileType as BaseFileType
+from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
+from geotrek.common.mixins import OptionalPictogramMixin, PictogramMixin
 
 
 class Organism(StructureOrNoneRelated):
@@ -52,6 +55,23 @@ class Attachment(BaseAttachment):
 
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+    def save(self, *args, **kwargs):
+        if settings.RESIZE_ATTACHMENTS_ON_UPLOAD and (self.pk is None) and self.attachment_file:
+            # Resize image
+            image = Image.open(self.attachment_file).convert('RGB')
+            image.thumbnail((settings.MAX_ATTACHMENT_WIDTH, settings.MAX_ATTACHMENT_HEIGHT))
+            # Write resized image
+            output = BytesIO()
+            ext = self.attachment_file.name.split('.')[1:][0].upper()  # JPEG, PNG...
+            image.save(output, format=ext)
+            output.seek(0)
+            # Replace attachment
+            content_file = ContentFile(output.read())
+            file = File(content_file)
+            name = self.attachment_file.name
+            self.attachment_file.save(name, file, save=False)
+        super().save(*args, **kwargs)
 
 
 class Theme(PictogramMixin):
