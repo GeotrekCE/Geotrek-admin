@@ -235,9 +235,9 @@ $(window).on('entity:map:list', function (e, data) {
                                           .replace('0', properties.pk);
     }
     if (typeof window.SETTINGS.map.styles.others === "function"){
-        var settings_style = window.SETTINGS.map.styles[data.modelname];
-        if (settings_style === undefined) {
-            var style = window.SETTINGS.map.styles.others;
+        var style = window.SETTINGS.map.styles[data.modelname];
+        if (style === undefined) {
+            style = window.SETTINGS.map.styles.others;
         }
     }
     else{
