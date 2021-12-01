@@ -234,19 +234,15 @@ $(window).on('entity:map:list', function (e, data) {
         return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), data.modelname)
                                           .replace('0', properties.pk);
     }
-    if (typeof window.SETTINGS.map.styles.others === "function"){
-        var style = window.SETTINGS.map.styles[data.modelname];
-        if (style === undefined) {
-            style = window.SETTINGS.map.styles.others;
-        }
+
+    var style = window.SETTINGS.map.styles[data.modelname];
+    if (style === undefined) {
+        style = window.SETTINGS.map.styles.others;
     }
-    else{
-        var settings_style = window.SETTINGS.map.styles[data.modelname];
-        if (settings_style === undefined) {
-            settings_style = window.SETTINGS.map.styles.others;
-        }
+    if (!(typeof window.SETTINGS.map.styles.others === "function")) {
         var style = L.Util.extend({}, style);
     }
+
     var objectsLayer = new L.ObjectsLayer(null, {
         objectUrl: getUrl,
         style: style,
