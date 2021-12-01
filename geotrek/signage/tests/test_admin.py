@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.signage.tests.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
                                              BladeDirectionFactory, BladeTypeFactory)
 from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType

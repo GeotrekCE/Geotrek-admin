@@ -1,4 +1,4 @@
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory
 
 

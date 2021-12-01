@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.base import AuthentFixturesTest
 
 from ..models import Dive
 from .factories import DifficultyFactory, DiveFactory, DivingManagerFactory, LevelFactory

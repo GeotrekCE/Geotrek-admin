@@ -17,7 +17,7 @@ from mapentity.tests.factories import UserFactory
 from geotrek.common.tests import CommonTest
 
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.base import AuthentFixturesTest
 
 from geotrek.core.views import PathFormatList, PathList
 from geotrek.core.models import Path, Trail, PathSource

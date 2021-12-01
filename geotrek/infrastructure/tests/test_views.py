@@ -4,7 +4,7 @@ from django.conf import settings
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureCondition, INFRASTRUCTURE_TYPES)

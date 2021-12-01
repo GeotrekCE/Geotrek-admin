@@ -16,7 +16,7 @@ from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory, UserFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
-from geotrek.trekking.tests import TrekkingManagerTest
+from geotrek.trekking.tests.base import TrekkingManagerTest
 from geotrek.core.tests import factories as core_factories
 from geotrek.trekking.tests import factories as trekking_factories
 from geotrek.zoning.tests import factories as zoning_factories

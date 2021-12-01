@@ -66,7 +66,7 @@ class TopologyTest(TestCase):
 
     def test_kind(self):
         from geotrek.land.models import LandEdge
-        from geotrek.land.factories import LandEdgeFactory
+        from geotrek.land.tests.factories import LandEdgeFactory
 
         # Test with a concrete inheritance of Topology : LandEdge
         self.assertEqual('TOPOLOGY', Topology.KIND)

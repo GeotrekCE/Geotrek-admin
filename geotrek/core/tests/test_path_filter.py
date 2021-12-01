@@ -3,7 +3,7 @@ from unittest import skipIf
 from django.conf import settings
 from django.urls import reverse
 
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory
 
 from geotrek.core.models import Path
