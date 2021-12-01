@@ -59,7 +59,8 @@
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
-    {% if perms.signage.read_blade %}
+    {% blades_enabled as blades_enabled %}
+    {% if blades_enabled and perms.signage.read_blade %}
         <h3>{% trans "Blades" %}</h3>
         <table class="table blades">
             {% if object.order_blades %}
