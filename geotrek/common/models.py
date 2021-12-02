@@ -1,4 +1,5 @@
 import os
+from pathlib import PurePosixPath
 import uuid
 from io import BytesIO
 
@@ -62,7 +63,8 @@ class Attachment(BaseAttachment):
             image.thumbnail((settings.MAX_ATTACHMENT_WIDTH, settings.MAX_ATTACHMENT_HEIGHT))
             # Write resized image
             output = BytesIO()
-            ext = self.attachment_file.name.split('.')[1:][0].upper()  # JPEG, PNG...
+            ext = PurePosixPath(self.attachment_file.name).suffix.split('.')[-1]  # JPEG, PNG..
+            print(ext)
             image.save(output, format=ext)
             output.seek(0)
             # Replace attachment
