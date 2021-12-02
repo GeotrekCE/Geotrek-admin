@@ -10,7 +10,7 @@ CHANGELOG
 - Add BLADE_ENABLED setting to hide Blade in Signage forms and in Signage detail page
 - Add LINE_ENABLED setting to hide Line in Blade forms and in Blade detail page
 - Add RESIZE_ATTACHMENTS_ON_UPLOAD setting to enable resize attachments on upload (#2835)
-- Add MAX_ATTACHMENT_WIDTH and MAX_ATTACHMENT_HEIGHT to configure attachment resizing (default 1280x720) (#2835)
+- Add MAX_ATTACHMENT_WIDTH and MAX_ATTACHMENT_HEIGHT to configure attachment resizing (defaults 1280px) (#2835)
 
 **User interface**
 
