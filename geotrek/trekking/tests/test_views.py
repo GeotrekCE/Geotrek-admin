@@ -1639,23 +1639,23 @@ class TestResizeAttachmentsOnUpload(TestCase):
     @override_settings(RESIZE_ATTACHMENTS_ON_UPLOAD=True)
     def test_attachment_is_resized(self):
         attachment = AttachmentFactory.create(content_object=POIFactory(), attachment_file=get_big_dummy_uploaded_image())
-        self.assertEqual((1280, 1280), get_image_dimensions(attachment.attachment_file))
+        self.assertEqual((640, 1280), get_image_dimensions(attachment.attachment_file))
 
     @override_settings(RESIZE_ATTACHMENTS_ON_UPLOAD=False)
     def test_attachment_is_not_resized(self):
         attachment = AttachmentFactory.create(content_object=POIFactory(), attachment_file=get_big_dummy_uploaded_image())
-        self.assertEqual((2000, 2000), get_image_dimensions(attachment.attachment_file))
+        self.assertEqual((2000, 4000), get_image_dimensions(attachment.attachment_file))
 
     @override_settings(RESIZE_ATTACHMENTS_ON_UPLOAD=True)
     @override_settings(MAX_ATTACHMENT_WIDTH=2100)
     @override_settings(MAX_ATTACHMENT_HEIGHT=100)
     def test_attachment_is_resized_per_height(self):
         attachment = AttachmentFactory.create(content_object=POIFactory(), attachment_file=get_big_dummy_uploaded_image())
-        self.assertEqual((100, 100), get_image_dimensions(attachment.attachment_file))
+        self.assertEqual((50, 100), get_image_dimensions(attachment.attachment_file))
 
     @override_settings(RESIZE_ATTACHMENTS_ON_UPLOAD=True)
     @override_settings(MAX_ATTACHMENT_WIDTH=100)
     @override_settings(MAX_ATTACHMENT_HEIGHT=2100)
     def test_attachment_is_resized_per_width(self):
         attachment = AttachmentFactory.create(content_object=POIFactory(), attachment_file=get_big_dummy_uploaded_image())
-        self.assertEqual((100, 100), get_image_dimensions(attachment.attachment_file))
+        self.assertEqual((100, 200), get_image_dimensions(attachment.attachment_file))

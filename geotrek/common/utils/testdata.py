@@ -28,7 +28,7 @@ def get_dummy_uploaded_image_svg(name='dummy_img.svg'):
 
 def get_big_dummy_uploaded_image(name='dummy_img.svg'):
     file = BytesIO()
-    image = Image.new('RGBA', size=(2000, 2000), color=(155, 0, 0))
+    image = Image.new('RGBA', size=(2000, 4000), color=(155, 0, 0))
     image.save(file, 'png')
     file.name = 'test_big.png'
     file.seek(0)
