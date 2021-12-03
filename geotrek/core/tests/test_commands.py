@@ -10,7 +10,7 @@ from django.db import IntegrityError
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Path
-from geotrek.trekking.factories import POIFactory
+from geotrek.trekking.tests.factories import POIFactory
 import os
 
 

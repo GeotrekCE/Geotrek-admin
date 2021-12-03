@@ -4,21 +4,21 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiPolygon, Polygon
 from django.test import TestCase
 
-from geotrek.land.factories import (
+from geotrek.land.tests.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
-from geotrek.core.factories import PathFactory, getRandomLineStringInBounds, TopologyFactory
+from geotrek.core.tests.factories import PathFactory, getRandomLineStringInBounds, TopologyFactory
 
 # Make sure dynamic filters are set up when testing
 from geotrek.land import filters  # noqa
 
 from geotrek.maintenance.filters import ProjectFilterSet, InterventionFilterSet
-from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
-from geotrek.zoning.factories import CityFactory, DistrictFactory
+from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    from geotrek.outdoor.factories import SiteFactory, CourseFactory
+    from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory
 
 
 class InterventionFilteringByBboxTest(TestCase):

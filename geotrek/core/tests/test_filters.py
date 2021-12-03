@@ -6,11 +6,11 @@ from django.test import TestCase
 
 from geotrek.land.tests.test_filters import LandFiltersTest
 
-from geotrek.core.factories import PathFactory, TrailFactory
+from geotrek.core.tests.factories import PathFactory, TrailFactory
 from geotrek.core.filters import PathFilterSet, TopologyFilter
 from geotrek.core.models import Topology
 
-from geotrek.trekking.factories import TrekFactory
+from geotrek.trekking.tests.factories import TrekFactory
 from geotrek.trekking.filters import TrekFilterSet
 
 

@@ -1,5 +1,5 @@
 from geotrek.common.models import Attachment
-from mapentity.factories import UserFactory
+from mapentity.tests.factories import UserFactory
 import os
 import io
 from unittest import mock
@@ -12,7 +12,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
-from geotrek.feedback.factories import ReportFactory
+from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
 from geotrek.feedback.models import (
     AttachedMessage,

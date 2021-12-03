@@ -3,10 +3,10 @@ from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Polygon, Point, MultiPolygon
 
-from geotrek.core.factories import PathFactory
-from geotrek.signage.factories import SignageFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.signage.tests.factories import SignageFactory
 from geotrek.zoning.models import City
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 
 class PathUpdateTest(TestCase):

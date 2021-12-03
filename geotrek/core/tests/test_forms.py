@@ -8,8 +8,8 @@ from unittest.mock import patch
 
 from django.test.utils import override_settings
 
-from geotrek.core.factories import TrailFactory, PathFactory
-from geotrek.authent.factories import UserFactory
+from geotrek.core.tests.factories import TrailFactory, PathFactory
+from geotrek.authent.tests.factories import UserFactory
 from geotrek.core.forms import TrailForm, PathForm
 
 

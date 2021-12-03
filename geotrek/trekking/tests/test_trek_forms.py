@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from geotrek.authent.factories import UserFactory
-from ..factories import TrekFactory
+from geotrek.authent.tests.factories import UserFactory
+from .factories import TrekFactory
 from ..models import OrderedTrekChild
 from ..forms import TrekForm
 

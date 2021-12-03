@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from geotrek.feedback.models import Report
-from geotrek.feedback.factories import ReportFactory
+from geotrek.feedback.tests.factories import ReportFactory
 
 
 class TestRemoveEmailsOlders(TestCase):

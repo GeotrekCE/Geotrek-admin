@@ -1,9 +1,9 @@
 from django.urls import reverse
 
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory
 
-from ..factories import StakeFactory
+from .factories import StakeFactory
 
 
 class StakeAdminTest(AuthentFixturesTest):

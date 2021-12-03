@@ -5,13 +5,13 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.signage.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
-                                       BladeDirectionFactory, BladeTypeFactory)
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.signage.tests.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
+                                             BladeDirectionFactory, BladeTypeFactory)
 from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class SignageTypeAdminNoBypassTest(TestCase):

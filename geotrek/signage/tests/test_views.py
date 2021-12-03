@@ -5,13 +5,13 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.signage.models import Signage, Blade
-from geotrek.core.factories import PathFactory
-from geotrek.signage.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
-                                       SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                       InfrastructureConditionFactory, LineFactory)
+from geotrek.core.tests.factories import PathFactory
+from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
+                                             SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
+                                             InfrastructureConditionFactory, LineFactory)
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.infrastructure.tests.test_views import InfraFilterTestMixin
 

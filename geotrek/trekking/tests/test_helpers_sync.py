@@ -7,11 +7,11 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 
-from geotrek.common.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory, AttachmentFactory
+from geotrek.common.tests.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
-from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory
+from geotrek.trekking.tests.factories import TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trek_models
-from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
+from geotrek.tourism.tests.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
 
 from geotrek.trekking.helpers_sync import SyncRando
 

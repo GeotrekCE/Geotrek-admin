@@ -1,10 +1,10 @@
 from django.urls import reverse
 
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import TrekkingManagerFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import TrekkingManagerFactory
 
 from ..models import Trek
-from ..factories import TrekFactory, DifficultyLevelFactory
+from .factories import TrekFactory, DifficultyLevelFactory
 
 
 class DifficultyLevelTest(AuthentFixturesTest):

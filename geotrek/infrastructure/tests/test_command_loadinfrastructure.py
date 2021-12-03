@@ -6,10 +6,10 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
 
-from geotrek.core.factories import PathFactory
-from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 
 
 class InfrastructureCommandTest(TestCase):
