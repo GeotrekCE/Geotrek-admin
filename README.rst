@@ -80,7 +80,7 @@ Status of sub-projects
 * |Leaflet.FileLayer| `Leaflet.FileLayer <https://github.com/makinacorpus/Leaflet.FileLayer>`_
 * |Leaflet.AlmostOver| `Leaflet.AlmostOver <https://github.com/makinacorpus/Leaflet.AlmostOver>`_
 
-.. |django-mapentity| image:: https://travis-ci.org/makinacorpus/django-mapentity.png?branch=master
+.. |django-mapentity| image:: https://github.com/makinacorpus/django-mapentity/actions/workflows/python-ci.yml/badge.svg
     :target: https://travis-ci.org/makinacorpus/django-mapentity?branch=master
 
 .. |django-leaflet| image:: https://travis-ci.org/makinacorpus/django-leaflet.png?branch=master
