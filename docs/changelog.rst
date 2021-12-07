@@ -7,6 +7,7 @@ CHANGELOG
 
 **New features**
 
+- Filter list views by Restricted Area as well as by Restricted Area Type
 - Add BLADE_ENABLED setting to hide Blade in Signage forms and in Signage detail page
 - Add LINE_ENABLED setting to hide Line in Blade forms and in Blade detail page
 
@@ -15,6 +16,7 @@ CHANGELOG
 - Clarify Land Edge module browsing (#1404)
 - Renamed "Tronçons physique" to "Types de voie", "Tronçons de compétence" to "Compétence sentiers",
   "Tronçons de gestion de travaux" to "Gestionnaire travaux", "Tronçons de gestion signalétique" to "Gestionnaire signalétique" (#1301)
+- Renamed "zonage réglementaire" to "zonage"
 
 **Minor improvements**
 

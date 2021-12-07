@@ -29,7 +29,7 @@ class IntersectionFilterDistrict(IntersectionFilter):
     model = District
 
 
-class IntersectionFilterRestrictedArea(RightFilter):
+class IntersectionFilterRestrictedAreaType(RightFilter):
     model = RestrictedAreaType
 
     def filter(self, qs, value):
@@ -43,8 +43,18 @@ class IntersectionFilterRestrictedArea(RightFilter):
         else:
             return qs.none()
 
+    def get_queryset(self, request=None):
+        if self.queryset is not None:
+            return self.queryset.order_by("name")
+        return self.model.objects.all().order_by("name")
+
+
+class IntersectionFilterRestrictedArea(IntersectionFilter):
+    model = RestrictedArea
+
 
 class ZoningFilterSet(FilterSet):
     city = IntersectionFilterCity(label=_('City'), required=False)
     district = IntersectionFilterDistrict(label=_('District'), required=False)
-    area_type = IntersectionFilterRestrictedArea(label=_('Restricted area'), required=False)
+    area_type = IntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False)
+    area = IntersectionFilterRestrictedArea(label=_('Restricted area'), required=False)
