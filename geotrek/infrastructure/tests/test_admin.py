@@ -5,12 +5,12 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.infrastructure.factories import InfrastructureMaintenanceDifficultyLevelFactory, InfrastructureTypeFactory, InfrastructureConditionFactory, InfrastructureUsageDifficultyLevelFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.infrastructure.tests.factories import InfrastructureMaintenanceDifficultyLevelFactory, InfrastructureTypeFactory, InfrastructureConditionFactory, InfrastructureUsageDifficultyLevelFactory
 from geotrek.infrastructure.models import InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class InfrastructureTypeAdminNoBypassTest(TestCase):

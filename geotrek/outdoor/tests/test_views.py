@@ -5,8 +5,8 @@ from django.contrib.gis.geos.point import Point
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
-from geotrek.outdoor.factories import CourseFactory, SiteFactory
+from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
+from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
 
 

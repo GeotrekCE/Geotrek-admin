@@ -4,15 +4,15 @@ from django.conf import settings
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
-from geotrek.authent.factories import PathManagerFactory
-from geotrek.core.factories import PathFactory
-from geotrek.common.factories import OrganismFactory
+from geotrek.authent.tests.factories import PathManagerFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.common.tests.factories import OrganismFactory
 from geotrek.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
                                  WorkManagementEdge, SignageManagementEdge)
-from geotrek.land.factories import (PhysicalEdgeFactory, LandEdgeFactory,
-                                    CompetenceEdgeFactory, WorkManagementEdgeFactory,
-                                    SignageManagementEdgeFactory, PhysicalTypeFactory,
-                                    LandTypeFactory)
+from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
+                                          CompetenceEdgeFactory, WorkManagementEdgeFactory,
+                                          SignageManagementEdgeFactory, PhysicalTypeFactory,
+                                          LandTypeFactory)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

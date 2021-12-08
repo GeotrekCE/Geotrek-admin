@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.db import IntegrityError
 from django.db.models import Q
 
-from ..factories import TrekFactory, TrekRelationshipFactory
+from .factories import TrekFactory, TrekRelationshipFactory
 from ..models import TrekRelationship
 
 

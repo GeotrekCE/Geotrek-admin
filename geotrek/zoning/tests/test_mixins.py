@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.test import TestCase
 
-from geotrek.core.factories import PathFactory
-from geotrek.trekking.factories import TrekFactory
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
 
 
 class ZoningPropertiesMixinTest(TestCase):

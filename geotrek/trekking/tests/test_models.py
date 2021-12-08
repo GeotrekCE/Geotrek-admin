@@ -9,10 +9,10 @@ from unittest import skipIf
 from bs4 import BeautifulSoup
 
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.core.factories import PathFactory
-from geotrek.zoning.factories import DistrictFactory, CityFactory
-from geotrek.trekking.factories import (POIFactory, TrekFactory,
-                                        TrekWithPOIsFactory, ServiceFactory)
+from geotrek.core.tests.factories import PathFactory
+from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
+from geotrek.trekking.tests.factories import (POIFactory, TrekFactory,
+                                              TrekWithPOIsFactory, ServiceFactory)
 from geotrek.trekking.models import Trek, OrderedTrekChild
 
 

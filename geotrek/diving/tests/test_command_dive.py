@@ -6,9 +6,9 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
 
-from geotrek.diving.factories import DiveFactory
+from geotrek.diving.tests.factories import DiveFactory
 from geotrek.diving.models import Dive
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 
 
 class DiveCommandTest(TestCase):

@@ -11,7 +11,7 @@ from django.test import TestCase
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.sensitivity.parsers import BiodivParser
 from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
-from geotrek.sensitivity.factories import SpeciesFactory, SportPracticeFactory
+from geotrek.sensitivity.tests.factories import SpeciesFactory, SportPracticeFactory
 
 
 json_test_sport_practice = {

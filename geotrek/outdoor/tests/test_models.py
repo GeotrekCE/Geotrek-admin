@@ -1,9 +1,9 @@
 from django.contrib.gis.geos.collections import GeometryCollection
-from geotrek.trekking.factories import POIFactory
+from geotrek.trekking.tests.factories import POIFactory
 from django.contrib.gis.geos.point import Point
 from django.contrib.gis.geos import Polygon
-from geotrek.common.factories import OrganismFactory
-from geotrek.outdoor.factories import SiteFactory, RatingScaleFactory, SectorFactory
+from geotrek.common.tests.factories import OrganismFactory
+from geotrek.outdoor.tests.factories import SiteFactory, RatingScaleFactory, SectorFactory
 from django.test import TestCase, override_settings
 
 

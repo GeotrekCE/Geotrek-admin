@@ -20,16 +20,16 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import translation
 
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
+from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
-from geotrek.core.factories import PathFactory
-from geotrek.flatpages.factories import FlatPageFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek, OrderedTrekChild
-from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
-from geotrek.tourism.factories import (InformationDeskFactory, InformationDeskTypeFactory,
-                                       TouristicContentFactory, TouristicEventFactory)
+from geotrek.trekking.tests.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
+from geotrek.tourism.tests.factories import (InformationDeskFactory, InformationDeskTypeFactory,
+                                             TouristicContentFactory, TouristicEventFactory)
 from geotrek.tourism.models import TouristicEventType
 
 

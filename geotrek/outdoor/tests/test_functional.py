@@ -1,7 +1,7 @@
 from geotrek.common.tests import CommonTest
 from geotrek.outdoor.models import Site, Course
-from geotrek.outdoor.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
-from geotrek.authent.factories import StructureFactory
+from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
+from geotrek.authent.tests.factories import StructureFactory
 from django.utils.translation import gettext as _
 
 
