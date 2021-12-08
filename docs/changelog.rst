@@ -24,6 +24,10 @@ CHANGELOG
 - Make targets display more specific in Interventions exports (#2711)
 - Improve support for Tourinsoft v3 with new medias management
 
+**Bug fix**
+
+- Fix TopologyException when filtering objects by several RestrictedAreaTypes
+
 
 2.72.0 (2021-11-16)
 -----------------------

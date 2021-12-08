@@ -1,2 +1,10 @@
-{% load static %}
+{% load static geotrek_tags %}
 <script type="text/javascript" src="{% static "common/main.js" %}"></script>
+<script type="application/json" id="restricted_area_types">
+    {% restricted_area_types as restricted_area_types %}
+    {{ restricted_area_types|safe }}
+</script>
+<script type="application/json" id="all_restricted_areas">
+    {% all_restricted_areas as all_restricted_areas %}
+    {{ all_restricted_areas|safe }}
+</script>

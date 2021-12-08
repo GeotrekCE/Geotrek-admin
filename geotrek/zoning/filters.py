@@ -1,7 +1,5 @@
 from django_filters import FilterSet
-from django.conf import settings
-from django.db.models import Q
-from django.contrib.gis.geos import GeometryCollection
+from django.db.models import Q, Exists, OuterRef
 from django.utils.translation import gettext_lazy as _
 
 
@@ -38,8 +36,7 @@ class IntersectionFilterRestrictedAreaType(RightFilter):
 
         areas_geom = RestrictedArea.objects.filter(area_type__in=value).values_list('geom', flat=True)
         if areas_geom:
-            geom = GeometryCollection(*areas_geom, srid=settings.SRID)
-            return qs.filter(geom__intersects=geom)
+            return qs.filter(Exists(RestrictedArea.objects.filter(area_type__in=value, geom__intersects=OuterRef('geom'))))
         else:
             return qs.none()
 
