@@ -674,13 +674,13 @@ Resizing uploaded pictures
 Attached pictures can be resized at upload by enabling ``RESIZE_ATTACHMENTS_ON_UPLOAD`` :
 
 ::
-    RESIZE_ATTACHMENTS_ON_UPLOAD = True
+    PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
 
 These corresponding height/width parameters can be overriden to select resized image size :
 
 ::
-    MAX_ATTACHMENT_WIDTH = 1280
-    MAX_ATTACHMENT_HEIGHT = 1280
+    PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
+    PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
 
 
 Share services between several Geotrek instances
