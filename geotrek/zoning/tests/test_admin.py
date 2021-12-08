@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
 from geotrek.zoning.models import City, District, RestrictedArea
 
 

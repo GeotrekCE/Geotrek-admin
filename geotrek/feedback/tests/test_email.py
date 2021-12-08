@@ -7,7 +7,7 @@ from django.core.mail.backends.base import BaseEmailBackend
 from django.utils import translation
 
 from geotrek.feedback.parsers import SuricateParser
-from geotrek.feedback.factories import ReportFactory
+from geotrek.feedback.tests.factories import ReportFactory
 
 
 class FailingEmailBackend(BaseEmailBackend):

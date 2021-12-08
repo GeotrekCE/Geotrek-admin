@@ -3,11 +3,11 @@ from unittest import skipIf
 from django.conf import settings
 from django.urls import reverse
 
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory
 
 from geotrek.core.models import Path
-from geotrek.core.factories import PathFactory
+from geotrek.core.tests.factories import PathFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

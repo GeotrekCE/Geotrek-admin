@@ -1,4 +1,4 @@
-from geotrek.common.factories import LabelFactory
+from geotrek.common.tests.factories import LabelFactory
 from geotrek.common.models import Theme
 from django.core.files import File
 from django.test import TestCase

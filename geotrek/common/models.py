@@ -64,7 +64,6 @@ class Attachment(BaseAttachment):
             # Write resized image
             output = BytesIO()
             ext = PurePosixPath(self.attachment_file.name).suffix.split('.')[-1]  # JPEG, PNG..
-            print(ext)
             image.save(output, format=ext)
             output.seek(0)
             # Replace attachment

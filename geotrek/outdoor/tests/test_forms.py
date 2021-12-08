@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
-from geotrek.authent.factories import UserFactory
-from geotrek.outdoor.factories import SiteFactory, RatingFactory, CourseFactory
+from geotrek.authent.tests.factories import UserFactory
+from geotrek.outdoor.tests.factories import SiteFactory, RatingFactory, CourseFactory
 from geotrek.outdoor.forms import SiteForm, CourseForm
 from geotrek.outdoor.models import OrderedCourseChild
 

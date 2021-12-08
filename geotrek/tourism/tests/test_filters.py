@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from geotrek.tourism.factories import TouristicEventFactory
+from geotrek.tourism.tests.factories import TouristicEventFactory
 from geotrek.tourism.models import TouristicEvent
 from geotrek.tourism.filters import CompletedFilter, BeforeFilter, AfterFilter
 

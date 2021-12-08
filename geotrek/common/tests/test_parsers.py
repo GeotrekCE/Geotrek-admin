@@ -13,7 +13,7 @@ from django.core.management.base import CommandError
 from django.test.utils import override_settings
 from django.template.exceptions import TemplateDoesNotExist
 
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import (

@@ -8,6 +8,7 @@ export DH_VIRTUALENV_INSTALL_ROOT=/opt
 override_dh_virtualenv:
 	dh_virtualenv \
 	--python /usr/bin/python3 \
+	--upgrade-pip \
 	--builtin-venv \
 	--extra-pip-arg --no-cache-dir \
 	--extra-pip-arg --quiet
@@ -33,7 +34,7 @@ override_dh_systemd_start:
 .PHONY: override_dh_strip override_dh_shlibdeps
 
 override_dh_strip:
-	dh_strip --exclude=/Fiona.libs/
+	dh_strip --exclude=/site-packages/
 
 override_dh_shlibdeps:
-	dh_shlibdeps -X/Fiona.libs/
+	dh_shlibdeps --exclude=/site-packages/

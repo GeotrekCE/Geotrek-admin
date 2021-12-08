@@ -15,14 +15,14 @@ from django.core.management.base import CommandError
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test.utils import override_settings
 
-from geotrek.common.factories import FileTypeFactory, RecordSourceFactory, TargetPortalFactory, AttachmentFactory, ThemeFactory
+from geotrek.common.tests.factories import FileTypeFactory, RecordSourceFactory, TargetPortalFactory, AttachmentFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.core.factories import PathFactory
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.sensitivity.factories import SensitiveAreaFactory, SportPracticeFactory
-from geotrek.signage.factories import SignageFactory
-from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
-from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.sensitivity.tests.factories import SensitiveAreaFactory, SportPracticeFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.tourism.tests.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
+from geotrek.trekking.tests.factories import TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trekking_models
 
 
