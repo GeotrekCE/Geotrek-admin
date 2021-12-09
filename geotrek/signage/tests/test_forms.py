@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 
-from geotrek.authent.factories import UserFactory
-from geotrek.signage.factories import SignageFactory, BladeFactory
+from geotrek.authent.tests.factories import UserFactory
+from geotrek.signage.tests.factories import SignageFactory, BladeFactory
 from geotrek.signage.forms import BladeForm
 
 

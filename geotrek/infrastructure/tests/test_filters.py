@@ -1,5 +1,5 @@
 from geotrek.infrastructure.filters import InfrastructureFilterSet
-from geotrek.infrastructure.factories import InfrastructureUsageDifficultyLevelFactory, InfrastructureFactory, InfrastructureMaintenanceDifficultyLevelFactory
+from geotrek.infrastructure.tests.factories import InfrastructureUsageDifficultyLevelFactory, InfrastructureFactory, InfrastructureMaintenanceDifficultyLevelFactory
 from django.test.testcases import TestCase
 
 

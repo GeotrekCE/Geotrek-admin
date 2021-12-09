@@ -9,12 +9,12 @@ from django.test import TestCase
 from django.contrib.auth.models import Permission
 from django.core import mail
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.feedback import models as feedback_models
-from geotrek.feedback import factories as feedback_factories
+from geotrek.feedback.tests import factories as feedback_factories
 from rest_framework.test import APIClient
 
 

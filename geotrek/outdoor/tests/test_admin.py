@@ -1,7 +1,7 @@
 from django.contrib.admin import AdminSite
 from django.test import TestCase
 from geotrek.outdoor.admin import RatingAdmin
-from geotrek.outdoor.factories import RatingFactory
+from geotrek.outdoor.tests.factories import RatingFactory
 from geotrek.outdoor.models import Rating
 
 

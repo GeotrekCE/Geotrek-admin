@@ -2,12 +2,12 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.testcases import TestCase
 
-from geotrek.common import factories as common_factories
-from geotrek.trekking import factories as trekking_factories
+from geotrek.common.tests import factories as common_factories
+from geotrek.trekking.tests import factories as trekking_factories
 from geotrek.trekking.models import POIType
-from geotrek.tourism import factories as tourism_factories
+from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.models import TouristicContentType, TouristicContentCategory, TouristicEventType
-from geotrek.zoning import factories as zoning_factories
+from geotrek.zoning.tests import factories as zoning_factories
 from geotrek.zoning.models import City, District
 
 

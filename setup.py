@@ -13,13 +13,12 @@ class BuildCommand(distutils.command.build.build):
         distutils.command.build.build.run(self)
         from django.core.management import call_command
         curdir = os.getcwd()
-        for subdir in ('geotrek', 'mapentity'):
+        for subdir in ('geotrek', ):
             os.chdir(subdir)
             call_command('compilemessages')
             for path in Path('.').rglob('*.mo'):
                 copy(path, os.path.join(curdir, self.build_lib, subdir, path))
             os.chdir(curdir)
-
 
 setup(
     name='geotrek',
@@ -32,30 +31,11 @@ setup(
                       + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     scripts=['manage.py'],
     install_requires=[
-        # mapentity requirements
-        'Django',
-        'netifaces',
-        'cairocffi',
-        'BeautifulSoup4',
-        'gpxpy',
-        'django-appypod',
-        'django-compressor',
-        'django-crispy-forms',
-        'django-embed-video',
-        'django-filter',
-        'django-geojson',
-        'django-leaflet',
-        'django-modeltranslation',
-        'django-tinymce',
-        'django-weasyprint',
-        'djangorestframework',
-        'djangorestframework-gis',
-        'django-modelcluster',
-        'easy-thumbnails',
-        'lxml',
-        'paperclip',
-        'WeasyPrint',
+        'Django==3.1.*',
+        'mapentity==7.0.2',
+        'env_file',
         # pinned by requirements.txt
+        'python-memcached',
         'psycopg2',
         'pdfimpose',
         'docutils',
@@ -72,11 +52,20 @@ setup(
         'landez',
         'celery[redis]',
         'django-celery-results',
-        'requests[security]',
         'drf-extensions',
         'django-colorfield',
-        'factory_boy',
         'Fiona',
+        # prod,
+        'gunicorn',
+        'raven',
+        'sentry-sdk',
+        # tests
+        'freezegun',
+        'coverage',
+        'factory_boy',
+        # dev,
+        'django-extensions',
+        'django-debug-toolbar',
     ],
     cmdclass={"build": BuildCommand},
     include_package_data=True,

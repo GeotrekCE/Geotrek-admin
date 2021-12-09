@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from geotrek.common.factories import FakeSyncCommand
-from geotrek.feedback.factories import ReportCategoryFactory
+from geotrek.common.tests.factories import FakeSyncCommand
+from geotrek.feedback.tests.factories import ReportCategoryFactory
 from geotrek.feedback.helpers_sync import SyncRando
 
 

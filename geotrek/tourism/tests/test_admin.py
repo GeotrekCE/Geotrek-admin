@@ -1,11 +1,11 @@
 from django.urls import reverse
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.base import AuthentFixturesTest
 
 from geotrek.tourism.models import InformationDesk
-from geotrek.tourism.factories import InformationDeskTypeFactory
+from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 
 
 class InformationDeskTest(AuthentFixturesTest):

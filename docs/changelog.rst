@@ -13,6 +13,7 @@ CHANGELOG
 
 - Add BLADE_ENABLED setting to hide Blade in Signage forms and in Signage detail page
 - Add LINE_ENABLED setting to hide Line in Blade forms and in Blade detail page
+- Use MAPENTITY_CONFIG setting to configure map style on list and detail views (#2554)
 
 **User interface**
 

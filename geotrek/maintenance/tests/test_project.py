@@ -3,12 +3,12 @@ from django.conf import settings
 
 from unittest import skipIf
 
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
-from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
-from geotrek.core.factories import TopologyFactory
-from geotrek.land.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
-                                    CompetenceEdgeFactory)
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory
+from geotrek.core.tests.factories import TopologyFactory
+from geotrek.land.tests.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
+                                          CompetenceEdgeFactory)
 
 
 class ProjectTest(TestCase):

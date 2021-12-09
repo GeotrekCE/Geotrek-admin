@@ -4,9 +4,9 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 from django.urls import reverse
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.core.factories import PathFactory, TopologyFactory, \
+from geotrek.core.tests.factories import PathFactory, TopologyFactory, \
     PathAggregationFactory
 from geotrek.core.models import PathAggregation, Topology
 

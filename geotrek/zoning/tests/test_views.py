@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from geotrek.zoning.factories import RestrictedAreaTypeFactory
+from geotrek.zoning.tests.factories import RestrictedAreaTypeFactory
 
 
 class LandLayersViewsTest(TestCase):
