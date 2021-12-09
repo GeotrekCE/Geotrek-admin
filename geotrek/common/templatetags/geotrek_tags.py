@@ -1,8 +1,6 @@
-from geotrek.zoning.models import RestrictedAreaType, RestrictedArea
 from django import template
 from django.conf import settings
 from datetime import datetime, timedelta
-import json
 
 from django.utils.translation import gettext_lazy as _
 
