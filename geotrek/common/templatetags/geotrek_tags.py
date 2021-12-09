@@ -63,26 +63,3 @@ def duration(value):
         final_duration = _("%s min") % duration.minute
 
     return final_duration
-
-
-@register.simple_tag
-def restricted_area_types():
-    restricted_areas_types = {
-        str(type.pk): {
-            'areas': [{
-                str(area.pk): area.area_type.name + " - " + area.name
-            } for area in type.restrictedarea_set.order_by('name')
-            ]  # We use an array instead of dict because JS parsing would re-order JSON dict
-        }
-        for type in RestrictedAreaType.objects.all()
-    }
-    return json.dumps(restricted_areas_types)
-
-
-@register.simple_tag
-def all_restricted_areas():
-    all_restricted_areas = [{
-        str(area.pk): area.area_type.name + " - " + area.name
-    } for area in RestrictedArea.objects.order_by('area_type__name', 'name')
-    ]  # We use an array instead of dict because JS parsing would re-order JSON dict
-    return json.dumps(all_restricted_areas)

@@ -19,7 +19,7 @@ $(window).on('entity:view:list', function () {
     // Dynamic area filters
     $('#id_area_type').change(function () {
         // Parse area data
-        var types = JSON.parse($('#restricted_area_types').text());
+        var types = JSON.parse($('#restricted_areas_by_type').text());
         var all_restricted_areas = JSON.parse($('#all_restricted_areas').text());
         // Change forms dynamically on selection
         var area_types = $('#id_area_type').val();
