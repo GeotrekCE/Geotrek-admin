@@ -33,17 +33,10 @@ class IntersectionFilterRestrictedAreaType(RightFilter):
     def filter(self, qs, value):
         if not value:
             return qs
-
-        areas_geom = RestrictedArea.objects.filter(area_type__in=value).values_list('geom', flat=True)
-        if areas_geom:
-            return qs.filter(Exists(RestrictedArea.objects.filter(area_type__in=value, geom__intersects=OuterRef('geom'))))
-        else:
-            return qs.none()
+        return qs.filter(Exists(RestrictedArea.objects.filter(area_type__in=value, geom__intersects=OuterRef('geom'))))
 
     def get_queryset(self, request=None):
-        if self.queryset is not None:
-            return self.queryset.order_by("name")
-        return self.model.objects.all().order_by("name")
+        return self.model.objects.order_by("name")
 
 
 class IntersectionFilterRestrictedArea(IntersectionFilter):
