@@ -5,6 +5,10 @@ CHANGELOG
 2.72.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix formset item deletion raises error in forms (#2693)
+
 **New features**
 
 - Add BLADE_ENABLED setting to hide Blade in Signage forms and in Signage detail page

@@ -10,6 +10,7 @@
         {{ manday_formset.management_form }}
         {% for manday_form in manday_formset %}
             <div class="form-row inline controls controls-row {{ manday_formset.prefix }}">
+            {% if manday_form.instance.pk %} {{ manday_form.DELETE }} {% endif %}
             {% crispy manday_form %}
             </div>
         {% endfor %}
