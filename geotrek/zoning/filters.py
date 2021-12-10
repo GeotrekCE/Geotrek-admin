@@ -36,9 +36,7 @@ class IntersectionFilterRestrictedAreaType(RightFilter):
         return qs.filter(Exists(RestrictedArea.objects.filter(area_type__in=value, geom__intersects=OuterRef('geom'))))
 
     def get_queryset(self, request=None):
-        if self.queryset is not None:
-            return self.queryset.order_by("name")
-        return self.model.objects.order_by("name")
+        return super().get_queryset().order_by("name")
 
 
 class IntersectionFilterRestrictedArea(IntersectionFilter):
