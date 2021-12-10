@@ -32,30 +32,30 @@ class RestrictedAreaViewsTest(TestCase):
 
 class RestrictedAreasSerializationTest(TestCase):
 
-    def setUp(self):
-        self.type_1 = RestrictedAreaTypeFactory(name="ABC")
-        self.type_2 = RestrictedAreaTypeFactory(name="AAC")
-        self.type_3 = RestrictedAreaTypeFactory(name="ABB")
-        self.type_4 = RestrictedAreaTypeFactory(name="AAA")
-        self.area_1 = RestrictedAreaFactory(area_type=self.type_1, name="aaa")
-        self.area_2 = RestrictedAreaFactory(area_type=self.type_1, name="aab")
-        self.area_3 = RestrictedAreaFactory(area_type=self.type_2, name="aaa")
-        self.area_4 = RestrictedAreaFactory(area_type=self.type_2, name="aab")
-        self.area_4 = RestrictedAreaFactory(area_type=self.type_3, name="aab")
-        self.area_5 = RestrictedAreaFactory(area_type=self.type_3, name="aaa")
-        self.area_6 = RestrictedAreaFactory(area_type=self.type_4, name="aba")
-        self.area_7 = RestrictedAreaFactory(area_type=self.type_4, name="aca")
-        self.area_8 = RestrictedAreaFactory(area_type=self.type_4, name="aaa")
+    def setUp(cls):
+        cls.type_1 = RestrictedAreaTypeFactory(name="ABC")
+        cls.type_2 = RestrictedAreaTypeFactory(name="AAC")
+        cls.type_3 = RestrictedAreaTypeFactory(name="ABB")
+        cls.type_4 = RestrictedAreaTypeFactory(name="AAA")
+        cls.area_1 = RestrictedAreaFactory(area_type=cls.type_1, name="aaa")
+        cls.area_2 = RestrictedAreaFactory(area_type=cls.type_1, name="aab")
+        cls.area_3 = RestrictedAreaFactory(area_type=cls.type_2, name="aaa")
+        cls.area_4 = RestrictedAreaFactory(area_type=cls.type_2, name="aab")
+        cls.area_5 = RestrictedAreaFactory(area_type=cls.type_3, name="aab")
+        cls.area_6 = RestrictedAreaFactory(area_type=cls.type_3, name="aaa")
+        cls.area_7 = RestrictedAreaFactory(area_type=cls.type_4, name="aba")
+        cls.area_8 = RestrictedAreaFactory(area_type=cls.type_4, name="aca")
+        cls.area_9 = RestrictedAreaFactory(area_type=cls.type_4, name="aaa")
 
     def test_restricted_areas_by_type_serizalization(self):
         """ Test restricted areas are sorted by type and ordered alphabetically within types
         """
         serizalized = restricted_areas_by_type()
         correct_data = json.dumps({
-            "1": {"areas": [{"1": "ABC - aaa"}, {"2": "ABC - aab"}]},
-            "2": {"areas": [{"3": "AAC - aaa"}, {"4": "AAC - aab"}]},
-            "3": {"areas": [{"6": "ABB - aaa"}, {"5": "ABB - aab"}]},
-            "4": {"areas": [{"9": "AAA - aaa"}, {"7": "AAA - aba"}, {"8": "AAA - aca"}]}
+            f"{self.type_1.pk}": {"areas": [{f"{self.area_1.pk}": "ABC - aaa"}, {f"{self.area_2.pk}": "ABC - aab"}]},
+            f"{self.type_2.pk}": {"areas": [{f"{self.area_3.pk}": "AAC - aaa"}, {f"{self.area_4.pk}": "AAC - aab"}]},
+            f"{self.type_3.pk}": {"areas": [{f"{self.area_6.pk}": "ABB - aaa"}, {f"{self.area_5.pk}": "ABB - aab"}]},
+            f"{self.type_4.pk}": {"areas": [{f"{self.area_9.pk}": "AAA - aaa"}, {f"{self.area_7.pk}": "AAA - aba"}, {f"{self.area_8.pk}": "AAA - aca"}]}
         })
         self.assertJSONEqual(serizalized, correct_data)
 
@@ -64,14 +64,14 @@ class RestrictedAreasSerializationTest(TestCase):
         """
         serizalized = all_restricted_areas()
         correct_data = json.dumps([
-            {"9": "AAA - aaa"},
-            {"7": "AAA - aba"},
-            {"8": "AAA - aca"},
-            {"3": "AAC - aaa"},
-            {"4": "AAC - aab"},
-            {"6": "ABB - aaa"},
-            {"5": "ABB - aab"},
-            {"1": "ABC - aaa"},
-            {"2": "ABC - aab"}
+            {f"{self.area_9.pk}": "AAA - aaa"},
+            {f"{self.area_7.pk}": "AAA - aba"},
+            {f"{self.area_8.pk}": "AAA - aca"},
+            {f"{self.area_3.pk}": "AAC - aaa"},
+            {f"{self.area_4.pk}": "AAC - aab"},
+            {f"{self.area_6.pk}": "ABB - aaa"},
+            {f"{self.area_5.pk}": "ABB - aab"},
+            {f"{self.area_1.pk}": "ABC - aaa"},
+            {f"{self.area_2.pk}": "ABC - aab"}
         ])
         self.assertJSONEqual(serizalized, correct_data)
