@@ -6,6 +6,7 @@ from unittest import skipIf, mock
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.core.cache import caches
 from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -598,8 +599,43 @@ class PathViewsTest(CommonTest):
         obj = self.modelfactory(draft=False)
         self.modelfactory(draft=False)
         self.modelfactory(draft=True)
-        response = self.client.get(obj.get_layer_url(), {"no_draft": "true"})
+        response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 2)
+
+    def test_draft_path_layer_cache(self):
+        self.login()
+        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
+        cache.clear()
+
+        obj = self.modelfactory(draft=False)
+        self.modelfactory(draft=True)
+
+        with self.assertNumQueries(7):
+            response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
+        self.assertEqual(len(response.json()['features']), 1)
+
+        last_update = Path.no_draft_latest_updated()
+        last_update_draft = Path.latest_updated()
+        geojson_lookup = 'en_path_%s_nodraft_json_layer' % last_update.strftime('%y%m%d%H%M%S%f')
+        geojson_lookup_last_update_draft = 'en_path_%s_json_layer' % last_update_draft.strftime('%y%m%d%H%M%S%f')
+        content = cache.get(geojson_lookup)
+        content_draft = cache.get(geojson_lookup_last_update_draft)
+
+        self.assertEqual(response.content, content)
+        self.assertIsNone(content_draft)
+
+        with self.assertNumQueries(6):
+            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
+
+        self.modelfactory(draft=True)
+
+        with self.assertNumQueries(6):
+            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
+
+        self.modelfactory(draft=False)
+
+        with self.assertNumQueries(7):
+            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
     @override_settings(COLUMNS_LISTS={'path_view': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
     def test_custom_columns_mixin_on_list(self):
