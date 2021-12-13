@@ -11,3 +11,11 @@
     window.SETTINGS.map['restricted_area_types'] = {{ all_area_types|safe }};
 </script>
 <script type="text/javascript" src="{% static "zoning/main.js" %}"></script>
+<script type="application/json" id="restricted_areas_by_type">
+    {% restricted_areas_by_type as restricted_areas_by_type %}
+    {{ restricted_areas_by_type|safe }}
+</script>
+<script type="application/json" id="all_restricted_areas">
+    {% all_restricted_areas as all_restricted_areas %}
+    {{ all_restricted_areas|safe }}
+</script>
