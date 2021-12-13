@@ -120,6 +120,10 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     def length_2d_verbose_name(cls):
         return _("2D Length")
 
+    @classmethod
+    def no_draft_latest_updated(cls):
+        return cls.objects.filter(draft=False).latest('date_update').get_date_update()
+
     @property
     def length_2d_display(self):
         return round(self.length_2d, 1)

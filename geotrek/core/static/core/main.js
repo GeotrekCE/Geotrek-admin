@@ -44,7 +44,7 @@ $(window).on('entity:map', function (e, data) {
             var options = e.layer.options || {'modelname': 'None'};
             if (! loaded_path){
                 if (options.modelname == 'path' && data.viewname != 'detail'){
-                    e.layer.load(url + '?no_draft=true', true);
+                    e.layer.load(url + '?_no_draft=true', true);
                     loaded_path = true;
                 };
 
