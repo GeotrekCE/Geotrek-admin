@@ -671,7 +671,7 @@ You can also add ``{legend}``.
 Resizing uploaded pictures
 ---------------------
 
-Attached pictures can be resized at upload by enabling ``RESIZE_ATTACHMENTS_ON_UPLOAD`` :
+Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
 
 ::
     PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
