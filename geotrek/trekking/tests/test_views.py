@@ -30,7 +30,7 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
                                             RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_big_dummy_uploaded_image
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.tests.factories import PathFactory

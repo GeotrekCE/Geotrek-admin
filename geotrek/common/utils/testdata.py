@@ -1,6 +1,3 @@
-from io import BytesIO
-from PIL import Image
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 import factory
@@ -24,16 +21,6 @@ def get_dummy_uploaded_image(name='dummy_img.png'):
 
 def get_dummy_uploaded_image_svg(name='dummy_img.svg'):
     return SimpleUploadedFile(name, SVG_FILE, content_type='image/svg')
-
-
-def get_big_dummy_uploaded_image(name='dummy_img.svg'):
-    file = BytesIO()
-    image = Image.new('RGBA', size=(2000, 4000), color=(155, 0, 0))
-    image.save(file, 'png')
-    file.name = 'test_big.png'
-    file.seek(0)
-    return SimpleUploadedFile(file.name, file.read(), content_type='image/png')
-
 
 def get_dummy_uploaded_file(name='dummy_file.txt'):
     return SimpleUploadedFile(name, b'HelloWorld', content_type='plain/text')
