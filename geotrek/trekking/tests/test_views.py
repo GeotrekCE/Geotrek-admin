@@ -1631,4 +1631,3 @@ class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
         trek.infrastructures[0].delete()
         trek = Trek.objects.get(pk=self.trek.pk)
         self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
-
