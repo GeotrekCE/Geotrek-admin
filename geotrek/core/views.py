@@ -68,7 +68,7 @@ class PathLayer(MapEntityLayer):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.request.GET.get('_no_draft') == 'true':
+        if self.request.GET.get('_no_draft'):
             qs = qs.exclude(draft=True)
         return qs
 
@@ -76,7 +76,7 @@ class PathLayer(MapEntityLayer):
         """Used by the ``view_cache_response_content`` decorator.
         """
         language = self.request.LANGUAGE_CODE
-        no_draft = self.request.GET.get('_no_draft') == 'true'
+        no_draft = self.request.GET.get('_no_draft')
         if no_draft:
             latest_saved = Path.no_draft_latest_updated()
         else:

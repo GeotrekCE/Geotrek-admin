@@ -603,17 +603,23 @@ class PathViewsTest(CommonTest):
         self.assertEqual(len(response.json()['features']), 2)
 
     def test_draft_path_layer_cache(self):
+        """
+
+        This test check draft path's cache is not the same as path's cache and works independently
+        """
         self.login()
         cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
-        cache.clear()
 
         obj = self.modelfactory(draft=False)
         self.modelfactory(draft=True)
 
+        # There are 7 queries to get layer without drafts
         with self.assertNumQueries(7):
             response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 1)
 
+        # We check the content was created and cached with no_draft key
+        # We check that any cached content can be found with no_draft (we still didn't ask for it)
         last_update = Path.no_draft_latest_updated()
         last_update_draft = Path.latest_updated()
         geojson_lookup = 'en_path_%s_nodraft_json_layer' % last_update.strftime('%y%m%d%H%M%S%f')
@@ -624,18 +630,65 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.content, content)
         self.assertIsNone(content_draft)
 
+        # We have 1 less query because the generation of paths was cached
         with self.assertNumQueries(6):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
         self.modelfactory(draft=True)
 
+        # Cache was not updated, the path was a draft
         with self.assertNumQueries(6):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
         self.modelfactory(draft=False)
 
+        # Cache was updated, the path was not a draft : we get 7 queries
         with self.assertNumQueries(7):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
+
+    def test_path_layer_cache(self):
+        """
+
+        This test check path's cache is not the same as draft path's cache and works independently
+        """
+        self.login()
+        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
+
+        obj = self.modelfactory(draft=False)
+        self.modelfactory(draft=True)
+
+        # There are 7 queries to get layer without drafts
+        with self.assertNumQueries(7):
+            response = self.client.get(obj.get_layer_url())
+        self.assertEqual(len(response.json()['features']), 2)
+
+        # We check the content was created and cached without no_draft key
+        # We check that any cached content can be found without no_draft (we still didn't ask for it)
+        last_update_no_draft = Path.no_draft_latest_updated()
+        last_update = Path.latest_updated()
+        geojson_lookup_no_draft = 'en_path_%s_nodraft_json_layer' % last_update_no_draft.strftime('%y%m%d%H%M%S%f')
+        geojson_lookup = 'en_path_%s_json_layer' % last_update.strftime('%y%m%d%H%M%S%f')
+        content_no_draft = cache.get(geojson_lookup_no_draft)
+        content = cache.get(geojson_lookup)
+
+        self.assertIsNone(content_no_draft)
+        self.assertEqual(response.content, content)
+
+        # We have 1 less query because the generation of paths was cached
+        with self.assertNumQueries(6):
+            self.client.get(obj.get_layer_url())
+
+        self.modelfactory(draft=True)
+
+        # Cache is updated when we add a draft path
+        with self.assertNumQueries(7):
+            self.client.get(obj.get_layer_url())
+
+        self.modelfactory(draft=False)
+
+        # Cache is updated when we add a path
+        with self.assertNumQueries(7):
+            self.client.get(obj.get_layer_url())
 
     @override_settings(COLUMNS_LISTS={'path_view': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
     def test_custom_columns_mixin_on_list(self):
