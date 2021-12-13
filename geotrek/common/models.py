@@ -1,17 +1,16 @@
 import os
 import uuid
 
-from PIL import Image
-
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-
-from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
+from paperclip.models import Attachment as BaseAttachment
+from paperclip.models import FileType as BaseFileType
+from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
+from geotrek.common.mixins import OptionalPictogramMixin, PictogramMixin
 
 
 class Organism(StructureOrNoneRelated):

@@ -668,6 +668,21 @@ You can also add ``{legend}``.
     THUMBNAIL_COPYRIGHT_SIZE = 15
 
 
+Resizing uploaded pictures
+---------------------
+
+Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
+
+::
+    PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
+
+These corresponding height/width parameters can be overriden to select resized image size :
+
+::
+    PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
+    PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+
+
 Share services between several Geotrek instances
 ------------------------------------------------
 
