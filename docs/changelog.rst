@@ -2,15 +2,20 @@
 CHANGELOG
 =========
 
-2.72.0+dev (XXXX-XX-XX)
+2.73.0 (2021-12-13)
 -----------------------
 
 **Bug fixes**
 
 - Fix formset item deletion raises error in forms (#2693)
 
+**Refactoring**
+
+- MapEntity is now a separate dependency (https://github.com/makinacorpus/django-mapentity)
+
 **New features**
 
+- Optimize Path caching in edition views
 - Filter list views by Restricted Area as well as by Restricted Area Type
 - Add BLADE_ENABLED setting to hide Blade in Signage forms and in Signage detail page
 - Add LINE_ENABLED setting to hide Line in Blade forms and in Blade detail page
