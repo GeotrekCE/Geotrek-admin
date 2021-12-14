@@ -19,20 +19,20 @@ CHANGELOG
 
 **New features**
 
-- Optimize Path caching in edition views
-- Filter list views by Restricted Area as well as by Restricted Area Type
-- Add BLADE_ENABLED setting to hide Blade in Signage forms and in Signage detail page
-- Add LINE_ENABLED setting to hide Line in Blade forms and in Blade detail page
-- Add PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD setting to enable resize attachments on upload (#2835)
-- Add PAPERCLIP_MAX_ATTACHMENT_WIDTH and PAPERCLIP_MAX_ATTACHMENT_HEIGHT to configure attachment resizing (defaults 1280px) (#2835)
-- Use MAPENTITY_CONFIG setting to configure map style on list and detail views (#2554)
+- Optimize Path caching in edition views (#2847)
+- Filter list views by Restricted Area as well as by Restricted Area Type (#2766)
+- Add `BLADE_ENABLED` setting to hide Blade in Signage forms and in Signage detail page (#2852)
+- Add `LINE_ENABLED` setting to hide Line in Blade forms and in Blade detail page (#2852)
+- Add `PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD` setting to enable resize attachments on upload (#2835)
+- Add `PAPERCLIP_MAX_ATTACHMENT_WIDTH` and `PAPERCLIP_MAX_ATTACHMENT_HEIGHT` to configure attachment resizing (defaults 1280px) (#2835)
+- Use `MAPENTITY_CONFIG` setting to configure map style on list and detail views (#2554)
 
 **User interface**
 
 - Clarify Land Edge module browsing (#1404)
 - Renamed "Tronçons physique" to "Types de voie", "Tronçons de compétence" to "Compétence sentiers",
   "Tronçons de gestion de travaux" to "Gestionnaire travaux", "Tronçons de gestion signalétique" to "Gestionnaire signalétique" (#1301)
-- Renamed "zonage réglementaire" to "zonage"
+- Renamed "zonage réglementaire" to "zonage" (#2766)
 
 **Minor improvements**
 
