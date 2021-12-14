@@ -830,6 +830,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
             id=hashlib.md5(
                 settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
                     author=self.attachment.author,
+                    title=self.attachment.title,
                     legend=self.attachment.legend).encode()).hexdigest())
         self.assertDictEqual(self.result['pictures'][0],
                              {'url': url,
