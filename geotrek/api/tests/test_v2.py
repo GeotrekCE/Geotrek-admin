@@ -65,7 +65,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
     'portal', 'practice', 'previous', 'public_transport', 'published',
-    'reservation_system', 'route', 'second_external_id', 'source', 'structure',
+    'reservation_system', 'reservation_id', 'route', 'second_external_id', 'source', 'structure',
     'themes', 'update_datetime', 'url', 'uuid', 'web_links'
 ])
 
