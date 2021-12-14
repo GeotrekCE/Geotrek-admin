@@ -105,9 +105,9 @@ class SuricateRequestManager:
             print(f"KO - Status code: {response.status_code}")
         else:
             data = json.loads(response.content.decode())
-            if "code_ok" in data and not bool(data["code_ok"]):
+            if "code_ok" in data and (data["code_ok"] == 'false'):
                 print(f"KO:   [{data['error']['code']} - {data['error']['message']}]")
-            elif "code_ok" in data and bool(data["code_ok"]):
+            elif "code_ok" in data and (data["code_ok"] == 'true'):
                 print("OK")
 
     def test_suricate_connection(self):
