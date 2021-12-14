@@ -462,6 +462,15 @@ Depuis cette version, 2 flux sont automatiquement générés par Geotrek-admin a
 
 Il est possible d'exclure les POI du flux pour ne diffuser que les randonnées. Pour cela, ajouter le paramètre ``?withoutpois=1`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1``).
 
+Il est possible de filtrer les POI du flux par structures. Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?structures=2``).
+Vous pouvez filtrer avec plusieurs structures : en séparant les identifiants par des virgules (``http://XXXXX/api/cirkwi/circuits.xml?structures=2,5,3``)
+
+Il est également possible de filtrer les randonnées du flux par structures et par portails. Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>``
+ou ``?portals=<identifian_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?portals=3``).
+Tout comme les pois Vous pouvez filtrer avec plusieurs structures et portails : en séparant les identifiants par des virgules
+
+Il est possible de filtrer par portail et structure en même temps en séparant les 2 filtres par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1``)
+
 Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'Adminsite (à ne pas modifier) :
 
 .. image :: images/user-manual/cirkwi-tables.png
