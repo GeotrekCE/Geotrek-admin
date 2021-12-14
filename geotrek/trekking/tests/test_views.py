@@ -1418,6 +1418,62 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</poi>'
             '</pois>'.format(**attrs))
 
+    def test_trek_filter_portals(self):
+        portal = TargetPortalFactory.create()
+        self.trek.portal.add(portal)
+
+        # We found one trek with the portal
+        response = self.client.get(f'/api/cirkwi/circuits.xml?portals={portal.pk},0')
+        self.assertEqual(response.status_code, 200)
+        self.assertXMLNotEqual(response.content.decode(), '<?xml version="1.0" encoding="utf8"?>\n'
+                                                          '<circuits version="2"/>')
+        # We found no treks with the portal's id 0
+        response = self.client.get(f'/api/cirkwi/circuits.xml?portals=0')
+        self.assertEqual(response.status_code, 200)
+        self.assertXMLEqual(response.content.decode(), '<?xml version="1.0" encoding="utf8"?>\n'
+                                                       '<circuits version="2"/>')
+        # We get a 404 with wrong use of params
+        response = self.client.get(f'/api/cirkwi/circuits.xml?portals=a')
+        self.assertEqual(response.status_code, 404)
+
+    def test_trek_filter_structures(self):
+        structure = StructureFactory.create()
+        self.trek.structure = structure
+        self.trek.save()
+
+        # We found one trek with the portal
+        response = self.client.get(f'/api/cirkwi/circuits.xml?structures={structure.pk},0')
+        self.assertEqual(response.status_code, 200)
+        self.assertXMLNotEqual(response.content.decode(), '<?xml version="1.0" encoding="utf8"?>\n'
+                                                          '<circuits version="2"/>')
+        # We found no treks with the portal's id 0
+        response = self.client.get(f'/api/cirkwi/circuits.xml?structures=0')
+        self.assertEqual(response.status_code, 200)
+        self.assertXMLEqual(response.content.decode(), '<?xml version="1.0" encoding="utf8"?>\n'
+                                                       '<circuits version="2"/>')
+        # We get a 404 with wrong use of params
+        response = self.client.get(f'/api/cirkwi/circuits.xml?structures=a')
+        self.assertEqual(response.status_code, 404)
+
+    def test_poi_filter_structures(self):
+        structure = StructureFactory.create()
+        self.poi.structure = structure
+        self.poi.save()
+
+        # We found one trek with the portal
+        response = self.client.get(f'/api/cirkwi/pois.xml?structures={structure.pk},0')
+        self.assertEqual(response.status_code, 200)
+        self.assertXMLNotEqual(response.content.decode(), '<?xml version="1.0" encoding="utf8"?>\n'
+                                                          '<pois version="2"/>')
+        # We found no treks with the portal's id 0
+        response = self.client.get(f'/api/cirkwi/pois.xml?structures=0')
+        self.assertEqual(response.status_code, 200)
+        self.assertXMLEqual(response.content.decode(), '<?xml version="1.0" encoding="utf8"?>\n'
+                                                       '<pois version="2"/>')
+        # We get a 404 with wrong use of params
+        response = self.client.get(f'/api/cirkwi/pois.xml?structures=a')
+        self.assertEqual(response.status_code, 404)
+
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):

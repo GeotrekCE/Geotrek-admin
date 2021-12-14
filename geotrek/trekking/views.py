@@ -509,15 +509,22 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
 class CirkwiTrekView(ListView):
     model = Trek
 
-    def get_queryset(self):
+    def get_queryset(self, portals=None, structures=None):
         qs = Trek.objects.existing()
+        try:
+            if portals:
+                qs = qs.filter(portal__in=portals.split(','))
+            if structures:
+                qs = qs.filter(structure__in=structures.split(','))
+        except ValueError:
+            raise Http404
         qs = qs.filter(published=True)
         return qs
 
     def get(self, request):
         response = HttpResponse(content_type='application/xml')
         serializer = CirkwiTrekSerializer(request, response, request.GET)
-        treks = self.get_queryset()
+        treks = self.get_queryset(structures=serializer.structures, portals=serializer.portals)
         serializer.serialize(treks)
         return response
 
@@ -525,15 +532,20 @@ class CirkwiTrekView(ListView):
 class CirkwiPOIView(ListView):
     model = POI
 
-    def get_queryset(self):
+    def get_queryset(self, structures=None):
         qs = POI.objects.existing()
+        try:
+            if structures:
+                qs = qs.filter(structure__in=structures.split(','))
+        except ValueError:
+            raise Http404
         qs = qs.filter(published=True)
         return qs
 
     def get(self, request):
         response = HttpResponse(content_type='application/xml')
-        serializer = CirkwiPOISerializer(request, response)
-        pois = self.get_queryset()
+        serializer = CirkwiPOISerializer(request, response, request.GET)
+        pois = self.get_queryset(structures=serializer.structures)
         serializer.serialize(pois)
         return response
 

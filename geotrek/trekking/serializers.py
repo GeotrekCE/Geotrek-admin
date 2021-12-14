@@ -374,10 +374,11 @@ def timestamp(dt):
 
 
 class CirkwiPOISerializer:
-    def __init__(self, request, stream):
+    def __init__(self, request, stream, get_params=None):
         self.xml = SimplerXMLGenerator(stream, 'utf8')
         self.request = request
         self.stream = stream
+        self.structures = get_params.get('structures', None)
 
     def serialize_field(self, name, value, attrs={}):
         if not value and not attrs:
@@ -452,9 +453,11 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                         'advised_parking', 'public_transport', 'advice')
 
     def __init__(self, request, stream, get_params=None):
-        super().__init__(request, stream)
+        super().__init__(request, stream, get_params)
         self.request = request
         self.exclude_pois = get_params.get('withoutpois', None)
+        self.portals = get_params.get('portals', None)
+        self.structures = get_params.get('structures', None)
 
     def serialize_additionnal_info(self, trek, name):
         value = getattr(trek, name)
