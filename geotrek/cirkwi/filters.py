@@ -12,10 +12,8 @@ class ComaSeparatedModelChoiceField(ModelChoiceField):
             return None
         try:
             key = self.to_field_name or 'pk'
-            if isinstance(value, self.queryset.model):
-                value = getattr(value, key)
             value = self.queryset.filter(**{f'{key}__in': value.split(',')})
-        except (ValueError, TypeError, self.queryset.model.DoesNotExist):
+        except (ValueError, TypeError):
             raise ValidationError(self.error_messages['invalid_choice'], code='invalid_choice')
         return value
 
