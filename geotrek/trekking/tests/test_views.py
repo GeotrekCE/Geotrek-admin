@@ -825,17 +825,20 @@ class TrekJSONDetailTest(TrekJSONSetUp):
 
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
+        url = '{url}.800x800_q85_watermark-{id}.png'.format(
+            url=self.attachment.attachment_file.url,
+            id=hashlib.md5(
+                settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                    author=self.attachment.author,
+                    title=self.attachment.title,
+                    legend=self.attachment.legend).encode()).hexdigest())
         self.assertDictEqual(self.result['pictures'][0],
-                             {'url': '{url}.800x800_q85_watermark-{id}.png'.format(
-                                 url=self.attachment.attachment_file.url,
-                                 id=hashlib.md5(
-                                     settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
-                                         author=self.attachment.author,
-                                         title=self.attachment.title,
-                                         legend=self.attachment.legend).encode()).hexdigest()),
+                             {'url': url,
                               'title': self.attachment.title,
                               'legend': self.attachment.legend,
                               'author': self.attachment.author})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
     def test_networks(self):
         self.assertDictEqual(self.result['networks'][0],

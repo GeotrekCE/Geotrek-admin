@@ -407,7 +407,8 @@ MAPENTITY_CONFIG = {
             'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
                      'arrowColor': 'black', 'arrowSize': 10},
         }
-    }
+    },
+    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg)$'
 }
 
 MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
