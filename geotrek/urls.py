@@ -47,6 +47,8 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.outdoor.urls')))
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.trekking.urls')))
+    if 'geotrek.cirkwi' in settings.INSTALLED_APPS:
+        urlpatterns.append(path('', include('geotrek.cirkwi.urls')))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.diving.urls')))
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
