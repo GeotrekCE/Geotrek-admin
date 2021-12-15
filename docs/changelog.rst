@@ -5,6 +5,10 @@ CHANGELOG
 2.73.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix access to pictures generated with watermark (#2840)
+
 
 2.73.0 (2021-12-13)
 -----------------------
