@@ -205,7 +205,7 @@ persistent==4.7.0
     # via
     #   btrees
     #   zodb
-pillow==8.1.1
+pillow==8.4.0
     # via
     #   cairosvg
     #   easy-thumbnails

@@ -85,7 +85,7 @@ class Theme(PictogramMixin):
             image = Image.open(pictopath)
             w, h = image.size
             if w > h:
-                image = image.crop((0, 0, w / 2, h))
+                image = image.crop(box=(0, 0, w / 2, h))
             image.save(output)
         return open(output, 'rb')
 
