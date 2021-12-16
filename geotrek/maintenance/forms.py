@@ -86,6 +86,7 @@ class InterventionForm(CommonForm):
             'heliport_cost',
             'subcontract_cost',
             Fieldset(_("Mandays")),
+            css_class="scrollable tab-pane active"
         ),
     ]
 
