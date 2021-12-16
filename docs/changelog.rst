@@ -5,6 +5,10 @@ CHANGELOG
 2.73.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Show every paths in intervention's csv
+
 **Bug fixes**
 
 - Fix access to pictures generated with watermark (#2840)

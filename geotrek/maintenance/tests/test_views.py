@@ -380,6 +380,23 @@ class InterventionViewsTest(CommonTest):
         projects = form.fields['project'].queryset.all()
         self.assertCountEqual(projects, [p1])
 
+    def test_csv_on_topology_multiple_paths(self):
+        # We create an intervention on multiple paths and we check in csv target's field we have all the paths
+        self.login()
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((4, 0), (8, 0)))
+        InterventionFactory.create(target=TopologyFactory.create(paths=[(path_AB, 0.2, 1),
+                                                                        (path_CD, 0, 1)]))
+        response = self.client.get(self.model.get_format_list_url() + '?format=csv')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+
+        # Read the csv
+        lines = list(csv.reader(StringIO(response.content.decode("utf-8")), delimiter=','))
+        index_line = lines[0].index('On')
+        self.assertEqual(lines[1][index_line],
+                         f'Path: {path_AB.name} ({path_AB.pk}), Path: {path_CD.name} ({path_CD.pk})')
+
     def test_no_html_in_csv_infrastructure(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             InfrastructureInterventionFactory.create()
