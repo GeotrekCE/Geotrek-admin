@@ -18,7 +18,7 @@ class ThemeModelTest(TestCase):
             self.theme.pictogram = File(picto_file)
             file = self.theme.pictogram_off
             path_off = os.path.join(self.directory, 'picto_off.png')
-            self.assertEqual(os.path.getsize(path_off), 4069)
+            self.assertEqual(os.path.getsize(path_off), 3445)
             self.assertEqual(file.name, path_off)
 
     def tearDown(self):
