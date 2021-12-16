@@ -6,7 +6,7 @@ from geotrek.trekking.models import POI, Trek
 from django.forms import ValidationError
 
 
-class ComaSeparatedModelChoiceField(ModelChoiceField):
+class ComaSeparatedMultipleModelChoiceField(ModelChoiceField):
     def to_python(self, value):
         if value in self.empty_values:
             return None
@@ -19,7 +19,7 @@ class ComaSeparatedModelChoiceField(ModelChoiceField):
 
 
 class ComaSeparatedMultipleModelChoiceFilter(ModelMultipleChoiceFilter):
-    field_class = ComaSeparatedModelChoiceField
+    field_class = ComaSeparatedMultipleModelChoiceField
 
 
 class CirkwiPOIFilterSet(FilterSet):
