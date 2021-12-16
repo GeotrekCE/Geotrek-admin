@@ -181,7 +181,7 @@ kombu==4.6.8
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-lxml==4.6.3
+lxml==4.7.1
     # via mapentity
 mapentity==7.0.3
     # via geotrek (setup.py)
