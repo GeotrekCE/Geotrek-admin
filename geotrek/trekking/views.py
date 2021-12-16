@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
@@ -33,8 +33,7 @@ from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
-from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
-                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer,
+from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer,
                           TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
@@ -504,38 +503,6 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
         if not self.request.user.has_perm('trekking.read_service') and not trek.is_public():
             raise Http404
         return trek.services.filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
-class CirkwiTrekView(ListView):
-    model = Trek
-
-    def get_queryset(self):
-        qs = Trek.objects.existing()
-        qs = qs.filter(published=True)
-        return qs
-
-    def get(self, request):
-        response = HttpResponse(content_type='application/xml')
-        serializer = CirkwiTrekSerializer(request, response, request.GET)
-        treks = self.get_queryset()
-        serializer.serialize(treks)
-        return response
-
-
-class CirkwiPOIView(ListView):
-    model = POI
-
-    def get_queryset(self):
-        qs = POI.objects.existing()
-        qs = qs.filter(published=True)
-        return qs
-
-    def get(self, request):
-        response = HttpResponse(content_type='application/xml')
-        serializer = CirkwiPOISerializer(request, response)
-        pois = self.get_queryset()
-        serializer.serialize(pois)
-        return response
 
 
 # Translations for public PDF

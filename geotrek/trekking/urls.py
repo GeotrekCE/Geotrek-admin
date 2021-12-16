@@ -10,8 +10,7 @@ from mapentity.registry import MapEntityOptions
 from . import models
 from .views import (
     TrekDocumentPublic, TrekDocumentBookletPublic, TrekMapImage, TrekMarkupPublic,
-    TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
-    CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
+    TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup, TrekPOIViewSet,
     TrekServiceViewSet
 )
 
@@ -25,8 +24,6 @@ urlpatterns = [
     path('api/<lang:lang>/treks/<int:pk>/<slug:slug>.kml', TrekKMLDetail.as_view(), name="trek_kml_detail"),
     path('api/<lang:lang>/treks/<int:pk>/meta.html', TrekKMLDetail.as_view(), name="trek_meta"),
     path('popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
-    path('api/cirkwi/circuits.xml', CirkwiTrekView.as_view()),
-    path('api/cirkwi/pois.xml', CirkwiPOIView.as_view()),
     path('image/trek-<int:pk>-<lang:lang>.png', TrekMapImage.as_view(), name='trek_map_image'),
 ]
 

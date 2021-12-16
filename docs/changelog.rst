@@ -10,6 +10,10 @@ CHANGELOG
 - Fix access to pictures generated with watermark (#2840)
 - Fix intervention creation and update is now scrollable after merging tabs (#2712)
 
+**New features**
+
+- Allow to filter cirkwi circtuis.xml and pois.xml with portals and structures
+
 
 2.73.0 (2021-12-13)
 -----------------------
