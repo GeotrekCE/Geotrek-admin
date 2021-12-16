@@ -83,7 +83,7 @@ class BladeFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def lines(obj, create, extracted=None, **kwargs):
-        if create and extracted:
+        if create:
             LineFactory.create(blade=obj)
 
 

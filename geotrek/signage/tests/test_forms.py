@@ -38,7 +38,8 @@ class BladeFormTest(TestCase):
         self.assertEqual(form.fields['number'].initial, None)
 
     def test_lines_formset(self):
-        blade = BladeFactory.create(lines=None)
+        blade = BladeFactory.create()
+        blade.lines.all().delete()
         line_1 = LineFactory.create(blade=blade, number=4)
         line_2 = LineFactory.create(blade=blade, number=5)
         data = {
