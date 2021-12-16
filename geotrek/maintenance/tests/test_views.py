@@ -380,6 +380,7 @@ class InterventionViewsTest(CommonTest):
         projects = form.fields['project'].queryset.all()
         self.assertCountEqual(projects, [p1])
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_csv_on_topology_multiple_paths(self):
         # We create an intervention on multiple paths and we check in csv target's field we have all the paths
         self.login()
