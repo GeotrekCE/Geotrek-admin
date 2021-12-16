@@ -277,7 +277,7 @@ class ProjectFilteringByLandTest(TestCase):
         self.assertEqual(qs[0], self.seek_proj)
 
 
-class ProjectIntersectionFilterCityTest(TestCase):
+class ProjectIntersectionFilterZoningTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -317,6 +317,40 @@ class ProjectIntersectionFilterCityTest(TestCase):
 
     def test_filter_out_district(self):
         filter = ProjectFilterSet(data={'district': [DistrictFactory.create(geom=self.geom_zoning)]})
+        project_out = ProjectFactory.create()
+        project_out.interventions.add(self.intervention_out)
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_in_restricted_area(self):
+        filter = ProjectFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_zoning)]})
+        project_in = ProjectFactory.create()
+        project_in.interventions.add(self.intervention_in)
+        self.assertTrue(filter.is_valid())
+        self.assertIn(project_in, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+    def test_filter_in_restricted_area_type(self):
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        RestrictedAreaFactory.create(geom=self.geom_zoning, area_type=restricted_area_type)
+        filter = ProjectFilterSet(data={'area_type': [restricted_area_type.pk]})
+        project_in = ProjectFactory.create()
+        project_in.interventions.add(self.intervention_in)
+        self.assertTrue(filter.is_valid())
+        self.assertIn(project_in, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+    def test_filter_out_restricted_area(self):
+        filter = ProjectFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_zoning)]})
+        project_out = ProjectFactory.create()
+        project_out.interventions.add(self.intervention_out)
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_out_restricted_area_type(self):
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        RestrictedAreaFactory.create(geom=self.geom_zoning, area_type=restricted_area_type)
+        filter = ProjectFilterSet(data={'area_type': [restricted_area_type.pk]})
         project_out = ProjectFactory.create()
         project_out.interventions.add(self.intervention_out)
         self.assertTrue(filter.is_valid())
