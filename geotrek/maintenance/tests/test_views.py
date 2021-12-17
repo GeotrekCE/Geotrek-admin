@@ -1,9 +1,11 @@
 import csv
 from decimal import Decimal
-from io import StringIO
+from io import BytesIO, StringIO
 import os
 from collections import OrderedDict
+from tempfile import TemporaryDirectory
 from unittest import skipIf
+from zipfile import ZipFile
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -710,7 +712,7 @@ class TestDetailedJobCostsExports(TestCase):
     def test_csv_detailed_cost_content(self):
         '''Test CSV job costs exports contain accurate total price'''
 
-        response = self.client.get('/intervention/list/export/', params={'format': 'csv'})
+        response = self.client.get('/intervention/list/export/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Type'), 'text/csv')
 
@@ -719,6 +721,26 @@ class TestDetailedJobCostsExports(TestCase):
         for row in reader:
             self.assertEqual(Decimal(row[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
             self.assertEqual(Decimal(row[self.job2_column_name]), self.job2.cost * self.manday2.nb_days)
+
+    def test_shp_detailed_cost_content(self):
+        '''Test SHP job costs exports contain accurate total price'''
+        signage = SignageFactory.create()
+        InterventionFactory.create(target=signage)
+
+        response = self.client.get('/intervention/list/export/?format=shp')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'application/zip')
+
+        # Assert right costs in CSV
+        with ZipFile(BytesIO(response.content)) as mzip:
+            temp_directory = TemporaryDirectory()
+            mzip.extractall(path=temp_directory.name)
+            shapefiles = [shapefile for shapefile in os.listdir(temp_directory.name) if shapefile[-3:] == "shp"]
+            datasource = gdal.DataSource(os.path.join(temp_directory.name, shapefiles[0]))
+            l_point = datasource[0]
+        feature_point = l_point[0]
+        self.assertEqual(Decimal(str(feature_point['cost_worke'])), self.job1.cost * self.manday1.nb_days)
+        self.assertEqual(Decimal(str(feature_point['cost_strea'])), self.job2.cost * self.manday2.nb_days)
 
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
