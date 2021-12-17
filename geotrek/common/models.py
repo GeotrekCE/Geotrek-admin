@@ -1,20 +1,19 @@
 import os
 import uuid
 
+from PIL import Image
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from paperclip.models import Attachment as BaseAttachment
 from paperclip.models import FileType as BaseFileType
-from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import OptionalPictogramMixin, PictogramMixin
 
 
 class Organism(StructureOrNoneRelated):
-
     organism = models.CharField(max_length=128, verbose_name=_("Organism"))
 
     class Meta:
@@ -29,16 +28,13 @@ class Organism(StructureOrNoneRelated):
 
 
 class FileType(StructureOrNoneRelated, BaseFileType):
-    """
-    Attachment FileTypes, related to structure and with custom table name.
-    """
+    """ Attachment FileTypes, related to structure and with custom table name."""
     class Meta(BaseFileType.Meta):
         pass
 
     @classmethod
     def objects_for(cls, request):
-        """Override this method to filter form choices depending on structure.
-        """
+        """ Override this method to filter form choices depending on structure."""
         return cls.objects.filter(Q(structure=request.user.profile.structure) | Q(structure=None))
 
     def __str__(self):
@@ -48,13 +44,11 @@ class FileType(StructureOrNoneRelated, BaseFileType):
 
 
 class Attachment(BaseAttachment):
-
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 
 class Theme(PictogramMixin):
-
     label = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
 
@@ -85,13 +79,12 @@ class Theme(PictogramMixin):
             image = Image.open(pictopath)
             w, h = image.size
             if w > h:
-                image = image.crop((0, 0, w / 2, h))
+                image = image.crop(box=(0, 0, w / 2, h))
             image.save(output)
         return open(output, 'rb')
 
 
 class RecordSource(OptionalPictogramMixin):
-
     name = models.CharField(verbose_name=_("Name"), max_length=50)
     website = models.URLField(verbose_name=_("Website"), max_length=256, blank=True, null=True)
 

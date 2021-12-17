@@ -65,7 +65,7 @@ datetime==4.3
     # via appy
 defusedxml==0.6.0
     # via cairosvg
-django==3.1.13
+django==3.1.14
     # via
     #   django-appconf
     #   django-appypod
@@ -181,7 +181,7 @@ kombu==4.6.8
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-lxml==4.6.3
+lxml==4.7.1
     # via mapentity
 mapentity==7.0.3
     # via geotrek (setup.py)
@@ -205,7 +205,7 @@ persistent==4.7.0
     # via
     #   btrees
     #   zodb
-pillow==8.1.1
+pillow==8.4.0
     # via
     #   cairosvg
     #   easy-thumbnails
