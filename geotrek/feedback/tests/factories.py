@@ -44,4 +44,3 @@ class ReportFactory(factory.django.DjangoModelFactory):
     problem_magnitude = factory.SubFactory(ReportProblemMagnitudeFactory)
     category = factory.SubFactory(ReportCategoryFactory)
     status = factory.SubFactory(ReportStatusFactory)
-    uid = factory.Sequence(lambda n: "123e4567-e89b-12d3-a456-42665544000%s" % n)

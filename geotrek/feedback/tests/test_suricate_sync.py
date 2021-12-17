@@ -393,7 +393,7 @@ class SuricateWorkflowTests(SuricateTests):
     def setUp(cls):
         filed = ReportStatusFactory(suricate_id='filed', label="Déposé")
         cls.classified = ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
-        cls.report = ReportFactory(status=filed)
+        cls.report = ReportFactory(status=filed, uid=uuid.uuid4())
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
