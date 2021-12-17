@@ -137,9 +137,8 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     @property
     def target_csv_display(self):
         if self.target._meta.model_name == "topology":
-            path = self.target.paths.first()
             title = _('Path')
-            return "%s: %s (%s)" % (title, path, path.pk)
+            return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all()])
         return "%s: %s (%s)" % (
             _(self.target._meta.verbose_name),
             self.target,
