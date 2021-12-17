@@ -1,5 +1,3 @@
-from mapentity.views.generic import MapEntityList
-from geotrek.common.mixins import CustomColumnsMixin
 import re
 from unittest import skipIf, mock
 
@@ -7,7 +5,6 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.cache import caches
-from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
@@ -20,7 +17,6 @@ from geotrek.common.tests import CommonTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 
-from geotrek.core.views import PathFormatList, PathList
 from geotrek.core.models import Path, Trail, PathSource
 
 from geotrek.trekking.tests.factories import POIFactory, TrekFactory, ServiceFactory
@@ -29,8 +25,6 @@ from geotrek.signage.tests.factories import SignageFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
 from geotrek.core.tests.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
 from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
-
-from unittest.mock import patch
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -103,6 +97,9 @@ class PathViewsTest(CommonTest):
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
     length = 141.42135623731
+    extra_column_list = ['length', 'eid']
+    expected_column_list_extra = ['id', 'checkbox', 'name', 'length', 'length', 'eid']
+    expected_column_formatlist_extra = ['id', 'length', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -690,29 +687,6 @@ class PathViewsTest(CommonTest):
         with self.assertNumQueries(7):
             self.client.get(obj.get_layer_url())
 
-    @override_settings(COLUMNS_LISTS={'path_view': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
-    def test_custom_columns_mixin_on_list(self):
-        # Assert columns equal mandatoy columns plus custom extra columns
-        self.assertEqual(PathList().columns, ['id', 'checkbox', 'name', 'length', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
-
-    @override_settings(COLUMNS_LISTS={'path_export': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
-    def test_custom_columns_mixin_on_export(self):
-        # Assert columns equal mandatoy columns plus custom extra columns
-        self.assertEqual(PathFormatList().columns, ['id', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
-
-    @override_settings(COLUMNS_LISTS={})
-    @patch('geotrek.common.mixins.logger')
-    def test_custom_columns_mixin_error_log(self, mock_logger):
-        # Create view where columns fields are omitted
-        class MissingColumns(CustomColumnsMixin, MapEntityList):
-            model = Path
-            # columns = None
-
-        MissingColumns()
-        # Assert logger raises error message
-        message = "Cannot build columns for class MissingColumns.\nPlease define on this class either : \n  - a field 'columns'\nOR \n  - two fields 'mandatory_columns' AND 'default_extra_columns'"
-        mock_logger.error.assert_called_with(message)
-
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
@@ -775,6 +749,9 @@ class TrailViewsTest(CommonTest):
         'type': 'LineString',
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
+    extra_column_list = ['length', 'eid', 'departure', 'arrival']
+    expected_column_list_extra = ['id', 'name', 'length', 'eid', 'departure', 'arrival']
+    expected_column_formatlist_extra = ['id', 'length', 'eid', 'departure', 'arrival']
 
     def get_expected_json_attrs(self):
         return {

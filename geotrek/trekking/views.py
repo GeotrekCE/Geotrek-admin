@@ -72,9 +72,9 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    mandatory_columns = ['id']
-    columns = [
-        'eid', 'eid2', 'structure', 'name', 'departure', 'arrival', 'duration',
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = [
+        'eid', 'eid2', 'structure', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty', 'information_desks',
         'themes', 'practice', 'accessibilities', 'access', 'route',

@@ -1,5 +1,7 @@
+from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
+from django.utils.module_loading import import_string
 
 from geotrek.common.tests import CommonTest
 from geotrek.sensitivity.models import SensitiveArea
@@ -15,6 +17,7 @@ class SensitiveAreaViewsTests(CommonTest):
         'type': 'Polygon',
         'coordinates': [[[3.0, 46.5], [3.0, 46.500027], [3.0000391, 46.500027], [3.0000391, 46.5], [3.0, 46.5]]],
     }
+    extra_column_list = ['description', 'contact']
 
     def get_expected_json_attrs(self):
         return {
@@ -52,6 +55,22 @@ class SensitiveAreaViewsTests(CommonTest):
             'structure': str(self.user.profile.structure.pk),
         }
 
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'sensitivity_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'species', 'description', 'contact'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'sensitivity_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'description', 'contact'])
+
 
 class RegulatorySensitiveAreaViewsTests(CommonTest):
     model = SensitiveArea
@@ -61,6 +80,7 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
         'type': 'Polygon',
         'coordinates': [[[3.0, 46.5], [3.0, 46.500027], [3.0000391, 46.500027], [3.0000391, 46.5], [3.0, 46.5]]],
     }
+    extra_column_list = ['description', 'contact']
 
     def get_expected_json_attrs(self):
         return {
@@ -143,3 +163,19 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
         self.assertEqual(response.status_code, 302)
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 302)
+
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'sensitivity_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'species', 'description', 'contact'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'sensitivity_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'description', 'contact'])

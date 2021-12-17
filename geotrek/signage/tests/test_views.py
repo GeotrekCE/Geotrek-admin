@@ -34,6 +34,10 @@ class BladeViewsTest(CommonTest):
     modelfactory = BladeFactory
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'number', 'direction', 'type', 'color']
+    expected_column_formatlist_extra = ['id', 'city', 'signage', 'printedelevation', 'bladecode', 'type',
+                                        'color', 'direction', 'condition', 'coordinates']
 
     def get_expected_json_attrs(self):
         return {
@@ -199,6 +203,9 @@ class SignageViewsTest(CommonTest):
     modelfactory = SignageFactory
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
         return {

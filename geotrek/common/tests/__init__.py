@@ -6,6 +6,7 @@ from django.contrib.auth.models import Permission, User
 from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
 from django.utils import translation
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.conf import settings
 
@@ -170,6 +171,22 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         response = self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(response.status_code, 302)
         self.assertTrue(self.model.objects.get(pk=obj.pk).published)
+
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'{self.model._meta.model_name}_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             self.expected_column_list_extra)
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'{self.model._meta.model_name}_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             self.expected_column_formatlist_extra)
 
 
 class CommonLiveTest(MapEntityLiveTest):

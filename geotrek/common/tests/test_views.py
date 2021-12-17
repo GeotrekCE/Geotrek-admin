@@ -10,8 +10,11 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from mapentity.tests.factories import UserFactory, SuperUserFactory
+from mapentity.views.generic import MapEntityList
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import launch_sync_rando
+from geotrek.trekking.models import Path
 
 
 class ViewsTest(TestCase):
@@ -34,6 +37,18 @@ class ViewsTest(TestCase):
         self.user.save()
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(COLUMNS_LISTS={})
+    @mock.patch('geotrek.common.mixins.logger')
+    def test_custom_columns_mixin_error_log(self, mock_logger):
+        # Create view where columns fields are omitted
+        class MissingColumns(CustomColumnsMixin, MapEntityList):
+            model = Path
+
+        MissingColumns()
+        # Assert logger raises error message
+        message = "Cannot build columns for class MissingColumns.\nPlease define on this class either : \n  - a field 'columns'\nOR \n  - two fields 'mandatory_columns' AND 'default_extra_columns'"
+        mock_logger.error.assert_called_with(message)
 
 
 class ViewsImportTest(TestCase):
