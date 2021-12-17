@@ -2,7 +2,6 @@ from crispy_forms.layout import Div
 from django.conf import settings
 from django.forms.fields import CharField
 from django.forms.widgets import Textarea
-from django.utils.html import escape
 
 from geotrek.common.forms import CommonForm
 

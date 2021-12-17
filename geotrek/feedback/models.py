@@ -4,7 +4,6 @@ import logging
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
-from django.core.mail import send_mail
 from django.db.models.query_utils import Q
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _

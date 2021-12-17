@@ -1,5 +1,4 @@
 
-from geotrek.authent.decorators import same_structure_required
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
