@@ -1,4 +1,5 @@
 
+from geotrek.authent.decorators import same_structure_required
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -96,6 +97,13 @@ class ReportCreate(MapEntityCreate):
 
     def get_success_url(self):
         return reverse('feedback:report_list')
+
+
+class ReportUpdate(mapentity_views.MapEntityUpdate):
+    queryset = feedback_models.Report.objects.existing().select_related(
+        "activity", "category", "problem_magnitude", "status", "related_trek"
+    ).prefetch_related("attachments")
+    form_class = ReportForm
 
 
 class ReportViewSet(mapentity_views.MapEntityViewSet):

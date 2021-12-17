@@ -831,7 +831,6 @@ LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 USE_X_FORWARDED_HOST = False
 HIDDEN_FORM_FIELDS['report'] = {
-    "status",
     "locked",
     "uid",
     "origin"

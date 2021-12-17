@@ -1,3 +1,4 @@
+from geotrek.feedback.forms import ReportForm
 from geotrek.common.models import Attachment
 from mapentity.tests.factories import UserFactory
 import os
@@ -12,7 +13,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
-from geotrek.feedback.tests.factories import ReportFactory
+from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
 from geotrek.feedback.models import (
     AttachedMessage,
@@ -385,3 +386,53 @@ class SuricateInterfaceTests(SuricateTests):
         # Get raises an exception
         with self.assertRaises(Exception):
             SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+
+
+class SuricateWorkflowTests(SuricateTests):
+
+    def setUp(cls):
+        filed = ReportStatusFactory(suricate_id='filed', label="Déposé")
+        cls.classified = ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
+        cls.report = ReportFactory(status=filed)
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
+    def test_classify_alert_notifies_suricate_when_management_enabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
+        form = ReportForm(
+            instance=self.report,
+            data={
+                'email': self.report.email,
+                'status': self.classified.pk,
+                'message': "Problème déjà réglé"
+            }
+        )
+        self.assertTrue(form.is_valid)
+        form.save()
+        mocked_mail_sentinel.assert_called_once_with(self.report.uid, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified.suricate_id, "Problème déjà réglé")
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
+    def test_classify_alert_does_not_notify_suricate_when_management_disabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
+        form = ReportForm(
+            instance=self.report,
+            data={
+                'email': self.report.email,
+                'status': self.classified.pk,
+                'message': "Problème déjà réglé"
+            }
+        )
+        self.assertTrue(form.is_valid)
+        form.save()
+        mocked_mail_sentinel.assert_not_called()
+        mocked_notify_suricate_status.assert_not_called()
+
+# Todo
+# assert message in form only if management
+# assert all id possible in form if not management

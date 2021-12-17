@@ -4,6 +4,7 @@ import logging
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
+from django.core.mail import send_mail
 from django.db.models.query_utils import Q
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
@@ -18,6 +19,18 @@ from mapentity.models import MapEntityMixin
 from .helpers import SuricateMessenger, send_report_to_managers
 
 logger = logging.getLogger(__name__)
+suricate_messenger = SuricateMessenger()
+
+# This dict stores status order in management workflow
+# {'current_status': ['allowed_next_status', 'other_allowed_status']}
+SURICATE_MANAGEMENT_WORKFLOW = {
+    'filed': ['classified', 'waiting'],
+}
+
+# This dict stores status changes that send an email and an API request
+NOTIFY_SURICATE_AND_SENTINEL = {
+    'filed': 'classified',
+}
 
 
 def status_default():
@@ -148,19 +161,24 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         """Save method for Suricate Report mode"""
         if self.pk is None:  # New report should alert managers AND be sent to Suricate
             self.try_send_report_to_managers()
-            SuricateMessenger().post_report(self)
+            suricate_messenger.post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_management_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
             if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
-                SuricateMessenger().post_report(self)
+                suricate_messenger.post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
         else:  # This is an update
-            # TODO We'll need to implement some of the workflow here
+            # TODO We'll need to implement some of the workflow here Todo do we need to remove this
             super().save(*args, **kwargs)
+
+    def send_notifications_on_status_change(self, old_status_id, message):
+        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and NOTIFY_SURICATE_AND_SENTINEL[old_status_id] == self.status.suricate_id:
+            suricate_messenger.update_status(self.uid, self.status.suricate_id, message)
+            suricate_messenger.message_sentinel(self.uid, message)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:
@@ -169,6 +187,13 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             self.save_suricate_report_mode(*args, **kwargs)  # Suricate Report Mode
         elif settings.SURICATE_MANAGEMENT_ENABLED:
             self.save_suricate_management_mode(*args, **kwargs)  # Suricate Management Mode
+
+    def next_status(self):
+        if self.status:
+            next_status = SURICATE_MANAGEMENT_WORKFLOW[self.status.suricate_id]
+            # Current status should also be a possibility
+            next_status.append(self.status.suricate_id)
+            return ReportStatus.objects.filter(suricate_id__in=next_status)
 
     @property
     def created_in_suricate_display(self):

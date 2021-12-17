@@ -218,34 +218,20 @@ class SuricateMessenger:
     #         "wsUnlockAlert", url_params={"uid_alerte": id_alert}
     #     )
 
-    # def post_message(self, message, id_alert):
-    #     """Send message to sentinel through Suricate Rest API"""
-    #     check = md5(
-    #         (self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()
-    #     ).hexdigest()
-    #     params = {
-    #         "id_origin": self.ID_ORIGIN,
-    #         "uid_alerte": id_alert,
-    #         "message": message,
-    #         "check": check,
-    #     }
+    def update_status(self, id_alert, new_status, message):
+        """Update status for given report on Suricate Rest API"""
+        check = md5(
+            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + id_alert).encode()
+        ).hexdigest()
 
-    #     self.gestion_manager.post_to_suricate("wsSendMessageSentinelle", params)
-
-    # def update_status(self, id_alert, new_status, message):
-    #     """Update status for given report on Suricate Rest API"""
-    #     check = md5(
-    #         (self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()
-    #     ).hexdigest()
-
-    #     params = {
-    #         "id_origin": self.ID_ORIGIN,
-    #         "uid_alerte": id_alert,
-    #         "statut": new_status,
-    #         "txt_changestatut": message,
-    #         "check": check,
-    #     }
-    #     self.gestion_manager.post_to_suricate("wsUpdateStatus", params)
+        params = {
+            "id_origin": self.gestion_manager.ID_ORIGIN,
+            "uid_alerte": id_alert,
+            "statut": new_status,
+            "txt_changestatut": message,
+            "check": check,
+        }
+        self.gestion_manager.post_to_suricate("wsUpdateStatus", params)
 
     # def update_gps(self, id_alert, gps_lat, gps_long):
     #     """Update report GPS coordinates on Suricate Rest API"""
@@ -258,16 +244,16 @@ class SuricateMessenger:
     #         },
     #     )
 
-    # def message_sentinel(self, id_alert, message):
-    #     check = md5(
-    #         (self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()
-    #     ).hexdigest()
-    #     """Send report to Suricate Rest API"""
-    #     params = {
-    #         "id_origin": self.ID_ORIGIN,
-    #         "uid_alerte": id_alert,
-    #         "message": message,
-    #         "check": check,
-    #     }
+    def message_sentinel(self, id_alert, message):
+        check = md5(
+            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + id_alert).encode()
+        ).hexdigest()
+        """Send report to Suricate Rest API"""
+        params = {
+            "id_origin": self.ID_ORIGIN,
+            "uid_alerte": id_alert,
+            "message": message,
+            "check": check,
+        }
 
-    #     self.gestion_manager.post_to_suricate("wsSendMessageSentinelle", params)
+        self.gestion_manager.post_to_suricate("wsSendMessageSentinelle", params)
