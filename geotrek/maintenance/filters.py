@@ -88,8 +88,7 @@ class InterventionIntersectionFilterRestrictedAreaType(PolygonInterventionFilter
 
 class InterventionIntersectionFilterRestrictedArea(PolygonInterventionFilterMixin,
                                                    IntersectionFilterRestrictedArea):
-    def get_geom(self, value):
-        return value.geom
+    pass
 
 
 class InterventionIntersectionFilterCity(PolygonInterventionFilterMixin,

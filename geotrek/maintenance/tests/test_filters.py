@@ -355,3 +355,11 @@ class ProjectIntersectionFilterZoningTest(TestCase):
         project_out.interventions.add(self.intervention_out)
         self.assertTrue(filter.is_valid())
         self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_restricted_area_type_without_restricted_area(self):
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        filter = ProjectFilterSet(data={'area_type': [restricted_area_type.pk]})
+        project_in = ProjectFactory.create()
+        project_in.interventions.add(self.intervention_in)
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
