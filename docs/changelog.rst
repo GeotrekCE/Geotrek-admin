@@ -8,6 +8,8 @@ CHANGELOG
 **Minor improvements**
 
 - Show every paths in intervention's csv
+- Unshow signage/blade dropdown-toggle with settings `BLADE_ENABLED=False`
+- Remove urls blade with settings `BLADE_ENABLED=False`
 
 **Bug fixes**
 
