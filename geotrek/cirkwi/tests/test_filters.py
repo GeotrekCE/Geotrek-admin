@@ -12,14 +12,15 @@ from geotrek.cirkwi.filters import CirkwiPOIFilterSet, CirkwiTrekFilterSet
 
 
 class CirkwiFilterTest(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.path = PathFactory()
-            self.poi = POIFactory.create(paths=[(self.path, 0, 1)])
-            self.trek = TrekFactory.create(paths=[(self.path, 0, 1)])
+            cls.path = PathFactory()
+            cls.poi = POIFactory.create(paths=[(cls.path, 0, 1)])
+            cls.trek = TrekFactory.create(paths=[(cls.path, 0, 1)])
         else:
-            self.poi = POIFactory.create(geom=Point(0, 0))
-            self.trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
+            cls.poi = POIFactory.create(geom=Point(0, 0))
+            cls.trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
 
     def test_trek_filters_structures(self):
         other_structure = StructureFactory.create()

@@ -4,7 +4,6 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from django.utils.timezone import utc, make_aware
-from unittest import util as testutil
 
 from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
@@ -20,7 +19,6 @@ from geotrek.trekking import urls  # NOQA
 
 class CirkwiTests(TranslationResetMixin, TestCase):
     def setUp(self):
-        testutil._MAX_LENGTH = 10000
         creation = make_aware(datetime.datetime(2014, 1, 1), utc)
         self.path = PathFactory.create()
         self.trek = TrekFactory.create(published=True, paths=[self.path])
@@ -31,9 +29,6 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         self.poi.save()
         TrekFactory.create(published=False, paths=[self.path])
         POIFactory.create(published=False, paths=[self.path])
-
-    def tearDown(self):
-        testutil._MAX_LENGTH = 80
 
     def test_export_circuits(self):
         response = self.client.get('/api/cirkwi/circuits.xml')
