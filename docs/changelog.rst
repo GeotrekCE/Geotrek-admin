@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix multiple forms in formsets deletion (#2693)
 - Fix access to pictures generated with watermark (#2840)
 - Fix intervention creation and update is now scrollable after merging tabs (#2712)
 
