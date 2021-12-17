@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.73.0+dev (XXXX-XX-XX)
+2.74.0     (2021-12-17)
 -----------------------
 
 **Minor improvements**
 
-- Show every paths in intervention's csv
+- Show every paths in intervention's csv (#2711)
 - Hide signage/blade dropdown-toggle with settings `BLADE_ENABLED=False`
 - Remove urls blade with settings `BLADE_ENABLED=False`
 
@@ -20,8 +20,9 @@ CHANGELOG
 
 **New features**
 
-- Allow to filter cirkwi circtuis.xml and pois.xml with portals and structures
-- Add restricted area and restricted area type filters on projects
+- Allow to filter Cirkwi ``circuits.xml`` and ``pois.xml`` API with portals and structures (#2822)
+- Add restricted area and restricted area type filters on projects (#2766)
+- Add ``reservation_id`` in ``/trek`` API v2 (#2817)
 
 
 2.73.0 (2021-12-13)

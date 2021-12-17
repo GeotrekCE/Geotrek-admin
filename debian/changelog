@@ -1,8 +1,8 @@
-geotrek-admin (2.73.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.74.0) RELEASED; urgency=medium
 
-  * 
+  * New package release
 
- -- Célia PRAT <celia.prat@makina-corpus.com>  Mon, 13 Dec 2021 18:02:56 +0100
+ -- Timothee de Montety <timothee.de-montety@makina-corpus.com>  Fri, 17 Dec 2021 17:55:03 +0100
 
 geotrek-admin (2.73.0) RELEASED; urgency=medium
 
