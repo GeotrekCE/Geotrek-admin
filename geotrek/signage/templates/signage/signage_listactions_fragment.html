@@ -1,8 +1,8 @@
 {% load i18n signage_tags %}
 
-{% blades_enabled as blades_enabled %}
+{% blades_enabled as is_blades_enabled %}
 
-{% if appname == "signage" and blades_enabled %}
+{% if appname == "signage" and is_blades_enabled %}
 <div class="btn-group mr-2">
     <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
         <strong>

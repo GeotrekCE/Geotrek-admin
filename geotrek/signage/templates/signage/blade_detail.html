@@ -34,8 +34,8 @@
             <td>{% if object.structure %}{{ object.structure }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
     </table>
-    {% lines_enabled as lines_enabled %}
-    {% if lines_enabled %}
+    {% lines_enabled as is_lines_enabled %}
+    {% if is_lines_enabled %}
         <h3>{% trans "Lines" %}</h3>
         <table class="table blades">
             <!-- TODO: with order-lines -->
