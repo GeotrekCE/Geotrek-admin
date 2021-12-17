@@ -8,8 +8,8 @@
 
     <fieldset class="formset">
         {{ blade_formset.management_form }}
-        {% for blade_form in blade_formset %}
-            <div class="form-row inline controls controls-row {{ blade_formset.prefix }}">
+        {% for blade_form in blade_formset.forms %}
+            <div class="form-row inline controls controls-row {{ blade_from.prefix }}">
                 {% crispy blade_form %}
                 {% if blade_form.instance.pk %}
                     <a href="{% url 'signage:blade_edit' pk=blade_form.instance.pk %}">{% trans "Edit" %}</a>
@@ -36,7 +36,7 @@
 
             $(".clearfix").removeClass("clearfix");
 
-            $('.form-row.inline.{{ blade_formset.prefix }}').formset({
+            $('.form-row.inline').formset({
                 prefix: '{{ blade_formset.prefix }}',
                 keepFieldValues: "[name='csrfmiddlewaretoken']",
                 addCssClass: 'btn btn-success add-row',

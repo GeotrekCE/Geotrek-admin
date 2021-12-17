@@ -154,7 +154,9 @@ class BladeViewsTest(CommonTest):
         self.login()
         signage = SignageFactory.create(name="ééé")
         blade = BladeFactory.create(signage=signage)
+        blade.lines.all().delete()
         LineFactory.create(blade=blade, number=3)
+        LineFactory.create(blade=blade, number=2)
         response = self.client.get(self.model.get_format_list_url() + '?format=csv')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Code,Type,Color,"
