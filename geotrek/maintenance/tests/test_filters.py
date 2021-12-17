@@ -45,8 +45,7 @@ class InterventionFilteringByBboxTest(TestCase):
 
 class InterventionZoningFilterTest(TestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.geom_1_wkt = 'SRID=2154;MULTIPOLYGON(((200000 300000, 900000 300000, 900000 1200000, 200000 1200000, ' \
                          '200000 300000)))'
         cls.geom_2_wkt = 'SRID=2154;MULTIPOLYGON(((1200000 300000, 1300000 300000, 1300000 1200000, 1200000 1200000, ' \
@@ -58,9 +57,6 @@ class InterventionZoningFilterTest(TestCase):
         cls.area = RestrictedAreaFactory.create(name='area_in', geom=cls.geom_1_wkt)
         cls.area_2 = RestrictedAreaFactory.create(name='area_out', geom=cls.geom_2_wkt)
         cls.area_type_3 = RestrictedAreaTypeFactory.create()
-
-    @classmethod
-    def setUpTestData(cls):
         if not settings.TREKKING_TOPOLOGY_ENABLED:
             seek_topo = TopologyFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
         else:
