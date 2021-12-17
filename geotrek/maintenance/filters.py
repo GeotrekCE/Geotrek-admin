@@ -9,8 +9,10 @@ from mapentity.filters import PolygonFilter, PythonPolygonFilter
 from geotrek.core.models import Topology
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import RightFilter
-from geotrek.zoning.filters import ZoningFilterSet
-from geotrek.zoning.models import City, District
+from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDistrict,
+                                    IntersectionFilterRestrictedArea, IntersectionFilterRestrictedAreaType,
+                                    ZoningFilterSet)
+from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
 
 from .models import Intervention, Project
 
@@ -71,6 +73,36 @@ class PolygonInterventionFilterMixin:
         return qs
 
 
+class InterventionIntersectionFilterRestrictedAreaType(PolygonInterventionFilterMixin,
+                                                       IntersectionFilterRestrictedAreaType):
+
+    def get_geom(self, value):
+        return value.geom
+
+    def filter(self, qs, values):
+        restricted_areas = RestrictedArea.objects.filter(area_type__in=values)
+        if not restricted_areas and values:
+            return qs.none()
+        return super().filter(qs, list(restricted_areas))
+
+
+class InterventionIntersectionFilterRestrictedArea(PolygonInterventionFilterMixin,
+                                                   IntersectionFilterRestrictedArea):
+    pass
+
+
+class InterventionIntersectionFilterCity(PolygonInterventionFilterMixin,
+                                         IntersectionFilterCity):
+    def get_geom(self, value):
+        return value.geom
+
+
+class InterventionIntersectionFilterDistrict(PolygonInterventionFilterMixin,
+                                             IntersectionFilterDistrict):
+    def get_geom(self, value):
+        return value.geom
+
+
 class PolygonTopologyFilter(PolygonInterventionFilterMixin, PolygonFilter):
     pass
 
@@ -99,6 +131,36 @@ class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFil
         return value.geom
 
 
+class ProjectIntersectionFilterRestrictedArea(PolygonInterventionFilterMixin, RightFilter):
+    model = RestrictedArea
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.lookup_expr = 'intersects'
+        self.lookup_queryset_in = 'interventions__in'
+
+    def get_geom(self, value):
+        return value.geom
+
+
+class ProjectIntersectionFilterRestrictedAreaType(PolygonInterventionFilterMixin, RightFilter):
+    model = RestrictedAreaType
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.lookup_expr = 'intersects'
+        self.lookup_queryset_in = 'interventions__in'
+
+    def filter(self, qs, values):
+        restricted_areas = RestrictedArea.objects.filter(area_type__in=values)
+        if not restricted_areas and values:
+            return qs.none()
+        return super().filter(qs, list(restricted_areas))
+
+    def get_geom(self, value):
+        return value.geom
+
+
 class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
@@ -111,6 +173,12 @@ class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     year = MultipleChoiceFilter(choices=Intervention.objects.year_choices(),
                                 field_name='date', lookup_expr='year', label=_("Year"))
     on = ChoiceFilter(field_name='target_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
+    area_type = InterventionIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False,
+                                                                 lookup_expr='intersects')
+    area = InterventionIntersectionFilterRestrictedArea(label=_('Restricted area'), required=False,
+                                                        lookup_expr='intersects')
+    city = InterventionIntersectionFilterCity(label=_('City'), required=False, lookup_expr='intersects')
+    district = InterventionIntersectionFilterDistrict(label=_('District'), required=False, lookup_expr='intersects')
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
@@ -127,6 +195,8 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     )
     city = ProjectIntersectionFilterCity(label=_('City'), required=False)
     district = ProjectIntersectionFilterDistrict(label=_('District'), required=False)
+    area_type = ProjectIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False)
+    area = ProjectIntersectionFilterRestrictedArea(label=_('Restricted area'), required=False)
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
