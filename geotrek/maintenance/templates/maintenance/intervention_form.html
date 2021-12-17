@@ -8,8 +8,8 @@
     
     <fieldset class="formset">
         {{ manday_formset.management_form }}
-        {% for manday_form in manday_formset %}
-            <div class="form-row inline controls controls-row {{ manday_formset.prefix }}">
+        {% for manday_form in manday_formset.forms %}
+            <div class="form-row inline controls controls-row {{ manday_from.prefix }}">
             {% if manday_form.instance.pk %} {{ manday_form.DELETE }} {% endif %}
             {% crispy manday_form %}
             </div>
@@ -35,7 +35,7 @@
             
             $(".clearfix").removeClass("clearfix");
             
-            $('.form-row.inline.{{ manday_formset.prefix }}').formset({
+            $('.form-row.inline').formset({
                 prefix: '{{ manday_formset.prefix }}',
                 keepFieldValues: "[name='csrfmiddlewaretoken']",
                 addCssClass: 'btn btn-success add-row',
