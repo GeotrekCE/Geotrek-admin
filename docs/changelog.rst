@@ -11,9 +11,9 @@ CHANGELOG
 
 **Minor improvements**
 
-- Show every paths in intervention's csv (#2711)
-- Hide signage/blade dropdown-toggle with settings `BLADE_ENABLED=False`
-- Remove urls blade with settings `BLADE_ENABLED=False`
+- Show every paths in intervention csv (#2711)
+- Hide signage/blade dropdown-toggle with settings ``BLADE_ENABLED=False`` (#2852)
+- Remove urls blade with settings ``BLADE_ENABLED=False`` (#2852)
 
 **Bug fixes**
 
@@ -44,11 +44,11 @@ CHANGELOG
 
 - Optimize Path caching in edition views (#2847)
 - Filter list views by Restricted Area as well as by Restricted Area Type (#2766)
-- Add `BLADE_ENABLED` setting to hide Blade in Signage forms and in Signage detail page (#2852)
-- Add `LINE_ENABLED` setting to hide Line in Blade forms and in Blade detail page (#2852)
-- Add `PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD` setting to enable resize attachments on upload (#2835)
-- Add `PAPERCLIP_MAX_ATTACHMENT_WIDTH` and `PAPERCLIP_MAX_ATTACHMENT_HEIGHT` to configure attachment resizing (defaults 1280px) (#2835)
-- Use `MAPENTITY_CONFIG` setting to configure map style on list and detail views (#2554)
+- Add ``BLADE_ENABLED`` setting to hide Blade in Signage forms and in Signage detail page (#2852)
+- Add ``LINE_ENABLED`` setting to hide Line in Blade forms and in Blade detail page (#2852)
+- Add ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` setting to enable resize attachments on upload (#2835)
+- Add ``PAPERCLIP_MAX_ATTACHMENT_WIDTH`` and ``PAPERCLIP_MAX_ATTACHMENT_HEIGHT`` to configure attachment resizing (defaults 1280px) (#2835)
+- Use ``MAPENTITY_CONFIG`` setting to configure map style on list and detail views (#2554)
 
 **User interface**
 
@@ -73,17 +73,17 @@ CHANGELOG
 
 **New features**
 
-- APIv2 : Add 'attachment' field to Touristic Event serialization
+- APIv2 : Add ``attachment`` field to Touristic Event serialization
 
 **Minor improvements**
 
-- Add possibility to fill 'code' Field in Signage model when using loadsignage command. Two parameters added : code_field and code_default
+- Add possibility to fill ``code`` field in Signage model when using ``loadsignage`` command. Two parameters added : ``code_field`` and ``code_default``
 
 **Bug fixes**
 
 - Prevent Signages and Infrastructures from being displayed on PDFs when unpublished
-- Database: fix sql cleanup that delete foreign key on core_pathaggregation.path_id -> core_path.id. (#2819)
-- Fix generation altimetry profile (dem.json)
+- Database: fix SQL cleanup that delete foreign key on ``core_pathaggregation.path_id`` -> ``core_path.id`` (#2819)
+- Fix generation altimetry profile (``dem.json``)
 
 
 2.71.0 (2021-11-03)
@@ -112,7 +112,7 @@ CHANGELOG
 
 **Breaking changes**
 
-- Geotrek now needs PostgreSQL extension 'pgrypto'.
+- Geotrek-admin now needs PostgreSQL extension 'pgrypto'.
 
 **WARNING!**
 
@@ -149,7 +149,7 @@ CHANGELOG
 
 **Breaking change**
 
-- APIv2 serialisation for Courses now exposes `sites` instead of `site`
+- APIv2 serialisation for Courses now exposes ``sites`` instead of ``site``
 
 **Bug fixes**
 
