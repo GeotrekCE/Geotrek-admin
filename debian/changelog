@@ -1,8 +1,8 @@
-geotrek-admin (2.74.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.74.1) RELEASED; urgency=medium
 
-  *
+  * New package release
 
- -- Timothee de Montety <timothee.de-montety@makina-corpus.com>  Fri, 17 Dec 2021 17:55:03 +0100
+ -- Jean-Etienne CASTAGNEDE <j.e.castagnede@gmail.com>  Tue, 21 Dec 2021 15:58:22 +0100
 
 geotrek-admin (2.74.0) RELEASED; urgency=medium
 
@@ -12,31 +12,31 @@ geotrek-admin (2.74.0) RELEASED; urgency=medium
 
 geotrek-admin (2.73.0) RELEASED; urgency=medium
 
-  * New package release 
+  * New package release
 
  -- Célia PRAT <celia.prat@makina-corpus.com>  Mon, 13 Dec 2021 17:40:31 +0100
 
 geotrek-admin (2.72.0) RELEASED; urgency=medium
 
-  * New package release 
+  * New package release
 
  -- Célia PRAT <celia.prat@makina-corpus.com>  Tue, 16 Nov 2021 16:42:50 +0100
 
 geotrek-admin (2.71.0) RELEASED; urgency=medium
 
-  * New package release 
+  * New package release
 
  -- Célia PRAT <celia.prat@makina-corpus.com>  Wed, 03 Nov 2021 19:05:02 +0100
 
 geotrek-admin (2.70.0) RELEASED; urgency=medium
 
-  * New package release 
+  * New package release
 
  -- Célia PRAT <celia.prat@makina-corpus.com>  Tue, 02 Nov 2021 16:39:18 +0100
 
 geotrek-admin (2.69.0) RELEASED; urgency=medium
 
-  * New package release 
+  * New package release
 
  -- Célia PRAT <celia.prat@makina-corpus.com>  Fri, 22 Oct 2021 11:58:46 +0200
 
@@ -54,7 +54,7 @@ geotrek-admin (2.68.0) RELEASED; urgency=medium
 
 geotrek-admin (2.67.0) RELEASED; urgency=medium
 
-  * New package release 
+  * New package release
 
  -- Célia PRAT <celia.prat@makina-corpus.com>  Tue, 12 Oct 2021 11:03:18 +0200
 
@@ -92,7 +92,7 @@ geotrek-admin (2.61.1) RELEASED; urgency=medium
 
   * New package release
 
- -- Jean-Etienne CASTAGNEDE <jean-etienne.castagnede+geotrek@makina-corpus.com>  Mon, 28 Jun 2021 19:45:01 +0200
+ -- Jean-Etienne CASTAGNEDE <j.e.castagnede@gmail.com>  Mon, 28 Jun 2021 19:45:01 +0200
 
 geotrek-admin (2.61.0) RELEASED; urgency=medium
 
