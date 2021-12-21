@@ -1,3 +1,9 @@
+geotrek-admin (2.74.1+dev) UNRELEASED; urgency=medium
+
+  *
+
+ -- Jean-Etienne CASTAGNEDE <j.e.castagnede@gmail.com>  Tue, 21 Dec 2021 16:04:11 +0100
+
 geotrek-admin (2.74.1) RELEASED; urgency=medium
 
   * New package release
