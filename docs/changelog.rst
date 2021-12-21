@@ -5,6 +5,9 @@ CHANGELOG
 2.73.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Suricate Workflow**
+- Add `assigned_user` field to Report model
+
 
 2.73.0 (2021-12-13)
 -----------------------

@@ -153,6 +153,9 @@ msgstr "Affecté"
 msgid "Intervention prévue"
 msgstr "Intervention prévue"
 
+msgid "Supervisor"
+msgstr "Responsable"
+
 msgid "Intervention terminée"
 msgstr "Intervention terminée"
 

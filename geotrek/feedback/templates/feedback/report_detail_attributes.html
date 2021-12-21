@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n mapentity_tags %}
+{% load i18n mapentity_tags feedback_tags %}
 
 
 {% block attributes %}
@@ -33,41 +33,46 @@
             <th>{{ report|verbose:"related_trek" }}</th>
             <td>{{ report.related_trek }}</td>
         </tr>
-        {% if suricate_enabled %}
-            <tr>
-                <th>{{ report|verbose:"created_in_suricate" }}</th>
-                <td>{{ report.created_in_suricate }}</td>
-            <tr>
-                <th>{{ report|verbose:"last_updated_in_suricate" }}</th>
-                <td>{{ report.last_updated_in_suricate }}</td>
-            </tr>
-            <tr>
-                <th>{{ report|verbose:"locked" }}</th>
-                <td>{{ report.locked }}</td>
-            </tr>
-            <tr>
-                <th>{{ report|verbose:"uid" }}</th>
-                <td>{{ report.uid }}</td>
-            </tr>
-            <tr>
-                <th>{% trans "Messages" %}</th>
-                <td>
-                    {% for msg in report.attachedmessage_set.all %}
-                        {% if forloop.first %}
-                        <table>
-                        <thead><th>{% trans "Text" %}</th><th>{% trans "Author" %}</th><th>{% trans "Date" %}</th></thead>
-                        <tbody>
-                        {% endif %}
-                        <tr><td>{{ msg.content }}</td><td>{{ msg.author }}</td><td>{{ msg.date }}</td></tr>
-                        {% if forloop.last %}
-                        </tbody>
-                        </table>
-                        {% endif %}
-                    {% empty %}
-                        <span class="none">{% trans "None" %}</span>
-                    {% endfor %}
-                </td>
-            </tr>
+        {% suricate_management_enabled as suricate_management_enabled %}
+        {% if suricate_management_enabled %}
+        <tr>
+            <th>{{ report|verbose:"assigned_user" }}</th>
+            <td>{{ report.assigned_user }}</td>
+        </tr>
+        <tr>
+            <th>{{ report|verbose:"created_in_suricate" }}</th>
+            <td>{{ report.created_in_suricate }}</td>
+        <tr>
+            <th>{{ report|verbose:"last_updated_in_suricate" }}</th>
+            <td>{{ report.last_updated_in_suricate }}</td>
+        </tr>
+        <tr>
+            <th>{{ report|verbose:"locked" }}</th>
+            <td>{{ report.locked }}</td>
+        </tr>
+        <tr>
+            <th>{{ report|verbose:"uid" }}</th>
+            <td>{{ report.uid }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Messages" %}</th>
+            <td>
+                {% for msg in report.attachedmessage_set.all %}
+                    {% if forloop.first %}
+                    <table>
+                    <thead><th>{% trans "Text" %}</th><th>{% trans "Author" %}</th><th>{% trans "Date" %}</th></thead>
+                    <tbody>
+                    {% endif %}
+                    <tr><td>{{ msg.content }}</td><td>{{ msg.author }}</td><td>{{ msg.date }}</td></tr>
+                    {% if forloop.last %}
+                    </tbody>
+                    </table>
+                    {% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
         {% endif %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

@@ -217,7 +217,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
-                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
             'loaders': [

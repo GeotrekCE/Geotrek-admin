@@ -2,18 +2,19 @@ import html
 import logging
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.db.models.query_utils import Q
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
+from mapentity.models import MapEntityMixin
 
-from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin, PicturesMixin,
-                                   TimeStampedModelMixin)
+from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
+                                   PicturesMixin, TimeStampedModelMixin)
 from geotrek.common.utils import intersecting
 from geotrek.maintenance.models import Intervention
 from geotrek.trekking.models import POI, Service, Trek
-from mapentity.models import MapEntityMixin
 
 from .helpers import SuricateMessenger, send_report_to_managers
 
@@ -85,7 +86,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         Trek,
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name=_("Related trek"),
     )
     created_in_suricate = models.DateTimeField(
@@ -102,6 +103,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     last_updated_in_suricate = models.DateTimeField(
         blank=True, null=True,
         verbose_name=_("Last updated in Suricate")
+    )
+    assigned_user = models.ForeignKey(
+        User,
+        blank=True,
+        on_delete=models.PROTECT,
+        null=True,
+        verbose_name=_("Supervisor"),
+        related_name="reports"
     )
 
     class Meta:

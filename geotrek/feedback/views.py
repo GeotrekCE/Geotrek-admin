@@ -51,7 +51,7 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     default_extra_columns = [
         'email', 'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'date_update',
+        'date_insert', 'date_update', 'assigned_user'
     ]
 
 
