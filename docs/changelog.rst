@@ -5,6 +5,14 @@ CHANGELOG
 2.74.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix blank line due to mapentity template error
+
+**Maintenance**
+
+- Update to mapentity 7.0.5
+
 
 2.74.0     (2021-12-17)
 -----------------------
