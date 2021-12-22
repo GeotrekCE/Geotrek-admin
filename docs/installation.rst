@@ -1,5 +1,5 @@
 ============
-INSTALLATION
+Installation
 ============
 
 Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Bionic 18.04 or Focal Fossa 20.04 LTS server for production.

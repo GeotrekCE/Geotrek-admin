@@ -1,7 +1,7 @@
 .. _design-section:
 
 ======
-DESIGN
+Design
 ======
 
 Architecture

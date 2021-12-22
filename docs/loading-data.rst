@@ -1,7 +1,7 @@
 .. _loading-data-section:
 
 ============
-LOADING DATA
+Loading data
 ============
 
 

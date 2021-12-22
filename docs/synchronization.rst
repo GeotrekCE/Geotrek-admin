@@ -1,7 +1,7 @@
 .. _synchronization-section:
 
 ===============
-SYNCHRONIZATION
+Synchronization
 ===============
 
 Manual synchronization

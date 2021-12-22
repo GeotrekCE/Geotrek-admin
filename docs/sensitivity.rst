@@ -1,7 +1,7 @@
 .. _sensitivity-section:
 
 ===========
-SENSITIVITY
+Sensitivity
 ===========
 
 
