@@ -22,15 +22,15 @@ Welcome to Geotrek's documentation!
     :caption: Installation & configuration
     :maxdepth: 2
 
-    installation
-    loading-data
-    configuration
-    advanced-configuration
-    maintenance
-    synchronization
-    import
-    docker
-    sensitivity
+    install/installation
+    install/loading-data
+    install/configuration
+    install/advanced-configuration
+    install/maintenance
+    install/synchronization
+    install/import
+    install/docker
+    install/sensitivity
 
 .. toctree::
     :caption: Contribute
