@@ -77,7 +77,7 @@ class ReportViewsTest(CommonTest):
             'comment': self.obj.comment,
             'related_trek': None,
             'email': self.obj.email,
-            'status': None,
+            'status': self.obj.status.pk,
             'problem_magnitude': self.obj.problem_magnitude.pk
         }
 
