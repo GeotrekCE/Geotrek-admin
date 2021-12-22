@@ -7,7 +7,7 @@ Design
 Architecture
 ------------
 
-.. image :: images/architecture-1.0.jpg
+.. image :: /images/architecture-1.0.jpg
     :width: 50%
 
 * **Geotrek-admin**, the web application
@@ -33,7 +33,7 @@ A generic application in charge of:
 
 For a Django model, we use the registry to activate all views and menus:
 
-.. image :: images/mapentity.jpg
+.. image :: /images/mapentity.jpg
     :width: 50%
 
 Business specific notions are implemented in Geotrek-admin respective applications:
