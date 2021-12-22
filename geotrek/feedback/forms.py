@@ -21,9 +21,6 @@ class ReportForm(CommonForm):
             "problem_magnitude",
             "related_trek",
             "status",
-            "locked",
-            "uid",
-            "origin",
             "assigned_user"
         )
     ]
@@ -38,26 +35,39 @@ class ReportForm(CommonForm):
             "problem_magnitude",
             "related_trek",
             "status",
-            "locked",
-            "uid",
-            "origin",
             "assigned_user"
         ]
         model = Report
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["geom"].required = True
         if settings.SURICATE_MANAGEMENT_ENABLED:
-            self.fields["assigned_user"].queryset = SelectableUser.objects.filter(userprofile__isnull=False)
-            self.old_status_id = None
-            self.fields["message"] = CharField(required=False)
-            self.fields["message"].widget = Textarea()
-            right_after_status_index = self.fieldslayout[0].fields.index('status') + 1
-            self.fieldslayout[0].insert(right_after_status_index, 'message')
             if self.instance.pk:
+                # Store current status
                 self.old_status_id = self.instance.status.suricate_id
+                # Hide fields that are handled automatically in Management mode
+                self.fields["geom"].widget = HiddenInput()
+                self.fields["email"].widget = HiddenInput()
+                self.fields["comment"].widget = HiddenInput()
+                self.fields["activity"].widget = HiddenInput()
+                self.fields["category"].widget = HiddenInput()
+                self.fields["problem_magnitude"].widget = HiddenInput()
+                # Add fields that are used in Management mode
+                # status
                 self.fields["status"].empty_label = None
                 self.fields["status"].queryset = self.instance.next_status()
+                # assigned_user
+                self.fields["assigned_user"].queryset = SelectableUser.objects.filter(userprofile__isnull=False)
+                # message
+                self.fields["message"] = CharField(required=False)
+                self.fields["message"].widget = Textarea()
+                right_after_status_index = self.fieldslayout[0].fields.index('status') + 1
+                self.fieldslayout[0].insert(right_after_status_index, 'message')
+            else:
+                self.old_status_id = None
+                self.fields["status"].widget = HiddenInput()
+                self.fields["assigned_user"].widget = HiddenInput()
         else:
             self.fields["assigned_user"].widget = HiddenInput()
 

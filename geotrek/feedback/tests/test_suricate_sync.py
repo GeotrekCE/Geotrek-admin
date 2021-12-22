@@ -1,30 +1,26 @@
-from geotrek.feedback.forms import ReportForm
-from geotrek.common.models import Attachment
-from mapentity.tests.factories import UserFactory
-import os
 import io
+import os
+import uuid
 from unittest import mock
 from unittest.mock import MagicMock
-import uuid
 
-from django.core.management import call_command
 from django.core import mail
+from django.core.management import call_command
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
-from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
+from mapentity.tests.factories import UserFactory
+
+from geotrek.common.models import Attachment
+from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
-from geotrek.feedback.models import (
-    AttachedMessage,
-    Report,
-    ReportActivity,
-    ReportProblemMagnitude,
-    ReportStatus,
-)
+from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
+                                     ReportProblemMagnitude, ReportStatus)
+from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 
 SURICATE_REPORT_SETTINGS = {
-    "URL": "http://suricate.example.com",
+    "URL": "http://suricate.example.com/",
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
@@ -32,7 +28,7 @@ SURICATE_REPORT_SETTINGS = {
 }
 
 SURICATE_MANAGEMENT_SETTINGS = {
-    "URL": "http://suricate.example.com",
+    "URL": "http://suricate.example.com/",
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
@@ -404,6 +400,7 @@ class SuricateWorkflowTests(SuricateTests):
         form = ReportForm(
             instance=self.report,
             data={
+                'geom': 'POINT(5.1 6.6)',
                 'email': self.report.email,
                 'status': self.classified.pk,
                 'message': "Problème déjà réglé"
@@ -423,6 +420,7 @@ class SuricateWorkflowTests(SuricateTests):
         form = ReportForm(
             instance=self.report,
             data={
+                'geom': 'POINT(5.1 6.6)',
                 'email': self.report.email,
                 'status': self.classified.pk,
                 'message': "Problème déjà réglé"
@@ -433,6 +431,66 @@ class SuricateWorkflowTests(SuricateTests):
         mocked_mail_sentinel.assert_not_called()
         mocked_notify_suricate_status.assert_not_called()
 
-# Todo
-# assert message in form only if management
-# assert all id possible in form if not management
+
+def raise_multiple(exceptions):
+    if not exceptions:  # list emptied, recursion ends
+        return
+    try:
+        raise exceptions.pop()  # pop removes list entries
+    finally:
+        raise_multiple(exceptions)  # recursion
+
+
+def test_for_all_suricate_modes(test_func):
+    def inner(self, *args, **kwargs):
+        exceptions = []
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'No Suricate' mode",)
+            exceptions.append(e)
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Report' mode",)
+            exceptions.append(e)
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Management' mode",)
+            exceptions.append(e)
+        raise_multiple(exceptions)
+    return inner
+
+
+def test_for_report_and_basic_modes(test_func):
+    def inner(self, *args, **kwargs):
+        exceptions = []
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'No Suricate' mode",)
+            exceptions.append(e)
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Report' mode",)
+            exceptions.append(e)
+        raise_multiple(exceptions)
+    return inner
+
+
+def test_for_management_mode(test_func):
+    def inner(self, *args, **kwargs):
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Management' mode",)
+            raise
+    return inner

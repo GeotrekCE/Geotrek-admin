@@ -19,7 +19,6 @@ from geotrek.trekking.models import POI, Service, Trek
 from .helpers import SuricateMessenger, send_report_to_managers
 
 logger = logging.getLogger(__name__)
-suricate_messenger = SuricateMessenger()
 
 # This dict stores status order in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
@@ -169,14 +168,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         """Save method for Suricate Report mode"""
         if self.pk is None:  # New report should alert managers AND be sent to Suricate
             self.try_send_report_to_managers()
-            suricate_messenger.post_report(self)
+            SuricateMessenger().post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_management_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
             if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
-                suricate_messenger.post_report(self)
+                SuricateMessenger().post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
         else:  # This is an update
@@ -185,8 +184,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def send_notifications_on_status_change(self, old_status_id, message):
         if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and NOTIFY_SURICATE_AND_SENTINEL[old_status_id] == self.status.suricate_id:
-            suricate_messenger.update_status(self.uid, self.status.suricate_id, message)
-            suricate_messenger.message_sentinel(self.uid, message)
+            SuricateMessenger().update_status(self.uid, self.status.suricate_id, message)
+            SuricateMessenger().message_sentinel(self.uid, message)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:

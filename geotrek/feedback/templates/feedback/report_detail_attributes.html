@@ -55,6 +55,10 @@
             <td>{{ report.uid }}</td>
         </tr>
         <tr>
+            <th>{{ report|verbose:"origin" }}</th>
+            <td>{{ report.origin }}</td>
+        </tr>
+        <tr>
             <th>{% trans "Messages" %}</th>
             <td>
                 {% for msg in report.attachedmessage_set.all %}
