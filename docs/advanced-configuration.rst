@@ -1,7 +1,7 @@
 .. _advanced-configuration-section:
 
 ======================
-ADVANCED CONFIGURATION
+Advanced configuration
 ======================
 
 Custom setting file
@@ -775,7 +775,7 @@ Please refer to the "settings detail" section for a complete list of modules and
 
 
 ================
-SETTINGS DETAILS
+Settings details
 ================
 
 Basic settings

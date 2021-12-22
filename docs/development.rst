@@ -1,7 +1,7 @@
 .. _development-section:
 
 ===========
-DEVELOPMENT
+Development
 ===========
 
 Quickstart

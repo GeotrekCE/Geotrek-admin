@@ -1,7 +1,7 @@
 .. _docker-section:
 
 ======
-DOCKER
+Docker
 ======
 
 Docker is an alternative installation method, recommended for experts only.
