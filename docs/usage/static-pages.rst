@@ -65,11 +65,11 @@ Ajouter du contenu dans un bloc
 En cliquant dans la zone de texte, une barre d'édition apparaît. Sur un format classique comme dans les logiciels de traitement texte, plusieurs menus et outils sont alors disponibles :
 
 * File : (fichier)
-* Edit : retour, copier-coller, 
+* Edit : retour, copier-coller,
 * Insert : Insérer une image, un lien, des caractères spéciaux
 
 .. image :: /images/user-manual/flatpages-wysiwyg.jpg
-	
+
 Insérer une image : cela ouvre une nouvelle fenêtre avec différents champs à remplir :
 
 * Source : insérer l'URL de l'image (idéalement dans le répertoire /custom/public/images/ de votre Geotrek-rando)
@@ -82,7 +82,7 @@ Insérer un lien : cela ouvre une nouvelle fenêtre avec différents champs à 
 * Title : texte à afficher pour le lien
 * Target : « New window » si vous souhaitez que le lien s'ouvre dans un nouvel onglet
 
-- View : « Show blocks » permet de faire apparaître les différents paragraphes de votre texte. Elles sont utiles à la structure de votre texte. 
+- View : « Show blocks » permet de faire apparaître les différents paragraphes de votre texte. Elles sont utiles à la structure de votre texte.
 - Format : gras, italique, souligner, etc. Le sous-menu « Formats » permet de choisir un style prédéfini pour les titres (Heading 1, Heading 2, etc.). Pour que le style s'applique uniquement au titre et non pas à tout le texte, faire un retour à la ligne et vérifier sa prise en compte en activant « Shox blocks ».
 - Table : insertion de tableau
 - Tools : Afficher le code source de la page
@@ -90,6 +90,6 @@ Insérer un lien : cela ouvre une nouvelle fenêtre avec différents champs à 
 Astuces
 =======
 
-1. Ne jamais utiliser la touche retour du clavier [ ? ] sans avoir le curseur sélectionné dans une zone de texte. Cela équivaut à revenir à la page précédente et vous perdrez tout votre contenu sans le sauvegarder. 
+1. Ne jamais utiliser la touche retour du clavier [ ? ] sans avoir le curseur sélectionné dans une zone de texte. Cela équivaut à revenir à la page précédente et vous perdrez tout votre contenu sans le sauvegarder.
 2. Pour reproduire une page dans une langue différente : copier le Code Source et coller-le Code Source de votre nouvelle langue. Nous n'aurez plus qu'à traduire votre texte ! Idem pour traduire un contenu dans une autre langue.
 3. Si deux de vos pages ont le même numéro d'ordre d'apparition, une seule des deux sera affichée sur la plate-forme numérique.

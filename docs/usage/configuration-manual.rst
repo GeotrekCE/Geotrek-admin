@@ -1,5 +1,5 @@
 =====================
-Administration manual
+Configuration manual
 =====================
 
 *Coming soon*

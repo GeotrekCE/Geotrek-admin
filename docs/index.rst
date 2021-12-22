@@ -13,7 +13,7 @@ Welcome to Geotrek's documentation!
     usage/management-modules.rst
     usage/promotion-modules.rst
     usage/static-pages.rst
-    usage/administrator-manual.rst
+    usage/configuration-manual.rst
     usage/externals-apis.rst
     faq.rst
 
