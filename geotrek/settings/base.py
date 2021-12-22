@@ -28,7 +28,7 @@ def api_bbox(bbox, buffer):
 
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VAR_DIR = '/opt/geotrek-admin/var'
+VAR_DIR = os.getenv('VAR_DIR', '/opt/geotrek-admin/var')
 TMP_DIR = os.path.join(VAR_DIR, 'tmp')
 
 DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
@@ -124,7 +124,7 @@ LANGUAGES = (
 )
 LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'fr')
 
-MODELTRANSLATION_LANGUAGES = os.getenv('LANGUAGES', 'fr en').split(' ')
+MODELTRANSLATION_LANGUAGES = tuple(os.getenv('LANGUAGES', 'fr en').split(' '))
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
 LOCALE_PATHS = (
@@ -217,6 +217,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
+                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
             'loaders': [
@@ -361,6 +362,7 @@ API_SRID = 4326
 
 # SRID displayed for the user (screens / pdf ...)
 DISPLAY_SRID = 3857
+DISPLAY_COORDS_AS_DECIMALS = False
 
 # Extent in native projection (France area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
@@ -405,7 +407,8 @@ MAPENTITY_CONFIG = {
             'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
                      'arrowColor': 'black', 'arrowSize': 10},
         }
-    }
+    },
+    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg)$'
 }
 
 MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
@@ -445,7 +448,7 @@ LEAFLET_CONFIG = {
     'PLUGINS': {
         'geotrek': {'js': ['core/leaflet.lineextremities.js',
                            'core/leaflet.textpath.js',
-                           'trekking/points_reference.js',
+                           'common/points_reference.js',
                            'trekking/parking_location.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
@@ -544,10 +547,14 @@ TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENA
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
+MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)
+REPORT_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
 
 TREK_POINTS_OF_REFERENCE_ENABLED = True
+OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
 TREK_EXPORT_POI_LIST_LIMIT = 14
 TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
 
@@ -592,8 +599,8 @@ HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
 TOURISTIC_CONTENTS_API_ORDER = ()
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3')
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3', 'bootstrap4')
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Mobile app_directories
 MOBILE_TILES_URL = [
@@ -608,6 +615,7 @@ MOBILE_TILES_HIGH_ZOOMS = list(range(15, 17))
 MOBILE_CATEGORY_PICTO_SIZE = 32
 MOBILE_POI_PICTO_SIZE = 32
 MOBILE_INFORMATIONDESKTYPE_PICTO_SIZE = 32
+MOBILE_NUMBER_PICTURES_SYNC = 3
 MOBILE_LENGTH_INTERVALS = [
     {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
     {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
@@ -646,7 +654,8 @@ TREK_WITH_POIS_PICTURES = False
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'APIS_SORTER': 'alpha',
-    'JSON_EDITOR': True
+    'JSON_EDITOR': True,
+    'API_V2_DESCRIPTION': "New Geotrek API"
 }
 
 API_IS_PUBLIC = True
@@ -731,8 +740,10 @@ LOGGING = {
     }
 }
 
+BLADE_ENABLED = True
 BLADE_CODE_TYPE = int
 BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+LINE_ENABLED = True
 LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 LINE_DISTANCE_FORMAT = "{:0.1f} km"
 LINE_TIME_FORMAT = "{hours}h{minutes:02d}"
@@ -746,6 +757,9 @@ THUMBNAIL_COPYRIGHT_FORMAT = ""
 # You can also add legend
 
 THUMBNAIL_COPYRIGHT_SIZE = 15
+PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
+PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = False
 
 ENABLED_MOBILE_FILTERS = [
     'practice',
@@ -768,7 +782,16 @@ SEND_REPORT_ACK = True
 
 SURICATE_REPORT_ENABLED = False
 
+SURICATE_MANAGEMENT_ENABLED = False
+
 SURICATE_REPORT_SETTINGS = {
+    'URL': '',
+    'ID_ORIGIN': '',
+    'PRIVATE_KEY_CLIENT_SERVER': '',
+    'PRIVATE_KEY_SERVER_CLIENT': '',
+}
+
+SURICATE_MANAGEMENT_SETTINGS = {
     'URL': '',
     'ID_ORIGIN': '',
     'PRIVATE_KEY_CLIENT_SERVER': '',
@@ -783,6 +806,9 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
+HIDDEN_FORM_FIELDS = {}
+COLUMNS_LISTS = {}
+ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
@@ -805,3 +831,9 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 USE_X_FORWARDED_HOST = False
+HIDDEN_FORM_FIELDS['report'] = {
+    "status",
+    "locked",
+    "uid",
+    "origin"
+}

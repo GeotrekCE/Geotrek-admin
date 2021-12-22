@@ -26,7 +26,7 @@ class SyncMobileRedirect(RedirectView):
         url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
                                          host=self.request.get_host())
         self.job = launch_sync_mobile.delay(url=url)
-        return super(SyncMobileRedirect, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
 
 @login_required

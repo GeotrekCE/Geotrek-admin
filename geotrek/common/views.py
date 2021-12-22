@@ -1,3 +1,4 @@
+from geotrek.feedback.parsers import SuricateParser
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -40,17 +41,17 @@ from .permissions import PublicOrReadPermMixin
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
 from .tasks import import_datas, import_datas_from_web
-from .forms import ImportDatasetForm, ImportDatasetFormWithFile, SyncRandoForm
+from .forms import ImportDatasetForm, ImportSuricateForm, ImportDatasetFormWithFile, SyncRandoForm
 from .models import Theme
 from .serializers import ThemeSerializer
 from .tasks import launch_sync_rando
 
 
-class MetaMixin(object):
+class MetaMixin:
     def get_context_data(self, **kwargs):
         lang = self.request.GET.get('lang')
         portal = self.request.GET.get('portal')
-        context = super(MetaMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
         context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
         context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
@@ -77,7 +78,7 @@ class Meta(MetaMixin, TemplateView):
     def get_context_data(self, **kwargs):
         lang = self.request.GET.get('lang')
         portal = self.request.GET.get('portal')
-        context = super(Meta, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         translation.activate(lang)
         context['META_DESCRIPTION'] = _('Geotrek is a web app allowing you to prepare your next trekking trip !')
         translation.deactivate()
@@ -111,7 +112,7 @@ class Meta(MetaMixin, TemplateView):
         return context
 
 
-class FormsetMixin(object):
+class FormsetMixin:
     context_name = None
     formset_class = None
 
@@ -120,7 +121,7 @@ class FormsetMixin(object):
         formset_form = context[self.context_name]
 
         if formset_form.is_valid():
-            response = super(FormsetMixin, self).form_valid(form)
+            response = super().form_valid(form)
             formset_form.instance = self.object
             formset_form.save()
         else:
@@ -128,7 +129,7 @@ class FormsetMixin(object):
         return response
 
     def get_context_data(self, **kwargs):
-        context = super(FormsetMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if self.request.POST:
             try:
                 context[self.context_name] = self.formset_class(
@@ -141,7 +142,7 @@ class FormsetMixin(object):
         return context
 
 
-class DocumentPublicMixin(object):
+class DocumentPublicMixin:
     template_name_suffix = "_public"
 
     # Override view_permission_required
@@ -156,7 +157,7 @@ class DocumentPublicMixin(object):
             file_type = None
         attachments = Attachment.objects.attachments_for_object_only_type(obj, file_type)
         if not attachments and not settings.ONLY_EXTERNAL_PUBLIC_PDF:
-            return super(DocumentPublicMixin, self).get(request, pk, slug, lang)
+            return super().get(request, pk, slug, lang)
         if not attachments:
             return HttpResponseNotFound("No attached file with 'Topoguide' type.")
         path = attachments[0].attachment_file.name
@@ -171,13 +172,13 @@ class DocumentPublicMixin(object):
         return response
 
     def get_context_data(self, **kwargs):
-        context = super(DocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         modelname = self.get_model()._meta.object_name.lower()
         context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         return context
 
 
-class BookletMixin(object):
+class BookletMixin:
 
     def get(self, request, pk, slug, lang=None):
         response = super().get(request, pk, slug)
@@ -210,10 +211,10 @@ class JSSettings(mapentity_views.JSSettings):
     """
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(JSSettings, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self):
-        dictsettings = super(JSSettings, self).get_context_data()
+        dictsettings = super().get_context_data()
         # Add extra stuff (edition, labelling)
         dictsettings['map'].update(
             snap_distance=settings.SNAP_DISTANCE,
@@ -264,10 +265,10 @@ def admin_check_extents(request):
     return render(request, 'common/check_extents.html', context)
 
 
-class UserArgMixin(object):
+class UserArgMixin:
 
     def get_form_kwargs(self):
-        kwargs = super(UserArgMixin, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
@@ -295,10 +296,12 @@ def import_view(request):
     render_dict = {}
 
     choices, choices_url, classes = discover_available_parsers(request.user)
+    choices_suricate = [("everything", _("Reports"))]
 
     form = ImportDatasetFormWithFile(choices, prefix="with-file")
     form_without_file = ImportDatasetForm(
         choices_url, prefix="without-file")
+    form_suricate = ImportSuricateForm(choices_suricate)
 
     if request.method == 'POST':
         if 'upload-file' in request.POST:
@@ -324,11 +327,21 @@ def import_view(request):
                     name=parser.__name__, module=parser.__module__, user=request.user.pk
                 )
 
+        if 'import-suricate' in request.POST:
+            form_suricate = ImportSuricateForm(choices_suricate, request.POST)
+            if form_suricate.is_valid() and settings.SURICATE_MANAGEMENT_ENABLED:
+                parser = SuricateParser()
+                parser.get_statuses()
+                parser.get_activities()
+                parser.get_alerts(verbosity=1)
+
     # Hide second form if parser has no web based imports.
     if choices:
         render_dict['form'] = form
     if choices_url:
         render_dict['form_without_file'] = form_without_file
+    if settings.SURICATE_MANAGEMENT_ENABLED:
+        render_dict['form_suricate'] = form_suricate
 
     return render(request, 'common/import_dataset.html', render_dict)
 
@@ -383,8 +396,7 @@ class ThemeViewSet(viewsets.ModelViewSet):
     serializer_class = ThemeSerializer
 
     def get_queryset(self):
-        qs = super(ThemeViewSet, self).get_queryset()
-        return qs.order_by('id')
+        return super().get_queryset().order_by('id')
 
 
 class ParametersView(View):
@@ -476,7 +488,7 @@ class SyncRandoRedirect(RedirectView):
         url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
                                          host=self.request.get_host())
         self.job = launch_sync_rando.delay(url=url)
-        return super(SyncRandoRedirect, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
 
 home = last_list

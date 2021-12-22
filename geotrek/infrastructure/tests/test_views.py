@@ -4,14 +4,14 @@ from django.conf import settings
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory
-from geotrek.maintenance.factories import InterventionFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory
+from geotrek.maintenance.tests.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureCondition, INFRASTRUCTURE_TYPES)
-from geotrek.core.factories import PathFactory
-from geotrek.infrastructure.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
-                                              InfrastructureTypeFactory, InfrastructureConditionFactory,
-                                              PointInfrastructureFactory)
+from geotrek.core.tests.factories import PathFactory
+from geotrek.infrastructure.tests.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
+                                                    InfrastructureTypeFactory, InfrastructureConditionFactory,
+                                                    PointInfrastructureFactory)
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 
 
@@ -87,7 +87,7 @@ class InfrastructureViewsTest(CommonTest):
 
     def test_no_pictogram(self):
         self.modelfactory = InfrastructureNoPictogramFactory
-        super(InfrastructureViewsTest, self).test_api_detail_for_model()
+        super().test_api_detail_for_model()
 
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):

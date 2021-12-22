@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from geotrek.authent.factories import UserFactory
-from geotrek.trekking.factories import TrekFactory
+from geotrek.authent.tests.factories import UserFactory
+from geotrek.trekking.tests.factories import TrekFactory
 
 
 class ProfileViewsTest(TestCase):

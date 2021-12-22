@@ -1,16 +1,16 @@
 from django.conf import settings
 from django.test import TestCase
 
-from geotrek.core.factories import PathFactory
+from geotrek.core.tests.factories import PathFactory
 from geotrek.core.filters import PathFilterSet
-from geotrek.trekking.factories import TrekFactory
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
+from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 
 class ZoningFilterTest(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(ZoningFilterTest, cls).setUpClass()
+        super().setUpClass()
         cls.geom_1_wkt = 'SRID=2154;MULTIPOLYGON(((200000 300000, 900000 300000, 900000 1200000, 200000 1200000, ' \
                          '200000 300000)))'
         cls.geom_2_wkt = 'SRID=2154;MULTIPOLYGON(((1200000 300000, 1300000 300000, 1300000 1200000, 1200000 1200000, ' \

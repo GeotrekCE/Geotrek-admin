@@ -9,9 +9,10 @@
     <fieldset class="formset">
         {{ line_formset.non_form_errors }}
         {{ line_formset.management_form }}
-        {% for line_form in line_formset %}
-            <div class="form-row inline controls controls-row {{ line_formset.prefix }}">
-                {% crispy line_form %}
+        {% for line_form in line_formset.forms %}
+            <div class="form-row inline controls controls-row {{ line_form.prefix }}">
+            {% if line_form.instance.pk %}{{ line_form.DELETE }}{% endif %}
+            {% crispy line_form %}
             </div>
         {% endfor %}
     </fieldset>
@@ -34,7 +35,7 @@
             // TODO: do this with crispyforms !
             $("fieldset.formset").detach().appendTo('#mainform fieldset');
 
-            $('.form-row.inline.{{ line_formset.prefix }}').formset({
+            $('.form-row.inline').formset({
                 prefix: '{{ line_formset.prefix }}',
                 keepFieldValues: "[name='csrfmiddlewaretoken']",
                 addCssClass: 'btn btn-primary add-row',

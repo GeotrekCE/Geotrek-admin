@@ -5,15 +5,15 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from geotrek.common.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory
-from geotrek.flatpages.factories import FlatPageFactory
+from geotrek.common.tests.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory
 from geotrek.flatpages.helpers_sync import SyncRando
 
 
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.flatpage = FlatPageFactory.create(published=True, title="test-0")
         cls.source = RecordSourceFactory()
 

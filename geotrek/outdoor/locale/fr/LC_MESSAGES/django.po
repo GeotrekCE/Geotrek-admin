@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-18 07:43+0000\n"
+"POT-Creation-Date: 2021-04-28 06:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,33 @@ msgstr "Outdoor"
 
 msgid "Sector"
 msgstr "Filière"
+
+msgid "Manager"
+msgstr "Gestionnaire"
+
+msgid "Orientation"
+msgstr "Orientation"
+
+msgid "Wind"
+msgstr "Vent"
+
+msgid "Children"
+msgstr "Enfants"
+
+msgid "Select children in order"
+msgstr "Selectionnez les enfants dans l'ordre"
+
+msgid "Hidden ordered children"
+msgstr "Enfants ordonnés cachés"
+
+msgid "Cannot add children because this course is itself a child."
+msgstr ""
+"Impossible d'ajouter des enfants car ce parcours est lui-même un enfant."
+
+#, python-brace-format
+msgid "Cannot use parent course {name} as a child course."
+msgstr ""
+"Impossible d'utiliser le parcours parent {name} comme itinéraire enfant."
 
 msgid "Name"
 msgstr "Nom"
@@ -95,6 +122,30 @@ msgstr "← O"
 msgid "↖ NW"
 msgstr "↖ NO"
 
+msgid "↓ N"
+msgstr "↓ N"
+
+msgid "↙ NE"
+msgstr "↙ NE"
+
+msgid "← E"
+msgstr "← E"
+
+msgid "↖ SE"
+msgstr "↖ SE"
+
+msgid "↑ S"
+msgstr "↑ S"
+
+msgid "↗ SW"
+msgstr "↗ SO"
+
+msgid "→ W"
+msgstr "→ O"
+
+msgid "↘ NW"
+msgstr "↘ NO"
+
 msgid "Location"
 msgstr "Emplacement"
 
@@ -124,12 +175,6 @@ msgstr "Risques, danger, meilleure période, ..."
 
 msgid "Period"
 msgstr "Période"
-
-msgid "Orientation"
-msgstr "Orientation"
-
-msgid "Wind"
-msgstr "Vent"
 
 msgid "Labels"
 msgstr "Étiquettes"
@@ -164,6 +209,9 @@ msgstr "Type"
 msgid "External id"
 msgstr "ID externe"
 
+msgid "Managers"
+msgstr "Gestionnaires"
+
 msgid "Outdoor site"
 msgstr "Site outdoor"
 
@@ -182,6 +230,9 @@ msgstr "Itinéraires"
 msgid "POIs"
 msgstr "POI"
 
+msgid "Services"
+msgstr "Services"
+
 msgid "Trails"
 msgstr "Sentiers"
 
@@ -197,8 +248,17 @@ msgstr "Contenus touristiques"
 msgid "Touristic events"
 msgstr "Événements touristiques"
 
+msgid "Interventions"
+msgstr "Interventions"
+
 msgid "Site"
 msgstr "Site"
+
+msgid "Equipment"
+msgstr "Équipement"
+
+msgid "Height"
+msgstr "Hauteur"
 
 msgid "Outdoor course"
 msgstr "Parcours outdoor"
@@ -212,11 +272,32 @@ msgstr "Ajouter un nouveau parcours outdoor"
 msgid "Courses"
 msgstr "Parcours"
 
+msgid "Tree view"
+msgstr "Vue arborescente"
+
+msgid "Add a course"
+msgstr "Ajouter un parcours outdoor"
+
 msgid "Attributes"
 msgstr "Informations"
 
 msgid "None"
 msgstr "Aucun(e)"
+
+msgid "Itinerancy"
+msgstr "Itinérance"
+
+msgid "Child of:"
+msgstr "Enfant de :"
+
+msgid "Parent of:"
+msgstr "Parent de :"
+
+msgid "No result"
+msgstr "Pas de résultat"
+
+msgid "Choose value(s)"
+msgstr "Choisir une ou des valeur(s)"
 
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
@@ -233,14 +314,35 @@ msgstr "Situation géographique"
 msgid "All useful information"
 msgstr "Toutes les infos pratiques"
 
+msgid "Add a child site"
+msgstr "Ajouter site enfant"
+
+msgid "Add a brother site"
+msgstr "Ajouter un site frère"
+
 msgid "Parents"
 msgstr "Parents"
-
-msgid "Children"
-msgstr "Enfants"
 
 msgid "Practical info"
 msgstr "Informations pratiques"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
+
+msgid "Ratings description"
+msgstr "Description des cotations"
+
+msgid "Gear"
+msgstr "Matériel"
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "Course type"
+msgstr "Type de parcours"
+
+msgid "Course types"
+msgstr "Types de parcours"

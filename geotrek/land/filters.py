@@ -4,7 +4,7 @@ from mapentity.filters import MapEntityFilterSet
 
 from geotrek.common.models import Organism
 
-from geotrek.core.filters import TopologyFilter, PathFilterSet, TrailFilterSet
+from geotrek.core.filters import TopologyFilter, PathFilterSet, TrailFilterSet, ValidTopologyFilterSet
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
@@ -17,19 +17,19 @@ from .models import (
 )
 
 
-class PhysicalEdgeFilterSet(MapEntityFilterSet):
+class PhysicalEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = PhysicalEdge
         fields = ['physical_type']
 
 
-class LandEdgeFilterSet(MapEntityFilterSet):
+class LandEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
         fields = ['land_type', 'owner', 'agreement']
 
 
-class OrganismFilterSet(MapEntityFilterSet):
+class OrganismFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         fields = ['organization']
 
@@ -93,11 +93,11 @@ class TopologyFilterWorkManagementEdge(TopologyFilter):
 
 def add_edge_filters(filter_set):
     filter_set.add_filters({
-        'physical_type': TopologyFilterPhysicalType(label=_('Physical type'), required=False),
-        'land_type': TopologyFilterLandType(label=_('Land type'), required=False),
-        'competence': TopologyFilterCompetenceEdge(label=_('Competence'), required=False),
-        'signage': TopologyFilterSignageManagementEdge(label=_('Signage management'), required=False),
-        'work': TopologyFilterWorkManagementEdge(label=_('Work management'), required=False),
+        'land_type': TopologyFilterLandType(label=_('Land edge'), required=False),
+        'physical_type': TopologyFilterPhysicalType(label=_('Physical edge'), required=False),
+        'competence': TopologyFilterCompetenceEdge(label=_('Competence edge'), required=False),
+        'signage': TopologyFilterSignageManagementEdge(label=_('Signage management edge'), required=False),
+        'work': TopologyFilterWorkManagementEdge(label=_('Work management edge'), required=False),
     })
 
 

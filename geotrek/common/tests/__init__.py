@@ -12,18 +12,18 @@ from django.conf import settings
 # Workaround https://code.djangoproject.com/ticket/22865
 from geotrek.common.models import FileType  # NOQA
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.registry import app_settings
 from mapentity.tests import MapEntityTest, MapEntityLiveTest
 
-from geotrek.authent.factories import StructureFactory
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
 
 
-class TranslationResetMixin(object):
+class TranslationResetMixin:
     def setUp(self):
         translation.deactivate()
-        super(TranslationResetMixin, self).setUp()
+        super().setUp()
 
 
 class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):

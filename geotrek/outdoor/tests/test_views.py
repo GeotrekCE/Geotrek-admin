@@ -1,8 +1,13 @@
-from django.test import TestCase
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
-from geotrek.outdoor.factories import SiteFactory, CourseFactory
-from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
 from unittest import mock
+
+from django.contrib.gis.geos.collections import MultiPoint
+from django.contrib.gis.geos.point import Point
+from django.test import TestCase
+from django.test.utils import override_settings
+
+from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
+from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
+from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
 
 
 class SiteCustomViewTests(TestCase):
@@ -19,6 +24,7 @@ class SiteCustomViewTests(TestCase):
         SiteFactory.create(name='site1', published=False)
         SiteFactory.create(name='site2', published=True)
         site3 = SiteFactory.create(name='site3', published=True)
+
         site3.source.add(RecordSourceFactory.create(name='source1'))
         site3.portal.add(TargetPortalFactory.create(name='portal1'))
 
@@ -53,8 +59,8 @@ class CourseCustomViewTests(TestCase):
         CourseFactory.create(name='course1', published=False)
         CourseFactory.create(name='course2', published=True)
         course3 = CourseFactory.create(name='course3', published=True)
-        course3.site.source.add(RecordSourceFactory.create(name='source1'))
-        course3.site.portal.add(TargetPortalFactory.create(name='portal1'))
+        course3.parent_sites.first().source.add(RecordSourceFactory.create(name='source1'))
+        course3.parent_sites.first().portal.add(TargetPortalFactory.create(name='portal1'))
 
         response1 = self.client.get('/api/en/courses.json')
         self.assertEqual(len(response1.json()), 2)
@@ -71,3 +77,12 @@ class CourseCustomViewTests(TestCase):
         response4 = self.client.get('/api/en/courses.json?portal=portalX')
         self.assertEqual(len(response4.json()), 1)
         self.assertEqual(response4.json()[0]['name'], 'course2')
+
+    @override_settings(API_SRID=2154)
+    def test_serialize_ref_points(self):
+        CourseFactory.create(name='course_with_ref_points', published=True, points_reference=MultiPoint(Point(12, 12)))
+        response = self.client.get('/api/en/courses.json')
+        self.assertEqual(len(response.json()), 1)
+        self.assertEqual(response.json()[0]['name'], 'course_with_ref_points')
+        data = "{'type': 'MultiPoint', 'coordinates': [[12.0, 12.0]]}"
+        self.assertEqual(str(response.json()[0]['points_reference']), data)

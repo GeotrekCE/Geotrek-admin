@@ -37,7 +37,7 @@
       </header>
       <div class="gray">
         {% if object.practice.pictogram %}
-          <div class="main-icon category-S{{ object.practice.pk }}">
+          <div class="main-icon category-S{{ object.practice.pk }}" {% block picto_attr %}{% endblock picto_attr %}>
             <img src="file://{{ object.practice.pictogram.path }}" alt="">
           </div>
         {% endif %}
@@ -50,10 +50,10 @@
         </div>
         <hr>
         {% if object.picture_print %}
-          <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+          <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div>
+          <div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
           {% if object.picture_print.legend or object.picture_print.author %}
             <legend>
-              {% trans "Attribution" %} :
               {{ object.picture_print.legend }}
               {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
             </legend>
@@ -73,12 +73,30 @@
         <div class="meta-items">
           <div class="meta-items-title">{% trans "Useful information" %}</div>
           <section class="meta-items-list">
+            {% if object.practice.sector %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Sector" %}</span>
+                <span class="meta-item-value">{{ object.practice.sector }}</span>
+              </span>
+            {% endif %}
             {% if object.practice %}
               <span class="meta-item">
                 <span class="meta-item-label">{% trans "Practice" %}</span>
                 <span class="meta-item-value">{{ object.practice }}</span>
               </span>
             {% endif %}
+            {% if object.type %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Type" %}</span>
+                <span class="meta-item-value">{{ object.type }}</span>
+              </span>
+            {% endif %}
+            {% for rating in object.ratings.all%}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans rating.scale.name %}</span>
+                <span class="meta-item-value">{% trans rating.name %}</span>
+              </span>
+            {% endfor %}
             <div class="lists">
               {% if object.themes.all %}
                 <span class="meta-item">

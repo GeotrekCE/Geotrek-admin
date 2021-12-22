@@ -6,13 +6,13 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 
-from geotrek.common.factories import AttachmentFactory, ThemeFactory
+from geotrek.common.tests.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.models import Attachment, FileType, Theme
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.models import DifficultyLevel, POI, Trek
-from geotrek.trekking.factories import DifficultyLevelFactory, POIFactory, TrekFactory
+from geotrek.trekking.tests.factories import DifficultyLevelFactory, POIFactory, TrekFactory
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 
 @override_settings(MEDIA_ROOT='/tmp/mapentity-media')

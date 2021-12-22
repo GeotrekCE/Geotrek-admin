@@ -4,15 +4,15 @@ from django.conf import settings
 from unittest import skipIf
 
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
 from geotrek.maintenance.models import Intervention
-from geotrek.maintenance.factories import (InterventionFactory,
-                                           InfrastructureInterventionFactory,
-                                           InfrastructurePointInterventionFactory,
-                                           SignageInterventionFactory,
-                                           ProjectFactory, ManDayFactory)
-from geotrek.core.factories import PathFactory, TopologyFactory, StakeFactory
+from geotrek.maintenance.tests.factories import (InterventionFactory,
+                                                 InfrastructureInterventionFactory,
+                                                 InfrastructurePointInterventionFactory,
+                                                 SignageInterventionFactory,
+                                                 ProjectFactory, ManDayFactory)
+from geotrek.core.tests.factories import PathFactory, TopologyFactory, StakeFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -198,3 +198,12 @@ class InterventionTest(TestCase):
         self.assertIn('signage-16.png', interv.target_display)
         name = interv.target.name
         self.assertIn(name, interv.target_display)
+
+    def test_total_cost(self):
+        interv = InfrastructureInterventionFactory.create(
+            material_cost=1,
+            heliport_cost=2,
+            subcontract_cost=4
+            # implicit 1 manday x 500 €
+        )
+        self.assertEqual(interv.total_cost, 507)

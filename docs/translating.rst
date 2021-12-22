@@ -3,7 +3,7 @@ TRANSLATING
 ============
 
 Geotrek-admin can be translated online on
-`Makina Corpus Weblate instance<https://weblate.makina-corpus.net/projects/geotrek-admin/>`_
+`Makina Corpus Weblate instance <https://weblate.makina-corpus.net/projects/geotrek-admin/>`_
 
 Getting started
 ---------------

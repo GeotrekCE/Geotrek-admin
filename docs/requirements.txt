@@ -1,4 +1,4 @@
-Sphinx
+# set versions because rtd don't use --upgrade and use old versions on geotrek repo
+sphinx-rtd-theme>=1.0.0
+sphinx>=4.0.0
 sphinx-autobuild
-sphinx-intl
-sphinx-rtd-theme

@@ -47,6 +47,8 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.outdoor.urls')))
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.trekking.urls')))
+    if 'geotrek.cirkwi' in settings.INSTALLED_APPS:
+        urlpatterns.append(path('', include('geotrek.cirkwi.urls')))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.diving.urls')))
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
@@ -66,10 +68,9 @@ urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG or settings.TEST:
-    try:
+    if 'debug_toolbar' in settings.INSTALLED_APPS:
+        # Debug toolbar is enabled in dev settings
         import debug_toolbar
-        urlpatterns = [
+        urlpatterns += [
             path('__debug__/', include(debug_toolbar.urls)),
-        ] + urlpatterns
-    except ImportError:
-        pass
+        ]

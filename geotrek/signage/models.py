@@ -48,7 +48,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
         return self.label
 
     def get_pictogram_url(self):
-        pictogram_url = super(SignageType, self).get_pictogram_url()
+        pictogram_url = super().get_pictogram_url()
         if pictogram_url:
             return pictogram_url
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
@@ -70,7 +70,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.CASCADE)
     sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
-    type = models.ForeignKey(SignageType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.CASCADE)
     coordinates_verbose_name = _("Coordinates")
 
     class Meta:
@@ -118,6 +118,20 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     @property
     def lng_value(self):
         return self.geomtransform.y
+
+    def distance(self, to_cls):
+        """Distance to associate this signage to another class"""
+        return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for trek in self.treks.all():
+            trek.save()
+
+    def delete(self, *args, **kwargs):
+        for trek in self.treks.all():
+            trek.save()
+        super().delete(*args, **kwargs)
 
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
@@ -270,6 +284,10 @@ class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     @property
     def coordinates(self):
         return format_coordinates(self.geom)
+
+    def distance(self, to_cls):
+        """Distance to associate this blade to another class"""
+        return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
 
 
 class Line(models.Model):

@@ -1,0 +1,8 @@
+{
+    "code_ok": "false",
+    "message": "Intégrité des données non validée !",
+    "error": {
+        "message": "Erreur inconnue",
+        "code": 400
+    }
+}

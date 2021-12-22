@@ -139,9 +139,6 @@ msgstr "Types de contenu touristique"
 msgid "Touristic event types"
 msgstr "Types d'événements touristiques"
 
-msgid "Launch Sync"
-msgstr "Lancer la synchro mobile"
-
 msgid "Sync verifications"
 msgstr "Vérification de la synchronisation"
 
@@ -266,8 +263,20 @@ msgstr ""
 "Filtrer par l'id d'un itinéraire. Le filtre n'affichera que les contenus "
 "touristiques liés à cet itinéraire."
 
+msgid "Filter by a trek id. It will show only the sensitive areas related to this trek."
+msgstr "Filtrer par l'id d'un itinéraire. Le filtre n'affichera que les zones sensibles liées à cet itinéraire."
+
 msgid "Categories"
 msgstr "Catégories"
+
+msgid "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
+msgstr "Filtrer par l'id d'un site outdoor. Le filtre n'affichera que les contenus liés à ce site outdoor."
+
+msgid "Filter by a touristic event id. It will only show the contents related to this touristic event."
+msgstr "Filtrer par l'id d'un évènement touristique. Le filtre n'affichera que les contenus liés à cet évènement touristique."
+
+msgid "Filter by a touristic content id. It will only show the contents related to this touristic content."
+msgstr "Filtrer par l'id d'un contenu touristique. Le filtre n'affichera que les contenus liés à cet contenu touristique."
 
 msgid "Filter by one or more category id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de catégorie, séparés par des virgules."
@@ -283,6 +292,9 @@ msgstr "Filtrer par un ou plusieurs id de secteur, séparés par des virgules."
 
 msgid "Filter by one or more themes id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de thème, séparés par des virgules."
+
+msgid "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
+msgstr "Filtrer par l'id d'un parcours outdoor. Le filtre n'affichera que les contenus liés à ce parcours outdoor."
 
 msgid "Portals"
 msgstr "Portails"
@@ -395,3 +407,18 @@ msgstr ""
 
 msgid "External ID"
 msgstr "ID externe"
+
+msgid "Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate."
+msgstr "Ne retourner que les sites qui sont au sommet de la hiérarchie des sites et n'ont pas de parent. Activable par n'importe quelle chaîne de charactères."
+
+msgid "Root sites only"
+msgstr "Sites racine seulement"
+
+msgid "Filter by one or more ratings id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules."
+
+msgid "Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does."
+msgstr "Filtrer par un ou plusieurs id de pratique, séparés par des virgules. Retourne les sites qui ont ces pratiques OU des sites enfants avec ces pratiques."
+
+msgid "Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does."
+msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules. Retourne les sites qui ont ces cotations OU des sites enfants avec ces cotations."

@@ -5,15 +5,15 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.infrastructure.helpers_sync import SyncRando
-from geotrek.common.factories import FakeSyncCommand
+from geotrek.common.tests.factories import FakeSyncCommand
 
 
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.signage = InfrastructureFactory.create(published=True)
 
     @patch('sys.stdout', new_callable=StringIO)

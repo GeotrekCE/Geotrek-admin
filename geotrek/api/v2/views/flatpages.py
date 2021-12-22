@@ -4,6 +4,9 @@ from geotrek.flatpages import models as flatpages_models
 
 
 class FlatPageViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.FlatPageFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.FlatPageFilter,
+        api_filters.UpdateOrCreateDateFilter
+    )
     serializer_class = api_serializers.FlatPageSerializer
     queryset = flatpages_models.FlatPage.objects.order_by('order', 'pk')  # Required for reliable pagination

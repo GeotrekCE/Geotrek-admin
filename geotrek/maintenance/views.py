@@ -1,13 +1,18 @@
+
 import logging
 
+from django.conf import settings
+from django.db.models import Subquery, OuterRef, Sum
+from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.altimetry.models import AltimetryMixin
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
-from .models import Intervention, Project
+from .models import Intervention, Project, ManDay
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
@@ -25,10 +30,11 @@ class InterventionLayer(MapEntityLayer):
     properties = ['name']
 
 
-class InterventionList(MapEntityList):
+class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
-    columns = ['id', 'name', 'date', 'type', 'target', 'status', 'stake']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -36,10 +42,64 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
-    columns = [
-        'id', 'name', 'date', 'type', 'target', 'status', 'stake',
+
+    def build_cost_column_name(cls, job_name):
+        return f"{_('Cost')} {job_name}"
+
+    def get_queryset(self):
+        """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
+
+        queryset = Intervention.objects.existing()
+
+        if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
+
+            # Get all jobs that are used in interventions, as unique names, ids and costs
+            all_mandays = ManDay.objects.all()
+            jobs_used_in_interventions = list(
+                set(all_mandays.values_list("job__job", "job_id", "job__cost"))
+            )
+
+            # Iter over unique jobs
+            for job_name, job_id, job_cost in jobs_used_in_interventions:
+
+                # Create column name for current job cost
+                column_name = self.build_cost_column_name(job_name)
+
+                # Create subquery to retrieve total cost of mandays for a given intervention and a given job
+                mandays_query = (
+                    ManDay.objects.filter(intervention=OuterRef("pk"), job_id=job_id)  # Extract all mandays for a given intervention and a given job
+                    .values("job_id")  # Group by job
+                    .annotate(total_days=Sum("nb_days"))  # Select number of days worked
+                    .values("total_days")  # Rename result as total_days
+                )
+
+                # Use total_days and job cost to calculate total cost for a given intervention and a given job
+                job_cost_query = Subquery(mandays_query) * Value(job_cost)
+
+                # Annotate queryset with this cost query
+                params = {column_name: job_cost_query}
+                queryset = queryset.annotate(**params)
+
+        return queryset
+
+    def get_mandatory_columns(cls):
+        mandatory_columns = ['id']
+        if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
+            all_mandays = ManDay.objects.all()  # Used to find all jobs that ARE USED in interventions
+            # Get all jobs that are used in interventions, as unique names
+            jobs_as_names = list(
+                set(all_mandays.values_list("job__job", flat=True))
+            )
+            # Create column names for each unique job cost
+            cost_column_names = list(map(cls.build_cost_column_name, jobs_as_names))
+            # Add these column names to export
+            mandatory_columns = mandatory_columns + cost_column_names
+        return mandatory_columns
+
+    default_extra_columns = [
+        'name', 'date', 'type', 'target', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
-        'width', 'height', 'length', 'area', 'structure',
+        'width', 'height', 'area', 'structure',
         'description', 'date_insert', 'date_update',
         'material_cost', 'heliport_cost', 'subcontract_cost',
         'total_cost_mandays', 'total_cost',
@@ -51,7 +111,7 @@ class InterventionDetail(MapEntityDetail):
     queryset = Intervention.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(InterventionDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -84,7 +144,7 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
 
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InterventionUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InterventionDelete(MapEntityDelete):
@@ -92,7 +152,7 @@ class InterventionDelete(MapEntityDelete):
 
     @same_structure_required('maintenance:intervention_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InterventionDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InterventionViewSet(MapEntityViewSet):
@@ -113,13 +173,14 @@ class ProjectLayer(MapEntityLayer):
 
     def get_queryset(self):
         nonemptyqs = Intervention.objects.existing().filter(project__isnull=False).values('project')
-        return super(ProjectLayer, self).get_queryset().filter(pk__in=nonemptyqs)
+        return super().get_queryset().filter(pk__in=nonemptyqs)
 
 
-class ProjectList(MapEntityList):
+class ProjectList(CustomColumnsMixin, MapEntityList):
     queryset = Project.objects.existing()
     filterform = ProjectFilterSet
-    columns = ['id', 'name', 'period', 'type', 'domain']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['period', 'type', 'domain']
 
 
 class ProjectJsonList(MapEntityJsonList, ProjectList):
@@ -127,8 +188,9 @@ class ProjectJsonList(MapEntityJsonList, ProjectList):
 
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
-    columns = [
-        'id', 'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
         'interventions', 'interventions_total_cost', 'comments', 'contractors',
         'project_owner', 'project_manager', 'founders',
         'date_insert', 'date_update',
@@ -140,7 +202,7 @@ class ProjectDetail(MapEntityDetail):
     queryset = Project.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProjectDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         context['empty_map_message'] = _("No intervention related.")
         return context
@@ -166,7 +228,7 @@ class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
 
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ProjectUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectDelete(MapEntityDelete):
@@ -174,7 +236,7 @@ class ProjectDelete(MapEntityDelete):
 
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ProjectDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ProjectViewSet(MapEntityViewSet):

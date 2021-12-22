@@ -1,29 +1,29 @@
-import os
 import logging
-
-from django.conf import settings
-from django.contrib.gis.db import models
-from django.utils.translation import gettext_lazy as _
-from django.utils.formats import date_format
+import os
+import uuid
 
 from colorfield.fields import ColorField
+from django.conf import settings
+from django.contrib.gis.db import models
+from django.db.models.query_utils import Q
+from django.utils.formats import date_format
+from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text
+from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Topology
-from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
-                                   PictogramMixin, OptionalPictogramMixin,
-                                   PublishableMixin, PicturesMixin,
-                                   AddPropertyMixin)
-from geotrek.common.models import Theme, ReservationSystem
+from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
+                                   OptionalPictogramMixin, PictogramMixin,
+                                   PicturesMixin, PublishableMixin,
+                                   TimeStampedModelMixin)
+from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.utils import intersecting
+from geotrek.core.models import Topology
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-
-from extended_choices import Choices
+from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.manager import MultilingualManager
@@ -158,8 +158,54 @@ class TouristicContentCategory(PictogramMixin):
         return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
-class TouristicContentType(OptionalPictogramMixin):
+class TouristicContentTypeFilteringManager(MultilingualManager):
+    def has_content_published_not_deleted_in_list(self, list_index, category=None, portals=None, language=None):
+        """ Retrieves content types for which there exists an event that is published and not deleted in list (type1 or type2)
+        """
+        i = list_index
+        q_total = Q()
+        qs = super().get_queryset().filter(in_list=i)
+        # Building following logic :
+        # return type1 if:
+        #            (contents1__portal__in==portals)
+        #          & (contents1__category==category)
+        #          & (contents1_published_fr | contents1_published_en)
+        #          & not(contents1_deleted)
+        #
+        # q_total  =      q_portal
+        #               & q_category
+        #               & q_lang
+        #               & q_deleted
 
+        q_portal = Q()
+        if portals:
+            portal_field_name = f"contents{i}__portal__in"
+            q_portal = Q(**{portal_field_name: portals})
+
+        q_category = Q()
+        if category:
+            category_field_name = f"contents{i}__category"
+            q_category = Q(**{category_field_name: category})
+
+        if language:
+            published_field_name = f"contents{i}__published_{language}"
+            q_lang = Q(**{published_field_name: True})
+        else:
+            q_lang = Q()
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                published_field_name = f"contents{i}__published_{lang}"
+                q_lang |= Q(**{published_field_name: True})
+
+        deleted_field_name = f"contents{i}__deleted"
+        q_deleted = Q(**{deleted_field_name: False})
+
+        q_total = q_portal & q_category & q_lang & q_deleted
+
+        return qs.filter(q_total).distinct()
+
+
+class TouristicContentType(OptionalPictogramMixin):
+    objects = TouristicContentTypeFilteringManager()
     label = models.CharField(verbose_name=_("Label"), max_length=128)
     category = models.ForeignKey(TouristicContentCategory, related_name='types', on_delete=models.CASCADE,
                                  verbose_name=_("Category"))
@@ -177,12 +223,12 @@ class TouristicContentType(OptionalPictogramMixin):
 
 class TouristicContentType1Manager(MultilingualManager):
     def get_queryset(self):
-        return super(TouristicContentType1Manager, self).get_queryset().filter(in_list=1)
+        return super().get_queryset().filter(in_list=1)
 
 
 class TouristicContentType2Manager(MultilingualManager):
     def get_queryset(self):
-        return super(TouristicContentType2Manager, self).get_queryset().filter(in_list=2)
+        return super().get_queryset().filter(in_list=2)
 
 
 class TouristicContentType1(TouristicContentType):
@@ -190,7 +236,7 @@ class TouristicContentType1(TouristicContentType):
 
     def __init__(self, *args, **kwargs):
         self._meta.get_field('in_list').default = 1
-        super(TouristicContentType1, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     class Meta:
         proxy = True
@@ -203,7 +249,7 @@ class TouristicContentType2(TouristicContentType):
 
     def __init__(self, *args, **kwargs):
         self._meta.get_field('in_list').default = 2
-        super(TouristicContentType2, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     class Meta:
         proxy = True
@@ -251,6 +297,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     class Meta:
         verbose_name = _("Touristic content")
@@ -358,6 +405,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     id_prefix = 'E'
 

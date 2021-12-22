@@ -5,13 +5,13 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.signage.models import Signage, Blade
-from geotrek.core.factories import PathFactory
-from geotrek.signage.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
-                                       SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                       InfrastructureConditionFactory, LineFactory)
+from geotrek.core.tests.factories import PathFactory
+from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
+                                             SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
+                                             InfrastructureConditionFactory, LineFactory)
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.infrastructure.tests.test_views import InfraFilterTestMixin
 
@@ -154,7 +154,9 @@ class BladeViewsTest(CommonTest):
         self.login()
         signage = SignageFactory.create(name="ééé")
         blade = BladeFactory.create(signage=signage)
+        blade.lines.all().delete()
         LineFactory.create(blade=blade, number=3)
+        LineFactory.create(blade=blade, number=2)
         response = self.client.get(self.model.get_format_list_url() + '?format=csv')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Code,Type,Color,"

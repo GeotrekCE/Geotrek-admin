@@ -9,7 +9,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from mapentity.factories import UserFactory, SuperUserFactory
+from mapentity.tests.factories import UserFactory, SuperUserFactory
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import launch_sync_rando
 

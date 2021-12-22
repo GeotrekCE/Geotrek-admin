@@ -10,7 +10,7 @@
 {% endblock toolbar %}
 
 {% block mainpanel %}
-<div id="import-forms" class="span3 offset2">
+<div id="import-forms" class="col-12 col-sm-3">
 	{% block mainform %}
 	{% if form %}
 		{% crispy form form.helper %}
@@ -23,12 +23,15 @@
 	{% if form_without_file %}
 		{% crispy form_without_file form_without_file.helper%}
 	{% endif %}
-	{% if not form and not form_without_file %}
+	{% if form_suricate %}
+		{% crispy form_suricate form_suricate.helper%}
+	{% endif %}
+	{% if not form and not form_without_file and not form_suricate %}
 		<p>{% trans "No parser available." %}</p>
 	{% endif %}
 	{% endblock mainform %}
 </div>
-<div id="progress-bars" class="span5">
+<div id="progress-bars" class="col-12 col-sm-5">
 </div>
 
 <script id="import-template" type="text/template">

@@ -5,15 +5,15 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from geotrek.common.factories import FakeSyncCommand
-from geotrek.signage.factories import SignageFactory
+from geotrek.common.tests.factories import FakeSyncCommand
+from geotrek.signage.tests.factories import SignageFactory
 from geotrek.signage.helpers_sync import SyncRando
 
 
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.signage = SignageFactory.create(published=True)
 
     @patch('sys.stdout', new_callable=StringIO)

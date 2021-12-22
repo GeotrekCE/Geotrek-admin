@@ -1,3 +1,4 @@
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
@@ -8,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
@@ -19,6 +20,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.api.v2.functions import Length
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
@@ -31,8 +33,7 @@ from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
-from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
-                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer,
+from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer,
                           TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
@@ -40,7 +41,7 @@ from geotrek.infrastructure.serializers import InfrastructureGeojsonSerializer
 from geotrek.signage.serializers import SignageGeojsonSerializer
 
 
-class FlattenPicturesMixin(object):
+class FlattenPicturesMixin:
     def get_queryset(self):
         """ Override queryset to avoid attachment lookup while serializing.
         It will fetch attachments, and force ``pictures`` attribute of instances.
@@ -59,10 +60,11 @@ class TrekLayer(MapEntityLayer):
     queryset = Trek.objects.existing()
 
 
-class TrekList(FlattenPicturesMixin, MapEntityList):
+class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = TrekFilterSet
-    columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
     queryset = Trek.objects.existing()
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -70,8 +72,9 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
+    mandatory_columns = ['id']
     columns = [
-        'id', 'eid', 'eid2', 'structure', 'name', 'departure', 'arrival', 'duration',
+        'eid', 'eid2', 'structure', 'name', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty', 'information_desks',
         'themes', 'practice', 'accessibilities', 'access', 'route',
@@ -123,10 +126,10 @@ class TrekDetail(MapEntityDetail):
         if lang:
             translation.activate(lang)
             self.request.LANGUAGE_CODE = lang
-        return super(TrekDetail, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(TrekDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         context['labels'] = Label.objects.all()
         return context
@@ -140,18 +143,18 @@ class TrekMapImage(MapEntityMapImage):
         if lang:
             translation.activate(lang)
             self.request.LANGUAGE_CODE = lang
-        return super(TrekMapImage, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TrekDocument(MapEntityDocument):
     queryset = Trek.objects.existing()
 
 
-class TrekDocumentPublicMixin(object):
+class TrekDocumentPublicMixin:
     queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TrekDocumentPublicMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         trek = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['trek']
@@ -192,7 +195,7 @@ class TrekDocumentPublicMixin(object):
         trek = self.get_object()
         language = self.request.LANGUAGE_CODE
         trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-        return super(TrekDocumentPublicMixin, self).render_to_response(context, **response_kwargs)
+        return super().render_to_response(context, **response_kwargs)
 
 
 class TrekDocumentPublic(TrekDocumentPublicMixin, DocumentPublic):
@@ -223,7 +226,7 @@ class TrekUpdate(TrekRelationshipFormsetMixin, MapEntityUpdate):
 
     @same_structure_required('trekking:trek_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TrekUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TrekDelete(MapEntityDelete):
@@ -231,7 +234,7 @@ class TrekDelete(MapEntityDelete):
 
     @same_structure_required('trekking:trek_detail')
     def dispatch(self, *args, **kwargs):
-        return super(TrekDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class TrekMeta(MetaMixin, DetailView):
@@ -244,11 +247,12 @@ class POILayer(MapEntityLayer):
     properties = ['name', 'published']
 
 
-class POIList(FlattenPicturesMixin, MapEntityList):
+class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     model = POI
-    filterform = POIFilterSet
-    columns = ['id', 'name', 'type', 'thumbnail']
     queryset = model.objects.existing()
+    filterform = POIFilterSet
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['type', 'thumbnail']
 
 
 class POIJsonList(MapEntityJsonList, POIList):
@@ -256,14 +260,13 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 
 class POIFormatList(MapEntityFormat, POIList):
-    columns = [
+    mandatory_columns = ['id']
+    default_extra_columns = [
         'id', 'structure', 'eid', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas'
     ] + AltimetryMixin.COLUMNS
-
-    set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -299,7 +302,7 @@ class POIDetail(MapEntityDetail):
     queryset = POI.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(POIDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -319,7 +322,7 @@ class POIUpdate(MapEntityUpdate):
 
     @same_structure_required('trekking:poi_detail')
     def dispatch(self, *args, **kwargs):
-        return super(POIUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class POIDelete(MapEntityDelete):
@@ -327,7 +330,7 @@ class POIDelete(MapEntityDelete):
 
     @same_structure_required('trekking:poi_detail')
     def dispatch(self, *args, **kwargs):
-        return super(POIDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class WebLinkCreatePopup(CreateView):
@@ -336,7 +339,7 @@ class WebLinkCreatePopup(CreateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(WebLinkCreatePopup, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save()
@@ -430,9 +433,10 @@ class ServiceLayer(MapEntityLayer):
     queryset = Service.objects.existing()
 
 
-class ServiceList(MapEntityList):
+class ServiceList(CustomColumnsMixin, MapEntityList):
     filterform = ServiceFilterSet
-    columns = ['id', 'name']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = []
     queryset = Service.objects.existing()
 
 
@@ -441,7 +445,8 @@ class ServiceJsonList(MapEntityJsonList, ServiceList):
 
 
 class ServiceFormatList(MapEntityFormat, ServiceList):
-    columns = [
+    mandatory_columns = ['id']
+    default_extra_columns = [
         'id', 'eid', 'type'
     ] + AltimetryMixin.COLUMNS
 
@@ -450,7 +455,7 @@ class ServiceDetail(MapEntityDetail):
     queryset = Service.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ServiceDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -466,7 +471,7 @@ class ServiceUpdate(MapEntityUpdate):
 
     @same_structure_required('trekking:service_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ServiceUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ServiceDelete(MapEntityDelete):
@@ -474,7 +479,7 @@ class ServiceDelete(MapEntityDelete):
 
     @same_structure_required('trekking:service_detail')
     def dispatch(self, *args, **kwargs):
-        return super(ServiceDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class ServiceViewSet(MapEntityViewSet):
@@ -498,38 +503,6 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
         if not self.request.user.has_perm('trekking.read_service') and not trek.is_public():
             raise Http404
         return trek.services.filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
-class CirkwiTrekView(ListView):
-    model = Trek
-
-    def get_queryset(self):
-        qs = Trek.objects.existing()
-        qs = qs.filter(published=True)
-        return qs
-
-    def get(self, request):
-        response = HttpResponse(content_type='application/xml')
-        serializer = CirkwiTrekSerializer(request, response, request.GET)
-        treks = self.get_queryset()
-        serializer.serialize(treks)
-        return response
-
-
-class CirkwiPOIView(ListView):
-    model = POI
-
-    def get_queryset(self):
-        qs = POI.objects.existing()
-        qs = qs.filter(published=True)
-        return qs
-
-    def get(self, request):
-        response = HttpResponse(content_type='application/xml')
-        serializer = CirkwiPOISerializer(request, response)
-        pois = self.get_queryset()
-        serializer.serialize(pois)
-        return response
 
 
 # Translations for public PDF

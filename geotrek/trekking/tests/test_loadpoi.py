@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management import call_command
 from django.test import TestCase
-from geotrek.core.factories import PathFactory
+from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.management.commands.loadpoi import Command
 from geotrek.trekking.models import POI
 

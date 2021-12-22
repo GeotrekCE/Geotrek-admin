@@ -1,9 +1,10 @@
 describe('Login from home page / admin page', () => {
+
   it('Redirects to login page.', () => {
     cy.visit('/')
     cy.url().should('include', '/login/?next=/')
     cy.get('form')
-    cy.contains("Username:")
+    cy.contains("Username")
     cy.get('[name="username"]')
     })
 
@@ -36,7 +37,7 @@ describe('Login from home page / admin page', () => {
     cy.visit('/admin')
     cy.url().should('include', '/login/?next=/')
     cy.get('form')
-    cy.contains("Username:")
+    cy.contains("Username")
     cy.get('[name="username"]')
   })
 

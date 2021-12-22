@@ -13,7 +13,7 @@ from django.core.management.base import CommandError
 from django.test.utils import override_settings
 from django.template.exceptions import TemplateDoesNotExist
 
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import (
@@ -256,7 +256,7 @@ class TourInSoftParserTests(TestCase):
 
             def __init__(self):
                 self.model = Trek
-                super(TestTourParser, self).__init__()
+                super().__init__()
 
         parser = TestTourParser()
         result = parser.filter_attachments('', 'a||b||c##||||##d||e||f')
@@ -266,7 +266,7 @@ class TourInSoftParserTests(TestCase):
         class TestTourParser(TourInSoftParser):
             def __init__(self):
                 self.model = Trek
-                super(TestTourParser, self).__init__()
+                super().__init__()
 
         parser = TestTourParser()
         with self.assertRaises(ValueImportError):
@@ -288,7 +288,7 @@ class TourismSystemParserTest(TestCase):
                 self.filetype = FileType.objects.create(type="Photographie")
                 self.login = "test"
                 self.password = "test"
-                super(TourismSystemParser, self).__init__()
+                super().__init__()
 
         def side_effect():
             response = Response()
@@ -315,7 +315,7 @@ class OpenSystemParserTest(TestCase):
                 self.filetype = FileType.objects.create(type="Photographie")
                 self.login = "test"
                 self.password = "test"
-                super(OpenSystemParser, self).__init__()
+                super().__init__()
 
         def side_effect():
             response = Response()

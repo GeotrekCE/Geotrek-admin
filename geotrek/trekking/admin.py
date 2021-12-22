@@ -105,7 +105,7 @@ class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
                 old=self.oldid, new=obj.pk)
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
-        return super(DifficultyLevelAdmin, self).response_change(request, obj)
+        return super().response_change(request, obj)
 
 
 class WebLinkAdmin(MergeActionMixin, TranslationAdmin):

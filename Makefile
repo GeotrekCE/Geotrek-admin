@@ -44,19 +44,19 @@ css:
 
 %.pdf:
 	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "$*_.*"
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "$*_.*" --password=geotrek -s "public"
 	dot geotrekdb.dot -T pdf -o docs/data-model/$@
 	rm geotrekdb.dot
 
 authent.pdf:
 	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "auth(ent)?_.*"
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "auth(ent)?_.*" --password=geotrek -s "public"
 	dot geotrekdb.dot -T pdf -o docs/data-model/authent.pdf
 	rm geotrekdb.dot
 
 global.pdf:
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot --password=geotrek -s "public"
 	dot geotrekdb.dot -T pdf -o docs/data-model/global.pdf
 	rm geotrekdb.dot
 
-uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf
+uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf outdoor.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf

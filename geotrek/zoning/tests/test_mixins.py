@@ -1,15 +1,15 @@
 from django.conf import settings
 from django.test import TestCase
 
-from geotrek.core.factories import PathFactory
-from geotrek.trekking.factories import TrekFactory
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory
 
 
 class ZoningPropertiesMixinTest(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(ZoningPropertiesMixinTest, cls).setUpClass()
+        super().setUpClass()
         cls.geom_1_wkt = 'SRID=2154;MULTIPOLYGON(((200000 300000, 900000 300000, 900000 1200000, 200000 1200000, ' \
                          '200000 300000)))'
         cls.geom_2_wkt = 'SRID=2154;MULTIPOLYGON(((900000 300000, 1100000 300000, 1100000 1200000, 900000 1200000, ' \

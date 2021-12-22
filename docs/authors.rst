@@ -21,6 +21,7 @@ Makina Corpus
 * Timothée de Montety
 * Bastien Potiron
 * Emmanuelle Helly
+* Célia Prat
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
@@ -36,6 +37,7 @@ Others
 * Michaël Viadere
 * Guillaume Boitel
 * Jean Lenormand
+* Claude Paroz
 
 Credits
 -------

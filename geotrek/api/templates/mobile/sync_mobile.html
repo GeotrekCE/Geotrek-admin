@@ -6,16 +6,16 @@
 {% block extrahead %}
 	<script type="text/javascript">
 		function enable_sync_button() {
-			$('#submit-id-sync-web').attr('disabled', false);
-			$('#submit-id-sync-web').val('{% trans "Launch Sync" %}');
+			$('#button-id-sync-web').attr('disabled', false);
+			$('#button-id-sync-web').val('{% trans "Launch Sync Mobile" %}');
 		}
 
 		function disable_sync_button(init) {
-			$('#submit-id-sync-web').attr('disabled', true);
+			$('#button-id-sync-web').attr('disabled', true);
 			if (init==true){
-				$('#submit-id-sync-web').val('{% trans "Sync verifications" %}');
+				$('#button-id-sync-web').val('{% trans "Sync verifications" %}');
 			} else {
-				$('#submit-id-sync-web').val('{% trans "Sync in progress" %}');
+				$('#button-id-sync-web').val('{% trans "Sync in progress" %}');
 			}
 		}
 
@@ -69,7 +69,7 @@
 			disable_sync_button(true);
 			get_sync_infos();
 
-			$('#btn-confirm').click(function(evt) {
+			$('#btn-confirm')[0].addEventListener('click', function(evt) {
 				$("#progress-value").css("width", '0%');
 				$("#progress-text").text('');
 				$("#progress-value").parent().addClass("active");
@@ -81,7 +81,8 @@
 			        $('#form-sync').serialize()
 		        );
 
-			    $('#confirm-submit').modal('toggle');
+				$('#confirm-submit').modal('toggle');
+				disable_sync_button(true);
 			});
 
 			window.setInterval(function(){
@@ -97,7 +98,7 @@
 
 {% block mainpanel %}
 
-	<div id="sync-div" class="span3 offset2">
+	<div id="sync-div" class="col-12 col-sm-3">
 	    <h3>{% trans "Mobile sync" %}</h3>
 		<div class="progress progress-striped active">
 		  <div id="progress-value" class="bar" style="width: 0%;"></div>

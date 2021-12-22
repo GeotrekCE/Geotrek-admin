@@ -6,6 +6,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.core.models import AltimetryMixin
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.core.views import CreateFromTopologyMixin
 
 from .filters import InfrastructureFilterSet
@@ -22,10 +23,11 @@ class InfrastructureLayer(MapEntityLayer):
     properties = ['name', 'published']
 
 
-class InfrastructureList(MapEntityList):
+class InfrastructureList(CustomColumnsMixin, MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilterSet
-    columns = ['id', 'name', 'type', 'condition', 'cities']
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = ['type', 'condition', 'cities']
 
 
 class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
@@ -33,10 +35,11 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
-    columns = [
+    mandatory_columns = ['id']
+    default_extra_columns = [
         'id', 'name', 'type', 'condition', 'description',
         'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
-        'date_update', 'cities', 'districts', 'areas',
+        'date_update', 'cities', 'districts', 'areas', 'usage_difficulty', 'maintenance_difficulty'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -44,7 +47,7 @@ class InfrastructureDetail(MapEntityDetail):
     queryset = Infrastructure.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(InfrastructureDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
@@ -64,7 +67,7 @@ class InfrastructureUpdate(MapEntityUpdate):
 
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InfrastructureUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InfrastructureDelete(MapEntityDelete):
@@ -72,7 +75,7 @@ class InfrastructureDelete(MapEntityDelete):
 
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
-        return super(InfrastructureDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class InfrastructureViewSet(MapEntityViewSet):

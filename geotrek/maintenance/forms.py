@@ -1,27 +1,29 @@
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 from django.forms import FloatField
 from django.utils.translation import gettext_lazy as _
 from django.forms.models import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Fieldset, Layout, Div, HTML
+from crispy_forms.layout import Fieldset, Layout, Div
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 
-from .models import Intervention, Project
+from .models import Intervention, InterventionJob, ManDay, Project
 
 
 class ManDayForm(forms.ModelForm):
 
     class Meta:
+        model = ManDay
         fields = ('id', 'nb_days', 'job')
 
     def __init__(self, *args, **kwargs):
-        super(ManDayForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'nb_days', 'job')
@@ -29,6 +31,10 @@ class ManDayForm(forms.ModelForm):
         self.fields['nb_days'].label = ''
         self.fields['nb_days'].widget.attrs['class'] = 'input-mini'
         self.fields['job'].widget.attrs['class'] = 'input-medium'
+        if self.instance and self.instance.pk:
+            self.fields['job'].queryset = InterventionJob.objects.filter(Q(active=True) | Q(id=self.instance.job_id))
+        else:
+            self.fields['job'].queryset = InterventionJob.objects.filter(active=True)
 
 
 ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, form=ManDayForm, extra=1)
@@ -40,7 +46,7 @@ class FundingForm(forms.ModelForm):
         fields = ('id', 'amount', 'organism')
 
     def __init__(self, *args, **kwargs):
-        super(FundingForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout('id', 'amount', 'organism')
@@ -63,40 +69,24 @@ class InterventionForm(CommonForm):
 
     fieldslayout = [
         Div(
-            HTML("""
-               <ul class="nav nav-tabs">
-                   <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
-                   <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-               </ul>""" % (_("Main"), _("Advanced"))),
-            Div(
-                Div(
-                    'structure',
-                    'name',
-                    'date',
-                    'status',
-                    'disorders',
-                    'type',
-                    'subcontracting',
-                    'length',
-                    'width',
-                    'height',
-                    'stake',
-                    'project',
-                    'description',
-                    css_id="main",
-                    css_class="tab-pane active"
-                ),
-                Div(
-                    'material_cost',
-                    'heliport_cost',
-                    'subcontract_cost',
-                    Fieldset(_("Mandays")),
-                    css_id="advanced",  # used in Javascript for activating tab if error
-                    css_class="tab-pane"
-                ),
-                css_class="scrollable tab-content"
-            ),
-            css_class="tabbable"
+            'structure',
+            'name',
+            'date',
+            'status',
+            'disorders',
+            'type',
+            'subcontracting',
+            'length',
+            'width',
+            'height',
+            'stake',
+            'project',
+            'description',
+            'material_cost',
+            'heliport_cost',
+            'subcontract_cost',
+            Fieldset(_("Mandays")),
+            css_class="scrollable tab-pane active"
         ),
     ]
 
@@ -107,7 +97,7 @@ class InterventionForm(CommonForm):
              'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
-        super(InterventionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not self.instance.pk:
             # New intervention. We have to set its target.
@@ -196,5 +186,5 @@ class ProjectForm(CommonForm):
              'global_cost', 'comments', 'project_owner', 'project_manager', 'contractors']
 
     def __init__(self, *args, **kwargs):
-        super(ProjectForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper.form_tag = False

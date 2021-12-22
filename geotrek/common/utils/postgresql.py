@@ -146,12 +146,9 @@ def move_models_to_schemas(app):
     cursor = connection.cursor()
 
     for schema_name in table_schemas.keys():
-        try:
-            sql = "CREATE SCHEMA %s;" % model_schema
-            cursor.execute(sql)
-            logger.info("Created schema %s" % model_schema)
-        except Exception:
-            logger.debug("Schema %s already exists." % model_schema)
+        sql = "CREATE SCHEMA IF NOT EXISTS %s;" % model_schema
+        cursor.execute(sql)
+        logger.info("Created schema %s" % model_schema)
 
     for schema_name, tables in table_schemas.items():
         for table_name in tables:

@@ -2,12 +2,12 @@ from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.tests import CommonLiveTest, CommonTest
 from geotrek.diving.models import Dive, Level
-from geotrek.diving.factories import DiveWithLevelsFactory, DiveFactory, DivingManagerFactory, PracticeFactory
+from geotrek.diving.tests.factories import DiveWithLevelsFactory, DiveFactory, DivingManagerFactory, PracticeFactory
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
 
 class DiveViewsTests(CommonTest):
@@ -75,9 +75,6 @@ class DiveViewsTests(CommonTest):
             'treks': [],
             'videos': [],
         }
-
-    def setUp(self):
-        super(DiveViewsTests, self).setUp()
 
     def get_bad_data(self):
         return {

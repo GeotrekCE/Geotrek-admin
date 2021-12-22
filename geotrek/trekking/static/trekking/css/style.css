@@ -1,0 +1,54 @@
+/* Trek form */
+
+#add_id_web_links {
+    margin-top: -20px;
+    margin-left: 10px;
+}
+
+.trek_relationship_a .control-group {
+    margin-bottom: 0px;
+}
+
+.form-panel.trek .form-row.inline.controls:last-of-type {
+    margin-top: 10px;
+}
+
+.trek_relationship_a .control-group label,
+.trek_relationship_a .control-group .control {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.form-panel.trek fieldset a.delete-row,
+.form-panel.trek fieldset a.add-row {
+    float: right;
+    margin-right: 40%;
+}
+
+
+.poi-marker-icon img {
+    max-width: 100% !important;
+}
+
+.leaflet-marker-icon.parking-location {
+    background-image: url(../parking.png);
+    background-size: cover;
+    width: 20px !important;
+    height: 20px !important;
+    margin-left: -10px;
+    margin-top: -10px;
+}
+
+
+.leaflet-draw.id_parking_location .leaflet-draw-draw-marker {
+    background-image: url(../parking.png);
+    background-position: 5px 5px, center;
+    background-size: 15px;
+}
+
+.servicetype img {
+    width: 18px;
+    height: 18px;
+    margin-left: 4px;
+    cursor: hand;
+}

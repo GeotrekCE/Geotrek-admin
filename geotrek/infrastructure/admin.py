@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from geotrek.common.mixins import MergeActionMixin
-from geotrek.infrastructure.models import InfrastructureType, InfrastructureCondition
+from geotrek.infrastructure.models import InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
 
 
 class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
@@ -12,7 +12,7 @@ class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         """
         filter objects by structure
         """
-        qs = super(InfrastructureTypeAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
             qs = qs.filter(structure=request.user.profile.structure)
         return qs
@@ -40,7 +40,7 @@ class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('type', 'structure')
 
 
-class InfrastructureConditionAdmin(MergeActionMixin, admin.ModelAdmin):
+class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure')
     merge_field = "label"
 
@@ -48,7 +48,7 @@ class InfrastructureConditionAdmin(MergeActionMixin, admin.ModelAdmin):
         """
         filter objects by structure
         """
-        qs = super(InfrastructureConditionAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
             qs = qs.filter(structure=request.user.profile.structure)
         return qs
@@ -77,4 +77,6 @@ class InfrastructureConditionAdmin(MergeActionMixin, admin.ModelAdmin):
 
 
 admin.site.register(InfrastructureType, InfrastructureTypeAdmin)
-admin.site.register(InfrastructureCondition, InfrastructureConditionAdmin)
+admin.site.register(InfrastructureCondition, InfrastructureSimpleFieldAdmin)
+admin.site.register(InfrastructureMaintenanceDifficultyLevel, InfrastructureSimpleFieldAdmin)
+admin.site.register(InfrastructureUsageDifficultyLevel, InfrastructureSimpleFieldAdmin)

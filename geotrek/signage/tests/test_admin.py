@@ -5,13 +5,13 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.signage.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
-                                       BladeDirectionFactory, BladeTypeFactory)
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.signage.tests.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
+                                             BladeDirectionFactory, BladeTypeFactory)
 from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class SignageTypeAdminNoBypassTest(TestCase):
@@ -226,7 +226,7 @@ class BladeTypeAdminNoBypassTest(AuthentFixturesTest):
 
 class BladeTypeAdminTest(BladeTypeAdminNoBypassTest):
     def setUp(self):
-        super(BladeTypeAdminTest, self).setUp()
+        super().setUp()
         perm_bypass = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm_bypass)
 
@@ -242,7 +242,7 @@ class BladeTypeAdminTest(BladeTypeAdminNoBypassTest):
 
 class SealingAdminTest(SealingAdminNoBypassTest):
     def setUp(self):
-        super(SealingAdminTest, self).setUp()
+        super().setUp()
         perm_bypass = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm_bypass)
 
@@ -258,7 +258,7 @@ class SealingAdminTest(SealingAdminNoBypassTest):
 
 class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
     def setUp(self):
-        super(SignageTypeAdminTest, self).setUp()
+        super().setUp()
         perm_bypass = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm_bypass)
 

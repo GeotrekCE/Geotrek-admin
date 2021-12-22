@@ -1,3 +1,4 @@
+
 import json
 import logging
 from django.conf import settings
@@ -12,6 +13,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
 
+from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
@@ -32,15 +34,17 @@ class SensitiveAreaLayer(MapEntityLayer):
     properties = ['species', 'radius', 'published']
 
 
-class SensitiveAreaList(MapEntityList):
+class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
     queryset = SensitiveArea.objects.existing()
     filterform = SensitiveAreaFilterSet
-    columns = ['id', 'species', 'category']
+    mandatory_columns = ['id', 'species']
+    default_extra_columns = ['category']
 
 
 class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
-    columns = [
-        'id', 'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
     ]
 
 
@@ -48,14 +52,14 @@ class SensitiveAreaDetail(MapEntityDetail):
     queryset = SensitiveArea.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
-        context = super(SensitiveAreaDetail, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 
 
-class SensitiveAreaRadiiMixin(object):
+class SensitiveAreaRadiiMixin:
     def get_context_data(self, *args, **kwargs):
-        context = super(SensitiveAreaRadiiMixin, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         species = Species.objects.filter(category=Species.SPECIES)
         context['radii'] = json.dumps({
             str(s.id): settings.SENSITIVITY_DEFAULT_RADIUS if s.radius is None else s.radius for s in species
@@ -82,7 +86,7 @@ class SensitiveAreaUpdate(SensitiveAreaRadiiMixin, MapEntityUpdate):
 
     @same_structure_required('sensitivity:sensitivearea_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SensitiveAreaUpdate, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SensitiveAreaDelete(MapEntityDelete):
@@ -90,7 +94,7 @@ class SensitiveAreaDelete(MapEntityDelete):
 
     @same_structure_required('sensitivity:sensitivearea_detail')
     def dispatch(self, *args, **kwargs):
-        return super(SensitiveAreaDelete, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class SensitiveAreaViewSet(MapEntityViewSet):

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from geotrek.maintenance.factories import ProjectFactory
+from geotrek.maintenance.tests.factories import ProjectFactory
 from geotrek.maintenance.filters import ProjectFilterSet
 
 

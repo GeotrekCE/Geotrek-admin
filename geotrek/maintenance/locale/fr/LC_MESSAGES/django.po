@@ -296,6 +296,12 @@ msgstr "l:"
 msgid "Add"
 msgstr "Ajouter"
 
+msgid "Outdoor Course"
+msgstr "Parcours Outdoor"
+
+msgid "Outdoor Site"
+msgstr "Site Outdoor"
+
 msgid "Remove"
 msgstr "Supprimer"
 
@@ -320,3 +326,6 @@ msgstr "Ajouter un financement"
 
 msgid "No intervention related."
 msgstr "Pas d'intervention liée."
+
+msgid "Active"
+msgstr "Actif"

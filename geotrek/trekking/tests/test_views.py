@@ -1,7 +1,7 @@
 import csv
 from io import StringIO
+from mapentity.helpers import is_file_uptodate
 import os
-import datetime
 from collections import OrderedDict
 import hashlib
 
@@ -21,33 +21,30 @@ from django.template.loader import get_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
-from django.utils.timezone import utc, make_aware
-from unittest import util as testutil
 
-from mapentity.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.common.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
-                                      RecordSourceFactory, TargetPortalFactory)
+from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
+                                            RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
+from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
-from geotrek.core.factories import PathFactory
+from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
-from geotrek.zoning.factories import DistrictFactory, CityFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
-from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
-                                        TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
-                                        TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
-                                        TrekWithServicesFactory, TrekWithInfrastructuresFactory,
-                                        TrekWithSignagesFactory)
-from geotrek.trekking.templatetags import trekking_tags
-from geotrek.trekking.serializers import timestamp
+from geotrek.trekking.tests.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
+                                              TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
+                                              TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
+                                              TrekWithServicesFactory, TrekWithInfrastructuresFactory,
+                                              TrekWithSignagesFactory)
+from geotrek.common.templatetags import geotrek_tags
 from geotrek.trekking import views as trekking_views
-from geotrek.tourism import factories as tourism_factories
+from geotrek.tourism.tests import factories as tourism_factories
 
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
@@ -347,7 +344,7 @@ class TrekViewsTest(CommonTest):
 
     def test_status(self):
         TrekFactory.create(duration=float('nan'))
-        super(TrekViewsTest, self).test_status()
+        super().test_status()
 
     def test_badfield_goodgeom(self):
         self.login()
@@ -362,7 +359,7 @@ class TrekViewsTest(CommonTest):
         self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
 
     def test_basic_format(self):
-        super(TrekViewsTest, self).test_basic_format()
+        super().test_basic_format()
         self.modelfactory.create(name="ukélélé")  # trek with utf8
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
@@ -824,17 +821,20 @@ class TrekJSONDetailTest(TrekJSONSetUp):
 
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
+        url = '{url}.800x800_q85_watermark-{id}.png'.format(
+            url=self.attachment.attachment_file.url,
+            id=hashlib.md5(
+                settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                    author=self.attachment.author,
+                    title=self.attachment.title,
+                    legend=self.attachment.legend).encode()).hexdigest())
         self.assertDictEqual(self.result['pictures'][0],
-                             {'url': '{url}.800x800_q85_watermark-{id}.png'.format(
-                                 url=self.attachment.attachment_file.url,
-                                 id=hashlib.md5(
-                                     settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
-                                         author=self.attachment.author,
-                                         title=self.attachment.title,
-                                         legend=self.attachment.legend).encode()).hexdigest()),
+                             {'url': url,
                               'title': self.attachment.title,
                               'legend': self.attachment.legend,
                               'author': self.attachment.author})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
     def test_networks(self):
         self.assertDictEqual(self.result['networks'][0],
@@ -1176,20 +1176,20 @@ class TrekViewTranslationTest(TrekkingManagerTest):
 
 class TemplateTagsTest(TestCase):
     def test_duration(self):
-        self.assertEqual("15 min", trekking_tags.duration(0.25))
-        self.assertEqual("30 min", trekking_tags.duration(0.5))
-        self.assertEqual("1 h", trekking_tags.duration(1))
-        self.assertEqual("1 h 45", trekking_tags.duration(1.75))
-        self.assertEqual("3 h 30", trekking_tags.duration(3.5))
-        self.assertEqual("4 h", trekking_tags.duration(4))
-        self.assertEqual("6 h", trekking_tags.duration(6))
-        self.assertEqual("10 h", trekking_tags.duration(10))
-        self.assertEqual("1 days", trekking_tags.duration(24))
-        self.assertEqual("2 days", trekking_tags.duration(32))
-        self.assertEqual("2 days", trekking_tags.duration(48))
-        self.assertEqual("3 days", trekking_tags.duration(49))
-        self.assertEqual("8 days", trekking_tags.duration(24 * 8))
-        self.assertEqual("9 days", trekking_tags.duration(24 * 9))
+        self.assertEqual("15 min", geotrek_tags.duration(0.25))
+        self.assertEqual("30 min", geotrek_tags.duration(0.5))
+        self.assertEqual("1 h", geotrek_tags.duration(1))
+        self.assertEqual("1 h 45", geotrek_tags.duration(1.75))
+        self.assertEqual("3 h 30", geotrek_tags.duration(3.5))
+        self.assertEqual("4 h", geotrek_tags.duration(4))
+        self.assertEqual("6 h", geotrek_tags.duration(6))
+        self.assertEqual("10 h", geotrek_tags.duration(10))
+        self.assertEqual("1 days", geotrek_tags.duration(24))
+        self.assertEqual("2 days", geotrek_tags.duration(32))
+        self.assertEqual("2 days", geotrek_tags.duration(48))
+        self.assertEqual("3 days", geotrek_tags.duration(49))
+        self.assertEqual("8 days", geotrek_tags.duration(24 * 8))
+        self.assertEqual("9 days", geotrek_tags.duration(24 * 9))
 
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):
@@ -1211,27 +1211,30 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         url = "/trek/{pk}/".format(pk=self.content1.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<a class="btn btn-primary pull-right" '
+                            '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
-                            'Update</a>'.format(pk=self.content1.pk))
+                            '<i class="bi bi-pencil-square"></i> '
+                            'Update</a>'.format(pk=self.content1.pk),
+                            html=True)
 
     def test_edit_button_other_structure(self):
         url = "/trek/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<span class="btn disabled pull-right" href="#">'
-                            '<i class="icon-pencil"></i> Update</span>')
+                            '<span class="btn ml-auto disabled" href="#">'
+                            '<i class="bi bi-pencil-square"></i> Update</span>',
+                            html=True)
 
     def test_edit_button_bypass_structure(self):
         self.add_bypass_perm()
         url = "/trek/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertContains(response,
-                            '<a class="btn btn-primary pull-right" '
+                            '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
-                            'Update</a>'.format(pk=self.content2.pk))
+                            '<i class="bi bi-pencil-square"></i> '
+                            'Update</a>'.format(pk=self.content2.pk),
+                            html=True)
 
     def test_can_edit_same_structure(self):
         url = "/trek/edit/{pk}/".format(pk=self.content1.pk)
@@ -1299,117 +1302,6 @@ class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
         url = "/poi/delete/{pk}/".format(pk=self.content2.pk)
         response = self.client.get(url)
         self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))
-
-
-class CirkwiTests(TranslationResetMixin, TestCase):
-    def setUp(self):
-        testutil._MAX_LENGTH = 10000
-        creation = make_aware(datetime.datetime(2014, 1, 1), utc)
-        self.path = PathFactory.create()
-        self.trek = TrekFactory.create(published=True, paths=[self.path])
-        self.trek.date_insert = creation
-        self.trek.save()
-        self.poi = POIFactory.create(published=True, paths=[self.path])
-        self.poi.date_insert = creation
-        self.poi.save()
-        TrekFactory.create(published=False, paths=[self.path])
-        POIFactory.create(published=False, paths=[self.path])
-
-    def tearDown(self):
-        testutil._MAX_LENGTH = 80
-
-    def test_export_circuits(self):
-        response = self.client.get('/api/cirkwi/circuits.xml')
-        self.assertEqual(response.status_code, 200)
-        attrs = {
-            'pk': self.trek.pk,
-            'title': self.trek.name,
-            'date_update': timestamp(self.trek.date_update),
-            'n': self.trek.description.replace('<p>description ', '').replace('</p>', ''),
-            'poi_pk': self.poi.pk,
-            'poi_title': self.poi.name,
-            'poi_date_update': timestamp(self.poi.date_update),
-            'poi_description': self.poi.description.replace('<p>', '').replace('</p>', ''),
-        }
-        self.assertXMLEqual(
-            response.content.decode(),
-            '<?xml version="1.0" encoding="utf8"?>\n'
-            '<circuits version="2">'
-            '<circuit date_creation="1388534400" date_modification="{date_update}" id_circuit="{pk}">'
-            '<informations>'
-            '<information langue="en">'
-            '<titre>{title}</titre>'
-            '<description>Description teaser\n\nDescription</description>'
-            '<informations_complementaires>'
-            '<information_complementaire><titre>Departure</titre><description>Departure</description></information_complementaire>'
-            '<information_complementaire><titre>Arrival</titre><description>Arrival</description></information_complementaire>'
-            '<information_complementaire><titre>Ambiance</titre><description>Ambiance</description></information_complementaire>'
-            '<information_complementaire><titre>Access</titre><description>Access</description></information_complementaire>'
-            '<information_complementaire><titre>Disabled infrastructure</titre><description>Disabled infrastructure</description></information_complementaire>'
-            '<information_complementaire><titre>Advised parking</titre><description>Advised parking</description></information_complementaire>'
-            '<information_complementaire><titre>Public transport</titre><description>Public transport</description></information_complementaire>'
-            '<information_complementaire><titre>Advice</titre><description>Advice</description></information_complementaire></informations_complementaires>'
-            '</information>'
-            '</informations>'
-            '<distance>141</distance>'
-            '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
-            '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
-            '<pois>'
-            '<poi date_creation="1388534400" date_modification="{poi_date_update}" id_poi="{poi_pk}">'
-            '<informations>'
-            '<information langue="en"><titre>POI</titre><description>Description</description></information>'
-            '</informations>'
-            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
-            '</poi>'
-            '</pois>'
-            '</circuit>'
-            '</circuits>'.format(**attrs))
-
-    def test_export_pois(self):
-        response = self.client.get('/api/cirkwi/pois.xml')
-        self.assertEqual(response.status_code, 200)
-        attrs = {
-            'pk': self.poi.pk,
-            'title': self.poi.name,
-            'description': self.poi.description.replace('<p>', '').replace('</p>', ''),
-            'date_update': timestamp(self.poi.date_update),
-        }
-        self.assertXMLEqual(
-            response.content.decode(),
-            '<?xml version="1.0" encoding="utf8"?>\n'
-            '<pois version="2">'
-            '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
-            '<informations>'
-            '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
-            '</informations>'
-            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
-            '</poi>'
-            '</pois>'.format(**attrs))
-
-    @override_settings(PUBLISHED_BY_LANG=False)
-    def test_export_pois_without_langs(self):
-        response = self.client.get('/api/cirkwi/pois.xml')
-        self.assertEqual(response.status_code, 200)
-        attrs = {
-            'pk': self.poi.pk,
-            'title': self.poi.name,
-            'description': self.poi.description.replace('<p>', '').replace('</p>', ''),
-            'date_update': timestamp(self.poi.date_update),
-        }
-        self.assertXMLEqual(
-            response.content.decode(),
-            '<?xml version="1.0" encoding="utf8"?>\n'
-            '<pois version="2">'
-            '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
-            '<informations>'
-            '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
-            '<information langue="es"><titre>{title}</titre><description>{description}</description></information>'
-            '<information langue="fr"><titre>{title}</titre><description>{description}</description></information>'
-            '<information langue="it"><titre>{title}</titre><description>{description}</description></information>'
-            '</informations>'
-            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
-            '</poi>'
-            '</pois>'.format(**attrs))
 
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
@@ -1549,3 +1441,81 @@ class ServiceJSONTest(TrekkingManagerTest):
                               'name': self.service.type.name,
                               'pictogram': os.path.join(settings.MEDIA_URL, self.service.type.pictogram.name),
                               })
+
+
+class TestDepublishSignagesRemovedFromPDF(TestCase):
+
+    def setUp(self):
+        self.trek = TrekWithSignagesFactory.create()
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_depublish_signage_refreshes_pdf(self, mock_get):
+        # Mock map screenshot
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        # Assert first access to PDF will trigger screenshot
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        # Assert second access to PDF will not trigger screenshot
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        # Assert access to PDF if signages were changed will trigger screenshot
+        trek.signages[0].published = False
+        trek.signages[0].save()
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_delete_signage_refreshes_pdf(self, mock_get):
+        # Mock map screenshot
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        # Assert first access to PDF will trigger screenshot
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        # Assert second access to PDF will not trigger screenshot
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        # Assert access to PDF if signage was deleted will trigger screenshot
+        trek.signages[0].delete()
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+
+
+class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
+
+    def setUp(self):
+        self.trek = TrekWithInfrastructuresFactory.create()
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_depublish_infrastructure_refreshes_pdf(self, mock_get):
+        # Mock map screenshot
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        # Assert first access to PDF will trigger screenshot
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        # Assert second access to PDF will not trigger screenshot
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        # Assert access to PDF if signages were changed will trigger screenshot
+        trek.infrastructures[0].published = False
+        trek.infrastructures[0].save()
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_delete_infrastructure_refreshes_pdf(self, mock_get):
+        # Mock map screenshot
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        # Assert first access to PDF will trigger screenshot
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        # Assert second access to PDF will not trigger screenshot
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        # Assert access to PDF if signage was deleted will trigger screenshot
+        trek.infrastructures[0].delete()
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))

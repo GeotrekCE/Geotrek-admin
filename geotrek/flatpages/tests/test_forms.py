@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from geotrek.authent.factories import UserProfileFactory
+from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.flatpages.forms import FlatPageForm

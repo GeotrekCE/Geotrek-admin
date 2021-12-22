@@ -42,7 +42,7 @@ class TouristicContentForm(CommonForm):
         model = TouristicContent
 
     def __init__(self, *args, **kwargs):
-        super(TouristicContentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'type1', 'type2', 'source', 'portal']:
             self.fields[f].help_text = ''
@@ -53,6 +53,7 @@ class TouristicEventForm(CommonForm):
 
     fieldslayout = [
         Div(
+            'structure',
             'name',
             'review',
             'published',
@@ -79,7 +80,6 @@ class TouristicEventForm(CommonForm):
             'source',
             'portal',
             'eid',
-            'structure'
         )
     ]
 
@@ -92,7 +92,7 @@ class TouristicEventForm(CommonForm):
         model = TouristicEvent
 
     def __init__(self, *args, **kwargs):
-        super(TouristicEventForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['begin_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
         self.fields['end_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
         self.fields['meeting_time'].widget.attrs['placeholder'] = _('HH:MM')

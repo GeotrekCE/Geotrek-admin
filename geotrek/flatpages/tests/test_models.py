@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from geotrek.flatpages.factories import FlatPageFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 
 
@@ -52,3 +52,7 @@ class FlatPageModelTest(TestCase):
         finally:
             for f in fp:
                 f.clean()
+
+    def test_is_public(self):
+        fp = FlatPageFactory(title="Blabla", published_fr=True)
+        self.assertTrue(fp.is_public())

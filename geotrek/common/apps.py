@@ -9,6 +9,9 @@ class CommonConfig(AppConfig):
     name = 'geotrek.common'
     verbose_name = _("Common")
 
+    def ready(self):
+        import geotrek.common.lookups  # NOQA
+
 
 @register()
 def srid_check(app_configs, **kwargs):

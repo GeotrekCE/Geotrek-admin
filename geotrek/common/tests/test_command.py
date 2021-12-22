@@ -2,19 +2,17 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 
 from django.test import TestCase
-from django.core import mail
 from django.conf import settings
 
-from geotrek.authent.factories import StructureFactory
-from geotrek.common.factories import AttachmentFactory, TargetPortalFactory
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
 from geotrek.common.models import TargetPortal
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.factories import POIFactory
-from geotrek.infrastructure.factories import InfrastructureFactory, InfrastructureTypeFactory
+from geotrek.trekking.tests.factories import POIFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory, InfrastructureTypeFactory
 from geotrek.infrastructure.models import InfrastructureType, Infrastructure
 from geotrek.core.models import Usage, Path
-from geotrek.core.factories import UsageFactory
-from geotrek.core.factories import PathFactory
+from geotrek.core.tests.factories import UsageFactory, PathFactory
 
 from easy_thumbnails.models import Thumbnail
 
@@ -22,13 +20,6 @@ from io import StringIO
 import os
 
 from unittest import mock
-
-
-class CommandEmailsTests(TestCase):
-    def test_command_emails_manager(self):
-        call_command('test_managers_emails')
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, '[%s] Test email for managers' % settings.TITLE)
 
 
 @mock.patch('sys.stdout', new_callable=StringIO)

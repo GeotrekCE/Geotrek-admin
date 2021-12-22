@@ -6,11 +6,11 @@ from io import StringIO
 from django.test import TestCase
 from django.conf import settings
 
-from geotrek.common.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory, AttachmentFactory
+from geotrek.common.tests.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
-from geotrek.diving.factories import DiveFactory, PracticeFactory
-from geotrek.trekking.factories import POIFactory
-from geotrek.tourism.factories import TouristicContentFactory, TouristicEventFactory
+from geotrek.diving.tests.factories import DiveFactory, PracticeFactory
+from geotrek.trekking.tests.factories import POIFactory
+from geotrek.tourism.tests.factories import TouristicContentFactory, TouristicEventFactory
 
 from geotrek.diving.helpers_sync import SyncRando
 
@@ -19,7 +19,7 @@ from geotrek.diving.helpers_sync import SyncRando
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.practice_dive = PracticeFactory.create(order=0)
         cls.dive = DiveFactory.create(practice=cls.practice_dive, published=True,
                                       geom='SRID=2154;POINT(700001 6600001)')

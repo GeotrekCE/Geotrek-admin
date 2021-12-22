@@ -1,12 +1,19 @@
+import json
+
+from django.conf import settings
+from rest_framework import serializers as rest_serializers
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
-from geotrek.common.serializers import (PublishableSerializerMixin, TranslatedModelSerializer,
-                                        LabelSerializer, ThemeSerializer, TargetPortalSerializer,
-                                        RecordSourceSerializer)
-from geotrek.outdoor.models import Practice, Site, Course
+from geotrek.common.serializers import (LabelSerializer,
+                                        PublishableSerializerMixin,
+                                        RecordSourceSerializer,
+                                        TargetPortalSerializer,
+                                        ThemeSerializer,
+                                        TranslatedModelSerializer)
+from geotrek.outdoor.models import Course, Practice, Site
 from geotrek.tourism.serializers import InformationDeskSerializer
 from geotrek.trekking.serializers import WebLinkSerializer
 from geotrek.zoning.serializers import ZoningSerializerMixin
@@ -41,7 +48,7 @@ class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Translat
         fields = ('id', 'structure', 'name', 'practice', 'description', 'description_teaser',
                   'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
                   'information_desks', 'web_links', 'type', 'parent', 'children', 'eid',
-                  'orientation', 'wind', 'ratings_min', 'ratings_max') + \
+                  'orientation', 'wind', 'ratings') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields
 
@@ -57,12 +64,20 @@ class SiteGeojsonSerializer(GeoFeatureModelSerializer, SiteSerializer):
 
 class CourseSerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
     structure = StructureSerializer()
+    points_reference = rest_serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = ('id', 'structure', 'name', 'site', 'description', 'advice', 'eid', 'ratings') + \
+        fields = ('id', 'structure', 'name', 'parent_sites', 'description', 'duration', 'advice', 'points_reference',
+                  'equipment', 'height', 'eid', 'ratings', 'ratings_description', 'gear', 'type') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields
+
+    def get_points_reference(self, obj):
+        if not obj.points_reference:
+            return None
+        geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
+        return json.loads(geojson)
 
 
 class CourseGeojsonSerializer(GeoFeatureModelSerializer, CourseSerializer):

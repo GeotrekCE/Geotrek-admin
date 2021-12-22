@@ -2,12 +2,541 @@
 CHANGELOG
 =========
 
-2.51.1+dev
+2.74.1+dev (XXXX-XX-XX)
+-----------------------
+
+
+2.74.1     (2021-12-21)
+-----------------------
+
+**Bug fixes**
+
+- Fix blank line due to mapentity template error
+
+**Maintenance**
+
+- Update to mapentity 7.0.5
+
+
+2.74.0     (2021-12-17)
+-----------------------
+
+**Minor improvements**
+
+- Show every paths in intervention csv (#2711)
+- Hide signage/blade dropdown-toggle with settings ``BLADE_ENABLED=False`` (#2852)
+- Remove urls blade with settings ``BLADE_ENABLED=False`` (#2852)
+
+**Bug fixes**
+
+- Fix multiple forms in formsets deletion (#2693)
+- Fix access to pictures generated with watermark (#2840)
+- Fix intervention creation and update is now scrollable after merging tabs (#2712)
+- Fix restricted area and restricted area type filters on intervention (#2766)
+
+**New features**
+
+- Allow to filter Cirkwi ``circuits.xml`` and ``pois.xml`` API with portals and structures (#2822)
+- Add restricted area and restricted area type filters on projects (#2766)
+- Add ``reservation_id`` in ``/trek`` API v2 (#2817)
+
+
+2.73.0 (2021-12-13)
+-----------------------
+
+**Bug fixes**
+
+- Fix formset item deletion raises error in forms (#2693)
+
+**Refactoring**
+
+- MapEntity is now a separate dependency (https://github.com/makinacorpus/django-mapentity)
+
+**New features**
+
+- Optimize Path caching in edition views (#2847)
+- Filter list views by Restricted Area as well as by Restricted Area Type (#2766)
+- Add ``BLADE_ENABLED`` setting to hide Blade in Signage forms and in Signage detail page (#2852)
+- Add ``LINE_ENABLED`` setting to hide Line in Blade forms and in Blade detail page (#2852)
+- Add ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` setting to enable resize attachments on upload (#2835)
+- Add ``PAPERCLIP_MAX_ATTACHMENT_WIDTH`` and ``PAPERCLIP_MAX_ATTACHMENT_HEIGHT`` to configure attachment resizing (defaults 1280px) (#2835)
+- Use ``MAPENTITY_CONFIG`` setting to configure map style on list and detail views (#2554)
+
+**User interface**
+
+- Clarify Land Edge module browsing (#1404)
+- Renamed "Tronçons physique" to "Types de voie", "Tronçons de compétence" to "Compétence sentiers",
+  "Tronçons de gestion de travaux" to "Gestionnaire travaux", "Tronçons de gestion signalétique" to "Gestionnaire signalétique" (#1301)
+- Renamed "zonage réglementaire" to "zonage" (#2766)
+
+**Minor improvements**
+
+- Merge tabs in Intervention forms (#2712)
+- Make targets display more specific in Interventions exports (#2711)
+- Improve support for Tourinsoft v3 with new medias management
+
+**Bug fix**
+
+- Fix TopologyException when filtering objects by several RestrictedAreaTypes
+
+
+2.72.0 (2021-11-16)
+-----------------------
+
+**New features**
+
+- APIv2 : Add ``attachment`` field to Touristic Event serialization
+
+**Minor improvements**
+
+- Add possibility to fill ``code`` field in Signage model when using ``loadsignage`` command. Two parameters added : ``code_field`` and ``code_default``
+
+**Bug fixes**
+
+- Prevent Signages and Infrastructures from being displayed on PDFs when unpublished
+- Database: fix SQL cleanup that delete foreign key on ``core_pathaggregation.path_id`` -> ``core_path.id`` (#2819)
+- Fix generation altimetry profile (``dem.json``)
+
+
+2.71.0 (2021-11-03)
+----------------------
+
+**New features**
+
+- APIv2 : Add filter by portal on outdoor practices and ratings
+
+**Bug fixes**
+
+- APIv2 : Fix exceptions on filter by portals or themes in Outdoor Course route
+
+
+2.70.0 (2021-11-02)
+----------------------
+
+**New features**
+
+- Add UUIDS to the following objects, and to APIv2 serialization for those included :
+  Path, TouristicContent, TouristicEvent, Outdoor Site, Outdoor Course, Attachment, and Topology (inherited by POI, Trek, Service, Trail, Signage, Infrastructure, PhysicalEdge, CompetenceEdge, LandEdge)
+- APIv2 : Add pictograms to outdoor practice routes
+- APIv2 : Add cities to outdoor sites and outdoor courses routes
+- APIv2 : Add filter by themes, cities, districts, types, and structures to outdoor sites and outdoor courses routes
+- APIv2 : Change Web Links serialization on outdoor sites routes, to detailed instead of just an id
+
+**Breaking changes**
+
+- Geotrek-admin now needs PostgreSQL extension 'pgrypto'.
+
+**WARNING!**
+
+**Before** upgrading to this version make sure to run ``CREATE EXTENSION IF NOT EXISTS "pgcrypto";``  from ``postgres`` user in database.
+
+``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'"``
+
+
+2.69.0 (2021-10-22)
+----------------------
+
+**New features**
+
+- Add public PDFs to Outdoor Course and Outdoor Site, with templates
+
+
+2.68.1 (2021-10-21)
+----------------------
+
+**Bug fixes**
+
+- Fix error 404 on CSS from 2.68.0
+
+
+2.68.0 (2021-10-20)
+----------------------
+
+**DO NOT USE IT!**
+
+**New features**
+
+- Link an Outdoor Course to multiple parent Sites instead of one
+- Added notion of points of reference for Outdoor Courses. (Can be disabled with ``OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = False``)
+
+**Breaking change**
+
+- APIv2 serialisation for Courses now exposes ``sites`` instead of ``site``
+
+**Bug fixes**
+
+- Fix translations for Site and Course filters in Interventions list view
+- Fix bug that auto-confirms the modal when launching a synchronization (bug introduced with bootstrap migration)
+
+**User Interface**
+
+- Display children Sites above parent Sites in Outdoor Sites list view
+
+
+2.67.0 (2021-10-12)
+----------------------
+
+**New features**
+
+- APIv2 : Add 'children' and 'parent' fields to Outdoor Site serialization
+- APIv2 : Add filter by pratices on outdoor courses
+- Filter interventions by Outdoor model targets in Intervention module's list view
+
+**User Interface**
+
+- Distinguish Sites from Courses in Outdoor tree display thanks to bullets
+- Display full Sites hierarchy in Outdoor detail views
+
+**Bug fixes**
+
+- Fix nearby Courses and nearby Sites display in Outdoor detail pages
+- Fix Outdoor migrations fail on empty database
+- Fix sync_mobile does not check for published or unpublished treks
+
+
+2.66.0 (2021-09-27)
+----------------------
+
+**New features**
+
+- APIv2 : Add filter by ratings on outdoor courses and sites
+- APIv2 : Add filter by pratices in hierarchy on outdoor courses and sites
+- APIv2 : Add filter by ratings in hierarchy on outdoor courses and sites
+- Display children sites' ratings in site page
+- APIv2 : Add 'sector' and 'attachment' fields to Outdoor Site serialization
+- Add DISPLAY_COORDS_AS_DECIMALS setting to format coordinates as decimal degrees instead of degrees minutes seconds
+- Enable translations on 'equipment' field on Outdoor Course
+
+
+**Bug fixes**
+
+- Fix dynamic forms on outdoor cotations display all cotations when selector empty
+- Hide excluded POIs on Outdoor Site and Course detail pages
+
+
+**User Interface**
+
+- Sort sites by alphabetical order in outdoor course forms
+
+
+2.65.0 (2021-09-21)
+----------------------
+
+**New features**
+
+- APIv2 : Add filter on Outdoor Site route to only retrieve root sites from hierarchy
+- Add fields 'duration', 'type', 'gear', 'ratings_description' to Outdoor Course
+- Add fields on APIv2 for Course model : 'min_elevation', 'max_elevation', 'children', 'parents', 'attachments'
+- Add excluded_pois on Course and Site models.
+- Add filter on APIVv2 POI endpoint to retrieve pois related to Course or Site
+- Replace Outdoor Site 'ratings_min' and 'ratings_max' fields with 'ratings'
+- Make Outdoor Site and Course 'ratings' form fields dynamically change on practice selection
+- APIv2 : Add children courses to sites' serialization
+- Add Course Type management to admin site
+
+
+2.64.0 (2021-09-14)
+----------------------
+
+**New features**
+
+- Add endpoints for infrastructure and related types in APIv2
+- Add endpoints for signage and related types in APIv2
+- Filter TouristicContentTypes according to published content in APIv2
+
+**Bug fixes**
+
+* Fix missing translations for infrastructure difficulty levels in admin
+* Fix impossible import of uninstalled module 'sensitivity' in 'dive'
+
+
+2.63.0 (2021-09-03)
+----------------------
+
+**New features**
+
+- Add difficulty level fields (usage and maintenance) to infrastructure
+- Add 'active' field to job model, and hide inactive jobs in forms
+- Add detailed jobs costs to interventions exports, with a new column for each job
+- Add SURICATE_MANAGEMENT_ENABLED setting
+- Add SURICATE_MANAGEMENT_SETTINGS setting to configure second Suricate API
+- Add helper to make requests to Suricate
+- Add parser to retrieve statuses, activities, and reports (in bounding box) from Suricate
+- Add sync_suricate command to retrieve Suricate data
+- Change Report model to use one of 3 modes : No Suricate, Suricate Report or Suricate Management (SURICATE_REPORT_ENABLED and SURICATE_MANAGEMENT_ENABLED settings)
+- Generalize existing filters in APIv2
+- Add 'near_outdoorsite' and 'near_outdoorcourse' filters in APIv2
+- Add 'created_before', 'updated_before', 'created_after' and 'updated_after' filters in APIv2
+- Add route to APIv2 to retrieve Geotrek version
+- Add API_V2_DESCRIPTION setting to change description text in API v2 Swagger page
+- Add endpoints for services in APIv2 : service, service type
+- Add link between reports and interventions
+
+
+**Bug fixes**
+
+* Fix length_kilometer attribute computation in treks
+* Fix date update format in lists
+* Add CORS header to access medias
+* Change geographic intersection calculation from annoted queries to optimized build-in method
+
+
+2.62.0 (2021-07-06)
+----------------------
+
+**New features**
+
+- Add custom columns configuration to list views
+- Add custom columns configuration to list CSV exports
+- Add custom form fields configuration to creation views
+
+**Bug fixes**
+
+* Fix filter difficulty in API v2
+
+
+2.61.1 (2021-06-28)
 -------------------
 
 **Bug fixes**
 
+* Fix filter in_bbox in API v2
 
+
+2.61.0 (2021-06-25)
+-------------------
+
+**New features**
+
+- Add Web Links to Trek endpoints in APIv2
+- Add endpoints for Web Links categories in APIv2
+- Ensure APIv2 returns outdoor sites list and outdoor courses list as ordered by localized name
+
+
+2.60.0 (2021-06-25)
+-------------------
+
+**New features**
+
+- Add endpoints for user feedback in APIv2 : report category, report activity, report problem magnitude, and report status
+- Ensure APIv2 returns treks list and touristic contents list as ordered by localized name
+
+**Bug fixes**
+
+- Fix confirm delete attachment modal not visible
+- Fix required '\*geom' position
+- Fix scroll unwanted when list is full
+- Fix responsive on dataTables
+- Remove excluded POIs from results in POI endpoint on api v2 when filtering by trek id
+- Sort attachments listed in api v2 endpoints for Trek, TouristicContent, POI
+- Ensure content is displayed only when a related object is published on api v2
+- Exclude deleted content of portal filters in api v2
+
+**Maintenance**
+
+- Update to paperclip 2.3.2
+
+
+2.59.0 (2021-06-07)
+-------------------
+
+**Breaking Change**
+
+- Template nginx.conf.in was changed to work with multiple rando portals (#2670).
+
+First, if you changed file `/opt/geotrek-admin/var/conf/nginx.conf.in`, back it up somewhere.
+1 - While installing, choose 'Y' to get the new version.
+2 - Copy your changes from the backed up file to the new version.
+3 - Execute : `dpkg-reconfigure geotrek-admin` to reapply your customization.
+
+**User Interface**
+
+- Important visual changes due to CSS framework upgrade
+- Improve responsive
+
+**Maintenance**
+
+- Upgrade Bootstrap to 4.6
+- Upgrade JQuery to 1.9.1
+- Upgrade DataTables to 1.10.23
+- Upgrade Chosen to 1.2.0
+- Move to vendor folder updated JS Libraries used by Mapentity
+- Update HTML markup in many templates, and update tests too
+- Expired sessions stored in database are now deleted at each update
+
+**Bug fixes**
+
+- Fix gpx/kml are not generated on all languages (The first object was working).
+
+
+2.58.0 (2021-05-20)
+-------------------
+
+**Documentation**
+
+- Add documentation ssl
+
+**New features**
+
+- Mobile API returns multiple pictures for objects like Treks and POIs. Can be configurated with MOBILE_NUMBER_PICTURES_SYNC setting.
+- Add filter bad topologies and geoms
+
+**Bug fixes**
+
+- Fix DistanceToPointFilter usage in API v2
+- Fix pdf/gpx/kml are not generated on all languages
+
+
+2.57.0 (2021-04-28)
+-------------------
+
+**New features**
+
+- Add managers field to outdoor sites
+
+**Bug fixes**
+
+- Fix projection of departure_geom in API v2
+
+
+2.56.0 (2021-04-27)
+-------------------
+
+**Bug fixes**
+
+- Fix API v2 crash when trek geom is a point
+
+**New features**
+
+- Add outdoor course endpoint to API v2
+- Add all fields to outdoor site/course exports (csv/gpx/shp)
+- Link outdoor sites and courses to other objects, especially
+  POIs, infrastructures and interventions
+
+**Documentation**
+
+- Update database ULM schemas (with outdoor)
+- Update faq.rst
+- Proofreading
+
+**Maintenance**
+
+- Update parser for Esprit Parc National data streams
+- Upgrade Weasyprint to 52.5
+- Use screamshotter >= 2.0.9 by default
+
+**Security**
+
+- Bump django-debug-toolbar from 3.1.1 to 3.2.1
+
+
+2.55.1 (2021-04-15)
+-------------------
+
+**Documentation**
+
+- Add outdoor section to user manual
+
+**Bug fixes**
+
+- Fix themes not including published touristic contents/events in API v2
+- Fix duplicate Access-Control-Allow-Origin header in sensitive areas API endpoint
+- Fix orientation/wind labels in outdoor course filter
+- Hide "Add a brother site" link if no parent site
+- Filter outdoor site/course orientations with a OR instead of a AND
+- Reverse wind arrows
+
+**Maintenance**
+
+- Use upstream appy dependency
+
+
+2.55.0 (2021-04-09)
+-------------------
+
+**New Feature**
+
+- Add /sensitivearea_species endpoint on api v2
+
+
+2.54.0 (2021-04-09)
+-------------------
+
+**New Feature**
+
+- Add 'trek' filter on endpoint /sensitivearea in api v2
+
+
+2.53.1 (2021-04-07)
+-------------------
+
+**Bug fixes**
+
+- Fix geojson display in API V2 /trek/ endpoint
+- Add publication filter by language on /trek/ detail view endpoint
+- Fixed the fact that the detail view of /trek/ endpoint crash when a trek has more than one parent
+- Do not display elements linked to content not published or not used at all in multiple endpoints on API V2
+
+
+2.53.0 (2021-04-01)
+-------------------
+
+**New Feature**
+
+- Add departure_city attribute to treks and touristiccontents in API v2
+- Allow to filter nomenclatures by portal in API v2
+- Allow to retrieve a single unpublished trek if its parent is published in API v2
+
+**Maintenance**
+
+- Simplify code thanks to Python 3 (thanks to Claude Paroz)
+- Add new sentry-sdk dependency
+
+**Bug fixes**
+
+- Avoid a db connection when requesting time from database (thanks to Claude Paroz)
+
+**Security**
+
+- Bump lxml from 4.6.2 to 4.6.3
+
+
+2.52.0 (2021-03-25)
+-------------------
+
+**Bug fixes**
+
+- Allow to add an outdoor sub-site or a course in a site owned by another structure
+- Fix outdoor site orientation/wind filtering
+- Add missing outdoor module translations
+
+**New Feature**
+
+- Outdoor course itinerancy
+- Add altimetry informations to outdoor sites and courses
+- Add outdoor course fields height and equipment
+- Add course layer to layers control
+- Allow VAR_DIR setting from environment (thanks to Claude Paroz)
+- Allow easier customization of loadpaths command (thanks to Claude Paroz)
+
+**Security**
+
+- Bump pillow from 7.1.2 to 8.1.1
+- Bump jinja2 from 2.11.1 to 2.11.3
+
+
+2.51.2 (2021-03-16)
+-------------------
+
+**Bug fixes**
+
+- Translate all text fields in API v2 trek endpoint
+- Serve attachments for flatpages
+- Fix bbox filtering of interventions
+
+**Performances**
+
+- Add prefetch to Path exports (CSV/Shapefile/GPX)
 
 
 2.51.1 (2021-03-05)
@@ -2781,8 +3310,7 @@ In order to enable those features under construction, add ``experimental = True`
 :notes:
 
     Give related permissions to the managers group in order to allow edition
-    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``,
-     ``add_touristiccontent`` ...).
+    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``, ``add_touristiccontent`` ...).
 
 
 0.27.2 (2010-10-14)
@@ -2966,6 +3494,7 @@ Since the map export have changed, empty the cache :
 * Rework display of lists in detail pages, better factorization
 * Removed links in logbook list for certain models
 * Display messages in login page too (useful for redirections)
+
 Support edition of several fields on the same map, via django-leaflet new feature (fixes #53)
 
 

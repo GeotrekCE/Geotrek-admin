@@ -5,15 +5,15 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from geotrek.common.factories import FakeSyncCommand
-from geotrek.feedback.factories import ReportCategoryFactory
+from geotrek.common.tests.factories import FakeSyncCommand
+from geotrek.feedback.tests.factories import ReportCategoryFactory
 from geotrek.feedback.helpers_sync import SyncRando
 
 
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.report_category = ReportCategoryFactory.create()
 
     @patch('sys.stdout', new_callable=StringIO)

@@ -5,12 +5,12 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.infrastructure.factories import InfrastructureTypeFactory, InfrastructureConditionFactory
-from geotrek.infrastructure.models import InfrastructureType, InfrastructureCondition
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.infrastructure.tests.factories import InfrastructureMaintenanceDifficultyLevelFactory, InfrastructureTypeFactory, InfrastructureConditionFactory, InfrastructureUsageDifficultyLevelFactory
+from geotrek.infrastructure.models import InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
+from geotrek.authent.tests.factories import StructureFactory
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class InfrastructureTypeAdminNoBypassTest(TestCase):
@@ -178,3 +178,75 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
         response = self.client.get(changelist_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, InfrastructureCondition.objects.get(pk=self.infra.pk).label)
+
+
+class InfrastructureUsageDifficultyAdminTest(AuthentFixturesTest):
+    def setUp(self):
+        self.user = SuperUserFactory.create(password='booh')
+        self.level = InfrastructureUsageDifficultyLevelFactory(label='Medium', structure=StructureFactory(name="Ecorp"))
+
+    def login(self):
+        success = self.client.login(username=self.user.username, password='booh')
+        self.assertTrue(success)
+
+    def tearDown(self):
+        self.client.logout()
+        self.user.delete()
+
+    def test_infrastructure_usage_difficulty_level_display_string(self):
+        '''Test string formatting for usage difficulty levels'''
+        self.assertEquals(str(self.level), "Medium (Ecorp)")
+
+    def test_infrastructure_usage_difficulty_can_be_changed(self):
+        '''Test admin update view for usage difficulty levels'''
+        self.login()
+        change_url = reverse('admin:infrastructure_infrastructureusagedifficultylevel_change', args=[self.level.pk])
+        response = self.client.post(change_url, {'label': 'Easy'})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(InfrastructureUsageDifficultyLevel.objects.get(pk=self.level.pk).label, 'Easy')
+
+        self.assertEqual(response.url, '/admin/infrastructure/infrastructureusagedifficultylevel/')
+
+    def test_infrastructurecondition_changelist(self):
+        '''Test admin list view for usage difficulty levels'''
+        self.login()
+        changelist_url = reverse('admin:infrastructure_infrastructureusagedifficultylevel_changelist')
+        response = self.client.get(changelist_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, InfrastructureUsageDifficultyLevel.objects.get(pk=self.level.pk).label)
+
+
+class InfrastructureMaintenanceDifficultyAdminTest(AuthentFixturesTest):
+    def setUp(self):
+        self.user = SuperUserFactory.create(password='booh')
+        self.level = InfrastructureMaintenanceDifficultyLevelFactory(label='Medium', structure=StructureFactory(name="Ecorp"))
+
+    def login(self):
+        success = self.client.login(username=self.user.username, password='booh')
+        self.assertTrue(success)
+
+    def tearDown(self):
+        self.client.logout()
+        self.user.delete()
+
+    def test_infrastructure_maintenance_difficulty_level_display_string(self):
+        '''Test string formatting for maintenance difficulty levels'''
+        self.assertEquals(str(self.level), "Medium (Ecorp)")
+
+    def test_infrastructure_maintenance_difficulty_can_be_changed(self):
+        '''Test admin update view for maintenance difficulty levels'''
+        self.login()
+        change_url = reverse('admin:infrastructure_infrastructuremaintenancedifficultylevel_change', args=[self.level.pk])
+        response = self.client.post(change_url, {'label': 'Easy'})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(InfrastructureMaintenanceDifficultyLevel.objects.get(pk=self.level.pk).label, 'Easy')
+
+        self.assertEqual(response.url, '/admin/infrastructure/infrastructuremaintenancedifficultylevel/')
+
+    def test_infrastructurecondition_maintenance_difficulty_changelist(self):
+        '''Test list view for maintenance difficulty levels'''
+        self.login()
+        changelist_url = reverse('admin:infrastructure_infrastructuremaintenancedifficultylevel_changelist')
+        response = self.client.get(changelist_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, InfrastructureMaintenanceDifficultyLevel.objects.get(pk=self.level.pk).label)

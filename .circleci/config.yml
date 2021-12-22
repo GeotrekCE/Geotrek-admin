@@ -13,8 +13,20 @@ jobs:
       - checkout
       - run: pip3 install flake8
       - run: flake8 --exclude "" --ignore=E501,F821 geotrek/settings
-      - run: flake8 geotrek mapentity
+      - run: flake8 geotrek
       - run: test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
+  doc:
+    docker:
+      - image: python:3.6
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      - run: |
+          cd docs/
+          pip install -r ./requirements.txt
+          make html
+
   docker_image:
     machine: true
     steps:
@@ -41,6 +53,7 @@ jobs:
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run: docker-compose run web ./manage.py makemigrations --check
       - run: docker-compose run web update.sh
       - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
       - run: docker-compose run web coverage xml -o var/coverage.xml
@@ -185,6 +198,9 @@ jobs:
       - persist_to_workspace:
           root: /root
           paths: geotrek-admin_*_amd64.deb
+      - store_artifacts:
+          path: geotrek-admin_*_amd64.deb
+          destination: ubuntu-package-18.04
   ubuntu_publish:
     docker:
       - image: ubuntu:bionic
@@ -205,6 +221,10 @@ workflows:
   all:
     jobs:
       - codestyle:
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
+      - doc:
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/

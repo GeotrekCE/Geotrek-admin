@@ -5,15 +5,15 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from geotrek.common.factories import FakeSyncCommand
-from geotrek.sensitivity.factories import SensitiveAreaFactory
+from geotrek.common.tests.factories import FakeSyncCommand
+from geotrek.sensitivity.tests.factories import SensitiveAreaFactory
 from geotrek.sensitivity.helpers_sync import SyncRando
 
 
 class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
-        super(SyncRandoTestCase, cls).setUpClass()
+        super().setUpClass()
         cls.area = SensitiveAreaFactory.create(published=True)
 
     @patch('sys.stdout', new_callable=StringIO)

@@ -36,10 +36,10 @@ msgid "Name"
 msgstr "Nom"
 
 msgid "Restricted area type"
-msgstr "Type de zonage réglementaire"
+msgstr "Type de zonage"
 
 msgid "Restricted area"
-msgstr "Zonage réglementaire"
+msgstr "Zonage"
 
 msgid "Published"
 msgstr "Publié"
@@ -48,16 +48,16 @@ msgid "Visible on Geotrek-rando"
 msgstr "Visible sur Geotrek-rando"
 
 msgid "Restricted areas"
-msgstr "Zonage réglementaire"
+msgstr "Zonage"
 
 msgid "Restricted area edge"
-msgstr "Tronçon de zonage réglementaire"
+msgstr "Tronçon de zonage"
 
 msgid "Restricted area edges"
-msgstr "Tronçons de zonage réglementaire"
+msgstr "Tronçons de zonage"
 
 msgid "Published areas"
-msgstr "Zonages réglementaires publiés"
+msgstr "Zonages publiés"
 
 msgid "Cities"
 msgstr "Communes"

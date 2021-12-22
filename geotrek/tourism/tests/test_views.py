@@ -14,22 +14,22 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.test import TestCase
 
-from geotrek.authent.factories import StructureFactory, UserProfileFactory, UserFactory
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory, UserFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
-from geotrek.trekking.tests import TrekkingManagerTest
-from geotrek.core import factories as core_factories
-from geotrek.trekking import factories as trekking_factories
-from geotrek.zoning import factories as zoning_factories
-from geotrek.common import factories as common_factories
+from geotrek.trekking.tests.base import TrekkingManagerTest
+from geotrek.core.tests import factories as core_factories
+from geotrek.trekking.tests import factories as trekking_factories
+from geotrek.zoning.tests import factories as zoning_factories
+from geotrek.common.tests import factories as common_factories
 from geotrek.common.models import FileType, Attachment
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
-from geotrek.tourism.factories import (InformationDeskFactory,
-                                       TouristicContentFactory,
-                                       TouristicEventFactory,
-                                       TouristicContentCategoryFactory,
-                                       TouristicContentType1Factory,
-                                       TouristicContentType2Factory)
+from geotrek.tourism.tests.factories import (InformationDeskFactory,
+                                             TouristicContentFactory,
+                                             TouristicEventFactory,
+                                             TouristicContentCategoryFactory,
+                                             TouristicContentType1Factory,
+                                             TouristicContentType2Factory)
 from embed_video.backends import detect_backend
 
 
@@ -139,7 +139,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
-        super(BasicJSONAPITest, self).setUp()
+        super().setUp()
         self._build_object()
 
         self.pk = self.content.pk
@@ -185,17 +185,20 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
+        url = '{url}.800x800_q85_watermark-{id}.png'.format(
+            url=self.picture.attachment_file.url,
+            id=hashlib.md5(
+                settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                    author=self.picture.author,
+                    title=self.picture.title,
+                    legend=self.picture.legend).encode()).hexdigest())
         self.assertDictEqual(self.result['pictures'][0],
-                             {'url': '{url}.800x800_q85_watermark-{id}.png'.format(
-                                 url=self.picture.attachment_file.url,
-                                 id=hashlib.md5(
-                                     settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
-                                         author=self.picture.author,
-                                         title=self.picture.title,
-                                         legend=self.picture.legend).encode()).hexdigest()),
+                             {'url': url,
                               'title': self.picture.title,
                               'legend': self.picture.legend,
                               'author': self.picture.author})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
     def test_files(self):
         self.assertDictEqual(self.result['files'][0],
@@ -303,7 +306,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicContentFactory
 
     def _build_object(self):
-        super(TouristicContentAPITest, self)._build_object()
+        super()._build_object()
         self.category = self.content.category
         self.type1 = TouristicContentType1Factory(category=self.category)
         self.type2 = TouristicContentType2Factory(category=self.category, pictogram=None)

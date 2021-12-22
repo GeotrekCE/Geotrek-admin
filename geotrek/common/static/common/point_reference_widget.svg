@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 15.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="60"
+   height="60"
+   viewBox="0 0 60 60"
+   enable-background="new 0 0 540 60"
+   xml:space="preserve"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="spritesheet.svg"
+   inkscape:export-filename="/home/mle/Code/Geotrek-unstable/geotrek/common/static/common/point_reference_widget.png"
+   inkscape:export-xdpi="108.81612"
+   inkscape:export-ydpi="108.81612"><metadata
+     id="metadata51"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+     id="defs49" /><sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1438"
+     inkscape:window-height="879"
+     id="namedview47"
+     showgrid="false"
+     inkscape:zoom="10.370899"
+     inkscape:cx="42.89719"
+     inkscape:cy="31.447352"
+     inkscape:window-x="0"
+     inkscape:window-y="19"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Layer_1" /><path
+     d="m 46.366635,30.241058 c 0,8.715283 -7.063423,15.77297 -15.77297,15.77297 -8.709548,0 -15.772971,-7.057687 -15.772971,-15.77297 0,-8.709548 7.063423,-15.772971 15.772971,-15.772971 8.709547,0 15.77297,7.063423 15.77297,15.772971 z"
+     id="path15"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke:#464646;stroke-width:2.79999971;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" /><text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#464646;fill-opacity:1;stroke:none;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+     x="23.388371"
+     y="37.702541"
+     id="text3796"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3798"
+       x="23.388371"
+       y="37.702541"
+       style="font-size:25px">+</tspan></text>
+</svg>

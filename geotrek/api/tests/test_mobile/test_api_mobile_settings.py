@@ -2,12 +2,12 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.testcases import TestCase
 
-from geotrek.common import factories as common_factories
-from geotrek.trekking import factories as trekking_factories
+from geotrek.common.tests import factories as common_factories
+from geotrek.trekking.tests import factories as trekking_factories
 from geotrek.trekking.models import POIType
-from geotrek.tourism import factories as tourism_factories
+from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.models import TouristicContentType, TouristicContentCategory, TouristicEventType
-from geotrek.zoning import factories as zoning_factories
+from geotrek.zoning.tests import factories as zoning_factories
 from geotrek.zoning.models import City, District
 
 
@@ -38,7 +38,7 @@ class SettingsMobileTest(TestCase):
         cls.route = trekking_factories.RouteFactory.create()
         cls.practice = trekking_factories.PracticeFactory.create()
         cls.theme = common_factories.ThemeFactory.create()
-        cls.trek = trekking_factories.TrekFactory.create(difficulty=cls.difficulty, practice=cls.practice,
+        cls.trek = trekking_factories.TrekFactory.create(difficulty=cls.difficulty, published_fr=True, practice=cls.practice,
                                                          route=cls.route)
         cls.trek.accessibilities.add(cls.accessibility_1, cls.accessibility_2)
         cls.trek.networks.add(cls.trek_network)
@@ -124,6 +124,9 @@ class SettingsMobileTest(TestCase):
 
     def test_settings_route(self):
         trekking_factories.RouteFactory()
+        route_unpublished = trekking_factories.RouteFactory()
+        self.trek_unpublished = trekking_factories.TrekFactory.create(route=route_unpublished, published=False)
+
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -153,6 +156,9 @@ class SettingsMobileTest(TestCase):
 
     def test_settings_practice(self):
         trekking_factories.PracticeFactory()
+        practice_unpublished = trekking_factories.PracticeFactory()
+        self.trek_unpublished = trekking_factories.TrekFactory.create(practice=practice_unpublished, published=False)
+
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -202,6 +208,9 @@ class SettingsMobileTest(TestCase):
 
     def test_settings_difficulty(self):
         trekking_factories.DifficultyLevelFactory()
+        difficulty_unpublished = trekking_factories.DifficultyLevelFactory()
+        self.trek_unpublished = trekking_factories.TrekFactory.create(difficulty=difficulty_unpublished, published=False)
+
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
