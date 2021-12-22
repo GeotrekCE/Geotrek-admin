@@ -6,7 +6,13 @@ from django.forms.widgets import HiddenInput, Textarea
 from geotrek.authent.models import SelectableUser
 from geotrek.common.forms import CommonForm
 
-from .models import Report
+from .models import Report, ReportStatus
+
+# This dict stores status order in management workflow
+# {'current_status': ['allowed_next_status', 'other_allowed_status']}
+SURICATE_MANAGEMENT_WORKFLOW = {
+    'filed': ['classified', 'waiting', 'filed'],
+}
 
 
 class ReportForm(CommonForm):
@@ -55,8 +61,9 @@ class ReportForm(CommonForm):
                 self.fields["problem_magnitude"].widget = HiddenInput()
                 # Add fields that are used in Management mode
                 # status
+                next_statuses = SURICATE_MANAGEMENT_WORKFLOW[self.instance.status.suricate_id]
                 self.fields["status"].empty_label = None
-                self.fields["status"].queryset = self.instance.next_status()
+                self.fields["status"].queryset = ReportStatus.objects.filter(suricate_id__in=next_statuses)
                 # assigned_user
                 self.fields["assigned_user"].queryset = SelectableUser.objects.filter(userprofile__isnull=False)
                 # message

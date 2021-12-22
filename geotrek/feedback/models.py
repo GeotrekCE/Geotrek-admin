@@ -20,11 +20,6 @@ from .helpers import SuricateMessenger, send_report_to_managers
 
 logger = logging.getLogger(__name__)
 
-# This dict stores status order in management workflow
-# {'current_status': ['allowed_next_status', 'other_allowed_status']}
-SURICATE_MANAGEMENT_WORKFLOW = {
-    'filed': ['classified', 'waiting'],
-}
 
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
@@ -194,13 +189,6 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             self.save_suricate_report_mode(*args, **kwargs)  # Suricate Report Mode
         elif settings.SURICATE_MANAGEMENT_ENABLED:
             self.save_suricate_management_mode(*args, **kwargs)  # Suricate Management Mode
-
-    def next_status(self):
-        if self.status:
-            next_status = SURICATE_MANAGEMENT_WORKFLOW[self.status.suricate_id]
-            # Current status should also be a possibility
-            next_status.append(self.status.suricate_id)
-            return ReportStatus.objects.filter(suricate_id__in=next_status)
 
     @property
     def created_in_suricate_display(self):
