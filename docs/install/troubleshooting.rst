@@ -1,5 +1,5 @@
 ===============
-TROUBLESHOUTING
+Troubleshouting
 ===============
 
 Geotrek-admin logs are stored in ``/opt/geotrek-admin/var/log/geotrek.log`` file.
