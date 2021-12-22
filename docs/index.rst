@@ -11,9 +11,9 @@ Welcome to Geotrek's documentation!
     usage/screencasts.rst
     usage/editing-objet.rst
     usage/management-modules.rst
-    usage/promotion-modules.rst
+    usage/treks.rst
+    usage/outdoor.rst
     usage/static-pages.rst
-    usage/configuration-manual.rst
     usage/externals-apis.rst
     faq.rst
 
