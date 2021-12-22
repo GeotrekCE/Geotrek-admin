@@ -1,5 +1,0 @@
-=====================
-Configuration manual
-=====================
-
-*Coming soon*

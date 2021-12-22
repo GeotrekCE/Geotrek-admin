@@ -14,6 +14,7 @@ Welcome to Geotrek's documentation!
     usage/treks.rst
     usage/outdoor.rst
     usage/static-pages.rst
+    usage/configuration-ttw.rst
     usage/externals-apis.rst
     faq.rst
 
