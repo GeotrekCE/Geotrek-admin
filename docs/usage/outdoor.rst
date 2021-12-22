@@ -1,53 +1,9 @@
-=======================
-Modules de valorisation
-=======================
+=================
+Activités outdoor
+=================
 
-.. todo::
-
-    Détailler le fonctionnement des modules de valorisation (itinéraires, POI, contenus et évenements touristiques, services, signalement et zones de sensibilité).
-
-Itinérance
-==========
-
-Il est possible de créer des randonnées itinérantes (sur plusieurs jours) et d'y associer des étapes comme sur cet exemple : http://www.grand-tour-ecrins.fr/a-pied/tour-de-la-berarde/.
-
-Pour cela il faut créer un itinéraire parent (séjour itinérant complet) puis y ajouter des itinéraires enfants (étapes) de manière ordonnée, dans le champs `Enfants` présent dans l'onglet `Avancé` du formulaire itinéraire du séjour complet.
-
-Le séjour complet ainsi que chaque sont donc chacunes des randonnées comme les autres. La seule différence est que les étapes (itinéraires enfants) sont rattachées à l'itinéraire parent.
-
-Si vous ne souhaitez pas que les étapes soient affichées dans la page de Recherche de Geotrek-rando, il ne faut pas les publier. Il suffit alors de publier l'itinéraire parent, pour que toutes les étapes qui y sont rattachées apparaissent uniquement dans sa fiche détail de Geotrek-rando.
-
-Points des références
-=====================
-
-Lorsque l'on localise un itinéraire, il est aussi possible de localiser le parking de la randonnée et de placer des points de référence numérotées sous forme de puces rouges sur la carte.
-
-Ces derniers servent à y faire référence dans le champs Description de l'itinéraire (Pas à pas) :
-
-.. image :: /images/user-manual/references-geotrek-rando.jpg
-
-Pour que des puces numérotées sous forme de pastilles rouges soient affichées dans la description, il suffit de les saisir en tant que Liste numérotées dans le champs Description :
-
-.. image :: /images/user-manual/references-geotrek-admin.jpg
-
-**Ordre des catégories** :
-
-Dans le portail Geotrek-rando, les différents types de contenus sont éclatés en catégories.
-
-Pour définir leur ordre d'affichage, il est possible de le définir dans la base de données pour certains contenus (ordre des pratiques et des catégories de contenus touristiques) en renseignant leur champs ``ordre`` depuis l'Adminsite de Geotrek-admin.
-
-Pour l'ordre d'affichage des catégorie Randonnées, Itinérance et Evènements touristiques, il est possible de modifier les valeurs par défaut définies dans le fichier ``geotrek/settings/base.py`` en surcouchant les paramètres correspondant dans le fichier de configuration avancée ``geotrek/settings/custom.py`` :
-
-- ``TREK_CATEGORY_ORDER = 1``
-- ``ITINERANCY_CATEGORY_ORDER = 2``
-- ``TOURISTIC_EVENT_CATEGORY_ORDER = 99``
-
-Il est aussi possible d'éclater les randonnées pour que chaque pratique soit une catégorie en surcouchant le paramètre ``SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False``, d'éclater les types d'accessibilité en catégories avec le paramètre ``SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False`` et de séparer les randonnées itinérantes dans une catégorie avec le paramètre ``SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False``.
-
-Gestion et valorisation des activités outdoor
-=============================================
-
-**Sites et parcours**
+Sites et parcours
+=================
 
 Geotrek-admin dédie 2 modules aux activités outdoor : les sites et les parcours. Un site correspond à une zone ou à un réseau hydrographique
 à gérer et/ou à valoriser d'un seul tenant : site d'escalade, cours d'eau, zone de vol libre…
@@ -73,7 +29,8 @@ Les 2 modules outdoor permettent de :
 - Associer des POI à un site ou parcours, automatiquement par intersection géographique
 - Associer des accès au site, automatiquement par intersection géographique des itinéraires à proximité
 
-**Arborescence**
+Arborescence
+------------
 
 Les fiches détail des sites et des parcours présentent les liens entre eux sous forme d'une arborescence. Pour ne pas surcharger,
 tous les éléments ne sont pas repris, mais uniquement :
@@ -84,7 +41,8 @@ tous les éléments ne sont pas repris, mais uniquement :
 
 Des liens permettent d'ajouter des sites ou parcours en les positionnant directement dans l'arborescence.
 
-**Nomenclatures**
+Nomenclatures
+=============
 
 En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin » il est possible de modifier les nomenclatures.
 
@@ -95,7 +53,11 @@ En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin 
   Par exemple « Site école » pour l'escalade.
 * Échelle de cotation : permet de regrouper les cotations faisant partie de la même échelle. Elles sont spécifiques à chaque pratique.
 
-**Escalade** :
+Filières
+========
+
+Escalade
+--------
 
 La notion de site est naturelle. Elle peut être définie géographiquement par un polygone.
 Il est possible (mais pas obligatoire) de créer des sous-sites pour représenter des secteurs.
@@ -108,7 +70,8 @@ il est également possible de créer autant de parcours que de longueurs dans la
 Lors de la saisie de la grande voie, il faudra préciser les différentes longueurs dans le champ « Enfants », dans le bon ordre.
 Le nom de chaque longueur pourra reprendre le nom de la voie suffixé par « longueur 1 », « longueur 2 », etc.
 
-**Vol libre**
+Vol libre
+---------
 
 La zone de vol n'est pas définie géographiquement de manière précise mais fait quand même l'objet d'un site avec un nom
 (ex: « massif de … ») et un polygone approximatif ou bien un point (de préférence celui de départ). Cela n'a pas une importance
@@ -120,7 +83,8 @@ Afin de les identifier, il faut créer les types de site « Aire de décollage �
 Comme le vol est libre, il n'est pas nécessaire de définir des parcours. Cependant, il est possible d'en définir pour donner
 des exemples de trajectoires.
 
-**Eau vive**
+Eau vive
+--------
 
 Le site est généralement constitué par une rivière ou une portion de rivière. Il est possible d'y adjoindre des affluents.
 La géométrie du site est donc un linéraire correspondant à un réseau hydrographique.
@@ -129,4 +93,3 @@ Les aires d'embarquement/débarquement sont définies par des sous-sites. Leur g
 ou d'un polygone.
 Les parcours sont automatiquement attachés à une aire d'embarquement et une aire de débarquement qui sont les aires les plus
 proches respectivement du début et de la fin du parcours.
-
