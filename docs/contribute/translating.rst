@@ -1,5 +1,5 @@
 ============
-TRANSLATING
+Translating
 ============
 
 Geotrek-admin can be translated online on
