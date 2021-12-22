@@ -7,4 +7,4 @@ To compile and test documentation on local environment, run :
 
 .. code-block :: bash
 
-    docker-compose run --workdir /opt/geotrek-admin/docs --rm web make html
+    docker-compose up -d sphinx
