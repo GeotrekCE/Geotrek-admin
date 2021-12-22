@@ -38,6 +38,7 @@ Welcome to Geotrek's documentation!
     :maxdepth: 2
 
     contribute/translating
+    contribute/documentation
     contribute/development
     contribute/design
     authors
