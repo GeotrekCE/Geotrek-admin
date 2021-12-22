@@ -9,7 +9,7 @@ Welcome to Geotrek's documentation!
 
     usage/overview.rst
     usage/screencasts.rst
-    usage/editing-objet.rst
+    usage/editing-objects.rst
     usage/management-modules.rst
     usage/treks.rst
     usage/outdoor.rst
