@@ -176,26 +176,6 @@ Restore files on the new server:
 	scp old_server_ip:path/to/data.tgz .
 	tar xvzf data.tgz
 
-Troubleshooting
----------------
-
-Geotrek-admin logs are stored in ``/opt/geotrek-admin/var/log/geotrek.log`` file.
-But if Geotrek-admin does not start, take a look to systemd logs for each of the 3 Geotrek-admin services
-(user web interface, API and asynchronous tasks):
-
-::
-
-   sudo journalctl -eu geotrek-ui
-   sudo journalctl -eu geotrek-api
-   sudo journalctl -eu geotrek-celery
-
-The output is paginated. With -e option you are at the end of the logs but you can go up an down with arrows.
-Type Q to quit. If you want to copy the log to a file, do:
-
-::
-
-   sudo journalctl -u geotrek-ui > systemd-geotrek-ui.log
-
 
 Uninstallation
 --------------
