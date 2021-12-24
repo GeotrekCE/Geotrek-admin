@@ -582,8 +582,8 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',
     messages.DEBUG: 'alert-info',
-    messages.WARNING: 'alert-error',
-    messages.ERROR: 'alert-error',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
 }
 
 CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
