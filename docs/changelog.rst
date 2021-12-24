@@ -5,6 +5,10 @@ CHANGELOG
 2.74.1+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix bootstrap theme in warning and error messages or alerts
+
 
 2.74.1     (2021-12-21)
 -----------------------
