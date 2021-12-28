@@ -5,7 +5,9 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
+from django.core.mail import send_mail
 from django.db.models.query_utils import Q
+from django.template.loader import render_to_string
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from mapentity.models import MapEntityMixin
@@ -23,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
-    'filed': 'classified',
+    'filed': ['classified', 'waiting']
 }
 
 
@@ -177,8 +179,19 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             # TODO We'll need to implement some of the workflow here Todo do we need to remove this
             super().save(*args, **kwargs)
 
+    def notify_assigned_user(self):
+        subject = str("Geotrek - Nouveau Signalement à traiter")
+        message = render_to_string("feedback/affectation_email.html", {"report": self})
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
+
+    def lock_in_suricate(self):
+        SuricateMessenger().lock_alert(self.uid)
+
+    def unlock_in_suricate(self):
+        SuricateMessenger().unlock_alert(self.uid)
+
     def send_notifications_on_status_change(self, old_status_id, message):
-        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and NOTIFY_SURICATE_AND_SENTINEL[old_status_id] == self.status.suricate_id:
+        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.suricate_id in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
             SuricateMessenger().update_status(self.uid, self.status.suricate_id, message)
             SuricateMessenger().message_sentinel(self.uid, message)
 

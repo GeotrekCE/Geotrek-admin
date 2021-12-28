@@ -52,7 +52,7 @@ class SuricateRequestManager:
         extra_url_params = urllib.parse.urlencode(url_params)
         # Include alert ID in check when needed
         if "uid_alerte" in url_params:
-            id_alert = url_params["uid_alerte"]
+            id_alert = str(url_params["uid_alerte"])
             check = f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + id_alert + self.ID_ORIGIN).encode()).hexdigest()}"
         else:
             check = self.CHECK_CLIENT
@@ -205,18 +205,17 @@ class SuricateMessenger:
         }
         manager.post_to_suricate("wsSendReport", params)
 
-    # TODO use in workflow
-    # def lock_alert(self, id_alert):
-    #     """Lock report on Suricate Rest API"""
-    #     return self.gestion_manager.get_from_suricate(
-    #         "wsLockAlert", extra_url_params={"uid_alerte": id_alert}
-    #     )
+    def lock_alert(self, id_alert):
+        """Lock report on Suricate Rest API"""
+        return self.gestion_manager.get_from_suricate(
+            "wsLockAlert", url_params={"uid_alerte": id_alert}
+        )
 
-    # def unlock_alert(self, id_alert):
-    #     """Unlock report on Suricate Rest API"""
-    #     return self.gestion_manager.get_from_suricate(
-    #         "wsUnlockAlert", url_params={"uid_alerte": id_alert}
-    #     )
+    def unlock_alert(self, id_alert):
+        """Unlock report on Suricate Rest API"""
+        return self.gestion_manager.get_from_suricate(
+            "wsUnlockAlert", url_params={"uid_alerte": id_alert}
+        )
 
     def update_status(self, id_alert, new_status, message):
         """Update status for given report on Suricate Rest API"""

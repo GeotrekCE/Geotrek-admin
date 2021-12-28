@@ -1,3 +1,5 @@
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from crispy_forms.layout import Div
 from django.conf import settings
 from django.forms.fields import CharField
@@ -11,7 +13,9 @@ from .models import Report, ReportStatus
 # This dict stores status order in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
 SURICATE_MANAGEMENT_WORKFLOW = {
-    'filed': ['classified', 'waiting', 'filed'],
+    'filed': ['classified', 'filed'],
+    'classified': ['classified'],
+    'waiting': ['waiting', 'filed']
 }
 
 
@@ -65,7 +69,10 @@ class ReportForm(CommonForm):
                 self.fields["status"].empty_label = None
                 self.fields["status"].queryset = ReportStatus.objects.filter(suricate_id__in=next_statuses)
                 # assigned_user
-                self.fields["assigned_user"].queryset = SelectableUser.objects.filter(userprofile__isnull=False)
+                if self.old_status_id == 'filed':
+                    self.fields["assigned_user"].queryset = SelectableUser.objects.filter(userprofile__isnull=False)
+                else:
+                    self.fields["assigned_user"].widget = HiddenInput()
                 # message
                 self.fields["message"] = CharField(required=False)
                 self.fields["message"].widget = Textarea()
@@ -80,7 +87,13 @@ class ReportForm(CommonForm):
 
     def save(self, *args, **kwargs):
         report = super().save(self, *args, **kwargs)
-        if self.instance.pk and settings.SURICATE_MANAGEMENT_ENABLED and 'status' in self.changed_data:
-            msg = self.cleaned_data.get('message', "")
-            report.send_notifications_on_status_change(self.old_status_id, msg)
+        if self.instance.pk and settings.SURICATE_MANAGEMENT_ENABLED:
+            if self.old_status_id == 'filed' and 'assigned_user' in self.changed_data:
+                report.notify_assigned_user()
+                report.status = ReportStatus.objects.get(suricate_id='waiting')
+                report.save()
+                report.lock_in_suricate()
+            if 'status' in self.changed_data or 'assigned_user' in self.changed_data:
+                msg = self.cleaned_data.get('message', "")
+                report.send_notifications_on_status_change(self.old_status_id, msg)
         return report
