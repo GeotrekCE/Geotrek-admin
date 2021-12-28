@@ -7,5 +7,23 @@
             "label_fr": "Programmed",
             "suricate_id": "programmed"
         }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Intervention en retard",
+            "label_en": "Intervention late",
+            "label_fr": "Intervention en retard",
+            "suricate_id": "intervention_late"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "R\u00e9solution en retard",
+            "label_en": "Resolution late",
+            "label_fr": "R\u00e9solution en retard",
+            "suricate_id": "resolution_late"
+        }
     }
 ]

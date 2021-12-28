@@ -1,26 +1,22 @@
-from geotrek.common.models import Attachment
-from mapentity.tests.factories import UserFactory
-import os
 import io
+import os
+import uuid
 from unittest import mock
 from unittest.mock import MagicMock
-import uuid
 
-from django.core.management import call_command
 from django.core import mail
+from django.core.management import call_command
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
-from geotrek.feedback.tests.factories import ReportFactory
+from mapentity.tests.factories import UserFactory
+
+from geotrek.common.models import Attachment
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
-from geotrek.feedback.models import (
-    AttachedMessage,
-    Report,
-    ReportActivity,
-    ReportProblemMagnitude,
-    ReportStatus,
-)
+from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
+                                     ReportProblemMagnitude, ReportStatus)
+from geotrek.feedback.tests.factories import ReportFactory
 
 SURICATE_REPORT_SETTINGS = {
     "URL": "http://suricate.example.com",
@@ -36,6 +32,8 @@ SURICATE_MANAGEMENT_SETTINGS = {
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
     "AUTH": ("", ""),
+    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 6,
+    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 7
 }
 
 
@@ -70,6 +68,9 @@ class SuricateTests(TestCase):
             elif "GetAlerts" in url:
                 mock_response.content = mocked_json("suricate_alerts.json")
                 mock_response.status_code = 200
+            elif "wsLockAlert" in url:
+                mock_response.content = mocked_json("suricate_positive.json")
+                mock_response.status_code = 200
             elif cause_JPG_error:
                 mock_response.status_code = 404
             elif ".jpg" in url or ".png" in url or ".JPG" in url:
@@ -86,10 +87,10 @@ class SuricateTests(TestCase):
 
         def build_response_patch(url, params=None, **kwargs):
             mock_response = MagicMock()
-            if "SendReport" in url:
+            if "SendReport" in url or "UpdateStatus" in url or "MessageSentinel" in url:
                 mock_response.status_code = 200
                 mock_response.content = mocked_json(
-                    "suricate_post_report_positive.json"
+                    "suricate_positive.json"
                 )
             else:
                 mock_response.status_code = 404
@@ -385,3 +386,119 @@ class SuricateInterfaceTests(SuricateTests):
         # Get raises an exception
         with self.assertRaises(Exception):
             SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+
+
+class SuricateWorkflowTests(SuricateTests):
+
+    def setUp(cls):
+        cls.filed_status = ReportStatusFactory(suricate_id='filed', label="Déposé")
+        cls.classified_status = ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
+        cls.programmed_status = ReportStatusFactory(suricate_id='programmed', label="Programmé")
+        cls.waiting_status = ReportStatusFactory(suricate_id='waiting', label="En cours")
+        cls.intervention_late_status = ReportStatusFactory(suricate_id='intervention_late', label="Intervention en retard")
+        cls.resolution_late_status = ReportStatusFactory(suricate_id='resolution_late', label="Resolution en retard")
+        cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
+    def test_classify_alert_notifies_suricate_when_management_enabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
+        form = ReportForm(
+            instance=self.report,
+            data={
+                'geom': 'POINT(5.1 6.6)',
+                'email': self.report.email,
+                'status': self.classified_status.pk,
+                'message': "Problème déjà réglé"
+            }
+        )
+        self.assertTrue(form.is_valid)
+        form.save()
+        mocked_mail_sentinel.assert_called_once_with(self.report.uid, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified_status.suricate_id, "Problème déjà réglé")
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
+    def test_classify_alert_does_not_notify_suricate_when_management_disabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
+        form = ReportForm(
+            instance=self.report,
+            data={
+                'geom': 'POINT(5.1 6.6)',
+                'email': self.report.email,
+                'status': self.classified_status.pk,
+                'message': "Problème déjà réglé"
+            }
+        )
+        self.assertTrue(form.is_valid)
+        form.save()
+        mocked_mail_sentinel.assert_not_called()
+        mocked_notify_suricate_status.assert_not_called()
+
+
+def raise_multiple(exceptions):
+    if not exceptions:  # list emptied, recursion ends
+        return
+    try:
+        raise exceptions.pop()  # pop removes list entries
+    finally:
+        raise_multiple(exceptions)  # recursion
+
+
+def test_for_all_suricate_modes(test_func):
+    def inner(self, *args, **kwargs):
+        exceptions = []
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'No Suricate' mode",)
+            exceptions.append(e)
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Report' mode",)
+            exceptions.append(e)
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Management' mode",)
+            exceptions.append(e)
+        raise_multiple(exceptions)
+    return inner
+
+
+def test_for_report_and_basic_modes(test_func):
+    def inner(self, *args, **kwargs):
+        exceptions = []
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'No Suricate' mode",)
+            exceptions.append(e)
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Report' mode",)
+            exceptions.append(e)
+        raise_multiple(exceptions)
+    return inner
+
+
+def test_for_management_mode(test_func):
+    def inner(self, *args, **kwargs):
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Management' mode",)
+            raise
+    return inner

@@ -1,10 +1,15 @@
 import html
 import logging
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
+from django.core.mail import send_mail
+from django.db.models.fields import related
 from django.db.models.query_utils import Q
+from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 
@@ -18,6 +23,17 @@ from mapentity.models import MapEntityMixin
 from .helpers import SuricateMessenger, send_report_to_managers
 
 logger = logging.getLogger(__name__)
+
+
+# This dict stores status changes that send an email and an API request
+NOTIFY_SURICATE_AND_SENTINEL = {
+    'filed': ['classified', 'waiting']
+}
+
+STATUS_WHEN_REPORT_IS_LATE = {
+    'waiting': 'intervention_late',
+    'programmed': 'resolution_late',
+}
 
 
 def status_default():
@@ -162,6 +178,27 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             # TODO We'll need to implement some of the workflow here
             super().save(*args, **kwargs)
 
+    def notify_assigned_user(self):
+        subject = str("Geotrek - Nouveau Signalement à traiter")
+        message = render_to_string("feedback/affectation_email.html", {"report": self})
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
+
+    def notify_late_report(self, status_id):
+        subject = str("Geotrek - Signalement à traiter en retard")
+        message = render_to_string(f"feedback/late_{status_id}_email.html", {"report": self})
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
+
+    def lock_in_suricate(self):
+        SuricateMessenger().lock_alert(self.uid)
+
+    def unlock_in_suricate(self):
+        SuricateMessenger().unlock_alert(self.uid)
+
+    def send_notifications_on_status_change(self, old_status_id, message):
+        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.suricate_id in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
+            SuricateMessenger().update_status(self.uid, self.status.suricate_id, message)
+            SuricateMessenger().message_sentinel(self.uid, message)
+
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:
             self.save_no_suricate(*args, **kwargs)  # No Suricate Mode
@@ -286,3 +323,32 @@ class AttachedMessage(models.Model):
 
     class Meta:
         unique_together = ('suricate_id', 'date', 'report')
+
+
+class TimerEvent(models.Model):
+    step = models.ForeignKey(ReportStatus, on_delete=models.CASCADE, null=False, related_name="timers")
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, null=False, related_name="timers")
+    date_event = models.DateTimeField()
+    date_notification = models.DateTimeField()
+    notification_sent = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            self.date_event = timezone.now()
+            days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.suricate_id.upper()}_REPORTS_IN_DAYS"]
+            self.date_notification = self.date_event + timedelta(days=days_nb)
+        super().save(*args, **kwargs)
+
+    def notify_if_needed(self):
+        if not(self.notification_sent) and (timezone.now() > self.date_notification) and (self.report.status.suricate_id == self.step.suricate_id):
+            self.report.notify_late_report(self.step.suricate_id)
+            late_status = ReportStatus.objects.get(suricate_id=STATUS_WHEN_REPORT_IS_LATE[self.step.suricate_id])
+            self.report.status = late_status
+            self.report.save()
+            self.notification_sent = True
+            self.save()
+
+    def is_obsolete(self):
+        obsolete_notified = (timezone.now() > self.date_notification) and self.notification_sent
+        obsolete_unused = (timezone.now() > self.date_notification) and (self.report.status.suricate_id != self.step.suricate_id)
+        return obsolete_notified or obsolete_unused

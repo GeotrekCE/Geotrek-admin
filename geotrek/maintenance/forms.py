@@ -15,7 +15,7 @@ from geotrek.core.models import Topology
 
 from .models import Intervention, InterventionJob, ManDay, Project
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
-    from geotrek.feedback.models import Report, ReportStatus
+    from geotrek.feedback.models import Report, ReportStatus, TimerEvent
 
 
 class ManDayForm(forms.ModelForm):
@@ -147,9 +147,10 @@ class InterventionForm(CommonForm):
             # If this is a new intervetion created for a report, change report status
             if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_MANAGEMENT_ENABLED:
                 if isinstance(target, Report):
-                    target.status = ReportStatus.objects.get(suricate_id='programmed')
+                    programmed_status = ReportStatus.objects.get(suricate_id='programmed')
+                    target.status = programmed_status
                     target.save()
-                    # Todo launch timer
+                    TimerEvent.objects.create(step=programmed_status, report=target)
         if not target.pk:
             target.save()
         topology = self.cleaned_data.get('topology')
