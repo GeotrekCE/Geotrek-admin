@@ -1,0 +1,11 @@
+[
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Programm\u00e9",
+            "label_en": "Programm\u00e9",
+            "label_fr": "Programmed",
+            "suricate_id": "programmed"
+        }
+    }
+]
