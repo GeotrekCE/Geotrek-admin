@@ -220,7 +220,7 @@ class SuricateMessenger:
     def update_status(self, id_alert, new_status, message):
         """Update status for given report on Suricate Rest API"""
         check = md5(
-            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + id_alert).encode()
+            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + str(id_alert)).encode()
         ).hexdigest()
 
         params = {
@@ -245,11 +245,11 @@ class SuricateMessenger:
 
     def message_sentinel(self, id_alert, message):
         check = md5(
-            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + id_alert).encode()
+            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + str(id_alert)).encode()
         ).hexdigest()
         """Send report to Suricate Rest API"""
         params = {
-            "id_origin": self.ID_ORIGIN,
+            "id_origin": self.gestion_manager.ID_ORIGIN,
             "uid_alerte": id_alert,
             "message": message,
             "check": check,

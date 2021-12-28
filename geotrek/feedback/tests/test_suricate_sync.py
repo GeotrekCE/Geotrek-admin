@@ -19,6 +19,7 @@ from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportProblemMagnitude, ReportStatus)
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 
+
 SURICATE_REPORT_SETTINGS = {
     "URL": "http://suricate.example.com/",
     "ID_ORIGIN": "geotrek",
@@ -33,6 +34,8 @@ SURICATE_MANAGEMENT_SETTINGS = {
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
     "AUTH": ("", ""),
+    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 6,
+    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 7
 }
 
 
@@ -67,6 +70,9 @@ class SuricateTests(TestCase):
             elif "GetAlerts" in url:
                 mock_response.content = mocked_json("suricate_alerts.json")
                 mock_response.status_code = 200
+            elif "wsLockAlert" in url:
+                mock_response.content = mocked_json("suricate_positive.json")
+                mock_response.status_code = 200
             elif cause_JPG_error:
                 mock_response.status_code = 404
             elif ".jpg" in url or ".png" in url or ".JPG" in url:
@@ -83,10 +89,10 @@ class SuricateTests(TestCase):
 
         def build_response_patch(url, params=None, **kwargs):
             mock_response = MagicMock()
-            if "SendReport" in url:
+            if "SendReport" in url or "UpdateStatus" in url or "MessageSentinel" in url:
                 mock_response.status_code = 200
                 mock_response.content = mocked_json(
-                    "suricate_post_report_positive.json"
+                    "suricate_positive.json"
                 )
             else:
                 mock_response.status_code = 404
@@ -387,9 +393,13 @@ class SuricateInterfaceTests(SuricateTests):
 class SuricateWorkflowTests(SuricateTests):
 
     def setUp(cls):
-        filed = ReportStatusFactory(suricate_id='filed', label="Déposé")
-        cls.classified = ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
-        cls.report = ReportFactory(status=filed, uid=uuid.uuid4())
+        cls.filed_status = ReportStatusFactory(suricate_id='filed', label="Déposé")
+        cls.classified_status = ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
+        cls.programmed_status = ReportStatusFactory(suricate_id='programmed', label="Programmé")
+        cls.waiting_status = ReportStatusFactory(suricate_id='waiting', label="En cours")
+        cls.intervention_late_status = ReportStatusFactory(suricate_id='intervention_late', label="Intervention en retard")
+        cls.resolution_late_status = ReportStatusFactory(suricate_id='resolution_late', label="Resolution en retard")
+        cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -402,14 +412,14 @@ class SuricateWorkflowTests(SuricateTests):
             data={
                 'geom': 'POINT(5.1 6.6)',
                 'email': self.report.email,
-                'status': self.classified.pk,
+                'status': self.classified_status.pk,
                 'message': "Problème déjà réglé"
             }
         )
         self.assertTrue(form.is_valid)
         form.save()
         mocked_mail_sentinel.assert_called_once_with(self.report.uid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified.suricate_id, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified_status.suricate_id, "Problème déjà réglé")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -422,7 +432,7 @@ class SuricateWorkflowTests(SuricateTests):
             data={
                 'geom': 'POINT(5.1 6.6)',
                 'email': self.report.email,
-                'status': self.classified.pk,
+                'status': self.classified_status.pk,
                 'message': "Problème déjà réglé"
             }
         )

@@ -6,7 +6,7 @@ from django.forms.widgets import HiddenInput, Textarea
 from geotrek.authent.models import SelectableUser
 from geotrek.common.forms import CommonForm
 
-from .models import Report, ReportStatus
+from .models import Report, ReportStatus, TimerEvent
 
 # This dict stores status order in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
@@ -88,9 +88,11 @@ class ReportForm(CommonForm):
         if self.instance.pk and settings.SURICATE_MANAGEMENT_ENABLED:
             if self.old_status_id == 'filed' and 'assigned_user' in self.changed_data:
                 report.notify_assigned_user()
-                report.status = ReportStatus.objects.get(suricate_id='waiting')
+                waiting_status = ReportStatus.objects.get(suricate_id='waiting')
+                report.status = waiting_status
                 report.save()
                 report.lock_in_suricate()
+                TimerEvent.objects.create(step=waiting_status, report=report)
             if 'status' in self.changed_data or 'assigned_user' in self.changed_data:
                 msg = self.cleaned_data.get('message', "")
                 report.send_notifications_on_status_change(self.old_status_id, msg)
