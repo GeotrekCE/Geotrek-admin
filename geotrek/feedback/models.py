@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.core.mail import send_mail
-from django.db.models.fields import related
 from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
