@@ -5,7 +5,7 @@ from django.forms.widgets import HiddenInput, Textarea
 
 from geotrek.common.forms import CommonForm
 
-from .models import Report, ReportStatus, SelectableUser, TimerEvent
+from .models import Report, ReportStatus, TimerEvent
 
 # This dict stores status order in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}

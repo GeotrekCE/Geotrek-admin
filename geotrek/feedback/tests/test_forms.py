@@ -2,21 +2,18 @@ import uuid
 from hashlib import md5
 from unittest import mock
 
-from django.conf import settings
 from django.core import mail
 from django.forms.widgets import EmailInput, HiddenInput, Select
 from django.test.utils import override_settings
 from django.urls.base import reverse
-from mapentity.tests.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory
 from mapentity.widgets import MapWidget
 from tinymce.widgets import TinyMCE
 
-from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import TimerEvent, WorkflowManager
-from geotrek.feedback.tests.factories import (ReportFactory,
-                                              WorkflowManagerFactory)
+from geotrek.feedback.models import TimerEvent
+from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SuricateWorkflowTests, test_for_management_mode,
     test_for_report_and_basic_modes)
