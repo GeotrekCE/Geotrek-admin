@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.core.mail import send_mail
+from django.db.models.deletion import CASCADE, PROTECT
 from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -41,6 +42,23 @@ def status_default():
     if new_status_query:
         return new_status_query.get().pk
     return None
+
+
+class SelectableUserManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(userprofile__isnull=False)
+
+
+class SelectableUser(User):
+
+    objects = SelectableUserManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return f"{self.username} ({self.email})"
 
 
 class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin):
@@ -105,6 +123,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     last_updated_in_suricate = models.DateTimeField(
         blank=True, null=True,
         verbose_name=_("Last updated in Suricate")
+    )
+    assigned_user = models.ForeignKey(
+        SelectableUser,
+        blank=True,
+        on_delete=models.PROTECT,
+        null=True,
+        verbose_name=_("Supervisor"),
+        related_name="reports"
     )
 
     class Meta:
@@ -351,3 +377,14 @@ class TimerEvent(models.Model):
         obsolete_notified = (timezone.now() > self.date_notification) and self.notification_sent
         obsolete_unused = (timezone.now() > self.date_notification) and (self.report.status.suricate_id != self.step.suricate_id)
         return obsolete_notified or obsolete_unused
+
+
+class WorkflowManager(models.Model):
+    user = models.ForeignKey(SelectableUser, on_delete=PROTECT)
+
+    class Meta:
+        verbose_name = _("Workflow Manager")
+        verbose_name_plural = _("Workflow Managers")
+
+    def __str__(self):
+        return f"{self.user.username} ({self.user.email})"
