@@ -1,21 +1,22 @@
-from datetime import datetime
 import json
+from datetime import datetime
 from unittest import mock
-from django.conf import settings
 
-from django.test.utils import override_settings
-from django.utils.translation import gettext_lazy as _
-from django.test import TestCase
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core import mail
-
+from django.test import TestCase
+from django.test.utils import override_settings
+from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from rest_framework.test import APIClient
 
 from geotrek.common.tests import CommonTest, TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
+from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
+                                           get_dummy_uploaded_image,
+                                           get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factories
-from rest_framework.test import APIClient
 
 
 class ReportViewsetMailSend(TestCase):

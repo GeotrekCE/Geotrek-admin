@@ -2,9 +2,11 @@ import uuid
 from hashlib import md5
 from unittest import mock
 
+from django.conf import settings
 from django.core import mail
 from django.forms.widgets import EmailInput, HiddenInput, Select
 from django.test.utils import override_settings
+from django.urls.base import reverse
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.widgets import MapWidget
 from tinymce.widgets import TinyMCE
@@ -12,13 +14,16 @@ from tinymce.widgets import TinyMCE
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import TimerEvent
-from geotrek.feedback.tests.factories import ReportFactory
+from geotrek.feedback.models import TimerEvent, WorkflowManager
+from geotrek.feedback.tests.factories import (ReportFactory,
+                                              WorkflowManagerFactory)
 from geotrek.feedback.tests.test_suricate_sync import (
     SuricateWorkflowTests, test_for_management_mode,
     test_for_report_and_basic_modes)
 from geotrek.maintenance.forms import InterventionForm
-from geotrek.maintenance.tests.factories import InterventionStatusFactory
+from geotrek.maintenance.models import InterventionStatus
+from geotrek.maintenance.tests.factories import (InterventionFactory,
+                                                 InterventionStatusFactory)
 
 
 class TestSuricateForms(SuricateWorkflowTests):
@@ -26,8 +31,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         super().setUp()
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uid=uuid.uuid4())
-        cls.user = UserFactory(password="drowssap")
-        UserProfileFactory.create(user=cls.user)
+        cls.client.login(username="Admiin", password="drowssap")
 
     @test_for_report_and_basic_modes
     def test_creation_form_common(self):
@@ -107,6 +111,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     def test_workflow_assign_step(self, mocked_post, mocked_get):
         self.build_get_request_patch(mocked_get)
         self.build_post_request_patch(mocked_post)
+        mails_before = len(mail.outbox)
         # When assigning a user to a report
         data = {
             'assigned_user': str(self.user.pk),
@@ -135,6 +140,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         # Assert user is notified
+        self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(mail.outbox[-1].subject, "Geotrek - Nouveau Signalement à traiter")
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
 
@@ -158,3 +164,48 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Assert report status changed
         self.waiting_report.refresh_from_db()
         self.assertEquals(self.waiting_report.status.suricate_id, "programmed")
+
+    @test_for_management_mode
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_solving_report_intervention(self, mocked_post):
+        mails_before = len(mail.outbox)
+        self.build_post_request_patch(mocked_post)
+        # Report has a linked intervention
+        interv = InterventionFactory(
+            status=InterventionStatus.objects.get(status="planifiée"),
+            target=self.interv_report
+        )
+        # Trigger resolving intervention
+        user = SuperUserFactory(username="admin", password="dadadad")
+        data = {
+            'name': interv.name,
+            'date': interv.date,
+            'status': 3,    # pk for "Terminée" from fixtures
+            'structure': user.profile.structure.pk
+        }
+        form = InterventionForm(user=user, instance=interv, data=data)
+        form.is_valid()
+        form.save()
+        # Assert report changes status and manager is notified
+        self.assertEqual(self.interv_report.status.suricate_id, "intervention_solved")
+        self.assertEqual(len(mail.outbox), mails_before + 1)
+        self.assertEqual(mail.outbox[-1].subject, "Geotrek - Un Signalement est à clôturer")
+        self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])
+
+    @test_for_report_and_basic_modes
+    def test_can_create_intervention(self):
+        response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("Add a new intervention", response.content.decode("utf-8"))
+
+    @test_for_management_mode
+    def test_can_only_create_intervention_once_1(self):
+        response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertNotIn("Add a new intervention", response.content.decode("utf-8"))
+
+    @test_for_management_mode
+    def test_can_only_create_intervention_once_2(self):
+        response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.waiting_report.pk}), follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("Add a new intervention", response.content.decode("utf-8"))

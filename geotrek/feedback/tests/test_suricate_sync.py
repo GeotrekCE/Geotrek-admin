@@ -10,15 +10,17 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
-from mapentity.tests.factories import UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
+from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.common.models import Attachment
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportProblemMagnitude, ReportStatus)
-from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
-
+from geotrek.feedback.tests.factories import (ReportFactory,
+                                              ReportStatusFactory,
+                                              WorkflowManagerFactory)
 
 SURICATE_REPORT_SETTINGS = {
     "URL": "http://suricate.example.com/",
@@ -391,6 +393,7 @@ class SuricateInterfaceTests(SuricateTests):
 
 
 class SuricateWorkflowTests(SuricateTests):
+    fixtures = ['geotrek/maintenance/fixtures/basic.json']
 
     def setUp(cls):
         cls.filed_status = ReportStatusFactory(suricate_id='filed', label="Déposé")
@@ -399,47 +402,13 @@ class SuricateWorkflowTests(SuricateTests):
         cls.waiting_status = ReportStatusFactory(suricate_id='waiting', label="En cours")
         cls.intervention_late_status = ReportStatusFactory(suricate_id='intervention_late', label="Intervention en retard")
         cls.resolution_late_status = ReportStatusFactory(suricate_id='resolution_late', label="Resolution en retard")
+        cls.intervention_solved_status = ReportStatusFactory(suricate_id='intervention_solved', label="Intervention terminée")
         cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
-
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
-    @mock.patch("geotrek.feedback.helpers.requests.get")
-    @mock.patch("geotrek.feedback.helpers.requests.post")
-    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
-    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
-    def test_classify_alert_notifies_suricate_when_management_enabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
-        form = ReportForm(
-            instance=self.report,
-            data={
-                'geom': 'POINT(5.1 6.6)',
-                'email': self.report.email,
-                'status': self.classified_status.pk,
-                'message': "Problème déjà réglé"
-            }
-        )
-        self.assertTrue(form.is_valid)
-        form.save()
-        mocked_mail_sentinel.assert_called_once_with(self.report.uid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified_status.suricate_id, "Problème déjà réglé")
-
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
-    @mock.patch("geotrek.feedback.helpers.requests.get")
-    @mock.patch("geotrek.feedback.helpers.requests.post")
-    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
-    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
-    def test_classify_alert_does_not_notify_suricate_when_management_disabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
-        form = ReportForm(
-            instance=self.report,
-            data={
-                'geom': 'POINT(5.1 6.6)',
-                'email': self.report.email,
-                'status': self.classified_status.pk,
-                'message': "Problème déjà réglé"
-            }
-        )
-        self.assertTrue(form.is_valid)
-        form.save()
-        mocked_mail_sentinel.assert_not_called()
-        mocked_notify_suricate_status.assert_not_called()
+        cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
+        cls.user = UserFactory(username="Maxou", password="drowssap")
+        UserProfileFactory.create(user=cls.user)
+        cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
+        cls.interv_report = ReportFactory(status=cls.programmed_status)
 
 
 def raise_multiple(exceptions):
@@ -504,3 +473,46 @@ def test_for_management_mode(test_func):
             e.args += ("Failed for 'Suricate Management' mode",)
             raise
     return inner
+
+
+class TestWorkflowFirstSteps(SuricateWorkflowTests):
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
+    def test_classify_alert_notifies_suricate_when_management_enabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
+        form = ReportForm(
+            instance=self.report,
+            data={
+                'geom': 'POINT(5.1 6.6)',
+                'email': self.report.email,
+                'status': self.classified_status.pk,
+                'message': "Problème déjà réglé"
+            }
+        )
+        self.assertTrue(form.is_valid)
+        form.save()
+        mocked_mail_sentinel.assert_called_once_with(self.report.uid, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified_status.suricate_id, "Problème déjà réglé")
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
+    @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
+    def test_classify_alert_does_not_notify_suricate_when_management_disabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
+        form = ReportForm(
+            instance=self.report,
+            data={
+                'geom': 'POINT(5.1 6.6)',
+                'email': self.report.email,
+                'status': self.classified_status.pk,
+                'message': "Problème déjà réglé"
+            }
+        )
+        self.assertTrue(form.is_valid)
+        form.save()
+        mocked_mail_sentinel.assert_not_called()
+        mocked_notify_suricate_status.assert_not_called()

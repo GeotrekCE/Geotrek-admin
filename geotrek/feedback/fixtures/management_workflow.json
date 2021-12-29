@@ -25,5 +25,14 @@
             "label_fr": "R\u00e9solution en retard",
             "suricate_id": "resolution_late"
         }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Intervention termin\u00e9e",
+            "label_en": "Resolved intervention",
+            "label_fr": "Intervention termin\u00e9e",
+            "suricate_id": "intervention_solved"
+        }
     }
 ]

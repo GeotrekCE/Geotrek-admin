@@ -156,6 +156,15 @@ msgstr "Intervention prévue"
 msgid "Supervisor"
 msgstr "Responsable"
 
+msgid "Supervisor"
+msgstr "Responsable"
+
+msgid "Workflow manager"
+msgstr "Manager de gestion"
+
+msgid "Workflow managers"
+msgstr "Managers de gestion"
+
 msgid "Intervention terminée"
 msgstr "Intervention terminée"
 
