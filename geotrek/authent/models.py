@@ -87,12 +87,3 @@ class UserProfile(StructureRelated):
 
 
 User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
-
-
-class SelectableUser(User):
-
-    class Meta:
-        proxy = True
-
-    def __str__(self):
-        return f"{self.username} ({self.email})"

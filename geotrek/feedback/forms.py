@@ -3,17 +3,17 @@ from django.conf import settings
 from django.forms.fields import CharField
 from django.forms.widgets import HiddenInput, Textarea
 
-from geotrek.authent.models import SelectableUser
 from geotrek.common.forms import CommonForm
 
-from .models import Report, ReportStatus, TimerEvent
+from .models import Report, ReportStatus, TimerEvent, SelectableUser
 
 # This dict stores status order in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
 SURICATE_MANAGEMENT_WORKFLOW = {
     'filed': ['classified', 'filed'],
     'classified': ['classified'],
-    'waiting': ['waiting', 'filed']
+    'waiting': ['waiting', 'filed'],
+    'programmed': ['waiting', 'filed']
 }
 
 
@@ -67,9 +67,7 @@ class ReportForm(CommonForm):
                 self.fields["status"].empty_label = None
                 self.fields["status"].queryset = ReportStatus.objects.filter(suricate_id__in=next_statuses)
                 # assigned_user
-                if self.old_status_id == 'filed':
-                    self.fields["assigned_user"].queryset = SelectableUser.objects.filter(userprofile__isnull=False)
-                else:
+                if self.old_status_id != 'filed':
                     self.fields["assigned_user"].widget = HiddenInput()
                 # message
                 self.fields["message"] = CharField(required=False)
