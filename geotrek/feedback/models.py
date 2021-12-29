@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.core.mail import send_mail
-from django.db.models.deletion import CASCADE, PROTECT
 from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -380,7 +379,7 @@ class TimerEvent(models.Model):
 
 
 class WorkflowManager(models.Model):
-    user = models.ForeignKey(SelectableUser, on_delete=PROTECT)
+    user = models.ForeignKey(SelectableUser, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = _("Workflow Manager")
