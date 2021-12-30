@@ -1,13 +1,17 @@
 from datetime import timedelta
+from geotrek.feedback.admin import WorkflowManagerAdmin
+from unittest import mock
+from geotrek.authent.tests.factories import UserProfileFactory
+from django.contrib.admin.sites import AdminSite
 
 from django.core import management
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun.api import freeze_time
-from mapentity.tests.factories import UserFactory
+from mapentity.tests.factories import UserFactory, SuperUserFactory
 
-from geotrek.feedback.models import TimerEvent
+from geotrek.feedback.models import SelectableUser, TimerEvent, WorkflowManager
 from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.feedback.tests.test_suricate_sync import SuricateWorkflowTests
 
@@ -65,3 +69,29 @@ class TestTimerEventClass(SuricateWorkflowTests):
         management.call_command("check_timers")
         # Event2 deleted as well as the others because running the command makes it obsolete
         self.assertEqual(TimerEvent.objects.count(), 0)
+
+
+class MockRequest:
+    pass
+
+
+class TestWorkflowUserModels(TestCase):
+
+    def test_strings(self):
+        user = UserProfileFactory(user__username="Chloe", user__email="chloe.price@notmail.com").user
+        self.assertIn(user, SelectableUser.objects.all())
+        as_selectable = SelectableUser.objects.get(username="Chloe")
+        self.assertEqual(str(as_selectable), "Chloe (chloe.price@notmail.com)")
+        manager = WorkflowManager.objects.create(user=user)
+        self.assertEqual(str(manager), "Chloe (chloe.price@notmail.com)")
+
+    def test_cannot_create_several_managers(self):
+        ma = WorkflowManagerAdmin(WorkflowManager, AdminSite())
+        request = MockRequest()
+        request.user = SuperUserFactory()
+        # We can create a manager when there is none
+        self.assertIs(ma.has_add_permission(request), True)
+        user = UserProfileFactory(user__username="Chloe", user__email="chloe.price@notmail.com").user
+        WorkflowManager.objects.create(user=user)
+        # We cannot create a manager if there is one
+        self.assertIs(ma.has_add_permission(request), False)
