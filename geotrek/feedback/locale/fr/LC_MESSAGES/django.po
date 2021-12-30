@@ -162,9 +162,6 @@ msgstr "Données à importer depuis Suricate"
 msgid "Invalid geometry value."
 msgstr "Géométrie invalide"
 
-msgid "Supervisor"
-msgstr "Responsable"
-
 msgid "Workflow manager"
 msgstr "Manager de gestion"
 
