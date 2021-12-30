@@ -221,6 +221,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def send_notifications_on_status_change(self, old_status_id, message):
         if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.suricate_id in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
+            print("SENDING NOTIFS")
             SuricateMessenger().update_status(self.uid, self.status.suricate_id, message)
             SuricateMessenger().message_sentinel(self.uid, message)
 

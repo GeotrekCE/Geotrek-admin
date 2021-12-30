@@ -11,14 +11,14 @@ from .models import Report, ReportStatus, TimerEvent
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
 # Empty status should not be changed from this form
 SURICATE_MANAGEMENT_WORKFLOW = {
-    'filed': ['classified'],
-    'classified': [],
-    'waiting': [],
-    'programmed': [],
-    'resolution_late': [],
-    'intervention_late': [],
-    'intervention_solved': ['resolved'],
-    'resolved': []
+    'filed': ['classified', 'filed'],
+    'classified': ['classified'],
+    'waiting': ['waiting'],
+    'programmed': ['programmed'],
+    'resolution_late': ['resolution_late'],
+    'intervention_late': ['intervention_late'],
+    'intervention_solved': ['resolved', 'intervention_solved'],
+    'resolved': ['resolved']
 }
 
 
