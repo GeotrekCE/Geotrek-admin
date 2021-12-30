@@ -1,0 +1,10 @@
+{% load static feedback_tags %}
+
+{% suricate_management_enabled as suricate_management_enabled %}
+{% if suricate_management_enabled %}
+    <script type="text/javascript" src="{% static "feedback/main.js" %}"></script>
+    <script type="application/json" id="status_ids">
+        {% status_ids as status_ids %}
+        {{ status_ids|safe }}
+    </script>
+{% endif %}
