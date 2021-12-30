@@ -490,7 +490,7 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
                 'geom': 'POINT(5.1 6.6)',
                 'email': self.report.email,
                 'status': self.classified_status.pk,
-                'message': "Problème déjà réglé"
+                'message_sentinel': "Problème déjà réglé"
             }
         )
         self.assertTrue(form.is_valid)
@@ -510,7 +510,7 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
                 'geom': 'POINT(5.1 6.6)',
                 'email': self.report.email,
                 'status': self.classified_status.pk,
-                'message': "Problème déjà réglé"
+                'message_sentinel': "Problème déjà réglé"
             }
         )
         self.assertTrue(form.is_valid)
