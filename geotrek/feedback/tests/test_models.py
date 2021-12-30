@@ -1,6 +1,5 @@
 from datetime import timedelta
 from geotrek.feedback.admin import WorkflowManagerAdmin
-from unittest import mock
 from geotrek.authent.tests.factories import UserProfileFactory
 from django.contrib.admin.sites import AdminSite
 

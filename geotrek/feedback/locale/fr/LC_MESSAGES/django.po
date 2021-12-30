@@ -162,6 +162,12 @@ msgstr "Données à importer depuis Suricate"
 msgid "Invalid geometry value."
 msgstr "Géométrie invalide"
 
+msgid "Message for sentinel"
+msgstr "Message pour la sentinelle"
+
+msgid "Message for supervisor"
+msgstr "Message pour le responsable"
+
 msgid "Workflow manager"
 msgstr "Manager de gestion"
 

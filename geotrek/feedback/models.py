@@ -202,9 +202,9 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         else:  # Report updates should do nothing more
             super().save(*args, **kwargs)
 
-    def notify_assigned_user(self):
+    def notify_assigned_user(self, message):
         subject = str("Geotrek - Nouveau Signalement à traiter")
-        message = render_to_string("feedback/affectation_email.html", {"report": self})
+        message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
 
     def notify_late_report(self, status_id):
@@ -220,7 +220,6 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def send_notifications_on_status_change(self, old_status_id, message):
         if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.suricate_id in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
-            print("SENDING NOTIFS")
             SuricateMessenger().update_status(self.uid, self.status.suricate_id, message)
             SuricateMessenger().message_sentinel(self.uid, message)
 
@@ -374,8 +373,8 @@ class TimerEvent(models.Model):
             self.save()
 
     def is_obsolete(self):
-        obsolete_notified = (timezone.now() > self.date_notification) and self.notification_sent
-        obsolete_unused = (timezone.now() > self.date_notification) and (self.report.status.suricate_id != self.step.suricate_id)
+        obsolete_notified = (timezone.now() > self.date_notification) and self.notification_sent  # Notification sent by timer
+        obsolete_unused = self.report.status.suricate_id != self.step.suricate_id  # Report changed status, therefore it was dealt with in time
         return obsolete_notified or obsolete_unused
 
 
