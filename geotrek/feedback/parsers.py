@@ -148,7 +148,7 @@ class SuricateParser(SuricateGestionRequestManager):
         :return: returns True if and only if reports was imported (it is in bbox)
         """
         if verbosity >= 1:
-            sys.stdout.write("Starting reports parsing from Suricate\n")
+            logger.info("Starting reports parsing from Suricate\n")
         data = self.get_from_suricate("wsGetAlerts")
         total_reports = len(data["alertes"])
         current_report = 1
@@ -156,12 +156,12 @@ class SuricateParser(SuricateGestionRequestManager):
         # Parse alerts
         for report in data["alertes"]:
             if verbosity == 2:
-                sys.stdout.write(f"Processing report {report['uid']} - {current_report}/{total_reports} \n")
+                logger.info(f"Processing report {report['uid']} - {current_report}/{total_reports} \n")
             report_created = self.parse_report(report)
             reports_created = reports_created or report_created
             current_report += 1
         if verbosity >= 1:
-            sys.stdout.write(f"Parsed {total_reports} reports from Suricate\n")
+            logger.info(f"Parsed {total_reports} reports from Suricate\n")
         if reports_created:
             self.send_managers_new_reports()
 
