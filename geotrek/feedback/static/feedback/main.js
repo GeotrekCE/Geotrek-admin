@@ -12,7 +12,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
 
 function display_message_fields_on_status_change() {
     var status_ids = JSON.parse($('#status_ids').text());
-    var selected = $('#id_status').val() || [];
+    var selected = $('#id_status').val() || null;
     do_display = ((status_ids[selected] == "resolved") || (status_ids[selected] == "classified"))
     $('#div_id_message_sentinel').prop('hidden', !do_display);
 }
