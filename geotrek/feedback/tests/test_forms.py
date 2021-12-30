@@ -86,7 +86,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["status"].widget, HiddenInput)
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
-        self.assertNotIn('message', keys)
+        self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
 
     @test_for_management_mode
@@ -101,7 +102,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["status"].widget, Select)
         self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
-        self.assertIn('message', keys)
+        self.assertIn('message_sentinel', keys)
+        self.assertIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         # Todo ajouter les contraintes de contenu de status selon old_status / pas de contrainte si autres modes
 
@@ -117,7 +119,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             'assigned_user': str(self.user.pk),
             'email': 'test@test.fr',
             'geom': 'POINT(5.1 6.6)',
-            'message': "Your message"
+            'message_sentinel': "Your message"
         }
         form = ReportForm(instance=self.filed_report, data=data)
         form.save()
