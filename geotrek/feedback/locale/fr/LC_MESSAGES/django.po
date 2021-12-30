@@ -156,6 +156,12 @@ msgstr "Intervention prévue"
 msgid "Supervisor"
 msgstr "Responsable"
 
+msgid "Message for sentinel"
+msgstr "Message pour la sentinelle"
+
+msgid "Message for supervisor"
+msgstr "Message pour le responsable"
+
 msgid "Workflow manager"
 msgstr "Manager de gestion"
 
