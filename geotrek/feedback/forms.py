@@ -7,13 +7,18 @@ from .models import Report
 
 from .models import Report, ReportStatus, TimerEvent
 
-# This dict stores status order in management workflow
+# This dict stores constraints for status changes in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
+# Empty status should not be changed from this form
 SURICATE_MANAGEMENT_WORKFLOW = {
-    'filed': ['classified', 'filed'],
-    'classified': ['classified'],
-    'waiting': ['waiting', 'filed'],
-    'programmed': ['waiting', 'filed']
+    'filed': ['classified'],
+    'classified': [],
+    'waiting': [],
+    'programmed': [],
+    'resolution_late': [],
+    'intervention_late': [],
+    'intervention_solved': ['resolved'],
+    'resolved': []
 }
 
 
@@ -83,4 +88,6 @@ class ReportForm(CommonForm):
             if 'status' in self.changed_data or 'assigned_user' in self.changed_data:
                 msg = self.cleaned_data.get('message', "")
                 report.send_notifications_on_status_change(self.old_status_id, msg)
+            if 'status' in self.changed_data and self.old_status_id == 'intervention_solved':
+                report.unlock_in_suricate()
         return report

@@ -52,19 +52,19 @@ class SuricateRequestManager:
         extra_url_params = urllib.parse.urlencode(url_params)
         # Include alert ID in check when needed
         if "uid_alerte" in url_params:
-            id_alert = url_params["uid_alerte"]
-            check = f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + id_alert + self.ID_ORIGIN).encode()).hexdigest()}"
+            id_alert = str(url_params["uid_alerte"])
+            check = f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()).hexdigest()}"
         else:
             check = self.CHECK_CLIENT
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.get(
-                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
+                f"{self.URL}{endpoint}{origin_param}&{extra_url_params}{check}",
                 auth=self.AUTH,
             )
         else:
             response = requests.get(
-                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
+                f"{self.URL}{endpoint}{origin_param}&{extra_url_params}{check}",
             )
         return response
 

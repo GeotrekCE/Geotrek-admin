@@ -34,5 +34,14 @@
             "label_fr": "Intervention termin\u00e9e",
             "suricate_id": "intervention_solved"
         }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "R\u00e9solu",
+            "label_en": "Resolved",
+            "label_fr": "R\u00e9solu",
+            "suricate_id": "resolved"
+        }
     }
 ]

@@ -72,7 +72,7 @@ class SuricateTests(TestCase):
             elif "GetAlerts" in url:
                 mock_response.content = mocked_json("suricate_alerts.json")
                 mock_response.status_code = 200
-            elif "wsLockAlert" in url:
+            elif "wsLockAlert" in url or "wsUnlockAlert" in url:
                 mock_response.content = mocked_json("suricate_positive.json")
                 mock_response.status_code = 200
             elif cause_JPG_error:
@@ -403,6 +403,7 @@ class SuricateWorkflowTests(SuricateTests):
         cls.intervention_late_status = ReportStatusFactory(suricate_id='intervention_late', label="Intervention en retard")
         cls.resolution_late_status = ReportStatusFactory(suricate_id='resolution_late', label="Resolution en retard")
         cls.intervention_solved_status = ReportStatusFactory(suricate_id='intervention_solved', label="Intervention terminée")
+        cls.resolved_status = ReportStatusFactory(suricate_id='resolved', label="Résolu")
         cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
         cls.user = UserFactory(username="Maxou", password="drowssap")

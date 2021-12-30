@@ -26,7 +26,8 @@ logger = logging.getLogger(__name__)
 
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
-    'filed': ['classified', 'waiting']
+    'filed': ['classified', 'waiting'],
+    'intervention_solved': ['resolved']
 }
 
 STATUS_WHEN_REPORT_IS_LATE = {
@@ -198,8 +199,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
                 SuricateMessenger().post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
-        else:  # This is an update
-            # TODO We'll need to implement some of the workflow here
+        else:  # Report updates should do nothing more
             super().save(*args, **kwargs)
 
     def notify_assigned_user(self):

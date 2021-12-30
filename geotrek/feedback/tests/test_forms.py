@@ -28,6 +28,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         super().setUp()
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uid=uuid.uuid4())
+        cls.intervention_solved_report = ReportFactory(status=cls.intervention_solved_status, uid=uuid.uuid4())
         cls.client.login(username="Admiin", password="drowssap")
 
     @test_for_report_and_basic_modes
@@ -114,6 +115,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             'assigned_user': str(self.user.pk),
             'email': 'test@test.fr',
             'geom': 'POINT(5.1 6.6)',
+            'message': "Your message"
         }
         form = ReportForm(instance=self.filed_report, data=data)
         form.save()
@@ -127,15 +129,19 @@ class TestSuricateForms(SuricateWorkflowTests):
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'message': '', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'statut': 'waiting', 'txt_changestatut': '', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
+        mocked_get.assert_called_once_with(
+            f"http://suricate.example.com/wsLockAlert?id_origin=geotrek&uid_alerte={self.filed_report.uid}&check={check}",
+            auth=('', '')
+        )
         # Assert user is notified
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(mail.outbox[-1].subject, "Geotrek - Nouveau Signalement à traiter")
@@ -206,3 +212,40 @@ class TestSuricateForms(SuricateWorkflowTests):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.waiting_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
         self.assertIn("Add a new intervention", response.content.decode("utf-8"))
+
+    @test_for_management_mode
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_workflow_resolve_step(self, mocked_post, mocked_get):
+        self.build_get_request_patch(mocked_get)
+        self.build_post_request_patch(mocked_post)
+        # When assigning a user to a report
+        data = {
+            'email': 'test@test.fr',
+            'geom': 'POINT(5.1 6.6)',
+            'status': self.resolved_status.pk,
+            'message': "Your message"
+        }
+        form = ReportForm(instance=self.intervention_solved_report, data=data)
+        form.save()
+        # Assert report status changes
+        self.assertEquals(self.intervention_solved_report.status.suricate_id, "resolved")
+        # Assert data forwarded to Suricate
+        check = md5(
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.intervention_solved_report.uid)).encode()
+        ).hexdigest()
+        call1 = mock.call(
+            'http://suricate.example.com/wsSendMessageSentinelle',
+            {'id_origin': 'geotrek', 'uid_alerte': self.intervention_solved_report.uid, 'message': 'Your message', 'check': check},
+            auth=('', '')
+        )
+        call2 = mock.call(
+            'http://suricate.example.com/wsUpdateStatus',
+            {'id_origin': 'geotrek', 'uid_alerte': self.intervention_solved_report.uid, 'statut': 'resolved', 'txt_changestatut': 'Your message', 'check': check},
+            auth=('', '')
+        )
+        mocked_post.assert_has_calls([call1, call2], any_order=True)
+        mocked_get.assert_called_once_with(
+            f"http://suricate.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.intervention_solved_report.uid}&check={check}",
+            auth=('', '')
+        )
