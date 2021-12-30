@@ -47,7 +47,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["status"].widget, Select)
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
-        self.assertNotIn('message', keys)
+        self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
         self.assertFalse(form.errors)
 
@@ -63,7 +64,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["status"].widget, Select)
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
-        self.assertNotIn('message', keys)
+        self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
         self.assertFalse(form.errors)  # assert form is valid
 
@@ -224,7 +226,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             'email': 'test@test.fr',
             'geom': 'POINT(5.1 6.6)',
             'status': self.resolved_status.pk,
-            'message': "Your message"
+            'message_sentinel': "Your message"
         }
         form = ReportForm(instance=self.intervention_solved_report, data=data)
         form.save()
