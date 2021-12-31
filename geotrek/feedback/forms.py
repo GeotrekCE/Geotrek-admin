@@ -93,6 +93,7 @@ class ReportForm(CommonForm):
                 self.old_status_id = None
                 self.fields["status"].widget = HiddenInput()
                 self.fields["assigned_user"].widget = HiddenInput()
+                self.fields["uses_timers"].widget = HiddenInput()
         else:
             self.fields["assigned_user"].widget = HiddenInput()
             self.fields["uses_timers"].widget = HiddenInput()
