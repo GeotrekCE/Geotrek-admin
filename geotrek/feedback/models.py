@@ -132,6 +132,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         verbose_name=_("Supervisor"),
         related_name="reports"
     )
+    uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
 
     class Meta:
         verbose_name = _("Report")
@@ -357,11 +358,13 @@ class TimerEvent(models.Model):
     notification_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.pk is None:
-            self.date_event = timezone.now()
-            days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.suricate_id.upper()}_REPORTS_IN_DAYS"]
-            self.date_notification = self.date_event + timedelta(days=days_nb)
-        super().save(*args, **kwargs)
+        if self.report.uses_timers:
+            if self.pk is None:
+                self.date_event = timezone.now()
+                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.suricate_id.upper()}_REPORTS_IN_DAYS"]
+                self.date_notification = self.date_event + timedelta(days=days_nb)
+            super().save(*args, **kwargs)
+        # Don't save if report doesn't use timers
 
     def notify_if_needed(self):
         if not(self.notification_sent) and (timezone.now() > self.date_notification) and (self.report.status.suricate_id == self.step.suricate_id):

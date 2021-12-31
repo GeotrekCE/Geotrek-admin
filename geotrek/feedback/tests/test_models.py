@@ -33,8 +33,9 @@ class TestTimerEventClass(SuricateWorkflowTests):
 
     def setUp(cls):
         super().setUp()
-        cls.programmed_report = ReportFactory(status=cls.programmed_status, assigned_user=UserFactory(password="drowssap"))
-        cls.waiting_report = ReportFactory(status=cls.waiting_status, assigned_user=UserFactory(password="drowssap"))
+        cls.programmed_report = ReportFactory(status=cls.programmed_status, uses_timers=True, assigned_user=UserFactory(password="drowssap"))
+        cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, assigned_user=UserFactory(password="drowssap"))
+        cls.waiting_report_no_timers = ReportFactory(status=cls.waiting_status, uses_timers=False, assigned_user=UserFactory(password="drowssap"))
         cls.event1 = TimerEvent.objects.create(step=cls.waiting_status, report=cls.waiting_report)
         cls.event2 = TimerEvent.objects.create(step=cls.programmed_status, report=cls.programmed_report)
         # Event 3 simulates report that was waiting and is now programmed
@@ -49,6 +50,10 @@ class TestTimerEventClass(SuricateWorkflowTests):
         event = TimerEvent.objects.create(step=self.programmed_status, report=self.programmed_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
         self.assertEquals(event.date_notification, event.date_event + timedelta(days=7))
+
+    def test_no_timers_when_disabled_on_reports(self):
+        TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report_no_timers)
+        self.assertEqual(TimerEvent.objects.filter(report=self.waiting_report_no_timers.pk).count(), 0)
 
     @freeze_time("2099-07-04")
     def test_events_notify(self):

@@ -26,6 +26,20 @@ SURICATE_MANAGEMENT_WORKFLOW = {
 class ReportForm(CommonForm):
     geomfields = ["geom"]
 
+    fieldslayout = [
+        Div(
+            "email",
+            "comment",
+            "activity",
+            "category",
+            "problem_magnitude",
+            "related_trek",
+            "status",
+            "assigned_user",
+            "uses_timers"
+        )
+    ]
+
     class Meta:
         fields = [
             "geom",
@@ -36,9 +50,8 @@ class ReportForm(CommonForm):
             "problem_magnitude",
             "related_trek",
             "status",
-            "locked",
-            "uid",
-            "origin"
+            "assigned_user",
+            "uses_timers"
         ]
         model = Report
 
@@ -82,6 +95,7 @@ class ReportForm(CommonForm):
                 self.fields["assigned_user"].widget = HiddenInput()
         else:
             self.fields["assigned_user"].widget = HiddenInput()
+            self.fields["uses_timers"].widget = HiddenInput()
 
     def save(self, *args, **kwargs):
         report = super().save(self, *args, **kwargs)
