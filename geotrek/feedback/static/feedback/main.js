@@ -16,6 +16,17 @@ function display_message_fields_on_status_change() {
     var selected = $('#id_status').val() || null;
     do_display = ((status_ids[selected] == "resolved") || (status_ids[selected] == "classified"))
     $('#div_id_message_sentinel').prop('hidden', !do_display);
+    // Prevent assigning and classifying at the same time
+    if (status_ids[selected] == "classified") {
+        $('#id_assigned_user').val("");
+        $('#div_id_assigned_user').prop('hidden', true);
+        $('#div_id_message_supervisor').prop('hidden', true);
+        $('#div_id_uses_timers').prop('hidden', true);
+    }
+    if (status_ids[selected] == "filed") {
+        $('#id_assigned_user').val("");
+        $('#div_id_assigned_user').prop('hidden', false);
+    }
 }
 
 function display_message_fields_on_supervisor_change() {
