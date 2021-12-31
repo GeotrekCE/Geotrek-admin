@@ -1,6 +1,7 @@
 $(window).on('entity:view:add entity:view:update', function (e, data) {
     $('#div_id_message_sentinel').prop('hidden', true);
     $('#div_id_message_supervisor').prop('hidden', true);
+    $('#div_id_uses_timers').prop('hidden', true);
     $('#id_status').change(function () {
         display_message_fields_on_status_change();
     });
@@ -21,4 +22,5 @@ function display_message_fields_on_supervisor_change() {
     var selected = $('#id_assigned_user').val() || null;
     $('#div_id_message_sentinel').prop('hidden', (selected == null));
     $('#div_id_message_supervisor').prop('hidden', (selected == null));
+    $('#div_id_uses_timers').prop('hidden', (selected == null));
 }
