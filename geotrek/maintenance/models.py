@@ -286,11 +286,11 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     @property
     def disorders_display(self):
-        return ','.join([str(disorder) for disorder in self.disorders.all()])
+        return ', '.join([str(disorder) for disorder in self.disorders.all()])
 
     @property
     def jobs_display(self):
-        return ','.join([str(job) for job in self.jobs.all()])
+        return ', '.join([str(job) for job in self.jobs.all()])
 
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))

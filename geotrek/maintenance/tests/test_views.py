@@ -42,9 +42,9 @@ class InterventionViewsTest(CommonTest):
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
-    extra_column_list = ['heliport_cost', 'subcontract_cost']
-    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'subcontract_cost']
-    expected_column_formatlist_extra = ['id', 'heliport_cost', 'subcontract_cost']
+    extra_column_list = ['heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
+    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
+    expected_column_formatlist_extra = ['id', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
 
     def get_bad_data(self):
         return OrderedDict([
