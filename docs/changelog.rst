@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix bootstrap theme in warning and error messages or alerts
+- Fix Services external IDs were not displayed in detail pages
 
 
 2.74.1     (2021-12-21)
