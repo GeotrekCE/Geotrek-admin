@@ -72,7 +72,7 @@ class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     mandatory_columns = ['id']
-    extra_default_columns = [
+    default_extra_columns = [
         'land_type', 'owner', 'agreement',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',
