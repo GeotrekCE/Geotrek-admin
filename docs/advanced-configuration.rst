@@ -1482,6 +1482,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "usages",
             "draft",
             "trails",
+            "uuid",
         ],
     COLUMNS_LISTS["trail_view"] = [
             "departure",
@@ -1494,6 +1495,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "length_2d",
             "date_insert",
             "comments",
+            "uuid",
         ],
     COLUMNS_LISTS["landedge_view"] = [
             "land_type",
@@ -1504,6 +1506,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "date_insert",
             "owner",
             "agreement",
+            "uuid",
         ],
     COLUMNS_LISTS["infrastructure_view"] = [
             "condition",
@@ -1518,6 +1521,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "usage_difficulty",
             "maintenance_difficulty"
             "published",
+            "uuid",
         ],
     COLUMNS_LISTS["signage_view"] = [
             "code",
@@ -1535,6 +1539,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "sealing",
             "manager",
             "published",
+            "uuid",
         ],
     COLUMNS_LISTS["intervention_view"] = [
             "date",
@@ -1600,9 +1605,26 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "reservation_system",
             "reservation_id",
             "portal",
+            "uuid",
         ],
-    COLUMNS_LISTS["poi_view"] = ["structure", "description", "type", "min_elevation", "date_update", "date_insert"],
-    COLUMNS_LISTS["service_view"] = ["structure", "min_elevation", "type", "length_2d", "date_update", "date_insert"],
+    COLUMNS_LISTS["poi_view"] = [
+            "structure",
+            "description",
+            "type",
+            "min_elevation",
+            "date_update",
+            "date_insert",
+            "uuid",
+        ],
+    COLUMNS_LISTS["service_view"] = [
+            "structure",
+            "min_elevation",
+            "type",
+            "length_2d",
+            "date_update",
+            "date_insert",
+            "uuid",
+        ],
     COLUMNS_LISTS["dive_view"] = [
             "structure",
             "description_teaser",
@@ -1621,6 +1643,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "portal",
             "date_update",
             "date_insert",
+            "uuid",
         ],
     COLUMNS_LISTS["touristic_content_view"] = [
             "structure",
@@ -1638,6 +1661,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "reservation_id",
             "date_update",
             "date_insert",
+            "uuid",
         ],
     COLUMNS_LISTS["touristic_event_view"] = [
             "structure",
@@ -1664,6 +1688,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "booking",
             "date_update",
             "date_insert",
+            "uuid",
         ],
     COLUMNS_LISTS["feedback_view"] = [
             "email",
@@ -1724,6 +1749,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "date_insert",
             "date_update",
+            "uuid",
         ],
     COLUMNS_LISTS["outdoor_course_view"] = [
             "structure",
@@ -1740,6 +1766,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "ratings_description",
             "type",
             "points_reference",
+            "uuid",
         ],
     COLUMNS_LISTS["path_export"] = [
             "structure",
@@ -1763,6 +1790,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "max_elevation",
             "slope",
+            "uuid",
         ],
     COLUMNS_LISTS["trail_export"] = [
             "structure",
@@ -1781,6 +1809,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "max_elevation",
             "slope",
+            "uuid",
         ],
     COLUMNS_LISTS["landedge_export"] = [
             "land_type",
@@ -1797,6 +1826,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "max_elevation",
             "slope",
+            "uuid",
         ],
     COLUMNS_LISTS["infrastructure_export"] = [
             "name",
@@ -1819,6 +1849,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "slope",
             "usage_difficulty",
             "maintenance_difficulty"
+            "uuid",
         ],
     COLUMNS_LISTS["signage_export"] = [
             "structure",
@@ -1844,6 +1875,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "descent",
             "min_elevation",
             "max_elevation",
+            "uuid",
         ],
     COLUMNS_LISTS["intervention_export"] = [
             "name",
@@ -1949,6 +1981,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "max_elevation",
             "slope",
+            "uuid",
         ],
     COLUMNS_LISTS["poi_export"] = [
             "structure",
@@ -1972,6 +2005,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "max_elevation",
             "slope",
+            "uuid",
         ],
     COLUMNS_LISTS["service_export"] = [
             "eid",
@@ -1982,6 +2016,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "max_elevation",
             "slope",
+            "uuid",
         ],
     COLUMNS_LISTS["dive_export"] = [
             "eid",
@@ -2004,6 +2039,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "source",
             "portal",
             "review",
+            "uuid",
         ],
     COLUMNS_LISTS["touristic_content_export"] = [
             "structure",
@@ -2030,6 +2066,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "districts",
             "areas",
             "approved",
+            "uuid",
         ],
     COLUMNS_LISTS["touristic_event_export"] = [
             "structure",
@@ -2065,6 +2102,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "districts",
             "areas",
             "approved",
+            "uuid",
         ],
     COLUMNS_LISTS["feedback_export"] = [
             "email",
@@ -2120,6 +2158,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "min_elevation",
             "date_insert",
             "date_update",
+            "uuid",
         ],
     COLUMNS_LISTS["outdoor_course_export"] = [
             "structure",
@@ -2136,6 +2175,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "ratings_description",
             "type",
             "points_reference",
+            "uuid",
         ]
 
 **Hideable form fields**
