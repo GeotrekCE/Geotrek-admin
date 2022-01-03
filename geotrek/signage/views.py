@@ -51,7 +51,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
         'structure', 'name', 'code', 'type', 'condition', 'description',
         'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
-        'printed_elevation', 'sealing', 'manager',
+        'printed_elevation', 'sealing', 'manager', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 

@@ -113,7 +113,7 @@ class PathFormatList(MapEntityFormat, PathList):
     default_extra_columns = [
         'structure', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
         'comfort', 'source', 'stake', 'usages', 'networks',
-        'date_insert', 'date_update', 'length_2d'
+        'date_insert', 'date_update', 'length_2d', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
     def get_queryset(self):
@@ -324,7 +324,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
     default_extra_columns = [
         'structure', 'name', 'comments', 'departure', 'arrival',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 

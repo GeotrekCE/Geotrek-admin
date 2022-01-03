@@ -28,7 +28,7 @@ class PhysicalEdgeJsonList(MapEntityJsonList, PhysicalEdgeList):
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
     default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -75,7 +75,7 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     extra_default_columns = [
         'land_type', 'owner', 'agreement',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas'
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -120,7 +120,7 @@ class CompetenceEdgeJsonList(MapEntityJsonList, CompetenceEdgeList):
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
     default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -165,7 +165,7 @@ class WorkManagementEdgeJsonList(MapEntityJsonList, WorkManagementEdgeList):
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
     default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -210,7 +210,7 @@ class SignageManagementEdgeJsonList(MapEntityJsonList, SignageManagementEdgeList
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
     default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
