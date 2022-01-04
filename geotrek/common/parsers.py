@@ -462,7 +462,7 @@ class Parser:
             except DatabaseError as e:
                 if settings.DEBUG:
                     raise
-                self.add_warning(str(e).decode('utf8'))
+                self.add_warning(str(e))
             except (ValueImportError, RowImportError) as e:
                 self.add_warning(str(e))
             except Exception as e:
