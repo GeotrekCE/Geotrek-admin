@@ -21,6 +21,12 @@ CHANGELOG
 - Update to mapentity 7.1.0
 - Update to django-tinymce 3.4.0 and TinyMCE 5.10.1
 
+**Suricate Workflow**  (#2366)
+- Add `assigned_user` field to Report model
+- Add `color` field to Report Status model
+- Add TimerEvent class, used to alert Report supervisors when timer expires, with `check_timers` command
+- Force workflow when SURICATE_MANAGEMENT_WORKFLOW setting is enabled
+- Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
 
 2.75.0     (2022-01-07)
 -----------------------
