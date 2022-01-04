@@ -34,18 +34,26 @@ class PolygonInterventionFilterMixin:
             values = [values]
 
         lookup = self.lookup_expr
-
+        content_type_exclude = []
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blade_content_type = ContentType.objects.get_for_model(Blade)
+            content_type_exclude.append(blade_content_type)
         if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             site_content_type = ContentType.objects.get_for_model(Site)
             course_content_type = ContentType.objects.get_for_model(Course)
-
+            content_type_exclude.append(site_content_type)
+            content_type_exclude.append(course_content_type)
         topologies = []
+        sites = []
+        courses = []
         for value in values:
             topologies += Topology.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True)
+
+            if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+                sites += Site.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True)
+                courses += Course.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True)
         topologies_intervention = Intervention.objects.existing().filter(target_id__in=topologies).exclude(
-            target_type=blade_content_type).distinct('pk').values_list('id', flat=True)
+            target_type__in=content_type_exclude).distinct('pk').values_list('id', flat=True)
 
         interventions = list(topologies_intervention)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
@@ -55,12 +63,10 @@ class PolygonInterventionFilterMixin:
                                                                                                                      flat=True)
             interventions.extend(blades_intervention)
         if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-            sites = list(Site.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True))
             sites_intervention = Intervention.objects.existing() \
                 .filter(target_id__in=sites, target_type=site_content_type) \
                 .values_list('id', flat=True)
             interventions.extend(sites_intervention)
-            courses = list(Course.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True))
             courses_intervention = Intervention.objects.existing() \
                 .filter(target_id__in=courses, target_type=course_content_type) \
                 .values_list('id', flat=True)
@@ -88,7 +94,8 @@ class InterventionIntersectionFilterRestrictedAreaType(PolygonInterventionFilter
 
 class InterventionIntersectionFilterRestrictedArea(PolygonInterventionFilterMixin,
                                                    IntersectionFilterRestrictedArea):
-    pass
+    def get_geom(self, value):
+        return value.geom
 
 
 class InterventionIntersectionFilterCity(PolygonInterventionFilterMixin,

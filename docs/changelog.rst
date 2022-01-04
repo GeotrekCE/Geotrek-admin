@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix bootstrap theme in warning and error messages or alerts
 - Fix Services external IDs were not displayed in detail pages
+- Fix interventions filtering on zonings
 
 
 2.74.1     (2021-12-21)
