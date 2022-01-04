@@ -2,6 +2,8 @@ import html
 import logging
 from datetime import timedelta
 
+from colorfield.fields import ColorField
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -304,6 +306,7 @@ class ReportStatus(models.Model):
         max_length=100,
         verbose_name=_("Identifiant"),
     )
+    color = ColorField(verbose_name=_("Color"), default='#444444')
 
     class Meta:
         verbose_name = _("Status")
