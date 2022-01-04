@@ -3,8 +3,8 @@
         "model": "feedback.reportstatus",
         "fields": {
             "label": "Programm\u00e9",
-            "label_en": "Programm\u00e9",
-            "label_fr": "Programmed",
+            "label_en": "Programmed",
+            "label_fr": "Programm\u00e9",
             "suricate_id": "programmed"
         }
     },
