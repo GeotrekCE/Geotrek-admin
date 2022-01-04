@@ -59,8 +59,10 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     def touristic_contents(self, request, *args, **kwargs):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk
-        qs = trek.touristic_contents.filter(published=True).prefetch_related('attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
+        qs = trek.touristic_contents.filter(published=True)
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+        qs = qs.prefetch_related('attachments').annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_tourism.TouristicContentListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
@@ -68,7 +70,9 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     def touristic_events(self, request, *args, **kwargs):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk
-        qs = trek.trek.touristic_events.filter(published=True).prefetch_related('attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
+        qs = trek.trek.touristic_events.filter(published=True)
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+        qs = qs.prefetch_related('attachments').annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_tourism.TouristicEventListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
