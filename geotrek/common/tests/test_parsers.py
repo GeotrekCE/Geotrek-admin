@@ -10,6 +10,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
+from django.db.utils import DatabaseError
 from django.test.utils import override_settings
 from django.template.exceptions import TemplateDoesNotExist
 
@@ -115,6 +116,14 @@ class ParserTests(TestCase):
         parser = OrganismParser()
         with self.assertRaises(TemplateDoesNotExist):
             parser.report(output_format='toto')
+
+    @mock.patch('geotrek.common.parsers.Parser.parse_row')
+    def test_databaseerror_except(self, mock_parse_row):
+        output = StringIO()
+        mock_parse_row.side_effect = DatabaseError('foo bar')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismEidParser', filename, verbosity=2, stdout=output)
+        self.assertIn('foo bar', output.getvalue())
 
 
 @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
