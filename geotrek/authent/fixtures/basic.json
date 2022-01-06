@@ -394,7 +394,7 @@
         }
     },
     {
-        "pk": 5,
+        "pk": 6,
         "model": "auth.group",
         "fields": {
             "name": "R\u00e9dacteurs rando et gestion",
@@ -707,7 +707,7 @@
         }
     },
     {
-        "pk": 6,
+        "pk": 5,
         "model": "auth.group",
         "fields": {
             "name": "Geotrek-rando",

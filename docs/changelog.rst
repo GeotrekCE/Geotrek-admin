@@ -5,6 +5,10 @@ CHANGELOG
 2.74.1+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add new group external authent `EDITOR_TREKKING_MANAGEMENT`
+
 **Bug fixes**
 
 - Fix bootstrap theme in warning and error messages or alerts
