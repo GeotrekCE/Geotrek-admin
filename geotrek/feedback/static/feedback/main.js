@@ -35,3 +35,23 @@ function display_message_fields_on_supervisor_change() {
     $('#div_id_message_supervisor').prop('hidden', (selected == null));
     $('#div_id_uses_timers').prop('hidden', (selected == null));
 }
+
+$(window).on('entity:map:list', function (e, data) {
+    // Warning, bad code
+    var map = data.map;
+    map.on('layeradd', function (e) {
+        console.log("dedans")
+        layers = map._layers
+        console.log(layers)
+        // For each layer in map,
+        // if this layer has a "color" key in its properties, then apply this color to the layer
+        Object.keys(layers).forEach((index) => layers[index].properties && layers[index].properties.color && layers[index].setStyle({ color: layers[index].properties.color }))
+    })
+    // This is used to trigger the event,
+    // because we can change colors only when everything was loaded on the map
+    var fake_layer = new L.ObjectsLayer(null, {
+        modelname: 'ignoreme',
+    });
+    map.addLayer(fake_layer) // We just need to trigger the event
+    map.removeLayer(fake_layer) // We just need to trigger the event
+});

@@ -25,7 +25,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     queryset = feedback_models.Report.objects.existing()
     model = feedback_models.Report
     filterform = ReportFilterSet
-    properties = ["email"]
+    properties = ["email", "color"]
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):

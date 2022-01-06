@@ -172,6 +172,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return self.geom.transform(4326, clone=True)
 
     @property
+    def color(self):
+        yellow = "#ffff00"
+        if self.status is None or self.status.color is None:
+            return yellow
+        else:
+            return self.status.color
+
+    @property
     def comment_text(self):
         return html.unescape(self.comment)
 
