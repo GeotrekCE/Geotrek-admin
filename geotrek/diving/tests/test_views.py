@@ -18,6 +18,9 @@ class DiveViewsTests(CommonTest):
         'type': 'Point',
         'coordinates': [-1.3630812, -5.9838563],
     }
+    extra_column_list = ['depth', 'advice']
+    expected_column_list_extra = ['id', 'name', 'depth', 'advice']
+    expected_column_formatlist_extra = ['id', 'depth', 'advice']
 
     def get_expected_json_attrs(self):
         return {

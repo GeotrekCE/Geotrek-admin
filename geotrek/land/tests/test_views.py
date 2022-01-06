@@ -72,6 +72,9 @@ class PhysicalEdgeViewsTest(CommonTest):
     modelfactory = PhysicalEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'physical_type', 'eid']
+    expected_column_formatlist_extra = ['id', 'physical_type', 'eid']
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -87,6 +90,9 @@ class LandEdgeViewsTest(CommonTest):
     modelfactory = LandEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['owner', 'agreement']
+    expected_column_list_extra = ['id', 'land_type', 'owner', 'agreement']
+    expected_column_formatlist_extra = ['id', 'owner', 'agreement']
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -102,6 +108,9 @@ class CompetenceEdgeViewsTest(CommonTest):
     modelfactory = CompetenceEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
+    expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -117,6 +126,9 @@ class WorkManagementEdgeViewsTest(CommonTest):
     modelfactory = WorkManagementEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
+    expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
         path = PathFactory.create()
@@ -132,6 +144,9 @@ class SignageManagementEdgeViewsTest(CommonTest):
     modelfactory = SignageManagementEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
+    expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
         path = PathFactory.create()

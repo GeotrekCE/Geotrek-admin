@@ -32,6 +32,9 @@ class InfrastructureViewsTest(CommonTest):
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -93,6 +96,9 @@ class InfrastructureViewsTest(CommonTest):
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
     modelfactory = PointInfrastructureFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_good_data(self):
         good_data = {

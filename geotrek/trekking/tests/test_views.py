@@ -57,6 +57,9 @@ class POIViewsTest(CommonTest):
     modelfactory = POIFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -171,6 +174,9 @@ class TrekViewsTest(CommonTest):
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'name', 'type', 'eid']
     length = 141.42135623731
 
     def get_expected_json_attrs(self):
@@ -1335,6 +1341,9 @@ class ServiceViewsTest(CommonTest):
     modelfactory = ServiceFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
         return {

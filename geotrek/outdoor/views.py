@@ -107,7 +107,7 @@ class SiteFormatList(MapEntityFormat, SiteList):
         'structure', 'name', 'practice', 'description',
         'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
         'portal', 'source', 'information_desks', 'web_links', 'eid',
-        'orientation', 'wind', 'ratings', 'managers',
+        'orientation', 'wind', 'ratings', 'managers', 'uuid',
     ]
 
 
@@ -202,5 +202,5 @@ class CourseFormatList(MapEntityFormat, CourseList):
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'parent_sites', 'description',
-        'advice', 'equipment', 'eid', 'height', 'ratings', 'points_reference'
+        'advice', 'equipment', 'eid', 'height', 'ratings', 'points_reference', 'uuid',
     ]

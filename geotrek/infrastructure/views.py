@@ -39,7 +39,7 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     default_extra_columns = [
         'id', 'name', 'type', 'condition', 'description',
         'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
-        'date_update', 'cities', 'districts', 'areas', 'usage_difficulty', 'maintenance_difficulty'
+        'date_update', 'cities', 'districts', 'areas', 'usage_difficulty', 'maintenance_difficulty', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 

@@ -51,7 +51,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
         'structure', 'name', 'code', 'type', 'condition', 'description',
         'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
-        'printed_elevation', 'sealing', 'manager',
+        'printed_elevation', 'sealing', 'manager', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -174,10 +174,11 @@ class BladeViewSet(MapEntityViewSet):
         return Blade.objects.all().annotate(api_geom=Transform("signage__geom", settings.API_SRID))
 
 
-class BladeList(MapEntityList):
+class BladeList(CustomColumnsMixin, MapEntityList):
     queryset = Blade.objects.all()
     filterform = BladeFilterSet
-    columns = ['id', 'number', 'direction', 'type', 'color']
+    mandatory_columns = ['id', 'number']
+    default_extra_columns = ['direction', 'type', 'color']
 
 
 class BladeJsonList(MapEntityJsonList, BladeList):
@@ -190,10 +191,9 @@ class BladeLayer(MapEntityLayer):
 
 
 class BladeFormatList(MapEntityFormat, BladeList):
-    columns = [
-        'id', 'city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction', 'condition',
-        'coordinates'
-    ]
+    mandatory_columns = ['id']
+    default_extra_columns = ['city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction',
+                             'condition', 'coordinates']
     columns_line = ['number', 'text', 'distance_pretty', 'time_pretty', 'pictogram_name']
 
     def csv_view(self, request, context, **kwargs):

@@ -72,9 +72,9 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
-    mandatory_columns = ['id']
-    columns = [
-        'eid', 'eid2', 'structure', 'name', 'departure', 'arrival', 'duration',
+    mandatory_columns = ['id', 'name']
+    default_extra_columns = [
+        'eid', 'eid2', 'structure', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty', 'information_desks',
         'themes', 'practice', 'accessibilities', 'access', 'route',
@@ -82,7 +82,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'disabled_infrastructure', 'parking_location', 'points_reference',
         'related', 'children', 'parents', 'pois', 'review', 'published',
         'publication_date', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'source', 'portal', 'length_2d'
+        'cities', 'districts', 'areas', 'source', 'portal', 'length_2d', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -265,7 +265,7 @@ class POIFormatList(MapEntityFormat, POIList):
         'id', 'structure', 'eid', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas'
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
     def get_queryset(self):
@@ -447,7 +447,7 @@ class ServiceJsonList(MapEntityJsonList, ServiceList):
 class ServiceFormatList(MapEntityFormat, ServiceList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'id', 'eid', 'type'
+        'id', 'eid', 'type', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 

@@ -2,6 +2,8 @@ from geotrek.common.tests import CommonTest
 from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
 from geotrek.authent.tests.factories import StructureFactory
+from django.test.utils import override_settings
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
 
@@ -13,6 +15,7 @@ class SiteViewsTests(CommonTest):
         'type': 'GeometryCollection',
         'geometries': [{'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}],
     }
+    extra_column_list = ['orientation', 'ratings', 'period']
 
     def get_expected_json_attrs(self):
         return {
@@ -76,6 +79,22 @@ class SiteViewsTests(CommonTest):
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates":[0, 0]}]}',
         }
 
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'name', 'orientation', 'ratings', 'period'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'orientation', 'ratings', 'period'])
+
 
 class CourseViewsTests(CommonTest):
     model = Course
@@ -85,6 +104,7 @@ class CourseViewsTests(CommonTest):
         'type': 'GeometryCollection',
         'geometries': [{'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}],
     }
+    extra_column_list = ['equipment', 'ratings', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -135,3 +155,19 @@ class CourseViewsTests(CommonTest):
             'name_fr': 'test fr',
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates":[0, 0]}]}',
         }
+
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'name', 'equipment', 'ratings', 'eid'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'equipment', 'ratings', 'eid'])

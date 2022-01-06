@@ -14,10 +14,11 @@ class PhysicalEdgeLayer(MapEntityLayer):
     properties = ['color_index', 'name']
 
 
-class PhysicalEdgeList(MapEntityList):
+class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
     queryset = PhysicalEdge.objects.existing()
     filterform = PhysicalEdgeFilterSet
-    columns = ['id', 'physical_type', 'length']
+    mandatory_columns = ['id', 'physical_type']
+    default_extra_columns = ['length']
 
 
 class PhysicalEdgeJsonList(MapEntityJsonList, PhysicalEdgeList):
@@ -25,10 +26,9 @@ class PhysicalEdgeJsonList(MapEntityJsonList, PhysicalEdgeList):
 
 
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
-    columns = [
-        'id', 'physical_type',
+    default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -72,10 +72,10 @@ class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     mandatory_columns = ['id']
-    extra_default_columns = [
+    default_extra_columns = [
         'land_type', 'owner', 'agreement',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas'
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -106,10 +106,11 @@ class CompetenceEdgeLayer(MapEntityLayer):
     properties = ['color_index', 'name']
 
 
-class CompetenceEdgeList(MapEntityList):
+class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = CompetenceEdge.objects.existing()
     filterform = CompetenceEdgeFilterSet
-    columns = ['id', 'organization', 'length']
+    mandatory_columns = ['id', 'organization']
+    default_extra_columns = ['length']
 
 
 class CompetenceEdgeJsonList(MapEntityJsonList, CompetenceEdgeList):
@@ -117,10 +118,9 @@ class CompetenceEdgeJsonList(MapEntityJsonList, CompetenceEdgeList):
 
 
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
-    columns = [
-        'id', 'organization',
+    default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -151,10 +151,11 @@ class WorkManagementEdgeLayer(MapEntityLayer):
     properties = ['color_index', 'name']
 
 
-class WorkManagementEdgeList(MapEntityList):
+class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = WorkManagementEdge.objects.existing()
     filterform = WorkManagementEdgeFilterSet
-    columns = ['id', 'organization', 'length']
+    mandatory_columns = ['id', 'organization']
+    default_extra_columns = ['length']
 
 
 class WorkManagementEdgeJsonList(MapEntityJsonList, WorkManagementEdgeList):
@@ -162,10 +163,9 @@ class WorkManagementEdgeJsonList(MapEntityJsonList, WorkManagementEdgeList):
 
 
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
-    columns = [
-        'id', 'organization',
+    default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -196,10 +196,11 @@ class SignageManagementEdgeLayer(MapEntityLayer):
     properties = ['color_index', 'name']
 
 
-class SignageManagementEdgeList(MapEntityList):
+class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = SignageManagementEdge.objects.existing()
     filterform = SignageManagementEdgeFilterSet
-    columns = ['id', 'organization', 'length']
+    mandatory_columns = ['id', 'organization']
+    default_extra_columns = ['length']
 
 
 class SignageManagementEdgeJsonList(MapEntityJsonList, SignageManagementEdgeList):
@@ -207,10 +208,9 @@ class SignageManagementEdgeJsonList(MapEntityJsonList, SignageManagementEdgeList
 
 
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
-    columns = [
-        'id', 'organization',
+    default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 

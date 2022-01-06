@@ -11,7 +11,8 @@ from geotrek.maintenance.tests.factories import (InterventionFactory,
                                                  InfrastructureInterventionFactory,
                                                  InfrastructurePointInterventionFactory,
                                                  SignageInterventionFactory,
-                                                 ProjectFactory, ManDayFactory)
+                                                 ProjectFactory, ManDayFactory, InterventionJobFactory,
+                                                 InterventionDisorderFactory)
 from geotrek.core.tests.factories import PathFactory, TopologyFactory, StakeFactory
 
 
@@ -207,3 +208,15 @@ class InterventionTest(TestCase):
             # implicit 1 manday x 500 €
         )
         self.assertEqual(interv.total_cost, 507)
+
+    def test_disorders_display(self):
+        interv = InterventionFactory.create()
+        interv.disorders.add(InterventionDisorderFactory.create(disorder="foobar"))
+        self.assertEqual(interv.disorders_display, f'{interv.disorders.first().disorder}, foobar')
+
+    def test_jobs_display(self):
+        interv = InterventionFactory.create()
+        job = InterventionJobFactory(job="Worker", cost=12, active=False)
+        ManDayFactory(nb_days=3, job=job, intervention=interv)
+        interv.jobs.add(job)
+        self.assertEqual(interv.jobs_display, f'{interv.jobs.first().job}, Worker')

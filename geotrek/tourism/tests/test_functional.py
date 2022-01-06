@@ -1,6 +1,8 @@
 from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.conf import settings
+from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
+from django.utils.module_loading import import_string
 
 import filecmp
 from geotrek.authent.tests.factories import StructureFactory
@@ -23,6 +25,7 @@ class TouristicContentViewsTests(CommonTest):
     modelfactory = TouristicContentFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
+    extra_column_list = ['type1', 'type2', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -125,12 +128,29 @@ class TouristicContentViewsTests(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["map_obj_pk"]), 0)
 
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'touristic_content_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'name', 'type1', 'type2', 'eid'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'touristic_content_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'type1', 'type2', 'eid'])
+
 
 class TouristicEventViewsTests(CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
+    extra_column_list = ['type', 'eid', 'themes']
 
     def get_expected_json_attrs(self):
         return {
@@ -234,3 +254,19 @@ class TouristicEventViewsTests(CommonTest):
         first_path = os.path.join(settings.MEDIA_ROOT, 'maps', element_in_dir[0])
         second_path = os.path.join(settings.MEDIA_ROOT, attachment.attachment_file.name)
         self.assertTrue(filecmp.cmp(first_path, second_path))
+
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'touristic_event_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'name', 'type', 'eid', 'themes'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'touristic_event_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'type', 'eid', 'themes'])

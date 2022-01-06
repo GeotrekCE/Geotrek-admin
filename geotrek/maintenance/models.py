@@ -284,6 +284,14 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         """Distance to associate this intervention to another class"""
         return settings.MAINTENANCE_INTERSECTION_MARGIN
 
+    @property
+    def disorders_display(self):
+        return ', '.join([str(disorder) for disorder in self.disorders.all()])
+
+    @property
+    def jobs_display(self):
+        return ', '.join([str(job) for job in self.jobs.all()])
+
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))
 Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self), _("Interventions"))
