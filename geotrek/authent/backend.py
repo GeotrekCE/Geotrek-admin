@@ -60,27 +60,32 @@ class DatabaseBackend(ModelBackend):
     def _update_groups(self, user, credentials):
         GROUP_PATH_MANAGER_ID = settings.AUTHENT_GROUPS_MAPPING['PATH_MANAGER']
         GROUP_TREKKING_MANAGER_ID = settings.AUTHENT_GROUPS_MAPPING['TREKKING_MANAGER']
-        GROUP_EDITOR_ID = settings.AUTHENT_GROUPS_MAPPING['EDITOR']
+        GROUP_EDITOR_MANAGEMENT_ID = settings.AUTHENT_GROUPS_MAPPING['EDITOR']
         GROUP_READER_ID = settings.AUTHENT_GROUPS_MAPPING['READER']
+        GROUP_EDITOR_ID = settings.AUTHENT_GROUPS_MAPPING['EDITOR_TREKKING_MANAGEMENT']
 
         # Set groups according to level
-        editor_group = Group.objects.get(id=GROUP_EDITOR_ID)
+        editor_management_group = Group.objects.get(id=GROUP_EDITOR_MANAGEMENT_ID)
         path_manager_group = Group.objects.get(id=GROUP_PATH_MANAGER_ID)
         trek_manager_group = Group.objects.get(id=GROUP_TREKKING_MANAGER_ID)
         reader_group = Group.objects.get(id=GROUP_READER_ID)
+        editor_group, created = Group.objects.get_or_create(id=GROUP_EDITOR_ID)
 
         user.groups.remove(reader_group)
         if credentials.level == 1:
             user.groups.add(reader_group)  # read-only
-        user.groups.remove(editor_group)
+        user.groups.remove(editor_management_group)
         if credentials.level == 2:
-            user.groups.add(editor_group)  # Editor
+            user.groups.add(editor_management_group)  # Editor management only
         user.groups.remove(path_manager_group)
         if credentials.level == 3:
             user.groups.add(path_manager_group)  # Path manager
         user.groups.remove(trek_manager_group)
         if credentials.level == 4:
             user.groups.add(trek_manager_group)  # Trekking manager
+        user.groups.remove(editor_group)
+        if credentials.level == 5:
+            user.groups.add(editor_group)  # Editor management and trekking
 
     def query_credentials(self, username):
         if not settings.AUTHENT_DATABASE:

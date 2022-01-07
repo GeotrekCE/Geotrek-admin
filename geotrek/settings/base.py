@@ -103,6 +103,7 @@ AUTHENT_GROUPS_MAPPING = {
     'TREKKING_MANAGER': 2,
     'EDITOR': 3,
     'READER': 4,
+    'EDITOR_TREKKING_MANAGEMENT': 6,
 }
 
 # Local time zone for this installation. Choices can be found here:

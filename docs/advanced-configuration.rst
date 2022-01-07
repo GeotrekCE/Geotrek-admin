@@ -383,7 +383,7 @@ Expected columns in table/view are :
 * last_name : string
 * password : string (simple md5 encoded, or full hashed and salted password)
 * email : string
-* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 6: administrator)
+* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 5: management and trekking editor, 6: administrator)
 * structure : string
 * lang : string (language code)
 

@@ -118,6 +118,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
         test_level('a', 2, [settings.AUTHENT_GROUPS_MAPPING['EDITOR']])
         test_level('a', 3, [settings.AUTHENT_GROUPS_MAPPING['PATH_MANAGER']])
         test_level('a', 4, [settings.AUTHENT_GROUPS_MAPPING['TREKKING_MANAGER']])
+        test_level('a', 5, [settings.AUTHENT_GROUPS_MAPPING['EDITOR_TREKKING_MANAGEMENT']])
         user = test_level('a', 6, [])
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)
