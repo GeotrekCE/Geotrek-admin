@@ -2,7 +2,7 @@
 INSTALLATION
 ============
 
-Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Bionic 18.04 LTS server for production.
+Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Bionic 18.04 or Focal Fossa 20.04 LTS server for production.
 For another distributions, please use :ref:`the Docker installation method <docker-section>`. It requires more technical skills.
 Lastly, for a developer instance, please follow :ref:`the dedicated procedure <development-section>`.
 
@@ -24,7 +24,7 @@ For big instances required system resources are:
 
 Software requirements are :
 
-* Ubuntu Bionic 18.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
+* Ubuntu Bionic 18.04 LTS or Ubuntu Focal Fossa 20.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
 
 An Internet connection with open HTTP and HTTPS destination ports is required.
 
