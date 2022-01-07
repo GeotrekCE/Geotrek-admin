@@ -30,6 +30,7 @@ from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.outdoor.tests.factories import CourseFactory
 from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 from geotrek.signage.models import Signage
 from geotrek.maintenance.tests.factories import (InterventionFactory, InfrastructureInterventionFactory,
@@ -726,7 +727,8 @@ class TestDetailedJobCostsExports(TestCase):
         '''Test SHP job costs exports contain accurate total price'''
         signage = SignageFactory.create()
         InterventionFactory.create(target=signage)
-
+        i_course = InterventionFactory.create(target=CourseFactory.create())
+        ManDayFactory.create(intervention=i_course, nb_days=2)
         response = self.client.get('/intervention/list/export/?format=shp')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Type'), 'application/zip')
