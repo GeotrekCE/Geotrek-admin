@@ -587,9 +587,11 @@ class ExportTest(TranslationResetMixin, TestCase):
 
         self.assertEqual(topo_point.paths.get(), closest_path)
 
-        # Create one intervention by geometry (point/linestring)
+        # Create one intervention by geometry (point/linestring/geometrycollection)
         it_point = InterventionFactory.create(target=topo_point)
         it_line = InterventionFactory.create(target=topo_line)
+        course = CourseFactory.create(geom='GEOMETRYCOLLECTION(POINT(0 0), POINT(0 1), LINESTRING(0 0, 1 1))')
+        it_geometrycollection = InterventionFactory.create(target=course)
         # reload
         it_point = type(it_point).objects.get(pk=it_point.pk)
         it_line = type(it_line).objects.get(pk=it_line.pk)
@@ -597,6 +599,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         proj = ProjectFactory.create()
         proj.interventions.add(it_point)
         proj.interventions.add(it_line)
+        proj.interventions.add(it_geometrycollection)
 
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
@@ -630,13 +633,14 @@ class ExportTest(TranslationResetMixin, TestCase):
 
         for feature in geom_type_layer['MultiPoint']:
             self.assertEqual(str(feature['id']), str(proj.pk))
-            self.assertEqual(len(feature.geom.geos), 1)
-            self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
-            self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
+            self.assertEqual(len(feature.geom.geos), 3)
+            self.assertAlmostEqual(feature.geom.geos[2].x, it_point.geom.x)
+            self.assertAlmostEqual(feature.geom.geos[2].y, it_point.geom.y)
 
         for feature in geom_type_layer['MultiLineString']:
             self.assertEqual(str(feature['id']), str(proj.pk))
-            self.assertTrue(feature.geom.geos.equals(it_line.geom))
+            self.assertEqual(len(feature.geom.geos), 2)
+            self.assertTrue(feature.geom.geos[1].equals(it_line.geom))
 
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)

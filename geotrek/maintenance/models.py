@@ -467,7 +467,15 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStamp
         """
         if self._geom is None:
             interventions = Intervention.objects.existing().filter(project=self)
-            geoms = [i.geom for i in interventions if i.geom is not None]
+            geoms = []
+            for i in interventions:
+                geom = i.geom
+                if geom is not None:
+                    if isinstance(geom, GeometryCollection):
+                        for sub_geom in geom:
+                            geoms.append(sub_geom)
+                    else:
+                        geoms.append(geom)
             if geoms:
                 self._geom = GeometryCollection(*geoms, srid=settings.SRID)
         return self._geom
