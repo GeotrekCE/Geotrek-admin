@@ -1,9 +1,11 @@
 import csv
 from decimal import Decimal
-from io import StringIO
+from io import BytesIO, StringIO
 import os
 from collections import OrderedDict
+from tempfile import TemporaryDirectory
 from unittest import skipIf
+from zipfile import ZipFile
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -28,6 +30,7 @@ from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.outdoor.tests.factories import CourseFactory
 from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 from geotrek.signage.models import Signage
 from geotrek.maintenance.tests.factories import (InterventionFactory, InfrastructureInterventionFactory,
@@ -584,9 +587,11 @@ class ExportTest(TranslationResetMixin, TestCase):
 
         self.assertEqual(topo_point.paths.get(), closest_path)
 
-        # Create one intervention by geometry (point/linestring)
+        # Create one intervention by geometry (point/linestring/geometrycollection)
         it_point = InterventionFactory.create(target=topo_point)
         it_line = InterventionFactory.create(target=topo_line)
+        course = CourseFactory.create(geom='GEOMETRYCOLLECTION(POINT(0 0), POINT(0 1), LINESTRING(0 0, 1 1))')
+        it_geometrycollection = InterventionFactory.create(target=course)
         # reload
         it_point = type(it_point).objects.get(pk=it_point.pk)
         it_line = type(it_line).objects.get(pk=it_line.pk)
@@ -594,6 +599,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         proj = ProjectFactory.create()
         proj.interventions.add(it_point)
         proj.interventions.add(it_line)
+        proj.interventions.add(it_geometrycollection)
 
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
@@ -627,13 +633,14 @@ class ExportTest(TranslationResetMixin, TestCase):
 
         for feature in geom_type_layer['MultiPoint']:
             self.assertEqual(str(feature['id']), str(proj.pk))
-            self.assertEqual(len(feature.geom.geos), 1)
-            self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
-            self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
+            self.assertEqual(len(feature.geom.geos), 3)
+            self.assertAlmostEqual(feature.geom.geos[2].x, it_point.geom.x)
+            self.assertAlmostEqual(feature.geom.geos[2].y, it_point.geom.y)
 
         for feature in geom_type_layer['MultiLineString']:
             self.assertEqual(str(feature['id']), str(proj.pk))
-            self.assertTrue(feature.geom.geos.equals(it_line.geom))
+            self.assertEqual(len(feature.geom.geos), 2)
+            self.assertTrue(feature.geom.geos[1].equals(it_line.geom))
 
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
@@ -710,7 +717,7 @@ class TestDetailedJobCostsExports(TestCase):
     def test_csv_detailed_cost_content(self):
         '''Test CSV job costs exports contain accurate total price'''
 
-        response = self.client.get('/intervention/list/export/', params={'format': 'csv'})
+        response = self.client.get('/intervention/list/export/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Type'), 'text/csv')
 
@@ -719,6 +726,27 @@ class TestDetailedJobCostsExports(TestCase):
         for row in reader:
             self.assertEqual(Decimal(row[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
             self.assertEqual(Decimal(row[self.job2_column_name]), self.job2.cost * self.manday2.nb_days)
+
+    def test_shp_detailed_cost_content(self):
+        '''Test SHP job costs exports contain accurate total price'''
+        signage = SignageFactory.create()
+        InterventionFactory.create(target=signage)
+        i_course = InterventionFactory.create(target=CourseFactory.create())
+        ManDayFactory.create(intervention=i_course, nb_days=2)
+        response = self.client.get('/intervention/list/export/?format=shp')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'application/zip')
+
+        # Assert right costs in CSV
+        with ZipFile(BytesIO(response.content)) as mzip:
+            temp_directory = TemporaryDirectory()
+            mzip.extractall(path=temp_directory.name)
+            shapefiles = [shapefile for shapefile in os.listdir(temp_directory.name) if shapefile[-3:] == "shp"]
+            datasource = gdal.DataSource(os.path.join(temp_directory.name, shapefiles[0]))
+            l_point = datasource[0]
+        feature_point = l_point[0]
+        self.assertEqual(Decimal(str(feature_point['cost_worke'])), self.job1.cost * self.manday1.nb_days)
+        self.assertEqual(Decimal(str(feature_point['cost_strea'])), self.job2.cost * self.manday2.nb_days)
 
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)

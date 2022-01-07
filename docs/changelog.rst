@@ -5,19 +5,31 @@ CHANGELOG
 2.74.1+dev (XXXX-XX-XX)
 -----------------------
 
+**Tools**
+
+- Update check_ign_key tool
+
 **New features**
 
-- Add new group external authent `EDITOR_TREKKING_MANAGEMENT`
+- Add new group external authent `EDITOR_TREKKING_MANAGEMENT` (#2842)
 
 **Bug fixes**
 
 - Fix bootstrap theme in warning and error messages or alerts
 - Fix Services external IDs were not displayed in detail pages
-- Fix interventions filtering on zonings
+- Fix interventions filtering on zonings (#2766)
+- Fix interventions shapefiles with `ENABLE_JOBS_COSTS_DETAILED_EXPORT` setting (#1798)
+- Fix projects on interventions with GeometryCollection's geometry
+- Fix parser when DatabaseError occurs
+- Add customization columns `COLUMNS_LISTS` on every models listed in documentation (#2688)
 
 **Minor improvements**
 
-- Add filtering portals sync_mobile for touristic contents and events
+- Add filtering portals sync_mobile for touristic contents and events (#1941)
+
+**Maintenance**
+
+- Update to mapentity 7.0.6
 
 
 2.74.1     (2021-12-21)
