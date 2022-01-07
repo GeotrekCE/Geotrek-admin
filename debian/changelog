@@ -1,3 +1,9 @@
+geotrek-admin (2.75.0+dev) UNRELEASED; urgency=medium
+
+  *
+
+ -- Timothee DE MONTETY <timothee.de-montety@makina-corpus.com>  Fri, 07 Jan 2022 18:01:00 +0100
+
 geotrek-admin (2.75.0) RELEASED; urgency=medium
 
   * New package release
