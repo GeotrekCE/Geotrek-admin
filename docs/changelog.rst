@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix bootstrap theme in warning and error messages or alerts
 - Fix Services external IDs were not displayed in detail pages
+- Fix interventions filtering on zonings
 
 **Minor improvements**
 
