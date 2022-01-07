@@ -132,6 +132,8 @@ class Command(BaseCommand):
 
     def sync_trek_touristic_contents(self, lang, trek):
         params = {'format': 'geojson', 'root_pk': trek.pk}
+        if self.portal:
+            params['portal'] = ','.join(self.portal)
         view = TrekViewSet.as_view({'get': 'touristic_contents'})
         name = os.path.join(lang, str(trek.pk), 'touristic_contents.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
@@ -142,6 +144,8 @@ class Command(BaseCommand):
 
     def sync_trek_touristic_events(self, lang, trek):
         params = {'format': 'geojson', 'root_pk': trek.pk}
+        if self.portal:
+            params['portal'] = ','.join(self.portal)
         view = TrekViewSet.as_view({'get': 'touristic_events'})
         name = os.path.join(lang, str(trek.pk), 'touristic_events.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
