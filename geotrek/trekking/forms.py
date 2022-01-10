@@ -16,7 +16,7 @@ from mapentity.widgets import SelectMultipleWithPop
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
-from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild, Rating, RatingScale
+from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild, RatingScale
 from django.db import transaction
 
 

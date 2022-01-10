@@ -576,6 +576,7 @@ class TrekNetwork(PictogramMixin):
     def __str__(self):
         return self.network
 
+
 class Accessibility(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
