@@ -49,6 +49,19 @@ class ReportViewsetMailSend(TestCase):
         self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
 
 
+class ReportSerializationOptmizeTests(TestCase):
+
+    def setUp(cls):
+        cls.classified_status = feedback_factories.ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
+        cls.classified_report_1 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.classified_report_2 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.classified_report_3 = feedback_factories.ReportFactory(status=cls.classified_status)
+
+    def test_num_queries(self):
+        with self.assertNumQueries(1):
+            self.client.get("/api/report/report-classified.geojson")
+
+
 class ReportViewsTest(CommonTest):
     model = feedback_models.Report
     modelfactory = feedback_factories.ReportFactory

@@ -12,18 +12,18 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
 });
 
 function display_message_fields_on_status_change() {
-    var status_ids = JSON.parse($('#status_ids').text());
+    var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
     var selected = $('#id_status').val() || null;
-    do_display = ((status_ids[selected] == "resolved") || (status_ids[selected] == "classified"))
+    do_display = ((status_ids_and_colors[selected]['id'] == "resolved") || (status_ids_and_colors[selected]['id'] == "classified"))
     $('#div_id_message_sentinel').prop('hidden', !do_display);
     // Prevent assigning and classifying at the same time
-    if (status_ids[selected] == "classified") {
+    if (status_ids_and_colors[selected]['id'] == "classified") {
         $('#id_assigned_user').val("");
         $('#div_id_assigned_user').prop('hidden', true);
         $('#div_id_message_supervisor').prop('hidden', true);
         $('#div_id_uses_timers').prop('hidden', true);
     }
-    if (status_ids[selected] == "filed") {
+    if (status_ids_and_colors[selected]['id'] == "filed") {
         $('#id_assigned_user').val("");
         $('#div_id_assigned_user').prop('hidden', false);
     }
@@ -36,22 +36,37 @@ function display_message_fields_on_supervisor_change() {
     $('#div_id_uses_timers').prop('hidden', (selected == null));
 }
 
-$(window).on('entity:map:list', function (e, data) {
-    // Warning, bad code
+function ChangeColors(e, data) {
     var map = data.map;
-    map.on('layeradd', function (e) {
-        console.log("dedans")
-        layers = map._layers
-        console.log(layers)
-        // For each layer in map,
-        // if this layer has a "color" key in its properties, then apply this color to the layer
-        Object.keys(layers).forEach((index) => layers[index].properties && layers[index].properties.color && layers[index].setStyle({ color: layers[index].properties.color }))
+    // Remove normal reports layer
+    map.eachLayer(function (layer) {
+        if (layer.options['modelname'] === "report") {
+            map.removeLayer(layer)
+        }
     })
-    // This is used to trigger the event,
-    // because we can change colors only when everything was loaded on the map
-    var fake_layer = new L.ObjectsLayer(null, {
-        modelname: 'ignoreme',
-    });
-    map.addLayer(fake_layer) // We just need to trigger the event
-    map.removeLayer(fake_layer) // We just need to trigger the event
-});
+    function getUrl(properties, layer) {
+        return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), data.modelname)
+            .replace('0', properties.pk);
+    }
+    // For each report status
+    var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
+    for (var status in status_ids_and_colors) {
+        status_id = status_ids_and_colors[status]["id"]
+        status_color = status_ids_and_colors[status]["color"]
+        // Use this status' color...
+        L.Util.extend(
+            window.SETTINGS.map.styles["report-" + status_id] = { 'weight': 5, 'color': status_color, 'opacity': 0.9, fillOpacity: 0.9 },
+        );
+        // ... in creating layer with reports that have this status
+        var layer = new L.ObjectsLayer(null, {
+            modelname: "report-" + status_id,
+            objectUrl: getUrl,
+            style: { color: status_color },
+        });
+        layer.load("/api/report/report-" + status_id + ".geojson")
+        map.addLayer(layer)
+    }
+}
+
+$(window).on('entity:map:detail', ChangeColors);
+$(window).on('entity:map:list', ChangeColors);
