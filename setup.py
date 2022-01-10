@@ -32,7 +32,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.1.*',
-        'mapentity==7.0.6',
+        'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@new_tinymce#egg=mapentity',
         'env_file',
         # pinned by requirements.txt
         'python-memcached',

@@ -119,7 +119,7 @@ django-modeltranslation==0.15.2
     # via mapentity
 django-mptt==0.11.0
     # via geotrek (setup.py)
-django-tinymce==2.8.0
+django-tinymce==3.4.0
     # via mapentity
 django-weasyprint==0.5.5
     # via mapentity
@@ -169,7 +169,7 @@ html5lib==1.0.1
     # via weasyprint
 idna==2.8
     # via requests
-importlib-metadata==4.8.2
+importlib-metadata==4.8.3
     # via kombu
 inflection==0.5.1
     # via drf-yasg
@@ -183,7 +183,7 @@ landez==2.5.0
     # via geotrek (setup.py)
 lxml==4.7.1
     # via mapentity
-mapentity==7.0.6
+mapentity @ git+https://github.com/makinacorpus/django-mapentity.git@new_tinymce
     # via geotrek (setup.py)
 markupsafe==1.1.1
     # via jinja2
