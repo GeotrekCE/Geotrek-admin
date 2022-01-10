@@ -43,15 +43,6 @@
 },
 {
     "model": "outdoor.practice",
-    "pk": 3,
-    "fields": {
-        "name": "Alpinisme",
-        "name_fr": "Alpinisme",
-        "name_en": "Mountaineering"
-    }
-},
-{
-    "model": "outdoor.practice",
     "pk": 4,
     "fields": {
         "name": "Via ferrata",
