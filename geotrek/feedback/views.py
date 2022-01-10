@@ -19,13 +19,66 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from djgeojson.views import GeoJSONLayerView
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
     queryset = feedback_models.Report.objects.existing()
     model = feedback_models.Report
     filterform = ReportFilterSet
+    properties = ["email"]
+
+
+class SameStatusReportLayer(GeoJSONLayerView):
     properties = ["email", "color"]
+    model = feedback_models.Report
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Backward compatibility with django-geojson 1.X
+        # for JS ObjectsLayer and rando-trekking application
+        # TODO: remove when migrated
+        properties = dict([(k, k) for k in self.properties])
+        if 'id' not in self.properties:
+            properties['id'] = 'pk'
+        self.properties = properties
+
+    def get_queryset(self):
+        return feedback_models.Report.objects.existing().select_related(
+            "activity", "category", "problem_magnitude", "status", "related_trek"
+        ).filter(status__suricate_id=self.layer_id)
+
+
+class WaitingReportLayer(SameStatusReportLayer):
+    layer_id = "waiting"
+
+
+class FiledReportLayer(SameStatusReportLayer):
+    layer_id = "filed"
+
+
+class LateInterventionReportLayer(SameStatusReportLayer):
+    layer_id = "intervention_late"
+
+
+class LateResolutionReportLayer(SameStatusReportLayer):
+    layer_id = "resolution_late"
+
+
+class SolvedInterventionReportLayer(SameStatusReportLayer):
+    layer_id = "intervention_solved"
+
+
+class ClassifiedReportLayer(SameStatusReportLayer):
+    layer_id = "classified"
+
+
+class ProgrammedReportLayer(SameStatusReportLayer):
+    layer_id = "programmed"
+
+
+class SolvedReportLayer(SameStatusReportLayer):
+    layer_id = "resolved"
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
