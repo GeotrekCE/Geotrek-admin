@@ -54,6 +54,14 @@ class WebLinkCategoryTO(TranslationOptions):
     fields = ('label', )
 
 
+class RatingScaleTO(TranslationOptions):
+    fields = ('name', )
+
+
+class RatingTO(TranslationOptions):
+    fields = ('name', 'description')
+
+
 class ServiceTypeTO(TranslationOptions):
     fields = ('name', )
 
@@ -71,6 +79,8 @@ trek_translation_to_register = [
     (trekking_models.WebLink, WebLinkTO),
     (trekking_models.WebLinkCategory, WebLinkCategoryTO),
     (trekking_models.ServiceType, ServiceTypeTO),
+    (trekking_models.Rating, RatingTO),
+    (trekking_models.RatingScale, RatingScaleTO)
 ]
 
 for model, model_to in trek_translation_to_register:

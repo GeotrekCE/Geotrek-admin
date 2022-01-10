@@ -60,6 +60,70 @@ class OrderedTrekChild(models.Model):
         )
 
 
+class Practice(PictogramMixin):
+
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
+                                   help_text=_("Touristic contents and events will associate within this distance (meters)"))
+    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.CASCADE)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Alphabetical order if blank"))
+    color = ColorField(verbose_name=_("Color"), default='#444444',
+                       help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
+
+    id_prefix = 'T'
+
+    class Meta:
+        verbose_name = _("Practice")
+        verbose_name_plural = _("Practices")
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def slug(self):
+        return slugify(self.name) or str(self.pk)
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
+
+
+class RatingScale(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
+                                 verbose_name=_("Practice"))
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Within a practice. Alphabetical order if blank"))
+
+    def __str__(self):
+        return "{} ({})".format(self.name, self.practice.name)
+
+    class Meta:
+        verbose_name = _("Rating scale")
+        verbose_name_plural = _("Rating scales")
+        ordering = ('practice', 'order', 'name')
+
+
+class Rating(OptionalPictogramMixin, models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
+                              verbose_name=_("Scale"))
+    description = models.TextField(verbose_name=_("Description"), blank=True)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Alphabetical order if blank"))
+    color = ColorField(verbose_name=_("Color"), blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Rating")
+        verbose_name_plural = _("Ratings")
+        ordering = ('order', 'name')
+
+
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     departure = models.CharField(verbose_name=_("Departure"), max_length=128, blank=True,
@@ -87,6 +151,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                         help_text=_("Train, bus (see web links)"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
+    ratings = models.ManyToManyField(Rating, related_name='sites', blank=True)
+    ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
     themes = models.ManyToManyField(Theme, related_name="treks", blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks", blank=True, verbose_name=_("Networks"),
@@ -509,37 +575,6 @@ class TrekNetwork(PictogramMixin):
 
     def __str__(self):
         return self.network
-
-
-class Practice(PictogramMixin):
-
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
-    distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
-                                   help_text=_("Touristic contents and events will associate within this distance (meters)"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.CASCADE)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Alphabetical order if blank"))
-    color = ColorField(verbose_name=_("Color"), default='#444444',
-                       help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
-
-    id_prefix = 'T'
-
-    class Meta:
-        verbose_name = _("Practice")
-        verbose_name_plural = _("Practices")
-        ordering = ['order', 'name']
-
-    def __str__(self):
-        return self.name
-
-    @property
-    def slug(self):
-        return slugify(self.name) or str(self.pk)
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
-
 
 class Accessibility(OptionalPictogramMixin):
 

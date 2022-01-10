@@ -77,7 +77,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'eid', 'eid2', 'structure', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty', 'information_desks',
-        'themes', 'practice', 'accessibilities', 'access', 'route',
+        'themes', 'practice', 'ratings', 'accessibilities', 'access', 'route',
         'public_transport', 'advised_parking', 'web_links', 'labels',
         'disabled_infrastructure', 'parking_location', 'points_reference',
         'related', 'children', 'parents', 'pois', 'review', 'published',

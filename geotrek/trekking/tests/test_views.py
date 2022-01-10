@@ -277,6 +277,8 @@ class TrekViewsTest(CommonTest):
             'web_links': [],
             'reservation_id': 'XXXXXXXXX',
             'reservation_system': self.obj.reservation_system.name,
+            'ratings': [],
+            'ratings_description': '',
         }
 
     def get_bad_data(self):

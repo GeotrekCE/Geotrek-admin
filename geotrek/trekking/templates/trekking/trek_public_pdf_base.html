@@ -110,6 +110,12 @@
                 <span class="meta-item-value">{{ object.difficulty }}</span>
               </span>
             {% endif %}
+            {% for rating in object.ratings.all%}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans rating.scale.name %}</span>
+                <span class="meta-item-value">{% trans rating.name %}</span>
+              </span>
+            {% endfor %}
             {% if object.route %}
               <span class="meta-item">
                 <span class="meta-item-label">{% trans "Type" %}</span>

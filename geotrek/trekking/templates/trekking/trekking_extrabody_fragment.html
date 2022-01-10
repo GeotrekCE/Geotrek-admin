@@ -1,5 +1,11 @@
-{% load i18n %}
+{% load i18n trekking_tags %}
 
 <script type="text/javascript">
     MapEntity.i18n['Services'] = "{% trans "Services" %}";
 </script>
+{% if modelname == "trek" %}
+    <script type="application/json" id="all-ratings-scales">
+        {% all_ratings_scales as scales %}
+        {{ scales|safe }}
+    </script>
+{% endif %}

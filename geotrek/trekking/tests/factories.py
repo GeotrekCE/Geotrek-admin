@@ -26,6 +26,22 @@ class PracticeFactory(factory.django.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('practice.png')
 
 
+class RatingScaleFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.RatingScale
+
+    name = "RatingScale"
+    practice = factory.SubFactory(PracticeFactory)
+
+
+class RatingFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Rating
+
+    name = "Rating"
+    scale = factory.SubFactory(RatingScaleFactory)
+
+
 class AccessibilityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Accessibility

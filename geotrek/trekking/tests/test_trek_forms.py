@@ -1,10 +1,56 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import UserFactory
-from .factories import TrekFactory
+from geotrek.core.tests.factories import PathFactory
+from .factories import TrekFactory, RatingFactory
 from ..models import OrderedTrekChild
 from ..forms import TrekForm
+
+
+class TrekFormTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create()
+        cls.path = PathFactory.create()
+        cls.rating = RatingFactory()
+        cls.trek = TrekFactory(practice=cls.rating.scale.practice)
+
+    def test_ratings_save(self):
+        data = {
+            'name_en': 'Trek',
+            'practice': str(self.rating.scale.practice.pk),
+            'rating_scale_{}'.format(self.rating.scale.pk): [str(self.rating.pk)],
+            'topology': '{"paths": [%s]}' % self.path.pk
+        }
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            data['topology'] = '{"paths": [%s]}' % self.path.pk
+        else:
+            data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+
+        form = TrekForm(user=self.user, instance=self.trek, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.assertQuerysetEqual(self.trek.ratings.all(), ['<Rating: Rating>'])
+
+    def test_no_rating_save(self):
+        data = {
+            'name_en': 'Trek',
+            'practice': str(self.rating.scale.practice.pk),
+            'topology': '{"paths": [%s]}' % self.path.pk
+        }
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            data['topology'] = '{"paths": [%s]}' % self.path.pk
+        else:
+            data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+
+        form = TrekForm(user=self.user, instance=self.trek, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
+        self.assertQuerysetEqual(self.trek.ratings.all(), [])
 
 
 class TrekItinerancyTestCase(TestCase):

@@ -1,10 +1,13 @@
+from django.contrib.admin import AdminSite
+from django.test import TestCase
 from django.urls import reverse
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory
 
-from ..models import Trek
-from .factories import TrekFactory, DifficultyLevelFactory
+from ..admin import RatingAdmin
+from ..models import Rating, Trek
+from .factories import TrekFactory, DifficultyLevelFactory, RatingFactory
 
 
 class DifficultyLevelTest(AuthentFixturesTest):
@@ -74,3 +77,15 @@ class DeleteObjectTest(AuthentFixturesTest):
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, '/admin/')
+
+
+class RatingAdminTest(TestCase):
+    def test_color_markup(self):
+        rating = RatingFactory(color='#AC2F89')
+        admin = RatingAdmin(Rating, AdminSite())
+        self.assertEqual(admin.color_markup(rating), '<span style="color: #AC2F89;">⬤</span> #AC2F89')
+
+    def test_no_color_markup(self):
+        rating = RatingFactory(color='')
+        admin = RatingAdmin(Rating, AdminSite())
+        self.assertEqual(admin.color_markup(rating), '')

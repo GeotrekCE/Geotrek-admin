@@ -16,7 +16,7 @@ from mapentity.widgets import SelectMultipleWithPop
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
-from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild
+from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild, Rating, RatingScale
 from django.db import transaction
 
 
@@ -123,6 +123,7 @@ class TrekForm(BaseTrekForm):
                     'description_teaser',
                     'ambiance',
                     'description',
+                    'ratings_description',
                     css_id="main",
                     css_class="scrollable tab-pane active"
                 ),
@@ -198,6 +199,19 @@ class TrekForm(BaseTrekForm):
 
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+        for scale in RatingScale.objects.all():
+            ratings = None
+            if self.instance.pk:
+                ratings = self.instance.ratings.filter(scale=scale)
+            fieldname = 'rating_scale_{}'.format(scale.pk)
+            self.fields[fieldname] = forms.ModelMultipleChoiceField(
+                label=scale.name,
+                queryset=scale.ratings.all(),
+                required=False,
+                initial=ratings if ratings else None
+            )
+            right_after_type_index = self.fieldslayout[0][1][0].fields.index('practice') + 1
+            self.fieldslayout[0][1][0].insert(right_after_type_index, fieldname)
         if self.instance.pk:
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
@@ -223,6 +237,23 @@ class TrekForm(BaseTrekForm):
 
         try:
             return_value = super().save(self, *args, **kwargs)
+            # Save ratings
+            if return_value.practice:
+                field = getattr(return_value, 'ratings')
+                to_remove = list(field.exclude(scale__practice=return_value.practice).values_list('pk', flat=True))
+                to_add = []
+                for scale in return_value.practice.rating_scales.all():
+                    ratings = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
+                    needs_removal = field.filter(scale=scale)
+                    if ratings is not None:
+                        for rating in ratings:
+                            needs_removal = needs_removal.exclude(pk=rating.pk)
+                            to_add.append(rating.pk)
+                    to_remove += list(needs_removal.values_list('pk', flat=True))
+                field.remove(*to_remove)
+                field.add(*to_add)
+
+            # save ordered children
             ordering = []
 
             if self.cleaned_data['hidden_ordered_children']:
@@ -257,7 +288,7 @@ class TrekForm(BaseTrekForm):
         fields = BaseTrekForm.Meta.fields + \
             ['structure', 'name', 'review', 'published', 'labels', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
-             'access', 'description_teaser', 'description', 'points_reference',
+             'access', 'description_teaser', 'description', 'ratings_description', 'points_reference',
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
