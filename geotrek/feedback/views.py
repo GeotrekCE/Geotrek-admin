@@ -44,41 +44,10 @@ class SameStatusReportLayer(GeoJSONLayerView):
         self.properties = properties
 
     def get_queryset(self):
+        status_id = self.kwargs['status_id']
         return feedback_models.Report.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
-        ).filter(status__suricate_id=self.layer_id)
-
-
-class WaitingReportLayer(SameStatusReportLayer):
-    layer_id = "waiting"
-
-
-class FiledReportLayer(SameStatusReportLayer):
-    layer_id = "filed"
-
-
-class LateInterventionReportLayer(SameStatusReportLayer):
-    layer_id = "intervention_late"
-
-
-class LateResolutionReportLayer(SameStatusReportLayer):
-    layer_id = "resolution_late"
-
-
-class SolvedInterventionReportLayer(SameStatusReportLayer):
-    layer_id = "intervention_solved"
-
-
-class ClassifiedReportLayer(SameStatusReportLayer):
-    layer_id = "classified"
-
-
-class ProgrammedReportLayer(SameStatusReportLayer):
-    layer_id = "programmed"
-
-
-class SolvedReportLayer(SameStatusReportLayer):
-    layer_id = "resolved"
+        ).filter(status__suricate_id=status_id)
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
