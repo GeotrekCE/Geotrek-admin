@@ -30,7 +30,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
 
 
 class SameStatusReportLayer(GeoJSONLayerView):
-    properties = ["email", "color"]
+    properties = ["email"]
     model = feedback_models.Report
 
     def __init__(self, *args, **kwargs):
