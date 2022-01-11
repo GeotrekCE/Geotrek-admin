@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 11:07+0000\n"
+"POT-Creation-Date: 2022-01-11 15:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,26 +45,26 @@ msgstr "Amplitude du problème"
 msgid "Status"
 msgstr "Statut"
 
-msgid "Statuses"
-msgstr "Statuts"
-
-msgid "Text"
-msgstr "Texte"
-
-msgid "Author"
-msgstr "Auteur"
-
-msgid "Date"
-msgstr "Date"
-
-msgid "Message"
-msgstr "Message"
-
 msgid "Location"
 msgstr "Emplacement"
 
 msgid "Related trek"
 msgstr "Itinéraire associé"
+
+msgid "Creation date in Suricate"
+msgstr "Date de création dans Suricate"
+
+msgid "Identifier"
+msgstr "Identifiant"
+
+msgid "Locked"
+msgstr ""
+
+msgid "Origin"
+msgstr ""
+
+msgid "Last updated in Suricate"
+msgstr "Date de modification dans Suricate"
 
 msgid "Report"
 msgstr "Signalement"
@@ -75,11 +75,22 @@ msgstr "Signalements"
 msgid "Add a new feedback"
 msgstr "Créer un signalement"
 
+msgid "Treks"
+msgstr ""
+
+msgid "POIs"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+#, fuzzy
+#| msgid "Intervention prévue"
+msgid "Interventions"
+msgstr "Intervention prévue"
+
 msgid "Suricate id"
 msgstr "ID Suricate"
-
-msgid "Data to import from Suricate"
-msgstr "Données à importer depuis Suricate"
 
 msgid "Activities"
 msgstr "Activités"
@@ -87,20 +98,51 @@ msgstr "Activités"
 msgid "Categories"
 msgstr "Catégories"
 
+#, fuzzy
+#| msgid "Identifier"
+msgid "Identifiant"
+msgstr "Identifiant"
+
+#, fuzzy
+#| msgid "Suricate id"
+msgid "Suricate label"
+msgstr "ID Suricate"
+
 msgid "Problem magnitudes"
 msgstr "Amplitudes des problèmes"
 
 msgid "Attributes"
 msgstr "Informations"
 
-msgid "Creation date in Suricate"
-msgstr "Date de création dans Suricate"
+#, fuzzy
+#| msgid "Message"
+msgid "Messages"
+msgstr "Message"
 
-msgid "Last updated in Suricate"
-msgstr "Date de modification dans Suricate"
+msgid "Text"
+msgstr "Texte"
 
-msgid "Identifier"
-msgstr "Identifiant"
+msgid "Author"
+msgstr "Auteur"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "None"
+msgstr ""
+
+#, fuzzy
+#| msgid "Intervention prévue"
+msgid "Intervention"
+msgstr "Intervention prévue"
+
+#, fuzzy
+#| msgid "Add a new feedback"
+msgid "Add a new intervention"
+msgstr "Créer un signalement"
+
+msgid "Map"
+msgstr ""
 
 #, python-format
 msgid "%(email)s has sent a feedback."
@@ -120,50 +162,22 @@ msgstr ""
 "Lat : %(lat)s / Lon : %(lng)s\n"
 "http://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
 
-msgid "Link to the report"
-msgstr "Lien vers le signalement"
+msgid "New reports have been imported from Suricate."
+msgstr "De nouveaux signalements ont été importés depuis Suricate."
+
+#, fuzzy
+#| msgid "Please consult your reports in Geotrek-Admin."
+msgid "Please consult your reports Geotrek-Admin."
+msgstr "Consultez vos signalements dans Geotrek-Admin."
+
+msgid "Data to import from Suricate"
+msgstr "Données à importer depuis Suricate"
 
 msgid "Invalid geometry value."
 msgstr "Géométrie invalide"
 
-msgid "Non confirmé par les sentinelles"
-msgstr "Non confirmé par les sentinelles"
-
-msgid "Déposé"
-msgstr "Déposé"
-
-msgid "En cours de traitement"
-msgstr "En cours de traitement"
-
-msgid "Résolu"
-msgstr "Résolu"
-
-msgid "Classé sans suite"
-msgstr "Classé sans suite"
-
-msgid "A transmettre"
-msgstr "A transmettre"
-
-msgid "Nouveau"
-msgstr "Nouveau"
-
-msgid "Affecté"
-msgstr "Affecté"
-
-msgid "Intervention prévue"
-msgstr "Intervention prévue"
-
-msgid "Intervention terminée"
-msgstr "Intervention terminée"
-
 msgid "Geotrek : Signal a mistake"
 msgstr "Geotrek : signalement d'un problème"
-
-msgid "New reports have been imported from Suricate."
-msgstr "De nouveaux signalements ont été importés depuis Suricate."
-
-msgid "Please consult your reports in Geotrek-Admin."
-msgstr "Consultez vos signalements dans Geotrek-Admin."
 
 msgid ""
 "Hello,\n"
@@ -185,3 +199,36 @@ msgstr ""
 "\n"
 "L'équipe Geotrek\n"
 "http://www.geotrek.fr"
+
+#~ msgid "Statuses"
+#~ msgstr "Statuts"
+
+#~ msgid "Link to the report"
+#~ msgstr "Lien vers le signalement"
+
+#~ msgid "Non confirmé par les sentinelles"
+#~ msgstr "Non confirmé par les sentinelles"
+
+#~ msgid "Déposé"
+#~ msgstr "Déposé"
+
+#~ msgid "En cours de traitement"
+#~ msgstr "En cours de traitement"
+
+#~ msgid "Résolu"
+#~ msgstr "Résolu"
+
+#~ msgid "Classé sans suite"
+#~ msgstr "Classé sans suite"
+
+#~ msgid "A transmettre"
+#~ msgstr "A transmettre"
+
+#~ msgid "Nouveau"
+#~ msgstr "Nouveau"
+
+#~ msgid "Affecté"
+#~ msgstr "Affecté"
+
+#~ msgid "Intervention terminée"
+#~ msgstr "Intervention terminée"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-28 06:17+0000\n"
+"POT-Creation-Date: 2022-01-11 15:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,6 +97,12 @@ msgstr "Type de site"
 
 msgid "Site types"
 msgstr "Types de site"
+
+msgid "Course type"
+msgstr "Type de parcours"
+
+msgid "Course types"
+msgstr "Types de parcours"
 
 msgid "↑ N"
 msgstr "↑ N"
@@ -197,6 +203,9 @@ msgstr "Portail"
 msgid "Source"
 msgstr "Source"
 
+msgid "Excluded POIs"
+msgstr ""
+
 msgid "Web links"
 msgstr "Liens web"
 
@@ -224,11 +233,13 @@ msgstr "Ajouter un nouveau site outdoor"
 msgid "Sites"
 msgstr "Sites"
 
+#, fuzzy
+#| msgid "Add a course"
+msgid "Parcours"
+msgstr "Ajouter un parcours outdoor"
+
 msgid "Treks"
 msgstr "Itinéraires"
-
-msgid "POIs"
-msgstr "POI"
 
 msgid "Services"
 msgstr "Services"
@@ -251,14 +262,26 @@ msgstr "Événements touristiques"
 msgid "Interventions"
 msgstr "Interventions"
 
-msgid "Site"
-msgstr "Site"
+msgid "Ratings description"
+msgstr "Description des cotations"
+
+msgid "Gear"
+msgstr "Matériel"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
 
 msgid "Equipment"
 msgstr "Équipement"
 
 msgid "Height"
 msgstr "Hauteur"
+
+msgid "Points of reference"
+msgstr ""
 
 msgid "Outdoor course"
 msgstr "Parcours outdoor"
@@ -272,11 +295,14 @@ msgstr "Ajouter un nouveau parcours outdoor"
 msgid "Courses"
 msgstr "Parcours"
 
+msgid "Public print"
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
 msgid "Tree view"
 msgstr "Vue arborescente"
-
-msgid "Add a course"
-msgstr "Ajouter un parcours outdoor"
 
 msgid "Attributes"
 msgstr "Informations"
@@ -314,6 +340,9 @@ msgstr "Situation géographique"
 msgid "All useful information"
 msgstr "Toutes les infos pratiques"
 
+msgid "Add a course"
+msgstr "Ajouter un parcours outdoor"
+
 msgid "Add a child site"
 msgstr "Ajouter site enfant"
 
@@ -329,20 +358,8 @@ msgstr "Informations pratiques"
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
 
-msgid "Ratings description"
-msgstr "Description des cotations"
+#~ msgid "POIs"
+#~ msgstr "POI"
 
-msgid "Gear"
-msgstr "Matériel"
-
-msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
-msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
-
-msgid "Duration"
-msgstr "Durée"
-
-msgid "Course type"
-msgstr "Type de parcours"
-
-msgid "Course types"
-msgstr "Types de parcours"
+#~ msgid "Site"
+#~ msgstr "Site"

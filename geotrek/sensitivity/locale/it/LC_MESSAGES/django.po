@@ -1,0 +1,173 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-11 15:22+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Sensitivity"
+msgstr ""
+
+msgctxt "Singular"
+msgid "Species"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Elevation"
+msgstr ""
+
+msgid "Pictogram"
+msgstr ""
+
+msgid "January"
+msgstr ""
+
+msgid "February"
+msgstr ""
+
+msgid "March"
+msgstr ""
+
+msgid "April"
+msgstr ""
+
+msgid "May"
+msgstr ""
+
+msgid "June"
+msgstr ""
+
+msgid "July"
+msgstr ""
+
+msgid "August"
+msgstr ""
+
+msgid "September"
+msgstr ""
+
+msgid "October"
+msgstr ""
+
+msgid "November"
+msgstr ""
+
+msgid "Decembre"
+msgstr ""
+
+msgid "Sport practices"
+msgstr ""
+
+msgid "URL"
+msgstr ""
+
+msgid "Sport practice"
+msgstr ""
+
+msgid "Bubble radius"
+msgstr ""
+
+msgid "meters"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Regulatory"
+msgstr ""
+
+msgid "External id"
+msgstr ""
+
+msgid "Species"
+msgstr ""
+
+msgid "Species or regulatory area"
+msgstr ""
+
+msgid "Published"
+msgstr ""
+
+msgid "Visible on Geotrek-rando"
+msgstr ""
+
+msgid "Publication date"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Contact"
+msgstr ""
+
+msgid "Sensitive area"
+msgstr ""
+
+msgid "Sensitive areas"
+msgstr ""
+
+msgid "Radius"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Practices"
+msgstr ""
+
+msgid "Published sensitive areas"
+msgstr ""
+
+msgid "POIs"
+msgstr ""
+
+msgid "Treks"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid "Dives"
+msgstr ""
+
+msgid "Published dives"
+msgstr ""
+
+msgid "Touristic contents"
+msgstr ""
+
+msgid "Published touristic contents"
+msgstr ""
+
+msgid "Touristic events"
+msgstr ""
+
+msgid "Published touristic events"
+msgstr ""
+
+msgid "Attributes"
+msgstr ""
+
+msgid "Add a sensitive area (Species)"
+msgstr ""
+
+msgid "Add a sensitive area (Regulatory)"
+msgstr ""
+
+msgid "Invalid geometry value."
+msgstr ""

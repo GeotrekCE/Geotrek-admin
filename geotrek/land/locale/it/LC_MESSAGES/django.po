@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-11 15:22+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Land"
+msgstr ""
+
+msgid "Land edge"
+msgstr ""
+
+msgid "Physical edge"
+msgstr ""
+
+msgid "Competence edge"
+msgstr ""
+
+msgid "Signage management edge"
+msgstr ""
+
+msgid "Work management edge"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Physical type"
+msgstr ""
+
+msgid "Physical types"
+msgstr ""
+
+msgid "External id"
+msgstr ""
+
+msgid "Physical edges"
+msgstr ""
+
+msgid "Right of way"
+msgstr ""
+
+msgid "Land type"
+msgstr ""
+
+msgid "Land types"
+msgstr ""
+
+msgid "Owner"
+msgstr ""
+
+msgid "Agreement"
+msgstr ""
+
+msgid "Land edges"
+msgstr ""
+
+msgid "Organism"
+msgstr ""
+
+msgid "Competence edges"
+msgstr ""
+
+msgid "Work management edges"
+msgstr ""
+
+msgid "Signage management edges"
+msgstr ""
+
+msgid "Add a new land edge"
+msgstr ""
+
+msgid "Add a new physical edge"
+msgstr ""
+
+msgid "Add a new competence edge"
+msgstr ""
+
+msgid "Add a new work management edge"
+msgstr ""
+
+msgid "Add a new signage management edge"
+msgstr ""
+
+msgid "Competence"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""

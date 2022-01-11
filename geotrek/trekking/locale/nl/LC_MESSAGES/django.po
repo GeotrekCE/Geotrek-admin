@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-25 16:40+0200\n"
+"POT-Creation-Date: 2022-01-11 15:22+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -18,18 +18,810 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.8.4\n"
 
-#, python-format
-msgid "%s days"
-msgstr "%s dagen"
+msgid "Geotrek"
+msgstr ""
 
-msgid "Hike"
-msgstr "Wandelen"
+msgid "English"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
+msgid "Italian"
+msgstr ""
+
+msgid "Spanish"
+msgstr ""
+
+#, python-brace-format
+msgid "{editor}: Editing failed"
+msgstr ""
+
+#, python-brace-format
+msgid "{editor}: Editing failed: {e}"
+msgstr ""
+
+msgid ""
+"Click will abort further execution because Python was configured to use "
+"ASCII as encoding for the environment. Consult https://click.palletsprojects."
+"com/unicode-support/ for mitigation steps."
+msgstr ""
+
+msgid ""
+"Additional information: on this system no suitable UTF-8 locales were "
+"discovered. This most likely requires resolving by reconfiguring the locale "
+"system."
+msgstr ""
+
+msgid ""
+"This system supports the C.UTF-8 locale which is recommended. You might be "
+"able to resolve your issue by exporting the following environment variables:"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"This system lists some UTF-8 supporting locales that you can pick from. The "
+"following suitable locales were discovered: {locales}"
+msgstr ""
+
+msgid ""
+"Click discovered that you exported a UTF-8 locale but the locale system "
+"could not pick up from it because it does not exist. The exported locale is "
+"{locale!r} but it is not supported."
+msgstr ""
+
+msgid "Aborted!"
+msgstr ""
+
+msgid "Show this message and exit."
+msgstr ""
+
+#, python-brace-format
+msgid "(Deprecated) {text}"
+msgstr ""
+
+msgid "Options"
+msgstr ""
+
+#, python-brace-format
+msgid "Got unexpected extra argument ({args})"
+msgid_plural "Got unexpected extra arguments ({args})"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "DeprecationWarning: The command {name!r} is deprecated."
+msgstr ""
+
+msgid "Commands"
+msgstr ""
+
+msgid "Missing command."
+msgstr ""
+
+msgid "No such command {name!r}."
+msgstr ""
+
+msgid "Value must be an iterable."
+msgstr ""
+
+#, python-brace-format
+msgid "Takes {nargs} values but 1 was given."
+msgid_plural "Takes {nargs} values but {len} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-brace-format
+msgid "env var: {var}"
+msgstr ""
+
+msgid "(dynamic)"
+msgstr ""
+
+#, python-brace-format
+msgid "default: {default}"
+msgstr ""
+
+msgid "required"
+msgstr ""
+
+#, python-format
+msgid "%(prog)s, version %(version)s"
+msgstr ""
+
+msgid "Show the version and exit."
+msgstr ""
+
+#, python-brace-format
+msgid "Error: {message}"
+msgstr ""
+
+#, python-brace-format
+msgid "Try '{command} {option}' for help."
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid value: {message}"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid value for {param_hint}: {message}"
+msgstr ""
+
+msgid "Missing argument"
+msgstr ""
+
+msgid "Missing option"
+msgstr ""
+
+msgid "Missing parameter"
+msgstr ""
+
+#, python-brace-format
+msgid "Missing {param_type}"
+msgstr ""
+
+#, python-brace-format
+msgid "Missing parameter: {param_name}"
+msgstr ""
+
+#, python-brace-format
+msgid "No such option: {name}"
+msgstr ""
+
+#, python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Possible options: {possibilities})"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "unknown error"
+msgstr ""
+
+msgid "Could not open file {filename!r}: {message}"
+msgstr ""
+
+msgid "Argument {name!r} takes {nargs} values."
+msgstr ""
+
+msgid "Option {name!r} does not take a value."
+msgstr ""
+
+msgid "Option {name!r} requires an argument."
+msgid_plural "Option {name!r} requires {nargs} arguments."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Shell completion is not supported for Bash versions older than 4.4."
+msgstr ""
+
+msgid "Couldn't detect Bash version, shell completion is not supported."
+msgstr ""
+
+msgid "Repeat for confirmation"
+msgstr ""
+
+msgid "Error: The value you entered was invalid."
+msgstr ""
+
+#, python-brace-format
+msgid "Error: {e.message}"
+msgstr ""
+
+msgid "Error: The two entered values do not match."
+msgstr ""
+
+msgid "Error: invalid input"
+msgstr ""
+
+msgid "Press any key to continue..."
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Choose from:\n"
+"\t{choices}"
+msgstr ""
+
+msgid "{value!r} is not {choice}."
+msgid_plural "{value!r} is not one of {choices}."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "{value!r} does not match the format {format}."
+msgid_plural "{value!r} does not match the formats {formats}."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "{value!r} is not a valid {number_type}."
+msgstr ""
+
+#, python-brace-format
+msgid "{value} is not in the range {range}."
+msgstr ""
+
+msgid "{value!r} is not a valid boolean."
+msgstr ""
+
+msgid "{value!r} is not a valid UUID."
+msgstr ""
+
+msgid "file"
+msgstr ""
+
+msgid "directory"
+msgstr ""
+
+msgid "path"
+msgstr ""
+
+msgid "{name} {filename!r} does not exist."
+msgstr ""
+
+msgid "{name} {filename!r} is a file."
+msgstr ""
+
+msgid "{name} {filename!r} is a directory."
+msgstr ""
+
+msgid "{name} {filename!r} is not writable."
+msgstr ""
+
+msgid "{name} {filename!r} is not readable."
+msgstr ""
+
+#, python-brace-format
+msgid "{len_type} values are required, but {len_value} was given."
+msgid_plural "{len_type} values are required, but {len_value} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Powered by geotrek.fr"
+msgstr ""
+
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr ""
+
+#, python-format
+msgid "Difficulty with id '%s' already exists"
+msgstr ""
+
+#, python-brace-format
+msgid "Difficulty id {old} was changed to {new} successfully."
+msgstr ""
+
+msgid "Practices"
+msgstr ""
+
+msgid "Trekking"
+msgstr ""
+
+msgid "Trek"
+msgstr ""
+
+msgid "Children"
+msgstr ""
+
+msgid "Select children in order"
+msgstr ""
+
+msgid "Hidden ordered children"
+msgstr ""
+
+msgid "Main"
+msgstr ""
+
+msgid "Advanced"
+msgstr ""
+
+msgid "Related treks"
+msgstr ""
+
+msgid "Insert service:"
+msgstr ""
+
+msgid "Cannot add children because this trek is itself a child."
+msgstr ""
+
+#, python-brace-format
+msgid "Cannot use parent trek {name} as a child trek."
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Departure"
+msgstr ""
+
+msgid "Departure description"
+msgstr ""
+
+msgid "Arrival"
+msgstr ""
+
+msgid "Arrival description"
+msgstr ""
+
+msgid "Description teaser"
+msgstr ""
+
+msgid "A brief summary (map pop-ups)"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Complete description"
+msgstr ""
+
+msgid "Ambiance"
+msgstr ""
+
+msgid "Main attraction and interest"
+msgstr ""
+
+msgid "Access"
+msgstr ""
+
+msgid "Best way to go"
+msgstr ""
+
+msgid "Disabled infrastructure"
+msgstr ""
+
+msgid "Any specific infrastructure"
+msgstr ""
+
+msgid "Duration"
+msgstr ""
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr ""
+
+msgid "Advised parking"
+msgstr ""
+
+msgid "Where to park"
+msgstr ""
+
+msgid "Parking location"
+msgstr ""
+
+msgid "Public transport"
+msgstr ""
+
+msgid "Train, bus (see web links)"
+msgstr ""
+
+msgid "Advice"
+msgstr ""
+
+msgid "Risks, danger, best period, ..."
+msgstr ""
+
+msgid "Themes"
+msgstr ""
+
+msgid "Main theme(s)"
+msgstr ""
+
+msgid "Networks"
+msgstr ""
+
+msgid "Hiking networks"
+msgstr ""
+
+msgid "Practice"
+msgstr ""
+
+msgid "Accessibility"
+msgstr ""
+
+msgid "Route"
+msgstr ""
+
+msgid "Difficulty"
+msgstr ""
+
+msgid "Web links"
+msgstr ""
+
+msgid "External resources"
+msgstr ""
+
+msgid "Connections between treks"
+msgstr ""
+
+msgid "Information desks"
+msgstr ""
+
+msgid "Where to obtain information"
+msgstr ""
+
+msgid "Points of reference"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Portal"
+msgstr ""
+
+msgid "Labels"
+msgstr ""
+
+msgid "External id"
+msgstr ""
+
+msgid "Second external id"
+msgstr ""
 
 msgid "Excluded POIs"
 msgstr "Uitgesloten POI"
 
-msgid "Trekking Label"
+msgid "Reservation system"
 msgstr ""
 
-msgid "Trekking Labels"
+msgid "Reservation ID"
 msgstr ""
+
+msgid "Treks"
+msgstr ""
+
+msgid "Formated duration"
+msgstr ""
+
+msgid "Add a new trek"
+msgstr ""
+
+msgid "Cannot use itself as child trek."
+msgstr ""
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "trek"
+msgstr ""
+
+msgid "Sensitive area"
+msgstr ""
+
+msgid "POIs"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid "Signages"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
+
+msgid "Published treks"
+msgstr ""
+
+msgid "Common departure"
+msgstr ""
+
+msgid "Common edge"
+msgstr ""
+
+msgid "Circuit step"
+msgstr ""
+
+msgid "Trek relationship"
+msgstr ""
+
+msgid "Trek relationships"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Circuit"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Trek network"
+msgstr ""
+
+msgid "Trek networks"
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+
+msgid "Cirkwi locomotion"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+msgid "Alphabetical order if blank"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "Color of the practice, only used in mobile."
+msgstr ""
+
+msgid "Cirkwi tag"
+msgstr ""
+
+msgid "Accessibilities"
+msgstr ""
+
+msgid "Routes"
+msgstr ""
+
+msgid "Difficulty level"
+msgstr ""
+
+msgid "Cirkwi level"
+msgstr ""
+
+msgid "Between 1 and 8"
+msgstr ""
+
+msgid "Difficulty levels"
+msgstr ""
+
+msgid "URL"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Web link"
+msgstr ""
+
+msgid "Web link category"
+msgstr ""
+
+msgid "Web link categories"
+msgstr ""
+
+msgid "History, details,  ..."
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "POI"
+msgstr ""
+
+msgid "Published POIs"
+msgstr ""
+
+msgid "Cirkwi POI category"
+msgstr ""
+
+msgid "POI type"
+msgstr ""
+
+msgid "POI types"
+msgstr ""
+
+msgid "Service type"
+msgstr ""
+
+msgid "Service types"
+msgstr ""
+
+msgid "Service"
+msgstr ""
+
+msgid "Published"
+msgstr ""
+
+msgid "Waiting for publication"
+msgstr ""
+
+msgid "Published Services"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be LineString, not "
+"{geom_type}"
+msgstr ""
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "itinerancy"
+msgstr ""
+
+msgid "Itinerancy"
+msgstr ""
+
+msgid "Hike"
+msgstr "Wandelen"
+
+msgid "Attributes"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Thumbnail"
+msgstr ""
+
+msgid "Elevation"
+msgstr ""
+
+msgid "Attribution"
+msgstr ""
+
+msgid "Powered by http://geotrek.fr"
+msgstr ""
+
+msgid ""
+"Your pictures should have the same ratio (height/width) for a better "
+"apparence in public portal."
+msgstr ""
+
+msgid "GPX"
+msgstr ""
+
+msgid "KML"
+msgstr ""
+
+msgid "Public print"
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
+msgid "Public print booklet"
+msgstr ""
+
+msgid "Print booklet"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "Child of:"
+msgstr ""
+
+msgid "Parent of:"
+msgstr ""
+
+msgid "Map"
+msgstr ""
+
+msgid "Add a point of reference"
+msgstr ""
+
+msgid "Move points of reference"
+msgstr ""
+
+msgid "Delete a point of reference"
+msgstr ""
+
+msgid "Set the parking location"
+msgstr ""
+
+msgid "Move the parking location"
+msgstr ""
+
+msgid "Delete the parking location"
+msgstr ""
+
+msgid "Add relation"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "No result"
+msgstr ""
+
+msgid "Choose value(s)"
+msgstr ""
+
+msgid "Useful information"
+msgstr ""
+
+msgid "Length"
+msgstr ""
+
+msgid "Trek ascent"
+msgstr ""
+
+msgid "Markings"
+msgstr ""
+
+msgid "Stages"
+msgstr ""
+
+msgid "On your path..."
+msgstr ""
+
+msgid "All useful information"
+msgstr ""
+
+msgid "Advices"
+msgstr ""
+
+msgid "Environmental sensitive areas"
+msgstr ""
+
+msgid ""
+"\n"
+"            Along your trek, you will go through sensitive areas related to "
+"the presence of a specific species or\n"
+"            environment. In these areas, an appropriate behaviour allows to "
+"contribute to their preservation. For\n"
+"            detailed information, specific forms are accessible for each "
+"area.\n"
+"          "
+msgstr ""
+
+msgid "Sensitivity period:"
+msgstr ""
+
+msgid "Contact:"
+msgstr ""
+
+msgid "Altimetric profile"
+msgstr ""
+
+msgid "Min elevation"
+msgstr ""
+
+msgid "Max elevation"
+msgstr ""
+
+msgid "Transports"
+msgstr ""
+
+msgid "Disabled Infrastructure"
+msgstr ""
+
+msgid "Add a new poi"
+msgstr ""
+
+msgid "Add a new service"
+msgstr ""
+
+msgid "Sync"
+msgstr ""
+
+msgid "Add Web link"
+msgstr ""
+
+msgid "Geographical location"
+msgstr ""
+
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
+msgstr ""
+
+msgid "This hike is in the core of the national park"
+msgstr ""
+
+#~ msgid "%s days"
+#~ msgstr "%s dagen"

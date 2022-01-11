@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-25 16:40+0200\n"
+"POT-Creation-Date: 2022-01-11 15:22+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -18,13 +18,286 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.8.4\n"
 
+#, fuzzy
+#| msgid "trek"
+msgid "Geotrek"
+msgstr "route"
+
+msgid "English"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
+msgid "Italian"
+msgstr ""
+
+msgid "Spanish"
+msgstr ""
+
+#, python-brace-format
+msgid "{editor}: Editing failed"
+msgstr ""
+
+#, python-brace-format
+msgid "{editor}: Editing failed: {e}"
+msgstr ""
+
+msgid ""
+"Click will abort further execution because Python was configured to use "
+"ASCII as encoding for the environment. Consult https://click.palletsprojects."
+"com/unicode-support/ for mitigation steps."
+msgstr ""
+
+msgid ""
+"Additional information: on this system no suitable UTF-8 locales were "
+"discovered. This most likely requires resolving by reconfiguring the locale "
+"system."
+msgstr ""
+
+msgid ""
+"This system supports the C.UTF-8 locale which is recommended. You might be "
+"able to resolve your issue by exporting the following environment variables:"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"This system lists some UTF-8 supporting locales that you can pick from. The "
+"following suitable locales were discovered: {locales}"
+msgstr ""
+
+msgid ""
+"Click discovered that you exported a UTF-8 locale but the locale system "
+"could not pick up from it because it does not exist. The exported locale is "
+"{locale!r} but it is not supported."
+msgstr ""
+
+msgid "Aborted!"
+msgstr ""
+
+msgid "Show this message and exit."
+msgstr ""
+
+#, python-brace-format
+msgid "(Deprecated) {text}"
+msgstr ""
+
+msgid "Options"
+msgstr ""
+
+#, python-brace-format
+msgid "Got unexpected extra argument ({args})"
+msgid_plural "Got unexpected extra arguments ({args})"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "DeprecationWarning: The command {name!r} is deprecated."
+msgstr ""
+
+#, fuzzy
+#| msgid "Common edge"
+msgid "Commands"
+msgstr "Gemeinsame Strecken"
+
+msgid "Missing command."
+msgstr ""
+
+msgid "No such command {name!r}."
+msgstr ""
+
+msgid "Value must be an iterable."
+msgstr ""
+
+#, python-brace-format
+msgid "Takes {nargs} values but 1 was given."
+msgid_plural "Takes {nargs} values but {len} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-brace-format
+msgid "env var: {var}"
+msgstr ""
+
+msgid "(dynamic)"
+msgstr ""
+
+#, python-brace-format
+msgid "default: {default}"
+msgstr ""
+
+msgid "required"
+msgstr ""
+
+#, python-format
+msgid "%(prog)s, version %(version)s"
+msgstr ""
+
+msgid "Show the version and exit."
+msgstr ""
+
+#, python-brace-format
+msgid "Error: {message}"
+msgstr ""
+
+#, python-brace-format
+msgid "Try '{command} {option}' for help."
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid value: {message}"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid value for {param_hint}: {message}"
+msgstr ""
+
+msgid "Missing argument"
+msgstr ""
+
+#, fuzzy
+#| msgid "Parking location"
+msgid "Missing option"
+msgstr "Parkplätze"
+
+msgid "Missing parameter"
+msgstr ""
+
+#, python-brace-format
+msgid "Missing {param_type}"
+msgstr ""
+
+#, python-brace-format
+msgid "Missing parameter: {param_name}"
+msgstr ""
+
+#, python-brace-format
+msgid "No such option: {name}"
+msgstr ""
+
+#, python-brace-format
+msgid "Did you mean {possibility}?"
+msgid_plural "(Possible options: {possibilities})"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "unknown error"
+msgstr ""
+
+msgid "Could not open file {filename!r}: {message}"
+msgstr ""
+
+msgid "Argument {name!r} takes {nargs} values."
+msgstr ""
+
+msgid "Option {name!r} does not take a value."
+msgstr ""
+
+msgid "Option {name!r} requires an argument."
+msgid_plural "Option {name!r} requires {nargs} arguments."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Shell completion is not supported for Bash versions older than 4.4."
+msgstr ""
+
+msgid "Couldn't detect Bash version, shell completion is not supported."
+msgstr ""
+
+#, fuzzy
+#| msgid "Confirmation"
+msgid "Repeat for confirmation"
+msgstr "Bestätigung"
+
+msgid "Error: The value you entered was invalid."
+msgstr ""
+
+#, python-brace-format
+msgid "Error: {e.message}"
+msgstr ""
+
+msgid "Error: The two entered values do not match."
+msgstr ""
+
+msgid "Error: invalid input"
+msgstr ""
+
+msgid "Press any key to continue..."
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Choose from:\n"
+"\t{choices}"
+msgstr ""
+
+msgid "{value!r} is not {choice}."
+msgid_plural "{value!r} is not one of {choices}."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "{value!r} does not match the format {format}."
+msgid_plural "{value!r} does not match the formats {formats}."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "{value!r} is not a valid {number_type}."
+msgstr ""
+
+#, python-brace-format
+msgid "{value} is not in the range {range}."
+msgstr ""
+
+msgid "{value!r} is not a valid boolean."
+msgstr ""
+
+msgid "{value!r} is not a valid UUID."
+msgstr ""
+
+msgid "file"
+msgstr ""
+
+msgid "directory"
+msgstr ""
+
+msgid "path"
+msgstr ""
+
+msgid "{name} {filename!r} does not exist."
+msgstr ""
+
+msgid "{name} {filename!r} is a file."
+msgstr ""
+
+msgid "{name} {filename!r} is a directory."
+msgstr ""
+
+msgid "{name} {filename!r} is not writable."
+msgstr ""
+
+msgid "{name} {filename!r} is not readable."
+msgstr ""
+
+#, python-brace-format
+msgid "{len_type} values are required, but {len_value} was given."
+msgid_plural "{len_type} values are required, but {len_value} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Powered by geotrek.fr"
+msgstr "Angetrieben von geotrek.fr"
+
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr ""
+
 #, python-format
 msgid "Difficulty with id '%s' already exists"
 msgstr "Ein Problem mit der id %s existiert bereits"
 
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
-msgstr "Die ID der Schwierigkeit wurde erfolgreich von {old} auf {new} geändert."
+msgstr ""
+"Die ID der Schwierigkeit wurde erfolgreich von {old} auf {new} geändert."
 
 msgid "Practices"
 msgstr "Praktik"
@@ -58,7 +331,8 @@ msgstr "Fügen Sie einen Service ein:"
 
 msgid "Cannot add children because this trek is itself a child."
 msgstr ""
-"Es ist nicht möglich, Kinder hinzuzufügen, da diese Route selbst ein Kind ist."
+"Es ist nicht möglich, Kinder hinzuzufügen, da diese Route selbst ein Kind "
+"ist."
 
 #, python-brace-format
 msgid "Cannot use parent trek {name} as a child trek."
@@ -70,24 +344,6 @@ msgstr "Stornieren"
 
 msgid "Create"
 msgstr "Schaffen"
-
-msgid "Launch Sync"
-msgstr "Synchro starten"
-
-msgid "Global tiles syncing ..."
-msgstr "Synchro der globalen Kacheln..."
-
-msgid "Trek tiles syncing ..."
-msgstr "Synchro der Wanderfliesen..."
-
-msgid "Tiles synced ..."
-msgstr "Synchronisierte Kacheln..."
-
-msgid "Language"
-msgstr "Sprache"
-
-msgid "Sync ended"
-msgstr "Synchro abgeschlossen"
 
 msgid "Departure"
 msgstr "Abreise"
@@ -136,12 +392,6 @@ msgstr "Dauer"
 
 msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr "In Stunden (1.5 = 1 h 30, 24 = 1 Tag, 48 = 2 Tage)"
-
-msgid "Is in the midst of the park"
-msgstr "Im Herzen des Parks"
-
-msgid "Crosses center of park"
-msgstr "Durchquert das Herz des Parks"
 
 msgid "Advised parking"
 msgstr "Empfohlener Parkplatz"
@@ -212,11 +462,25 @@ msgstr "Quelle"
 msgid "Portal"
 msgstr "Portal-Portal"
 
+msgid "Labels"
+msgstr ""
+
 msgid "External id"
 msgstr "Externe Id"
 
 msgid "Second external id"
 msgstr "Zweite externe ID"
+
+msgid "Excluded POIs"
+msgstr "Ausgeschlossene POI"
+
+msgid "Reservation system"
+msgstr ""
+
+#, fuzzy
+#| msgid "Elevation"
+msgid "Reservation ID"
+msgstr "Elevation"
 
 msgid "Treks"
 msgstr "Route"
@@ -240,8 +504,18 @@ msgstr "Empfindlicher Bereich"
 msgid "POIs"
 msgstr "POIs"
 
-msgid "services"
+msgid "Services"
 msgstr "Dienstleistungen"
+
+#, fuzzy
+#| msgid "Stages"
+msgid "Signages"
+msgstr "Etappen"
+
+#, fuzzy
+#| msgid "Disabled Infrastructure"
+msgid "Infrastructures"
+msgstr "Behindertengerechte Einrichtungen"
 
 msgid "Published treks"
 msgstr "Publizierte Routen"
@@ -282,8 +556,8 @@ msgstr "Länge"
 msgid ""
 "Touristic contents and events will associate within this distance (meters)"
 msgstr ""
-"Touristische Inhalte und Veranstaltungen werden entsprechend dieser Entfernung zugeordnet."
-"(meter)"
+"Touristische Inhalte und Veranstaltungen werden entsprechend dieser "
+"Entfernung zugeordnet.(meter)"
 
 msgid "Cirkwi locomotion"
 msgstr "Locomotion Cirkwi"
@@ -293,6 +567,12 @@ msgstr "Ordnung"
 
 msgid "Alphabetical order if blank"
 msgstr "Alphabetische Reihenfolge, wenn leer"
+
+msgid "Color"
+msgstr ""
+
+msgid "Color of the practice, only used in mobile."
+msgstr ""
 
 msgid "Cirkwi tag"
 msgstr "Cirkwi Tag"
@@ -323,9 +603,6 @@ msgstr "Kategorie"
 
 msgid "Web link"
 msgstr "Weblink"
-
-msgid "Label"
-msgstr "Label"
 
 msgid "Web link category"
 msgstr "Weblink-Kategorie"
@@ -363,9 +640,6 @@ msgstr "Arten von Dienstleistungen"
 msgid "Service"
 msgstr "Dienstleistung"
 
-msgid "Services"
-msgstr "Dienstleistungen"
-
 msgid "Published"
 msgstr "Publiziert"
 
@@ -394,8 +668,8 @@ msgid ""
 "Invalid geometry type for field '{src}'. Should be LineString, not "
 "{geom_type}"
 msgstr ""
-"Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte sein "
-"LineString, nicht {geom_type}"
+"Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte sein LineString, "
+"nicht {geom_type}"
 
 #. Translators: This is a slug (without space, accent or special char)
 msgid "itinerancy"
@@ -404,21 +678,8 @@ msgstr "Roaming"
 msgid "Itinerancy"
 msgstr "Roaming"
 
-msgid "Init sync ..."
-msgstr "Synchrostart"
-
-msgid "Geotrek Rando"
-msgstr "Geotrek Rando"
-
-msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
-msgstr ""
-"Geotrek ist eine Web-App, mit der Sie Ihre Wanderungen im Voraus vorbereiten können!"
-
-msgid "Public print"
-msgstr "Öffentliches Drucken"
-
-msgid "Print"
-msgstr "Druck"
+msgid "Hike"
+msgstr "Wander"
 
 msgid "Attributes"
 msgstr "Informationen"
@@ -439,32 +700,11 @@ msgid "Powered by http://geotrek.fr"
 msgstr "Unterstützt von http://geotrek.fr"
 
 msgid ""
-"Your pictures should have the same ratio (height/width) for "
-"a better apparence in public portal."
+"Your pictures should have the same ratio (height/width) for a better "
+"apparence in public portal."
 msgstr ""
-"Ihre Bilder müssen das gleiche Verhältnis (Höhe/Breite) haben, "
-"um besser in das öffentliche Portal integriert werden zu können."
-
-msgid "Sync verifications"
-msgstr "Synchro-Check"
-
-msgid "Sync in progress"
-msgstr "Synchro läuft"
-
-msgid "An error occured"
-msgstr "Ein Fehler ist aufgetreten"
-
-msgid "Public web site sync"
-msgstr "Synchro der öffentlichen Website"
-
-msgid "Confirmation"
-msgstr "Bestätigung"
-
-msgid "Are you sure you want to sync ?"
-msgstr "Sind Sie sicher, dass Sie die Synchro starten möchten?"
-
-msgid "Sync"
-msgstr "Sync"
+"Ihre Bilder müssen das gleiche Verhältnis (Höhe/Breite) haben, um besser in "
+"das öffentliche Portal integriert werden zu können."
 
 msgid "GPX"
 msgstr "GPX"
@@ -472,8 +712,27 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
-msgid "yes,no"
+msgid "Public print"
+msgstr "Öffentliches Drucken"
+
+msgid "Print"
+msgstr "Druck"
+
+#, fuzzy
+#| msgid "Public print"
+msgid "Public print booklet"
+msgstr "Öffentliches Drucken"
+
+msgid "Print booklet"
+msgstr ""
+
+#, fuzzy
+#| msgid "yes,no"
+msgid "yes"
 msgstr "ja,nein"
+
+msgid "no"
+msgstr ""
 
 msgid "Child of:"
 msgstr "Kind von:"
@@ -514,9 +773,6 @@ msgstr "Kein Ergebnis"
 msgid "Choose value(s)"
 msgstr "Wert(e) auswählen"
 
-msgid "Powered by geotrek.fr"
-msgstr "Angetrieben von geotrek.fr"
-
 msgid "Useful information"
 msgstr "Praktische Informationen"
 
@@ -538,16 +794,6 @@ msgstr "Auf dem Weg..."
 msgid "All useful information"
 msgstr "Alle praktischen Informationen"
 
-msgid "This hike is in the core of the national park"
-msgstr "Diese Wanderung befindet sich im Herzen des Nationalparks."
-
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
-msgstr ""
-"Der Nationalpark ist ein natürliches Gebiet, das für alle zugänglich ist, aber "
-"Vorschriften unterliegt, die zur Vorbereitung Ihres Aufenthalts nützlich sind."
-
 msgid "Advices"
 msgstr "Empfehlungen"
 
@@ -565,10 +811,10 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"Auf Ihrer Reiseroute durchqueren Sie Gebiete mit hoher Empfindlichkeit, "
-"die mit dem Vorhandensein einer bestimmten Art oder Umgebung zusammenhängen."
-"In diesen Bereichen hilft ein angepasstes Verhalten, sie zu erhalten."
-"Für detailliertere Informationen stehen für jeden Bereich spezifische Blätter "
+"Auf Ihrer Reiseroute durchqueren Sie Gebiete mit hoher Empfindlichkeit, die "
+"mit dem Vorhandensein einer bestimmten Art oder Umgebung zusammenhängen.In "
+"diesen Bereichen hilft ein angepasstes Verhalten, sie zu erhalten.Für "
+"detailliertere Informationen stehen für jeden Bereich spezifische Blätter "
 "zur Verfügung."
 
 msgid "Sensitivity period:"
@@ -592,73 +838,120 @@ msgstr "Transporte"
 msgid "Disabled Infrastructure"
 msgstr "Behindertengerechte Einrichtungen"
 
-msgid ""
-"This hike is in the core of the national park > The national park is an "
-"unrestricted natural area but subjected to regulations which must be known "
-"by all visitors."
-msgstr ""
-"Diese Reiseroute befindet sich im Herzen des Nationalparks > Der Nationalpark ist ein "
-"natürliches Gebiet, das für alle zugänglich ist, aber den Vorschriften unterliegt, "
-"die Sie zur Vorbereitung Ihres Aufenthalts kennen sollten."
-
-msgid "On the way..."
-msgstr "Auf dem Weg..."
-
-msgid "Related Treks"
-msgstr "Zugehörige Routen"
-
-msgid ""
-"To check the practicability of the hiking paths and to know more about the "
-"National park, please visit us or call us at"
-msgstr ""
-"Um die Nutzbarkeit der Wege zu überprüfen und mehr über die Entdeckung "
-"des Gebietes zu erfahren, fragen Sie bitte vorab nach"
-
 msgid "Add a new poi"
 msgstr "Hinzufügen eine POI"
 
 msgid "Add a new service"
 msgstr "Einen Dienst hinzufügen"
 
+msgid "Sync"
+msgstr "Sync"
+
 msgid "Add Web link"
 msgstr "Weblink hinzufügen"
-
-#, python-format
-msgid "%s days"
-msgstr "%s Tage"
-
-#, python-format
-msgid "%(hour)s h %(min)s"
-msgstr "%(hour)s h %(min)s"
-
-#, python-format
-msgid "%(hour)s h"
-msgstr "%(hour)s h"
-
-#, python-format
-msgid "%s min"
-msgstr "%s min"
 
 msgid "Geographical location"
 msgstr "Geographische Lage"
 
-msgid "Hike"
-msgstr "Wander"
-
-msgid "Excluded POIs"
-msgstr "Ausgeschlossene POI"
-
-msgid "Trekking Label"
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
 msgstr ""
+"Der Nationalpark ist ein natürliches Gebiet, das für alle zugänglich ist, "
+"aber Vorschriften unterliegt, die zur Vorbereitung Ihres Aufenthalts "
+"nützlich sind."
 
-msgid "Trekking Labels"
-msgstr ""
+msgid "This hike is in the core of the national park"
+msgstr "Diese Wanderung befindet sich im Herzen des Nationalparks."
 
-msgid "Advice linked to the label"
-msgstr ""
+#~ msgid "Launch Sync"
+#~ msgstr "Synchro starten"
 
-msgid "Description of the label"
-msgstr ""
+#~ msgid "Global tiles syncing ..."
+#~ msgstr "Synchro der globalen Kacheln..."
 
-msgid "Labels"
-msgstr ""
+#~ msgid "Trek tiles syncing ..."
+#~ msgstr "Synchro der Wanderfliesen..."
+
+#~ msgid "Tiles synced ..."
+#~ msgstr "Synchronisierte Kacheln..."
+
+#~ msgid "Language"
+#~ msgstr "Sprache"
+
+#~ msgid "Sync ended"
+#~ msgstr "Synchro abgeschlossen"
+
+#~ msgid "Is in the midst of the park"
+#~ msgstr "Im Herzen des Parks"
+
+#~ msgid "Crosses center of park"
+#~ msgstr "Durchquert das Herz des Parks"
+
+#~ msgid "services"
+#~ msgstr "Dienstleistungen"
+
+#~ msgid "Label"
+#~ msgstr "Label"
+
+#~ msgid "Init sync ..."
+#~ msgstr "Synchrostart"
+
+#~ msgid "Geotrek Rando"
+#~ msgstr "Geotrek Rando"
+
+#~ msgid ""
+#~ "Geotrek is a web app allowing you to prepare your next trekking trip !"
+#~ msgstr ""
+#~ "Geotrek ist eine Web-App, mit der Sie Ihre Wanderungen im Voraus "
+#~ "vorbereiten können!"
+
+#~ msgid "Sync verifications"
+#~ msgstr "Synchro-Check"
+
+#~ msgid "Sync in progress"
+#~ msgstr "Synchro läuft"
+
+#~ msgid "An error occured"
+#~ msgstr "Ein Fehler ist aufgetreten"
+
+#~ msgid "Public web site sync"
+#~ msgstr "Synchro der öffentlichen Website"
+
+#~ msgid "Are you sure you want to sync ?"
+#~ msgstr "Sind Sie sicher, dass Sie die Synchro starten möchten?"
+
+#~ msgid ""
+#~ "This hike is in the core of the national park > The national park is an "
+#~ "unrestricted natural area but subjected to regulations which must be "
+#~ "known by all visitors."
+#~ msgstr ""
+#~ "Diese Reiseroute befindet sich im Herzen des Nationalparks > Der "
+#~ "Nationalpark ist ein natürliches Gebiet, das für alle zugänglich ist, "
+#~ "aber den Vorschriften unterliegt, die Sie zur Vorbereitung Ihres "
+#~ "Aufenthalts kennen sollten."
+
+#~ msgid "On the way..."
+#~ msgstr "Auf dem Weg..."
+
+#~ msgid "Related Treks"
+#~ msgstr "Zugehörige Routen"
+
+#~ msgid ""
+#~ "To check the practicability of the hiking paths and to know more about "
+#~ "the National park, please visit us or call us at"
+#~ msgstr ""
+#~ "Um die Nutzbarkeit der Wege zu überprüfen und mehr über die Entdeckung "
+#~ "des Gebietes zu erfahren, fragen Sie bitte vorab nach"
+
+#~ msgid "%s days"
+#~ msgstr "%s Tage"
+
+#~ msgid "%(hour)s h %(min)s"
+#~ msgstr "%(hour)s h %(min)s"
+
+#~ msgid "%(hour)s h"
+#~ msgstr "%(hour)s h"
+
+#~ msgid "%s min"
+#~ msgstr "%s min"

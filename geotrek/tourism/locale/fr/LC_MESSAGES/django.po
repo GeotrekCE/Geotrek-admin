@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 11:08+0000\n"
+"POT-Creation-Date: 2022-01-11 15:22+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -336,9 +336,6 @@ msgstr "oui,non"
 msgid "Thumbnail"
 msgstr "Aperçu"
 
-msgid "All"
-msgstr "Tout"
-
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
 
@@ -362,3 +359,6 @@ msgstr "Date"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
+
+#~ msgid "All"
+#~ msgstr "Tout"
