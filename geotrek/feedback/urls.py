@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.urls import path, register_converter
+from django.conf import settings
 from mapentity.registry import registry
 
 from geotrek.common.urls import LangConverter
@@ -18,6 +19,7 @@ urlpatterns = [
 
 urlpatterns += registry.register(feedback_models.Report, menu=settings.REPORT_MODEL_ENABLED)
 
-urlpatterns += [
-    path("api/report/report-<slug:status_id>.geojson", SameStatusReportLayer.as_view()),
-]
+if settings.SURICATE_MANAGEMENT_ENABLED:
+    urlpatterns += [
+        path("api/report/report-<slug:status_id>.geojson", SameStatusReportLayer.as_view()),
+    ]
