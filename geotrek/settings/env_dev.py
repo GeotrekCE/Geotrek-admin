@@ -2,6 +2,11 @@
 # Django Development
 # ..........................
 
+import sys
+import os
+if 'makemessages' in sys.argv:
+    LOCALE_PATHS = (os.path.join('geotrek', 'locale'),)
+
 DEBUG = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

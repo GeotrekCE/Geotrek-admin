@@ -8,7 +8,7 @@ serve:
 	docker-compose up
 
 messages:
-	docker-compose run --rm web bash -c 'for d in geotrek/*/locale; do cd $$d; cd ..; ../../manage.py makemessages -a --no-location; cd ../../; done'
+	docker-compose run --rm web ./manage.py makemessages -a --no-location
 
 test:
 	docker-compose -e ENV=tests run web ./manage.py test
