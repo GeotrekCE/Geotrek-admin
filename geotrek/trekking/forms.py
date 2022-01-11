@@ -133,6 +133,7 @@ class TrekForm(BaseTrekForm):
                     'parking_location',
                     'public_transport',
                     'advice',
+                    'equipment',
                     'themes',
                     'labels',
                     'networks',
@@ -259,7 +260,7 @@ class TrekForm(BaseTrekForm):
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
              'access', 'description_teaser', 'description', 'points_reference',
              'disabled_infrastructure', 'advised_parking', 'parking_location',
-             'public_transport', 'advice', 'themes', 'networks', 'practice',
+             'public_transport', 'advice', 'equipment', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
              'children_trek', 'eid', 'eid2', 'reservation_system', 'reservation_id',
              'pois_excluded', 'hidden_ordered_children']

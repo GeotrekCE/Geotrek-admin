@@ -87,6 +87,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                         help_text=_("Train, bus (see web links)"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
+    equipment = models.TextField(verbose_name=_("Equipment"), blank=True,
+                                 help_text=_("Equipment needed"))
     themes = models.ManyToManyField(Theme, related_name="treks", blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks", blank=True, verbose_name=_("Networks"),

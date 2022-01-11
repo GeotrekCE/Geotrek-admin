@@ -217,7 +217,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         model = trekking_models.Trek
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
-                  'description', 'description_teaser', 'networks', 'advice',
+                  'description', 'description_teaser', 'networks', 'advice', 'equipment',
                   'ambiance', 'difficulty', 'information_desks', 'themes',
                   'labels', 'practice', 'accessibilities', 'usages', 'access', 'route',
                   'public_transport', 'advised_parking', 'web_links',
