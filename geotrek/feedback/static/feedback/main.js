@@ -38,12 +38,6 @@ function display_message_fields_on_supervisor_change() {
 
 function ChangeColors(e, data) {
     var map = data.map;
-    // Remove normal reports layer
-    map.eachLayer(function (layer) {
-        if (layer.options['modelname'] === "report") {
-            map.removeLayer(layer)
-        }
-    })
     function getUrl(properties, layer) {
         return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), data.modelname)
             .replace('0', properties.pk);
@@ -59,7 +53,7 @@ function ChangeColors(e, data) {
         );
         // ... in creating layer with reports that have this status
         var layer = new L.ObjectsLayer(null, {
-            modelname: "report-" + status_id,
+            modelname: "report",
             objectUrl: getUrl,
             style: { color: status_color },
         });
