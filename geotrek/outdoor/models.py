@@ -1,6 +1,5 @@
 import uuid
 
-from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
@@ -67,14 +66,17 @@ class Practice(OptionalPictogramMixin, models.Model):
 class RatingScale(RatingScaleMixin):
     practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"))
+
     class Meta:
         verbose_name = _("Rating scale")
         verbose_name_plural = _("Rating scales")
         ordering = ('practice', 'order', 'name')
 
+
 class Rating(RatingMixin):
     scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
                               verbose_name=_("Scale"))
+
     class Meta:
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")

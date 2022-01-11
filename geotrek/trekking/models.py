@@ -93,14 +93,17 @@ class Practice(PictogramMixin):
 class RatingScale(RatingScaleMixin):
     practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"))
+
     class Meta:
         verbose_name = _("Rating scale")
         verbose_name_plural = _("Rating scales")
         ordering = ('practice', 'order', 'name')
 
+
 class Rating(RatingMixin):
     scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
                               verbose_name=_("Scale"))
+
     class Meta:
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
