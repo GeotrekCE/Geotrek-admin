@@ -37,7 +37,11 @@ function display_message_fields_on_supervisor_change() {
 }
 
 function ChangeColors(e, data) {
+    if (data.modelname != 'report')
+        return;
     var map = data.map;
+    var dt = MapEntity.mainDatatable;
+
     function getUrl(properties, layer) {
         return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), data.modelname)
             .replace('0', properties.pk);
@@ -56,11 +60,52 @@ function ChangeColors(e, data) {
             modelname: "report",
             objectUrl: getUrl,
             style: { color: status_color },
+            onEachFeature: function (geojson, layer) {
+                if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+            }
         });
         layer.load("/api/report/report-" + status_id + ".geojson")
         map.addLayer(layer)
+
+        /*
+         * Assemble components
+         * .......................
+         */
+        var mapsync = new L.MapListSync(dt,
+            map,
+            layer, {
+            filter: {
+                form: $('#mainfilter'),
+                submitbutton: $('#filter'),
+                resetbutton: $('#reset'),
+                bboxfield: $('#id_bbox'),
+            }
+        });
+        mapsync.on('reloaded', function (data) {
+            // Show and save number of results
+            MapEntity.history.saveListInfo({
+                model: data.modelname,
+                nb: data.nbrecords
+            });
+            // Show layer info
+            layer.fire('info', { info: (data.nbrecords + ' ' + tr("results")) });
+        });
+
     }
 }
 
-$(window).on('entity:map:detail', ChangeColors);
+function ChangeColor(e, data) {
+    if (data.modelname != 'report')
+        return;
+    var map = data.map;
+    map.eachLayer(function (layer) {
+        if (layer.options['modelname'] === "report") {
+            layer.setStyle({ color: $("#report_color").text() })
+        }
+    }
+    )
+}
+
+
+$(window).on('entity:map:detail', ChangeColor);
 $(window).on('entity:map:list', ChangeColors);
