@@ -20,7 +20,7 @@ from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
                                    PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
-from geotrek.common.models import Theme, ReservationSystem
+from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 
 from geotrek.maintenance.models import Intervention, Project
@@ -90,34 +90,17 @@ class Practice(PictogramMixin):
         return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
-class RatingScale(models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
+class RatingScale(RatingScaleMixin):
     practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"))
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Within a practice. Alphabetical order if blank"))
-
-    def __str__(self):
-        return "{} ({})".format(self.name, self.practice.name)
-
     class Meta:
         verbose_name = _("Rating scale")
         verbose_name_plural = _("Rating scales")
         ordering = ('practice', 'order', 'name')
 
-
-class Rating(OptionalPictogramMixin, models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
+class Rating(RatingMixin):
     scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
                               verbose_name=_("Scale"))
-    description = models.TextField(verbose_name=_("Description"), blank=True)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Alphabetical order if blank"))
-    color = ColorField(verbose_name=_("Color"), blank=True)
-
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
