@@ -31,8 +31,6 @@ class ReportLayer(mapentity_views.MapEntityLayer):
             "activity", "category", "problem_magnitude", "status", "related_trek"
         )
         status_id = self.request.GET.get('_status_id')
-        print("in queryset")
-        print(status_id)
         if status_id:
             qs = qs.filter(status__suricate_id=status_id)
         return qs
