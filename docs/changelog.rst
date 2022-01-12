@@ -5,6 +5,10 @@ CHANGELOG
 2.75.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add ratings, rating scales on trekking
+
 **Minor improvements**
 
 * Add translations NL, ES, DE, IT, EN for all apps
