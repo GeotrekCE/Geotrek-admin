@@ -7,6 +7,7 @@ from django.contrib.auth.models import Permission
 from django.core import mail
 from django.utils.module_loading import import_string
 
+from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls.base import reverse
@@ -76,22 +77,36 @@ class ReportSerializationOptmizeTests(TestCase):
         cls.classified_report_2 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.classified_report_3 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.filed_report = feedback_factories.ReportFactory(status=cls.filed_status)
-        cls.num_queries_before = 37
 
-    def test_num_queries_per_url(self):
-        with self.assertNumQueries(3):
-            # 2 for authent
-            self.client.get("/api/report/report-classified.geojson")
+    def test_report_layer_cache(self):
+        """
+        This test check report's per status cache work independently
+        """
+        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
-    def test_num_queries_on_list_before(self):
-        with self.assertNumQueries(self.num_queries_before):
-            self.client.get(reverse("feedback:report_list"))
+        # There are 5 queries to get layer
+        with self.assertNumQueries(5):
+            response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        self.assertEqual(len(response.json()['features']), 3)
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
-    def test_num_queries_on_list_after(self):
-        with self.assertNumQueries(self.num_queries_before + feedback_models.ReportStatus.objects.count()):
-            self.client.get(reverse("feedback:report_list"))
+        # We check the content was created and cached
+        last_update_status = feedback_models.Report.latest_updated_by_status("classified")
+        geojson_lookup_status = 'en_report_%sclassified_json_layer' % last_update_status.strftime('%y%m%d%H%M%S%f')
+        content_per_status = cache.get(geojson_lookup_status)
+
+        self.assertEqual(response.content, content_per_status)
+
+        # We have 1 less query because the generation of report was cached
+        with self.assertNumQueries(4):
+            self.client.get("/api/report/report.geojson?_status_id=classified")
+
+        self.classified_report_4 = feedback_factories.ReportFactory(status=self.classified_status)
+
+        # Cache is updated when we add a report
+        with self.assertNumQueries(5):
+            self.client.get("/api/report/report.geojson?_status_id=classified")
+
+        self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
 
 
 class ReportViewsTest(CommonTest):
