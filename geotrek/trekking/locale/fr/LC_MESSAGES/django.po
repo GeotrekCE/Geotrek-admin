@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-01-12 14:09+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -140,6 +140,12 @@ msgstr "Recommandations"
 
 msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
+
+msgid "Equipment"
+msgstr "Équipement"
+
+msgid "Equipment needed"
+msgstr "Équipement nécessaire"
 
 msgid "Themes"
 msgstr "Thématiques"
@@ -516,6 +522,9 @@ msgstr "Toutes les infos pratiques"
 
 msgid "Advices"
 msgstr "Recommandations"
+
+msgid "Equipments"
+msgstr "Équipements"
 
 msgid "Environmental sensitive areas"
 msgstr "Zones de sensibilité environnementale"

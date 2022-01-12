@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-01-12 14:09+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -140,6 +140,12 @@ msgstr "Consigli"
 
 msgid "Risks, danger, best period, ..."
 msgstr "Rischi, pericolo, periodo migliore, ..."
+
+msgid "Equipment"
+msgstr ""
+
+msgid "Equipment needed"
+msgstr ""
 
 msgid "Themes"
 msgstr "Temi"
@@ -514,6 +520,9 @@ msgstr "Tutte le informazioni utili"
 
 msgid "Advices"
 msgstr "Consigli"
+
+msgid "Equipments"
+msgstr ""
 
 msgid "Environmental sensitive areas"
 msgstr "Aree di sensibilità ambientale"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-01-12 14:09+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -136,6 +136,12 @@ msgid "Advice"
 msgstr "Recomendacion"
 
 msgid "Risks, danger, best period, ..."
+msgstr ""
+
+msgid "Equipment"
+msgstr ""
+
+msgid "Equipment needed"
 msgstr ""
 
 msgid "Themes"
@@ -503,6 +509,9 @@ msgstr "Información útil"
 
 msgid "Advices"
 msgstr "Recomendaciones"
+
+msgid "Equipments"
+msgstr ""
 
 msgid "Environmental sensitive areas"
 msgstr ""

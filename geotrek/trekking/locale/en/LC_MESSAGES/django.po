@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-01-12 14:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -136,6 +136,12 @@ msgid "Advice"
 msgstr ""
 
 msgid "Risks, danger, best period, ..."
+msgstr ""
+
+msgid "Equipment"
+msgstr ""
+
+msgid "Equipment needed"
 msgstr ""
 
 msgid "Themes"
@@ -502,6 +508,9 @@ msgid "All useful information"
 msgstr ""
 
 msgid "Advices"
+msgstr ""
+
+msgid "Equipments"
 msgstr ""
 
 msgid "Environmental sensitive areas"
