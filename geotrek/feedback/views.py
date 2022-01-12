@@ -30,7 +30,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
         qs = feedback_models.Report.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
         )
-        status_id = self.request.GET.get('status_id')
+        status_id = self.request.GET.get('_status_id')
         if status_id:
             qs = qs.filter(status__suricate_id=status_id)
         return qs
@@ -39,7 +39,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
         """Used by the ``view_cache_response_content`` decorator.
         """
         language = self.request.LANGUAGE_CODE
-        status_id = self.request.GET.get('status_id')
+        status_id = self.request.GET.get('_status_id')
         geojson_lookup = None
         if status_id:
             latest_saved = feedback_models.Report.latest_updated_by_status(status_id)
