@@ -64,7 +64,7 @@ function ChangeColors(e, data) {
                 if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
             }
         });
-        layer.load("/api/report/report-" + status_id + ".geojson")
+        layer.load("/api/report/report.geojson?status_id=" + status_id)
         map.addLayer(layer)
 
         /*

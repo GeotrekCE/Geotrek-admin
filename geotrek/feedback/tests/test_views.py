@@ -9,6 +9,7 @@ from django.utils.module_loading import import_string
 
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from rest_framework.test import APIClient
@@ -67,14 +68,30 @@ class ReportViewsetMailSend(TestCase):
 class ReportSerializationOptmizeTests(TestCase):
 
     def setUp(cls):
+        cls.user = SuperUserFactory.create()
+        cls.client.force_login(cls.user)
         cls.classified_status = feedback_factories.ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
+        cls.filed_status = feedback_factories.ReportStatusFactory(suricate_id='filed', label="Classé sans suite")
         cls.classified_report_1 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.classified_report_2 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.classified_report_3 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.filed_report = feedback_factories.ReportFactory(status=cls.filed_status)
+        cls.num_queries_before = 37
 
-    def test_num_queries(self):
-        with self.assertNumQueries(1):
+    def test_num_queries_per_url(self):
+        with self.assertNumQueries(3):
+            # 2 for authent
             self.client.get("/api/report/report-classified.geojson")
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    def test_num_queries_on_list_before(self):
+        with self.assertNumQueries(self.num_queries_before):
+            self.client.get(reverse("feedback:report_list"))
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    def test_num_queries_on_list_after(self):
+        with self.assertNumQueries(self.num_queries_before + feedback_models.ReportStatus.objects.count()):
+            self.client.get(reverse("feedback:report_list"))
 
 
 class ReportViewsTest(CommonTest):
