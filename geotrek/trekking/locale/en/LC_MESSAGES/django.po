@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-01-12 13:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,6 +24,9 @@ msgstr ""
 
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
+msgstr ""
+
+msgid "Color"
 msgstr ""
 
 msgid "Practices"
@@ -67,6 +70,46 @@ msgid "Cancel"
 msgstr ""
 
 msgid "Create"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+
+msgid "Cirkwi locomotion"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+msgid "Alphabetical order if blank"
+msgstr ""
+
+msgid "Color of the practice, only used in mobile."
+msgstr ""
+
+msgid "Practice"
+msgstr ""
+
+msgid "Rating scale"
+msgstr ""
+
+msgid "Rating scales"
+msgstr ""
+
+msgid "Scale"
+msgstr ""
+
+msgid "Rating"
+msgstr ""
+
+msgid "Ratings"
 msgstr ""
 
 msgid "Departure"
@@ -138,6 +181,9 @@ msgstr ""
 msgid "Risks, danger, best period, ..."
 msgstr ""
 
+msgid "Ratings description"
+msgstr ""
+
 msgid "Themes"
 msgstr ""
 
@@ -148,9 +194,6 @@ msgid "Networks"
 msgstr ""
 
 msgid "Hiking networks"
-msgstr ""
-
-msgid "Practice"
 msgstr ""
 
 msgid "Accessibility"
@@ -259,35 +302,10 @@ msgstr ""
 msgid "Circuit"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
 msgid "Trek network"
 msgstr ""
 
 msgid "Trek networks"
-msgstr ""
-
-msgid "Distance"
-msgstr ""
-
-msgid ""
-"Touristic contents and events will associate within this distance (meters)"
-msgstr ""
-
-msgid "Cirkwi locomotion"
-msgstr ""
-
-msgid "Order"
-msgstr ""
-
-msgid "Alphabetical order if blank"
-msgstr ""
-
-msgid "Color"
-msgstr ""
-
-msgid "Color of the practice, only used in mobile."
 msgstr ""
 
 msgid "Cirkwi tag"

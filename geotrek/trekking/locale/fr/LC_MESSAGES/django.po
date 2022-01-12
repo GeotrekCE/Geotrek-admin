@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-01-12 13:54+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -26,6 +26,9 @@ msgstr "Une difficulté avec l'id %s existe déjà"
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
+
+msgid "Color"
+msgstr "Couleur"
 
 msgid "Practices"
 msgstr "Pratiques"
@@ -71,6 +74,48 @@ msgstr "Annuler"
 
 msgid "Create"
 msgstr "Créer"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Distance"
+msgstr "Distance"
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+"Les contenus et événements touristiques seront associés selon cette distance "
+"(mètres)"
+
+msgid "Cirkwi locomotion"
+msgstr "Locomotion Cirkwi"
+
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Alphabetical order if blank"
+msgstr "Ordre alphabétique si vide"
+
+msgid "Color of the practice, only used in mobile."
+msgstr "Couleur définie pour la pratique, utilisée seulement pour le mobile."
+
+msgid "Practice"
+msgstr "Pratique"
+
+msgid "Rating scale"
+msgstr "Échelle de cotation"
+
+msgid "Rating scales"
+msgstr "Échelles de cotation"
+
+msgid "Scale"
+msgstr "Échelle"
+
+msgid "Rating"
+msgstr "Cotation"
+
+msgid "Ratings"
+msgstr "Cotations"
 
 msgid "Departure"
 msgstr "Départ"
@@ -141,6 +186,9 @@ msgstr "Recommandations"
 msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
 
+msgid "Ratings description"
+msgstr "Description de cotation"
+
 msgid "Themes"
 msgstr "Thématiques"
 
@@ -152,9 +200,6 @@ msgstr "Réseaux de randonnée"
 
 msgid "Hiking networks"
 msgstr "Réseaux de randonnée"
-
-msgid "Practice"
-msgstr "Pratique"
 
 msgid "Accessibility"
 msgstr "Accessibilité"
@@ -262,38 +307,11 @@ msgstr "Tronçons"
 msgid "Circuit"
 msgstr "Circuit"
 
-msgid "Name"
-msgstr "Nom"
-
 msgid "Trek network"
 msgstr "Réseau d'itinéraire"
 
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
-
-msgid "Distance"
-msgstr "Distance"
-
-msgid ""
-"Touristic contents and events will associate within this distance (meters)"
-msgstr ""
-"Les contenus et événements touristiques seront associés selon cette distance "
-"(mètres)"
-
-msgid "Cirkwi locomotion"
-msgstr "Locomotion Cirkwi"
-
-msgid "Order"
-msgstr "Ordre"
-
-msgid "Alphabetical order if blank"
-msgstr "Ordre alphabétique si vide"
-
-msgid "Color"
-msgstr "Couleur"
-
-msgid "Color of the practice, only used in mobile."
-msgstr "Couleur définie pour la pratique, utilisée seulement pour le mobile."
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"

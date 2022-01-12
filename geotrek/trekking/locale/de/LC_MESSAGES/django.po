@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-01-12 13:54+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -26,6 +26,9 @@ msgstr "Ein Problem mit der id %s existiert bereits"
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr ""
 "Die ID der Schwierigkeit wurde erfolgreich von {old} auf {new} geändert."
+
+msgid "Color"
+msgstr ""
 
 msgid "Practices"
 msgstr "Praktik"
@@ -72,6 +75,48 @@ msgstr "Stornieren"
 
 msgid "Create"
 msgstr "Schaffen"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Distance"
+msgstr "Länge"
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+"Touristische Inhalte und Veranstaltungen werden entsprechend dieser "
+"Entfernung zugeordnet.(meter)"
+
+msgid "Cirkwi locomotion"
+msgstr "Locomotion Cirkwi"
+
+msgid "Order"
+msgstr "Ordnung"
+
+msgid "Alphabetical order if blank"
+msgstr "Alphabetische Reihenfolge, wenn leer"
+
+msgid "Color of the practice, only used in mobile."
+msgstr ""
+
+msgid "Practice"
+msgstr "Praktik"
+
+msgid "Rating scale"
+msgstr ""
+
+msgid "Rating scales"
+msgstr ""
+
+msgid "Scale"
+msgstr ""
+
+msgid "Rating"
+msgstr ""
+
+msgid "Ratings"
+msgstr ""
 
 msgid "Departure"
 msgstr "Abreise"
@@ -142,6 +187,9 @@ msgstr "Handlungsempfehlungen"
 msgid "Risks, danger, best period, ..."
 msgstr "Risiken, Gefahr, Bestzeit,..."
 
+msgid "Ratings description"
+msgstr ""
+
 msgid "Themes"
 msgstr "Themen"
 
@@ -153,9 +201,6 @@ msgstr "Netzwerke"
 
 msgid "Hiking networks"
 msgstr "Route Netzwerke"
-
-msgid "Practice"
-msgstr "Praktik"
 
 msgid "Accessibility"
 msgstr "Zugänglichkeit"
@@ -263,38 +308,11 @@ msgstr "Strecken"
 msgid "Circuit"
 msgstr "Schaltkreise"
 
-msgid "Name"
-msgstr "Name"
-
 msgid "Trek network"
 msgstr "Routen Netzwerk"
 
 msgid "Trek networks"
 msgstr "Wander netzwerke"
-
-msgid "Distance"
-msgstr "Länge"
-
-msgid ""
-"Touristic contents and events will associate within this distance (meters)"
-msgstr ""
-"Touristische Inhalte und Veranstaltungen werden entsprechend dieser "
-"Entfernung zugeordnet.(meter)"
-
-msgid "Cirkwi locomotion"
-msgstr "Locomotion Cirkwi"
-
-msgid "Order"
-msgstr "Ordnung"
-
-msgid "Alphabetical order if blank"
-msgstr "Alphabetische Reihenfolge, wenn leer"
-
-msgid "Color"
-msgstr ""
-
-msgid "Color of the practice, only used in mobile."
-msgstr ""
 
 msgid "Cirkwi tag"
 msgstr "Cirkwi Tag"
