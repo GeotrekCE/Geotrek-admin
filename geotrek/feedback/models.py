@@ -268,6 +268,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         qs = Q(target_type=report_content_type, target_id=self.id)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
+    @classmethod
+    def latest_updated_by_status(cls, status_id):
+        return cls.objects.existing().filter(status__suricate_id=status_id).latest('date_update').get_date_update()
+
 
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))

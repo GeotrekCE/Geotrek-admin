@@ -13,13 +13,11 @@ from geotrek.feedback import serializers as feedback_serializers
 from geotrek.feedback.filters import ReportFilterSet
 from geotrek.feedback.forms import ReportForm
 from mapentity import views as mapentity_views
-from mapentity.views.generic import MapEntityCreate
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from djgeojson.views import GeoJSONLayerView
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
@@ -28,26 +26,32 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     filterform = ReportFilterSet
     properties = ["email"]
 
-
-class SameStatusReportLayer(GeoJSONLayerView):
-    properties = ["email"]
-    model = feedback_models.Report
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Backward compatibility with django-geojson 1.X
-        # for JS ObjectsLayer and rando-trekking application
-        # TODO: remove when migrated
-        properties = dict([(k, k) for k in self.properties])
-        if 'id' not in self.properties:
-            properties['id'] = 'pk'
-        self.properties = properties
-
     def get_queryset(self):
-        status_id = self.kwargs['status_id']
-        return feedback_models.Report.objects.existing().select_related(
+        qs = feedback_models.Report.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
-        ).filter(status__suricate_id=status_id)
+        )
+        status_id = self.request.GET.get('status_id')
+        if status_id:
+            qs = qs.filter(status__suricate_id=status_id)
+        return qs
+
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator.
+        """
+        language = self.request.LANGUAGE_CODE
+        status_id = self.request.GET.get('status_id')
+        geojson_lookup = None
+        if status_id:
+            latest_saved = feedback_models.Report.latest_updated_by_status(status_id)
+        else:
+            latest_saved = feedback_models.Report.latest_updated()
+        if latest_saved:
+            geojson_lookup = '%s_report_%s%s_json_layer' % (
+                language,
+                latest_saved.strftime('%y%m%d%H%M%S%f'),
+                status_id if status_id else ''
+            )
+        return geojson_lookup
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
@@ -112,7 +116,7 @@ class FeedbackOptionsView(APIView):
         return Response(options)
 
 
-class ReportCreate(MapEntityCreate):
+class ReportCreate(mapentity_views.MapEntityCreate):
     model = feedback_models.Report
     form_class = ReportForm
 
