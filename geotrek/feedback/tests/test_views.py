@@ -8,7 +8,6 @@ from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from rest_framework.test import APIClient
