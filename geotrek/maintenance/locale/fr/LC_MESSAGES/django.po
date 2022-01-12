@@ -335,9 +335,3 @@ msgstr "Ajouter un financement"
 
 msgid "No intervention related."
 msgstr "Pas d'intervention liée."
-
-#~ msgid "Main"
-#~ msgstr "Basique"
-
-#~ msgid "Advanced"
-#~ msgstr "Avancé"

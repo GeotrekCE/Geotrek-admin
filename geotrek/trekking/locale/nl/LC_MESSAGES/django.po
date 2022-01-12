@@ -561,6 +561,3 @@ msgstr ""
 
 msgid "This hike is in the core of the national park"
 msgstr ""
-
-#~ msgid "%s days"
-#~ msgstr "%s dagen"

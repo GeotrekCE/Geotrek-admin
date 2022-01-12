@@ -26,15 +26,11 @@ msgstr ""
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr ""
 
-#, fuzzy
-#| msgid "Practice"
 msgid "Practices"
-msgstr "Práctica"
+msgstr "Pratiche"
 
-#, fuzzy
-#| msgid "Trek"
 msgid "Trekking"
-msgstr "Itinerario"
+msgstr ""
 
 msgid "Trek"
 msgstr "Itinerario"
@@ -76,10 +72,8 @@ msgstr ""
 msgid "Departure"
 msgstr "Salida"
 
-#, fuzzy
-#| msgid "Departure"
 msgid "Departure description"
-msgstr "Salida"
+msgstr ""
 
 msgid "Arrival"
 msgstr "Llegada"
@@ -93,10 +87,8 @@ msgstr ""
 msgid "A brief summary (map pop-ups)"
 msgstr ""
 
-#, fuzzy
-#| msgid "Duration"
 msgid "Description"
-msgstr "Duración"
+msgstr ""
 
 msgid "Complete description"
 msgstr ""
@@ -113,15 +105,11 @@ msgstr "Acceso por carretera"
 msgid "Best way to go"
 msgstr ""
 
-#, fuzzy
-#| msgid "Disabled Infrastructure"
 msgid "Disabled infrastructure"
-msgstr "Zona para personas con discapacidad"
+msgstr ""
 
-#, fuzzy
-#| msgid "Disabled Infrastructure"
 msgid "Any specific infrastructure"
-msgstr "Zona para personas con discapacidad"
+msgstr ""
 
 msgid "Duration"
 msgstr "Duración"
@@ -135,23 +123,17 @@ msgstr "Parking recomendado"
 msgid "Where to park"
 msgstr ""
 
-#, fuzzy
-#| msgid "Min elevation"
 msgid "Parking location"
-msgstr "Altitud mín"
+msgstr ""
 
-#, fuzzy
-#| msgid "Transports"
 msgid "Public transport"
-msgstr "Transportes"
+msgstr ""
 
 msgid "Train, bus (see web links)"
 msgstr ""
 
-#, fuzzy
-#| msgid "Advices"
 msgid "Advice"
-msgstr "Recomendaciones"
+msgstr "Recomendacion"
 
 msgid "Risks, danger, best period, ..."
 msgstr ""
@@ -222,10 +204,8 @@ msgstr ""
 msgid "Reservation ID"
 msgstr ""
 
-#, fuzzy
-#| msgid "Trek"
 msgid "Treks"
-msgstr "Itinerario"
+msgstr ""
 
 msgid "Formated duration"
 msgstr ""
@@ -246,28 +226,20 @@ msgstr ""
 msgid "POIs"
 msgstr ""
 
-#, fuzzy
-#| msgid "Advices"
 msgid "Services"
-msgstr "Recomendaciones"
+msgstr ""
 
-#, fuzzy
-#| msgid "Stages"
 msgid "Signages"
-msgstr "Etapas"
+msgstr ""
 
-#, fuzzy
-#| msgid "Disabled Infrastructure"
 msgid "Infrastructures"
-msgstr "Zona para personas con discapacidad"
+msgstr ""
 
 msgid "Published treks"
 msgstr ""
 
-#, fuzzy
-#| msgid "Departure"
 msgid "Common departure"
-msgstr "Salida"
+msgstr ""
 
 msgid "Common edge"
 msgstr ""
@@ -290,10 +262,8 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#, fuzzy
-#| msgid "Trek ascent"
 msgid "Trek network"
-msgstr "Desnivel positivo"
+msgstr ""
 
 msgid "Trek networks"
 msgstr ""
@@ -323,18 +293,14 @@ msgstr ""
 msgid "Cirkwi tag"
 msgstr ""
 
-#, fuzzy
-#| msgid "Accessibility"
 msgid "Accessibilities"
-msgstr "Accesibilidad"
+msgstr ""
 
 msgid "Routes"
 msgstr ""
 
-#, fuzzy
-#| msgid "Difficulty"
 msgid "Difficulty level"
-msgstr "Dificultad"
+msgstr ""
 
 msgid "Cirkwi level"
 msgstr ""
@@ -342,10 +308,8 @@ msgstr ""
 msgid "Between 1 and 8"
 msgstr ""
 
-#, fuzzy
-#| msgid "Difficulty"
 msgid "Difficulty levels"
-msgstr "Dificultad"
+msgstr ""
 
 msgid "URL"
 msgstr ""
@@ -427,10 +391,8 @@ msgstr ""
 msgid "Hike"
 msgstr "Caminata"
 
-#, fuzzy
-#| msgid "Attribution"
 msgid "Attributes"
-msgstr "Créditos de fotos"
+msgstr ""
 
 msgid "None"
 msgstr ""
@@ -438,16 +400,12 @@ msgstr ""
 msgid "Thumbnail"
 msgstr ""
 
-#, fuzzy
-#| msgid "Max elevation"
 msgid "Elevation"
-msgstr "Altitud máx"
+msgstr ""
 
 msgid "Attribution"
 msgstr "Créditos de fotos"
 
-#, fuzzy
-#| msgid "Powered by geotrek.fr"
 msgid "Powered by http://geotrek.fr"
 msgstr "Generado por geotrek.fr"
 
@@ -507,10 +465,8 @@ msgstr ""
 msgid "Delete the parking location"
 msgstr ""
 
-#, fuzzy
-#| msgid "Max elevation"
 msgid "Add relation"
-msgstr "Altitud máx"
+msgstr ""
 
 msgid "Remove"
 msgstr ""

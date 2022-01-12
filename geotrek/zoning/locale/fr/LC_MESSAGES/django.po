@@ -70,30 +70,3 @@ msgstr ""
 
 msgid "Restricted Area"
 msgstr "Zone réglementaire"
-
-#~ msgid "Restricted area edge"
-#~ msgstr "Tronçon de zonage"
-
-#~ msgid "Restricted area edges"
-#~ msgstr "Tronçons de zonage"
-
-#~ msgid "Published areas"
-#~ msgstr "Zonages publiés"
-
-#~ msgid "City edge"
-#~ msgstr "Tronçon de commune"
-
-#~ msgid "City edges"
-#~ msgstr "Tronçons de commune"
-
-#~ msgid "Published cities"
-#~ msgstr "Communes publiées"
-
-#~ msgid "District edge"
-#~ msgstr "Tronçon de secteur"
-
-#~ msgid "District edges"
-#~ msgstr "Tronçons de secteur"
-
-#~ msgid "Published districts"
-#~ msgstr "Secteurs publiés"

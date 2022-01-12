@@ -47,10 +47,8 @@ msgstr "Données à importer depuis le réseau"
 msgid "Import"
 msgstr "Importer"
 
-#, fuzzy
-#| msgid "Data to import from local file"
 msgid "Data to import from Suricate"
-msgstr "Données à importer depuis un fichier local"
+msgstr ""
 
 msgid "File"
 msgstr "Fichier"
@@ -477,10 +475,8 @@ msgctxt "West"
 msgid "W"
 msgstr "O"
 
-#, fuzzy
-#| msgid "Imports"
 msgid "Reports"
-msgstr "Imports"
+msgstr ""
 
 msgid "Any year"
 msgstr "N'importe quelle année"

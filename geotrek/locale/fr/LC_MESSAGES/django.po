@@ -81,10 +81,8 @@ msgstr ""
 msgid "(Deprecated) {text}"
 msgstr ""
 
-#, fuzzy
-#| msgid "Action"
 msgid "Options"
-msgstr "Action"
+msgstr "Options"
 
 #, python-brace-format
 msgid "Got unexpected extra argument ({args})"
@@ -95,10 +93,8 @@ msgstr[1] ""
 msgid "DeprecationWarning: The command {name!r} is deprecated."
 msgstr ""
 
-#, fuzzy
-#| msgid "Comments"
 msgid "Commands"
-msgstr "Commentaires"
+msgstr "Commandes"
 
 msgid "Missing command."
 msgstr ""
@@ -152,10 +148,8 @@ msgstr ""
 msgid "Invalid value for {param_hint}: {message}"
 msgstr ""
 
-#, fuzzy
-#| msgid "Management"
 msgid "Missing argument"
-msgstr "Gestion"
+msgstr ""
 
 msgid "Missing option"
 msgstr ""
@@ -258,10 +252,8 @@ msgstr ""
 msgid "directory"
 msgstr ""
 
-#, fuzzy
-#| msgid "path %d"
 msgid "path"
-msgstr "tronçon %d"
+msgstr "tronçon"
 
 msgid "{name} {filename!r} does not exist."
 msgstr ""
@@ -290,264 +282,3 @@ msgstr ""
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
 msgstr ""
-
-#~ msgid "Core"
-#~ msgstr "Cœur"
-
-#~ msgid "Topology is empty."
-#~ msgstr "La topologie est vide."
-
-#~ msgid "Topology is not valid."
-#~ msgstr "La topologie n'est pas valide."
-
-#~ msgid "Topology %s does not exist."
-#~ msgstr "La topologie %s n'existe pas."
-
-#~ msgid "Linestring invalid snapping."
-#~ msgstr "La ligne a un snapping invalide"
-
-#~ msgid "Valid topology"
-#~ msgstr "Topologie valide"
-
-#~ msgid "length"
-#~ msgstr "Longueur"
-
-#~ msgid "Name"
-#~ msgstr "Nom"
-
-#~ msgid "Departure"
-#~ msgstr "Départ"
-
-#~ msgid "Arrival"
-#~ msgstr "Arrivée"
-
-#~ msgid "Trail"
-#~ msgstr "Sentier"
-
-#~ msgid "Reverse path"
-#~ msgstr "Inverser le tronçon"
-
-#~ msgid "The path will be reversed once saved"
-#~ msgstr "Le tronçon sera inversé une fois sauvegardé."
-
-#~ msgid "Invalid snapped geometry."
-#~ msgstr "La géométrie snappée est invalide"
-
-#~ msgid "Geometry is not simple."
-#~ msgstr "La géométrie est non simple"
-
-#~ msgid "Geometry overlaps another."
-#~ msgstr "La géométrie en superpose une autre"
-
-#~ msgid "Validity"
-#~ msgstr "Validité"
-
-#~ msgid "Approved by manager"
-#~ msgstr "Approuvé par le référent"
-
-#~ msgid "Visible"
-#~ msgstr "Visible"
-
-#~ msgid "Shown in lists and maps"
-#~ msgstr "Affiché dans les listes et sur les cartes"
-
-#~ msgid "Official name"
-#~ msgstr "Nom officiel"
-
-#~ msgid "Remarks"
-#~ msgstr "Remarques"
-
-#~ msgid "Departure place"
-#~ msgstr "Lieu de départ"
-
-#~ msgid "Arrival place"
-#~ msgstr "Lieu d'arrivée"
-
-#~ msgid "Comfort"
-#~ msgstr "Confort"
-
-#~ msgid "Source"
-#~ msgstr "Source"
-
-#~ msgid "Maintenance stake"
-#~ msgstr "Enjeu d'entretien"
-
-#~ msgid "Usages"
-#~ msgstr "Usages"
-
-#~ msgid "Networks"
-#~ msgstr "Réseaux"
-
-#~ msgid "External id"
-#~ msgstr "ID externe"
-
-#~ msgid "Draft"
-#~ msgstr "Brouillon"
-
-#~ msgid "2D Length"
-#~ msgstr "Longueur 2D"
-
-#~ msgid "Path"
-#~ msgstr "Tronçon"
-
-#~ msgid "Paths"
-#~ msgstr "Tronçons"
-
-#~ msgid "Trails"
-#~ msgstr "Sentiers"
-
-#~ msgid "None"
-#~ msgstr "Aucun(e)"
-
-#~ msgid "Add a new path"
-#~ msgstr "Ajouter un tronçon"
-
-#~ msgid "Treks"
-#~ msgstr "Itinéraires"
-
-#~ msgid "Services"
-#~ msgstr "Services"
-
-#~ msgid "Pois"
-#~ msgstr "POI"
-
-#~ msgid "Signages"
-#~ msgstr "Signalétiques"
-
-#~ msgid "Infrastructures"
-#~ msgstr "Aménagements"
-
-#~ msgid "Interventions"
-#~ msgstr "Interventions"
-
-#~ msgid "Offset"
-#~ msgstr "Décalage"
-
-#~ msgid "Kind"
-#~ msgstr "Type de topologie"
-
-#~ msgid "Topology"
-#~ msgstr "Topologie"
-
-#~ msgid "Topologies"
-#~ msgstr "Topologies"
-
-#~ msgid "Start position"
-#~ msgstr "Position de début"
-
-#~ msgid "End position"
-#~ msgstr "Position de fin"
-
-#~ msgid "Order"
-#~ msgstr "Ordre"
-
-#~ msgid "Path aggregation"
-#~ msgstr "Aggrégation de tronçons"
-
-#~ msgid "Path aggregations"
-#~ msgstr "Aggrégations de tronçons"
-
-#~ msgid "Path source"
-#~ msgstr "Source des tronçon"
-
-#~ msgid "Path sources"
-#~ msgstr "Sources des tronçons"
-
-#~ msgid "Stake"
-#~ msgstr "Enjeu"
-
-#~ msgid "Maintenance stakes"
-#~ msgstr "Enjeux d'entretien"
-
-#~ msgid "Comforts"
-#~ msgstr "Conforts"
-
-#~ msgid "Usage"
-#~ msgstr "Usage"
-
-#~ msgid "Network"
-#~ msgstr "Réseau"
-
-#~ msgid "No information"
-#~ msgstr "Pas d'information"
-
-#~ msgid "Add a new trail"
-#~ msgstr "Ajouter un sentier"
-
-#~ msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
-#~ msgstr "Voulez-vous réellement supprimer <strong>%(object)s</strong> ?"
-
-#~ msgid "Yes, delete"
-#~ msgstr "Oui, supprimer"
-
-#~ msgid "No, back to list view"
-#~ msgstr "Non, retour à la liste"
-
-#~ msgid "Different topologies are linked with this path"
-#~ msgstr "Différentes Topologies sont liées à ce tronçon"
-
-#~ msgid "GPX"
-#~ msgstr "GPX"
-
-#~ msgid "KML"
-#~ msgstr "KML"
-
-#~ msgid "Not validated"
-#~ msgstr "Non validé"
-
-#~ msgid "Attributes"
-#~ msgstr "Informations"
-
-#~ msgid "Draft mode"
-#~ msgstr "Mode brouillon"
-
-#~ msgid "Select two paths to merge them"
-#~ msgstr "Sélectionner deux tronçons pour les fusionner"
-
-#~ msgid "Are you sure you want to merge these paths ?"
-#~ msgstr "Etes-vous certain de vouloir fusionner ces tronçons ?"
-
-#~ msgid "Merge"
-#~ msgstr "Fusionner"
-
-#~ msgid "Delete"
-#~ msgstr "Supprimer"
-
-#~ msgid "Merge paths"
-#~ msgstr "Fusionner les tronçons"
-
-#~ msgid "Cancel"
-#~ msgstr "Annuler"
-
-#~ msgid ""
-#~ "Access to the requested resource is restricted. You have been redirected."
-#~ msgstr "L'accès à cette ressource est restreint. Vous avez été redirigé."
-
-#~ msgid ""
-#~ "Access to the requested resource is restricted by structure. You have "
-#~ "been redirected."
-#~ msgstr ""
-#~ "L'accès à cette ressource est restreint selon la structure. Vous avez été "
-#~ "redirigé."
-
-#~ msgid "You should select two paths"
-#~ msgstr "Vous devez sélectionner 2 tronçons"
-
-#~ msgid "You don't have the right to change these paths"
-#~ msgstr "Vous n'avez pas le droit de modifier ces tronçons"
-
-#~ msgid "You can't merge 1 draft path with 1 normal path"
-#~ msgstr ""
-#~ "Vous ne pouvez pas fusionner un tronçon en brouillon avec un tronçon "
-#~ "normal"
-
-#~ msgid "You can't merge 2 paths with a 3rd path in the intersection"
-#~ msgstr ""
-#~ "Vous ne pouvez pas fusionner deux tronçons qui intersectent un troisième "
-#~ "tronçon"
-
-#~ msgid "No matching points to merge paths found"
-#~ msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
-
-#~ msgid "Paths merged successfully"
-#~ msgstr "Les tronçons ont été fusionnés."

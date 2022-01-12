@@ -139,10 +139,8 @@ msgstr "Organismo"
 msgid "Organisms"
 msgstr "Organismos"
 
-#, fuzzy
-#| msgid "Insertion date"
 msgid "Creation Date"
-msgstr "Fecha de inserción"
+msgstr ""
 
 msgid "Cirkwi tag"
 msgstr ""
@@ -207,15 +205,11 @@ msgstr ""
 msgid "Target portals"
 msgstr ""
 
-#, fuzzy
-#| msgid "Insertion date"
 msgid "Reservation system"
-msgstr "Fecha de inserción"
+msgstr ""
 
-#, fuzzy
-#| msgid "Insertion date"
 msgid "Reservation systems"
-msgstr "Fecha de inserción"
+msgstr ""
 
 msgid "Advice"
 msgstr ""
@@ -229,10 +223,8 @@ msgstr ""
 msgid "Label"
 msgstr "Sello de calidad"
 
-#, fuzzy
-#| msgid "Label"
 msgid "Labels"
-msgstr "Sello de calidad"
+msgstr ""
 
 #, python-brace-format
 msgid "Line {line}"
@@ -446,10 +438,8 @@ msgstr ""
 msgid "Topology is not valid."
 msgstr "La topología no está valida"
 
-#, fuzzy
-#| msgid "has invalid geometry;"
 msgid "Invalid geometry value."
-msgstr "tiene una geometría invalida;"
+msgstr ""
 
 msgctxt "North"
 msgid "N"

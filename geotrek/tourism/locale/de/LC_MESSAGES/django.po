@@ -140,18 +140,14 @@ msgstr "Zweiter"
 msgid "Touristic content type"
 msgstr "Art der touristischen Inhalte"
 
-#, fuzzy
-#| msgid "Type 1"
 msgid "Type1"
-msgstr "Typ 1"
+msgstr "Type 1"
 
 msgid "First list types"
 msgstr "Typen in der ersten Liste"
 
-#, fuzzy
-#| msgid "Type 2"
 msgid "Type2"
-msgstr "Typ 2"
+msgstr "Type 2"
 
 msgid "Second list types"
 msgstr "Typen in der zweiten Liste"
@@ -362,38 +358,3 @@ msgstr "Datum"
 
 msgid "Invalid geometry value."
 msgstr "Ungültiger Geometriewert"
-
-#~ msgid "GeoJSON"
-#~ msgstr "GeoJSON"
-
-#~ msgid "TourInFrance"
-#~ msgstr "TourInFrance"
-
-#~ msgid "Apidae"
-#~ msgstr "Apidae"
-
-#~ msgid "Public website"
-#~ msgstr "Öffentliche Website"
-
-#~ msgid "Name"
-#~ msgstr "Name"
-
-#~ msgid "Reservation systems"
-#~ msgstr "Buchungssysteme"
-
-#~ msgid "Failed to download {url}. HTTP status code {status_code}"
-#~ msgstr ""
-#~ "Der Download von {url} konnte nicht durchgeführt werden. HTTP Statuscode "
-#~ "{status_code}"
-
-#~ msgid "All"
-#~ msgstr "Alle"
-
-#~ msgid "Advice"
-#~ msgstr "Mitteilungen"
-
-#~ msgid "Related Treks"
-#~ msgstr "Zugehörige Routen"
-
-#~ msgid "Powered by http://geotrek.fr"
-#~ msgstr "Powered by geotrek.fr"

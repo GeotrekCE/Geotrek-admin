@@ -233,10 +233,8 @@ msgstr "Ajouter un nouveau site outdoor"
 msgid "Sites"
 msgstr "Sites"
 
-#, fuzzy
-#| msgid "Add a course"
 msgid "Parcours"
-msgstr "Ajouter un parcours outdoor"
+msgstr "Parcours"
 
 msgid "Treks"
 msgstr "Itinéraires"
@@ -357,9 +355,3 @@ msgstr "Informations pratiques"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
-
-#~ msgid "POIs"
-#~ msgstr "POI"
-
-#~ msgid "Site"
-#~ msgstr "Site"

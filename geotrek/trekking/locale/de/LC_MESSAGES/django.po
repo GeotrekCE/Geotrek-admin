@@ -205,10 +205,8 @@ msgstr "Ausgeschlossene POI"
 msgid "Reservation system"
 msgstr ""
 
-#, fuzzy
-#| msgid "Elevation"
 msgid "Reservation ID"
-msgstr "Elevation"
+msgstr "ID reservation"
 
 msgid "Treks"
 msgstr "Route"
@@ -235,15 +233,11 @@ msgstr "POIs"
 msgid "Services"
 msgstr "Dienstleistungen"
 
-#, fuzzy
-#| msgid "Stages"
 msgid "Signages"
-msgstr "Etappen"
+msgstr ""
 
-#, fuzzy
-#| msgid "Disabled Infrastructure"
 msgid "Infrastructures"
-msgstr "Behindertengerechte Einrichtungen"
+msgstr ""
 
 msgid "Published treks"
 msgstr "Publizierte Routen"
@@ -446,18 +440,14 @@ msgstr "Öffentliches Drucken"
 msgid "Print"
 msgstr "Druck"
 
-#, fuzzy
-#| msgid "Public print"
 msgid "Public print booklet"
-msgstr "Öffentliches Drucken"
+msgstr ""
 
 msgid "Print booklet"
 msgstr ""
 
-#, fuzzy
-#| msgid "yes,no"
 msgid "yes"
-msgstr "ja,nein"
+msgstr "ja"
 
 msgid "no"
 msgstr ""
@@ -594,115 +584,3 @@ msgstr ""
 
 msgid "This hike is in the core of the national park"
 msgstr "Diese Wanderung befindet sich im Herzen des Nationalparks."
-
-#, fuzzy
-#~| msgid "Common edge"
-#~ msgid "Commands"
-#~ msgstr "Gemeinsame Strecken"
-
-#, fuzzy
-#~| msgid "Parking location"
-#~ msgid "Missing option"
-#~ msgstr "Parkplätze"
-
-#, fuzzy
-#~| msgid "Confirmation"
-#~ msgid "Repeat for confirmation"
-#~ msgstr "Bestätigung"
-
-#, fuzzy
-#~| msgid "trek"
-#~ msgid "Geotrek"
-#~ msgstr "route"
-
-#~ msgid "Launch Sync"
-#~ msgstr "Synchro starten"
-
-#~ msgid "Global tiles syncing ..."
-#~ msgstr "Synchro der globalen Kacheln..."
-
-#~ msgid "Trek tiles syncing ..."
-#~ msgstr "Synchro der Wanderfliesen..."
-
-#~ msgid "Tiles synced ..."
-#~ msgstr "Synchronisierte Kacheln..."
-
-#~ msgid "Language"
-#~ msgstr "Sprache"
-
-#~ msgid "Sync ended"
-#~ msgstr "Synchro abgeschlossen"
-
-#~ msgid "Is in the midst of the park"
-#~ msgstr "Im Herzen des Parks"
-
-#~ msgid "Crosses center of park"
-#~ msgstr "Durchquert das Herz des Parks"
-
-#~ msgid "services"
-#~ msgstr "Dienstleistungen"
-
-#~ msgid "Label"
-#~ msgstr "Label"
-
-#~ msgid "Init sync ..."
-#~ msgstr "Synchrostart"
-
-#~ msgid "Geotrek Rando"
-#~ msgstr "Geotrek Rando"
-
-#~ msgid ""
-#~ "Geotrek is a web app allowing you to prepare your next trekking trip !"
-#~ msgstr ""
-#~ "Geotrek ist eine Web-App, mit der Sie Ihre Wanderungen im Voraus "
-#~ "vorbereiten können!"
-
-#~ msgid "Sync verifications"
-#~ msgstr "Synchro-Check"
-
-#~ msgid "Sync in progress"
-#~ msgstr "Synchro läuft"
-
-#~ msgid "An error occured"
-#~ msgstr "Ein Fehler ist aufgetreten"
-
-#~ msgid "Public web site sync"
-#~ msgstr "Synchro der öffentlichen Website"
-
-#~ msgid "Are you sure you want to sync ?"
-#~ msgstr "Sind Sie sicher, dass Sie die Synchro starten möchten?"
-
-#~ msgid ""
-#~ "This hike is in the core of the national park > The national park is an "
-#~ "unrestricted natural area but subjected to regulations which must be "
-#~ "known by all visitors."
-#~ msgstr ""
-#~ "Diese Reiseroute befindet sich im Herzen des Nationalparks > Der "
-#~ "Nationalpark ist ein natürliches Gebiet, das für alle zugänglich ist, "
-#~ "aber den Vorschriften unterliegt, die Sie zur Vorbereitung Ihres "
-#~ "Aufenthalts kennen sollten."
-
-#~ msgid "On the way..."
-#~ msgstr "Auf dem Weg..."
-
-#~ msgid "Related Treks"
-#~ msgstr "Zugehörige Routen"
-
-#~ msgid ""
-#~ "To check the practicability of the hiking paths and to know more about "
-#~ "the National park, please visit us or call us at"
-#~ msgstr ""
-#~ "Um die Nutzbarkeit der Wege zu überprüfen und mehr über die Entdeckung "
-#~ "des Gebietes zu erfahren, fragen Sie bitte vorab nach"
-
-#~ msgid "%s days"
-#~ msgstr "%s Tage"
-
-#~ msgid "%(hour)s h %(min)s"
-#~ msgstr "%(hour)s h %(min)s"
-
-#~ msgid "%(hour)s h"
-#~ msgstr "%(hour)s h"
-
-#~ msgid "%s min"
-#~ msgstr "%s min"

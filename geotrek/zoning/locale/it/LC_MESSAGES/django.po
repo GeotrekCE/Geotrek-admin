@@ -70,21 +70,3 @@ msgstr ""
 
 msgid "Restricted Area"
 msgstr "Area di regolamentazione"
-
-#~ msgid "Restricted area edge"
-#~ msgstr "Sezione di zonizzazione normativa"
-
-#~ msgid "Restricted area edges"
-#~ msgstr "Sezioni di zonizzazione normativa"
-
-#~ msgid "City edge"
-#~ msgstr "Sezione comune"
-
-#~ msgid "City edges"
-#~ msgstr "Sezioni comuni"
-
-#~ msgid "District edge"
-#~ msgstr "Sezione settoriale"
-
-#~ msgid "District edges"
-#~ msgstr "Sezioni di settore"

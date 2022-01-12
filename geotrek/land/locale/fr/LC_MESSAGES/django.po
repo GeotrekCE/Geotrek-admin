@@ -38,8 +38,7 @@ msgstr "Gestionnaire travaux"
 msgid "Status"
 msgstr "Statuts"
 
-#, fuzzy
-#| msgid "Status"
+
 msgid "Statuses"
 msgstr "Statuts"
 

@@ -4,6 +4,9 @@
 
 import sys
 import os
+
+# Makemessages uses Locale_paths's settings to get the list of translations to do.
+# We change 'var/extra_locale' to 'geotrek/locale'
 if 'makemessages' in sys.argv:
     LOCALE_PATHS = (os.path.join('geotrek', 'locale'),)
 

@@ -139,16 +139,12 @@ msgstr "Secondo"
 msgid "Touristic content type"
 msgstr "Tipo di contenuto turistico"
 
-#, fuzzy
-#| msgid "Type 1"
 msgid "Type1"
 msgstr "Tipo 1"
 
 msgid "First list types"
 msgstr "Tipi nel primo elenco"
 
-#, fuzzy
-#| msgid "Type 2"
 msgid "Type2"
 msgstr "Tipo 2"
 
@@ -242,10 +238,8 @@ msgstr "3 giorni, stagione, ...."
 msgid "Meeting point"
 msgstr "Punto d'incontro"
 
-#, fuzzy
-#| msgid "Where exactly?"
 msgid "Where exactly ?"
-msgstr "Dove esattamente?"
+msgstr ""
 
 msgid "Meeting time"
 msgstr "Orario della riunione"
@@ -363,22 +357,3 @@ msgstr "Data"
 
 msgid "Invalid geometry value."
 msgstr "Valore geometrico non valido"
-
-#~ msgid "Public website"
-#~ msgstr "Sito web pubblico"
-
-#~ msgid "Name"
-#~ msgstr "Nome"
-
-#~ msgid "Reservation systems"
-#~ msgstr "Sistemi di prenotazione"
-
-#~ msgid "Failed to download {url}. HTTP status code {status_code}"
-#~ msgstr ""
-#~ "Non è riuscito a scaricare {url}. Codice di stato HTTP {status_code}"
-
-#~ msgid "All"
-#~ msgstr "Tutti"
-
-#~ msgid "Geotrek Rando"
-#~ msgstr "Geotrek Rando"

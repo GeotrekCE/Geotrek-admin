@@ -139,10 +139,8 @@ msgstr "Organismo"
 msgid "Organisms"
 msgstr "Organismi"
 
-#, fuzzy
-#| msgid "Insertion date"
 msgid "Creation Date"
-msgstr "Data di inserimento"
+msgstr ""
 
 msgid "Cirkwi tag"
 msgstr ""
@@ -207,15 +205,11 @@ msgstr ""
 msgid "Target portals"
 msgstr ""
 
-#, fuzzy
-#| msgid "Insertion date"
 msgid "Reservation system"
-msgstr "Data di inserimento"
+msgstr ""
 
-#, fuzzy
-#| msgid "Insertion date"
 msgid "Reservation systems"
-msgstr "Data di inserimento"
+msgstr ""
 
 msgid "Advice"
 msgstr ""
@@ -229,10 +223,8 @@ msgstr ""
 msgid "Label"
 msgstr "Etichetta"
 
-#, fuzzy
-#| msgid "Label"
 msgid "Labels"
-msgstr "Etichetta"
+msgstr "Etichette"
 
 #, python-brace-format
 msgid "Line {line}"

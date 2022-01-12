@@ -84,10 +84,8 @@ msgstr ""
 msgid "Services"
 msgstr ""
 
-#, fuzzy
-#| msgid "Intervention prévue"
 msgid "Interventions"
-msgstr "Intervention prévue"
+msgstr "Interventions"
 
 msgid "Suricate id"
 msgstr "ID Suricate"
@@ -98,15 +96,11 @@ msgstr "Activités"
 msgid "Categories"
 msgstr "Catégories"
 
-#, fuzzy
-#| msgid "Identifier"
 msgid "Identifiant"
 msgstr "Identifiant"
 
-#, fuzzy
-#| msgid "Suricate id"
 msgid "Suricate label"
-msgstr "ID Suricate"
+msgstr ""
 
 msgid "Problem magnitudes"
 msgstr "Amplitudes des problèmes"
@@ -114,10 +108,8 @@ msgstr "Amplitudes des problèmes"
 msgid "Attributes"
 msgstr "Informations"
 
-#, fuzzy
-#| msgid "Message"
 msgid "Messages"
-msgstr "Message"
+msgstr "Messages"
 
 msgid "Text"
 msgstr "Texte"
@@ -131,15 +123,11 @@ msgstr "Date"
 msgid "None"
 msgstr ""
 
-#, fuzzy
-#| msgid "Intervention prévue"
 msgid "Intervention"
-msgstr "Intervention prévue"
+msgstr "Intervention"
 
-#, fuzzy
-#| msgid "Add a new feedback"
 msgid "Add a new intervention"
-msgstr "Créer un signalement"
+msgstr "Ajouter une nouvelle intervention"
 
 msgid "Map"
 msgstr ""
@@ -165,10 +153,8 @@ msgstr ""
 msgid "New reports have been imported from Suricate."
 msgstr "De nouveaux signalements ont été importés depuis Suricate."
 
-#, fuzzy
-#| msgid "Please consult your reports in Geotrek-Admin."
 msgid "Please consult your reports Geotrek-Admin."
-msgstr "Consultez vos signalements dans Geotrek-Admin."
+msgstr "Veuillez consulter vos rapports Geotrek-Admin. "
 
 msgid "Data to import from Suricate"
 msgstr "Données à importer depuis Suricate"
@@ -199,36 +185,3 @@ msgstr ""
 "\n"
 "L'équipe Geotrek\n"
 "http://www.geotrek.fr"
-
-#~ msgid "Statuses"
-#~ msgstr "Statuts"
-
-#~ msgid "Link to the report"
-#~ msgstr "Lien vers le signalement"
-
-#~ msgid "Non confirmé par les sentinelles"
-#~ msgstr "Non confirmé par les sentinelles"
-
-#~ msgid "Déposé"
-#~ msgstr "Déposé"
-
-#~ msgid "En cours de traitement"
-#~ msgstr "En cours de traitement"
-
-#~ msgid "Résolu"
-#~ msgstr "Résolu"
-
-#~ msgid "Classé sans suite"
-#~ msgstr "Classé sans suite"
-
-#~ msgid "A transmettre"
-#~ msgstr "A transmettre"
-
-#~ msgid "Nouveau"
-#~ msgstr "Nouveau"
-
-#~ msgid "Affecté"
-#~ msgstr "Affecté"
-
-#~ msgid "Intervention terminée"
-#~ msgstr "Intervention terminée"

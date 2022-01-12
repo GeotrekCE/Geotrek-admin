@@ -204,10 +204,8 @@ msgstr "PDI esclusi"
 msgid "Reservation system"
 msgstr ""
 
-#, fuzzy
-#| msgid "Elevation"
 msgid "Reservation ID"
-msgstr "Elevazione"
+msgstr ""
 
 msgid "Treks"
 msgstr "Itinerari"
@@ -445,10 +443,8 @@ msgstr "Stampa pubblica opuscolo"
 msgid "Print booklet"
 msgstr "Stampa opuscolo"
 
-#, fuzzy
-#| msgid "yes,no"
 msgid "yes"
-msgstr "si, no"
+msgstr "si"
 
 msgid "no"
 msgstr ""
@@ -583,95 +579,3 @@ msgstr ""
 
 msgid "This hike is in the core of the national park"
 msgstr "Questo itinerario si trova nel cuore del Parco Nazionale"
-
-#, fuzzy
-#~| msgid "Common edge"
-#~ msgid "Commands"
-#~ msgstr "Sezione comune"
-
-#, fuzzy
-#~| msgid "Parking location"
-#~ msgid "Missing option"
-#~ msgstr "Parcheggio"
-
-#, fuzzy
-#~| msgid "Confirmation"
-#~ msgid "Repeat for confirmation"
-#~ msgstr "Conferma"
-
-#, fuzzy
-#~| msgid "trek"
-#~ msgid "Geotrek"
-#~ msgstr "itinerario"
-
-#~ msgid "Launch Sync"
-#~ msgstr "Avvio della Sincro"
-
-#~ msgid "Global tiles syncing ..."
-#~ msgstr "Global tiles syncing ..."
-
-#~ msgid "Trek tiles syncing ..."
-#~ msgstr "Trek tiles syncing ..."
-
-#~ msgid "Tiles synced ..."
-#~ msgstr "Tiles synced ..."
-
-#~ msgid "Language"
-#~ msgstr "Lingua"
-
-#~ msgid "Sync ended"
-#~ msgstr "Sincro terminata"
-
-#~ msgid "Is in the midst of the park"
-#~ msgstr "Nel cuore del parco"
-
-#~ msgid "Crosses center of park"
-#~ msgstr "Attraversa il cuore del parco"
-
-#~ msgid "Label"
-#~ msgstr "Label"
-
-#~ msgid "Init sync ..."
-#~ msgstr "Inizio sincro"
-
-#~ msgid "Geotrek Rando"
-#~ msgstr "Geotrek Rando"
-
-#~ msgid ""
-#~ "Geotrek is a web app allowing you to prepare your next trekking trip !"
-#~ msgstr ""
-#~ "Geotrek è un'applicazione web che ti permette di preparare il tuo "
-#~ "prossimo viaggio di escursione !"
-
-#~ msgid "Sync verifications"
-#~ msgstr "Controllo della sincro"
-
-#~ msgid "Sync in progress"
-#~ msgstr "Sincro in corso"
-
-#~ msgid "An error occured"
-#~ msgstr "Si è verificato un errore"
-
-#~ msgid "Public web site sync"
-#~ msgstr "Sincro del sito web pubblico"
-
-#~ msgid "Are you sure you want to sync ?"
-#~ msgstr "Sei sicuro di voler avviare la sincro?"
-
-#~ msgid "%s days"
-#~ msgstr "%s giorni"
-
-#~ msgid "%(hour)s h %(min)s"
-#~ msgstr "%(hour)s h %(min)s"
-
-#~ msgid "%(hour)s h"
-#~ msgstr "%(hour)s h"
-
-#~ msgid "%s min"
-#~ msgstr "%s min"
-
-#~ msgid "Trekking Label"
-#~ msgstr "Etichetta de Itinerario"
-
-#~ msgid "Trekking Labels"
-#~ msgstr "Etichette de Itinerario"

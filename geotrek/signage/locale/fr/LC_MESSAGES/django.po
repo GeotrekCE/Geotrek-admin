@@ -161,6 +161,3 @@ msgstr "Ajouter"
 
 msgid "meters"
 msgstr "mètres"
-
-#~ msgid "Implantation year"
-#~ msgstr "Année d'implantation"

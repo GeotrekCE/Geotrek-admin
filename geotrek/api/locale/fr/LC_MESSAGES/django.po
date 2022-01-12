@@ -263,60 +263,40 @@ msgstr ""
 msgid "Sites"
 msgstr ""
 
-#, fuzzy
-#| msgid ""
-#| "Filter by an outdoor site id. It will only show the contents related to "
-#| "this outdoor site."
 msgid ""
 "Filter by one or multiple site id. It will show only the POIs related to "
 "this outdoor site. If multiple sites, they should be separated by commas."
 msgstr ""
-"Filtrer par l'id d'un site outdoor. Le filtre n'affichera que les contenus "
-"liés à ce site outdoor."
+"Filtrer par un ou plusieurs identifiants de site. Il affichera uniquement"
+"les POI liés à ce site outdoor. S'il s'agit de plusieurs sites, ils doivent être séparés par des virgules."
 
 msgid "Courses"
 msgstr ""
 
-#, fuzzy
-#| msgid ""
-#| "Filter by an outdoor course id. It will only show the contents related to "
-#| "this outdoor course."
 msgid ""
 "Filter by one or multiple Course id. It will show only the POIs related to "
 "this outdoor Course. If multiple courses, they should be separated by commas."
 msgstr ""
-"Filtrer par l'id d'un parcours outdoor. Le filtre n'affichera que les "
-"contenus liés à ce parcours outdoor."
+"Filtrer par un ou plusieurs identifiants de cours. Il n'affichera que les POI"
+"liés à ce parcours outdoor. S'il s'agit de plusieurs cours, ils doivent être séparés par des virgules. "
 
 msgid "Near trek"
 msgstr "Proche de l'itinéraire"
 
-#, fuzzy
-#| msgid ""
-#| "Filter by an outdoor site id. It will only show the contents related to "
-#| "this outdoor site."
 msgid ""
 "Filter by a trek id. It will only show the contents related to this trek."
 msgstr ""
-"Filtrer par l'id d'un site outdoor. Le filtre n'affichera que les contenus "
-"liés à ce site outdoor."
 
-#, fuzzy
-#| msgid "Touristic content types"
 msgid "Near touristic content"
-msgstr "Types de contenu touristique"
+msgstr ""
 
 msgid ""
 "Filter by a touristic content id. It will only show the contents related to "
 "this touristic content."
 msgstr ""
-"Filtrer par l'id d'un contenu touristique. Le filtre n'affichera que les "
-"contenus liés à cet contenu touristique."
 
-#, fuzzy
-#| msgid "Touristic event types"
 msgid "Near touristic event"
-msgstr "Types d'événements touristiques"
+msgstr "Proche du evenement touristique"
 
 msgid ""
 "Filter by a touristic event id. It will only show the contents related to "
@@ -325,10 +305,8 @@ msgstr ""
 "Filtrer par l'id d'un évènement touristique. Le filtre n'affichera que les "
 "contenus liés à cet évènement touristique."
 
-#, fuzzy
-#| msgid "Near trek"
 msgid "Near outdoor site"
-msgstr "Proche de l'itinéraire"
+msgstr "Proche du site outdoor"
 
 msgid ""
 "Filter by an outdoor site id. It will only show the contents related to this "
@@ -378,17 +356,12 @@ msgstr "Catégories"
 msgid "Filter by one or more category id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de catégorie, séparés par des virgules."
 
-#, fuzzy
-#| msgid ""
-#| "Filter by one or more ratings id, comma-separated. Return sites that have "
-#| "theses ratings OR have at least one child site that does."
 msgid ""
 "Filter by one or more types id, comma-separated. Logical OR for types in the "
 "same list, AND for types in different lists."
 msgstr ""
-"Filtrer par un ou plusieurs id de cotation, séparés par des virgules. "
-"Retourne les sites qui ont ces cotations OU des sites enfants avec ces "
-"cotations."
+"Filtrez par un ou plusieurs identifiants de types, séparés par des virgules. OU logique"
+"pour les types dans la même liste, ET pour les types dans des listes différentes. "
 
 msgid "Dates before"
 msgstr ""
@@ -503,10 +476,8 @@ msgstr ""
 "Filtrer par du texte insensible à la casse contenu dans le nom, la "
 "description, le chapeau ou l'ambiance."
 
-#, fuzzy
-#| msgid "Rating scale"
 msgid "Ratings"
-msgstr "Échelle de cotation"
+msgstr "Cotations"
 
 msgid "Filter by one or more ratings id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules."
@@ -532,8 +503,6 @@ msgstr ""
 "Retourne les sites qui ont ces pratiques OU des sites enfants avec ces "
 "pratiques."
 
-#, fuzzy
-#| msgid "Filter by one or more type id, comma-separated."
 msgid "Filter by one or more site type id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
 
@@ -548,10 +517,8 @@ msgstr ""
 "Retourne les sites qui ont ces cotations OU des sites enfants avec ces "
 "cotations."
 
-#, fuzzy
-#| msgid "Filter by one or more type id, comma-separated."
 msgid "Filter by one or more course type id, comma-separated."
-msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
+msgstr "Filtrer par un ou plusieurs id de type de parcours, séparés par des virgules."
 
 msgid "Filter by some case-insensitive text contained in name."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom."
@@ -572,34 +539,18 @@ msgstr ""
 msgid "Targets"
 msgstr ""
 
-#, fuzzy
-#| msgid "Filter by one or more theme id, comma-separated."
 msgid ""
 "Filter by one or more target (all, mobile, hidden or web), comma-separated."
-msgstr "Filtrer par un ou plusieurs id de thème, séparés par des virgules."
+msgstr "Filtrez par une ou plusieurs cibles (toutes, mobiles, masquées ou Web), séparées par des virgules."
 
 msgid "Sources"
 msgstr ""
 
-#, fuzzy
-#| msgid "Filter by one or more route id, comma-separated."
 msgid "Filter by one or more source id, comma-separated."
-msgstr "Filtrer par un ou plusieurs id de parcours, séparés par des virgules."
+msgstr "Filtrez par un ou plusieurs identifiants de source, séparés par des virgules."
 
-#, fuzzy
-#| msgid "Filter by some case-insensitive text contained in name."
 msgid "Filter by some case-insensitive text contained in name or content."
-msgstr "Filtrer par du texte insensible à la casse contenu dans le nom."
+msgstr ""
 
 msgid "External ID"
 msgstr "ID externe"
-
-#~ msgid ""
-#~ "Filter by a trek id. It will show only the touristics contents related to "
-#~ "this trek."
-#~ msgstr ""
-#~ "Filtrer par l'id d'un itinéraire. Le filtre n'affichera que les contenus "
-#~ "touristiques liés à cet itinéraire."
-
-#~ msgid "Filter by one or more types id, comma-separated."
-#~ msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."

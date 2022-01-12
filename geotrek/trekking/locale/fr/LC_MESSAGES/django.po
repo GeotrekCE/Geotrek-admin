@@ -582,35 +582,3 @@ msgstr ""
 
 msgid "This hike is in the core of the national park"
 msgstr "Cet itinéraire est dans le cœur du Parc national"
-
-#, fuzzy
-#~| msgid "Common edge"
-#~ msgid "Commands"
-#~ msgstr "Tronçon commun"
-
-#, fuzzy
-#~| msgid "Parking location"
-#~ msgid "Missing option"
-#~ msgstr "Emplacement parking"
-
-#, fuzzy
-#~| msgid "Where to obtain information"
-#~ msgid "Repeat for confirmation"
-#~ msgstr "Où obtenir des informations"
-
-#, fuzzy
-#~| msgid "trek"
-#~ msgid "Geotrek"
-#~ msgstr "itineraire"
-
-#~ msgid "%s days"
-#~ msgstr "%s jours"
-
-#~ msgid "%(hour)s h %(min)s"
-#~ msgstr "%(hour)s h %(min)s"
-
-#~ msgid "%(hour)s h"
-#~ msgstr "%(hour)s h"
-
-#~ msgid "%s min"
-#~ msgstr "%s min"
