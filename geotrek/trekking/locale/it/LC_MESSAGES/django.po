@@ -190,6 +190,12 @@ msgstr "Rischi, pericolo, periodo migliore, ..."
 msgid "Ratings description"
 msgstr ""
 
+msgid "Equipment"
+msgstr ""
+
+msgid "Equipment needed"
+msgstr ""
+
 msgid "Themes"
 msgstr "Temi"
 
@@ -534,6 +540,9 @@ msgstr "Tutte le informazioni utili"
 
 msgid "Advices"
 msgstr "Consigli"
+
+msgid "Equipments"
+msgstr ""
 
 msgid "Environmental sensitive areas"
 msgstr "Aree di sensibilità ambientale"

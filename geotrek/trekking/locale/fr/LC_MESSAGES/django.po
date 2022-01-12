@@ -188,8 +188,16 @@ msgstr "Recommandations"
 msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
 
+
 msgid "Ratings description"
 msgstr "Description de cotation"
+
+msgid "Equipment"
+msgstr "Équipement"
+
+msgid "Equipment needed"
+msgstr "Équipement nécessaire"
+
 
 msgid "Themes"
 msgstr "Thématiques"
@@ -536,6 +544,9 @@ msgstr "Toutes les infos pratiques"
 
 msgid "Advices"
 msgstr "Recommandations"
+
+msgid "Equipments"
+msgstr "Équipements"
 
 msgid "Environmental sensitive areas"
 msgstr "Zones de sensibilité environnementale"
