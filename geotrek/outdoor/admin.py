@@ -6,20 +6,20 @@ from geotrek.common.mixins import MergeActionMixin
 from geotrek.outdoor.models import Sector, Practice, SiteType, RatingScale, Rating, CourseType
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.admin import TranslationAdmin
+    from modeltranslation.admin import TabbedTranslationAdmin
 else:
-    TranslationAdmin = admin.ModelAdmin
+    TabbedTranslationAdmin = admin.ModelAdmin
 
 
 @admin.register(Sector)
-class SectorAdmin(MergeActionMixin, TranslationAdmin):
+class SectorAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', )
     search_fields = ('name', )
     merge_field = 'name'
 
 
 @admin.register(Practice)
-class PracticeAdmin(MergeActionMixin, TranslationAdmin):
+class PracticeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'sector', 'pictogram_img')
     list_filter = ('sector', )
     search_fields = ('name', )
@@ -27,7 +27,7 @@ class PracticeAdmin(MergeActionMixin, TranslationAdmin):
 
 
 @admin.register(SiteType)
-class SiteTypeAdmin(MergeActionMixin, TranslationAdmin):
+class SiteTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'practice')
     list_filter = ('practice', )
     search_fields = ('name', )
@@ -35,7 +35,7 @@ class SiteTypeAdmin(MergeActionMixin, TranslationAdmin):
 
 
 @admin.register(CourseType)
-class CourseTypeAdmin(MergeActionMixin, TranslationAdmin):
+class CourseTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'practice')
     list_filter = ('practice', )
     search_fields = ('name', )
@@ -43,7 +43,7 @@ class CourseTypeAdmin(MergeActionMixin, TranslationAdmin):
 
 
 @admin.register(RatingScale)
-class RatingScaleAdmin(MergeActionMixin, TranslationAdmin):
+class RatingScaleAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'practice', 'order')
     list_filter = ('practice', )
     search_fields = ('name', )
@@ -51,7 +51,7 @@ class RatingScaleAdmin(MergeActionMixin, TranslationAdmin):
 
 
 @admin.register(Rating)
-class RatingAdmin(MergeActionMixin, TranslationAdmin):
+class RatingAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'scale', 'order', 'color_markup', 'pictogram_img')
     list_filter = ('scale', 'scale__practice')
     search_fields = ('name', 'description', 'scale__name')

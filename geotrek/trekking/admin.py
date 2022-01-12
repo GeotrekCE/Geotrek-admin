@@ -12,36 +12,36 @@ from .models import (
 )
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.admin import TranslationAdmin
+    from modeltranslation.admin import TabbedTranslationAdmin
 else:
-    TranslationAdmin = admin.ModelAdmin
+    TabbedTranslationAdmin = admin.ModelAdmin
 
 
-class POITypeAdmin(MergeActionMixin, TranslationAdmin):
+class POITypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label', 'cirkwi', 'pictogram_img')
     search_fields = ('label',)
     merge_field = 'label'
 
 
-class TrekNetworkAdmin(MergeActionMixin, TranslationAdmin):
+class TrekNetworkAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('network', 'pictogram_img')
     search_fields = ('network',)
     merge_field = 'network'
 
 
-class PracticeAdmin(MergeActionMixin, TranslationAdmin):
+class PracticeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'prefixed_id', 'order', 'cirkwi', 'distance', 'pictogram_img')
     search_fields = ('name',)
     merge_field = 'network'
 
 
-class AccessibilityAdmin(MergeActionMixin, TranslationAdmin):
+class AccessibilityAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'cirkwi', 'pictogram_img')
     search_fields = ('name',)
     merge_field = 'network'
 
 
-class RouteAdmin(MergeActionMixin, TranslationAdmin):
+class RouteAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('route', 'pictogram_img')
     search_fields = ('route',)
     merge_field = 'route'
@@ -59,7 +59,7 @@ class DifficultyLevelForm(forms.ModelForm):
         return self.newid
 
 
-class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
+class DifficultyLevelAdmin(MergeActionMixin, TabbedTranslationAdmin):
     form = DifficultyLevelForm
     list_display = ('id', 'difficulty', 'cirkwi_level', 'cirkwi', 'pictogram_img')
     search_fields = ('difficulty',)
@@ -108,19 +108,19 @@ class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
         return super().response_change(request, obj)
 
 
-class WebLinkAdmin(MergeActionMixin, TranslationAdmin):
+class WebLinkAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'url', )
     search_fields = ('name', 'url', )
     merge_field = 'name'
 
 
-class WebLinkCategoryAdmin(MergeActionMixin, TranslationAdmin):
+class WebLinkCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )
     merge_field = 'label'
 
 
-class ServiceTypeAdmin(MergeActionMixin, TranslationAdmin):
+class ServiceTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'pictogram_img', 'practices_display')
     search_fields = ('name',)
     merge_field = 'name'

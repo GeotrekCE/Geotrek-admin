@@ -9,13 +9,13 @@ from geotrek.common.mixins import MergeActionMixin
 from geotrek.tourism import models as tourism_models
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
+    from modeltranslation.admin import TabbedTranslationAdmin, TranslationTabularInline
 else:
-    TranslationAdmin = admin.ModelAdmin
+    TabbedTranslationAdmin = admin.ModelAdmin
     TranslationTabularInline = admin.TabularInline
 
 
-class InformationDeskTypeAdmin(MergeActionMixin, TranslationAdmin):
+class InformationDeskTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )
     merge_field = 'label'
@@ -24,7 +24,7 @@ class InformationDeskTypeAdmin(MergeActionMixin, TranslationAdmin):
 admin.site.register(tourism_models.InformationDeskType, InformationDeskTypeAdmin)
 
 
-class InformationDeskAdmin(LeafletGeoAdmin, TranslationAdmin):
+class InformationDeskAdmin(LeafletGeoAdmin, TabbedTranslationAdmin):
     list_display = ('name', 'website', 'municipality')
     search_fields = ('name',)
 
@@ -48,7 +48,7 @@ class TouristicContentType2Inline(TranslationTabularInline):
     extra = 0
 
 
-class TouristicContentCategoryAdmin(MergeActionMixin, TranslationAdmin):
+class TouristicContentCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label', 'prefixed_id', 'order', 'pictogram_img', 'type1_label', 'type2_label')
     search_fields = ('label',)
     inlines = [
@@ -62,7 +62,7 @@ if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
 
 
-class TouristicEventTypeAdmin(MergeActionMixin, TranslationAdmin):
+class TouristicEventTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('type', 'pictogram_img')
     search_fields = ('type',)
     merge_field = 'type'
