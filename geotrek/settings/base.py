@@ -131,6 +131,7 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 LOCALE_PATHS = (
     # override locale
     os.path.join(VAR_DIR, 'conf', 'extra_locale'),
+    os.path.join('geotrek', 'locale'),
 )
 
 SITE_ID = 1
