@@ -1,8 +1,10 @@
 from django import forms
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from django.utils.html import format_html
@@ -14,9 +16,17 @@ from .models import (
 )
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
+<<<<<<< HEAD
     from modeltranslation.admin import TabbedTranslationAdmin
 else:
     from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
+=======
+    from modeltranslation.admin import TranslationAdmin, TabbedTranslationAdmin, TranslationTabularInline
+else:
+    TranslationAdmin = admin.ModelAdmin
+    TabbedTranslationAdmin = admin.ModelAdmin
+    TabbedTranslationTabularInline = admin.TabularInline
+>>>>>>> [#2755] Add ratingadmin inline
 
 
 class POITypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
@@ -122,13 +132,6 @@ class WebLinkCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
     merge_field = 'label'
 
 
-class RatingScaleAdmin(MergeActionMixin, TabbedTranslationAdmin):
-    list_display = ('name', 'practice', 'order')
-    list_filter = ('practice', )
-    search_fields = ('name', )
-    merge_field = 'name'
-
-
 class RatingAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'scale', 'order', 'color_markup', 'pictogram_img')
     list_filter = ('scale', 'scale__practice')
@@ -140,6 +143,31 @@ class RatingAdmin(MergeActionMixin, TabbedTranslationAdmin):
             return ''
         return format_html('<span style="color: {code};">⬤</span> {code}', code=obj.color)
     color_markup.short_description = _("Color")
+
+
+class RatingAdminInLine(TranslationTabularInline):
+    model = Rating
+    extra = 0
+    formfield_overrides = {
+        models.TextField: {'widget': widgets.AdminTextareaWidget(
+            attrs={'rows': 1,
+                   'cols': 40,
+                   'style': 'height: 1em;'})},
+    }
+
+    def color_markup(self, obj):
+        if not obj.color:
+            return ''
+        return format_html('<span style="color: {code};">⬤</span> {code}', code=obj.color)
+    color_markup.short_description = _("Color")
+
+
+class RatingScaleAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('name', 'practice', 'order')
+    list_filter = ('practice', )
+    search_fields = ('name', )
+    merge_field = 'name'
+    inlines = [RatingAdminInLine]
 
 
 class ServiceTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
