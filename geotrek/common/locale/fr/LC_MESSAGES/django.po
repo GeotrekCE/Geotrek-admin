@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 11:07+0000\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -18,9 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.1.1\n"
-
-msgid "Merge"
-msgstr "Fusionner"
 
 msgid "content type"
 msgstr "type d'objet"
@@ -49,6 +46,9 @@ msgstr "Données à importer depuis le réseau"
 
 msgid "Import"
 msgstr "Importer"
+
+msgid "Data to import from Suricate"
+msgstr ""
 
 msgid "File"
 msgstr "Fichier"
@@ -135,6 +135,9 @@ msgstr "En attente de publication"
 
 msgid "Pictogram"
 msgstr "Pictogramme"
+
+msgid "Merge"
+msgstr "Fusionner"
 
 msgid "Organism"
 msgstr "Organisme"
@@ -434,6 +437,22 @@ msgstr "Annuler"
 msgid "Sync"
 msgstr "Sync"
 
+#, python-format
+msgid "%s days"
+msgstr ""
+
+#, python-format
+msgid "%(hour)s h %(min)s"
+msgstr ""
+
+#, python-format
+msgid "%(hour)s h"
+msgstr ""
+
+#, python-format
+msgid "%s min"
+msgstr ""
+
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
@@ -455,6 +474,9 @@ msgstr "E"
 msgctxt "West"
 msgid "W"
 msgstr "O"
+
+msgid "Reports"
+msgstr ""
 
 msgid "Any year"
 msgstr "N'importe quelle année"

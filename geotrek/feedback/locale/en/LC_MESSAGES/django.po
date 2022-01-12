@@ -1,0 +1,176 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Feedback"
+msgstr ""
+
+#, python-brace-format
+msgid "Feedback from {email}"
+msgstr ""
+
+msgid "New reports from Suricate"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "Activity"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Problem magnitude"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "Related trek"
+msgstr ""
+
+msgid "Creation date in Suricate"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Locked"
+msgstr ""
+
+msgid "Origin"
+msgstr ""
+
+msgid "Last updated in Suricate"
+msgstr ""
+
+msgid "Report"
+msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+msgid "Add a new feedback"
+msgstr ""
+
+msgid "Treks"
+msgstr ""
+
+msgid "POIs"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid "Interventions"
+msgstr ""
+
+msgid "Suricate id"
+msgstr ""
+
+msgid "Activities"
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "Identifiant"
+msgstr ""
+
+msgid "Suricate label"
+msgstr ""
+
+msgid "Problem magnitudes"
+msgstr ""
+
+msgid "Attributes"
+msgstr ""
+
+msgid "Messages"
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Intervention"
+msgstr ""
+
+msgid "Add a new intervention"
+msgstr ""
+
+msgid "Map"
+msgstr ""
+
+#, python-format
+msgid "%(email)s has sent a feedback."
+msgstr ""
+
+#, python-format
+msgid "Comment : %(comment)s"
+msgstr ""
+
+#, python-format
+msgid ""
+"\n"
+"Lat : %(lat)s / Lon : %(lng)s\n"
+"http://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+msgstr ""
+
+msgid "New reports have been imported from Suricate."
+msgstr ""
+
+msgid "Please consult your reports Geotrek-Admin."
+msgstr ""
+
+msgid "Data to import from Suricate"
+msgstr ""
+
+msgid "Invalid geometry value."
+msgstr ""
+
+msgid "Geotrek : Signal a mistake"
+msgstr ""
+
+msgid ""
+"Hello,\n"
+"\n"
+"We acknowledge receipt of your feedback, thank you for your interest in "
+"Geotrek.\n"
+"\n"
+"Best regards,\n"
+"\n"
+"The Geotrek Team\n"
+"http://www.geotrek.fr"
+msgstr ""

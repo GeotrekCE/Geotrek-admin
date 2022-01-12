@@ -1,0 +1,512 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Medias syncing ..."
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Sync mobile ended"
+msgstr ""
+
+msgid "Launch Sync Mobile"
+msgstr ""
+
+msgid "Init sync ..."
+msgstr ""
+
+msgid "Show all difficulties"
+msgstr ""
+
+msgid "Hide all difficulties"
+msgstr ""
+
+msgid "Show all lengths"
+msgstr ""
+
+msgid "Hide all lengths"
+msgstr ""
+
+msgid "Show all ascents"
+msgstr ""
+
+msgid "Hide all ascents"
+msgstr ""
+
+msgid "Show all districts"
+msgstr ""
+
+msgid "Hide all districts"
+msgstr ""
+
+msgid "Show all cities"
+msgstr ""
+
+msgid "Hide all cities"
+msgstr ""
+
+msgid "Show all accessibilities"
+msgstr ""
+
+msgid "Hide all accessibilities"
+msgstr ""
+
+msgid "Show all practices"
+msgstr ""
+
+msgid "Hide all practices"
+msgstr ""
+
+msgid "Show all durations"
+msgstr ""
+
+msgid "Hide all durations"
+msgstr ""
+
+msgid "Show all themes"
+msgstr ""
+
+msgid "Hide all themes"
+msgstr ""
+
+msgid "Show all routes"
+msgstr ""
+
+msgid "Hide all routes"
+msgstr ""
+
+msgid "Length"
+msgstr ""
+
+msgid "Ascent"
+msgstr ""
+
+msgid "Duration"
+msgstr ""
+
+msgid "Difficulty"
+msgstr ""
+
+msgid "Practice"
+msgstr ""
+
+msgid "Accessibilities"
+msgstr ""
+
+msgid "Route"
+msgstr ""
+
+msgid "Themes"
+msgstr ""
+
+msgid "Networks"
+msgstr ""
+
+msgid "Information Desks Types"
+msgstr ""
+
+msgid "Districts"
+msgstr ""
+
+msgid "Cities"
+msgstr ""
+
+msgid "POI types"
+msgstr ""
+
+msgid "Touristic content types"
+msgstr ""
+
+msgid "Touristic event types"
+msgstr ""
+
+msgid "Sync verifications"
+msgstr ""
+
+msgid "Sync in progress"
+msgstr ""
+
+msgid "An error occured"
+msgstr ""
+
+msgid "Mobile sync"
+msgstr ""
+
+msgid "Confirmation"
+msgstr ""
+
+msgid "Are you sure you want to sync ?"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Sync"
+msgstr ""
+
+msgid ""
+"Set language for translation. Can be all or a two-letters language code."
+msgstr ""
+
+msgid "Fields"
+msgstr ""
+
+msgid ""
+"Limit required fields to increase performances. Example: id,url,geometry."
+msgstr ""
+
+msgid "Omit"
+msgstr ""
+
+msgid "Omit specified fields to increase performance. Example: url,category."
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+msgid "Set output format (json / geojson). Default: json. Example: geojson."
+msgstr ""
+
+msgid "In bbox"
+msgstr ""
+
+msgid ""
+"Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84)."
+"Example: 1.15,46.1,1.56,47.6."
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid "Filter by maximum distance in meters between a point and elements."
+msgstr ""
+
+msgid "Point"
+msgstr ""
+
+msgid "Reference point to compute distance (WGS84). Example: lng,lat."
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid ""
+"Filter by period of occupancy. Month numbers (1-12), comma-separated. any = "
+"occupied at any time in the year. ignore = occupied or not. Example: 7,8 for "
+"july and august."
+msgstr ""
+
+msgid "Practices"
+msgstr ""
+
+msgid "Filter by one or more practice id, comma-separated."
+msgstr ""
+
+msgid "Structures"
+msgstr ""
+
+msgid "Filter by one or more structure id, comma-separated."
+msgstr ""
+
+msgid "Trek"
+msgstr ""
+
+msgid ""
+"Filter by a trek id. It will show only the sensitive areas related to this "
+"trek."
+msgstr ""
+
+msgid "Types"
+msgstr ""
+
+msgid "Filter by one or more type id, comma-separated."
+msgstr ""
+
+msgid "Filter by a trek id. It will show only the POIs related to this trek."
+msgstr ""
+
+msgid "Sites"
+msgstr ""
+
+msgid ""
+"Filter by one or multiple site id. It will show only the POIs related to "
+"this outdoor site. If multiple sites, they should be separated by commas."
+msgstr ""
+
+msgid "Courses"
+msgstr ""
+
+msgid ""
+"Filter by one or multiple Course id. It will show only the POIs related to "
+"this outdoor Course. If multiple courses, they should be separated by commas."
+msgstr ""
+
+msgid "Near trek"
+msgstr ""
+
+msgid ""
+"Filter by a trek id. It will only show the contents related to this trek."
+msgstr ""
+
+msgid "Near touristic content"
+msgstr ""
+
+msgid ""
+"Filter by a touristic content id. It will only show the contents related to "
+"this touristic content."
+msgstr ""
+
+msgid "Near touristic event"
+msgstr ""
+
+msgid ""
+"Filter by a touristic event id. It will only show the contents related to "
+"this touristic event."
+msgstr ""
+
+msgid "Near outdoor site"
+msgstr ""
+
+msgid ""
+"Filter by an outdoor site id. It will only show the contents related to this "
+"outdoor site."
+msgstr ""
+
+msgid "Near outdoor course"
+msgstr ""
+
+msgid ""
+"Filter by an outdoor course id. It will only show the contents related to "
+"this outdoor course."
+msgstr ""
+
+msgid "Filter by one or more city id, comma-separated."
+msgstr ""
+
+msgid "Filter by one or more district id, comma-separated."
+msgstr ""
+
+msgid "Filter by one or more themes id, comma-separated."
+msgstr ""
+
+msgid "Portals"
+msgstr ""
+
+msgid "Filter by one or more portal id, comma-separated."
+msgstr ""
+
+msgid "Query string"
+msgstr ""
+
+msgid ""
+"Filter by some case-insensitive text contained in name, description teaser "
+"or description."
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "Filter by one or more category id, comma-separated."
+msgstr ""
+
+msgid ""
+"Filter by one or more types id, comma-separated. Logical OR for types in the "
+"same list, AND for types in different lists."
+msgstr ""
+
+msgid "Dates before"
+msgstr ""
+
+msgid "Filter events happening before or during date, format YYYY-MM-DD"
+msgstr ""
+
+msgid "Dates after"
+msgstr ""
+
+msgid "Filter events happening after or during date, format YYYY-MM-DD"
+msgstr ""
+
+msgid "Update date after"
+msgstr ""
+
+msgid "Filter objects updated after or during date, format YYYY-MM-DD"
+msgstr ""
+
+msgid "Update date before"
+msgstr ""
+
+msgid "Filter objects updated before or during date, format YYYY-MM-DD"
+msgstr ""
+
+msgid "Create date after"
+msgstr ""
+
+msgid "Filter objects created after or during date, format YYYY-MM-DD"
+msgstr ""
+
+msgid "Create date before"
+msgstr ""
+
+msgid "Filter objects created before or during date, format YYYY-MM-DD"
+msgstr ""
+
+msgid "Duration min"
+msgstr ""
+
+msgid "Filter by minimum duration (hours)."
+msgstr ""
+
+msgid "Duration max"
+msgstr ""
+
+msgid "Filter by maximum duration (hours)."
+msgstr ""
+
+msgid "Length min"
+msgstr ""
+
+msgid "Filter by minimum length (meters)."
+msgstr ""
+
+msgid "Length max"
+msgstr ""
+
+msgid "Filter by maximum length (meters)."
+msgstr ""
+
+msgid "Difficulty min"
+msgstr ""
+
+msgid "Filter by minimum difficulty level (id)."
+msgstr ""
+
+msgid "Difficulty max"
+msgstr ""
+
+msgid "Filter by maximum difficulty level (id)."
+msgstr ""
+
+msgid "Ascent min"
+msgstr ""
+
+msgid "Filter by minimum ascent (meters)."
+msgstr ""
+
+msgid "Ascent max"
+msgstr ""
+
+msgid "Filter by maximum ascent (meters)."
+msgstr ""
+
+msgid "Filter by one or more accessibility id, comma-separated."
+msgstr ""
+
+msgid "Filter by one or more theme id, comma-separated."
+msgstr ""
+
+msgid "Filter by one or more portal id, comma-separateds."
+msgstr ""
+
+msgid "Routes"
+msgstr ""
+
+msgid "Filter by one or more route id, comma-separated."
+msgstr ""
+
+msgid "Labels"
+msgstr ""
+
+msgid "Filter by one or more label id, comma-separated."
+msgstr ""
+
+msgid ""
+"Filter by some case-insensitive text contained in name, description, "
+"description teaser or ambiance."
+msgstr ""
+
+msgid "Ratings"
+msgstr ""
+
+msgid "Filter by one or more ratings id, comma-separated."
+msgstr ""
+
+msgid "Root sites only"
+msgstr ""
+
+msgid ""
+"Only return sites that are at the top of the hierarchy and have no parent. "
+"Use any string to activate."
+msgstr ""
+
+msgid "Practices in hierarchy"
+msgstr ""
+
+msgid ""
+"Filter by one or more practices id, comma-separated. Return sites that have "
+"theses practices OR have at least one child site that does."
+msgstr ""
+
+msgid "Filter by one or more site type id, comma-separated."
+msgstr ""
+
+msgid "Ratings in hierarchy"
+msgstr ""
+
+msgid ""
+"Filter by one or more ratings id, comma-separated. Return sites that have "
+"theses ratings OR have at least one child site that does."
+msgstr ""
+
+msgid "Filter by one or more course type id, comma-separated."
+msgstr ""
+
+msgid "Filter by some case-insensitive text contained in name."
+msgstr ""
+
+msgid "Rating scale"
+msgstr ""
+
+msgid "Filter by a rating scale id."
+msgstr ""
+
+msgid ""
+"Filter by some case-insensitive text contained in name, scale name or "
+"description."
+msgstr ""
+
+msgid "Targets"
+msgstr ""
+
+msgid ""
+"Filter by one or more target (all, mobile, hidden or web), comma-separated."
+msgstr ""
+
+msgid "Sources"
+msgstr ""
+
+msgid "Filter by one or more source id, comma-separated."
+msgstr ""
+
+msgid "Filter by some case-insensitive text contained in name or content."
+msgstr ""
+
+msgid "External ID"
+msgstr ""

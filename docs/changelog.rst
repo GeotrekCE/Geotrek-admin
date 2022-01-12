@@ -5,6 +5,10 @@ CHANGELOG
 2.75.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+* Add translations NL, ES, DE, IT, EN for all apps
+
 
 2.75.0     (2022-01-07)
 -----------------------

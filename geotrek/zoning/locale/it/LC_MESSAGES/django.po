@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Publish (visible on Geotrek-rando)"
+msgstr ""
+
+msgid "Unpublish (hidden on Geotrek-rando)"
+msgstr ""
 
 msgid "Zoning"
 msgstr "Zonazione"
@@ -26,9 +32,6 @@ msgstr "Comune"
 msgid "District"
 msgstr "Secteur"
 
-msgid "Name"
-msgstr "Nome"
-
 msgid "Restricted area type"
 msgstr "Tipo di zonizzazione regolatoria"
 
@@ -38,29 +41,20 @@ msgstr "Zonizzazione normativa"
 msgid "Restricted areas"
 msgstr "Zonizzazione normativa"
 
-msgid "Restricted area edge"
-msgstr "Sezione di zonizzazione normativa"
+msgid "Name"
+msgstr "Nome"
 
-msgid "Restricted area edges"
-msgstr "Sezioni di zonizzazione normativa"
+msgid "Published"
+msgstr ""
+
+msgid "Visible on Geotrek-rando"
+msgstr ""
 
 msgid "Cities"
 msgstr "Comuni"
 
-msgid "City edge"
-msgstr "Sezione comune"
-
-msgid "City edges"
-msgstr "Sezioni comuni"
-
 msgid "Districts"
 msgstr "Settori"
-
-msgid "District edge"
-msgstr "Sezione settoriale"
-
-msgid "District edges"
-msgstr "Sezioni di settore"
 
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"

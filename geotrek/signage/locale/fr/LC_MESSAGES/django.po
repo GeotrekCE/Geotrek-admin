@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 08:00+0000\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: 2015-09-25 17:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -26,6 +26,12 @@ msgstr "Nom"
 
 msgid "Description"
 msgstr "Description"
+
+msgid "Intervention year"
+msgstr "Année d'intervention"
+
+msgid "Trail"
+msgstr ""
 
 msgid "Lines"
 msgstr "Lignes"
@@ -155,9 +161,3 @@ msgstr "Ajouter"
 
 msgid "meters"
 msgstr "mètres"
-
-msgid "Intervention year"
-msgstr "Année d'intervention"
-
-msgid "Implantation year"
-msgstr "Année d'implantation"

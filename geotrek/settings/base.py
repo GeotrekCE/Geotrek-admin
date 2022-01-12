@@ -130,7 +130,9 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
 LOCALE_PATHS = (
     # override locale
+    os.path.join(PROJECT_DIR, 'locale'),
     os.path.join(VAR_DIR, 'conf', 'extra_locale'),
+
 )
 
 SITE_ID = 1

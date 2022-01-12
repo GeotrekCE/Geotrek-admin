@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,20 +20,33 @@ msgstr ""
 msgid "Land"
 msgstr "Statuts"
 
+msgid "Land edge"
+msgstr "Type foncier"
+
+msgid "Physical edge"
+msgstr "Type de voie"
+
+msgid "Competence edge"
+msgstr "Compétence sentiers"
+
+msgid "Signage management edge"
+msgstr "Gestionnaire signalétique"
+
+msgid "Work management edge"
+msgstr "Gestionnaire travaux"
+
 msgid "Status"
 msgstr "Statuts"
 
-msgid "Physical type"
-msgstr "Type de voie"
 
-msgid "Land type"
-msgstr "Type foncier"
-
-msgid "Competence"
-msgstr "Compétence"
+msgid "Statuses"
+msgstr "Statuts"
 
 msgid "Name"
 msgstr "Nom"
+
+msgid "Physical type"
+msgstr "Type de voie"
 
 msgid "Physical types"
 msgstr "Types de voie"
@@ -41,14 +54,14 @@ msgstr "Types de voie"
 msgid "External id"
 msgstr "ID externe"
 
-msgid "Physical edge"
-msgstr "Type de voie"
-
 msgid "Physical edges"
 msgstr "Types de voie"
 
 msgid "Right of way"
 msgstr "Droit de passage"
+
+msgid "Land type"
+msgstr "Type foncier"
 
 msgid "Land types"
 msgstr "Types fonciers"
@@ -59,29 +72,17 @@ msgstr "Propriétaire"
 msgid "Agreement"
 msgstr "Conventionné"
 
-msgid "Land edge"
-msgstr "Type foncier"
-
 msgid "Land edges"
 msgstr "Types fonciers"
 
 msgid "Organism"
 msgstr "Organisme"
 
-msgid "Competence edge"
-msgstr "Compétence sentiers"
-
 msgid "Competence edges"
 msgstr "Compétences sentiers"
 
-msgid "Work management edge"
-msgstr "Gestionnaire travaux"
-
 msgid "Work management edges"
 msgstr "Gestionnaires travaux"
-
-msgid "Signage management edge"
-msgstr "Gestionnaire signalétique"
 
 msgid "Signage management edges"
 msgstr "Gestionnaires signalétique"
@@ -100,6 +101,9 @@ msgstr "Ajouter un gestionnaire travaux"
 
 msgid "Add a new signage management edge"
 msgstr "Ajouter un gestionnaire signalétique"
+
+msgid "Competence"
+msgstr "Compétence"
 
 msgid "Yes"
 msgstr "Oui"

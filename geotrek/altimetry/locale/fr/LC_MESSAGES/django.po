@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: 2015-10-06 12:11+0100\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -53,9 +53,6 @@ msgstr "Afficher/cacher le profile altimétrique"
 msgid "Altitude profile"
 msgstr "Profil altimétrique"
 
-msgid "Elevation"
-msgstr "Altitude"
-
 msgid "Length"
 msgstr "Longueur"
 
@@ -64,3 +61,6 @@ msgstr "3D"
 
 msgid "2D"
 msgstr "2D"
+
+msgid "Elevation"
+msgstr "Altitude"

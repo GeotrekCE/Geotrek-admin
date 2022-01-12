@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -18,114 +18,548 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.8.4\n"
 
+#, python-format
+msgid "Difficulty with id '%s' already exists"
+msgstr ""
 
-msgid "Access"
-msgstr "Acceso por carretera"
+#, python-brace-format
+msgid "Difficulty id {old} was changed to {new} successfully."
+msgstr ""
 
-msgid "Accessibility"
-msgstr "Accesibilidad"
+msgid "Practices"
+msgstr "Pratiche"
 
-msgid "Advices"
-msgstr "Recomendaciones"
-
-msgid "Advised parking"
-msgstr "Parking recomendado"
-
-msgid "All useful information"
-msgstr "Información útil"
-
-msgid "Altimetric profile"
-msgstr "Perfil altimétrico"
-
-msgid "Arrival"
-msgstr "Llegada"
-
-msgid "Attribution"
-msgstr "Créditos de fotos"
-
-msgid "Departure"
-msgstr "Salida"
-
-msgid "Difficulty"
-msgstr "Dificultad"
-
-msgid "Disabled Infrastructure"
-msgstr "Zona para personas con discapacidad"
-
-msgid "Duration"
-msgstr "Duración"
-
-msgid "Information desks"
-msgstr "Puntos de información"
-
-msgid "Length"
-msgstr "Distancia"
-
-msgid "Markings"
-msgstr "Puntos de interés"
-
-msgid "Max elevation"
-msgstr "Altitud máx"
-
-msgid "Min elevation"
-msgstr "Altitud mín"
-
-msgid "On your path..."
-msgstr "En su camino..."
-
-msgid "Powered by geotrek.fr"
-msgstr "Generado por geotrek.fr"
-
-msgid "Practice"
-msgstr "Práctica"
-
-msgid "Source"
-msgstr "Origen"
-
-msgid "Stages"
-msgstr "Etapas"
-
-msgid "The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
-msgstr "El parque nacional es un área natural sin restricciones pero sometido a regulaciones que deben ser conocidas por todos los visitantes."
-
-msgid "Themes"
-msgstr "Temas"
-
-msgid "This hike is in the core of the national park"
-msgstr "Este itinerario está en el corazón del Parque nacional"
-
-msgid "Transports"
-msgstr "Transportes"
+msgid "Trekking"
+msgstr ""
 
 msgid "Trek"
 msgstr "Itinerario"
 
-msgid "Trek ascent"
-msgstr "Desnivel positivo"
-
-msgid "Type"
-msgstr "Tipo"
-
-msgid "Useful information"
-msgstr "Información útil"
-
-msgid "Hike"
-msgstr "Caminata"
-
-msgid "Excluded POIs"
-msgstr "PDI excluidos"
-
-msgid "Trekking Label"
+msgid "Children"
 msgstr ""
 
-msgid "Trekking Labels"
+msgid "Select children in order"
 msgstr ""
 
-msgid "Advice linked to the label"
+msgid "Hidden ordered children"
 msgstr ""
 
-msgid "Description of the label"
+msgid "Main"
+msgstr ""
+
+msgid "Advanced"
+msgstr ""
+
+msgid "Related treks"
+msgstr ""
+
+msgid "Insert service:"
+msgstr ""
+
+msgid "Cannot add children because this trek is itself a child."
+msgstr ""
+
+#, python-brace-format
+msgid "Cannot use parent trek {name} as a child trek."
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Departure"
+msgstr "Salida"
+
+msgid "Departure description"
+msgstr ""
+
+msgid "Arrival"
+msgstr "Llegada"
+
+msgid "Arrival description"
+msgstr ""
+
+msgid "Description teaser"
+msgstr ""
+
+msgid "A brief summary (map pop-ups)"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Complete description"
+msgstr ""
+
+msgid "Ambiance"
+msgstr ""
+
+msgid "Main attraction and interest"
+msgstr ""
+
+msgid "Access"
+msgstr "Acceso por carretera"
+
+msgid "Best way to go"
+msgstr ""
+
+msgid "Disabled infrastructure"
+msgstr ""
+
+msgid "Any specific infrastructure"
+msgstr ""
+
+msgid "Duration"
+msgstr "Duración"
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr ""
+
+msgid "Advised parking"
+msgstr "Parking recomendado"
+
+msgid "Where to park"
+msgstr ""
+
+msgid "Parking location"
+msgstr ""
+
+msgid "Public transport"
+msgstr ""
+
+msgid "Train, bus (see web links)"
+msgstr ""
+
+msgid "Advice"
+msgstr "Recomendacion"
+
+msgid "Risks, danger, best period, ..."
+msgstr ""
+
+msgid "Themes"
+msgstr "Temas"
+
+msgid "Main theme(s)"
+msgstr ""
+
+msgid "Networks"
+msgstr ""
+
+msgid "Hiking networks"
+msgstr ""
+
+msgid "Practice"
+msgstr "Práctica"
+
+msgid "Accessibility"
+msgstr "Accesibilidad"
+
+msgid "Route"
+msgstr ""
+
+msgid "Difficulty"
+msgstr "Dificultad"
+
+msgid "Web links"
+msgstr ""
+
+msgid "External resources"
+msgstr ""
+
+msgid "Connections between treks"
+msgstr ""
+
+msgid "Information desks"
+msgstr "Puntos de información"
+
+msgid "Where to obtain information"
+msgstr ""
+
+msgid "Points of reference"
+msgstr ""
+
+msgid "Source"
+msgstr "Origen"
+
+msgid "Portal"
 msgstr ""
 
 msgid "Labels"
 msgstr ""
+
+msgid "External id"
+msgstr ""
+
+msgid "Second external id"
+msgstr ""
+
+msgid "Excluded POIs"
+msgstr "PDI excluidos"
+
+msgid "Reservation system"
+msgstr ""
+
+msgid "Reservation ID"
+msgstr ""
+
+msgid "Treks"
+msgstr ""
+
+msgid "Formated duration"
+msgstr ""
+
+msgid "Add a new trek"
+msgstr ""
+
+msgid "Cannot use itself as child trek."
+msgstr ""
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "trek"
+msgstr ""
+
+msgid "Sensitive area"
+msgstr ""
+
+msgid "POIs"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid "Signages"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
+
+msgid "Published treks"
+msgstr ""
+
+msgid "Common departure"
+msgstr ""
+
+msgid "Common edge"
+msgstr ""
+
+msgid "Circuit step"
+msgstr ""
+
+msgid "Trek relationship"
+msgstr ""
+
+msgid "Trek relationships"
+msgstr ""
+
+msgid "Path"
+msgstr ""
+
+msgid "Circuit"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Trek network"
+msgstr ""
+
+msgid "Trek networks"
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+
+msgid "Cirkwi locomotion"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+msgid "Alphabetical order if blank"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "Color of the practice, only used in mobile."
+msgstr ""
+
+msgid "Cirkwi tag"
+msgstr ""
+
+msgid "Accessibilities"
+msgstr ""
+
+msgid "Routes"
+msgstr ""
+
+msgid "Difficulty level"
+msgstr ""
+
+msgid "Cirkwi level"
+msgstr ""
+
+msgid "Between 1 and 8"
+msgstr ""
+
+msgid "Difficulty levels"
+msgstr ""
+
+msgid "URL"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Web link"
+msgstr ""
+
+msgid "Web link category"
+msgstr ""
+
+msgid "Web link categories"
+msgstr ""
+
+msgid "History, details,  ..."
+msgstr ""
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "POI"
+msgstr ""
+
+msgid "Published POIs"
+msgstr ""
+
+msgid "Cirkwi POI category"
+msgstr ""
+
+msgid "POI type"
+msgstr ""
+
+msgid "POI types"
+msgstr ""
+
+msgid "Service type"
+msgstr ""
+
+msgid "Service types"
+msgstr ""
+
+msgid "Service"
+msgstr ""
+
+msgid "Published"
+msgstr ""
+
+msgid "Waiting for publication"
+msgstr ""
+
+msgid "Published Services"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be LineString, not "
+"{geom_type}"
+msgstr ""
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "itinerancy"
+msgstr ""
+
+msgid "Itinerancy"
+msgstr ""
+
+msgid "Hike"
+msgstr "Caminata"
+
+msgid "Attributes"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Thumbnail"
+msgstr ""
+
+msgid "Elevation"
+msgstr ""
+
+msgid "Attribution"
+msgstr "Créditos de fotos"
+
+msgid "Powered by http://geotrek.fr"
+msgstr "Generado por geotrek.fr"
+
+msgid ""
+"Your pictures should have the same ratio (height/width) for a better "
+"apparence in public portal."
+msgstr ""
+
+msgid "GPX"
+msgstr ""
+
+msgid "KML"
+msgstr ""
+
+msgid "Public print"
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
+msgid "Public print booklet"
+msgstr ""
+
+msgid "Print booklet"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "Child of:"
+msgstr ""
+
+msgid "Parent of:"
+msgstr ""
+
+msgid "Map"
+msgstr ""
+
+msgid "Add a point of reference"
+msgstr ""
+
+msgid "Move points of reference"
+msgstr ""
+
+msgid "Delete a point of reference"
+msgstr ""
+
+msgid "Set the parking location"
+msgstr ""
+
+msgid "Move the parking location"
+msgstr ""
+
+msgid "Delete the parking location"
+msgstr ""
+
+msgid "Add relation"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "No result"
+msgstr ""
+
+msgid "Choose value(s)"
+msgstr ""
+
+msgid "Powered by geotrek.fr"
+msgstr "Generado por geotrek.fr"
+
+msgid "Useful information"
+msgstr "Información útil"
+
+msgid "Length"
+msgstr "Distancia"
+
+msgid "Trek ascent"
+msgstr "Desnivel positivo"
+
+msgid "Markings"
+msgstr "Puntos de interés"
+
+msgid "Stages"
+msgstr "Etapas"
+
+msgid "On your path..."
+msgstr "En su camino..."
+
+msgid "All useful information"
+msgstr "Información útil"
+
+msgid "Advices"
+msgstr "Recomendaciones"
+
+msgid "Environmental sensitive areas"
+msgstr ""
+
+msgid ""
+"\n"
+"            Along your trek, you will go through sensitive areas related to "
+"the presence of a specific species or\n"
+"            environment. In these areas, an appropriate behaviour allows to "
+"contribute to their preservation. For\n"
+"            detailed information, specific forms are accessible for each "
+"area.\n"
+"          "
+msgstr ""
+
+msgid "Sensitivity period:"
+msgstr ""
+
+msgid "Contact:"
+msgstr ""
+
+msgid "Altimetric profile"
+msgstr "Perfil altimétrico"
+
+msgid "Min elevation"
+msgstr "Altitud mín"
+
+msgid "Max elevation"
+msgstr "Altitud máx"
+
+msgid "Transports"
+msgstr "Transportes"
+
+msgid "Disabled Infrastructure"
+msgstr "Zona para personas con discapacidad"
+
+msgid "Add a new poi"
+msgstr ""
+
+msgid "Add a new service"
+msgstr ""
+
+msgid "Sync"
+msgstr ""
+
+msgid "Add Web link"
+msgstr ""
+
+msgid "Geographical location"
+msgstr ""
+
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
+msgstr ""
+"El parque nacional es un área natural sin restricciones pero sometido a "
+"regulaciones que deben ser conocidas por todos los visitantes."
+
+msgid "This hike is in the core of the national park"
+msgstr "Este itinerario está en el corazón del Parque nacional"

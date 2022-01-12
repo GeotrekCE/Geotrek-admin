@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 11:08+0000\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,9 +19,6 @@ msgstr ""
 
 msgid "Maintenance"
 msgstr "Maintenance"
-
-msgid "Year"
-msgstr "Année"
 
 msgid "Infrastructure"
 msgstr "Aménagement"
@@ -47,8 +44,29 @@ msgstr "Service"
 msgid "Trail"
 msgstr "Sentier"
 
+msgid "Outdoor Course"
+msgstr "Parcours Outdoor"
+
+msgid "Outdoor Site"
+msgstr "Site Outdoor"
+
+msgid "Year"
+msgstr "Année"
+
 msgid "On"
 msgstr "Sur"
+
+msgid "Restricted area type"
+msgstr ""
+
+msgid "Restricted area"
+msgstr ""
+
+msgid "City"
+msgstr ""
+
+msgid "District"
+msgstr ""
 
 msgid "Year of activity"
 msgstr "Année d'activité"
@@ -61,12 +79,6 @@ msgstr "Longueur"
 
 msgid "Project"
 msgstr "Chantier"
-
-msgid "Main"
-msgstr "Basique"
-
-msgid "Advanced"
-msgstr "Avancé"
 
 msgid "Mandays"
 msgstr "Jours-Hommes"
@@ -182,6 +194,9 @@ msgstr "Fonction"
 msgid "Cost"
 msgstr "Coût"
 
+msgid "Active"
+msgstr "Actif"
+
 msgid "Intervention's job"
 msgstr "Fonction"
 
@@ -296,12 +311,6 @@ msgstr "l:"
 msgid "Add"
 msgstr "Ajouter"
 
-msgid "Outdoor Course"
-msgstr "Parcours Outdoor"
-
-msgid "Outdoor Site"
-msgstr "Site Outdoor"
-
 msgid "Remove"
 msgstr "Supprimer"
 
@@ -326,6 +335,3 @@ msgstr "Ajouter un financement"
 
 msgid "No intervention related."
 msgstr "Pas d'intervention liée."
-
-msgid "Active"
-msgstr "Actif"

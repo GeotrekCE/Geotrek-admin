@@ -1,0 +1,356 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Color"
+msgstr ""
+
+msgid "Outdoor"
+msgstr ""
+
+msgid "Sector"
+msgstr ""
+
+msgid "Manager"
+msgstr ""
+
+msgid "Orientation"
+msgstr ""
+
+msgid "Wind"
+msgstr ""
+
+msgid "Children"
+msgstr ""
+
+msgid "Select children in order"
+msgstr ""
+
+msgid "Hidden ordered children"
+msgstr ""
+
+msgid "Cannot add children because this course is itself a child."
+msgstr ""
+
+#, python-brace-format
+msgid "Cannot use parent course {name} as a child course."
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Sectors"
+msgstr ""
+
+msgid "Practice"
+msgstr ""
+
+msgid "Practices"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+msgid "Within a practice. Alphabetical order if blank"
+msgstr ""
+
+msgid "Rating scale"
+msgstr ""
+
+msgid "Rating scales"
+msgstr ""
+
+msgid "Scale"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Alphabetical order if blank"
+msgstr ""
+
+msgid "Rating"
+msgstr ""
+
+msgid "Ratings"
+msgstr ""
+
+msgid "Site type"
+msgstr ""
+
+msgid "Site types"
+msgstr ""
+
+msgid "Course type"
+msgstr ""
+
+msgid "Course types"
+msgstr ""
+
+msgid "↑ N"
+msgstr ""
+
+msgid "↗ NE"
+msgstr ""
+
+msgid "→ E"
+msgstr ""
+
+msgid "↘ SE"
+msgstr ""
+
+msgid "↓ S"
+msgstr ""
+
+msgid "↙ SW"
+msgstr ""
+
+msgid "← W"
+msgstr ""
+
+msgid "↖ NW"
+msgstr ""
+
+msgid "↓ N"
+msgstr ""
+
+msgid "↙ NE"
+msgstr ""
+
+msgid "← E"
+msgstr ""
+
+msgid "↖ SE"
+msgstr ""
+
+msgid "↑ S"
+msgstr ""
+
+msgid "↗ SW"
+msgstr ""
+
+msgid "→ W"
+msgstr ""
+
+msgid "↘ NW"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "Parent"
+msgstr ""
+
+msgid "Complete description"
+msgstr ""
+
+msgid "Description teaser"
+msgstr ""
+
+msgid "A brief summary (map pop-ups)"
+msgstr ""
+
+msgid "Ambiance"
+msgstr ""
+
+msgid "Main attraction and interest"
+msgstr ""
+
+msgid "Advice"
+msgstr ""
+
+msgid "Risks, danger, best period, ..."
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Labels"
+msgstr ""
+
+msgid "Themes"
+msgstr ""
+
+msgid "Main theme(s)"
+msgstr ""
+
+msgid "Information desks"
+msgstr ""
+
+msgid "Where to obtain information"
+msgstr ""
+
+msgid "Portal"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Excluded POIs"
+msgstr ""
+
+msgid "Web links"
+msgstr ""
+
+msgid "External resources"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "External id"
+msgstr ""
+
+msgid "Managers"
+msgstr ""
+
+msgid "Outdoor site"
+msgstr ""
+
+msgid "Outdoor sites"
+msgstr ""
+
+msgid "Add a new outdoor site"
+msgstr ""
+
+msgid "Sites"
+msgstr ""
+
+msgid "Parcours"
+msgstr ""
+
+msgid "Treks"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid "Trails"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
+
+msgid "Signages"
+msgstr ""
+
+msgid "Touristic contents"
+msgstr ""
+
+msgid "Touristic events"
+msgstr ""
+
+msgid "Interventions"
+msgstr ""
+
+msgid "Ratings description"
+msgstr ""
+
+msgid "Gear"
+msgstr ""
+
+msgid "Duration"
+msgstr ""
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr ""
+
+msgid "Equipment"
+msgstr ""
+
+msgid "Height"
+msgstr ""
+
+msgid "Points of reference"
+msgstr ""
+
+msgid "Outdoor course"
+msgstr ""
+
+msgid "Outdoor courses"
+msgstr ""
+
+msgid "Add a new outdoor course"
+msgstr ""
+
+msgid "Courses"
+msgstr ""
+
+msgid "Public print"
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
+msgid "Tree view"
+msgstr ""
+
+msgid "Attributes"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Itinerancy"
+msgstr ""
+
+msgid "Child of:"
+msgstr ""
+
+msgid "Parent of:"
+msgstr ""
+
+msgid "No result"
+msgstr ""
+
+msgid "Choose value(s)"
+msgstr ""
+
+msgid "Powered by geotrek.fr"
+msgstr ""
+
+msgid "Attribution"
+msgstr ""
+
+msgid "Useful information"
+msgstr ""
+
+msgid "Geographical location"
+msgstr ""
+
+msgid "All useful information"
+msgstr ""
+
+msgid "Add a course"
+msgstr ""
+
+msgid "Add a child site"
+msgstr ""
+
+msgid "Add a brother site"
+msgstr ""
+
+msgid "Parents"
+msgstr ""
+
+msgid "Practical info"
+msgstr ""
+
+msgid "Invalid geometry value."
+msgstr ""
