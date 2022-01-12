@@ -16,17 +16,10 @@ from .models import (
 )
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-<<<<<<< HEAD
-    from modeltranslation.admin import TabbedTranslationAdmin
+    from modeltranslation.admin import TabbedTranslationAdmin, TranslationTabularInline
 else:
-    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
-=======
-    from modeltranslation.admin import TranslationAdmin, TabbedTranslationAdmin, TranslationTabularInline
-else:
-    TranslationAdmin = admin.ModelAdmin
+    TranslationTabularInline = admin.TabularInline
     TabbedTranslationAdmin = admin.ModelAdmin
-    TabbedTranslationTabularInline = admin.TabularInline
->>>>>>> [#2755] Add ratingadmin inline
 
 
 class POITypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
