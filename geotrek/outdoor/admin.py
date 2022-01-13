@@ -8,7 +8,7 @@ from geotrek.common.mixins import MergeActionMixin
 from geotrek.outdoor.models import Sector, Practice, SiteType, RatingScale, Rating, CourseType
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.admin import TabbedTranslationAdmin
+    from modeltranslation.admin import TabbedTranslationAdmin, TranslationTabularInline
 else:
     from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin, TabularInline as TranslationTabularInline
 
