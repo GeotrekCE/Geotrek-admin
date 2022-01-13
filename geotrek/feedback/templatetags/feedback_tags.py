@@ -16,6 +16,7 @@ def suricate_management_enabled():
 def enable_report_colors_per_status():
     return settings.ENABLE_REPORT_COLORS_PER_STATUS
 
+
 @register.simple_tag
 def status_ids_and_colors():
     status_ids_and_colors = {
