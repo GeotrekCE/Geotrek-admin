@@ -12,6 +12,7 @@ CHANGELOG
 **Minor improvements**
 
 * Add translations NL, ES, DE, IT, EN for all apps
+* Change admin translations fields, add tab (#2892)
 
 
 2.75.0     (2022-01-07)
