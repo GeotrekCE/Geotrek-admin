@@ -8,10 +8,11 @@ from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun.api import freeze_time
+from geotrek.settings.base import MAPENTITY_CONFIG
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 
 from geotrek.feedback.models import SelectableUser, TimerEvent, WorkflowManager
-from geotrek.feedback.tests.factories import ReportFactory
+from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import SuricateWorkflowTests
 
 
@@ -99,3 +100,28 @@ class TestWorkflowUserModels(TestCase):
         WorkflowManager.objects.create(user=user)
         # We cannot create a manager if there is one
         self.assertIs(ma.has_add_permission(request), False)
+
+
+class TestReportColor(TestCase):
+
+    def setUp(cls):
+        cls.status = ReportStatusFactory(suricate_id='filed', label="Classé sans suite", color="#888888")
+        cls.report = ReportFactory(status=cls.status)
+        cls.report_1 = ReportFactory(status=None)
+
+    @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=True)
+    def test_status_color(self):
+        self.assertEqual(self.report.color, "#888888")
+
+    @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=True)
+    def test_default_color(self):
+        self.assertEqual(self.report_1.color, "#ffff00")
+
+    @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=False)
+    def test_disabled_color(self):
+        self.assertEqual(self.report.color, "#ffff00")
+
+    @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=True)
+    @override_settings(MAPENTITY_CONFIG={})
+    def test_no_default_color(self):
+        self.assertEqual(self.report_1.color, "#ffff00")

@@ -174,9 +174,11 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     @property
     def color(self):
-        yellow = "#ffff00"
-        if self.status is None or self.status.color is None:
-            return yellow
+        default = settings.MAPENTITY_CONFIG.get('MAP_STYLES', {}).get("detail", {}).get("color", None)
+        if not default:
+            default = "#ffff00"
+        if not(settings.ENABLE_REPORT_COLORS_PER_STATUS) or self.status is None or self.status.color is None:
+            return default
         else:
             return self.status.color
 

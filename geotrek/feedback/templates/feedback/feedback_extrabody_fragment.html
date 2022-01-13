@@ -1,10 +1,19 @@
 {% load static feedback_tags %}
 
 {% suricate_management_enabled as suricate_management_enabled %}
-{% if suricate_management_enabled %}
-    <script type="text/javascript" src="{% static "feedback/main.js" %}"></script>
+{% enable_report_colors_per_status as enable_report_colors_per_status %}
+
+{% if suricate_management_enabled or enable_report_colors_per_status %}
     <script type="application/json" id="status_ids_and_colors">
         {% status_ids_and_colors as status_ids_and_colors %}
         {{ status_ids_and_colors|safe }}
     </script>
+{% endif %}
+
+{% if suricate_management_enabled %}
+    <script type="text/javascript" src="{% static "feedback/workflow.js" %}"></script>
+{% endif %}
+
+{% if enable_report_colors_per_status %}
+    <script type="text/javascript" src="{% static "feedback/status_colors.js" %}"></script>
 {% endif %}
