@@ -11,8 +11,7 @@ from geotrek.tourism import models as tourism_models
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin, TranslationTabularInline
 else:
-    TabbedTranslationAdmin = admin.ModelAdmin
-    TranslationTabularInline = admin.TabularInline
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin, TabularInline as TranslationTabularInline
 
 
 class InformationDeskTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):

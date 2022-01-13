@@ -13,7 +13,7 @@ from .models import (
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
 else:
-    TabbedTranslationAdmin = admin.ModelAdmin
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
 
 
 class PracticeAdmin(MergeActionMixin, TabbedTranslationAdmin):

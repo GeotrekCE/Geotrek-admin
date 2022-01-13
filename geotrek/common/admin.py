@@ -7,7 +7,7 @@ from . import models as common_models
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
 else:
-    TabbedTranslationAdmin = admin.ModelAdmin
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
 
 
 class OrganismAdmin(MergeActionMixin, admin.ModelAdmin):
