@@ -12,7 +12,8 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.tests.factories import PathFactory
 from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
 from geotrek.trekking.tests.factories import (POIFactory, TrekFactory,
-                                              TrekWithPOIsFactory, ServiceFactory)
+                                              TrekWithPOIsFactory, ServiceFactory,
+                                              RatingFactory, RatingScaleFactory)
 from geotrek.trekking.models import Trek, OrderedTrekChild
 
 
@@ -462,3 +463,15 @@ class MapImageExtentTest(TestCase):
         self.assertAlmostEqual(lat_min, -5.983856309208769)
         self.assertAlmostEqual(lng_max, 3.001303976720215)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
+
+
+class RatingScaleTest(TestCase):
+    def test_ratingscale_str(self):
+        scale = RatingScaleFactory.create(name='Bar', practice__name='Foo')
+        self.assertEqual(str(scale), 'Bar (Foo)')
+
+
+class RatingTest(TestCase):
+    def test_rating_str(self):
+        scale = RatingFactory.create(name='Bar')
+        self.assertEqual(str(scale), 'Bar')

@@ -1,6 +1,5 @@
 import uuid
 
-from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
@@ -16,7 +15,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import (AddPropertyMixin, OptionalPictogramMixin,
                                    PicturesMixin, PublishableMixin,
                                    TimeStampedModelMixin)
-from geotrek.common.models import Organism
+from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
@@ -64,15 +63,9 @@ class Practice(OptionalPictogramMixin, models.Model):
         return self.name
 
 
-class RatingScale(models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
+class RatingScale(RatingScaleMixin):
     practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"))
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Within a practice. Alphabetical order if blank"))
-
-    def __str__(self):
-        return "{} ({})".format(self.name, self.practice.name)
 
     class Meta:
         verbose_name = _("Rating scale")
@@ -80,17 +73,9 @@ class RatingScale(models.Model):
         ordering = ('practice', 'order', 'name')
 
 
-class Rating(OptionalPictogramMixin, models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
+class Rating(RatingMixin):
     scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
                               verbose_name=_("Scale"))
-    description = models.TextField(verbose_name=_("Description"), blank=True)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Alphabetical order if blank"))
-    color = ColorField(verbose_name=_("Color"), blank=True)
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name = _("Rating")

@@ -5,9 +5,14 @@ CHANGELOG
 2.75.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add ratings, rating scales on trekking
+
 **Minor improvements**
 
 * Add translations NL, ES, DE, IT, EN for all apps
+* Change admin translations fields, add tab (#2892)
 
 
 2.75.0     (2022-01-07)

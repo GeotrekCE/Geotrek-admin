@@ -1,20 +1,24 @@
 from django import forms
 from django.conf import settings
-from django.db import transaction
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
+from django.contrib.admin import widgets
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+from django.utils.html import format_html
 
 from geotrek.common.mixins import MergeActionMixin
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
-    WebLink, WebLinkCategory, Trek, ServiceType
+    WebLink, WebLinkCategory, Trek, ServiceType, Rating, RatingScale
 )
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.admin import TabbedTranslationAdmin
+    from modeltranslation.admin import TabbedTranslationAdmin, TranslationTabularInline
 else:
-    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin, TabularInline as TranslationTabularInline
 
 
 class POITypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
@@ -120,6 +124,38 @@ class WebLinkCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
     merge_field = 'label'
 
 
+class RatingAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('name', 'scale', 'order', 'color_markup', 'pictogram_img')
+    list_filter = ('scale', 'scale__practice')
+    search_fields = ('name', 'description', 'scale__name')
+    merge_field = 'name'
+
+    def color_markup(self, obj):
+        if not obj.color:
+            return ''
+        return format_html('<span style="color: {code};">⬤</span> {code}', code=obj.color)
+    color_markup.short_description = _("Color")
+
+
+class RatingAdminInLine(TranslationTabularInline):
+    model = Rating
+    extra = 1   # We need one extra to generate Tabbed Translation Tabular inline
+    formfield_overrides = {
+        models.TextField: {'widget': widgets.AdminTextareaWidget(
+            attrs={'rows': 1,
+                   'cols': 40,
+                   'style': 'height: 1em;'})},
+    }
+
+
+class RatingScaleAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('name', 'practice', 'order')
+    list_filter = ('practice', )
+    search_fields = ('name', )
+    merge_field = 'name'
+    inlines = [RatingAdminInLine]
+
+
 class ServiceTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'pictogram_img', 'practices_display')
     search_fields = ('name',)
@@ -141,6 +177,8 @@ trek_admin_to_register = [
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
     (ServiceType, ServiceTypeAdmin),
+    (Rating, RatingAdmin),
+    (RatingScale, RatingScaleAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

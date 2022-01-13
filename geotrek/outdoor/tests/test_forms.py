@@ -22,6 +22,21 @@ class SiteFormTest(TestCase):
         form.save()
         self.assertQuerysetEqual(site.ratings.all(), ['<Rating: Rating>'])
 
+    def test_ratings_clean(self):
+        user = UserFactory()
+        rating = RatingFactory()
+        other_rating = RatingFactory()
+        site = SiteFactory(practice=rating.scale.practice)
+        form = SiteForm(user=user, instance=site, data={
+            'name_en': 'Site',
+            'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
+            'practice': str(rating.scale.practice.pk),
+            'rating_scale_{}'.format(other_rating.scale.pk): [str(other_rating.pk)],
+        })
+        self.assertFalse(form.is_valid())
+        with self.assertRaisesRegex(ValidationError, 'One of the rating scale use is not part of the practice chosen'):
+            form.clean()
+
 
 class CourseFormTest(TestCase):
     @classmethod
@@ -82,6 +97,21 @@ class CourseFormTest(TestCase):
         self.assertTrue(form.is_valid())
         created = form.save()
         self.assertIsNone(created.points_reference)
+
+    def test_ratings_clean(self):
+        user = UserFactory()
+        rating = RatingFactory()
+        other_rating = RatingFactory()
+        site = SiteFactory(practice=rating.scale.practice)
+        form = SiteForm(user=user, instance=site, data={
+            'name_en': 'Site',
+            'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
+            'practice': str(rating.scale.practice.pk),
+            f'rating_scale_{other_rating.scale.pk}': [str(other_rating.pk)],
+        })
+        self.assertFalse(form.is_valid())
+        with self.assertRaisesRegex(ValidationError, 'One of the rating scale use is not part of the practice chosen'):
+            form.clean()
 
 
 class CourseItinerancyTestCase(TestCase):

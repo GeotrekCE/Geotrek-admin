@@ -1,6 +1,7 @@
 import os
 import uuid
 
+from colorfield.fields import ColorField
 from PIL import Image
 from django.conf import settings
 from django.db import models
@@ -151,3 +152,29 @@ class Label(OptionalPictogramMixin):
 
     def __str__(self):
         return self.name
+
+
+class RatingScaleMixin(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Within a practice. Alphabetical order if blank"))
+
+    def __str__(self):
+        return "{} ({})".format(self.name, self.practice.name)
+
+    class Meta:
+        abstract = True
+
+
+class RatingMixin(OptionalPictogramMixin, models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    description = models.TextField(verbose_name=_("Description"), blank=True)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Alphabetical order if blank"))
+    color = ColorField(verbose_name=_("Color"), blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True

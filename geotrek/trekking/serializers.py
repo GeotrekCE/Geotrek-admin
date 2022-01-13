@@ -224,7 +224,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'disabled_infrastructure', 'parking_location', 'relationships',
                   'points_reference', 'gpx', 'kml', 'source', 'portal',
                   'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
-                  'children', 'parents', 'previous', 'next') + \
+                  'children', 'parents', 'previous', 'next', 'ratings', 'ratings_description') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
