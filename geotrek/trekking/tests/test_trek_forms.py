@@ -1,3 +1,4 @@
+import json
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -25,7 +26,7 @@ class TrekFormTest(TestCase):
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            data['topology'] = f'{"paths": [{self.path.pk}]}'
+            data['topology'] = json.dumps({"paths": [self.path.pk]})
         else:
             data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
 
@@ -41,7 +42,7 @@ class TrekFormTest(TestCase):
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            data['topology'] = f'{"paths": [{self.path.pk}]}'
+            data['topology'] = json.dumps({"paths": [self.path.pk]})
         else:
             data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
 
@@ -59,7 +60,7 @@ class TrekFormTest(TestCase):
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            data['topology'] = f'{"paths": [{self.path.pk}]}'
+            data['topology'] = json.dumps({"paths": [self.path.pk]})
 
         else:
             data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
