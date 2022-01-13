@@ -58,7 +58,7 @@ class SiteForm(CommonForm):
             ratings = None
             if self.instance.pk:
                 ratings = self.instance.ratings.filter(scale=scale)
-            fieldname = 'rating_scale_{}'.format(scale.pk)
+            fieldname = f'rating_scale_{scale.pk}'
             self.fields[fieldname] = forms.ModelMultipleChoiceField(
                 label=scale.name,
                 queryset=scale.ratings.all(),
@@ -72,6 +72,17 @@ class SiteForm(CommonForm):
         else:
             self.fieldslayout[0].remove('pois_excluded')
 
+    def clean(self):
+        cleaned_data = super().clean()
+        practice = self.cleaned_data['practice']
+        for scale in RatingScale.objects.all():
+            if self.cleaned_data.get(f'rating_scale_{scale.pk}'):
+                try:
+                    practice.rating_scales.get(pk=scale.pk)
+                except RatingScale.DoesNotExist:
+                    raise ValidationError(_("One of the rating scale use is not part of the practice chosen"))
+        return cleaned_data
+
     def save(self, *args, **kwargs):
         site = super().save(self, *args, **kwargs)
 
@@ -81,7 +92,7 @@ class SiteForm(CommonForm):
             to_remove = list(field.exclude(scale__practice=site.practice).values_list('pk', flat=True))
             to_add = []
             for scale in site.practice.rating_scales.all():
-                ratings = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
+                ratings = self.cleaned_data.get(f'rating_scale_{scale.pk}')
                 needs_removal = field.filter(scale=scale)
                 if ratings is not None:
                     for rating in ratings:
@@ -142,7 +153,7 @@ class CourseForm(CommonForm):
             ratings = None
             if self.instance.pk and self.instance.parent_sites.exists() and self.instance.parent_sites.first().practice:
                 ratings = self.instance.ratings.filter(scale=scale)
-            fieldname = 'rating_scale_{}'.format(scale.pk)
+            fieldname = f'rating_scale_{scale.pk}'
             self.fields[fieldname] = forms.ModelChoiceField(
                 label=scale.name,
                 queryset=scale.ratings.all(),
@@ -179,7 +190,7 @@ class CourseForm(CommonForm):
             raise ValidationError(_("Cannot add children because this course is itself a child."))
         for child in children:
             if child.course_children.exists():
-                raise ValidationError(_("Cannot use parent course {name} as a child course.".format(name=child.name)))
+                raise ValidationError(_(f"Cannot use parent course {child.name} as a child course."))
         return children
 
     def save(self, *args, **kwargs):
@@ -190,7 +201,7 @@ class CourseForm(CommonForm):
             to_remove = list(course.ratings.exclude(scale__practice=course.parent_sites.first().practice).values_list('pk', flat=True))
             to_add = []
             for scale in course.parent_sites.first().practice.rating_scales.all():
-                rating = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
+                rating = self.cleaned_data.get(f'rating_scale_{scale.pk}')
                 needs_removal = course.parent_sites.first().ratings.filter(scale=scale)
                 if rating:
                     needs_removal = needs_removal.exclude(pk=rating.pk)

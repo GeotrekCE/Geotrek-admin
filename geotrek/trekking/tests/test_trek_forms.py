@@ -22,11 +22,10 @@ class TrekFormTest(TestCase):
             'name_en': 'Trek',
             'practice': str(self.rating.scale.practice.pk),
             'rating_scale_{}'.format(self.rating.scale.pk): [str(self.rating.pk)],
-            'topology': '{"paths": [%s]}' % self.path.pk
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            data['topology'] = '{"paths": [%s]}' % self.path.pk
+            data['topology'] = f'{"paths": [{self.path.pk}]}'
         else:
             data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
 
@@ -39,11 +38,10 @@ class TrekFormTest(TestCase):
         data = {
             'name_en': 'Trek',
             'practice': str(self.rating.scale.practice.pk),
-            'topology': '{"paths": [%s]}' % self.path.pk
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            data['topology'] = '{"paths": [%s]}' % self.path.pk
+            data['topology'] = f'{"paths": [{self.path.pk}]}'
         else:
             data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
 
@@ -51,6 +49,26 @@ class TrekFormTest(TestCase):
         self.assertTrue(form.is_valid())
         form.save()
         self.assertQuerysetEqual(self.trek.ratings.all(), [])
+
+    def test_ratings_clean(self):
+        other_rating = RatingFactory()
+        data = {
+            'name_en': 'Trek',
+            'practice': str(self.rating.scale.practice.pk),
+            f'rating_scale_{other_rating.scale.pk}': [str(other_rating.pk)],
+        }
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            data['topology'] = f'{"paths": [{self.path.pk}]}'
+
+        else:
+            data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+
+        form = TrekForm(user=self.user, instance=self.trek, data=data)
+
+        self.assertFalse(form.is_valid())
+        with self.assertRaisesRegex(ValidationError, 'One of the rating scale used is not part of the practice chosen'):
+            form.clean()
 
 
 class TrekItinerancyTestCase(TestCase):

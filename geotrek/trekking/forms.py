@@ -164,9 +164,8 @@ class TrekForm(BaseTrekForm):
         self.fieldslayout[0][1][0].append(HTML(
             '<div class="controls">{}{}</div>'.format(
                 _('Insert service:'),
-                ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(
-                    url=t.pictogram.url, name=t.name)
-                    for t in ServiceType.objects.all()])))
+                ''.join([f'<a class="servicetype" data-url="{t.pictogram.url}" data-name={t.name}">'
+                         f'<img src="{t.pictogram.url}"></a>' for t in ServiceType.objects.all()])))
         )
         super().__init__(*args, **kwargs)
         if self.fields.get('structure'):
@@ -203,7 +202,7 @@ class TrekForm(BaseTrekForm):
             ratings = None
             if self.instance.pk:
                 ratings = self.instance.ratings.filter(scale=scale)
-            fieldname = 'rating_scale_{}'.format(scale.pk)
+            fieldname = f'rating_scale_{scale.pk}'
             self.fields[fieldname] = forms.ModelMultipleChoiceField(
                 label=scale.name,
                 queryset=scale.ratings.all(),
@@ -217,6 +216,17 @@ class TrekForm(BaseTrekForm):
         else:
             self.fieldslayout[0][1][1].remove('pois_excluded')
 
+    def clean(self):
+        cleaned_data = super().clean()
+        practice = self.cleaned_data['practice']
+        for scale in RatingScale.objects.all():
+            if self.cleaned_data.get(f'rating_scale_{scale.pk}'):
+                try:
+                    practice.rating_scales.get(pk=scale.pk)
+                except RatingScale.DoesNotExist:
+                    raise ValidationError(_("One of the rating scale used is not part of the practice chosen"))
+        return cleaned_data
+
     def clean_children_trek(self):
         """
         Check the trek is not parent and child at the same time
@@ -226,7 +236,7 @@ class TrekForm(BaseTrekForm):
             raise ValidationError(_("Cannot add children because this trek is itself a child."))
         for child in children:
             if child.trek_children.exists():
-                raise ValidationError(_("Cannot use parent trek {name} as a child trek.".format(name=child.name)))
+                raise ValidationError(_(f"Cannot use parent trek {child.name} as a child trek."))
         return children
 
     def save(self, *args, **kwargs):
@@ -243,7 +253,7 @@ class TrekForm(BaseTrekForm):
                 to_remove = list(field.exclude(scale__practice=return_value.practice).values_list('pk', flat=True))
                 to_add = []
                 for scale in return_value.practice.rating_scales.all():
-                    ratings = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
+                    ratings = self.cleaned_data.get(f'rating_scale_{scale.pk}')
                     needs_removal = field.filter(scale=scale)
                     if ratings is not None:
                         for rating in ratings:
@@ -391,7 +401,7 @@ class WebLinkCreateFormPopup(TranslatedModelForm):
         # Main form layout
         # Adds every name field explicitly (name_fr, name_en, ...)
         self.helper.form_class = 'form-horizontal'
-        arg_list = ['name_{0}'.format(language[0]) for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        arg_list = [f'name_{language[0]}' for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         arg_list += ['url', 'category', FormActions(
             HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
             Submit('save_changes', _('Create'), css_class="btn-primary"),
