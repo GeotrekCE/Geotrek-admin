@@ -60,19 +60,13 @@ class RatingAdmin(MergeActionMixin, TabbedTranslationAdmin):
 
 class RatingAdminInLine(TranslationTabularInline):
     model = Rating
-    extra = 0
+    extra = 1  # We need one extra to generate Tabbed Translation Tabular inline
     formfield_overrides = {
         models.TextField: {'widget': widgets.AdminTextareaWidget(
             attrs={'rows': 1,
                    'cols': 40,
                    'style': 'height: 1em;'})},
     }
-
-    def color_markup(self, obj):
-        if not obj.color:
-            return ''
-        return format_html('<span style="color: {code};">⬤</span> {code}', code=obj.color)
-    color_markup.short_description = _("Color")
 
 
 @admin.register(RatingScale)
