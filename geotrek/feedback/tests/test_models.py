@@ -8,7 +8,6 @@ from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun.api import freeze_time
-from geotrek.settings.base import MAPENTITY_CONFIG
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 
 from geotrek.feedback.models import SelectableUser, TimerEvent, WorkflowManager
