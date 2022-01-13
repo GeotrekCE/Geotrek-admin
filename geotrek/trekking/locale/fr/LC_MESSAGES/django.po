@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 11:08+0000\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -569,22 +569,6 @@ msgstr "Sync"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
-
-#, python-format
-msgid "%s days"
-msgstr "%s jours"
-
-#, python-format
-msgid "%(hour)s h %(min)s"
-msgstr "%(hour)s h %(min)s"
-
-#, python-format
-msgid "%(hour)s h"
-msgstr "%(hour)s h"
-
-#, python-format
-msgid "%s min"
-msgstr "%s min"
 
 msgid "Geographical location"
 msgstr "Situation géographique"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-04 16:09+0100\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -57,7 +57,9 @@ msgid "Insert service:"
 msgstr "Inserisci servizio:"
 
 msgid "Cannot add children because this trek is itself a child."
-msgstr "Non si possono aggiungere i bambini perché questo itinerario è esso stesso un bambino"
+msgstr ""
+"Non si possono aggiungere i bambini perché questo itinerario è esso stesso "
+"un bambino"
 
 #, python-brace-format
 msgid "Cannot use parent trek {name} as a child trek."
@@ -69,24 +71,6 @@ msgstr "Annulla"
 
 msgid "Create"
 msgstr "Creare"
-
-msgid "Launch Sync"
-msgstr "Avvio della Sincro"
-
-msgid "Global tiles syncing ..."
-msgstr "Global tiles syncing ..."
-
-msgid "Trek tiles syncing ..."
-msgstr "Trek tiles syncing ..."
-
-msgid "Tiles synced ..."
-msgstr "Tiles synced ..."
-
-msgid "Language"
-msgstr "Lingua"
-
-msgid "Sync ended"
-msgstr "Sincro terminata"
 
 msgid "Departure"
 msgstr "Partenza"
@@ -135,12 +119,6 @@ msgstr "Durata"
 
 msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr "In ore (1.5 = 1 h 30, 24 = 1 giorno, 48 = 2 giornate)"
-
-msgid "Is in the midst of the park"
-msgstr "Nel cuore del parco"
-
-msgid "Crosses center of park"
-msgstr "Attraversa il cuore del parco"
 
 msgid "Advised parking"
 msgstr "Parcheggio consigliato"
@@ -211,6 +189,9 @@ msgstr "Fonte"
 msgid "Portal"
 msgstr "Portale"
 
+msgid "Labels"
+msgstr "Etichette"
+
 msgid "External id"
 msgstr "Id esterno"
 
@@ -219,6 +200,12 @@ msgstr "Secondo id esterno"
 
 msgid "Excluded POIs"
 msgstr "PDI esclusi"
+
+msgid "Reservation system"
+msgstr ""
+
+msgid "Reservation ID"
+msgstr ""
 
 msgid "Treks"
 msgstr "Itinerari"
@@ -301,6 +288,12 @@ msgstr "Ordine"
 msgid "Alphabetical order if blank"
 msgstr "Ordine alfabetico se vuoto"
 
+msgid "Color"
+msgstr ""
+
+msgid "Color of the practice, only used in mobile."
+msgstr ""
+
 msgid "Cirkwi tag"
 msgstr "Cirkwi tag"
 
@@ -330,9 +323,6 @@ msgstr "Categoria"
 
 msgid "Web link"
 msgstr "Link web"
-
-msgid "Label"
-msgstr "Label"
 
 msgid "Web link category"
 msgstr "Categoria di link web"
@@ -383,7 +373,8 @@ msgstr "Pubblicato"
 msgid ""
 "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
-"Valore errato '{val}' per il campo {src}. Dovrebbe essere come '2h30', '2,5' o '2.5'"
+"Valore errato '{val}' per il campo {src}. Dovrebbe essere come '2h30', '2,5' "
+"o '2.5'"
 
 #, python-brace-format
 msgid ""
@@ -396,8 +387,8 @@ msgid ""
 "Invalid geometry type for field '{src}'. Should be LineString, not "
 "{geom_type}"
 msgstr ""
-"Tipo di geometria non valida per il campo '{src}'. Dovrebbe essere LineString, non "
-"{geom_type}"
+"Tipo di geometria non valida per il campo '{src}'. Dovrebbe essere "
+"LineString, non {geom_type}"
 
 #. Translators: This is a slug (without space, accent or special char)
 msgid "itinerancy"
@@ -408,27 +399,6 @@ msgstr "itinerari a tappe"
 
 msgid "Hike"
 msgstr "Escursione"
-
-msgid "Init sync ..."
-msgstr "Inizio sincro"
-
-msgid "Geotrek Rando"
-msgstr "Geotrek Rando"
-
-msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
-msgstr "Geotrek è un'applicazione web che ti permette di preparare il tuo prossimo viaggio di escursione !"
-
-msgid "Public print"
-msgstr "Stampa pubblica"
-
-msgid "Public print booklet"
-msgstr "Stampa pubblica opuscolo"
-
-msgid "Print"
-msgstr "Stampa"
-
-msgid "Print booklet"
-msgstr "Stampa opuscolo"
 
 msgid "Attributes"
 msgstr "Attributi"
@@ -449,32 +419,11 @@ msgid "Powered by http://geotrek.fr"
 msgstr "Alimentato da http://geotrek.fr"
 
 msgid ""
-"Your pictures should have the same ratio (height/width) for "
-"a better apparence in public portal."
+"Your pictures should have the same ratio (height/width) for a better "
+"apparence in public portal."
 msgstr ""
 "Le tue immagini dovrebbero avere lo stesso rapporto (altezza/larghezza) per "
 "una migliore apparenza nel portale pubblico."
-
-msgid "Sync verifications"
-msgstr "Controllo della sincro"
-
-msgid "Sync in progress"
-msgstr "Sincro in corso"
-
-msgid "An error occured"
-msgstr "Si è verificato un errore"
-
-msgid "Public web site sync"
-msgstr "Sincro del sito web pubblico"
-
-msgid "Confirmation"
-msgstr "Conferma"
-
-msgid "Are you sure you want to sync ?"
-msgstr "Sei sicuro di voler avviare la sincro?"
-
-msgid "Sync"
-msgstr "Sincro"
 
 msgid "GPX"
 msgstr "GPX"
@@ -482,8 +431,23 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
-msgid "yes,no"
-msgstr "si, no"
+msgid "Public print"
+msgstr "Stampa pubblica"
+
+msgid "Print"
+msgstr "Stampa"
+
+msgid "Public print booklet"
+msgstr "Stampa pubblica opuscolo"
+
+msgid "Print booklet"
+msgstr "Stampa opuscolo"
+
+msgid "yes"
+msgstr "si"
+
+msgid "no"
+msgstr ""
 
 msgid "Child of:"
 msgstr "Bambino di:"
@@ -548,16 +512,6 @@ msgstr "Sulla tua strada..."
 msgid "All useful information"
 msgstr "Tutte le informazioni utili"
 
-msgid "This hike is in the core of the national park"
-msgstr "Questo itinerario si trova nel cuore del Parco Nazionale"
-
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
-msgstr ""
-"Il Parco Nazionale è un territorio naturale, aperto a tutti, ma soggetto ad un "
-"regolamento che è utile conoscere per preparare il vostro soggiorno."
-
 msgid "Advices"
 msgstr "Consigli"
 
@@ -575,11 +529,10 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"Lungo il vostro itinerario, attraverserete aree di sensibilità "
-"legate alla presenza di una particolare specie o ambiente. In questi settori, "
-"un comportamento adeguato contribuisce a preservarli. Per "
-"informazioni più dettagliate, sono disponibili schede specifiche per "
-"ogni area."
+"Lungo il vostro itinerario, attraverserete aree di sensibilità legate alla "
+"presenza di una particolare specie o ambiente. In questi settori, un "
+"comportamento adeguato contribuisce a preservarli. Per informazioni più "
+"dettagliate, sono disponibili schede specifiche per ogni area."
 
 msgid "Sensitivity period:"
 msgstr "Periodo di sensibilità:"
@@ -608,39 +561,21 @@ msgstr "Aggiungere un nuovo pdi"
 msgid "Add a new service"
 msgstr "Aggiungere un nuovo servizio"
 
+msgid "Sync"
+msgstr "Sincro"
+
 msgid "Add Web link"
 msgstr "Aggiungi link Web"
-
-#, python-format
-msgid "%s days"
-msgstr "%s giorni"
-
-#, python-format
-msgid "%(hour)s h %(min)s"
-msgstr "%(hour)s h %(min)s"
-
-#, python-format
-msgid "%(hour)s h"
-msgstr "%(hour)s h"
-
-#, python-format
-msgid "%s min"
-msgstr "%s min"
 
 msgid "Geographical location"
 msgstr "Posizione geografica"
 
-msgid "Trekking Label"
-msgstr "Etichetta de Itinerario"
-
-msgid "Trekking Labels"
-msgstr "Etichette de Itinerario"
-
-msgid "Advice linked to the label"
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
 msgstr ""
+"Il Parco Nazionale è un territorio naturale, aperto a tutti, ma soggetto ad "
+"un regolamento che è utile conoscere per preparare il vostro soggiorno."
 
-msgid "Description of the label"
-msgstr ""
-
-msgid "Labels"
-msgstr "Etichette"
+msgid "This hike is in the core of the national park"
+msgstr "Questo itinerario si trova nel cuore del Parco Nazionale"

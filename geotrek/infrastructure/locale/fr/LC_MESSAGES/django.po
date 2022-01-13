@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: 2020-04-22 07:48+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/infrastructure/fr/>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
+"admin/infrastructure/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,8 +28,20 @@ msgstr "Nom"
 msgid "Description"
 msgstr "Description"
 
+msgid "Intervention year"
+msgstr "Année d'intervention"
+
 msgid "Category"
 msgstr "Catégorie"
+
+msgid "Trail"
+msgstr ""
+
+msgid "Maintenance difficulty"
+msgstr "Niveau des interventions"
+
+msgid "Usage difficulty"
+msgstr "Niveau des usagers"
 
 msgid "Implantation year"
 msgstr "Année d'implantation"
@@ -52,6 +64,15 @@ msgstr "Etat d'aménagement"
 msgid "Infrastructure Conditions"
 msgstr "Etats d'aménagement"
 
+msgid "Label"
+msgstr ""
+
+msgid "Maintenance difficulty levels"
+msgstr "Niveaux des interventions"
+
+msgid "Usage difficulty levels"
+msgstr "Niveaux des usagers"
+
 msgid "Reference, code, ..."
 msgstr "Référence, code, ..."
 
@@ -73,6 +94,12 @@ msgstr "Communes"
 msgid "Type"
 msgstr "Type"
 
+msgid "Danger level of infrastructure maintenance"
+msgstr "Niveau de dangerosité des interventions d'entretien"
+
+msgid "Danger level of end users' infrastructure usage"
+msgstr "Niveau de dangerosité de l'aménagement pour les usagers"
+
 msgid "Infrastructures"
 msgstr "Aménagements"
 
@@ -87,24 +114,3 @@ msgstr "Aucun(e)"
 
 msgid "Add a new infrastructure"
 msgstr "Ajouter un aménagement"
-
-msgid "Intervention year"
-msgstr "Année d'intervention"
-
-msgid "Usage difficulty"
-msgstr "Niveau des usagers"
-
-msgid "Usage difficulty levels"
-msgstr "Niveaux des usagers"
-
-msgid "Maintenance difficulty"
-msgstr "Niveau des interventions"
-
-msgid "Maintenance difficulty levels"
-msgstr "Niveaux des interventions"
-
-msgid "Danger level of infrastructure maintenance"
-msgstr "Niveau de dangerosité des interventions d'entretien"
-
-msgid "Danger level of end users' infrastructure usage"
-msgstr "Niveau de dangerosité de l'aménagement pour les usagers"

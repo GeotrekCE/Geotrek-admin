@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-25 16:40+0200\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -24,7 +24,8 @@ msgstr "Ein Problem mit der id %s existiert bereits"
 
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
-msgstr "Die ID der Schwierigkeit wurde erfolgreich von {old} auf {new} geändert."
+msgstr ""
+"Die ID der Schwierigkeit wurde erfolgreich von {old} auf {new} geändert."
 
 msgid "Practices"
 msgstr "Praktik"
@@ -58,7 +59,8 @@ msgstr "Fügen Sie einen Service ein:"
 
 msgid "Cannot add children because this trek is itself a child."
 msgstr ""
-"Es ist nicht möglich, Kinder hinzuzufügen, da diese Route selbst ein Kind ist."
+"Es ist nicht möglich, Kinder hinzuzufügen, da diese Route selbst ein Kind "
+"ist."
 
 #, python-brace-format
 msgid "Cannot use parent trek {name} as a child trek."
@@ -70,24 +72,6 @@ msgstr "Stornieren"
 
 msgid "Create"
 msgstr "Schaffen"
-
-msgid "Launch Sync"
-msgstr "Synchro starten"
-
-msgid "Global tiles syncing ..."
-msgstr "Synchro der globalen Kacheln..."
-
-msgid "Trek tiles syncing ..."
-msgstr "Synchro der Wanderfliesen..."
-
-msgid "Tiles synced ..."
-msgstr "Synchronisierte Kacheln..."
-
-msgid "Language"
-msgstr "Sprache"
-
-msgid "Sync ended"
-msgstr "Synchro abgeschlossen"
 
 msgid "Departure"
 msgstr "Abreise"
@@ -136,12 +120,6 @@ msgstr "Dauer"
 
 msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr "In Stunden (1.5 = 1 h 30, 24 = 1 Tag, 48 = 2 Tage)"
-
-msgid "Is in the midst of the park"
-msgstr "Im Herzen des Parks"
-
-msgid "Crosses center of park"
-msgstr "Durchquert das Herz des Parks"
 
 msgid "Advised parking"
 msgstr "Empfohlener Parkplatz"
@@ -212,11 +190,23 @@ msgstr "Quelle"
 msgid "Portal"
 msgstr "Portal-Portal"
 
+msgid "Labels"
+msgstr ""
+
 msgid "External id"
 msgstr "Externe Id"
 
 msgid "Second external id"
 msgstr "Zweite externe ID"
+
+msgid "Excluded POIs"
+msgstr "Ausgeschlossene POI"
+
+msgid "Reservation system"
+msgstr ""
+
+msgid "Reservation ID"
+msgstr "ID reservation"
 
 msgid "Treks"
 msgstr "Route"
@@ -240,8 +230,14 @@ msgstr "Empfindlicher Bereich"
 msgid "POIs"
 msgstr "POIs"
 
-msgid "services"
+msgid "Services"
 msgstr "Dienstleistungen"
+
+msgid "Signages"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
 
 msgid "Published treks"
 msgstr "Publizierte Routen"
@@ -282,8 +278,8 @@ msgstr "Länge"
 msgid ""
 "Touristic contents and events will associate within this distance (meters)"
 msgstr ""
-"Touristische Inhalte und Veranstaltungen werden entsprechend dieser Entfernung zugeordnet."
-"(meter)"
+"Touristische Inhalte und Veranstaltungen werden entsprechend dieser "
+"Entfernung zugeordnet.(meter)"
 
 msgid "Cirkwi locomotion"
 msgstr "Locomotion Cirkwi"
@@ -293,6 +289,12 @@ msgstr "Ordnung"
 
 msgid "Alphabetical order if blank"
 msgstr "Alphabetische Reihenfolge, wenn leer"
+
+msgid "Color"
+msgstr ""
+
+msgid "Color of the practice, only used in mobile."
+msgstr ""
 
 msgid "Cirkwi tag"
 msgstr "Cirkwi Tag"
@@ -323,9 +325,6 @@ msgstr "Kategorie"
 
 msgid "Web link"
 msgstr "Weblink"
-
-msgid "Label"
-msgstr "Label"
 
 msgid "Web link category"
 msgstr "Weblink-Kategorie"
@@ -363,9 +362,6 @@ msgstr "Arten von Dienstleistungen"
 msgid "Service"
 msgstr "Dienstleistung"
 
-msgid "Services"
-msgstr "Dienstleistungen"
-
 msgid "Published"
 msgstr "Publiziert"
 
@@ -394,8 +390,8 @@ msgid ""
 "Invalid geometry type for field '{src}'. Should be LineString, not "
 "{geom_type}"
 msgstr ""
-"Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte sein "
-"LineString, nicht {geom_type}"
+"Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte sein LineString, "
+"nicht {geom_type}"
 
 #. Translators: This is a slug (without space, accent or special char)
 msgid "itinerancy"
@@ -404,21 +400,8 @@ msgstr "Roaming"
 msgid "Itinerancy"
 msgstr "Roaming"
 
-msgid "Init sync ..."
-msgstr "Synchrostart"
-
-msgid "Geotrek Rando"
-msgstr "Geotrek Rando"
-
-msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
-msgstr ""
-"Geotrek ist eine Web-App, mit der Sie Ihre Wanderungen im Voraus vorbereiten können!"
-
-msgid "Public print"
-msgstr "Öffentliches Drucken"
-
-msgid "Print"
-msgstr "Druck"
+msgid "Hike"
+msgstr "Wander"
 
 msgid "Attributes"
 msgstr "Informationen"
@@ -439,32 +422,11 @@ msgid "Powered by http://geotrek.fr"
 msgstr "Unterstützt von http://geotrek.fr"
 
 msgid ""
-"Your pictures should have the same ratio (height/width) for "
-"a better apparence in public portal."
+"Your pictures should have the same ratio (height/width) for a better "
+"apparence in public portal."
 msgstr ""
-"Ihre Bilder müssen das gleiche Verhältnis (Höhe/Breite) haben, "
-"um besser in das öffentliche Portal integriert werden zu können."
-
-msgid "Sync verifications"
-msgstr "Synchro-Check"
-
-msgid "Sync in progress"
-msgstr "Synchro läuft"
-
-msgid "An error occured"
-msgstr "Ein Fehler ist aufgetreten"
-
-msgid "Public web site sync"
-msgstr "Synchro der öffentlichen Website"
-
-msgid "Confirmation"
-msgstr "Bestätigung"
-
-msgid "Are you sure you want to sync ?"
-msgstr "Sind Sie sicher, dass Sie die Synchro starten möchten?"
-
-msgid "Sync"
-msgstr "Sync"
+"Ihre Bilder müssen das gleiche Verhältnis (Höhe/Breite) haben, um besser in "
+"das öffentliche Portal integriert werden zu können."
 
 msgid "GPX"
 msgstr "GPX"
@@ -472,8 +434,23 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
-msgid "yes,no"
-msgstr "ja,nein"
+msgid "Public print"
+msgstr "Öffentliches Drucken"
+
+msgid "Print"
+msgstr "Druck"
+
+msgid "Public print booklet"
+msgstr ""
+
+msgid "Print booklet"
+msgstr ""
+
+msgid "yes"
+msgstr "ja"
+
+msgid "no"
+msgstr ""
 
 msgid "Child of:"
 msgstr "Kind von:"
@@ -538,16 +515,6 @@ msgstr "Auf dem Weg..."
 msgid "All useful information"
 msgstr "Alle praktischen Informationen"
 
-msgid "This hike is in the core of the national park"
-msgstr "Diese Wanderung befindet sich im Herzen des Nationalparks."
-
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
-msgstr ""
-"Der Nationalpark ist ein natürliches Gebiet, das für alle zugänglich ist, aber "
-"Vorschriften unterliegt, die zur Vorbereitung Ihres Aufenthalts nützlich sind."
-
 msgid "Advices"
 msgstr "Empfehlungen"
 
@@ -565,10 +532,10 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"Auf Ihrer Reiseroute durchqueren Sie Gebiete mit hoher Empfindlichkeit, "
-"die mit dem Vorhandensein einer bestimmten Art oder Umgebung zusammenhängen."
-"In diesen Bereichen hilft ein angepasstes Verhalten, sie zu erhalten."
-"Für detailliertere Informationen stehen für jeden Bereich spezifische Blätter "
+"Auf Ihrer Reiseroute durchqueren Sie Gebiete mit hoher Empfindlichkeit, die "
+"mit dem Vorhandensein einer bestimmten Art oder Umgebung zusammenhängen.In "
+"diesen Bereichen hilft ein angepasstes Verhalten, sie zu erhalten.Für "
+"detailliertere Informationen stehen für jeden Bereich spezifische Blätter "
 "zur Verfügung."
 
 msgid "Sensitivity period:"
@@ -592,73 +559,28 @@ msgstr "Transporte"
 msgid "Disabled Infrastructure"
 msgstr "Behindertengerechte Einrichtungen"
 
-msgid ""
-"This hike is in the core of the national park > The national park is an "
-"unrestricted natural area but subjected to regulations which must be known "
-"by all visitors."
-msgstr ""
-"Diese Reiseroute befindet sich im Herzen des Nationalparks > Der Nationalpark ist ein "
-"natürliches Gebiet, das für alle zugänglich ist, aber den Vorschriften unterliegt, "
-"die Sie zur Vorbereitung Ihres Aufenthalts kennen sollten."
-
-msgid "On the way..."
-msgstr "Auf dem Weg..."
-
-msgid "Related Treks"
-msgstr "Zugehörige Routen"
-
-msgid ""
-"To check the practicability of the hiking paths and to know more about the "
-"National park, please visit us or call us at"
-msgstr ""
-"Um die Nutzbarkeit der Wege zu überprüfen und mehr über die Entdeckung "
-"des Gebietes zu erfahren, fragen Sie bitte vorab nach"
-
 msgid "Add a new poi"
 msgstr "Hinzufügen eine POI"
 
 msgid "Add a new service"
 msgstr "Einen Dienst hinzufügen"
 
+msgid "Sync"
+msgstr "Sync"
+
 msgid "Add Web link"
 msgstr "Weblink hinzufügen"
-
-#, python-format
-msgid "%s days"
-msgstr "%s Tage"
-
-#, python-format
-msgid "%(hour)s h %(min)s"
-msgstr "%(hour)s h %(min)s"
-
-#, python-format
-msgid "%(hour)s h"
-msgstr "%(hour)s h"
-
-#, python-format
-msgid "%s min"
-msgstr "%s min"
 
 msgid "Geographical location"
 msgstr "Geographische Lage"
 
-msgid "Hike"
-msgstr "Wander"
-
-msgid "Excluded POIs"
-msgstr "Ausgeschlossene POI"
-
-msgid "Trekking Label"
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
 msgstr ""
+"Der Nationalpark ist ein natürliches Gebiet, das für alle zugänglich ist, "
+"aber Vorschriften unterliegt, die zur Vorbereitung Ihres Aufenthalts "
+"nützlich sind."
 
-msgid "Trekking Labels"
-msgstr ""
-
-msgid "Advice linked to the label"
-msgstr ""
-
-msgid "Description of the label"
-msgstr ""
-
-msgid "Labels"
-msgstr ""
+msgid "This hike is in the core of the national park"
+msgstr "Diese Wanderung befindet sich im Herzen des Nationalparks."

@@ -5,6 +5,7 @@ CHANGELOG
 2.75.0+dev (XXXX-XX-XX)
 -----------------------
 
+
 **Maintenance**
 
 - Update to mapentity 7.1.0
@@ -13,6 +14,11 @@ CHANGELOG
 **Changes**
 
 - All rich text fields are updated according new TinyMCE theme.
+
+**Minor improvements**
+
+* Add translations NL, ES, DE, IT, EN for all apps
+
 
 
 2.75.0     (2022-01-07)
