@@ -5,6 +5,15 @@ CHANGELOG
 2.75.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Maintenance**
+
+- Update to mapentity 7.1.0
+- Update to django-tinymce 3.4.0 and TinyMCE 5.10.1
+
+**Changes**
+
+- All rich text fields are updated according new TinyMCE theme.
+
 
 2.75.0     (2022-01-07)
 -----------------------
