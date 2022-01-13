@@ -39,13 +39,13 @@ admin.site.register(tourism_models.InformationDesk, InformationDeskAdmin)
 class TouristicContentType1Inline(TranslationTabularInline):
     model = tourism_models.TouristicContentType1
     readonly_fields = ('in_list',)
-    extra = 0
+    extra = 1
 
 
 class TouristicContentType2Inline(TranslationTabularInline):
     model = tourism_models.TouristicContentType2
     readonly_fields = ('in_list',)
-    extra = 0
+    extra = 1
 
 
 class TouristicContentCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
