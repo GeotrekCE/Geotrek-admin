@@ -11,8 +11,14 @@ CHANGELOG
 
 **Minor improvements**
 
-* Add translations NL, ES, DE, IT, EN for all apps
-* Change admin translations fields, add tab (#2892)
+- Add translations NL, ES, DE, IT, EN for all apps
+- Change admin translations fields, add tab (#2892)
+- All rich text fields are updated according new TinyMCE theme.
+
+**Maintenance**
+
+- Update to mapentity 7.1.0
+- Update to django-tinymce 3.4.0 and TinyMCE 5.10.1
 
 
 2.75.0     (2022-01-07)

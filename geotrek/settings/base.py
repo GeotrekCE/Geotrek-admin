@@ -641,6 +641,9 @@ MOBILE_DURATION_INTERVALS = [
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
+    "toolbar": "bold italic forecolor | bullist numlist link media | "
+               "undo redo | "
+               "removeformat | code",
 }
 
 SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
