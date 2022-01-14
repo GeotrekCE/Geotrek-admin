@@ -139,6 +139,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                               help_text=_("Risks, danger, best period, ..."))
     ratings = models.ManyToManyField(Rating, related_name='sites', blank=True)
     ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
+    equipment = models.TextField(verbose_name=_("Equipment"), blank=True,
+                                 help_text=_("Equipment needed, adviced ..."))
     themes = models.ManyToManyField(Theme, related_name="treks", blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks", blank=True, verbose_name=_("Networks"),

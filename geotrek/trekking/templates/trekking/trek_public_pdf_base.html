@@ -223,6 +223,17 @@
           <div class="advice-content">{{ object.advice | safe }}</div>
         </div>
       {% endif %}
+      {% if object.equipment %}
+        <div class="equipment">
+          <div class="equipment-title">
+            <div class="equipment-icon">
+              <img src="file://{{ STATIC_ROOT }}/trekking/equipment.svg">
+            </div>
+            {% trans "Equipments" %}
+          </div>
+          <div class="equipment-content">{{ object.equipment | safe }}</div>
+        </div>
+      {% endif %}
       {% if object.published_sensitive_areas %}
         <section class="block sensitive-areas">
           <h2>{% trans "Environmental sensitive areas" %}</h2>
