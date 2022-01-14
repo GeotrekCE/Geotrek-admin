@@ -30,12 +30,12 @@ logger = logging.getLogger(__name__)
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
     'filed': ['classified', 'waiting'],
-    'intervention_solved': ['resolved']
+    'solved_intervention': ['resolved']
 }
 
 STATUS_WHEN_REPORT_IS_LATE = {
-    'waiting': 'intervention_late',
-    'programmed': 'resolution_late',
+    'waiting': 'late_intervention',
+    'programmed': 'late_resolution',
 }
 
 

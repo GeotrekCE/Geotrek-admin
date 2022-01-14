@@ -64,7 +64,7 @@ class TestTimerEventClass(SuricateWorkflowTests):
         self.event1.notify_if_needed()
         self.assertTrue(self.event1.notification_sent)
         # Assert report status changed to late
-        self.assertEqual(self.waiting_report.status, self.intervention_late_status)
+        self.assertEqual(self.waiting_report.status, self.late_intervention_status)
 
     @freeze_time("2099-07-04")
     def test_command_clears_obsolete_events(self):

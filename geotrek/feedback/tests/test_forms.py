@@ -28,7 +28,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         super().setUp()
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
-        cls.intervention_solved_report = ReportFactory(status=cls.intervention_solved_status, uid=uuid.uuid4())
+        cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uid=uuid.uuid4())
         cls.client.login(username="Admiin", password="drowssap")
 
     @test_for_report_and_basic_modes
@@ -199,7 +199,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.is_valid()
         form.save()
         # Assert report changes status and manager is notified
-        self.assertEqual(self.interv_report.status.suricate_id, "intervention_solved")
+        self.assertEqual(self.interv_report.status.suricate_id, "solved_intervention")
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(mail.outbox[-1].subject, "Geotrek - Un Signalement est à clôturer")
         self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])
@@ -235,26 +235,26 @@ class TestSuricateForms(SuricateWorkflowTests):
             'status': self.resolved_status.pk,
             'message_sentinel': "Your message"
         }
-        form = ReportForm(instance=self.intervention_solved_report, data=data)
+        form = ReportForm(instance=self.solved_intervention_report, data=data)
         form.save()
         # Assert report status changes
-        self.assertEquals(self.intervention_solved_report.status.suricate_id, "resolved")
+        self.assertEquals(self.solved_intervention_report.status.suricate_id, "resolved")
         # Assert data forwarded to Suricate
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.intervention_solved_report.uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.uid)).encode()
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.intervention_solved_report.uid, 'message': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.intervention_solved_report.uid, 'statut': 'resolved', 'txt_changestatut': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'statut': 'resolved', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.intervention_solved_report.uid}&check={check}",
+            f"http://suricate.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.uid}&check={check}",
             auth=('', '')
         )

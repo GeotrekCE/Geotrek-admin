@@ -152,7 +152,7 @@ class InterventionForm(CommonForm):
                 TimerEvent.objects.create(step=programmed_status, report=target)
             # If this is an intervention being resolved for a report, change report status and notify
             elif 'status' in self.changed_data and self.instance.status.pk == 3:
-                resolved_status = ReportStatus.objects.get(suricate_id='intervention_solved')
+                resolved_status = ReportStatus.objects.get(suricate_id='solved_intervention')
                 target.status = resolved_status
                 target.save()
                 WorkflowManager.objects.first().notify(target)

@@ -16,9 +16,9 @@ SURICATE_MANAGEMENT_WORKFLOW = {
     'classified': ['classified'],
     'waiting': ['waiting'],
     'programmed': ['programmed'],
-    'resolution_late': ['resolution_late'],
-    'intervention_late': ['intervention_late'],
-    'intervention_solved': ['resolved', 'intervention_solved'],
+    'late_resolution': ['late_resolution'],
+    'late_intervention': ['late_intervention'],
+    'solved_intervention': ['resolved', 'solved_intervention'],
     'resolved': ['resolved']
 }
 
@@ -112,6 +112,6 @@ class ReportForm(CommonForm):
             if 'status' in self.changed_data or 'assigned_user' in self.changed_data:
                 msg = self.cleaned_data.get('message_sentinel', "")
                 report.send_notifications_on_status_change(self.old_status_id, msg)
-            if 'status' in self.changed_data and self.old_status_id == 'intervention_solved':
+            if 'status' in self.changed_data and self.old_status_id == 'solved_intervention':
                 report.unlock_in_suricate()
         return report

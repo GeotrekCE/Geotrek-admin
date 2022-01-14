@@ -15,7 +15,7 @@
             "label": "Intervention en retard",
             "label_en": "Late intervention",
             "label_fr": "Intervention en retard",
-            "suricate_id": "intervention_late",
+            "suricate_id": "late_intervention",
             "color": "#CC0000"
         }
     },
@@ -25,7 +25,7 @@
             "label": "R\u00e9solution en retard",
             "label_en": "Late resolution",
             "label_fr": "R\u00e9solution en retard",
-            "suricate_id": "resolution_late",
+            "suricate_id": "late_resolution",
             "color": "#CC0000"
         }
     },
@@ -35,7 +35,7 @@
             "label": "Intervention termin\u00e9e",
             "label_en": "Resolved intervention",
             "label_fr": "Intervention termin\u00e9e",
-            "suricate_id": "intervention_solved",
+            "suricate_id": "solved_intervention",
             "color": "#4285F4"
         }
     },
