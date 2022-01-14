@@ -1,453 +1,1533 @@
 [
-    {
-        "pk": 1,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-patrimony.png",
-            "label": "Small patrimony",
-            "label_en": "Small patrimony",
-            "label_fr": "Petit patrimoine",
-            "cirkwi": 22
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-flora.png",
-            "label": "Flora",
-            "label_en": "Flora",
-            "label_fr": "Flore",
-            "cirkwi": 23
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-fauna.png",
-            "label": "Fauna",
-            "label_en": "Fauna",
-            "label_fr": "Faune",
-            "cirkwi": 23
-        }
-    },
-    {
-        "pk": 4,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-panorama.png",
-            "label": "Panorama",
-            "label_en": "Panorama",
-            "label_fr": "Point de vue",
-            "cirkwi": 21
-        }
-    },
-    {
-        "pk": 5,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-refuge.png",
-            "label": "Refuge",
-            "label_en": "Refuge",
-            "label_fr": "Refuge",
-            "cirkwi": 8
-        }
-    },
-    {
-        "pk": 6,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-lake.png",
-            "label": "Lake",
-            "label_en": "Lake",
-            "label_fr": "Lac",
-            "cirkwi": 26
-        }
-    },
-    {
-        "pk": 7,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-peak.png",
-            "label": "Peak",
-            "label_en": "Peak",
-            "label_fr": "Sommet",
-            "cirkwi": 21
-        }
-    },
-    {
-        "pk": 8,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-geology.png",
-            "label": "Geology",
-            "label_en": "Geology",
-            "label_fr": "G\u00e9ologie",
-            "cirkwi": null
-        }
-    },
-    {
-        "pk": 9,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-archeology.png",
-            "label": "Arch\u00e9ologie",
-            "label_fr": "Arch\u00e9ologie",
-            "cirkwi": 18
-        }
-    },
-    {
-        "pk": 10,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-history.png",
-            "label": "Histoire",
-            "label_fr": "Histoire",
-            "cirkwi": 18
-        }
-    },
-    {
-        "pk": 11,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-architecture.png",
-            "label": "Architecture",
-            "label_fr": "Architecture",
-            "cirkwi": 16
-        }
-    },
-    {
-        "pk": 12,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-glacier.png",
-            "label": "Glacier",
-            "label_fr": "Glacier",
-            "cirkwi": null
-        }
-    },
-    {
-        "pk": 13,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-knowhow.png",
-            "label": "Savoir-faire",
-            "label_fr": "Savoir-faire",
-            "cirkwi": null
-        }
-    },
-    {
-        "pk": 14,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-pastoral.png",
-            "label": "Pastoralisme",
-            "label_fr": "Pastoralisme",
-            "cirkwi": null
-        }
-    },
-    {
-        "pk": 15,
-        "model": "trekking.poitype",
-        "fields": {
-            "pictogram": "upload/poi-pass.png",
-            "label": "Col",
-            "label_fr": "Col",
-            "cirkwi": 31
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.treknetwork",
-        "fields": {
-            "network": "PR",
-            "pictogram": "upload/network-PR.svg",
-            "network_fr": "PR"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.treknetwork",
-        "fields": {
-            "network": "GRP",
-            "pictogram": "upload/network-GRP.svg",
-            "network_fr": "GRP"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "trekking.treknetwork",
-        "fields": {
-            "network": "VTT",
-            "pictogram": "upload/network-VTT.svg",
-            "network_fr": "VTT"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "trekking.treknetwork",
-        "fields": {
-            "network": "Piste \u00e9questre",
-            "pictogram": "upload/network-horse.svg",
-            "network_fr": "Piste \u00e9questre"
-        }
-    },
-    {
-        "pk": 6,
-        "model": "trekking.treknetwork",
-        "fields": {
-            "network": "GR",
-            "pictogram": "upload/network-GR.svg",
-            "network_fr": "GR"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "trekking.practice",
-        "fields": {
-            "name_fr": "VTT",
-            "name": "Mountain Bike",
-            "pictogram": "upload/practice-mountainbike.svg",
-            "cirkwi": 3,
-            "name_en": "Mountain Bike"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.practice",
-        "fields": {
-            "name_fr": "V\u00e9lo",
-            "name": "Cycling",
-            "pictogram": "upload/practice-bike.svg",
-            "cirkwi": 14,
-            "name_en": "Cycling"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.practice",
-        "fields": {
-            "name_fr": "Cheval",
-            "name": "Horse",
-            "pictogram": "upload/practice-horse.svg",
-            "cirkwi": 4,
-            "name_en": "Horse"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "trekking.practice",
-        "fields": {
-            "name": "P\u00e9destre",
-            "pictogram": "upload/practice-foot.svg",
-            "cirkwi": 1
-        }
-    },
-    {
-        "pk": 1,
-        "model": "trekking.accessibility",
-        "fields": {
-            "name_fr": "Fauteuil roulant",
-            "name": "Fauteuil roulant",
-            "pictogram": "upload/accessibility-wheelchair.png",
-            "cirkwi": 9
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.accessibility",
-        "fields": {
-            "name_fr": "Poussette",
-            "name": "Poussette",
-            "pictogram": "upload/accessibility-troller.png",
-            "cirkwi": 1
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.accessibility",
-        "fields": {
-            "name_fr": "Joelette",
-            "name": "Joelette",
-            "pictogram": "upload/accessibility-joelette.png",
-            "cirkwi": null
-        }
-    },
-    {
-        "pk": 1,
-        "model": "trekking.route",
-        "fields": {
-            "pictogram": "upload/route-loop.svg",
-            "route_fr": "Boucle",
-            "route_en": "Loop",
-            "route": "Boucle"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.route",
-        "fields": {
-            "pictogram": "upload/route-return.svg",
-            "route_fr": "Aller-retour",
-            "route_en": "Round trip",
-            "route": "Aller-retour"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.route",
-        "fields": {
-            "pictogram": "upload/route-cross.svg",
-            "route_fr": "Travers\u00e9e",
-            "route_en": "Crossing",
-            "route": "Travers\u00e9e"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "trekking.difficultylevel",
-        "fields": {
-            "pictogram": "upload/difficulty-1.svg",
-            "cirkwi_level": 1,
-            "difficulty_en": "Very easy",
-            "cirkwi": 5,
-            "difficulty": "Very easy",
-            "difficulty_fr": "Très facile"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.difficultylevel",
-        "fields": {
-            "pictogram": "upload/difficulty-2.svg",
-            "cirkwi_level": 2,
-            "difficulty_en": "Easy",
-            "cirkwi": 12,
-            "difficulty": "Easy",
-            "difficulty_fr": "Facile"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.difficultylevel",
-        "fields": {
-            "pictogram": "upload/difficulty-3.svg",
-            "cirkwi_level": 3,
-            "difficulty_en": "Medium",
-            "cirkwi": 12,
-            "difficulty": "Medium",
-            "difficulty_fr": "Intermédiaire"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "trekking.difficultylevel",
-        "fields": {
-            "pictogram": "upload/difficulty-4.svg",
-            "cirkwi_level": 4,
-            "difficulty_en": "Hard",
-            "cirkwi": 11,
-            "difficulty": "Hard",
-            "difficulty_fr": "Difficile"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "trekking.difficultylevel",
-        "fields": {
-            "pictogram": "upload/difficulty-5.svg",
-            "cirkwi_level": 5,
-            "difficulty_en": "Very hard",
-            "cirkwi": 16,
-            "difficulty": "Very hard",
-            "difficulty_fr": "Très difficile"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "trekking.weblinkcategory",
-        "fields": {
-            "pictogram": "upload/weblink-refuge.png",
-            "label": "Refugee",
-            "label_en": "Refugee",
-            "label_fr": "Refuge"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.weblinkcategory",
-        "fields": {
-            "pictogram": "upload/weblink-map.png",
-            "label": "Map",
-            "label_en": "Map",
-            "label_fr": "Carte"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "trekking.weblinkcategory",
-        "fields": {
-            "pictogram": "upload/weblink-bus.png",
-            "label": "Bus",
-            "label_en": "Bus",
-            "label_fr": "Bus"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "trekking.weblinkcategory",
-        "fields": {
-            "pictogram": "upload/weblink-book.png",
-            "label": "A lire",
-            "label_fr": "A lire"
-        }
-    },
-    {
-        "pk": 5,
-        "model": "trekking.weblinkcategory",
-        "fields": {
-            "pictogram": "upload/weblink-tourism.png",
-            "label": "Information touristique",
-            "label_fr": "Information touristique"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "trekking.servicetype",
-        "fields": {
-            "name_fr": "Eau potable",
-            "name": "Drinking water",
-            "review": false,
-            "pictogram": "upload/drinking_water.svg",
-            "practices": [
-                1,
-                2,
-                3,
-                4
-            ],
-            "published": true,
-            "publication_date": null,
-            "name_en": "Drinking water"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "trekking.servicetype",
-        "fields": {
-            "name_fr": "Descente pentue",
-            "name": "Steep descent",
-            "review": false,
-            "pictogram": "upload/steep_descent.svg",
-            "practices": [
-                1,
-                2,
-                3,
-                4
-            ],
-            "published": true,
-            "publication_date": null,
-            "name_en": "Steep descent"
-        }
+  {
+    "pk": 1,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-patrimony.png",
+      "label": "Small patrimony",
+      "label_en": "Small patrimony",
+      "label_fr": "Petit patrimoine",
+      "cirkwi": 22
     }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-flora.png",
+      "label": "Flora",
+      "label_en": "Flora",
+      "label_fr": "Flore",
+      "cirkwi": 23
+    }
+  },
+  {
+    "pk": 3,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-fauna.png",
+      "label": "Fauna",
+      "label_en": "Fauna",
+      "label_fr": "Faune",
+      "cirkwi": 23
+    }
+  },
+  {
+    "pk": 4,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-panorama.png",
+      "label": "Panorama",
+      "label_en": "Panorama",
+      "label_fr": "Point de vue",
+      "cirkwi": 21
+    }
+  },
+  {
+    "pk": 5,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-refuge.png",
+      "label": "Refuge",
+      "label_en": "Refuge",
+      "label_fr": "Refuge",
+      "cirkwi": 8
+    }
+  },
+  {
+    "pk": 6,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-lake.png",
+      "label": "Lake",
+      "label_en": "Lake",
+      "label_fr": "Lac",
+      "cirkwi": 26
+    }
+  },
+  {
+    "pk": 7,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-peak.png",
+      "label": "Peak",
+      "label_en": "Peak",
+      "label_fr": "Sommet",
+      "cirkwi": 21
+    }
+  },
+  {
+    "pk": 8,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-geology.png",
+      "label": "Geology",
+      "label_en": "Geology",
+      "label_fr": "G\u00e9ologie",
+      "cirkwi": null
+    }
+  },
+  {
+    "pk": 9,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-archeology.png",
+      "label": "Arch\u00e9ologie",
+      "label_fr": "Arch\u00e9ologie",
+      "cirkwi": 18
+    }
+  },
+  {
+    "pk": 10,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-history.png",
+      "label": "Histoire",
+      "label_fr": "Histoire",
+      "cirkwi": 18
+    }
+  },
+  {
+    "pk": 11,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-architecture.png",
+      "label": "Architecture",
+      "label_fr": "Architecture",
+      "cirkwi": 16
+    }
+  },
+  {
+    "pk": 12,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-glacier.png",
+      "label": "Glacier",
+      "label_fr": "Glacier",
+      "cirkwi": null
+    }
+  },
+  {
+    "pk": 13,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-knowhow.png",
+      "label": "Savoir-faire",
+      "label_fr": "Savoir-faire",
+      "cirkwi": null
+    }
+  },
+  {
+    "pk": 14,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-pastoral.png",
+      "label": "Pastoralisme",
+      "label_fr": "Pastoralisme",
+      "cirkwi": null
+    }
+  },
+  {
+    "pk": 15,
+    "model": "trekking.poitype",
+    "fields": {
+      "pictogram": "upload/poi-pass.png",
+      "label": "Col",
+      "label_fr": "Col",
+      "cirkwi": 31
+    }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.treknetwork",
+    "fields": {
+      "network": "PR",
+      "pictogram": "upload/network-PR.svg",
+      "network_fr": "PR"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "trekking.treknetwork",
+    "fields": {
+      "network": "GRP",
+      "pictogram": "upload/network-GRP.svg",
+      "network_fr": "GRP"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "trekking.treknetwork",
+    "fields": {
+      "network": "VTT",
+      "pictogram": "upload/network-VTT.svg",
+      "network_fr": "VTT"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "trekking.treknetwork",
+    "fields": {
+      "network": "Piste \u00e9questre",
+      "pictogram": "upload/network-horse.svg",
+      "network_fr": "Piste \u00e9questre"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "trekking.treknetwork",
+    "fields": {
+      "network": "GR",
+      "pictogram": "upload/network-GR.svg",
+      "network_fr": "GR"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "trekking.practice",
+    "fields": {
+      "name_fr": "VTT",
+      "name": "Mountain Bike",
+      "pictogram": "upload/practice-mountainbike.svg",
+      "cirkwi": 3,
+      "name_en": "Mountain Bike"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.practice",
+    "fields": {
+      "name_fr": "V\u00e9lo",
+      "name": "Cycling",
+      "pictogram": "upload/practice-bike.svg",
+      "cirkwi": 14,
+      "name_en": "Cycling"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "trekking.practice",
+    "fields": {
+      "name_fr": "Cheval",
+      "name": "Horse",
+      "pictogram": "upload/practice-horse.svg",
+      "cirkwi": 4,
+      "name_en": "Horse"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "trekking.practice",
+    "fields": {
+      "name": "P\u00e9destre",
+      "pictogram": "upload/practice-foot.svg",
+      "cirkwi": 1
+    }
+  },
+  {
+    "pk": 5,
+    "model": "trekking.practice",
+    "fields": {
+      "name": "Mountain climbing",
+      "name_fr": "Alpinisme",
+      "pictogram": "upload/practice-mountain-climbing.svg"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "trekking.practice",
+    "fields": {
+      "name": "Trail",
+      "pictogram": "upload/practice-trail.svg"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "trekking.practice",
+    "fields": {
+      "name": "VTTAE",
+      "pictogram": "upload/practice-vttae.svg"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "trekking.accessibility",
+    "fields": {
+      "name_fr": "Fauteuil roulant",
+      "name": "Fauteuil roulant",
+      "pictogram": "upload/accessibility-wheelchair.png",
+      "cirkwi": 9
+    }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.accessibility",
+    "fields": {
+      "name_fr": "Poussette",
+      "name": "Poussette",
+      "pictogram": "upload/accessibility-troller.png",
+      "cirkwi": 1
+    }
+  },
+  {
+    "pk": 3,
+    "model": "trekking.accessibility",
+    "fields": {
+      "name_fr": "Joelette",
+      "name": "Joelette",
+      "pictogram": "upload/accessibility-joelette.png",
+      "cirkwi": null
+    }
+  },
+  {
+    "pk": 1,
+    "model": "trekking.route",
+    "fields": {
+      "pictogram": "upload/route-loop.svg",
+      "route_fr": "Boucle",
+      "route_en": "Loop",
+      "route": "Boucle"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.route",
+    "fields": {
+      "pictogram": "upload/route-return.svg",
+      "route_fr": "Aller-retour",
+      "route_en": "Round trip",
+      "route": "Aller-retour"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "trekking.route",
+    "fields": {
+      "pictogram": "upload/route-cross.svg",
+      "route_fr": "Travers\u00e9e",
+      "route_en": "Crossing",
+      "route": "Travers\u00e9e"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "trekking.difficultylevel",
+    "fields": {
+      "pictogram": "upload/difficulty-1.svg",
+      "cirkwi_level": 1,
+      "difficulty_en": "Very easy",
+      "cirkwi": 5,
+      "difficulty": "Very easy",
+      "difficulty_fr": "Très facile"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.difficultylevel",
+    "fields": {
+      "pictogram": "upload/difficulty-2.svg",
+      "cirkwi_level": 2,
+      "difficulty_en": "Easy",
+      "cirkwi": 12,
+      "difficulty": "Easy",
+      "difficulty_fr": "Facile"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "trekking.difficultylevel",
+    "fields": {
+      "pictogram": "upload/difficulty-3.svg",
+      "cirkwi_level": 3,
+      "difficulty_en": "Medium",
+      "cirkwi": 12,
+      "difficulty": "Medium",
+      "difficulty_fr": "Intermédiaire"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "trekking.difficultylevel",
+    "fields": {
+      "pictogram": "upload/difficulty-4.svg",
+      "cirkwi_level": 4,
+      "difficulty_en": "Hard",
+      "cirkwi": 11,
+      "difficulty": "Hard",
+      "difficulty_fr": "Difficile"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "trekking.difficultylevel",
+    "fields": {
+      "pictogram": "upload/difficulty-5.svg",
+      "cirkwi_level": 5,
+      "difficulty_en": "Very hard",
+      "cirkwi": 16,
+      "difficulty": "Very hard",
+      "difficulty_fr": "Très difficile"
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 1,
+    "fields": {
+      "name": "Cotation globale",
+      "name_fr": "Cotation globale",
+      "name_en": null,
+      "order": 1,
+      "practice": 5
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 2,
+    "fields": {
+      "name": "Engagement / éloignement",
+      "name_fr": "Engagement / éloignement",
+      "name_en": null,
+      "order": 2,
+      "practice": 5
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 3,
+    "fields": {
+      "name": "Effort",
+      "name_fr": "Effort",
+      "name_en": null,
+      "order": 1,
+      "practice": 4
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 4,
+    "fields": {
+      "name": "Technicité",
+      "name_fr": "Technicité",
+      "name_en": null,
+      "order": 2,
+      "practice": 4
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 5,
+    "fields": {
+      "name": "Risque",
+      "name_fr": "Risque",
+      "name_en": null,
+      "order": 3,
+      "practice": 4
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 6,
+    "fields": {
+      "name": "Type de voie",
+      "name_fr": "Type de voie",
+      "name_en": null,
+      "order": 1,
+      "practice": 1
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 7,
+    "fields": {
+      "name": "Technique",
+      "name_fr": "Technique",
+      "name_en": null,
+      "order": 2,
+      "practice": 1
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 7,
+    "fields": {
+      "name": "Technique",
+      "name_fr": "Technique",
+      "name_en": null,
+      "order": 2,
+      "practice": 1
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 8,
+    "fields": {
+      "name": "Type de voie",
+      "name_fr": "Type de voie",
+      "name_en": null,
+      "order": 1,
+      "practice": 7
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 9,
+    "fields": {
+      "name": "Technique",
+      "name_fr": "Technique",
+      "name_en": null,
+      "order": 2,
+      "practice": 7
+    }
+  },
+  {
+    "model": "trekking.ratingscale",
+    "pk": 10,
+    "fields": {
+      "name": "Pente",
+      "name_fr": "Pente",
+      "name_en": null,
+      "order": 2,
+      "practice": 2
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 1,
+    "fields": {
+      "name": "F",
+      "name_fr": "F",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 10,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 2,
+    "fields": {
+      "name": "PD-",
+      "name_fr": "PD-",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 20,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 3,
+    "fields": {
+      "name": "PD",
+      "name_fr": "PD",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 21,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 4,
+    "fields": {
+      "name": "PD+",
+      "name_fr": "PD+",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 22,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 5,
+    "fields": {
+      "name": "AD-",
+      "name_fr": "AD-",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 30,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 6,
+    "fields": {
+      "name": "AD",
+      "name_fr": "AD",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 31,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 7,
+    "fields": {
+      "name": "AD+",
+      "name_fr": "AD+",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 32,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 8,
+    "fields": {
+      "name": "D-",
+      "name_fr": "D-",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 40,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 9,
+    "fields": {
+      "name": "D",
+      "name_fr": "D",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 41,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 10,
+    "fields": {
+      "name": "D+",
+      "name_fr": "D+",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 42,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 11,
+    "fields": {
+      "name": "TD-",
+      "name_fr": "TD-",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 50,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 12,
+    "fields": {
+      "name": "TD",
+      "name_fr": "TD",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 51,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 13,
+    "fields": {
+      "name": "TD+",
+      "name_fr": "TD+",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 52,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 14,
+    "fields": {
+      "name": "ED-",
+      "name_fr": "ED-",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 60,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 15,
+    "fields": {
+      "name": "ED",
+      "name_fr": "ED",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 61,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 16,
+    "fields": {
+      "name": "ED+",
+      "name_fr": "ED+",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 62,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 17,
+    "fields": {
+      "name": "ABO-",
+      "name_fr": "ABO-",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 70,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 18,
+    "fields": {
+      "name": "ABO",
+      "name_fr": "ABO",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 71,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 19,
+    "fields": {
+      "name": "ABO+",
+      "name_fr": "ABO+",
+      "name_en": null,
+      "scale": 1,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 72,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 20,
+    "fields": {
+      "name": "I",
+      "name_fr": "I",
+      "name_en": null,
+      "scale": 2,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 1,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 21,
+    "fields": {
+      "name": "II",
+      "name_fr": "II",
+      "name_en": null,
+      "scale": 2,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 2,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 22,
+    "fields": {
+      "name": "III",
+      "name_fr": "III",
+      "name_en": null,
+      "scale": 2,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 3,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 23,
+    "fields": {
+      "name": "IV",
+      "name_fr": "IV",
+      "name_en": null,
+      "scale": 2,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 4,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 24,
+    "fields": {
+      "name": "V",
+      "name_fr": "V",
+      "name_en": null,
+      "scale": 2,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 5,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 25,
+    "fields": {
+      "name": "VI",
+      "name_fr": "VI",
+      "name_en": null,
+      "scale": 2,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 6,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 26,
+    "fields": {
+      "name": "Facile",
+      "name_fr": "Facile",
+      "name_en": null,
+      "scale": 3,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 1,
+      "color": ""
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 27,
+    "fields": {
+      "pictogram": "",
+      "name": "Assez facile",
+      "name_fr": "Assez facile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 3
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 28,
+    "fields": {
+      "pictogram": "",
+      "name": "Peu difficile",
+      "name_fr": "Peu difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 3
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 29,
+    "fields": {
+      "pictogram": "",
+      "name": "Assez difficile",
+      "name_fr": "Assez difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 3
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 30,
+    "fields": {
+      "pictogram": "",
+      "name": "Difficile",
+      "name_fr": "Difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 3
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 31,
+    "fields": {
+      "pictogram": "",
+      "name": "Facile",
+      "name_fr": "Facile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 4
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 32,
+    "fields": {
+      "pictogram": "",
+      "name": "Assez facile",
+      "name_fr": "Assez facile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": 2,
+      "color": "",
+      "scale": 4
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 33,
+    "fields": {
+      "pictogram": "",
+      "name": "Peu difficile",
+      "name_fr": "Peu difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 4
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 34,
+    "fields": {
+      "pictogram": "",
+      "name": "Assez difficile",
+      "name_fr": "Assez difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 4
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 35,
+    "fields": {
+      "pictogram": "",
+      "name": "Difficile",
+      "name_fr": "Difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 4
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 36,
+    "fields": {
+      "pictogram": "",
+      "name": "Faible",
+      "name_fr": "Faible",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 5
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 37,
+    "fields": {
+      "pictogram": "",
+      "name": "Assez Faible",
+      "name_fr": "Assez Faible",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 5
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 38,
+    "fields": {
+      "pictogram": "",
+      "name": "Peu Elevé",
+      "name_fr": "Peu Elevé",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 5
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 39,
+    "fields": {
+      "pictogram": "",
+      "name": "Assez élevé",
+      "name_fr": "Assez élevé",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 5
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 40,
+    "fields": {
+      "pictogram": "",
+      "name": "Elevé",
+      "name_fr": "Elevé",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 5
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 41,
+    "fields": {
+      "pictogram": "",
+      "name": "3 à 5 %",
+      "name_fr": "3 à 5 %",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 10
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 42,
+    "fields": {
+      "pictogram": "",
+      "name": "5 à 7 %",
+      "name_fr": "5 à 7 %",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 10
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 43,
+    "fields": {
+      "pictogram": "",
+      "name": "8 à 9 %",
+      "name_fr": "8 à 9 %",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 10
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 44,
+    "fields": {
+      "pictogram": "",
+      "name": "> ou = 10 %",
+      "name_fr": "> ou = 10 %",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 10
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 45,
+    "fields": {
+      "pictogram": "",
+      "name": "Voie ou piste en stabilisé ou goudron",
+      "name_fr": "Voie ou piste en stabilisé ou goudron",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 6
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 46,
+    "fields": {
+      "pictogram": "",
+      "name": "Piste en terre ou herbe carrossable",
+      "name_fr": "Piste en terre ou herbe carrossable",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 6
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 47,
+    "fields": {
+      "pictogram": "",
+      "name": "Sentier monotrace ou voie étroite",
+      "name_fr": "Sentier monotrace ou voie étroite",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 6
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 48,
+    "fields": {
+      "pictogram": "",
+      "name": "Facile",
+      "name_fr": "Facile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 7
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 49,
+    "fields": {
+      "pictogram": "",
+      "name": "Peu difficile",
+      "name_fr": "Peu difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 7
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 50,
+    "fields": {
+      "pictogram": "",
+      "name": "Assez difficile",
+      "name_fr": "Assez difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 7
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 51,
+    "fields": {
+      "pictogram": "",
+      "name": "Difficile",
+      "name_fr": "Difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 7
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 52,
+    "fields": {
+      "pictogram": "",
+      "name": "Très difficile",
+      "name_fr": "Très difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 7
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 53,
+    "fields": {
+      "pictogram": "",
+      "name": "Voie ou piste en stabilisé ou goudron",
+      "name_fr": "Voie ou piste en stabilisé ou goudron",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 8
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 54,
+    "fields": {
+      "pictogram": "",
+      "name": "Piste en terre ou herbe carrossable",
+      "name_fr": "Piste en terre ou herbe carrossable",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 8
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 55,
+    "fields": {
+      "pictogram": "",
+      "name": "Sentier monotrace ou voie étroite",
+      "name_fr": "Sentier monotrace ou voie étroite",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 8
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 56,
+    "fields": {
+      "pictogram": "",
+      "name": "Facile",
+      "name_fr": "Facile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 9
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 57,
+    "fields": {
+      "pictogram": "",
+      "name": "Peu difficile",
+      "name_fr": "Peu difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 9
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 58,
+    "fields": {
+      "pictogram": "",
+      "name": "Assez difficile",
+      "name_fr": "Assez difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 9
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 59,
+    "fields": {
+      "pictogram": "",
+      "name": "Difficile",
+      "name_fr": "Difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 9
+    }
+  },
+  {
+    "model": "trekking.rating",
+    "pk": 60,
+    "fields": {
+      "pictogram": "",
+      "name": "Très difficile",
+      "name_fr": "Très difficile",
+      "name_en": null,
+      "description": "",
+      "description_fr": "",
+      "description_en": "",
+      "order": null,
+      "color": "",
+      "scale": 9
+    }
+  },
+  {
+    "pk": 1,
+    "model": "trekking.weblinkcategory",
+    "fields": {
+      "pictogram": "upload/weblink-refuge.png",
+      "label": "Refugee",
+      "label_en": "Refugee",
+      "label_fr": "Refuge"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.weblinkcategory",
+    "fields": {
+      "pictogram": "upload/weblink-map.png",
+      "label": "Map",
+      "label_en": "Map",
+      "label_fr": "Carte"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "trekking.weblinkcategory",
+    "fields": {
+      "pictogram": "upload/weblink-bus.png",
+      "label": "Bus",
+      "label_en": "Bus",
+      "label_fr": "Bus"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "trekking.weblinkcategory",
+    "fields": {
+      "pictogram": "upload/weblink-book.png",
+      "label": "A lire",
+      "label_fr": "A lire"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "trekking.weblinkcategory",
+    "fields": {
+      "pictogram": "upload/weblink-tourism.png",
+      "label": "Information touristique",
+      "label_fr": "Information touristique"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "trekking.servicetype",
+    "fields": {
+      "name_fr": "Eau potable",
+      "name": "Drinking water",
+      "review": false,
+      "pictogram": "upload/drinking_water.svg",
+      "practices": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "published": true,
+      "publication_date": null,
+      "name_en": "Drinking water"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.servicetype",
+    "fields": {
+      "name_fr": "Descente pentue",
+      "name": "Steep descent",
+      "review": false,
+      "pictogram": "upload/steep_descent.svg",
+      "practices": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "published": true,
+      "publication_date": null,
+      "name_en": "Steep descent"
+    }
+  }
 ]

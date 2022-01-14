@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-01-13 15:53+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -24,6 +24,9 @@ msgstr ""
 
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
+msgstr ""
+
+msgid "Color"
 msgstr ""
 
 msgid "Practices"
@@ -56,21 +59,64 @@ msgstr "Itinerari correlati"
 msgid "Insert service:"
 msgstr "Inserisci servizio:"
 
+msgid "One of the rating scale used is not part of the practice chosen"
+msgstr ""
+
 msgid "Cannot add children because this trek is itself a child."
 msgstr ""
 "Non si possono aggiungere i bambini perché questo itinerario è esso stesso "
 "un bambino"
 
-#, python-brace-format
-msgid "Cannot use parent trek {name} as a child trek."
+msgid "Cannot use parent trek {child.name} as a child trek."
 msgstr ""
-"Non può usare il itinerario dei genitori {name} come un trek per bambini."
+"Non può usare il itinerario dei genitori {child.name} come un trek per bambini."
 
 msgid "Cancel"
 msgstr "Annulla"
 
 msgid "Create"
 msgstr "Creare"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Distance"
+msgstr "Distanza"
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+"I contenuti turistici e gli eventi si associano a questa distanza (metri)"
+
+msgid "Cirkwi locomotion"
+msgstr "Locomozione Cirkwi"
+
+msgid "Order"
+msgstr "Ordine"
+
+msgid "Alphabetical order if blank"
+msgstr "Ordine alfabetico se vuoto"
+
+msgid "Color of the practice, only used in mobile."
+msgstr ""
+
+msgid "Practice"
+msgstr "Pratica"
+
+msgid "Rating scale"
+msgstr ""
+
+msgid "Rating scales"
+msgstr ""
+
+msgid "Scale"
+msgstr ""
+
+msgid "Rating"
+msgstr ""
+
+msgid "Ratings"
+msgstr ""
 
 msgid "Departure"
 msgstr "Partenza"
@@ -141,6 +187,9 @@ msgstr "Consigli"
 msgid "Risks, danger, best period, ..."
 msgstr "Rischi, pericolo, periodo migliore, ..."
 
+msgid "Ratings description"
+msgstr ""
+
 msgid "Themes"
 msgstr "Temi"
 
@@ -152,9 +201,6 @@ msgstr "Reti"
 
 msgid "Hiking networks"
 msgstr "Reti escursionistiche"
-
-msgid "Practice"
-msgstr "Pratica"
 
 msgid "Accessibility"
 msgstr "Accessibilità"
@@ -262,37 +308,11 @@ msgstr "Sezione"
 msgid "Circuit"
 msgstr "Circuito"
 
-msgid "Name"
-msgstr "Nome"
-
 msgid "Trek network"
 msgstr "Reti da Itineraro"
 
 msgid "Trek networks"
 msgstr "Reti da escursionistiche"
-
-msgid "Distance"
-msgstr "Distanza"
-
-msgid ""
-"Touristic contents and events will associate within this distance (meters)"
-msgstr ""
-"I contenuti turistici e gli eventi si associano a questa distanza (metri)"
-
-msgid "Cirkwi locomotion"
-msgstr "Locomozione Cirkwi"
-
-msgid "Order"
-msgstr "Ordine"
-
-msgid "Alphabetical order if blank"
-msgstr "Ordine alfabetico se vuoto"
-
-msgid "Color"
-msgstr ""
-
-msgid "Color of the practice, only used in mobile."
-msgstr ""
 
 msgid "Cirkwi tag"
 msgstr "Cirkwi tag"

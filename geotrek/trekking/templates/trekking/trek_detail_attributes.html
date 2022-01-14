@@ -109,6 +109,12 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
+        {% for rating in object.ratings.all %}
+            <tr>
+                <th>{{ rating.scale.name }}</th>
+                <td>{{ rating.name }}</td>
+            </tr>
+        {% endfor %}
         <tr>
             <th>{{ trek|verbose:"accessibilities" }}</th>
             <td>

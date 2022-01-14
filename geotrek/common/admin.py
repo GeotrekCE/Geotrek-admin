@@ -5,9 +5,9 @@ from geotrek.common.mixins import MergeActionMixin
 from . import models as common_models
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.admin import TranslationAdmin
+    from modeltranslation.admin import TabbedTranslationAdmin
 else:
-    TranslationAdmin = admin.ModelAdmin
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
 
 
 class OrganismAdmin(MergeActionMixin, admin.ModelAdmin):
@@ -54,7 +54,7 @@ class AttachmentAdmin(admin.ModelAdmin):
         return False
 
 
-class ThemeAdmin(MergeActionMixin, TranslationAdmin):
+class ThemeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label', 'cirkwi', 'pictogram_img')
     search_fields = ('label',)
     merge_field = 'label'
@@ -76,7 +76,7 @@ class ReservationSystemAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = 'name'
 
 
-class LabelAdmin(TranslationAdmin):
+class LabelAdmin(TabbedTranslationAdmin):
     list_display = ('pictogram_img', 'name', 'filter')
     list_display_links = ('name',)
     search_fields = ('name', )
