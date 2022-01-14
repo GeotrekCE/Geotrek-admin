@@ -396,14 +396,14 @@ class SuricateWorkflowTests(SuricateTests):
     fixtures = ['geotrek/maintenance/fixtures/basic.json']
 
     def setUp(cls):
-        cls.filed_status = ReportStatusFactory(suricate_id='filed', label="Déposé")
-        cls.classified_status = ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
-        cls.programmed_status = ReportStatusFactory(suricate_id='programmed', label="Programmé")
-        cls.waiting_status = ReportStatusFactory(suricate_id='waiting', label="En cours")
-        cls.late_intervention_status = ReportStatusFactory(suricate_id='late_intervention', label="Intervention en retard")
-        cls.late_resolution_status = ReportStatusFactory(suricate_id='late_resolution', label="Resolution en retard")
-        cls.solved_intervention_status = ReportStatusFactory(suricate_id='solved_intervention', label="Intervention terminée")
-        cls.resolved_status = ReportStatusFactory(suricate_id='resolved', label="Résolu")
+        cls.filed_status = ReportStatusFactory(identifier='filed', label="Déposé")
+        cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
+        cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
+        cls.waiting_status = ReportStatusFactory(identifier='waiting', label="En cours")
+        cls.late_intervention_status = ReportStatusFactory(identifier='late_intervention', label="Intervention en retard")
+        cls.late_resolution_status = ReportStatusFactory(identifier='late_resolution', label="Resolution en retard")
+        cls.solved_intervention_status = ReportStatusFactory(identifier='solved_intervention', label="Intervention terminée")
+        cls.resolved_status = ReportStatusFactory(identifier='resolved', label="Résolu")
         cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
         cls.user = UserFactory(username="Maxou", password="drowssap")
@@ -496,7 +496,7 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         self.assertTrue(form.is_valid)
         form.save()
         mocked_mail_sentinel.assert_called_once_with(self.report.uid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified_status.suricate_id, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified_status.identifier, "Problème déjà réglé")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")

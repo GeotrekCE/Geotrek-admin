@@ -231,8 +231,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         SuricateMessenger().unlock_alert(self.uid)
 
     def send_notifications_on_status_change(self, old_status_id, message):
-        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.suricate_id in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
-            SuricateMessenger().update_status(self.uid, self.status.suricate_id, message)
+        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
+            SuricateMessenger().update_status(self.uid, self.status.identifier, message)
             SuricateMessenger().message_sentinel(self.uid, message)
 
     def save(self, *args, **kwargs):
@@ -270,7 +270,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     @classmethod
     def latest_updated_by_status(cls, status_id):
-        return cls.objects.existing().filter(status__suricate_id=status_id).latest('date_update').get_date_update()
+        return cls.objects.existing().filter(status__identifier=status_id).latest('date_update').get_date_update()
 
 
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
@@ -283,7 +283,7 @@ class ReportActivity(models.Model):
     """Activity involved in report"""
 
     label = models.CharField(verbose_name=_("Activity"), max_length=128)
-    suricate_id = models.PositiveIntegerField(
+    identifier = models.PositiveIntegerField(
         verbose_name=_("Suricate id"), null=True, blank=True, unique=True
     )
 
@@ -298,7 +298,7 @@ class ReportActivity(models.Model):
 
 class ReportCategory(models.Model):
     label = models.CharField(verbose_name=_("Category"), max_length=128)
-    suricate_id = models.PositiveIntegerField(_("Suricate id"), null=True, blank=True)
+    identifier = models.PositiveIntegerField(_("Suricate id"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Category")
@@ -311,7 +311,7 @@ class ReportCategory(models.Model):
 
 class ReportStatus(models.Model):
     label = models.CharField(verbose_name=_("Status"), max_length=128)
-    suricate_id = models.CharField(
+    identifier = models.CharField(
         null=True,
         blank=True,
         unique=True,
@@ -332,7 +332,7 @@ class ReportProblemMagnitude(models.Model):
     """Report problem magnitude"""
 
     label = models.CharField(verbose_name=_("Problem magnitude"), max_length=128)
-    suricate_id = models.PositiveIntegerField(
+    identifier = models.PositiveIntegerField(
         verbose_name=_("Suricate id"), null=True, blank=True, unique=True
     )
     suricate_label = models.CharField(
@@ -356,14 +356,14 @@ class AttachedMessage(models.Model):
     date = models.DateTimeField()
     author = models.CharField(max_length=300)
     content = models.TextField()
-    suricate_id = models.IntegerField(
+    identifier = models.IntegerField(
         null=True, blank=True, verbose_name=_("Identifiant")
     )
     type = models.CharField(max_length=100)
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('suricate_id', 'date', 'report')
+        unique_together = ('identifier', 'date', 'report')
 
 
 class TimerEvent(models.Model):
@@ -377,15 +377,15 @@ class TimerEvent(models.Model):
         if self.report.uses_timers:
             if self.pk is None:
                 self.date_event = timezone.now()
-                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.suricate_id.upper()}_REPORTS_IN_DAYS"]
+                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS"]
                 self.date_notification = self.date_event + timedelta(days=days_nb)
             super().save(*args, **kwargs)
         # Don't save if report doesn't use timers
 
     def notify_if_needed(self):
-        if not(self.notification_sent) and (timezone.now() > self.date_notification) and (self.report.status.suricate_id == self.step.suricate_id):
-            self.report.notify_late_report(self.step.suricate_id)
-            late_status = ReportStatus.objects.get(suricate_id=STATUS_WHEN_REPORT_IS_LATE[self.step.suricate_id])
+        if not(self.notification_sent) and (timezone.now() > self.date_notification) and (self.report.status.identifier == self.step.identifier):
+            self.report.notify_late_report(self.step.identifier)
+            late_status = ReportStatus.objects.get(identifier=STATUS_WHEN_REPORT_IS_LATE[self.step.identifier])
             self.report.status = late_status
             self.report.save()
             self.notification_sent = True
@@ -393,7 +393,7 @@ class TimerEvent(models.Model):
 
     def is_obsolete(self):
         obsolete_notified = (timezone.now() > self.date_notification) and self.notification_sent  # Notification sent by timer
-        obsolete_unused = self.report.status.suricate_id != self.step.suricate_id  # Report changed status, therefore it was dealt with in time
+        obsolete_unused = self.report.status.identifier != self.step.identifier  # Report changed status, therefore it was dealt with in time
         return obsolete_notified or obsolete_unused
 
 

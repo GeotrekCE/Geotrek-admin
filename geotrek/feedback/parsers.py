@@ -43,7 +43,7 @@ class SuricateParser(SuricateGestionRequestManager):
         # Parse activities and create
         for activity in data["activites"]:
             obj, created = ReportActivity.objects.update_or_create(
-                suricate_id=activity["id"], defaults={"label": activity["libelle"]}
+                identifier=activity["id"], defaults={"label": activity["libelle"]}
             )
             if created:
                 logger.info(
@@ -58,7 +58,7 @@ class SuricateParser(SuricateGestionRequestManager):
         # Parse statuses and create
         for status in data["statuts"]:
             obj, created = ReportStatus.objects.get_or_create(
-                suricate_id=status["id"], defaults={"label": status["libelle"]}
+                identifier=status["id"], defaults={"label": status["libelle"]}
             )
             if created:
                 logger.info(
@@ -104,9 +104,9 @@ class SuricateParser(SuricateGestionRequestManager):
             if created:
                 logger.info(f"Created new feedback category - label: {report['type']}")
             # Parse status
-            rep_status = ReportStatus.objects.get(suricate_id=report["statut"])
+            rep_status = ReportStatus.objects.get(identifier=report["statut"])
             # Parse activity
-            rep_activity = ReportActivity.objects.get(suricate_id=report["idactivite"])
+            rep_activity = ReportActivity.objects.get(identifier=report["idactivite"])
 
             # Create report object
             fields = {
@@ -212,7 +212,7 @@ class SuricateParser(SuricateGestionRequestManager):
 
             # Create message object
             message_obj, created = AttachedMessage.objects.update_or_create(
-                suricate_id=message["id"], date=msg_creation, report=parent, defaults=fields
+                identifier=message["id"], date=msg_creation, report=parent, defaults=fields
             )
             if created:
                 logger.info(

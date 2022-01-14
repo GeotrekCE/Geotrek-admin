@@ -129,7 +129,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form = ReportForm(instance=self.filed_report, data=data)
         form.save()
         # Assert report status changes
-        self.assertEquals(self.filed_report.status.suricate_id, "waiting")
+        self.assertEquals(self.filed_report.status.identifier, "waiting")
         # Asser timer is created
         self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
         # Assert data forwarded to Suricate
@@ -175,7 +175,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(TimerEvent.objects.filter(report=self.waiting_report).count(), 1)
         # Assert report status changed
         self.waiting_report.refresh_from_db()
-        self.assertEquals(self.waiting_report.status.suricate_id, "programmed")
+        self.assertEquals(self.waiting_report.status.identifier, "programmed")
 
     @test_for_management_mode
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -199,7 +199,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.is_valid()
         form.save()
         # Assert report changes status and manager is notified
-        self.assertEqual(self.interv_report.status.suricate_id, "solved_intervention")
+        self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(mail.outbox[-1].subject, "Geotrek - Un Signalement est à clôturer")
         self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])
@@ -238,7 +238,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form = ReportForm(instance=self.solved_intervention_report, data=data)
         form.save()
         # Assert report status changes
-        self.assertEquals(self.solved_intervention_report.status.suricate_id, "resolved")
+        self.assertEquals(self.solved_intervention_report.status.identifier, "resolved")
         # Assert data forwarded to Suricate
         check = md5(
             (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.uid)).encode()

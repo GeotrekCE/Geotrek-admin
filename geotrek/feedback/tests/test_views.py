@@ -55,8 +55,8 @@ class ReportSerializationOptimizeTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = SuperUserFactory.create()
-        cls.classified_status = feedback_factories.ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
-        cls.filed_status = feedback_factories.ReportStatusFactory(suricate_id='filed', label="Classé sans suite")
+        cls.classified_status = feedback_factories.ReportStatusFactory(identifier='classified', label="Classé sans suite")
+        cls.filed_status = feedback_factories.ReportStatusFactory(identifier='filed', label="Classé sans suite")
         cls.classified_report_1 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.classified_report_2 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.classified_report_3 = feedback_factories.ReportFactory(status=cls.classified_status)

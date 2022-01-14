@@ -21,7 +21,7 @@ def enable_report_colors_per_status():
 def status_ids_and_colors():
     status_ids_and_colors = {
         status.pk: {
-            "id": str(status.suricate_id),
+            "id": str(status.identifier),
             "color": str(status.color)
         }
         for status in ReportStatus.objects.all()

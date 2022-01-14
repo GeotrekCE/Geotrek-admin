@@ -61,7 +61,7 @@ class ReportForm(CommonForm):
         if settings.SURICATE_MANAGEMENT_ENABLED:
             if self.instance.pk:
                 # Store current status
-                self.old_status_id = self.instance.status.suricate_id
+                self.old_status_id = self.instance.status.identifier
                 # Hide fields that are handled automatically in Management mode
                 self.fields["geom"].widget = HiddenInput()
                 self.fields["email"].widget = HiddenInput()
@@ -71,9 +71,9 @@ class ReportForm(CommonForm):
                 self.fields["problem_magnitude"].widget = HiddenInput()
                 # Add fields that are used in Management mode
                 # status
-                next_statuses = SURICATE_MANAGEMENT_WORKFLOW[self.instance.status.suricate_id]
+                next_statuses = SURICATE_MANAGEMENT_WORKFLOW[self.instance.status.identifier]
                 self.fields["status"].empty_label = None
-                self.fields["status"].queryset = ReportStatus.objects.filter(suricate_id__in=next_statuses)
+                self.fields["status"].queryset = ReportStatus.objects.filter(identifier__in=next_statuses)
                 # assigned_user
                 if self.old_status_id != 'filed':
                     self.fields["assigned_user"].widget = HiddenInput()
@@ -104,7 +104,7 @@ class ReportForm(CommonForm):
             if self.old_status_id == 'filed' and 'assigned_user' in self.changed_data:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
-                waiting_status = ReportStatus.objects.get(suricate_id='waiting')
+                waiting_status = ReportStatus.objects.get(identifier='waiting')
                 report.status = waiting_status
                 report.save()
                 report.lock_in_suricate()

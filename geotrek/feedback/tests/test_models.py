@@ -105,7 +105,7 @@ class TestReportColor(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.status = ReportStatusFactory(suricate_id='filed', label="Classé sans suite", color="#888888")
+        cls.status = ReportStatusFactory(identifier='filed', label="Classé sans suite", color="#888888")
         cls.report = ReportFactory(status=cls.status)
         cls.report_1 = ReportFactory(status=None)
 

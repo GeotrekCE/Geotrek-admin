@@ -32,7 +32,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
         )
         status_id = self.request.GET.get('_status_id')
         if status_id:
-            qs = qs.filter(status__suricate_id=status_id)
+            qs = qs.filter(status__identifier=status_id)
         return qs
 
     def view_cache_key(self):
