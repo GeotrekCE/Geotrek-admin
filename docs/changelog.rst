@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 - Add ratings, rating scales on trekking
+- Add equipments on trekking
 
 **Minor improvements**
 
