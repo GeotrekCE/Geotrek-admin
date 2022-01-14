@@ -27,7 +27,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     properties = ["email"]
 
     def get_queryset(self):
-        qs = feedback_models.Report.objects.existing().select_related(
+        qs = self.queryset.select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
         )
         status_id = self.request.GET.get('_status_id')
@@ -46,9 +46,9 @@ class ReportLayer(mapentity_views.MapEntityLayer):
         else:
             latest_saved = feedback_models.Report.latest_updated()
         if latest_saved:
-            geojson_lookup = '%s_report_%s%s_json_layer' % (
+            geojson_lookup = '%s_report_%s_%s_json_layer' % (
                 language,
-                latest_saved.strftime('%y%m%d%H%M%S%f'),
+                latest_saved.isoformat(),
                 status_id if status_id else ''
             )
         return geojson_lookup

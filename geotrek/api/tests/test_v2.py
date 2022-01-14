@@ -2108,13 +2108,13 @@ class ReportStatusTestCase(TestCase):
             "results": [
                 {
                     'suricate_id': self.status1.suricate_id,
-                    'color': str(self.status1.color),
+                    'color': self.status1.color,
                     "id": self.status1.pk,
                     "label": {'en': "A transmettre", 'es': None, 'fr': None, 'it': None},
                 },
                 {
                     'suricate_id': self.status2.suricate_id,
-                    'color': str(self.status2.color),
+                    'color': self.status2.color,
                     "id": self.status2.pk,
                     "label": {'en': "En cours de traitement", 'es': None, 'fr': None, 'it': None},
                 }]
