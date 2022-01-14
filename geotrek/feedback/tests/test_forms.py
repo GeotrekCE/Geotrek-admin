@@ -3,7 +3,7 @@ from hashlib import md5
 from unittest import mock
 
 from django.core import mail
-from django.forms.widgets import EmailInput, HiddenInput, Select
+from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
 from django.test.utils import override_settings
 from django.urls.base import reverse
 from mapentity.tests.factories import SuperUserFactory
@@ -27,7 +27,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     def setUp(cls):
         super().setUp()
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
-        cls.waiting_report = ReportFactory(status=cls.waiting_status, uid=uuid.uuid4())
+        cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
         cls.intervention_solved_report = ReportFactory(status=cls.intervention_solved_status, uid=uuid.uuid4())
         cls.client.login(username="Admiin", password="drowssap")
 
@@ -50,6 +50,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_sentinel', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)
 
     @test_for_report_and_basic_modes
@@ -67,6 +68,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_sentinel', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)  # assert form is valid
 
     @test_for_management_mode
@@ -89,6 +91,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_sentinel', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
 
     @test_for_management_mode
     def test_update_form_specifics_2(self):
@@ -105,6 +108,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIn('message_sentinel', keys)
         self.assertIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
         # Todo ajouter les contraintes de contenu de status selon old_status / pas de contrainte si autres modes
 
     @test_for_management_mode
@@ -119,14 +123,15 @@ class TestSuricateForms(SuricateWorkflowTests):
             'assigned_user': str(self.user.pk),
             'email': 'test@test.fr',
             'geom': 'POINT(5.1 6.6)',
-            'message_sentinel': "Your message"
+            'message_sentinel': "Your message",
+            "uses_timers": True
         }
         form = ReportForm(instance=self.filed_report, data=data)
         form.save()
         # Assert report status changes
         self.assertEquals(self.filed_report.status.suricate_id, "waiting")
         # Asser timer is created
-        self.assertEquals(TimerEvent.objects.filter(report=self.filed_report).count(), 1)
+        self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
         # Assert data forwarded to Suricate
         check = md5(
             (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.uid)).encode()
@@ -161,7 +166,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             'name': "test_interv",
             'date': "2025-12-12",
             'status': status.pk,
-            'structure': user.profile.structure.pk
+            'structure': user.profile.structure.pk,
         }
         form = InterventionForm(user=user, target_type=self.waiting_report.get_content_type_id(), target_id=self.waiting_report.pk, data=data)
         form.is_valid()

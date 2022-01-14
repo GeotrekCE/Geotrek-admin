@@ -3,9 +3,10 @@
         "model": "feedback.reportstatus",
         "fields": {
             "label": "Programm\u00e9",
-            "label_en": "Programm\u00e9",
-            "label_fr": "Programmed",
-            "suricate_id": "programmed"
+            "label_en": "Programmed",
+            "label_fr": "Programm\u00e9",
+            "suricate_id": "programmed",
+            "color": "#6AA84F"
         }
     },
     {
@@ -14,7 +15,8 @@
             "label": "Intervention en retard",
             "label_en": "Late intervention",
             "label_fr": "Intervention en retard",
-            "suricate_id": "intervention_late"
+            "suricate_id": "intervention_late",
+            "color": "#CC0000"
         }
     },
     {
@@ -23,7 +25,8 @@
             "label": "R\u00e9solution en retard",
             "label_en": "Late resolution",
             "label_fr": "R\u00e9solution en retard",
-            "suricate_id": "resolution_late"
+            "suricate_id": "resolution_late",
+            "color": "#CC0000"
         }
     },
     {
@@ -32,7 +35,8 @@
             "label": "Intervention termin\u00e9e",
             "label_en": "Resolved intervention",
             "label_fr": "Intervention termin\u00e9e",
-            "suricate_id": "intervention_solved"
+            "suricate_id": "intervention_solved",
+            "color": "#4285F4"
         }
     },
     {
@@ -41,7 +45,8 @@
             "label": "R\u00e9solu",
             "label_en": "Resolved",
             "label_fr": "R\u00e9solu",
-            "suricate_id": "resolved"
+            "suricate_id": "resolved",
+            "color": "#999999"
         }
     }
 ]

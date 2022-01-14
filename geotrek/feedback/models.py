@@ -2,6 +2,8 @@ import html
 import logging
 from datetime import timedelta
 
+from colorfield.fields import ColorField
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -133,6 +135,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         verbose_name=_("Supervisor"),
         related_name="reports"
     )
+    uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
 
     class Meta:
         verbose_name = _("Report")
@@ -168,6 +171,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     @property
     def geom_wgs84(self):
         return self.geom.transform(4326, clone=True)
+
+    @property
+    def color(self):
+        default = settings.MAPENTITY_CONFIG.get('MAP_STYLES', {}).get("detail", {}).get("color", "#ffff00")
+        if not(settings.ENABLE_REPORT_COLORS_PER_STATUS) or self.status is None or self.status.color is None:
+            return default
+        else:
+            return self.status.color
 
     @property
     def comment_text(self):
@@ -257,6 +268,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         qs = Q(target_type=report_content_type, target_id=self.id)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
+    @classmethod
+    def latest_updated_by_status(cls, status_id):
+        return cls.objects.existing().filter(status__suricate_id=status_id).latest('date_update').get_date_update()
+
 
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
@@ -303,6 +318,7 @@ class ReportStatus(models.Model):
         max_length=100,
         verbose_name=_("Identifiant"),
     )
+    color = ColorField(verbose_name=_("Color"), default='#444444')
 
     class Meta:
         verbose_name = _("Status")
@@ -358,11 +374,13 @@ class TimerEvent(models.Model):
     notification_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.pk is None:
-            self.date_event = timezone.now()
-            days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.suricate_id.upper()}_REPORTS_IN_DAYS"]
-            self.date_notification = self.date_event + timedelta(days=days_nb)
-        super().save(*args, **kwargs)
+        if self.report.uses_timers:
+            if self.pk is None:
+                self.date_event = timezone.now()
+                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.suricate_id.upper()}_REPORTS_IN_DAYS"]
+                self.date_notification = self.date_event + timedelta(days=days_nb)
+            super().save(*args, **kwargs)
+        # Don't save if report doesn't use timers
 
     def notify_if_needed(self):
         if not(self.notification_sent) and (timezone.now() > self.date_notification) and (self.report.status.suricate_id == self.step.suricate_id):
