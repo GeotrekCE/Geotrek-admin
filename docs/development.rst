@@ -94,7 +94,7 @@ When adding a new field ``my_field`` to a model ``MyModel``, please proceed with
 
 - If ``my_field`` is a ``ForeignKey``, make sure to override ``related_name`` with an explicit set name
 
-- Make sure to set ``verbose_name`` on the field and add proper translations in ``.mo`` files
+- Make sure to set ``verbose_name`` on the field and add proper translations in ``.po`` files
 
 **Outside of model class** :
 

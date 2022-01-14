@@ -40,6 +40,10 @@
             <td>{{ report.assigned_user }}</td>
         </tr>
         <tr>
+            <th>{{ report|verbose:"uses_timers" }}</th>
+            <td>{{ report.uses_timers }}</td>
+        </tr>
+        <tr>
             <th>{{ report|verbose:"created_in_suricate" }}</th>
             <td>{{ report.created_in_suricate }}</td>
         <tr>

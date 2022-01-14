@@ -2,8 +2,8 @@ from django.conf import settings
 from django.urls import path, register_converter
 from mapentity.registry import registry
 
-from geotrek.feedback import models as feedback_models
 from geotrek.common.urls import LangConverter
+from geotrek.feedback import models as feedback_models
 
 from .views import CategoryList, FeedbackOptionsView
 

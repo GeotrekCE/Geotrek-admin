@@ -1,1 +1,11 @@
 {% extends "mapentity/mapentity_detail.html" %}
+{% load feedback_tags %}
+
+
+{% block detailspanel %}
+    {{ block.super }}
+    {% suricate_management_enabled as suricate_management_enabled %}
+    {% if suricate_management_enabled %}
+        <p hidden=true id="report_color">{{ report.color }}</p>
+    {% endif %}
+{% endblock detailspanel %}
