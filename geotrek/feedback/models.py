@@ -408,6 +408,6 @@ class WorkflowManager(models.Model):
         return f"{self.user.username} ({self.user.email})"
 
     def notify(self, report):
-        subject = str("Geotrek - Un Signalement est à clôturer")
+        subject = _("Geotrek - Un Signalement est à clôturer")
         message = render_to_string("feedback/cloture_email.html", {"report": report})
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
