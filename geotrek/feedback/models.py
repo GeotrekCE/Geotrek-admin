@@ -2,6 +2,8 @@ import html
 import logging
 from datetime import timedelta
 
+from colorfield.fields import ColorField
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -27,7 +29,8 @@ logger = logging.getLogger(__name__)
 
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
-    'filed': ['classified', 'waiting']
+    'filed': ['classified', 'waiting'],
+    'intervention_solved': ['resolved']
 }
 
 STATUS_WHEN_REPORT_IS_LATE = {
@@ -132,6 +135,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         verbose_name=_("Supervisor"),
         related_name="reports"
     )
+    uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
 
     class Meta:
         verbose_name = _("Report")
@@ -169,6 +173,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return self.geom.transform(4326, clone=True)
 
     @property
+    def color(self):
+        default = settings.MAPENTITY_CONFIG.get('MAP_STYLES', {}).get("detail", {}).get("color", "#ffff00")
+        if not(settings.ENABLE_REPORT_COLORS_PER_STATUS) or self.status is None or self.status.color is None:
+            return default
+        else:
+            return self.status.color
+
+    @property
     def comment_text(self):
         return html.unescape(self.comment)
 
@@ -199,13 +211,12 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
                 SuricateMessenger().post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
-        else:  # This is an update
-            # TODO We'll need to implement some of the workflow here Todo do we need to remove this
+        else:  # Report updates should do nothing more
             super().save(*args, **kwargs)
 
-    def notify_assigned_user(self):
+    def notify_assigned_user(self, message):
         subject = str("Geotrek - Nouveau Signalement à traiter")
-        message = render_to_string("feedback/affectation_email.html", {"report": self})
+        message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
 
     def notify_late_report(self, status_id):
@@ -257,6 +268,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         qs = Q(target_type=report_content_type, target_id=self.id)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
+    @classmethod
+    def latest_updated_by_status(cls, status_id):
+        return cls.objects.existing().filter(status__suricate_id=status_id).latest('date_update').get_date_update()
+
 
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
@@ -303,6 +318,7 @@ class ReportStatus(models.Model):
         max_length=100,
         verbose_name=_("Identifiant"),
     )
+    color = ColorField(verbose_name=_("Color"), default='#444444')
 
     class Meta:
         verbose_name = _("Status")
@@ -358,11 +374,13 @@ class TimerEvent(models.Model):
     notification_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.pk is None:
-            self.date_event = timezone.now()
-            days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.suricate_id.upper()}_REPORTS_IN_DAYS"]
-            self.date_notification = self.date_event + timedelta(days=days_nb)
-        super().save(*args, **kwargs)
+        if self.report.uses_timers:
+            if self.pk is None:
+                self.date_event = timezone.now()
+                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.suricate_id.upper()}_REPORTS_IN_DAYS"]
+                self.date_notification = self.date_event + timedelta(days=days_nb)
+            super().save(*args, **kwargs)
+        # Don't save if report doesn't use timers
 
     def notify_if_needed(self):
         if not(self.notification_sent) and (timezone.now() > self.date_notification) and (self.report.status.suricate_id == self.step.suricate_id):
@@ -374,8 +392,8 @@ class TimerEvent(models.Model):
             self.save()
 
     def is_obsolete(self):
-        obsolete_notified = (timezone.now() > self.date_notification) and self.notification_sent
-        obsolete_unused = (timezone.now() > self.date_notification) and (self.report.status.suricate_id != self.step.suricate_id)
+        obsolete_notified = (timezone.now() > self.date_notification) and self.notification_sent  # Notification sent by timer
+        obsolete_unused = self.report.status.suricate_id != self.step.suricate_id  # Report changed status, therefore it was dealt with in time
         return obsolete_notified or obsolete_unused
 
 

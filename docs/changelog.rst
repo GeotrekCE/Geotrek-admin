@@ -5,8 +5,11 @@ CHANGELOG
 2.73.0+dev (XXXX-XX-XX)
 -----------------------
 
-**Suricate Workflow**
+**Suricate Workflow**  (#2366)
 - Add `assigned_user` field to Report model
+- Add `color` field to Report Status model
+- Add TimerEvent class, used to alert Report supervisors when timer expires
+- Force workflow when SURICATE_MANAGEMENT_WORKFLOW setting is enabled
 
 
 2.73.0 (2021-12-13)

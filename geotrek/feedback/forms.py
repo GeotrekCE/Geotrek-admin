@@ -2,18 +2,24 @@ from crispy_forms.layout import Div
 from django.conf import settings
 from django.forms.fields import CharField
 from django.forms.widgets import HiddenInput, Textarea
+from django.utils.translation import gettext as _
 
 from geotrek.common.forms import CommonForm
 
 from .models import Report, ReportStatus, TimerEvent
 
-# This dict stores status order in management workflow
+# This dict stores constraints for status changes in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
+# Empty status should not be changed from this form
 SURICATE_MANAGEMENT_WORKFLOW = {
     'filed': ['classified', 'filed'],
     'classified': ['classified'],
-    'waiting': ['waiting', 'filed'],
-    'programmed': ['waiting', 'filed']
+    'waiting': ['waiting'],
+    'programmed': ['programmed'],
+    'resolution_late': ['resolution_late'],
+    'intervention_late': ['intervention_late'],
+    'intervention_solved': ['resolved', 'intervention_solved'],
+    'resolved': ['resolved']
 }
 
 
@@ -29,7 +35,8 @@ class ReportForm(CommonForm):
             "problem_magnitude",
             "related_trek",
             "status",
-            "assigned_user"
+            "assigned_user",
+            "uses_timers"
         )
     ]
 
@@ -43,7 +50,8 @@ class ReportForm(CommonForm):
             "problem_magnitude",
             "related_trek",
             "status",
-            "assigned_user"
+            "assigned_user",
+            "uses_timers"
         ]
         model = Report
 
@@ -69,29 +77,41 @@ class ReportForm(CommonForm):
                 # assigned_user
                 if self.old_status_id != 'filed':
                     self.fields["assigned_user"].widget = HiddenInput()
-                # message
-                self.fields["message"] = CharField(required=False)
-                self.fields["message"].widget = Textarea()
+                # message for sentinel
+                self.fields["message_sentinel"] = CharField(required=False)
+                self.fields["message_sentinel"].widget = Textarea()
+                self.fields["message_sentinel"].label = _("Message for sentinel")
                 right_after_status_index = self.fieldslayout[0].fields.index('status') + 1
-                self.fieldslayout[0].insert(right_after_status_index, 'message')
+                self.fieldslayout[0].insert(right_after_status_index, 'message_sentinel')
+                # message for supervisor
+                self.fields["message_supervisor"] = CharField(required=False)
+                self.fields["message_supervisor"].widget = Textarea()
+                self.fields["message_supervisor"].label = _("Message for supervisor")
+                right_after_user_index = self.fieldslayout[0].fields.index('assigned_user') + 1
+                self.fieldslayout[0].insert(right_after_user_index, 'message_supervisor')
             else:
                 self.old_status_id = None
                 self.fields["status"].widget = HiddenInput()
                 self.fields["assigned_user"].widget = HiddenInput()
+                self.fields["uses_timers"].widget = HiddenInput()
         else:
             self.fields["assigned_user"].widget = HiddenInput()
+            self.fields["uses_timers"].widget = HiddenInput()
 
     def save(self, *args, **kwargs):
         report = super().save(self, *args, **kwargs)
         if self.instance.pk and settings.SURICATE_MANAGEMENT_ENABLED:
             if self.old_status_id == 'filed' and 'assigned_user' in self.changed_data:
-                report.notify_assigned_user()
+                msg = self.cleaned_data.get('message_supervisor', "")
+                report.notify_assigned_user(msg)
                 waiting_status = ReportStatus.objects.get(suricate_id='waiting')
                 report.status = waiting_status
                 report.save()
                 report.lock_in_suricate()
                 TimerEvent.objects.create(step=waiting_status, report=report)
             if 'status' in self.changed_data or 'assigned_user' in self.changed_data:
-                msg = self.cleaned_data.get('message', "")
+                msg = self.cleaned_data.get('message_sentinel', "")
                 report.send_notifications_on_status_change(self.old_status_id, msg)
+            if 'status' in self.changed_data and self.old_status_id == 'intervention_solved':
+                report.unlock_in_suricate()
         return report
