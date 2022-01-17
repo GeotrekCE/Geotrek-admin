@@ -21,6 +21,10 @@ CHANGELOG
 - Update to mapentity 7.1.0
 - Update to django-tinymce 3.4.0 and TinyMCE 5.10.1
 
+**Bug fixes**
+
+- Fix trademark missing
+
 
 2.75.0     (2022-01-07)
 -----------------------
