@@ -52,7 +52,7 @@ class ReportViewsetMailSend(TestCase):
 
 
 class ReportSerializationOptimizeTests(TestCase):
-    
+
     @classmethod
     def setUpTestData(cls):
         cls.user = SuperUserFactory.create()

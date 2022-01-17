@@ -19,15 +19,6 @@ class WorkflowManagerAdmin(admin.ModelAdmin):
         return perms
 
 
-class WorkflowManagerAdmin(admin.ModelAdmin):
-
-    def has_add_permission(self, request):
-        # There can be only one manager
-        perms = super().has_add_permission(request)
-        if perms and feedback_models.WorkflowManager.objects.exists():
-            perms = False
-        return perms
-
 admin.site.register(feedback_models.ReportCategory, TabbedTranslationAdmin)
 admin.site.register(feedback_models.ReportStatus)
 admin.site.register(feedback_models.ReportActivity, TabbedTranslationAdmin)

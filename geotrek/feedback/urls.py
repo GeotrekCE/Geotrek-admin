@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.urls import path, register_converter
-from django.conf import settings
 from mapentity.registry import registry
 
 from geotrek.common.urls import LangConverter
