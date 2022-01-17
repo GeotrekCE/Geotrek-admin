@@ -2,14 +2,14 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
-from django_filters import ChoiceFilter, MultipleChoiceFilter, FilterSet
+from django_filters import ChoiceFilter, MultipleChoiceFilter
 
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
-from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
+from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.core.models import Topology
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.common.filters import RightFilter
+from geotrek.common.filters import OptionalRangeFilter, RightFilter
 from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDistrict,
                                     IntersectionFilterRestrictedArea, IntersectionFilterRestrictedAreaType,
                                     ZoningFilterSet)
@@ -169,7 +169,14 @@ class ProjectIntersectionFilterRestrictedAreaType(PolygonInterventionFilterMixin
         return value.geom
 
 
-class InterventionFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
+class AltimetryInterventionFilterSet(AltimetryPointFilterSet):
+    length_3d = OptionalRangeFilter(field_name='length', label=_('length 3d'))
+    ascent = OptionalRangeFilter(label=_('ascent'))
+    descent = OptionalRangeFilter(label=_('descent'))
+    slope = OptionalRangeFilter(label=_('slope'))
+
+
+class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
                   ('trail', _("Trail")))
@@ -187,12 +194,6 @@ class InterventionFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, St
                                                         lookup_expr='intersects')
     city = InterventionIntersectionFilterCity(label=_('City'), required=False, lookup_expr='intersects')
     district = InterventionIntersectionFilterDistrict(label=_('District'), required=False, lookup_expr='intersects')
-
-    @classmethod
-    def get_filters(cls):
-        filters = super(FilterSet, cls).get_filters()
-        del filters['length']
-        return filters
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
