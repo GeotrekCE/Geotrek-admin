@@ -1,21 +1,23 @@
-from datetime import datetime
 import json
+from datetime import datetime
 from unittest import mock
-from django.conf import settings
 
-from django.test.utils import override_settings
-from django.utils.translation import gettext_lazy as _
-from django.test import TestCase
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core import mail
-
+from django.core.cache import caches
+from django.test import TestCase
+from django.test.utils import override_settings
+from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from rest_framework.test import APIClient
 
 from geotrek.common.tests import CommonTest, TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
+from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
+                                           get_dummy_uploaded_image,
+                                           get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factories
-from rest_framework.test import APIClient
 
 
 class ReportViewsetMailSend(TestCase):
@@ -46,6 +48,52 @@ class ReportViewsetMailSend(TestCase):
         self.assertEqual(mail.outbox[1].subject, "Geotrek : Signal a mistake")
         self.assertIn("We acknowledge receipt of your feedback", mail.outbox[1].body)
         self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
+
+
+class ReportSerializationOptimizeTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+        cls.classified_status = feedback_factories.ReportStatusFactory(identifier='classified', label="Classé sans suite")
+        cls.filed_status = feedback_factories.ReportStatusFactory(identifier='filed', label="Classé sans suite")
+        cls.classified_report_1 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.classified_report_2 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.classified_report_3 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.filed_report = feedback_factories.ReportFactory(status=cls.filed_status)
+
+    def setUp(cls):
+        cls.client.force_login(cls.user)
+
+    def test_report_layer_cache(self):
+        """
+        This test check report's per status cache work independently
+        """
+        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
+
+        # There are 5 queries to get layer
+        with self.assertNumQueries(5):
+            response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        self.assertEqual(len(response.json()['features']), 3)
+
+        # We check the content was created and cached
+        last_update_status = feedback_models.Report.latest_updated_by_status("classified")
+        geojson_lookup_status = 'en_report_%s_classified_json_layer' % last_update_status.isoformat()
+        content_per_status = cache.get(geojson_lookup_status)
+
+        self.assertEqual(response.content, content_per_status)
+
+        # We have 1 less query because the generation of report was cached
+        with self.assertNumQueries(4):
+            self.client.get("/api/report/report.geojson?_status_id=classified")
+
+        self.classified_report_4 = feedback_factories.ReportFactory(status=self.classified_status)
+
+        # Cache is updated when we add a report
+        with self.assertNumQueries(5):
+            self.client.get("/api/report/report.geojson?_status_id=classified")
+
+        self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
 
 
 class ReportViewsTest(CommonTest):

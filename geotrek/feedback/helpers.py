@@ -52,19 +52,19 @@ class SuricateRequestManager:
         extra_url_params = urllib.parse.urlencode(url_params)
         # Include alert ID in check when needed
         if "uid_alerte" in url_params:
-            id_alert = url_params["uid_alerte"]
-            check = f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + id_alert + self.ID_ORIGIN).encode()).hexdigest()}"
+            id_alert = str(url_params["uid_alerte"])
+            check = f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()).hexdigest()}"
         else:
             check = self.CHECK_CLIENT
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.get(
-                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
+                f"{self.URL}{endpoint}{origin_param}&{extra_url_params}{check}",
                 auth=self.AUTH,
             )
         else:
             response = requests.get(
-                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
+                f"{self.URL}{endpoint}{origin_param}&{extra_url_params}{check}",
             )
         return response
 
@@ -186,9 +186,9 @@ class SuricateMessenger:
             (manager.PRIVATE_KEY_CLIENT_SERVER + report.email).encode()
         ).hexdigest()
         """Send report to Suricate Rest API"""
-        activity_id = report.activity.suricate_id if report.activity is not None else None
-        category_id = report.category.suricate_id if report.category is not None else None
-        magnitude_id = report.problem_magnitude.suricate_id if report.problem_magnitude is not None else None
+        activity_id = report.activity.identifier if report.activity is not None else None
+        category_id = report.category.identifier if report.category is not None else None
+        magnitude_id = report.problem_magnitude.identifier if report.problem_magnitude is not None else None
         gps_geom = report.geom.transform(4326, clone=True)
         params = {
             "id_origin": manager.ID_ORIGIN,
@@ -205,23 +205,22 @@ class SuricateMessenger:
         }
         manager.post_to_suricate("wsSendReport", params)
 
-    # TODO use in workflow
-    # def lock_alert(self, id_alert):
-    #     """Lock report on Suricate Rest API"""
-    #     return self.gestion_manager.get_from_suricate(
-    #         "wsLockAlert", extra_url_params={"uid_alerte": id_alert}
-    #     )
+    def lock_alert(self, id_alert):
+        """Lock report on Suricate Rest API"""
+        return self.gestion_manager.get_from_suricate(
+            "wsLockAlert", url_params={"uid_alerte": id_alert}
+        )
 
-    # def unlock_alert(self, id_alert):
-    #     """Unlock report on Suricate Rest API"""
-    #     return self.gestion_manager.get_from_suricate(
-    #         "wsUnlockAlert", url_params={"uid_alerte": id_alert}
-    #     )
+    def unlock_alert(self, id_alert):
+        """Unlock report on Suricate Rest API"""
+        return self.gestion_manager.get_from_suricate(
+            "wsUnlockAlert", url_params={"uid_alerte": id_alert}
+        )
 
     def update_status(self, id_alert, new_status, message):
         """Update status for given report on Suricate Rest API"""
         check = md5(
-            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + id_alert).encode()
+            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + str(id_alert)).encode()
         ).hexdigest()
 
         params = {
@@ -246,11 +245,11 @@ class SuricateMessenger:
 
     def message_sentinel(self, id_alert, message):
         check = md5(
-            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + id_alert).encode()
+            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + str(id_alert)).encode()
         ).hexdigest()
         """Send report to Suricate Rest API"""
         params = {
-            "id_origin": self.ID_ORIGIN,
+            "id_origin": self.gestion_manager.ID_ORIGIN,
             "uid_alerte": id_alert,
             "message": message,
             "check": check,
