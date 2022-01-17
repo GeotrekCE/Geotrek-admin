@@ -61,6 +61,7 @@ class EmailSendingTest(TestCase):
         self.assertIn("Comment : This is a 'comment'", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
 
+    @override_settings(LANGUAGE_CODE='fr')
     def test_email_format_and_content_fr(self):
         translation.activate('fr')
         ReportFactory.create(email='jacques.dupont@nulpart.com',
