@@ -1,3 +1,7 @@
-Le traitement d'un Signalement est en retard sur Geotrek : {{report.full_url}}
+{% load i18n l10n %}
+{% autoescape off %}
 
-Une intervention doit être programmée.
+{% trans "A report's processing is late on Geotrek" %} : {{report.full_url}}
+{% trans "An intervention must be planned." %} 
+
+{% endautoescape %}

@@ -215,12 +215,12 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             super().save(*args, **kwargs)
 
     def notify_assigned_user(self, message):
-        subject = str("Geotrek - Nouveau Signalement à traiter")
+        subject = _("Geotrek - New report to process")
         message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
 
     def notify_late_report(self, status_id):
-        subject = str("Geotrek - Signalement à traiter en retard")
+        subject = _("Geotrek - Late report processsing")
         message = render_to_string(f"feedback/late_{status_id}_email.html", {"report": self})
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
 
@@ -408,6 +408,6 @@ class WorkflowManager(models.Model):
         return f"{self.user.username} ({self.user.email})"
 
     def notify(self, report):
-        subject = _("Geotrek - Un Signalement est à clôturer")
+        subject = _("Geotrek - A report must be solved")
         message = render_to_string("feedback/cloture_email.html", {"report": report})
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.user.email])

@@ -1,3 +1,7 @@
-On vous a assigné un signalement sur Geotrek : {{report.full_url}}
+{% load i18n l10n %}
+{% autoescape off %}
 
-Message du responsable : {{ message }} 
+{% trans "You have been assigned a report on Geotrek" %} : {{report.full_url}}
+{% trans "Message from the manager" %} : {{ message }}
+
+{% endautoescape %}

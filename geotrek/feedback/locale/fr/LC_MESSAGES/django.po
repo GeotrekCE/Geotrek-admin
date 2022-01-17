@@ -209,3 +209,30 @@ msgstr ""
 "\n"
 "L'équipe Geotrek\n"
 "http://www.geotrek.fr"
+
+msgid "You have been assigned a report on Geotrek"
+msgstr "On vous a assigné un signalement sur Geotrek"
+
+msgid "Message from the manager"
+msgstr "Message du responsable"
+
+msgid "A report on Geotrek has to be marked as resolved, since the corresponding intervention was completed"
+msgstr "Un signalement sur Geotrek est à clôturer suite à la résolution de l'intervention associée"
+
+msgid "A report's processing is late on Geotrek"
+msgstr "Le traitement d'un Signalement est en retard sur Geotrek"
+
+msgid "The corresponding intervention must be resolved."
+msgstr "L'intervention associée doit être cloturée."
+
+msgid "An intervention must be planned."
+msgstr "Une intervention doit être programmée."
+
+msgid "Geotrek - New report to process"
+msgstr "Geotrek - Nouveau Signalement à traiter"
+
+msgid "Geotrek - Late report processsing"
+msgstr "Geotrek - Signalement à traiter en retard"
+
+msgid "Geotrek - A report must be solved"
+msgstr "Geotrek - Un Signalement est à clôturer"

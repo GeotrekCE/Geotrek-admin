@@ -1,1 +1,6 @@
-Un signalement sur Geotrek est à clôturer suite à la résolution de l'intervention associée : {{report.full_url}}
+{% load i18n l10n %}
+{% autoescape off %}
+
+{% trans "A report on Geotrek has to be marked as resolved, since the corresponding intervention was completed" %} : {{report.full_url}}
+
+{% endautoescape %}
