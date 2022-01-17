@@ -156,6 +156,24 @@ msgstr "Intervention prévue"
 msgid "Supervisor"
 msgstr "Responsable"
 
+msgid "Message for sentinel"
+msgstr "Message pour la sentinelle"
+
+msgid "Use timers"
+msgstr "Lancer les comptes à rebours"
+
+msgid "Launch timers to alert supervisor if report is not being treated on time"
+msgstr "Lancer des comptes à rebours pour notifier le responsable si le signalement n'est pas traité dans les temps"
+
+msgid "Message for supervisor"
+msgstr "Message pour le responsable"
+
+msgid "Workflow manager"
+msgstr "Manager de gestion"
+
+msgid "Workflow managers"
+msgstr "Managers de gestion"
+
 msgid "Intervention terminée"
 msgstr "Intervention terminée"
 
@@ -167,6 +185,9 @@ msgstr "De nouveaux signalements ont été importés depuis Suricate."
 
 msgid "Please consult your reports in Geotrek-Admin."
 msgstr "Consultez vos signalements dans Geotrek-Admin."
+
+msgid "Geotrek - Un Signalement est à clôturer"
+msgstr "Geotrek - A Report is ready to be resolved"
 
 msgid ""
 "Hello,\n"
@@ -188,3 +209,30 @@ msgstr ""
 "\n"
 "L'équipe Geotrek\n"
 "http://www.geotrek.fr"
+
+msgid "You have been assigned a report on Geotrek"
+msgstr "On vous a assigné un signalement sur Geotrek"
+
+msgid "Message from the manager"
+msgstr "Message du responsable"
+
+msgid "A report on Geotrek has to be marked as resolved, since the corresponding intervention was completed"
+msgstr "Un signalement sur Geotrek est à clôturer suite à la résolution de l'intervention associée"
+
+msgid "A report's processing is late on Geotrek"
+msgstr "Le traitement d'un Signalement est en retard sur Geotrek"
+
+msgid "The corresponding intervention must be resolved."
+msgstr "L'intervention associée doit être cloturée."
+
+msgid "An intervention must be planned."
+msgstr "Une intervention doit être programmée."
+
+msgid "Geotrek - New report to process"
+msgstr "Geotrek - Nouveau Signalement à traiter"
+
+msgid "Geotrek - Late report processsing"
+msgstr "Geotrek - Signalement à traiter en retard"
+
+msgid "Geotrek - A report must be solved"
+msgstr "Geotrek - Un Signalement est à clôturer"

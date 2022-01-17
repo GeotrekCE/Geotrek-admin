@@ -1681,6 +1681,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "created_in_suricate",
             "last_updated_in_suricate",
             "assigned_user",
+            "uses_timers"
         ],
     COLUMNS_LISTS["sensitivity_view"] = [
             "structure",
@@ -2088,6 +2089,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "created_in_suricate",
             "last_updated_in_suricate",
             "assigned_user",
+            "uses_timers"
         ],
     COLUMNS_LISTS["sensitivity_export"] = [
             "species",
@@ -2379,7 +2381,8 @@ An exhaustive list of form fields hideable in each module.
             "locked",
             "uid",
             "origin",
-            "assigned_user"
+            "assigned_user",
+            "uses_timers"
         ],
     HIDDEN_FORM_FIELDS["sensitivity_species"] = [
             "contact",

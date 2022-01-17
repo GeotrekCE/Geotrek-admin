@@ -13,7 +13,6 @@ from geotrek.feedback import serializers as feedback_serializers
 from geotrek.feedback.filters import ReportFilterSet
 from geotrek.feedback.forms import ReportForm
 from mapentity import views as mapentity_views
-from mapentity.views.generic import MapEntityCreate
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
@@ -26,6 +25,33 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     model = feedback_models.Report
     filterform = ReportFilterSet
     properties = ["email"]
+
+    def get_queryset(self):
+        qs = self.queryset.select_related(
+            "activity", "category", "problem_magnitude", "status", "related_trek"
+        )
+        status_id = self.request.GET.get('_status_id')
+        if status_id:
+            qs = qs.filter(status__identifier=status_id)
+        return qs
+
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator.
+        """
+        language = self.request.LANGUAGE_CODE
+        status_id = self.request.GET.get('_status_id')
+        geojson_lookup = None
+        if status_id:
+            latest_saved = feedback_models.Report.latest_updated_by_status(status_id)
+        else:
+            latest_saved = feedback_models.Report.latest_updated()
+        if latest_saved:
+            geojson_lookup = '%s_report_%s_%s_json_layer' % (
+                language,
+                latest_saved.isoformat(),
+                status_id if status_id else ''
+            )
+        return geojson_lookup
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
@@ -90,7 +116,7 @@ class FeedbackOptionsView(APIView):
         return Response(options)
 
 
-class ReportCreate(MapEntityCreate):
+class ReportCreate(mapentity_views.MapEntityCreate):
     model = feedback_models.Report
     form_class = ReportForm
 

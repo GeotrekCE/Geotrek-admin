@@ -1006,7 +1006,7 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
 
         class Meta:
             model = feedback_models.ReportStatus
-            fields = ('id', 'label')
+            fields = ('color', 'id', 'label', 'identifier')
 
     class ReportCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)

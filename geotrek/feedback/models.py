@@ -1,5 +1,8 @@
 import html
 import logging
+from datetime import timedelta
+
+from colorfield.fields import ColorField
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -8,6 +11,7 @@ from django.contrib.gis.db import models
 from django.core.mail import send_mail
 from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from mapentity.models import MapEntityMixin
@@ -25,7 +29,13 @@ logger = logging.getLogger(__name__)
 
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
-    'filed': ['classified', 'waiting']
+    'filed': ['classified', 'waiting'],
+    'solved_intervention': ['resolved']
+}
+
+STATUS_WHEN_REPORT_IS_LATE = {
+    'waiting': 'late_intervention',
+    'programmed': 'late_resolution',
 }
 
 
@@ -35,6 +45,23 @@ def status_default():
     if new_status_query:
         return new_status_query.get().pk
     return None
+
+
+class SelectableUserManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().filter(userprofile__isnull=False)
+
+
+class SelectableUser(User):
+
+    objects = SelectableUserManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return f"{self.username} ({self.email})"
 
 
 class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin):
@@ -101,13 +128,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         verbose_name=_("Last updated in Suricate")
     )
     assigned_user = models.ForeignKey(
-        User,
+        SelectableUser,
         blank=True,
         on_delete=models.PROTECT,
         null=True,
         verbose_name=_("Supervisor"),
         related_name="reports"
     )
+    uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
 
     class Meta:
         verbose_name = _("Report")
@@ -145,6 +173,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return self.geom.transform(4326, clone=True)
 
     @property
+    def color(self):
+        default = settings.MAPENTITY_CONFIG.get('MAP_STYLES', {}).get("detail", {}).get("color", "#ffff00")
+        if not(settings.ENABLE_REPORT_COLORS_PER_STATUS) or self.status is None or self.status.color is None:
+            return default
+        else:
+            return self.status.color
+
+    @property
     def comment_text(self):
         return html.unescape(self.comment)
 
@@ -175,13 +211,17 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
                 SuricateMessenger().post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
-        else:  # This is an update
-            # TODO We'll need to implement some of the workflow here Todo do we need to remove this
+        else:  # Report updates should do nothing more
             super().save(*args, **kwargs)
 
-    def notify_assigned_user(self):
-        subject = str("Geotrek - Nouveau Signalement à traiter")
-        message = render_to_string("feedback/affectation_email.html", {"report": self})
+    def notify_assigned_user(self, message):
+        subject = _("Geotrek - New report to process")
+        message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
+
+    def notify_late_report(self, status_id):
+        subject = _("Geotrek - Late report processsing")
+        message = render_to_string(f"feedback/late_{status_id}_email.html", {"report": self})
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
 
     def lock_in_suricate(self):
@@ -191,8 +231,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         SuricateMessenger().unlock_alert(self.uid)
 
     def send_notifications_on_status_change(self, old_status_id, message):
-        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.suricate_id in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
-            SuricateMessenger().update_status(self.uid, self.status.suricate_id, message)
+        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
+            SuricateMessenger().update_status(self.uid, self.status.identifier, message)
             SuricateMessenger().message_sentinel(self.uid, message)
 
     def save(self, *args, **kwargs):
@@ -228,6 +268,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         qs = Q(target_type=report_content_type, target_id=self.id)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
+    @classmethod
+    def latest_updated_by_status(cls, status_id):
+        return cls.objects.existing().filter(status__identifier=status_id).latest('date_update').get_date_update()
+
 
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
@@ -239,7 +283,7 @@ class ReportActivity(models.Model):
     """Activity involved in report"""
 
     label = models.CharField(verbose_name=_("Activity"), max_length=128)
-    suricate_id = models.PositiveIntegerField(
+    identifier = models.PositiveIntegerField(
         verbose_name=_("Suricate id"), null=True, blank=True, unique=True
     )
 
@@ -254,7 +298,7 @@ class ReportActivity(models.Model):
 
 class ReportCategory(models.Model):
     label = models.CharField(verbose_name=_("Category"), max_length=128)
-    suricate_id = models.PositiveIntegerField(_("Suricate id"), null=True, blank=True)
+    identifier = models.PositiveIntegerField(_("Suricate id"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Category")
@@ -267,13 +311,14 @@ class ReportCategory(models.Model):
 
 class ReportStatus(models.Model):
     label = models.CharField(verbose_name=_("Status"), max_length=128)
-    suricate_id = models.CharField(
+    identifier = models.CharField(
         null=True,
         blank=True,
         unique=True,
         max_length=100,
         verbose_name=_("Identifiant"),
     )
+    color = ColorField(verbose_name=_("Color"), default='#444444')
 
     class Meta:
         verbose_name = _("Status")
@@ -287,7 +332,7 @@ class ReportProblemMagnitude(models.Model):
     """Report problem magnitude"""
 
     label = models.CharField(verbose_name=_("Problem magnitude"), max_length=128)
-    suricate_id = models.PositiveIntegerField(
+    identifier = models.PositiveIntegerField(
         verbose_name=_("Suricate id"), null=True, blank=True, unique=True
     )
     suricate_label = models.CharField(
@@ -311,11 +356,66 @@ class AttachedMessage(models.Model):
     date = models.DateTimeField()
     author = models.CharField(max_length=300)
     content = models.TextField()
-    suricate_id = models.IntegerField(
+    identifier = models.IntegerField(
         null=True, blank=True, verbose_name=_("Identifiant")
     )
     type = models.CharField(max_length=100)
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('suricate_id', 'date', 'report')
+        unique_together = ('identifier', 'date', 'report')
+
+
+class TimerEvent(models.Model):
+    """
+    This model stores notification dates for late reports, according to management workflow
+    Run 'check_timers" command everyday to send notifications and clear timers
+    """
+
+    step = models.ForeignKey(ReportStatus, on_delete=models.CASCADE, null=False, related_name="timers")
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, null=False, related_name="timers")
+    date_event = models.DateTimeField(default=timezone.now)
+    deadline = models.DateTimeField()
+    notification_sent = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.report.uses_timers:
+            if self.pk is None:
+                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS.get(f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS", 30)
+                self.deadline = self.date_event + timedelta(days=days_nb)
+            super().save(*args, **kwargs)
+        # Don't save if report doesn't use timers
+
+    def is_linked_report_late(self):
+        # Deadline is over and report status still hasn't changed
+        return (timezone.now() > self.deadline) and (self.report.status.identifier == self.step.identifier)
+
+    def notify_if_needed(self):
+        if not(self.notification_sent) and self.is_linked_report_late():
+            self.report.notify_late_report(self.step.identifier)
+            late_status = ReportStatus.objects.get(identifier=STATUS_WHEN_REPORT_IS_LATE[self.step.identifier])
+            self.report.status = late_status
+            self.report.save()
+            self.notification_sent = True
+            self.save()
+
+    def is_obsolete(self):
+        obsolete_notified = (timezone.now() > self.deadline) and self.notification_sent  # Notification sent by timer
+        obsolete_unused = self.report.status.identifier != self.step.identifier  # Report status changed, therefore it was dealt with in time
+        return obsolete_notified or obsolete_unused
+
+
+class WorkflowManager(models.Model):
+    user = models.ForeignKey(SelectableUser, on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = _("Workflow Manager")
+        verbose_name_plural = _("Workflow Managers")
+
+    def __str__(self):
+        return f"{self.user.username} ({self.user.email})"
+
+    def notify(self, report):
+        subject = _("Geotrek - A report must be solved")
+        message = render_to_string("feedback/cloture_email.html", {"report": report})
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
