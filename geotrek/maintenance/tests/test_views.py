@@ -9,7 +9,7 @@ from zipfile import ZipFile
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.gis.geos import Point, LineString
+from django.contrib.gis.geos import Point, LineString, GeometryCollection
 from django.contrib.gis import gdal
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -27,7 +27,6 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import InterventionFormatList, ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
-from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.outdoor.tests.factories import CourseFactory
@@ -578,19 +577,20 @@ class ExportTest(TranslationResetMixin, TestCase):
         line = PathFactory.create(geom=LineString(Point(10, 10), Point(11, 10)))
         topo_line = TopologyFactory.create(paths=[line])
 
-        # Create a topology point
-        lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
-
-        closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 0), srid=settings.SRID))
-        topo_point = Topology._topologypoint(lng, lat, None)
-        topo_point.save()
+        closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 1), srid=settings.SRID))
+        topo_point = TopologyFactory.create(paths=[(closest_path, 0.5, 0.5)])
 
         self.assertEqual(topo_point.paths.get(), closest_path)
 
         # Create one intervention by geometry (point/linestring/geometrycollection)
         it_point = InterventionFactory.create(target=topo_point)
         it_line = InterventionFactory.create(target=topo_line)
-        course = CourseFactory.create(geom='GEOMETRYCOLLECTION(POINT(0 0), POINT(0 1), LINESTRING(0 0, 1 1))')
+        course_point_a = Point(0, 0, srid=2154)
+        course_point_b = Point(5, 5, srid=2154)
+        course_line = LineString((0, 0), (1, 1), srid=2154)
+        course_geometry_collection = GeometryCollection(course_point_a, course_point_b, course_line, srid=2154)
+
+        course = CourseFactory.create(geom=course_geometry_collection)
         it_geometrycollection = InterventionFactory.create(target=course)
         # reload
         it_point = type(it_point).objects.get(pk=it_point.pk)
@@ -604,21 +604,22 @@ class ExportTest(TranslationResetMixin, TestCase):
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
         pfl = ZipShapeSerializer()
-        shapefiles = pfl.path_directory
         devnull = open(os.devnull, "wb")
         pfl.serialize(Project.objects.all(), stream=devnull, delete=False,
                       fields=ProjectFormatList().columns)
+        shapefiles = pfl.path_directory
         shapefiles = [shapefile for shapefile in os.listdir(shapefiles) if shapefile[-3:] == "shp"]
-        datasources = [gdal.DataSource(os.path.join(pfl.path_directory, s)) for s in shapefiles]
-        layers = [ds[0] for ds in datasources]
+        layers = {
+            s: gdal.DataSource(os.path.join(pfl.path_directory, s))[0] for s in shapefiles
+        }
 
-        self.assertEqual(len(datasources), 2)
-        geom_type_layer = {layer.name: layer for layer in layers}
+        self.assertEqual(len(layers), 2)
+        geom_type_layer = {layer.name: layer for layer in layers.values()}
         geom_types = geom_type_layer.keys()
         self.assertIn('MultiPoint', geom_types)
         self.assertIn('MultiLineString', geom_types)
 
-        for layer in layers:
+        for layer in layers.values():
             self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
             self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
@@ -628,19 +629,19 @@ class ExportTest(TranslationResetMixin, TestCase):
                 'cities', 'districts', 'restricted'
             ])
 
-        self.assertEqual(len(layers[0]), 1)
-        self.assertEqual(len(layers[1]), 1)
-
+            self.assertEqual(len(layer), 1)
+            self.assertEqual(len(layer), 1)
         for feature in geom_type_layer['MultiPoint']:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertEqual(len(feature.geom.geos), 3)
-            self.assertAlmostEqual(feature.geom.geos[2].x, it_point.geom.x)
-            self.assertAlmostEqual(feature.geom.geos[2].y, it_point.geom.y)
+            geoms = {geos.wkt for geos in feature.geom.geos}
+            self.assertSetEqual(geoms, {it_point.geom.wkt, course_point_a.wkt, course_point_b.wkt})
 
         for feature in geom_type_layer['MultiLineString']:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertEqual(len(feature.geom.geos), 2)
-            self.assertTrue(feature.geom.geos[1].equals(it_line.geom))
+            geoms = {geos.wkt for geos in feature.geom.geos}
+            self.assertSetEqual(geoms, {it_line.geom.wkt, course_line.wkt})
 
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
