@@ -211,7 +211,7 @@ msgstr ""
 "http://www.geotrek.fr"
 
 msgid "You have been assigned a report on Geotrek"
-msgstr "On vous a assigné un signalement sur Geotrek"
+msgstr "Un signalement vous a été assigné sur Geotrek""
 
 msgid "Message from the manager"
 msgstr "Message du responsable"
