@@ -31,8 +31,9 @@ class TestFeedbackModel(TestCase):
 
 class TestTimerEventClass(SuricateWorkflowTests):
 
-    def setUp(cls):
-        super().setUp()
+    @classmethod
+    def setUpTestData(cls):
+        SuricateWorkflowTests.setUpTestData()
         cls.programmed_report = ReportFactory(status=cls.programmed_status, uses_timers=True, assigned_user=UserFactory(password="drowssap"))
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, assigned_user=UserFactory(password="drowssap"))
         cls.waiting_report_no_timers = ReportFactory(status=cls.waiting_status, uses_timers=False, assigned_user=UserFactory(password="drowssap"))

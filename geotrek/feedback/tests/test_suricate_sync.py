@@ -395,7 +395,8 @@ class SuricateInterfaceTests(SuricateTests):
 class SuricateWorkflowTests(SuricateTests):
     fixtures = ['geotrek/maintenance/fixtures/basic.json']
 
-    def setUp(cls):
+    @classmethod
+    def setUpTestData(cls):
         cls.filed_status = ReportStatusFactory(identifier='filed', label="Déposé")
         cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
         cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
@@ -478,6 +479,12 @@ def test_for_management_mode(test_func):
 
 class TestWorkflowFirstSteps(SuricateWorkflowTests):
 
+    @classmethod
+    def setUpTestData(cls):
+        SuricateWorkflowTests.setUpTestData()
+        cls.report_filed_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
+        cls.report_filed_2 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
+
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -485,18 +492,18 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
     def test_classify_alert_notifies_suricate_when_management_enabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
         form = ReportForm(
-            instance=self.report,
+            instance=self.report_filed_1,
             data={
                 'geom': 'POINT(5.1 6.6)',
-                'email': self.report.email,
+                'email': self.report_filed_1.email,
                 'status': self.classified_status.pk,
                 'message_sentinel': "Problème déjà réglé"
             }
         )
         self.assertTrue(form.is_valid)
         form.save()
-        mocked_mail_sentinel.assert_called_once_with(self.report.uid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified_status.identifier, "Problème déjà réglé")
+        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.uid, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.uid, self.classified_status.identifier, "Problème déjà réglé")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -505,10 +512,10 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
     def test_classify_alert_does_not_notify_suricate_when_management_disabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
         form = ReportForm(
-            instance=self.report,
+            instance=self.report_filed_2,
             data={
                 'geom': 'POINT(5.1 6.6)',
-                'email': self.report.email,
+                'email': self.report_filed_2.email,
                 'status': self.classified_status.pk,
                 'message_sentinel': "Problème déjà réglé"
             }

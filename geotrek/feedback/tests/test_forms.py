@@ -24,12 +24,16 @@ from geotrek.maintenance.tests.factories import (InterventionFactory,
 
 
 class TestSuricateForms(SuricateWorkflowTests):
-    def setUp(cls):
-        super().setUp()
+
+    @classmethod
+    def setUpTestData(cls):
+        SuricateWorkflowTests.setUpTestData()
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
         cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uid=uuid.uuid4())
-        cls.client.login(username="Admiin", password="drowssap")
+
+    def setUp(self):
+        self.client.login(username="Admiin", password="drowssap")
 
     @test_for_report_and_basic_modes
     def test_creation_form_common(self):
