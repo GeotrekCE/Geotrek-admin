@@ -11,7 +11,7 @@ from freezegun.api import freeze_time
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 
 from geotrek.feedback.models import SelectableUser, TimerEvent, WorkflowManager
-from geotrek.feedback.tests.factories import ReportFactory
+from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import SuricateWorkflowTests
 
 
@@ -31,8 +31,9 @@ class TestFeedbackModel(TestCase):
 
 class TestTimerEventClass(SuricateWorkflowTests):
 
-    def setUp(cls):
-        super().setUp()
+    @classmethod
+    def setUpTestData(cls):
+        SuricateWorkflowTests.setUpTestData()
         cls.programmed_report = ReportFactory(status=cls.programmed_status, uses_timers=True, assigned_user=UserFactory(password="drowssap"))
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, assigned_user=UserFactory(password="drowssap"))
         cls.waiting_report_no_timers = ReportFactory(status=cls.waiting_status, uses_timers=False, assigned_user=UserFactory(password="drowssap"))
@@ -44,12 +45,12 @@ class TestTimerEventClass(SuricateWorkflowTests):
     def test_notification_dates_waiting(self):
         event = TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
-        self.assertEquals(event.date_notification, event.date_event + timedelta(days=6))
+        self.assertEquals(event.deadline, event.date_event + timedelta(days=6))
 
     def test_notification_dates_programmed(self):
         event = TimerEvent.objects.create(step=self.programmed_status, report=self.programmed_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
-        self.assertEquals(event.date_notification, event.date_event + timedelta(days=7))
+        self.assertEquals(event.deadline, event.date_event + timedelta(days=7))
 
     def test_no_timers_when_disabled_on_reports(self):
         TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report_no_timers)
@@ -64,7 +65,7 @@ class TestTimerEventClass(SuricateWorkflowTests):
         self.event1.notify_if_needed()
         self.assertTrue(self.event1.notification_sent)
         # Assert report status changed to late
-        self.assertEqual(self.waiting_report.status, self.intervention_late_status)
+        self.assertEqual(self.waiting_report.status, self.late_intervention_status)
 
     @freeze_time("2099-07-04")
     def test_command_clears_obsolete_events(self):
@@ -99,3 +100,29 @@ class TestWorkflowUserModels(TestCase):
         WorkflowManager.objects.create(user=user)
         # We cannot create a manager if there is one
         self.assertIs(ma.has_add_permission(request), False)
+
+
+class TestReportColor(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.status = ReportStatusFactory(identifier='filed', label="Classé sans suite", color="#888888")
+        cls.report = ReportFactory(status=cls.status)
+        cls.report_1 = ReportFactory(status=None)
+
+    @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=True)
+    def test_status_color(self):
+        self.assertEqual(self.report.color, "#888888")
+
+    @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=True)
+    def test_default_color(self):
+        self.assertEqual(self.report_1.color, "#ffff00")
+
+    @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=False)
+    def test_disabled_color(self):
+        self.assertEqual(self.report.color, "#ffff00")
+
+    @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=True)
+    @override_settings(MAPENTITY_CONFIG={})
+    def test_no_default_color(self):
+        self.assertEqual(self.report_1.color, "#ffff00")

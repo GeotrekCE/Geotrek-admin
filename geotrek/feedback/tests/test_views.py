@@ -5,12 +5,9 @@ from unittest import mock
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core import mail
-from django.utils.module_loading import import_string
-
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.urls.base import reverse
 from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from rest_framework.test import APIClient
@@ -21,19 +18,6 @@ from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factories
-
-
-class ReportModelTest(TestCase):
-    """Test some custom model"""
-
-    def test_default_no_status(self):
-        my_report = feedback_factories.ReportFactory()
-        self.assertEqual(my_report.status, None)
-
-    def test_default_status_exists(self):
-        self.default_status = feedback_factories.ReportStatusFactory(label="Nouveau")
-        my_report = feedback_factories.ReportFactory()
-        self.assertEqual(my_report.status, self.default_status)
 
 
 class ReportViewsetMailSend(TestCase):
@@ -66,17 +50,20 @@ class ReportViewsetMailSend(TestCase):
         self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
 
 
-class ReportSerializationOptmizeTests(TestCase):
-
-    def setUp(cls):
+class ReportSerializationOptimizeTests(TestCase):
+    
+    @classmethod
+    def setUpTestData(cls):
         cls.user = SuperUserFactory.create()
-        cls.client.force_login(cls.user)
-        cls.classified_status = feedback_factories.ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
-        cls.filed_status = feedback_factories.ReportStatusFactory(suricate_id='filed', label="Classé sans suite")
+        cls.classified_status = feedback_factories.ReportStatusFactory(identifier='classified', label="Classé sans suite")
+        cls.filed_status = feedback_factories.ReportStatusFactory(identifier='filed', label="Classé sans suite")
         cls.classified_report_1 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.classified_report_2 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.classified_report_3 = feedback_factories.ReportFactory(status=cls.classified_status)
         cls.filed_report = feedback_factories.ReportFactory(status=cls.filed_status)
+
+    def setUp(cls):
+        cls.client.force_login(cls.user)
 
     def test_report_layer_cache(self):
         """
@@ -91,7 +78,7 @@ class ReportSerializationOptmizeTests(TestCase):
 
         # We check the content was created and cached
         last_update_status = feedback_models.Report.latest_updated_by_status("classified")
-        geojson_lookup_status = 'en_report_%sclassified_json_layer' % last_update_status.strftime('%y%m%d%H%M%S%f')
+        geojson_lookup_status = 'en_report_%s_classified_json_layer' % last_update_status.isoformat()
         content_per_status = cache.get(geojson_lookup_status)
 
         self.assertEqual(response.content, content_per_status)
@@ -126,7 +113,7 @@ class ReportViewsTest(CommonTest):
             'comment': self.obj.comment,
             'related_trek': None,
             'email': self.obj.email,
-            'status': None,
+            'status': self.obj.status.pk,
             'problem_magnitude': self.obj.problem_magnitude.pk
         }
 

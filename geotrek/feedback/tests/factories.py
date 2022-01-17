@@ -10,7 +10,7 @@ class ReportStatusFactory(factory.django.DjangoModelFactory):
         model = feedback_models.ReportStatus
 
     label = factory.Sequence(lambda n: "Status %s" % n)
-    suricate_id = factory.Sequence(lambda n: "ID %s" % n)
+    identifier = factory.Sequence(lambda n: "ID %s" % n)
 
 
 class ReportActivityFactory(factory.django.DjangoModelFactory):
@@ -49,3 +49,4 @@ class ReportFactory(factory.django.DjangoModelFactory):
     activity = factory.SubFactory(ReportActivityFactory)
     problem_magnitude = factory.SubFactory(ReportProblemMagnitudeFactory)
     category = factory.SubFactory(ReportCategoryFactory)
+    status = factory.SubFactory(ReportStatusFactory)

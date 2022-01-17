@@ -1700,6 +1700,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "problem_magnitude",
             "status",
             "related_trek",
+            "uid",
+            "locked",
+            "origin"
             "date_update",
             "date_insert",
             "created_in_suricate",
@@ -2114,12 +2117,16 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         ],
     COLUMNS_LISTS["feedback_export"] = [
             "email",
-            "activity",
             "comment",
+            "activity",
             "category",
             "problem_magnitude",
             "status",
             "related_trek",
+            "uid",
+            "locked",
+            "origin"
+            "date_update",
             "date_insert",
             "created_in_suricate",
             "last_updated_in_suricate",

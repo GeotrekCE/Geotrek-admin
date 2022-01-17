@@ -14,16 +14,16 @@ from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.common.models import Attachment
+from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportProblemMagnitude, ReportStatus)
-from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.feedback.tests.factories import (ReportFactory,
                                               ReportStatusFactory,
                                               WorkflowManagerFactory)
 
 SURICATE_REPORT_SETTINGS = {
-    "URL": "http://suricate.example.com",
+    "URL": "http://suricate.example.com/",
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
@@ -31,7 +31,7 @@ SURICATE_REPORT_SETTINGS = {
 }
 
 SURICATE_MANAGEMENT_SETTINGS = {
-    "URL": "http://suricate.example.com",
+    "URL": "http://suricate.example.com/",
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
@@ -395,15 +395,16 @@ class SuricateInterfaceTests(SuricateTests):
 class SuricateWorkflowTests(SuricateTests):
     fixtures = ['geotrek/maintenance/fixtures/basic.json']
 
-    def setUp(cls):
-        cls.filed_status = ReportStatusFactory(suricate_id='filed', label="Déposé")
-        cls.classified_status = ReportStatusFactory(suricate_id='classified', label="Classé sans suite")
-        cls.programmed_status = ReportStatusFactory(suricate_id='programmed', label="Programmé")
-        cls.waiting_status = ReportStatusFactory(suricate_id='waiting', label="En cours")
-        cls.intervention_late_status = ReportStatusFactory(suricate_id='intervention_late', label="Intervention en retard")
-        cls.resolution_late_status = ReportStatusFactory(suricate_id='resolution_late', label="Resolution en retard")
-        cls.intervention_solved_status = ReportStatusFactory(suricate_id='intervention_solved', label="Intervention terminée")
-        cls.resolved_status = ReportStatusFactory(suricate_id='resolved', label="Résolu")
+    @classmethod
+    def setUpTestData(cls):
+        cls.filed_status = ReportStatusFactory(identifier='filed', label="Déposé")
+        cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
+        cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
+        cls.waiting_status = ReportStatusFactory(identifier='waiting', label="En cours")
+        cls.late_intervention_status = ReportStatusFactory(identifier='late_intervention', label="Intervention en retard")
+        cls.late_resolution_status = ReportStatusFactory(identifier='late_resolution', label="Resolution en retard")
+        cls.solved_intervention_status = ReportStatusFactory(identifier='solved_intervention', label="Intervention terminée")
+        cls.resolved_status = ReportStatusFactory(identifier='resolved', label="Résolu")
         cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
         cls.user = UserFactory(username="Maxou", password="drowssap")
@@ -425,19 +426,19 @@ def test_for_all_suricate_modes(test_func):
     def inner(self, *args, **kwargs):
         exceptions = []
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'No Suricate' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Report' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Management' mode",)
@@ -450,13 +451,13 @@ def test_for_report_and_basic_modes(test_func):
     def inner(self, *args, **kwargs):
         exceptions = []
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'No Suricate' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Report' mode",)
@@ -468,7 +469,7 @@ def test_for_report_and_basic_modes(test_func):
 def test_for_management_mode(test_func):
     def inner(self, *args, **kwargs):
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Management' mode",)
@@ -478,6 +479,12 @@ def test_for_management_mode(test_func):
 
 class TestWorkflowFirstSteps(SuricateWorkflowTests):
 
+    @classmethod
+    def setUpTestData(cls):
+        SuricateWorkflowTests.setUpTestData()
+        cls.report_filed_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
+        cls.report_filed_2 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
+
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -485,18 +492,18 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
     def test_classify_alert_notifies_suricate_when_management_enabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
         form = ReportForm(
-            instance=self.report,
+            instance=self.report_filed_1,
             data={
                 'geom': 'POINT(5.1 6.6)',
-                'email': self.report.email,
+                'email': self.report_filed_1.email,
                 'status': self.classified_status.pk,
                 'message_sentinel': "Problème déjà réglé"
             }
         )
         self.assertTrue(form.is_valid)
         form.save()
-        mocked_mail_sentinel.assert_called_once_with(self.report.uid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report.uid, self.classified_status.suricate_id, "Problème déjà réglé")
+        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.uid, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.uid, self.classified_status.identifier, "Problème déjà réglé")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -505,10 +512,10 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
     def test_classify_alert_does_not_notify_suricate_when_management_disabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
         form = ReportForm(
-            instance=self.report,
+            instance=self.report_filed_2,
             data={
                 'geom': 'POINT(5.1 6.6)',
-                'email': self.report.email,
+                'email': self.report_filed_2.email,
                 'status': self.classified_status.pk,
                 'message_sentinel': "Problème déjà réglé"
             }

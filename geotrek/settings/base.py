@@ -220,7 +220,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
-                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
             'loaders': [
@@ -786,6 +785,8 @@ ONLY_EXTERNAL_PUBLIC_PDF = False
 
 SEND_REPORT_ACK = True
 
+ENABLE_REPORT_COLORS_PER_STATUS = False
+
 SURICATE_REPORT_ENABLED = False
 
 SURICATE_MANAGEMENT_ENABLED = False
@@ -840,6 +841,6 @@ LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 USE_X_FORWARDED_HOST = False
 
-if SURICATE_MANAGEMENT_ENABLED:
+if ENABLE_REPORT_COLORS_PER_STATUS:
     # Hide away regular report layer while keeping data in page
     MAPENTITY_CONFIG['MAP_STYLES']['report'] = {'weight': 2, 'color': '#FF4800', 'opacity': 0.0, 'fillOpacity': 0.0}

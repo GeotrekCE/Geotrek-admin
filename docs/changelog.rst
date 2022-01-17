@@ -28,6 +28,7 @@ CHANGELOG
 - Force workflow when SURICATE_MANAGEMENT_WORKFLOW setting is enabled
 - Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
 
+
 2.75.0     (2022-01-07)
 -----------------------
 

@@ -24,12 +24,16 @@ from geotrek.maintenance.tests.factories import (InterventionFactory,
 
 
 class TestSuricateForms(SuricateWorkflowTests):
-    def setUp(cls):
-        super().setUp()
+
+    @classmethod
+    def setUpTestData(cls):
+        SuricateWorkflowTests.setUpTestData()
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
-        cls.intervention_solved_report = ReportFactory(status=cls.intervention_solved_status, uid=uuid.uuid4())
-        cls.client.login(username="Admiin", password="drowssap")
+        cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uid=uuid.uuid4())
+
+    def setUp(self):
+        self.client.login(username="Admiin", password="drowssap")
 
     @test_for_report_and_basic_modes
     def test_creation_form_common(self):
@@ -129,7 +133,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form = ReportForm(instance=self.filed_report, data=data)
         form.save()
         # Assert report status changes
-        self.assertEquals(self.filed_report.status.suricate_id, "waiting")
+        self.assertEquals(self.filed_report.status.identifier, "waiting")
         # Asser timer is created
         self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
         # Assert data forwarded to Suricate
@@ -175,7 +179,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(TimerEvent.objects.filter(report=self.waiting_report).count(), 1)
         # Assert report status changed
         self.waiting_report.refresh_from_db()
-        self.assertEquals(self.waiting_report.status.suricate_id, "programmed")
+        self.assertEquals(self.waiting_report.status.identifier, "programmed")
 
     @test_for_management_mode
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -199,7 +203,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.is_valid()
         form.save()
         # Assert report changes status and manager is notified
-        self.assertEqual(self.interv_report.status.suricate_id, "intervention_solved")
+        self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(mail.outbox[-1].subject, "Geotrek - Un Signalement est à clôturer")
         self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])
@@ -208,19 +212,19 @@ class TestSuricateForms(SuricateWorkflowTests):
     def test_can_create_intervention(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
-        self.assertIn("Add a new intervention", response.content.decode("utf-8"))
+        self.assertIn("Ajouter une intervention", response.content.decode("utf-8"))
 
     @test_for_management_mode
     def test_can_only_create_intervention_once_1(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
-        self.assertNotIn("Add a new intervention", response.content.decode("utf-8"))
+        self.assertNotIn("Ajouter une intervention", response.content.decode("utf-8"))
 
     @test_for_management_mode
     def test_can_only_create_intervention_once_2(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.waiting_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
-        self.assertIn("Add a new intervention", response.content.decode("utf-8"))
+        self.assertIn("Ajouter une intervention", response.content.decode("utf-8"))
 
     @test_for_management_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -235,26 +239,26 @@ class TestSuricateForms(SuricateWorkflowTests):
             'status': self.resolved_status.pk,
             'message_sentinel': "Your message"
         }
-        form = ReportForm(instance=self.intervention_solved_report, data=data)
+        form = ReportForm(instance=self.solved_intervention_report, data=data)
         form.save()
         # Assert report status changes
-        self.assertEquals(self.intervention_solved_report.status.suricate_id, "resolved")
+        self.assertEquals(self.solved_intervention_report.status.identifier, "resolved")
         # Assert data forwarded to Suricate
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.intervention_solved_report.uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.uid)).encode()
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.intervention_solved_report.uid, 'message': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.intervention_solved_report.uid, 'statut': 'resolved', 'txt_changestatut': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'statut': 'resolved', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.intervention_solved_report.uid}&check={check}",
+            f"http://suricate.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.uid}&check={check}",
             auth=('', '')
         )

@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n mapentity_tags %}
+{% load i18n mapentity_tags feedback_tags %}
 
 
 {% block attributes %}
@@ -100,7 +100,7 @@
                             class="btn btn-sm btn-success">
                             <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
                         </p>
-                    {% elif suricate_management_enabled and report.interventions.all|length == 0 and report.status.suricate_id == "waiting" %}
+                    {% elif suricate_management_enabled and report.interventions.all|length == 0 and report.status.identifier == "waiting" %}
                         <p class="spacer"></p>
                         <p class="autohide">
                             <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"

@@ -5,7 +5,7 @@
             "label": "Programm\u00e9",
             "label_en": "Programmed",
             "label_fr": "Programm\u00e9",
-            "suricate_id": "programmed",
+            "identifier": "programmed",
             "color": "#6AA84F"
         }
     },
@@ -15,7 +15,7 @@
             "label": "Intervention en retard",
             "label_en": "Late intervention",
             "label_fr": "Intervention en retard",
-            "suricate_id": "intervention_late",
+            "identifier": "late_intervention",
             "color": "#CC0000"
         }
     },
@@ -25,7 +25,7 @@
             "label": "R\u00e9solution en retard",
             "label_en": "Late resolution",
             "label_fr": "R\u00e9solution en retard",
-            "suricate_id": "resolution_late",
+            "identifier": "late_resolution",
             "color": "#CC0000"
         }
     },
@@ -35,7 +35,7 @@
             "label": "Intervention termin\u00e9e",
             "label_en": "Resolved intervention",
             "label_fr": "Intervention termin\u00e9e",
-            "suricate_id": "intervention_solved",
+            "identifier": "solved_intervention",
             "color": "#4285F4"
         }
     },
@@ -45,7 +45,7 @@
             "label": "R\u00e9solu",
             "label_en": "Resolved",
             "label_fr": "R\u00e9solu",
-            "suricate_id": "resolved",
+            "identifier": "resolved",
             "color": "#999999"
         }
     }

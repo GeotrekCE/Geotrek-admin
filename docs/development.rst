@@ -98,6 +98,8 @@ When adding a new field ``my_field`` to a model ``MyModel``, please proceed with
 
 **Outside of model class** :
 
+- To display ``my_field`` in detail views, add a row in template ``mymodel_detail_attributes.html``
+
 - Look for form class ``MyModelForm(CommonForm)`` :
 
     - If it exists, and field needs to be included in form, add ``my_field`` to form attributes (``fields`` on the ``Meta`` class, sometimes ``fieldslayout`` as well).
