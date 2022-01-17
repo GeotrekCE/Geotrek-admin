@@ -44,12 +44,12 @@ class TestTimerEventClass(SuricateWorkflowTests):
     def test_notification_dates_waiting(self):
         event = TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
-        self.assertEquals(event.date_notification, event.date_event + timedelta(days=6))
+        self.assertEquals(event.deadline, event.date_event + timedelta(days=6))
 
     def test_notification_dates_programmed(self):
         event = TimerEvent.objects.create(step=self.programmed_status, report=self.programmed_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
-        self.assertEquals(event.date_notification, event.date_event + timedelta(days=7))
+        self.assertEquals(event.deadline, event.date_event + timedelta(days=7))
 
     def test_no_timers_when_disabled_on_reports(self):
         TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report_no_timers)

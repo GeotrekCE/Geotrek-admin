@@ -367,23 +367,32 @@ class AttachedMessage(models.Model):
 
 
 class TimerEvent(models.Model):
+    """
+    This model stores notification dates for late reports, according to management workflow
+    Run 'check_timers" command everyday to send notifications and clear timers
+    """
+
     step = models.ForeignKey(ReportStatus, on_delete=models.CASCADE, null=False, related_name="timers")
     report = models.ForeignKey(Report, on_delete=models.CASCADE, null=False, related_name="timers")
     date_event = models.DateTimeField()
-    date_notification = models.DateTimeField()
+    deadline = models.DateTimeField()
     notification_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self.report.uses_timers:
             if self.pk is None:
                 self.date_event = timezone.now()
-                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS[f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS"]
-                self.date_notification = self.date_event + timedelta(days=days_nb)
+                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS.get(f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS", 30)
+                self.deadline = self.date_event + timedelta(days=days_nb)
             super().save(*args, **kwargs)
         # Don't save if report doesn't use timers
 
+    def is_linked_report_late(self):
+        # Deadline is over and report status still hasn't changed
+        return (timezone.now() > self.deadline) and (self.report.status.identifier == self.step.identifier)
+
     def notify_if_needed(self):
-        if not(self.notification_sent) and (timezone.now() > self.date_notification) and (self.report.status.identifier == self.step.identifier):
+        if not(self.notification_sent) and self.is_linked_report_late():
             self.report.notify_late_report(self.step.identifier)
             late_status = ReportStatus.objects.get(identifier=STATUS_WHEN_REPORT_IS_LATE[self.step.identifier])
             self.report.status = late_status
@@ -392,8 +401,8 @@ class TimerEvent(models.Model):
             self.save()
 
     def is_obsolete(self):
-        obsolete_notified = (timezone.now() > self.date_notification) and self.notification_sent  # Notification sent by timer
-        obsolete_unused = self.report.status.identifier != self.step.identifier  # Report changed status, therefore it was dealt with in time
+        obsolete_notified = (timezone.now() > self.deadline) and self.notification_sent  # Notification sent by timer
+        obsolete_unused = self.report.status.identifier != self.step.identifier  # Report status changed, therefore it was dealt with in time
         return obsolete_notified or obsolete_unused
 
 

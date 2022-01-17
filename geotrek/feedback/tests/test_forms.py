@@ -208,19 +208,19 @@ class TestSuricateForms(SuricateWorkflowTests):
     def test_can_create_intervention(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
-        self.assertIn("Add a new intervention", response.content.decode("utf-8"))
+        self.assertIn("Ajouter une intervention", response.content.decode("utf-8"))
 
     @test_for_management_mode
     def test_can_only_create_intervention_once_1(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
-        self.assertNotIn("Add a new intervention", response.content.decode("utf-8"))
+        self.assertNotIn("Ajouter une intervention", response.content.decode("utf-8"))
 
     @test_for_management_mode
     def test_can_only_create_intervention_once_2(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.waiting_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
-        self.assertIn("Add a new intervention", response.content.decode("utf-8"))
+        self.assertIn("Ajouter une intervention", response.content.decode("utf-8"))
 
     @test_for_management_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
