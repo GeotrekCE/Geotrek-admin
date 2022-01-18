@@ -131,7 +131,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         data = {
             'assigned_user': str(self.user.pk),
             'email': 'test@test.fr',
-            'geom': Point(700000, 6600000, srid=settings.SRID),
+            'geom': self.filed_report.geom,
             'message_sentinel': "Your message",
             "uses_timers": True
         }
@@ -241,7 +241,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         # When assigning a user to a report
         data = {
             'email': 'test@test.fr',
-            'geom': Point(700000, 6600000, srid=settings.SRID),
+            'geom': self.solved_intervention_report.geom,
             'status': self.resolved_status.pk,
             'message_sentinel': "Your message"
         }

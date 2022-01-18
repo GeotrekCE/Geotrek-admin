@@ -49,7 +49,7 @@ class EmailSendingTest(TestCase):
     @override_settings(EMAIL_BACKEND='geotrek.feedback.tests.FailingEmailBackend')
     @mock.patch("geotrek.feedback.parsers.logger")
     def test_email_failed_logs_and_warns(self, mocked):
-        self.assertRaises(Exception, SuricateParser().send_managers_new_reports())
+        self.assertRaises(Exception, SuricateParser().send_managers_new_reports_email())
         mocked.error.assert_called_with("Email could not be sent to managers.")
 
     def test_email_format_and_content(self):
