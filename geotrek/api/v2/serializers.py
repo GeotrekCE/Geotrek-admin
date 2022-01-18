@@ -271,6 +271,32 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'advice', 'filter', 'name', 'pictogram')
 
 
+class RatingScaleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+
+    def get_name(self, obj):
+        return get_translation_or_dict('name', self, obj)
+
+    class Meta:
+        model = outdoor_models.RatingScale
+        fields = ('id', 'name', 'practice')
+
+
+class RatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+    description = serializers.SerializerMethodField(read_only=True)
+
+    def get_name(self, obj):
+        return get_translation_or_dict('name', self, obj)
+
+    def get_description(self, obj):
+        return get_translation_or_dict('description', self, obj)
+
+    class Meta:
+        model = outdoor_models.Rating
+        fields = ('id', 'name', 'description', 'scale', 'order', 'color')
+
+
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicContentCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         types = serializers.SerializerMethodField(read_only=True)
@@ -816,30 +842,6 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
 
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    class RatingScaleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField(read_only=True)
-
-        def get_name(self, obj):
-            return get_translation_or_dict('name', self, obj)
-
-        class Meta:
-            model = outdoor_models.RatingScale
-            fields = ('id', 'name', 'practice')
-
-    class RatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField(read_only=True)
-        description = serializers.SerializerMethodField(read_only=True)
-
-        def get_name(self, obj):
-            return get_translation_or_dict('name', self, obj)
-
-        def get_description(self, obj):
-            return get_translation_or_dict('description', self, obj)
-
-        class Meta:
-            model = outdoor_models.Rating
-            fields = ('id', 'name', 'description', 'scale', 'order', 'color')
-
     class OutdoorPracticeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
