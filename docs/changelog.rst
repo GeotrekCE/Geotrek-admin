@@ -24,7 +24,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix trademark missing
-- Fix broken signage list view
+- Fix broken list views using trekking_tags
 
 
 2.75.0     (2022-01-07)
