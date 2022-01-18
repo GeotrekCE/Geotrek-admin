@@ -49,5 +49,7 @@ class ConfigView(APIView):
 
 
 class GeotrekVersionAPIView(APIView):
+    permission_classes = [permissions.AllowAny, ]
+
     def get(self, request, *args, **kwargs):
         return response.Response({'version': __version__})
