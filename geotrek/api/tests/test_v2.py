@@ -1880,7 +1880,64 @@ class APISwaggerTestCase(BaseApiTest):
         self.assertContains(response, 'swagger')
 
 
-class RatingScaleTestCase(TestCase):
+class TrekRatingScaleTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice1 = trek_factory.PracticeFactory()
+        cls.practice2 = trek_factory.PracticeFactory()
+        cls.practice1.treks.set([trek_factory.TrekFactory()])
+        cls.practice2.treks.set([trek_factory.TrekFactory()])
+        cls.scale1 = trek_factory.RatingScaleFactory(name='AAA', practice=cls.practice1)
+        cls.scale2 = trek_factory.RatingScaleFactory(name='AAA', practice=cls.practice2)
+        cls.scale3 = trek_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
+
+    def test_list(self):
+        response = self.client.get('/api/v2/trek_ratingscale/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'count': 3,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'id': self.scale1.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice1.pk,
+            }, {
+                'id': self.scale2.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice2.pk,
+            }, {
+                'id': self.scale3.pk,
+                'name': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice2.pk,
+            }]
+        })
+
+    def test_detail(self):
+        response = self.client.get('/api/v2/trek_ratingscale/{}/'.format(self.scale1.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': self.scale1.pk,
+            'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+            'practice': self.practice1.pk,
+        })
+
+    def test_filter_q(self):
+        response = self.client.get('/api/v2/trek_ratingscale/', {'q': 'A'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for scale in response.json()['results']:
+            self.assertEqual(scale['name']['en'], 'AAA')
+
+    def test_filter_practice(self):
+        response = self.client.get('/api/v2/trek_ratingscale/', {'practices': self.practice2.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for scale in response.json()['results']:
+            self.assertEqual(scale['practice'], self.practice2.pk)
+
+
+class OutdoorRatingScaleTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.practice1 = outdoor_factory.PracticeFactory()
