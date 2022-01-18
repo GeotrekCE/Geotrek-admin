@@ -114,22 +114,6 @@ header .url .geo {
   transform: translate(-50%, -50%);
 }
 
-.trademark {
-  float: right;
-  width: 3cm;
-  height: 1.5cm;
-  margin-top: 0;
-  margin-right: 1cm;
-  text-align: right;
-}
-
-.trademark img {
-  display: inline-block;
-  vertical-align: middle;
-  max-width: 100%;
-  max-height: 100%;
-}
-
 .main-title {
   outline: 1px red;
   max-width: 80%;

@@ -42,9 +42,11 @@
           </div>
         {% endif %}
         {% if object.approved %}
-          <div class="trademark">
-            <img src="file://{{ MEDIA_ROOT }}/upload/trademark.svg" alt="">
-          </div>
+          {% block trademark %}
+            <div class="trademark">
+              <img src="file://{% media_static_fallback_path "upload/trademark.svg" "images/trademark.svg" %}" alt="">
+            </div>
+          {% endblock %}
         {% endif %}
         <div class="main-title">
           <h1>{{ object.name }}</h1>
