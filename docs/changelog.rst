@@ -24,6 +24,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix trademark missing
+- Fix broken signage list view
 
 
 2.75.0     (2022-01-07)
