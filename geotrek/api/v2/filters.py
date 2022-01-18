@@ -725,7 +725,7 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         )
 
 
-class OutdoorRatingsFilter(BaseFilterBackend):
+class GeotrekRatingsFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         ratings = request.GET.get('ratings')
         if ratings:
