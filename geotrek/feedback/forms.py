@@ -61,7 +61,7 @@ class ReportForm(CommonForm):
         if settings.SURICATE_MANAGEMENT_ENABLED:
             if self.instance.pk:
                 # Store current status
-                self.old_status_id = self.instance.status.identifier
+                self.old_status_identifier = self.instance.status.identifier
                 # Hide fields that are handled automatically in Management mode
                 self.fields["geom"].widget = HiddenInput()
                 self.fields["email"].widget = HiddenInput()
@@ -75,7 +75,7 @@ class ReportForm(CommonForm):
                 self.fields["status"].empty_label = None
                 self.fields["status"].queryset = ReportStatus.objects.filter(identifier__in=next_statuses)
                 # assigned_user
-                if self.old_status_id != 'filed':
+                if self.old_status_identifier != 'filed':
                     self.fields["assigned_user"].widget = HiddenInput()
                 # message for sentinel
                 self.fields["message_sentinel"] = CharField(required=False)
@@ -90,7 +90,7 @@ class ReportForm(CommonForm):
                 right_after_user_index = self.fieldslayout[0].fields.index('assigned_user') + 1
                 self.fieldslayout[0].insert(right_after_user_index, 'message_supervisor')
             else:
-                self.old_status_id = None
+                self.old_status_identifier = None
                 self.fields["status"].widget = HiddenInput()
                 self.fields["assigned_user"].widget = HiddenInput()
                 self.fields["uses_timers"].widget = HiddenInput()
@@ -101,7 +101,7 @@ class ReportForm(CommonForm):
     def save(self, *args, **kwargs):
         report = super().save(self, *args, **kwargs)
         if self.instance.pk and settings.SURICATE_MANAGEMENT_ENABLED:
-            if self.old_status_id == 'filed' and 'assigned_user' in self.changed_data:
+            if self.old_status_identifier == 'filed' and 'assigned_user' in self.changed_data:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
                 waiting_status = ReportStatus.objects.get(identifier='waiting')
@@ -111,7 +111,7 @@ class ReportForm(CommonForm):
                 TimerEvent.objects.create(step=waiting_status, report=report)
             if 'status' in self.changed_data or 'assigned_user' in self.changed_data:
                 msg = self.cleaned_data.get('message_sentinel', "")
-                report.send_notifications_on_status_change(self.old_status_id, msg)
-            if 'status' in self.changed_data and self.old_status_id == 'solved_intervention':
+                report.send_notifications_on_status_change(self.old_status_identifier, msg)
+            if 'status' in self.changed_data and self.old_status_identifier == 'solved_intervention':
                 report.unlock_in_suricate()
         return report

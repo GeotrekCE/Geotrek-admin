@@ -152,7 +152,7 @@ class InterventionForm(CommonForm):
                 target.save()
                 TimerEvent.objects.create(step=programmed_status, report=target)
             # If this is an intervention being resolved for a report, change report status and notify
-            elif 'status' in self.changed_data and self.instance.status.pk == 3:
+            elif 'status' in self.changed_data and self.instance.status_pk == 3:
                 resolved_status = ReportStatus.objects.get(identifier='solved_intervention')
                 target.status = resolved_status
                 target.save()

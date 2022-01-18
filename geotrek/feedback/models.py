@@ -230,8 +230,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def unlock_in_suricate(self):
         SuricateMessenger().unlock_alert(self.uid)
 
-    def send_notifications_on_status_change(self, old_status_id, message):
-        if old_status_id in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_id]):
+    def send_notifications_on_status_change(self, old_status_identifier, message):
+        if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
             SuricateMessenger().update_status(self.uid, self.status.identifier, message)
             SuricateMessenger().message_sentinel(self.uid, message)
 
