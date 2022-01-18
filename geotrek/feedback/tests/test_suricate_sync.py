@@ -72,7 +72,7 @@ class SuricateTests(TestCase):
             elif "GetAlerts" in url:
                 mock_response.content = mocked_json("suricate_alerts.json")
                 mock_response.status_code = 200
-            elif "wsLockAlert" in url or "wsUnlockAlert" in url:
+            elif "wsLockAlert" in url or "wsUnlockAlert" in url or "wsUpdateGPS" in url:
                 mock_response.content = mocked_json("suricate_positive.json")
                 mock_response.status_code = 200
             elif cause_JPG_error:
