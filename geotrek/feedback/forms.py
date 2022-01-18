@@ -13,13 +13,7 @@ from .models import Report, ReportStatus, TimerEvent
 # Empty status should not be changed from this form
 SURICATE_MANAGEMENT_WORKFLOW = {
     'filed': ['classified', 'filed'],
-    'classified': ['classified'],
-    'waiting': ['waiting'],
-    'programmed': ['programmed'],
-    'late_resolution': ['late_resolution'],
-    'late_intervention': ['late_intervention'],
     'solved_intervention': ['resolved', 'solved_intervention'],
-    'resolved': ['resolved']
 }
 
 
@@ -71,21 +65,19 @@ class ReportForm(CommonForm):
                 self.fields["problem_magnitude"].widget = HiddenInput()
                 # Add fields that are used in Management mode
                 # status
-                next_statuses = SURICATE_MANAGEMENT_WORKFLOW[self.instance.status.identifier]
+                next_statuses = SURICATE_MANAGEMENT_WORKFLOW.get(self.instance.status.identifier, [self.instance.status.identifier])
                 self.fields["status"].empty_label = None
                 self.fields["status"].queryset = ReportStatus.objects.filter(identifier__in=next_statuses)
                 # assigned_user
                 if self.old_status_identifier != 'filed':
                     self.fields["assigned_user"].widget = HiddenInput()
                 # message for sentinel
-                self.fields["message_sentinel"] = CharField(required=False)
-                self.fields["message_sentinel"].widget = Textarea()
+                self.fields["message_sentinel"] = CharField(required=False, widget=Textarea())
                 self.fields["message_sentinel"].label = _("Message for sentinel")
                 right_after_status_index = self.fieldslayout[0].fields.index('status') + 1
                 self.fieldslayout[0].insert(right_after_status_index, 'message_sentinel')
                 # message for supervisor
-                self.fields["message_supervisor"] = CharField(required=False)
-                self.fields["message_supervisor"].widget = Textarea()
+                self.fields["message_supervisor"] = CharField(required=False, widget=Textarea())
                 self.fields["message_supervisor"].label = _("Message for supervisor")
                 right_after_user_index = self.fieldslayout[0].fields.index('assigned_user') + 1
                 self.fieldslayout[0].insert(right_after_user_index, 'message_supervisor')
