@@ -472,6 +472,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         advice = serializers.SerializerMethodField(read_only=True)
         advised_parking = serializers.SerializerMethodField(read_only=True)
         parking_location = serializers.SerializerMethodField(read_only=True)
+        ratings_description = serializers.SerializerMethodField(read_only=True)
         children = serializers.ReadOnlyField(source='children_id')
         parents = serializers.ReadOnlyField(source='parents_id')
         public_transport = serializers.SerializerMethodField(read_only=True)
@@ -552,6 +553,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             point = obj.parking_location.transform(settings.API_SRID, clone=True)
             return [round(point.x, 7), round(point.y, 7)]
 
+        def get_ratings_description(self, obj):
+            return get_translation_or_dict('ratings_description', self, obj)
+
         def get_public_transport(self, obj):
             return get_translation_or_dict('public_transport', self, obj)
 
@@ -591,7 +595,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
                 'max_elevation', 'min_elevation', 'name', 'networks', 'next',
                 'parents', 'parking_location', 'pdf', 'points_reference',
-                'portal', 'practice', 'previous', 'public_transport',
+                'portal', 'practice', 'ratings', 'ratings_description', 'previous', 'public_transport',
                 'published', 'reservation_system', 'reservation_id', 'route', 'second_external_id',
                 'source', 'structure', 'themes', 'update_datetime', 'url', 'uuid', 'web_links'
             )

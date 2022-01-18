@@ -13,7 +13,7 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.GeotrekSiteFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
-        api_filters.OutdoorRatingsFilter
+        api_filters.GeotrekRatingsFilter
     )
     serializer_class = api_serializers.SiteSerializer
 
@@ -57,14 +57,14 @@ class CourseTypeViewSet(api_viewsets.GeotrekGeometricViewset):
         .order_by('pk')  # Required for reliable pagination
 
 
-class RatingScaleViewSet(api_viewsets.GeotrekViewSet):
+class OutdoorRatingScaleViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRatingScaleFilter, )
     serializer_class = api_serializers.RatingScaleSerializer
     queryset = outdoor_models.RatingScale.objects \
         .order_by('pk')  # Required for reliable pagination
 
 
-class RatingViewSet(api_viewsets.GeotrekViewSet):
+class OutdoorRatingViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
         api_filters.GeotrekRatingFilter,
         api_filters.SiteRelatedPortalFilter,
@@ -79,7 +79,7 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.GeotrekCourseFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
-        api_filters.OutdoorRatingsFilter
+        api_filters.GeotrekRatingsFilter
     )
     serializer_class = api_serializers.CourseSerializer
 
