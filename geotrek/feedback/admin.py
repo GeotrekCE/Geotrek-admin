@@ -18,7 +18,7 @@ class WorkflowManagerAdmin(admin.ModelAdmin):
             perms = False
         return perms
 
-
+admin.site.register(feedback_models.WorkflowManager, WorkflowManagerAdmin)
 admin.site.register(feedback_models.ReportCategory, TabbedTranslationAdmin)
 admin.site.register(feedback_models.ReportStatus)
 admin.site.register(feedback_models.ReportActivity, TabbedTranslationAdmin)
