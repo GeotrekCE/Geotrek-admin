@@ -406,6 +406,10 @@ class TimerEvent(models.Model):
 
 
 class WorkflowManager(models.Model):
+    """
+    Workflow Manager is a User that is responsible for assigning reports to other Users and confirming that reports can be marked as resolved
+    There should be only one Workflow Manager, who will receive notification emails when an action is needed
+    """
     user = models.ForeignKey(SelectableUser, on_delete=models.PROTECT)
 
     class Meta:

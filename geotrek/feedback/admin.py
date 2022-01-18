@@ -10,12 +10,16 @@ else:
 
 
 class WorkflowManagerAdmin(admin.ModelAdmin):
+    """
+    Workflow Manager is a User that is responsible for assigning reports to other Users and confirming that reports can be marked as resolved
+    There should be only one Workflow Manager, who will receive notification emails when an action is needed
+    """
 
     def has_add_permission(self, request):
         # There can be only one manager
         perms = super().has_add_permission(request)
         if perms and feedback_models.WorkflowManager.objects.exists():
-            perms = False
+            perms = False   # Disallow creating a new workflow manager if there is one already
         return perms
 
 
