@@ -274,17 +274,19 @@ class TestSuricateForms(SuricateWorkflowTests):
     def test_relocate_report(self, mocked_get):
         self.build_get_request_patch(mocked_get)
         # Relocate report
+        new_geom = Point(700000, 6900000, srid=settings.SRID)
         data = {
             'email': 'test@test.fr',
-            'geom': Point(700000, 6900000, srid=settings.SRID)
+            'geom': new_geom
         }
         form = ReportForm(instance=self.filed_report_1, data=data)
         form.save()
         # Assert relocation is forwarded to Suricate
+        long, lat = new_geom.transform(4326, clone=True).coords
         check = md5(
             (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.uid)).encode()
         ).hexdigest()
         mocked_get.assert_called_once_with(
-            f"http://suricate.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.uid}&gpslatitude=49.19972309841569&gpslongitude=3.0000000000000004&check={check}",
+            f"http://suricate.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
             auth=('', '')
         )
