@@ -301,6 +301,22 @@
   },
   {
     "pk": 1,
+    "model": "trekking.accessibilitylevel",
+    "fields": {
+      "name_fr": "Débutant",
+      "name_en": "Beginner"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "trekking.accessibilitylevel",
+    "fields": {
+      "name_fr": "Experimenté",
+      "name_en": "Experimented"
+    }
+  },
+  {
+    "pk": 1,
     "model": "trekking.route",
     "fields": {
       "pictogram": "upload/route-loop.svg",

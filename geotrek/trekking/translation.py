@@ -38,6 +38,10 @@ class AccessibilityTO(TranslationOptions):
     fields = ('name', )
 
 
+class AccessibilityLevelTO(TranslationOptions):
+    fields = ('name', )
+
+
 class RouteTO(TranslationOptions):
     fields = ('route', )
 
@@ -74,6 +78,7 @@ trek_translation_to_register = [
     (trekking_models.TrekNetwork, TrekNetworkTO),
     (trekking_models.Practice, PracticeTO),
     (trekking_models.Accessibility, AccessibilityTO),
+    (trekking_models.AccessibilityLevel, AccessibilityLevelTO),
     (trekking_models.Route, RouteTO),
     (trekking_models.DifficultyLevel, DifficultyLevelTO),
     (trekking_models.WebLink, WebLinkTO),

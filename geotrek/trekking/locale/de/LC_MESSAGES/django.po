@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 16:47+0000\n"
+"POT-Creation-Date: 2022-01-19 14:18+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -53,6 +53,9 @@ msgstr "Basic"
 
 msgid "Advanced"
 msgstr "Fortgeschritten"
+
+msgid "Accessibility"
+msgstr "Zugänglichkeit"
 
 msgid "Related treks"
 msgstr "Anschlusswege"
@@ -212,8 +215,8 @@ msgstr "Netzwerke"
 msgid "Hiking networks"
 msgstr "Route Netzwerke"
 
-msgid "Accessibility"
-msgstr "Zugänglichkeit"
+msgid "Accessibility level"
+msgstr ""
 
 msgid "Route"
 msgstr "Weg"
@@ -329,6 +332,9 @@ msgstr "Cirkwi Tag"
 
 msgid "Accessibilities"
 msgstr "Zugänglichkeit"
+
+msgid "Accessibility levels"
+msgstr ""
 
 msgid "Routes"
 msgstr "Weg"

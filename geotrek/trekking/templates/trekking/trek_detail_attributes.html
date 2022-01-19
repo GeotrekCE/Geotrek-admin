@@ -98,12 +98,6 @@
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"disabled_infrastructure" }}</th>
-            <td>{% if trek.disabled_infrastructure %}{{ trek.disabled_infrastructure|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
-        <tr>
             <th>{{ trek|verbose:"themes" }}</th>
             <td>
                 {% valuelist trek.themes.all %}
@@ -121,12 +115,6 @@
                 <td>{{ rating.name }}</td>
             </tr>
         {% endfor %}
-        <tr>
-            <th>{{ trek|verbose:"accessibilities" }}</th>
-            <td>
-                {% valuelist trek.accessibilities.all %}
-            </td>
-        </tr>
         <tr>
             <th>{{ trek|verbose:"networks" }}</th>
             <td>
@@ -206,6 +194,26 @@
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
-
+    <table class="table-striped table-bordered table">
+        <caption class="caption-detail">{% trans "Accessibility" %}</caption>
+        <tr>
+            <th>{{ trek|verbose:"accessibilities" }}</th>
+            <td>
+                {% valuelist trek.accessibilities.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Accessibility level" %}</th>
+            <td>{% if trek.accessibility_level %}{{ trek.accessibility_level|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"disabled_infrastructure" }}</th>
+            <td>{% if trek.disabled_infrastructure %}{{ trek.disabled_infrastructure|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+    </table>
     {{ block.super }}
 {% endblock attributes %}

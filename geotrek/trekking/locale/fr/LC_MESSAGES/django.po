@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 16:47+0000\n"
+"POT-Creation-Date: 2022-01-19 14:18+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -53,6 +53,9 @@ msgstr "Basique"
 
 msgid "Advanced"
 msgstr "Avancé"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
 
 msgid "Related treks"
 msgstr "Itinéraires liés"
@@ -213,8 +216,8 @@ msgstr "Réseaux de randonnée"
 msgid "Hiking networks"
 msgstr "Réseaux de randonnée"
 
-msgid "Accessibility"
-msgstr "Accessibilité"
+msgid "Accessibility level"
+msgstr "Niveau d'accessibilité"
 
 msgid "Route"
 msgstr "Parcours"
@@ -330,6 +333,9 @@ msgstr "Tag Cirkwi"
 
 msgid "Accessibilities"
 msgstr "Accessibilités"
+
+msgid "Accessibility levels"
+msgstr "Niveaux d'accessibilité"
 
 msgid "Routes"
 msgstr "Parcours"

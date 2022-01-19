@@ -12,7 +12,7 @@ class TrekFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFil
         model = Trek
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'difficulty', 'duration', 'themes', 'networks',
-            'practice', 'accessibilities', 'route', 'labels',
+            'practice', 'accessibilities', 'accessibility_level', 'route', 'labels',
             'source', 'portal', 'reservation_system',
         ]
 

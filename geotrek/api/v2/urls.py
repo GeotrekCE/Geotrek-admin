@@ -34,6 +34,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('poi_type', api_views.POITypeViewSet, basename='poitype')
     router.register('tour', api_views.TourViewSet, basename='tour')
     router.register('trek_accessibility', api_views.AccessibilityViewSet, basename='accessibility')
+    router.register('trek_accessibility_level', api_views.AccessibilityLevelViewSet, basename='accessibility-level')
     router.register('trek_route', api_views.RouteViewSet, basename='route')
     router.register('trek_difficulty', api_views.DifficultyViewSet, basename='difficulty')
     router.register('trek_network', api_views.NetworkViewSet, basename='network')

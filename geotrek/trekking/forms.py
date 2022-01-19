@@ -107,7 +107,10 @@ class TrekForm(BaseTrekForm):
     <li id="tab-advanced" class="nav-item">
         <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
     </li>
-</ul>""".format(_("Main"), _("Advanced"))),
+    <li id="tab-accessibility" class="nav-item">
+        <a class="nav-link" href="#accessibility" data-toggle="tab"><i class="bi bi-eye-slash-fill"></i> {2}</a>
+    </li>
+</ul>""".format(_("Main"), _("Advanced"), _("Accessibility"))),
             Div(
                 Div(
                     'name',
@@ -129,7 +132,6 @@ class TrekForm(BaseTrekForm):
                 ),
                 Div(
                     'points_reference',
-                    'disabled_infrastructure',
                     'advised_parking',
                     'parking_location',
                     'public_transport',
@@ -138,7 +140,6 @@ class TrekForm(BaseTrekForm):
                     'themes',
                     'labels',
                     'networks',
-                    'accessibilities',
                     'web_links',
                     'information_desks',
                     'source',
@@ -152,6 +153,13 @@ class TrekForm(BaseTrekForm):
                     'hidden_ordered_children',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
+                    css_class="scrollable tab-pane"
+                ),
+                Div(
+                    'accessibilities',
+                    'accessibility_level',
+                    'disabled_infrastructure',
+                    css_id="accessibility",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
                 ),
                 css_class="tab-content"
@@ -302,7 +310,7 @@ class TrekForm(BaseTrekForm):
              'access', 'description_teaser', 'description', 'ratings_description', 'points_reference',
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'equipment', 'themes', 'networks', 'practice',
-             'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
+             'accessibilities', 'accessibility_level', 'web_links', 'information_desks', 'source', 'portal',
              'children_trek', 'eid', 'eid2', 'reservation_system', 'reservation_id',
              'pois_excluded', 'hidden_ordered_children']
 

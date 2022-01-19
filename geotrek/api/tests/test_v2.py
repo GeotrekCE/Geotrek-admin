@@ -56,7 +56,7 @@ GEOJSON_STRUCTURE = sorted([
 ])
 
 TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'access', 'accessibilities', 'advice', 'advised_parking',
+    'id', 'access', 'accessibilities', 'accessibility_level', 'advice', 'advised_parking',
     'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
     'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
     'descent', 'description', 'description_teaser', 'difficulty', 'departure_city',
@@ -107,6 +107,10 @@ THEME_PROPERTIES_JSON_STRUCTURE = sorted([
 
 ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'name', 'pictogram'
+])
+
+ACCESSIBILITY_LEVEL_PROPERTIES_JSON_STRUCTURE = sorted([
+    'id', 'name'
 ])
 
 TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -306,6 +310,8 @@ class BaseApiTest(TestCase):
             difficulty=cls.difficulty,
         )
         cls.parent.accessibilities.add(cls.accessibility)
+        cls.accessibility_level = trek_factory.AccessibilityLevelFactory.create()
+        cls.parent.accessibility_level = cls.accessibility_level
         cls.parent.source.add(cls.source)
         cls.parent.themes.add(cls.theme2)
         cls.parent.networks.add(cls.network)
@@ -445,8 +451,14 @@ class BaseApiTest(TestCase):
     def get_accessibility_list(self, params=None):
         return self.client.get(reverse('apiv2:accessibility-list'), params)
 
+    def get_accessibility_level_list(self, params=None):
+        return self.client.get(reverse('apiv2:accessibility-level-list'), params)
+
     def get_accessibility_detail(self, id_accessibility, params=None):
         return self.client.get(reverse('apiv2:accessibility-detail', args=(id_accessibility,)), params)
+
+    def get_accessibility_level_detail(self, id_accessibility_level, params=None):
+        return self.client.get(reverse('apiv2:accessibility-level-detail', args=(id_accessibility_level,)), params)
 
     def get_portal_list(self, params=None):
         return self.client.get(reverse('apiv2:portal-list'), params)
@@ -734,6 +746,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'districts': self.district.pk,
             'structures': self.structure.pk,
             'accessibilities': self.accessibility.pk,
+            'accessibility_level': self.accessibility_level.pk,
             'themes': self.theme2.pk,
             'portals': self.portal.pk,
             'labels': '23',
@@ -1065,10 +1078,22 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             trek_models.Accessibility
         )
 
+    def test_accessibility_level_list(self):
+        self.check_number_elems_response(
+            self.get_accessibility_level_list(),
+            trek_models.AccessibilityLevel
+        )
+
     def test_accessibility_detail(self):
         self.check_structure_response(
             self.get_accessibility_detail(self.accessibility.pk),
             ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_accessibility_level_detail(self):
+        self.check_structure_response(
+            self.get_accessibility_level_detail(self.accessibility_level.pk),
+            ACCESSIBILITY_LEVEL_PROPERTIES_JSON_STRUCTURE
         )
 
     def test_theme_detail(self):

@@ -609,7 +609,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.Trek
             fields = (
-                'id', 'access', 'accessibilities', 'advice', 'advised_parking',
+                'id', 'access', 'accessibilities', 'accessibility_level', 'advice', 'advised_parking',
                 'altimetric_profile', 'ambiance', 'arrival', 'ascent',
                 'attachments', 'children', 'cities', 'create_datetime',
                 'departure', 'departure_city', 'departure_geom', 'descent',
@@ -713,6 +713,15 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Accessibility
             fields = ('id', 'name', 'pictogram')
 
+    class AccessibilityLevelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = trekking_models.AccessibilityLevel
+            fields = ('id', 'name')
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     class SensitiveAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

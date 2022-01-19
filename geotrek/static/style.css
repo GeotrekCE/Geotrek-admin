@@ -14,3 +14,16 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     background-color: #B4B4B4;
     color: #bbb;
 }
+
+table.table-striped caption {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  color: black;
+  text-align: left;
+  caption-side: top;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border: 1px solid #cccccc;
+  padding-left: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}

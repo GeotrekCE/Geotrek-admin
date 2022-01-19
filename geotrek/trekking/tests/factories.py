@@ -50,6 +50,13 @@ class AccessibilityFactory(factory.django.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('accessibility.png')
 
 
+class AccessibilityLevelFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.AccessibilityLevel
+
+    name = "Easy"
+
+
 class RouteFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Route

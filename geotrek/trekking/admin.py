@@ -11,7 +11,7 @@ from django.utils.html import format_html
 
 from geotrek.common.mixins import MergeActionMixin
 from .models import (
-    POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
+    POIType, TrekNetwork, Practice, Accessibility, AccessibilityLevel, Route, DifficultyLevel,
     WebLink, WebLinkCategory, Trek, ServiceType, Rating, RatingScale
 )
 
@@ -43,6 +43,12 @@ class AccessibilityAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'cirkwi', 'pictogram_img')
     search_fields = ('name',)
     merge_field = 'network'
+
+
+class AccessibilityLevelAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    merge_field = 'name'
 
 
 class RouteAdmin(MergeActionMixin, TabbedTranslationAdmin):
@@ -172,6 +178,7 @@ trek_admin_to_register = [
     (TrekNetwork, TrekNetworkAdmin),
     (Practice, PracticeAdmin),
     (Accessibility, AccessibilityAdmin),
+    (AccessibilityLevel, AccessibilityLevelAdmin),
     (Route, RouteAdmin),
     (DifficultyLevel, DifficultyLevelAdmin),
     (WebLink, WebLinkAdmin),

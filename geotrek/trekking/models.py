@@ -149,6 +149,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                  blank=True, null=True, verbose_name=_("Practice"))
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
                                              verbose_name=_("Accessibility"))
+    accessibility_level = models.ForeignKey('AccessibilityLevel', related_name="treks", blank=True,
+                                            verbose_name=_("Accessibility level"), null=True, on_delete=models.PROTECT)
     route = models.ForeignKey('Route', related_name='treks', on_delete=models.CASCADE,
                               blank=True, null=True, verbose_name=_("Route"))
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.CASCADE,
@@ -587,6 +589,18 @@ class Accessibility(OptionalPictogramMixin):
     @property
     def slug(self):
         return slugify(self.name) or str(self.pk)
+
+
+class AccessibilityLevel(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Accessibility level")
+        verbose_name_plural = _("Accessibility levels")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class Route(OptionalPictogramMixin):
