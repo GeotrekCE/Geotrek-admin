@@ -424,7 +424,19 @@ class WorkflowManager(models.Model):
     def __str__(self):
         return f"{self.user.username} ({self.user.email})"
 
-    def notify(self, report):
+    def try_send_email(self, subject, message):
+        try:
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.user.email], fail_silently=False)
+        except Exception as e:
+            logger.error("Email could not be sent to Workflow Managers.")
+            logger.exception(e)  # This sends an email to admins :)
+
+    def notify_report_to_solve(self, report):
         subject = _("Geotrek - A report must be solved")
         message = render_to_string("feedback/cloture_email.html", {"report": report})
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
+        self.try_send_email(subject, message)
+
+    def notify_new_reports(self):
+        subject = _("Geotrek - New reports from Suricate")
+        message = render_to_string("feedback/reports_email.html")
+        self.try_send_email(subject, message)

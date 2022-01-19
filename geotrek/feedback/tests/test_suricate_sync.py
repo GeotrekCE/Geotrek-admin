@@ -119,6 +119,12 @@ class SuricateTests(TestCase):
         mock_response.content = {}
         mocked.return_value = mock_response
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        UserProfileFactory.create(user=cls.user)
+        cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
+
 
 class SuricateAPITests(SuricateTests):
 
@@ -173,7 +179,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 4)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
+        self.assertEqual(sent_mail.subject, "Geotrek - New reports from Suricate")
         # Test update report does not send email and saves
         r = Report.objects.all()[0]
         r.category = None
@@ -418,6 +424,7 @@ class SuricateWorkflowTests(SuricateTests):
 
     @classmethod
     def setUpTestData(cls):
+        SuricateTests.setUpTestData()
         cls.filed_status = ReportStatusFactory(identifier='filed', label="Déposé")
         cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
         cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
@@ -428,9 +435,6 @@ class SuricateWorkflowTests(SuricateTests):
         cls.resolved_status = ReportStatusFactory(identifier='resolved', label="Résolu")
         cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
-        cls.user = UserFactory(username="Maxou", password="drowssap")
-        UserProfileFactory.create(user=cls.user)
-        cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
         cls.interv_report = ReportFactory(status=cls.programmed_status)
 
 
