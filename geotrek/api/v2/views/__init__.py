@@ -10,7 +10,9 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
     from .feedback import ReportStatusViewSet, ReportActivityViewSet, ReportCategoryViewSet, ReportProblemMagnitudeViewSet  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    from .trekking import TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet, DifficultyViewSet, NetworkViewSet, PracticeViewSet, WebLinkCategoryViewSet, ServiceTypeViewSet, ServiceViewSet  # noqa
+    from .trekking import (TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet,  # noqa
+                           DifficultyViewSet, NetworkViewSet, PracticeViewSet,  # noqa
+                           WebLinkCategoryViewSet, ServiceTypeViewSet, ServiceViewSet, TrekRatingScaleViewSet, TrekRatingViewSet) # noqa
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SensitiveAreaViewSet  # noqa
     from .sensitivity import SportPracticeViewSet  # noqa
@@ -20,7 +22,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from .zoning import CityViewSet, DistrictViewSet  # noqa
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    from .outdoor import SiteViewSet, OutdoorPracticeViewSet, SiteTypeViewSet, CourseTypeViewSet, RatingScaleViewSet, RatingViewSet, CourseViewSet, SectorViewSet  # noqa
+    from .outdoor import (SiteViewSet, OutdoorPracticeViewSet, SiteTypeViewSet, CourseTypeViewSet,  # noqa
+                          OutdoorRatingScaleViewSet, OutdoorRatingViewSet, CourseViewSet, SectorViewSet)  # noqa
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     from .flatpages import FlatPageViewSet  # noqa
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:

@@ -98,6 +98,30 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Practice
             fields = ('id', 'name', 'order', 'pictogram',)
 
+    class TrekRatingScaleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = trekking_models.RatingScale
+            fields = ('id', 'name', 'practice')
+
+    class TrekRatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+        description = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
+
+        class Meta:
+            model = trekking_models.Rating
+            fields = ('id', 'name', 'description', 'scale', 'order', 'color')
+
     class TrekDifficultySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
@@ -472,6 +496,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         advice = serializers.SerializerMethodField(read_only=True)
         advised_parking = serializers.SerializerMethodField(read_only=True)
         parking_location = serializers.SerializerMethodField(read_only=True)
+        ratings_description = serializers.SerializerMethodField(read_only=True)
         children = serializers.ReadOnlyField(source='children_id')
         parents = serializers.ReadOnlyField(source='parents_id')
         public_transport = serializers.SerializerMethodField(read_only=True)
@@ -552,6 +577,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             point = obj.parking_location.transform(settings.API_SRID, clone=True)
             return [round(point.x, 7), round(point.y, 7)]
 
+        def get_ratings_description(self, obj):
+            return get_translation_or_dict('ratings_description', self, obj)
+
         def get_public_transport(self, obj):
             return get_translation_or_dict('public_transport', self, obj)
 
@@ -591,7 +619,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
                 'max_elevation', 'min_elevation', 'name', 'networks', 'next',
                 'parents', 'parking_location', 'pdf', 'points_reference',
-                'portal', 'practice', 'previous', 'public_transport',
+                'portal', 'practice', 'ratings', 'ratings_description', 'previous', 'public_transport',
                 'published', 'reservation_system', 'reservation_id', 'route', 'second_external_id',
                 'source', 'structure', 'themes', 'update_datetime', 'url', 'uuid', 'web_links'
             )
@@ -812,7 +840,7 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
 
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    class RatingScaleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class OutdoorRatingScaleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
@@ -822,7 +850,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.RatingScale
             fields = ('id', 'name', 'practice')
 
-    class RatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class OutdoorRatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
 
