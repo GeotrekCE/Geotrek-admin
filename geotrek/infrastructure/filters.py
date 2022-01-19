@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
-from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter
 from django.utils.translation import gettext_lazy as _
-
+from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter
+from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.core.filters import ValidTopologyFilterSet, TopologyFilterTrail
 from .models import Infrastructure, INFRASTRUCTURE_TYPES, InfrastructureMaintenanceDifficultyLevel, InfrastructureUsageDifficultyLevel
@@ -9,7 +9,7 @@ from geotrek.maintenance.models import Intervention
 from geotrek.zoning.filters import ZoningFilterSet
 
 
-class InfrastructureFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
+class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = MultipleChoiceFilter(choices=Infrastructure.objects.implantation_year_choices())
