@@ -14,7 +14,7 @@ from django.utils.timezone import make_aware
 from geotrek.common.models import Attachment, FileType
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
-                                     ReportStatus)
+                                     ReportStatus, WorkflowManager)
 
 from .helpers import SuricateGestionRequestManager, send_reports_to_managers
 
@@ -65,12 +65,8 @@ class SuricateParser(SuricateGestionRequestManager):
                     f"New status - id: {status['id']}, label: {status['libelle']}"
                 )
 
-    def send_managers_new_reports_email(self):
-        try:
-            send_reports_to_managers()
-        except Exception as e:
-            logger.error("Email could not be sent to managers.")
-            logger.exception(e)  # This sends an email to admins :)
+    def send_workflow_manager_new_reports_email(self):
+        WorkflowManager.objects.first().notify_new_reports()
 
     def parse_report(self, report):
         """
@@ -151,7 +147,7 @@ class SuricateParser(SuricateGestionRequestManager):
     def after_get_alerts(self, reports_created):
         Report.objects.filter(pk__in=self.to_delete).delete()
         if reports_created:
-            self.send_managers_new_reports_email()
+            self.send_workflow_manager_new_reports_email()
 
     def get_alerts(self, verbosity=1):
         """

@@ -156,7 +156,7 @@ class InterventionForm(CommonForm):
                 resolved_status = ReportStatus.objects.get(identifier='solved_intervention')
                 target.status = resolved_status
                 target.save()
-                WorkflowManager.objects.first().notify(target)
+                WorkflowManager.objects.first().notify_report_to_solve(target)
         if not target.pk:
             target.save()
         topology = self.cleaned_data.get('topology')
