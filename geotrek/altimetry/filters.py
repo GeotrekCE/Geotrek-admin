@@ -13,7 +13,7 @@ class AltimetryPointFilterSet(FilterSet):
     def filter_queryset(self, queryset):
         if self.filters.get('length'):
             queryset = queryset.annotate(_length_2d=Length('geom', output_field=FloatField()))
-        return super(AltimetryPointFilterSet, self).filter_queryset(queryset)
+        return super().filter_queryset(queryset)
 
     def filter_elevation(self, qs, name, value):
         # TODO: Remove, when min_elevation and max_elevation use DecimalRangeField
