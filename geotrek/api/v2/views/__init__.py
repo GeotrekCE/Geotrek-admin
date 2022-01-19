@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
+
+from geotrek import __version__
 from .authent import StructureViewSet  # noqa
 from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet, LabelViewSet, OrganismViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
@@ -47,3 +49,10 @@ class ConfigView(APIView):
         return response.Response({
             'bbox': bbox.extent
         })
+
+
+class GeotrekVersionAPIView(APIView):
+    permission_classes = [permissions.AllowAny, ]
+
+    def get(self, request, *args, **kwargs):
+        return response.Response({'version': __version__})

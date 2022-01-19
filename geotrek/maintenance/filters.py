@@ -6,9 +6,10 @@ from django_filters import ChoiceFilter, MultipleChoiceFilter
 
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
+from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.core.models import Topology
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.common.filters import RightFilter
+from geotrek.common.filters import OptionalRangeFilter, RightFilter
 from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDistrict,
                                     IntersectionFilterRestrictedArea, IntersectionFilterRestrictedAreaType,
                                     ZoningFilterSet)
@@ -168,7 +169,14 @@ class ProjectIntersectionFilterRestrictedAreaType(PolygonInterventionFilterMixin
         return value.geom
 
 
-class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+class AltimetryInterventionFilterSet(AltimetryPointFilterSet):
+    length_3d = OptionalRangeFilter(field_name='length', label=_('length 3d'))
+    ascent = OptionalRangeFilter(label=_('ascent'))
+    descent = OptionalRangeFilter(label=_('descent'))
+    slope = OptionalRangeFilter(label=_('slope'))
+
+
+class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
                   ('trail', _("Trail")))

@@ -1,6 +1,11 @@
 from datetime import datetime
 from django.utils.translation import gettext_lazy as _
 from django.forms.widgets import Select
+from django_filters.widgets import RangeWidget
+
+
+class OneLineRangeWidget(RangeWidget):
+    template_name = 'common/range_widget.html'
 
 
 class YearSelect(Select):
