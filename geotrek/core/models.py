@@ -16,12 +16,12 @@ from django.contrib.gis.geos import fromstr, LineString, GEOSGeometry
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
+from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
                                    AddPropertyMixin)
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
-from geotrek.altimetry.models import AltimetryMixin
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 from django.db import connection, connections, DEFAULT_DB_ALIAS

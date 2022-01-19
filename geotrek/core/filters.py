@@ -5,8 +5,9 @@ from django_filters import BooleanFilter, CharFilter, FilterSet
 
 from .models import Topology, Path, Trail
 
+from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.common.filters import OptionalRangeFilter, RightFilter
+from geotrek.common.filters import RightFilter
 from geotrek.maintenance import models as maintenance_models
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
@@ -77,18 +78,17 @@ class TopologyFilter(RightFilter):
             return qs.filter(pk__in=[topo.pk for topo in overlapping])
 
 
-class PathFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    length = OptionalRangeFilter(label=_('length'))
+class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['valid', 'length', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
+            ['valid', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
 
 
-class TrailFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
+class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')

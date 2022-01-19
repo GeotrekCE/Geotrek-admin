@@ -22,7 +22,8 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.GeotrekTrekQueryParamsFilter,
         api_filters.NearbyContentFilter,
-        api_filters.UpdateOrCreateDateFilter
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.GeotrekRatingsFilter
     )
     serializer_class = api_serializers.TrekSerializer
 
@@ -92,6 +93,23 @@ class PracticeViewSet(api_viewsets.GeotrekViewSet):
         elem = get_object_or_404(trekking_models.Practice, pk=pk)
         serializer = api_serializers.PracticeSerializer(elem, many=False, context={'request': request})
         return Response(serializer.data)
+
+
+class TrekRatingScaleViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.GeotrekRatingScaleFilter, )
+    serializer_class = api_serializers.TrekRatingScaleSerializer
+    queryset = trekking_models.RatingScale.objects \
+        .order_by('pk')  # Required for reliable pagination
+
+
+class TrekRatingViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.GeotrekRatingFilter,
+        api_filters.TrekRelatedPortalFilter,
+    )
+    serializer_class = api_serializers.TrekRatingSerializer
+    queryset = trekking_models.Rating.objects \
+        .order_by('order', 'name', 'pk')  # Required for reliable pagination
 
 
 class NetworkViewSet(api_viewsets.GeotrekViewSet):
