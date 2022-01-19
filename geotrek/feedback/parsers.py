@@ -16,7 +16,7 @@ from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
                                      ReportStatus, WorkflowManager)
 
-from .helpers import SuricateGestionRequestManager, send_reports_to_managers
+from .helpers import SuricateGestionRequestManager
 
 logger = logging.getLogger(__name__)
 
