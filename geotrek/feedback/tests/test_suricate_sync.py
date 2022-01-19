@@ -121,7 +121,7 @@ class SuricateTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(username="Maxou", password="drowssap")
+        cls.user = UserFactory()
         UserProfileFactory.create(user=cls.user)
         cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
 

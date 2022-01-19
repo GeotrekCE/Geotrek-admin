@@ -27,6 +27,7 @@ from geotrek.maintenance.tests.factories import (InterventionFactory,
 
 
 class TestSuricateForms(SuricateWorkflowTests):
+    fixtures = ['geotrek/maintenance/fixtures/basic.json']
 
     @classmethod
     def setUpTestData(cls):
@@ -169,12 +170,11 @@ class TestSuricateForms(SuricateWorkflowTests):
     @override_settings()
     def test_workflow_program_step(self):
         # When creating an intervention for a report
-        status = InterventionStatusFactory()
         user = SuperUserFactory(username="admin", password="dadadad")
         data = {
             'name': "test_interv",
             'date': "2025-12-12",
-            'status': status.pk,
+            'status': 2,
             'structure': user.profile.structure.pk,
         }
         form = InterventionForm(user=user, target_type=self.waiting_report.get_content_type_id(), target_id=self.waiting_report.pk, data=data)
