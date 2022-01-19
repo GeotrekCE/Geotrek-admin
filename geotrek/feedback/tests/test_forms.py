@@ -22,8 +22,7 @@ from geotrek.feedback.tests.test_suricate_sync import (
     test_for_report_and_basic_modes)
 from geotrek.maintenance.forms import InterventionForm
 from geotrek.maintenance.models import InterventionStatus
-from geotrek.maintenance.tests.factories import (InterventionFactory,
-                                                 InterventionStatusFactory)
+from geotrek.maintenance.tests.factories import InterventionFactory
 
 
 class TestSuricateForms(SuricateWorkflowTests):
