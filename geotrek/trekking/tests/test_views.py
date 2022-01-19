@@ -183,7 +183,7 @@ class TrekViewsTest(CommonTest):
         return {
             'access': '<p>Access</p>',
             'accessibilities': [],
-            'accessibility_level': None,
+            'accessibility_level': {'id': self.obj.accessibility_level.pk, 'label': 'Easy'},
             'advice': '<p>Advice</p>',
             'equipment': '<p>Equipment</p>',
             'advised_parking': '<p>Advised parking</p>',
