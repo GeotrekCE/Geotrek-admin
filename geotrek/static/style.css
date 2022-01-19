@@ -15,7 +15,7 @@ a.leaflet-draw-toolbar-button-enabled, .leaflet-control.enabled a {
     color: #bbb;
 }
 
-table.table-striped caption {
+table.table-striped caption.caption-detail {
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   color: black;
