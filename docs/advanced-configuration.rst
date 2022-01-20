@@ -2255,6 +2255,8 @@ An exhaustive list of form fields hideable in each module.
             "children_trek",
             "eid",
             "eid2",
+            "ratings",
+            "ratings_description",
             "reservation_system",
             "reservation_id",
             "pois_excluded",
