@@ -244,6 +244,12 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
+        <tr>
+            <th>{{ trek|verbose:"accessibility_signage" }}</th>
+            <td>{% if trek.accessibility_signage %}{{ trek.accessibility_signage|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
     </table>
     {{ block.super }}
 {% endblock attributes %}

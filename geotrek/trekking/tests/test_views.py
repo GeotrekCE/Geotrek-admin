@@ -187,6 +187,7 @@ class TrekViewsTest(CommonTest):
             'accessibility_covering': '<p>Accessibility covering</p>',
             'accessibility_exposure': '<p>Accessibility exposure</p>',
             'accessibility_level': {'id': self.obj.accessibility_level.pk, 'label': 'Easy'},
+            'accessibility_signage': '<p>Accessibility signage</p>',
             'accessibility_slope': '<p>Accessibility slope</p>',
             'accessibility_width': '<p>Accessibility width</p>',
             'advice': '<p>Advice</p>',

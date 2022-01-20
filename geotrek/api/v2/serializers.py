@@ -481,6 +481,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         accessibility_advice = serializers.SerializerMethodField(read_only=True)
         accessibility_covering = serializers.SerializerMethodField(read_only=True)
         accessibility_exposure = serializers.SerializerMethodField(read_only=True)
+        accessibility_signage = serializers.SerializerMethodField(read_only=True)
         accessibility_slope = serializers.SerializerMethodField(read_only=True)
         accessibility_width = serializers.SerializerMethodField(read_only=True)
         ambiance = serializers.SerializerMethodField(read_only=True)
@@ -541,6 +542,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_accessibility_exposure(self, obj):
             return get_translation_or_dict('accessibility_exposure', self, obj)
+
+        def get_accessibility_signage(self, obj):
+            return get_translation_or_dict('accessibility_signage', self, obj)
 
         def get_accessibility_slope(self, obj):
             return get_translation_or_dict('accessibility_slope', self, obj)
@@ -629,11 +633,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.Trek
             fields = (
-                'id', 'access', 'accessibilities', 'accessibility_level',
-                'accessibility_slope', 'accessibility_covering',
-                'accessibility_exposure', 'accessibility_width', 'accessibility_advice',
-                'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival', 'ascent',
-                'attachments', 'children', 'cities', 'create_datetime',
+                'id', 'access', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
+                'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
+                'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival',
+                'ascent', 'attachments', 'children', 'cities', 'create_datetime',
                 'departure', 'departure_city', 'departure_geom', 'descent',
                 'description', 'description_teaser', 'difficulty',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',

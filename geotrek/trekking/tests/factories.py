@@ -114,6 +114,7 @@ class TrekFactory(TopologyFactory):
 
     accessibility_level = factory.SubFactory(AccessibilityLevelFactory)
     accessibility_slope = "<p>Accessibility slope</p>"
+    accessibility_signage = "<p>Accessibility signage</p>"
     accessibility_covering = "<p>Accessibility covering</p>"
     accessibility_exposure = "<p>Accessibility exposure</p>"
     accessibility_width = "<p>Accessibility width</p>"
