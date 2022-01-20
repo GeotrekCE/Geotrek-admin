@@ -58,7 +58,7 @@ def mocked_image(file_name):
 class SuricateTests(TestCase):
     """Test Suricate API"""
 
-    def build_get_request_patch(self, mocked: MagicMock, cause_JPG_error=False):
+    def build_get_request_patch(self, mocked: MagicMock, cause_JPG_error=False, remove_one_alert=False):
         """Mock get requests to Suricate API"""
 
         def build_response_patch(url, params=None, **kwargs):
@@ -69,10 +69,13 @@ class SuricateTests(TestCase):
             elif "GetStatusList" in url:
                 mock_response.status_code = 200
                 mock_response.content = mocked_json("suricate_statuses.json")
-            elif "GetAlerts" in url:
+            elif "GetAlerts" in url and not remove_one_alert:
                 mock_response.content = mocked_json("suricate_alerts.json")
                 mock_response.status_code = 200
-            elif "wsLockAlert" in url or "wsUnlockAlert" in url:
+            elif "GetAlerts" in url and remove_one_alert:
+                mock_response.content = mocked_json("suricate_alerts_later.json")
+                mock_response.status_code = 200
+            elif "wsLockAlert" in url or "wsUnlockAlert" in url or "wsUpdateGPS" in url:
                 mock_response.content = mocked_json("suricate_positive.json")
                 mock_response.status_code = 200
             elif cause_JPG_error:
@@ -115,6 +118,12 @@ class SuricateTests(TestCase):
         mock_response.status_code = 408  # reqest timeout
         mock_response.content = {}
         mocked.return_value = mock_response
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        UserProfileFactory.create(user=cls.user)
+        cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
 
 
 class SuricateAPITests(SuricateTests):
@@ -170,7 +179,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 4)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
+        self.assertEqual(sent_mail.subject, "Geotrek - New reports from Suricate")
         # Test update report does not send email and saves
         r = Report.objects.all()[0]
         r.category = None
@@ -335,6 +344,24 @@ class SuricateAPITests(SuricateTests):
         call_command("sync_suricate", test=True)
         self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 408\nAPI Gestion :\nKO - Status code: 408\n")
 
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.logger")
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_relocated_report_is_deleted_on_next_sync(self, mocked_get, mocked_logger):
+        """Test reports relocated outside of BBOX are deleted on next sync"""
+        self.build_get_request_patch(mocked_get, remove_one_alert=False)
+        call_command("sync_suricate", verbosity=2)
+        # 8 out of 9 are imported because one of them is out of bbox by design
+        self.assertEqual(Report.objects.filter(uid="742CBF16-5056-AA2B-DD1FD403F72D6B9B").count(), 1)
+        self.assertEqual(Report.objects.count(), 8)
+        """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
+        self.build_get_request_patch(mocked_get, remove_one_alert=True)
+        call_command("sync_suricate", verbosity=2)
+        # One out of the 9 was removed from response because this report now lives outside of BBOX according to Suricate
+        # 7 out of 8 are imported because one of them is out of bbox by design
+        self.assertEqual(Report.objects.filter(uid="742CBF16-5056-AA2B-DD1FD403F72D6B9B").count(), 0)
+        self.assertEqual(Report.objects.count(), 7)
+
 
 class SuricateInterfaceTests(SuricateTests):
 
@@ -397,6 +424,7 @@ class SuricateWorkflowTests(SuricateTests):
 
     @classmethod
     def setUpTestData(cls):
+        SuricateTests.setUpTestData()
         cls.filed_status = ReportStatusFactory(identifier='filed', label="Déposé")
         cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
         cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
@@ -407,9 +435,6 @@ class SuricateWorkflowTests(SuricateTests):
         cls.resolved_status = ReportStatusFactory(identifier='resolved', label="Résolu")
         cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
-        cls.user = UserFactory(username="Maxou", password="drowssap")
-        UserProfileFactory.create(user=cls.user)
-        cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
         cls.interv_report = ReportFactory(status=cls.programmed_status)
 
 
@@ -494,7 +519,7 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         form = ReportForm(
             instance=self.report_filed_1,
             data={
-                'geom': 'POINT(5.1 6.6)',
+                'geom': self.report_filed_1.geom,
                 'email': self.report_filed_1.email,
                 'status': self.classified_status.pk,
                 'message_sentinel': "Problème déjà réglé"
@@ -514,7 +539,7 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         form = ReportForm(
             instance=self.report_filed_2,
             data={
-                'geom': 'POINT(5.1 6.6)',
+                'geom': self.report_filed_2.geom,
                 'email': self.report_filed_2.email,
                 'status': self.classified_status.pk,
                 'message_sentinel': "Problème déjà réglé"

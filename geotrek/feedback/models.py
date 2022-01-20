@@ -230,6 +230,11 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def unlock_in_suricate(self):
         SuricateMessenger().unlock_alert(self.uid)
 
+    def change_position_in_suricate(self):
+        rep_gps = self.geom.transform(4326, clone=True)
+        long, lat = rep_gps
+        SuricateMessenger().update_gps(self.uid, lat, long)
+
     def send_notifications_on_status_change(self, old_status_identifier, message):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
             SuricateMessenger().update_status(self.uid, self.status.identifier, message)
@@ -419,7 +424,19 @@ class WorkflowManager(models.Model):
     def __str__(self):
         return f"{self.user.username} ({self.user.email})"
 
-    def notify(self, report):
+    def try_send_email(self, subject, message):
+        try:
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.user.email], fail_silently=False)
+        except Exception as e:
+            logger.error("Email could not be sent to Workflow Managers.")
+            logger.exception(e)  # This sends an email to admins :)
+
+    def notify_report_to_solve(self, report):
         subject = _("Geotrek - A report must be solved")
         message = render_to_string("feedback/cloture_email.html", {"report": report})
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
+        self.try_send_email(subject, message)
+
+    def notify_new_reports(self):
+        subject = _("Geotrek - New reports from Suricate")
+        message = render_to_string("feedback/reports_email.html")
+        self.try_send_email(subject, message)

@@ -1,6 +1,5 @@
 from unittest import mock
 
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
@@ -8,6 +7,7 @@ from django.utils import translation
 
 from geotrek.feedback.parsers import SuricateParser
 from geotrek.feedback.tests.factories import ReportFactory
+from geotrek.feedback.tests.test_suricate_sync import SuricateTests
 
 
 class FailingEmailBackend(BaseEmailBackend):
@@ -18,7 +18,7 @@ class FailingEmailBackend(BaseEmailBackend):
         raise Exception('Fake problem')
 
 
-class EmailSendingTest(TestCase):
+class EmailSendingTest(SuricateTests):
     def test_a_mail_is_sent_on_report_creation(self):
         ReportFactory.create()
         self.assertEqual(len(mail.outbox), 1)
@@ -47,10 +47,10 @@ class EmailSendingTest(TestCase):
         self.assertIsNotNone(r.id)
 
     @override_settings(EMAIL_BACKEND='geotrek.feedback.tests.FailingEmailBackend')
-    @mock.patch("geotrek.feedback.parsers.logger")
+    @mock.patch("geotrek.feedback.models.logger")
     def test_email_failed_logs_and_warns(self, mocked):
-        self.assertRaises(Exception, SuricateParser().send_managers_new_reports())
-        mocked.error.assert_called_with("Email could not be sent to managers.")
+        self.assertRaises(Exception, SuricateParser().send_workflow_manager_new_reports_email())
+        mocked.error.assert_called_with("Email could not be sent to Workflow Managers.")
 
     def test_email_format_and_content(self):
         ReportFactory.create(email='john.doe@nowhere.com',

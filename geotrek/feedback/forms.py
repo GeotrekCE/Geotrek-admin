@@ -57,7 +57,6 @@ class ReportForm(CommonForm):
                 # Store current status
                 self.old_status_identifier = self.instance.status.identifier
                 # Hide fields that are handled automatically in Management mode
-                self.fields["geom"].widget = HiddenInput()
                 self.fields["email"].widget = HiddenInput()
                 self.fields["comment"].widget = HiddenInput()
                 self.fields["activity"].widget = HiddenInput()
@@ -106,4 +105,6 @@ class ReportForm(CommonForm):
                 report.send_notifications_on_status_change(self.old_status_identifier, msg)
             if 'status' in self.changed_data and self.old_status_identifier == 'solved_intervention':
                 report.unlock_in_suricate()
+            if 'geom' in self.changed_data:
+                report.change_position_in_suricate()
         return report

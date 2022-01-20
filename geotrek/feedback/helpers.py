@@ -168,12 +168,6 @@ def send_report_to_managers(report, template_name="feedback/report_email.html"):
     mail_managers(subject, message, fail_silently=False)
 
 
-def send_reports_to_managers(template_name="feedback/reports_email.html"):
-    subject = _("New reports from Suricate")
-    message = render_to_string(template_name)
-    mail_managers(subject, message, fail_silently=False)
-
-
 class SuricateMessenger:
 
     def __init__(self):
@@ -232,16 +226,17 @@ class SuricateMessenger:
         }
         self.gestion_manager.post_to_suricate("wsUpdateStatus", params)
 
-    # def update_gps(self, id_alert, gps_lat, gps_long):
-    #     """Update report GPS coordinates on Suricate Rest API"""
-    #     self.gestion_manager.get_from_suricate(
-    #         "wsUpdateStatus",
-    #         url_params={
-    #             "uid_alerte": id_alert,
-    #             "gpslatitude": gps_lat,
-    #             "gpslongitude": gps_long,
-    #         },
-    #     )
+    # TODO TEST ON PREPROD
+    def update_gps(self, id_alert, gps_lat, gps_long):
+        """Update report GPS coordinates on Suricate Rest API"""
+        self.gestion_manager.get_from_suricate(
+            "wsUpdateGPS",
+            url_params={
+                "uid_alerte": id_alert,
+                "gpslatitude": gps_lat,
+                "gpslongitude": gps_long,
+            },
+        )
 
     def message_sentinel(self, id_alert, message):
         check = md5(

@@ -14,9 +14,9 @@ from django.utils.timezone import make_aware
 from geotrek.common.models import Attachment, FileType
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
-                                     ReportStatus)
+                                     ReportStatus, WorkflowManager)
 
-from .helpers import SuricateGestionRequestManager, send_reports_to_managers
+from .helpers import SuricateGestionRequestManager
 
 logger = logging.getLogger(__name__)
 
@@ -65,12 +65,8 @@ class SuricateParser(SuricateGestionRequestManager):
                     f"New status - id: {status['id']}, label: {status['libelle']}"
                 )
 
-    def send_managers_new_reports(self):
-        try:
-            send_reports_to_managers()
-        except Exception as e:
-            logger.error("Email could not be sent to managers.")
-            logger.exception(e)  # This sends an email to admins :)
+    def send_workflow_manager_new_reports_email(self):
+        WorkflowManager.objects.first().notify_new_reports()
 
     def parse_report(self, report):
         """
@@ -132,6 +128,8 @@ class SuricateParser(SuricateGestionRequestManager):
                 logger.info(
                     f"New report - id: {report['uid']}, location: {report_obj.geom}"
                 )
+            else:
+                self.to_delete.discard(report_obj.pk)
 
             # Parse documents attached to report
             self.create_documents(report["documents"], report_obj)
@@ -141,13 +139,22 @@ class SuricateParser(SuricateGestionRequestManager):
 
             return created
 
+    def before_get_alerts(self, verbosity=1):
+        self.to_delete = set(Report.objects.values_list('pk', flat=True))
+        if verbosity >= 1:
+            logger.info("Starting reports parsing from Suricate\n")
+
+    def after_get_alerts(self, reports_created):
+        Report.objects.filter(pk__in=self.to_delete).delete()
+        if reports_created:
+            self.send_workflow_manager_new_reports_email()
+
     def get_alerts(self, verbosity=1):
         """
         Get reports list from Suricate Rest API
         :return: returns True if and only if reports was imported (it is in bbox)
         """
-        if verbosity >= 1:
-            logger.info("Starting reports parsing from Suricate\n")
+        self.before_get_alerts(verbosity)
         data = self.get_from_suricate("wsGetAlerts")
         total_reports = len(data["alertes"])
         current_report = 1
@@ -161,8 +168,7 @@ class SuricateParser(SuricateGestionRequestManager):
             current_report += 1
         if verbosity >= 1:
             logger.info(f"Parsed {total_reports} reports from Suricate\n")
-        if reports_created:
-            self.send_managers_new_reports()
+        self.after_get_alerts(reports_created)
 
     def create_documents(self, documents, parent):
         """Parse documents list from Suricate Rest API"""

@@ -145,8 +145,8 @@ class InterventionForm(CommonForm):
     def save(self, *args, **kwargs):
         target = self.instance.target
         if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_MANAGEMENT_ENABLED and isinstance(target, Report):
-            # If this is a new intervention created for a report, change report status
-            if not self.instance.pk:
+            # If this is an intervention programmed for a report, change report status
+            if 'status' in self.changed_data and self.instance.status_id == 2:
                 programmed_status = ReportStatus.objects.get(identifier='programmed')
                 target.status = programmed_status
                 target.save()
@@ -156,7 +156,7 @@ class InterventionForm(CommonForm):
                 resolved_status = ReportStatus.objects.get(identifier='solved_intervention')
                 target.status = resolved_status
                 target.save()
-                WorkflowManager.objects.first().notify(target)
+                WorkflowManager.objects.first().notify_report_to_solve(target)
         if not target.pk:
             target.save()
         topology = self.cleaned_data.get('topology')

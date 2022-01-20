@@ -2,6 +2,8 @@ import uuid
 from hashlib import md5
 from unittest import mock
 
+from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.core import mail
 from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
 from django.test.utils import override_settings
@@ -20,16 +22,17 @@ from geotrek.feedback.tests.test_suricate_sync import (
     test_for_report_and_basic_modes)
 from geotrek.maintenance.forms import InterventionForm
 from geotrek.maintenance.models import InterventionStatus
-from geotrek.maintenance.tests.factories import (InterventionFactory,
-                                                 InterventionStatusFactory)
+from geotrek.maintenance.tests.factories import InterventionFactory
 
 
 class TestSuricateForms(SuricateWorkflowTests):
+    fixtures = ['geotrek/maintenance/fixtures/basic.json']
 
     @classmethod
     def setUpTestData(cls):
         SuricateWorkflowTests.setUpTestData()
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
+        cls.filed_report_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
         cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uid=uuid.uuid4())
 
@@ -40,7 +43,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     def test_creation_form_common(self):
         data = {
             'email': 'test@test.fr',
-            'geom': 'POINT(5.1 6.6)',
+            'geom': Point(700000, 6600000, srid=settings.SRID)
         }
         form = ReportForm(data)
         keys = form.fields.keys()
@@ -80,7 +83,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     def test_creation_form_specifics_2(self):
         data = {
             'email': 'test@test.fr',
-            'geom': 'POINT(5.1 6.6)',
+            'geom': Point(700000, 6600000, srid=settings.SRID)
         }
         form = ReportForm(data)
         keys = form.fields.keys()
@@ -102,7 +105,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     def test_update_form_specifics_2(self):
         form = ReportForm(instance=self.filed_report)
         keys = form.fields.keys()
-        self.assertIsInstance(form.fields["geom"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["geom"].widget, MapWidget)
         self.assertIsInstance(form.fields["email"].widget, HiddenInput)
         self.assertIsInstance(form.fields["comment"].widget, HiddenInput)
         self.assertIsInstance(form.fields["activity"].widget, HiddenInput)
@@ -128,7 +131,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         data = {
             'assigned_user': str(self.user.pk),
             'email': 'test@test.fr',
-            'geom': 'POINT(5.1 6.6)',
+            'geom': self.filed_report.geom,
             'message_sentinel': "Your message",
             "uses_timers": True
         }
@@ -166,12 +169,11 @@ class TestSuricateForms(SuricateWorkflowTests):
     @override_settings()
     def test_workflow_program_step(self):
         # When creating an intervention for a report
-        status = InterventionStatusFactory()
         user = SuperUserFactory(username="admin", password="dadadad")
         data = {
             'name': "test_interv",
             'date': "2025-12-12",
-            'status': status.pk,
+            'status': 2,
             'structure': user.profile.structure.pk,
         }
         form = InterventionForm(user=user, target_type=self.waiting_report.get_content_type_id(), target_id=self.waiting_report.pk, data=data)
@@ -238,7 +240,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         # When assigning a user to a report
         data = {
             'email': 'test@test.fr',
-            'geom': 'POINT(5.1 6.6)',
+            'geom': self.solved_intervention_report.geom,
             'status': self.resolved_status.pk,
             'message_sentinel': "Your message"
         }
@@ -263,5 +265,27 @@ class TestSuricateForms(SuricateWorkflowTests):
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
             f"http://suricate.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.uid}&check={check}",
+            auth=('', '')
+        )
+
+    @test_for_management_mode
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_relocate_report(self, mocked_get):
+        self.build_get_request_patch(mocked_get)
+        # Relocate report
+        new_geom = Point(700000, 6900000, srid=settings.SRID)
+        data = {
+            'email': 'test@test.fr',
+            'geom': new_geom
+        }
+        form = ReportForm(instance=self.filed_report_1, data=data)
+        form.save()
+        # Assert relocation is forwarded to Suricate
+        long, lat = new_geom.transform(4326, clone=True).coords
+        check = md5(
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.uid)).encode()
+        ).hexdigest()
+        mocked_get.assert_called_once_with(
+            f"http://suricate.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
             auth=('', '')
         )

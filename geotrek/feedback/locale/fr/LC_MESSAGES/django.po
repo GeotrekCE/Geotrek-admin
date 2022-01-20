@@ -24,8 +24,8 @@ msgstr "Retours utilisateurs"
 msgid "Feedback from {email}"
 msgstr "Signalement de {email}"
 
-msgid "New reports from Suricate"
-msgstr "Nouveaux signalements Suricate"
+msgid "Geotrek - New reports from Suricate"
+msgstr "Geotrek - Nouveaux signalements Suricate"
 
 msgid "Email"
 msgstr "Email"
