@@ -151,6 +151,18 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                              verbose_name=_("Accessibility"))
     accessibility_level = models.ForeignKey('AccessibilityLevel', related_name="treks", blank=True,
                                             verbose_name=_("Accessibility level"), null=True, on_delete=models.PROTECT)
+    accessibility_slope = models.TextField(verbose_name=_("Description slope for accessibility"),
+                                           blank=True, help_text=_("Description of the slope for accessibility"))
+    accessibility_covering = models.TextField(verbose_name=_("Description covering for accessibility"),
+                                              blank=True, help_text=_("Description of the covering for accessibility"))
+    accessibility_exposure = models.TextField(verbose_name=_("Description exposure for accessibility"),
+                                              blank=True, help_text=_("Description of the exposure for accessibility"))
+    accessibility_width = models.TextField(verbose_name=_("Description width for accessibility"),
+                                           blank=True, help_text=_("Description of the width for accessibility"))
+    accessibility_signage = models.TextField(verbose_name=_("Description signage for accessibility"),
+                                             blank=True, help_text=_("Description of the signage for accessibility"))
+    accessibility_advice = models.TextField(verbose_name=_("Description advice for accessibility"),
+                                            blank=True, help_text=_("Description of the advice for accessibility"))
     route = models.ForeignKey('Route', related_name='treks', on_delete=models.CASCADE,
                               blank=True, null=True, verbose_name=_("Route"))
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.CASCADE,

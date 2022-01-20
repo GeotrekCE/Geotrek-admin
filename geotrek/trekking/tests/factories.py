@@ -113,6 +113,11 @@ class TrekFactory(TopologyFactory):
     duration = 1.5  # hour
 
     accessibility_level = factory.SubFactory(AccessibilityLevelFactory)
+    accessibility_slope = "<p>Accessibility slope</p>"
+    accessibility_covering = "<p>Accessibility covering</p>"
+    accessibility_exposure = "<p>Accessibility exposure</p>"
+    accessibility_width = "<p>Accessibility width</p>"
+    accessibility_advice = "<p>Accessibility advice</p>"
     advised_parking = "<p>Advised parking</p>"
     parking_location = Point(1, 1)
 

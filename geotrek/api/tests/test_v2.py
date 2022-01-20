@@ -56,11 +56,12 @@ GEOJSON_STRUCTURE = sorted([
 ])
 
 TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'access', 'accessibilities', 'accessibility_level', 'advice', 'advised_parking',
-    'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
+    'id', 'access', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
+    'accessibility_exposure', 'accessibility_level', 'accessibility_slope', 'accessibility_width',
+    'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
     'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
     'descent', 'description', 'description_teaser', 'difficulty', 'departure_city',
-    'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url',
+    'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url', 'equipment',
     'external_id', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',

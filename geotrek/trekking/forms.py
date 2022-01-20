@@ -159,6 +159,11 @@ class TrekForm(BaseTrekForm):
                     'accessibilities',
                     'accessibility_level',
                     'disabled_infrastructure',
+                    'accessibility_slope',
+                    'accessibility_covering',
+                    'accessibility_exposure',
+                    'accessibility_width',
+                    'accessibility_advice',
                     css_id="accessibility",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
                 ),
@@ -310,9 +315,10 @@ class TrekForm(BaseTrekForm):
              'access', 'description_teaser', 'description', 'ratings_description', 'points_reference',
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'equipment', 'themes', 'networks', 'practice',
-             'accessibilities', 'accessibility_level', 'web_links', 'information_desks', 'source', 'portal',
-             'children_trek', 'eid', 'eid2', 'reservation_system', 'reservation_id',
-             'pois_excluded', 'hidden_ordered_children']
+             'accessibilities', 'accessibility_level', 'accessibility_slope', 'accessibility_covering',
+             'accessibility_exposure', 'accessibility_width', 'accessibility_advice', 'web_links',
+             'information_desks', 'source', 'portal', 'children_trek', 'eid', 'eid2', 'reservation_system',
+             'reservation_id', 'pois_excluded', 'hidden_ordered_children']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
