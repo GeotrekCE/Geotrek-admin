@@ -167,6 +167,18 @@ class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
         return Response(serializer.data)
 
 
+class AccessibilityLevelViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
+    serializer_class = api_serializers.AccessibilityLevelSerializer
+    queryset = trekking_models.AccessibilityLevel.objects.all()
+
+    def retrieve(self, request, pk=None, format=None):
+        # Allow to retrieve objects even if not visible in list view
+        elem = get_object_or_404(trekking_models.AccessibilityLevel, pk=pk)
+        serializer = api_serializers.AccessibilityLevelSerializer(elem, many=False, context={'request': request})
+        return Response(serializer.data)
+
+
 class RouteViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.RouteSerializer

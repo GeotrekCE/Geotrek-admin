@@ -78,6 +78,14 @@ class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerialize
         fields = ('id', 'pictogram', 'label')
 
 
+class AccessibilityLevelSerializer(TranslatedModelSerializer):
+    label = rest_serializers.ReadOnlyField(source='name')
+
+    class Meta:
+        model = trekking_models.AccessibilityLevel
+        fields = ('id', 'label')
+
+
 class TypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = trekking_models.Practice
@@ -151,6 +159,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     practice = PracticeSerializer()
     usages = PracticeSerializer(many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
+    accessibility_level = AccessibilityLevelSerializer()
     web_links = WebLinkSerializer(many=True)
     labels = LabelSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
@@ -219,7 +228,10 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
                   'description', 'description_teaser', 'networks', 'advice', 'equipment',
                   'ambiance', 'difficulty', 'information_desks', 'themes',
-                  'labels', 'practice', 'accessibilities', 'usages', 'access', 'route',
+                  'labels', 'practice', 'accessibilities', 'accessibility_level',
+                  'accessibility_signage', 'accessibility_slope', 'accessibility_covering', 'accessibility_exposure',
+                  'accessibility_width', 'accessibility_advice',
+                  'usages', 'access', 'route',
                   'public_transport', 'advised_parking', 'web_links',
                   'disabled_infrastructure', 'parking_location', 'relationships',
                   'points_reference', 'gpx', 'kml', 'source', 'portal',

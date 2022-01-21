@@ -13,7 +13,7 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
     from .feedback import ReportStatusViewSet, ReportActivityViewSet, ReportCategoryViewSet, ReportProblemMagnitudeViewSet  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from .trekking import (TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet,  # noqa
-                           DifficultyViewSet, NetworkViewSet, PracticeViewSet,  # noqa
+                           DifficultyViewSet, NetworkViewSet, PracticeViewSet, AccessibilityLevelViewSet,  # noqa
                            WebLinkCategoryViewSet, ServiceTypeViewSet, ServiceViewSet, TrekRatingScaleViewSet, TrekRatingViewSet) # noqa
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SensitiveAreaViewSet  # noqa

@@ -149,6 +149,32 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                  blank=True, null=True, verbose_name=_("Practice"))
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
                                              verbose_name=_("Accessibility"))
+    accessibility_level = models.ForeignKey('AccessibilityLevel', related_name="treks", blank=True,
+                                            verbose_name=_("Level"), null=True, on_delete=models.PROTECT,
+                                            help_text=_("Beginner (Little drop – terrain without difficulties) / Experienced "
+                                                        "(Significant slope – Technical terrain, with obstacles)"))
+    accessibility_slope = models.TextField(verbose_name=_("Slope"),
+                                           blank=True, help_text=_("Description of the slope: greater than 10% "
+                                                                   "(Requires assistance when the slope is greater "
+                                                                   "than 8%); slope break"))
+    accessibility_covering = models.TextField(verbose_name=_("Covering"),
+                                              blank=True, help_text=_("Description of the surfaces encountered on the "
+                                                                      "entire route. Track, path, road + type of "
+                                                                      "surface (stony, presence of stones, sand, "
+                                                                      "paving, slab...)"))
+    accessibility_exposure = models.TextField(verbose_name=_("Exposure"),
+                                              blank=True, help_text=_("Description of exposures and shaded areas. "
+                                                                      "Shaded, High exposure, Presence of shaded areas"))
+    accessibility_width = models.TextField(verbose_name=_("Width"),
+                                           blank=True, help_text=_("Description of the narrowing of the trails and the "
+                                                                   "minimum width for wheelchairs (Trail>0.90 m, "
+                                                                   "Joëlette, Narrow trail requiring strong driving "
+                                                                   "technique)"))
+    accessibility_signage = models.TextField(verbose_name=_("Signage"),
+                                             blank=True, help_text=_("Description of the size, shape and colors of signages."))
+    accessibility_advice = models.TextField(verbose_name=_("Advice"),
+                                            blank=True, help_text=_("Specific elements allowing to appreciate the context "
+                                                                    "of the itinerary for PRMs (advice, delicate passages, etc.)"))
     route = models.ForeignKey('Route', related_name='treks', on_delete=models.CASCADE,
                               blank=True, null=True, verbose_name=_("Route"))
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.CASCADE,
@@ -587,6 +613,18 @@ class Accessibility(OptionalPictogramMixin):
     @property
     def slug(self):
         return slugify(self.name) or str(self.pk)
+
+
+class AccessibilityLevel(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Accessibility level")
+        verbose_name_plural = _("Accessibility levels")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class Route(OptionalPictogramMixin):
