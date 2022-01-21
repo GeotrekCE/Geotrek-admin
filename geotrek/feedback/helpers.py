@@ -5,8 +5,6 @@ from hashlib import md5
 
 import requests
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-
 
 logger = logging.getLogger(__name__)
 
@@ -107,11 +105,11 @@ class SuricateRequestManager:
         except Exception as e:
             # Save request to database
             if "wsstandard" in self.URL:
-                which_api = SuricateAPI.STANDARD
+                which_api = "STA"
             else:
-                which_api = SuricateAPI.MANAGEMENT
-            PendingSuricateAPIRequest.objects.create(
-                request_type=RequestType.POST,
+                which_api = 'MAN'
+            self.pending_requests_model.objects.create(
+                request_type="POST",
                 api=which_api,
                 endpoint=endpoint,
                 url_params=params,
@@ -198,7 +196,7 @@ def test_suricate_connection():
 
 class SuricateMessenger:
 
-    def __init__(self, pending_requests_model):
+    def __init__(self, pending_requests_model=None):
         self.standard_manager = SuricateStandardRequestManager()
         self.gestion_manager = SuricateGestionRequestManager()
         self.pending_requests_model = pending_requests_model
@@ -253,7 +251,7 @@ class SuricateMessenger:
             "txt_changestatut": message,
             "check": check,
         }
-        self.gestion_manager.post_or_retry_from_suricate("wsUpdateStatus", params)
+        self.gestion_manager.post_or_retry_to_suricate("wsUpdateStatus", params)
 
     # TODO TEST ON PREPROD
     def update_gps(self, id_alert, gps_lat, gps_long):
@@ -294,7 +292,7 @@ class SuricateMessenger:
                     failed_request.delete()
                 except Exception as e:
                     failed_request.retries += 1
-                    failed_request.error_message += f"\n ---------- {self.retries} ---------- \n: {e.args}"  # Todo test
+                    failed_request.error_message = str(e.args)  # Keep last exception message
                     failed_request.save()
             # Retry for POST requests
             else:
@@ -303,5 +301,5 @@ class SuricateMessenger:
                     failed_request.delete()
                 except Exception as e:
                     failed_request.retries += 1
-                    failed_request.error_message += f"\n ---------- {self.failed_request} ---------- \n: {e.args}"  # Todo test
+                    failed_request.error_message = str(e.args)  # Keep last exception message
                     failed_request.save()

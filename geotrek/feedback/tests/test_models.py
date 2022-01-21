@@ -1,18 +1,20 @@
 from datetime import timedelta
+from unittest import mock
+from geotrek.feedback.parsers import SuricateParser
 from geotrek.feedback.admin import WorkflowManagerAdmin
 from geotrek.authent.tests.factories import UserProfileFactory
 from django.contrib.admin.sites import AdminSite
 
-from django.core import management
+from django.core import management, mail
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun.api import freeze_time
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 
-from geotrek.feedback.models import SelectableUser, TimerEvent, WorkflowManager
+from geotrek.feedback.models import PendingEmail, SelectableUser, TimerEvent, WorkflowManager
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
-from geotrek.feedback.tests.test_suricate_sync import SuricateWorkflowTests
+from geotrek.feedback.tests.test_suricate_sync import SuricateTests, SuricateWorkflowTests
 
 
 class TestFeedbackModel(TestCase):

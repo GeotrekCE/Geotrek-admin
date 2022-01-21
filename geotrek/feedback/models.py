@@ -177,6 +177,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             self,
         )
 
+    @classmethod
+    def get_suricate_messenger(cls):
+        return SuricateMessenger(PendingSuricateAPIRequest)
+
     @property
     def full_url(self):
         try:
@@ -227,14 +231,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         """Save method for Suricate Report mode"""
         if self.pk is None:  # New report should alert managers AND be sent to Suricate
             self.try_send_report_to_managers()
-            SuricateMessenger(PendingSuricateAPIRequest).post_report(self)
+            self.get_suricate_messenger().post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_management_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
             if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
-                SuricateMessenger(PendingSuricateAPIRequest).post_report(self)
+                self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
         else:  # Report updates should do nothing more
@@ -244,41 +248,41 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         try:
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email], fail_silently=False)
         except Exception as e:
-            logger.error("Email could not be sent to Workflow Managers.")
+            logger.error("Email could not be sent to report's assigned user.")
             logger.exception(e)  # This sends an email to admins :)
             # Save failed email to database
             PendingEmail.objects.create(
                 recipient=self.assigned_user.email,
                 subject=subject,
                 message=message,
-                error_message=e.args  # Todo check
+                error_message=e.args
             )
 
     def notify_assigned_user(self, message):
         subject = _("Geotrek - New report to process")
         message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
-        self.try_send_mail(subject, message)
+        self.try_send_email(subject, message)
 
     def notify_late_report(self, status_id):
         subject = _("Geotrek - Late report processsing")
         message = render_to_string(f"feedback/late_{status_id}_email.html", {"report": self})
-        self.try_send_mail(subject, message)
+        self.try_send_email(subject, message)
 
     def lock_in_suricate(self):
-        SuricateMessenger(PendingSuricateAPIRequest).lock_alert(self.uid)
+        self.get_suricate_messenger().lock_alert(self.uid)
 
     def unlock_in_suricate(self):
-        SuricateMessenger(PendingSuricateAPIRequest).unlock_alert(self.uid)
+        self.get_suricate_messenger().unlock_alert(self.uid)
 
     def change_position_in_suricate(self):
         rep_gps = self.geom.transform(4326, clone=True)
         long, lat = rep_gps
-        SuricateMessenger(PendingSuricateAPIRequest).update_gps(self.uid, lat, long)
+        self.get_suricate_messenger().update_gps(self.uid, lat, long)
 
     def send_notifications_on_status_change(self, old_status_identifier, message):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
-            SuricateMessenger(PendingSuricateAPIRequest).update_status(self.uid, self.status.identifier, message)
-            SuricateMessenger(PendingSuricateAPIRequest).message_sentinel(self.uid, message)
+            self.get_suricate_messenger().update_status(self.uid, self.status.identifier, message)
+            self.get_suricate_messenger().message_sentinel(self.uid, message)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:
@@ -452,7 +456,7 @@ class TimerEvent(models.Model):
 
 class PendingEmail(models.Model):
     recipient = models.EmailField(verbose_name=_("Email"), max_length=256, blank=True, null=True)
-    subjet = models.CharField(max_length=200, null=False, blank=False)
+    subject = models.CharField(max_length=200, null=False, blank=False)
     message = models.TextField(verbose_name=_("Message"), blank=False, null=False)
     error_message = models.TextField(null=False, blank=False)
     retries = models.IntegerField(blank=False, default=0)
@@ -463,7 +467,7 @@ class PendingEmail(models.Model):
             self.delete()
         except Exception as e:
             self.retries += 1
-            self.error_message += f"\n ---------- {self.retries} ---------- \n: {e.args}"  # Todo test
+            self.error_message = str(e.args)  # Keep last exception message
             self.save()
 
 
@@ -492,7 +496,7 @@ class WorkflowManager(models.Model):
                 recipient=self.user.email,
                 subject=subject,
                 message=message,
-                error_message=e.args  # Todo check
+                error_message=e.args
             )
 
     def notify_report_to_solve(self, report):
