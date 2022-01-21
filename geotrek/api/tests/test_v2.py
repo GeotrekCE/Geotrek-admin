@@ -56,11 +56,12 @@ GEOJSON_STRUCTURE = sorted([
 ])
 
 TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'access', 'accessibilities', 'advice', 'advised_parking',
-    'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
-    'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
+    'id', 'access', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
+    'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
+    'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival', 'ascent',
+    'attachments', 'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
     'descent', 'description', 'description_teaser', 'difficulty', 'departure_city',
-    'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url',
+    'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url', 'equipment',
     'external_id', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
@@ -107,6 +108,10 @@ THEME_PROPERTIES_JSON_STRUCTURE = sorted([
 
 ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'name', 'pictogram'
+])
+
+ACCESSIBILITY_LEVEL_PROPERTIES_JSON_STRUCTURE = sorted([
+    'id', 'name'
 ])
 
 TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -247,7 +252,8 @@ class BaseApiTest(TestCase):
         cls.rating2 = trek_factory.RatingFactory()
         cls.label = common_factory.LabelFactory(id=23)
         cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)], geom=cls.path.geom)
+        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)],
+                                                                  geom=cls.path.geom)
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
         cls.treks[0].labels.add(cls.label)
@@ -273,6 +279,7 @@ class BaseApiTest(TestCase):
         cls.district = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.district2 = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.accessibility = trek_factory.AccessibilityFactory()
+        cls.accessibility_level = trek_factory.AccessibilityLevelFactory()
         cls.route = trek_factory.RouteFactory()
         cls.theme2 = common_factory.ThemeFactory()
         cls.portal = common_factory.TargetPortalFactory()
@@ -304,6 +311,7 @@ class BaseApiTest(TestCase):
             reservation_system=cls.reservation_system,
             practice=cls.practice,
             difficulty=cls.difficulty,
+            accessibility_level=cls.accessibility_level
         )
         cls.parent.accessibilities.add(cls.accessibility)
         cls.parent.source.add(cls.source)
@@ -311,10 +319,16 @@ class BaseApiTest(TestCase):
         cls.parent.networks.add(cls.network)
         cls.parent.save()
         # For unpublished treks we avoid to create new reservation system and routes
-        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2', reservation_system=cls.reservation_system, route=cls.route)
-        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1', reservation_system=cls.reservation_system, route=cls.route)
-        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
-        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3', reservation_system=cls.reservation_system, route=cls.route)
+        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2',
+                                                      reservation_system=cls.reservation_system, route=cls.route,
+                                                      accessibility_level=None)
+        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1',
+                                                     reservation_system=cls.reservation_system, route=cls.route,
+                                                     accessibility_level=None)
+        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2', accessibility_level=None)
+        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3',
+                                                     reservation_system=cls.reservation_system, route=cls.route,
+                                                     accessibility_level=None)
         trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
@@ -445,8 +459,14 @@ class BaseApiTest(TestCase):
     def get_accessibility_list(self, params=None):
         return self.client.get(reverse('apiv2:accessibility-list'), params)
 
+    def get_accessibility_level_list(self, params=None):
+        return self.client.get(reverse('apiv2:accessibility-level-list'), params)
+
     def get_accessibility_detail(self, id_accessibility, params=None):
         return self.client.get(reverse('apiv2:accessibility-detail', args=(id_accessibility,)), params)
+
+    def get_accessibility_level_detail(self, id_accessibility_level, params=None):
+        return self.client.get(reverse('apiv2:accessibility-level-detail', args=(id_accessibility_level,)), params)
 
     def get_portal_list(self, params=None):
         return self.client.get(reverse('apiv2:portal-list'), params)
@@ -734,6 +754,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'districts': self.district.pk,
             'structures': self.structure.pk,
             'accessibilities': self.accessibility.pk,
+            'accessibility_level': self.accessibility_level.pk,
             'themes': self.theme2.pk,
             'portals': self.portal.pk,
             'labels': '23',
@@ -1065,10 +1086,22 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             trek_models.Accessibility
         )
 
+    def test_accessibility_level_list(self):
+        self.check_number_elems_response(
+            self.get_accessibility_level_list(),
+            trek_models.AccessibilityLevel
+        )
+
     def test_accessibility_detail(self):
         self.check_structure_response(
             self.get_accessibility_detail(self.accessibility.pk),
             ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_accessibility_level_detail(self):
+        self.check_structure_response(
+            self.get_accessibility_level_detail(self.accessibility_level.pk),
+            ACCESSIBILITY_LEVEL_PROPERTIES_JSON_STRUCTURE
         )
 
     def test_theme_detail(self):

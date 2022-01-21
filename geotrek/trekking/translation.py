@@ -8,9 +8,10 @@ from geotrek.trekking import models as trekking_models
 # Trek app
 
 class TrekTO(TranslationOptions):
-    fields = ('name', 'departure', 'arrival', 'description_teaser',
-              'description', 'ambiance', 'access', 'disabled_infrastructure', 'advice', 'equipment',
-              'advised_parking', 'public_transport', 'ratings_description') + (
+    fields = ('name', 'departure', 'arrival', 'description_teaser', 'description', 'ambiance', 'access',
+              'disabled_infrastructure', 'advice', 'equipment', 'accessibility_signage', 'accessibility_slope',
+              'accessibility_covering', 'accessibility_exposure', 'accessibility_width',
+              'accessibility_advice', 'advised_parking', 'public_transport', 'ratings_description') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
@@ -35,6 +36,10 @@ class PracticeTO(TranslationOptions):
 
 
 class AccessibilityTO(TranslationOptions):
+    fields = ('name', )
+
+
+class AccessibilityLevelTO(TranslationOptions):
     fields = ('name', )
 
 
@@ -74,6 +79,7 @@ trek_translation_to_register = [
     (trekking_models.TrekNetwork, TrekNetworkTO),
     (trekking_models.Practice, PracticeTO),
     (trekking_models.Accessibility, AccessibilityTO),
+    (trekking_models.AccessibilityLevel, AccessibilityLevelTO),
     (trekking_models.Route, RouteTO),
     (trekking_models.DifficultyLevel, DifficultyLevelTO),
     (trekking_models.WebLink, WebLinkTO),
