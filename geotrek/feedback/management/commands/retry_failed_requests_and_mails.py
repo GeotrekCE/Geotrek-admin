@@ -1,7 +1,7 @@
 import logging
 from django.core.management.base import BaseCommand
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import PendingEmail, PendingSuricateAPIRequest, TimerEvent
+from geotrek.feedback.models import PendingEmail, PendingSuricateAPIRequest
 
 logger = logging.getLogger(__name__)
 

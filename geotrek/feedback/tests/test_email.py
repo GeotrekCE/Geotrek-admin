@@ -18,6 +18,7 @@ class FailingEmailBackend(BaseEmailBackend):
     def send_messages(self, email_messages):
         raise Exception('Fake problem')
 
+
 class FailingEmailBackend2(BaseEmailBackend):
     """
     This Email Backend is used to test error management when sending email
