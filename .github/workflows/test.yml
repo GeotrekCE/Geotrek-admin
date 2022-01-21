@@ -152,31 +152,6 @@ jobs:
         with:
           image: "geotrek:latest"
 
-  build_deb_18_04:
-    name: Build 18.04 package
-    runs-on: ubuntu-latest
-    container: ubuntu:bionic
-    #needs: [test]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Prepare debian 18.04 versioning
-        run: |
-          grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-          sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) bionic;/' debian/changelog
-      - name: Install build dependencies
-        run: |
-          apt-get -q update
-          apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
-      - name: Building package debian 18.04
-        run: |
-          dpkg-buildpackage -uc -us -b
-      - name: Archive package artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: debian-18-04
-          path: |
-            /home/runner/work/Geotrek-admin/*.deb
-
   build_deb_20_04:
     name: Build 20.04 package
     runs-on: ubuntu-latest
@@ -203,7 +178,6 @@ jobs:
           name: debian-20-04
           path: |
             /home/runner/work/Geotrek-admin/*.deb
-
 
 
 
@@ -260,6 +234,7 @@ jobs:
 
       - name: install Cypress
         run: |
+          cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/package.json /home/runner/work/Geotrek-admin/Geotrek-admin/package.json
           npm install cypress
           echo "Waiting for container..."
           while ! nc -z "127.0.0.1" "8000"; do
@@ -317,6 +292,7 @@ jobs:
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
+          sudo ss -ltnp
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
@@ -326,6 +302,8 @@ jobs:
 
       - name: Install package
         run: |
+          sudo netstat -tunlp
+          sudo rm /etc/nginx/sites-enabled/default
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl status nginx
           sudo systemctl restart nginx
@@ -362,6 +340,7 @@ jobs:
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
+
 
   e2e_deb_20_04:
     name: Tests E2E 20.04
