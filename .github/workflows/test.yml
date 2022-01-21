@@ -320,6 +320,7 @@ jobs:
           echo "geotrek-admin geotrek-admin/SERVER_NAME string localhost" >> .debian_settings
           cat .debian_settings
           sudo debconf-set-selections .debian_settings
+          sudo ss -ltnp
 
       - name: Install package
         run: |
