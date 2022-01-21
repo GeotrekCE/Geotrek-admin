@@ -8,12 +8,13 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
-from django.core.mail import send_mail
+from django.core.mail import send_mail, mail_managers
 from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
+
 from mapentity.models import MapEntityMixin
 
 from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
@@ -22,7 +23,7 @@ from geotrek.common.utils import intersecting
 from geotrek.maintenance.models import Intervention
 from geotrek.trekking.models import POI, Service, Trek
 
-from .helpers import SuricateMessenger, send_report_to_managers
+from .helpers import SuricateMessenger
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,26 @@ class SelectableUser(User):
 
     def __str__(self):
         return f"{self.username} ({self.email})"
+
+
+class RequestType(models.TextChoices):
+    GET = 'GET', 'Get Request'
+    POST = 'POST', 'Post Request'
+
+
+class SuricateAPI(models.TextChoices):
+    STANDARD = 'STA', 'Standard API'
+    MANAGEMENT = 'MAN', 'Management API'
+
+
+class PendingSuricateAPIRequest(models.Model):
+
+    request_type = models.CharField(max_length=4, choices=RequestType.choices)
+    api = models.CharField(max_length=3, choices=SuricateAPI.choices)
+    endpoint = models.CharField(max_length=40, null=False, blank=False)
+    params = models.JSONField(max_length=300, null=False, blank=False)
+    error_message = models.TextField(null=False, blank=False)
+    retries = models.IntegerField(blank=False, default=0)
 
 
 class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin):
@@ -184,9 +205,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def comment_text(self):
         return html.unescape(self.comment)
 
+    def send_report_to_managers(self, template_name="feedback/report_email.html"):
+        subject = _("Feedback from {email}").format(email=self.email)
+        message = render_to_string(template_name, {"report": self})
+        mail_managers(subject, message, fail_silently=False)
+
     def try_send_report_to_managers(self):
         try:
-            send_report_to_managers(self)
+            self.send_report_to_managers()
         except Exception as e:
             logger.error("Email could not be sent to managers.")
             logger.exception(e)  # This sends an email to admins :)
@@ -201,44 +227,58 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         """Save method for Suricate Report mode"""
         if self.pk is None:  # New report should alert managers AND be sent to Suricate
             self.try_send_report_to_managers()
-            SuricateMessenger().post_report(self)
+            SuricateMessenger(PendingSuricateAPIRequest).post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_management_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
             if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
-                SuricateMessenger().post_report(self)
+                SuricateMessenger(PendingSuricateAPIRequest).post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
         else:  # Report updates should do nothing more
             super().save(*args, **kwargs)
 
+    def try_send_email(self, subject, message):
+        try:
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email], fail_silently=False)
+        except Exception as e:
+            logger.error("Email could not be sent to Workflow Managers.")
+            logger.exception(e)  # This sends an email to admins :)
+            # Save failed email to database
+            PendingEmail.objects.create(
+                recipient=self.assigned_user.email,
+                subject=subject,
+                message=message,
+                error_message=e.args  # Todo check
+            )
+
     def notify_assigned_user(self, message):
         subject = _("Geotrek - New report to process")
         message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
+        self.try_send_mail(subject, message)
 
     def notify_late_report(self, status_id):
         subject = _("Geotrek - Late report processsing")
         message = render_to_string(f"feedback/late_{status_id}_email.html", {"report": self})
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email])
+        self.try_send_mail(subject, message)
 
     def lock_in_suricate(self):
-        SuricateMessenger().lock_alert(self.uid)
+        SuricateMessenger(PendingSuricateAPIRequest).lock_alert(self.uid)
 
     def unlock_in_suricate(self):
-        SuricateMessenger().unlock_alert(self.uid)
+        SuricateMessenger(PendingSuricateAPIRequest).unlock_alert(self.uid)
 
     def change_position_in_suricate(self):
         rep_gps = self.geom.transform(4326, clone=True)
         long, lat = rep_gps
-        SuricateMessenger().update_gps(self.uid, lat, long)
+        SuricateMessenger(PendingSuricateAPIRequest).update_gps(self.uid, lat, long)
 
     def send_notifications_on_status_change(self, old_status_identifier, message):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
-            SuricateMessenger().update_status(self.uid, self.status.identifier, message)
-            SuricateMessenger().message_sentinel(self.uid, message)
+            SuricateMessenger(PendingSuricateAPIRequest).update_status(self.uid, self.status.identifier, message)
+            SuricateMessenger(PendingSuricateAPIRequest).message_sentinel(self.uid, message)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:
@@ -410,6 +450,23 @@ class TimerEvent(models.Model):
         return obsolete_notified or obsolete_unused
 
 
+class PendingEmail(models.Model):
+    recipient = models.EmailField(verbose_name=_("Email"), max_length=256, blank=True, null=True)
+    subjet = models.CharField(max_length=200, null=False, blank=False)
+    message = models.TextField(verbose_name=_("Message"), blank=False, null=False)
+    error_message = models.TextField(null=False, blank=False)
+    retries = models.IntegerField(blank=False, default=0)
+
+    def retry(self):
+        try:
+            send_mail(self.subject, self.message, settings.DEFAULT_FROM_EMAIL, [self.recipient], fail_silently=False)
+            self.delete()
+        except Exception as e:
+            self.retries += 1
+            self.error_message += f"\n ---------- {self.retries} ---------- \n: {e.args}"  # Todo test
+            self.save()
+
+
 class WorkflowManager(models.Model):
     """
     Workflow Manager is a User that is responsible for assigning reports to other Users and confirming that reports can be marked as resolved
@@ -430,6 +487,13 @@ class WorkflowManager(models.Model):
         except Exception as e:
             logger.error("Email could not be sent to Workflow Managers.")
             logger.exception(e)  # This sends an email to admins :)
+            # Save failed email to database
+            PendingEmail.objects.create(
+                recipient=self.user.email,
+                subject=subject,
+                message=message,
+                error_message=e.args  # Todo check
+            )
 
     def notify_report_to_solve(self, report):
         subject = _("Geotrek - A report must be solved")
