@@ -314,13 +314,13 @@ jobs:
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
+          sudo ss -ltnp
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
           echo "geotrek-admin geotrek-admin/SERVER_NAME string localhost" >> .debian_settings
           cat .debian_settings
           sudo debconf-set-selections .debian_settings
-          sudo ss -ltnp
 
       - name: Install package
         run: |
