@@ -87,6 +87,7 @@ class TestTimerEventClass(SuricateWorkflowTests):
 class MockRequest:
     pass
 
+
 @override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
 class TestWorkflowUserModels(TestCase):
 

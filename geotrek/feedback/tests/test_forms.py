@@ -146,18 +146,18 @@ class TestSuricateForms(SuricateWorkflowTests):
             (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.uid)).encode()
         ).hexdigest()
         call1 = mock.call(
-            'http://suricate.example.com/wsSendMessageSentinelle',
+            'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
             {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
-            'http://suricate.example.com/wsUpdateStatus',
+            'http://suricate.wsmanagement.example.com/wsUpdateStatus',
             {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.example.com/wsLockAlert?id_origin=geotrek&uid_alerte={self.filed_report.uid}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsLockAlert?id_origin=geotrek&uid_alerte={self.filed_report.uid}&check={check}",
             auth=('', '')
         )
         # Assert user is notified
@@ -253,18 +253,18 @@ class TestSuricateForms(SuricateWorkflowTests):
             (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.uid)).encode()
         ).hexdigest()
         call1 = mock.call(
-            'http://suricate.example.com/wsSendMessageSentinelle',
+            'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
             {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
-            'http://suricate.example.com/wsUpdateStatus',
+            'http://suricate.wsmanagement.example.com/wsUpdateStatus',
             {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'statut': 'resolved', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.uid}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.uid}&check={check}",
             auth=('', '')
         )
 
@@ -286,6 +286,6 @@ class TestSuricateForms(SuricateWorkflowTests):
             (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.uid)).encode()
         ).hexdigest()
         mocked_get.assert_called_once_with(
-            f"http://suricate.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
             auth=('', '')
         )

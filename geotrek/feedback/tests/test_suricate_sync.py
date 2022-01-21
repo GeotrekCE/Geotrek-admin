@@ -1,7 +1,6 @@
 import io
 import os
 import uuid
-import requests
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -271,21 +270,6 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(result, None)
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
-    @override_settings(SURICATE_REPORT_ENABLED=True)
-    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
-    @mock.patch("geotrek.feedback.helpers.requests.post")
-    def test_post_request_to_suricate_fails(self, mock_post):
-        """Test post request itself but fails
-        Request post is mock
-        """
-        # Define a mock response
-        self.build_failed_request_patch(mock_post)
-
-        # Create a report, should raise an exception
-        with self.assertRaises(Exception):
-            ReportFactory()
-
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_request_to_suricate_fails_1(self, mock_get):
@@ -295,7 +279,7 @@ class SuricateAPITests(SuricateTests):
         self.build_timeout_request_patch(mock_get)
         # Get raises an exception
         with self.assertRaises(Exception):
-            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+            SuricateRequestManager().get_suricate(endpoint="wsGetStatusList")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
@@ -307,7 +291,7 @@ class SuricateAPITests(SuricateTests):
         self.build_failed_request_patch(mock_get)
         # Get raises an exception
         with self.assertRaises(Exception):
-            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+            SuricateRequestManager().get_suricate(endpoint="wsGetStatusList")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("sys.stdout", new_callable=io.StringIO)
@@ -417,7 +401,7 @@ class SuricateInterfaceTests(SuricateTests):
         self.build_timeout_request_patch(mock_get)
         # Get raises an exception
         with self.assertRaises(Exception):
-            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+            SuricateRequestManager().get_suricate(endpoint="wsGetStatusList")
 
 
 class SuricateWorkflowTests(SuricateTests):

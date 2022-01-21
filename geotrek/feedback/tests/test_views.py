@@ -19,15 +19,12 @@ from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factories
+from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS
 
 
 class ReportViewsetMailSend(TestCase):
 
-    @override_settings(SURICATE_REPORT_SETTINGS={"URL": "http://suricate.example.com",
-                                                 "ID_ORIGIN": "geotrek",
-                                                 "PRIVATE_KEY_CLIENT_SERVER": "",
-                                                 "PRIVATE_KEY_SERVER_CLIENT": "",
-                                                 "AUTH": ("", "")})
+    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_MANAGEMENTT_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.post")

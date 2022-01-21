@@ -146,7 +146,7 @@ class SuricateRequestManager:
 
 class SuricateStandardRequestManager(SuricateRequestManager):
 
-    def __init__(self, pending_requests_model):
+    def __init__(self, pending_requests_model=None):
         self.pending_requests_model = pending_requests_model
         self.URL = settings.SURICATE_REPORT_SETTINGS["URL"]
         self.ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
