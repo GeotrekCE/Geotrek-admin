@@ -606,6 +606,9 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         accessibilities = request.GET.get('accessibilities')
         if accessibilities:
             qs = qs.filter(accessibilities__in=accessibilities.split(','))
+        accessibility_level = request.GET.get('accessibility_level')
+        if accessibility_level:
+            qs = qs.filter(accessibility_level__in=accessibility_level.split(','))
         themes = request.GET.get('themes')
         if themes:
             qs = qs.filter(themes__in=themes.split(','))
@@ -690,6 +693,11 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 name='accessibilities', required=False, location='query', schema=coreschema.String(
                     title=_("Accessibilities"),
                     description=_('Filter by one or more accessibility id, comma-separated.')
+                )
+            ), Field(
+                name='accessibility_level', required=False, location='query', schema=coreschema.String(
+                    title=_("Accessibility level"),
+                    description=_('Filter by one or more accessibility level id, comma-separated.')
                 )
             ), Field(
                 name='themes', required=False, location='query', schema=coreschema.String(

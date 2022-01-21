@@ -74,11 +74,11 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 class TrekFormatList(MapEntityFormat, TrekList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = [
-        'eid', 'eid2', 'structure', 'departure', 'arrival', 'duration',
-        'duration_pretty', 'description', 'description_teaser',
-        'networks', 'advice', 'equipment', 'ambiance', 'difficulty', 'information_desks',
-        'themes', 'practice', 'ratings', 'accessibilities', 'access', 'route',
-        'public_transport', 'advised_parking', 'web_links', 'labels',
+        'eid', 'eid2', 'structure', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
+        'description_teaser', 'networks', 'advice', 'equipment', 'ambiance', 'difficulty', 'information_desks',
+        'themes', 'practice', 'ratings', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
+        'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
+        'accessibility_width', 'access', 'route', 'public_transport', 'advised_parking', 'web_links', 'labels',
         'disabled_infrastructure', 'parking_location', 'points_reference',
         'related', 'children', 'parents', 'pois', 'review', 'published',
         'publication_date', 'date_insert', 'date_update',
@@ -356,7 +356,7 @@ class TrekViewSet(MapEntityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        qs = qs.select_related('structure', 'difficulty', 'practice', 'route')
+        qs = qs.select_related('structure', 'difficulty', 'practice', 'route', 'accessibility_level')
         qs = qs.prefetch_related(
             'networks', 'source', 'portal', 'web_links', 'accessibilities', 'themes', 'aggregations',
             'information_desks', 'attachments',

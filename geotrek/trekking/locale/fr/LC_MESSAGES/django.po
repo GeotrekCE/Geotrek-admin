@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-14 16:47+0000\n"
+"POT-Creation-Date: 2022-01-20 16:34+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -53,6 +53,9 @@ msgstr "Basique"
 
 msgid "Advanced"
 msgstr "Avancé"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
 
 msgid "Related treks"
 msgstr "Itinéraires liés"
@@ -213,8 +216,69 @@ msgstr "Réseaux de randonnée"
 msgid "Hiking networks"
 msgstr "Réseaux de randonnée"
 
-msgid "Accessibility"
-msgstr "Accessibilité"
+msgid "Level"
+msgstr "Niveau "
+
+msgid ""
+"Beginner (Little drop – terrain without difficulties) / Experienced "
+"(Significant slope – Technical terrain, with obstacles)"
+msgstr ""
+"Débutant (Peu de dénivelé – terrain sans de difficultés) / Expérimenté "
+"(Pente importante – Terrain technique, avec obstacles)"
+
+msgid "Slope"
+msgstr "Pente"
+
+msgid ""
+"Description of the slope: greater than 10% (Requires assistance when the "
+"slope is greater than 8%); slope break"
+msgstr ""
+"Description de la pente : supérieure à 10 % (Nécessite une assistance quand la "
+"pente est supérieur à 8%) ; rupture de pente"
+
+msgid "Covering"
+msgstr "Revêtement"
+
+msgid ""
+"Description of the surfaces encountered on the entire route. Track, path, "
+"road + type of surface (stony, presence of stones, sand, paving, slab...)"
+msgstr ""
+"Description des revêtements rencontrés sur la totalité d’un itinéraire. Piste, sentier, "
+"route + type de Revêtement (Caillouteux, présence de pierres, sable, pavettage, dalle...)"
+
+msgid "Exposure"
+msgstr "Revêtement"
+
+msgid ""
+"Description of exposures and shaded areas. Shaded, High exposure, Presence "
+"of shaded areas"
+msgstr ""
+"Description des expositions et des zones ombragées. Ombragé, Forte expositions, Présence "
+"de zone ombragées"
+
+msgid "Width"
+msgstr "Largeur"
+
+msgid ""
+"Description of the narrowing of the trails and the minimum width for "
+"wheelchairs (Trail>0.90 m, Joëlette, Narrow trail requiring strong driving "
+"technique)"
+msgstr ""
+"Description des rétrécissements des sentiers et la largueur minimum pour "
+"les fauteuils (Sentier>0,90 m, Joëlette, Sentier étroit demandant une forte technique de conduite)"
+
+msgid "Signage"
+msgstr "Signalétique"
+
+msgid "Description of the size, shape and colors of signages."
+msgstr "Description de taille, forme et couleurs des signalétiques."
+
+msgid ""
+"Specific elements allowing to appreciate the context of the itinerary for "
+"PRMs (advice, delicate passages, etc.)"
+msgstr ""
+"Eléments particuliers permettant d’apprécier le contexte de l’itinéraire pour "
+"les PMR (conseils, passages délicats, etc.)"
 
 msgid "Route"
 msgstr "Parcours"
@@ -330,6 +394,12 @@ msgstr "Tag Cirkwi"
 
 msgid "Accessibilities"
 msgstr "Accessibilités"
+
+msgid "Accessibility level"
+msgstr "Niveau d'accessibilité"
+
+msgid "Accessibility levels"
+msgstr "Niveaux d'accessibilité"
 
 msgid "Routes"
 msgstr "Parcours"

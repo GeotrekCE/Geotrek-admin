@@ -478,6 +478,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         length_3d = serializers.SerializerMethodField(read_only=True)
         name = serializers.SerializerMethodField(read_only=True)
         access = serializers.SerializerMethodField(read_only=True)
+        accessibility_advice = serializers.SerializerMethodField(read_only=True)
+        accessibility_covering = serializers.SerializerMethodField(read_only=True)
+        accessibility_exposure = serializers.SerializerMethodField(read_only=True)
+        accessibility_signage = serializers.SerializerMethodField(read_only=True)
+        accessibility_slope = serializers.SerializerMethodField(read_only=True)
+        accessibility_width = serializers.SerializerMethodField(read_only=True)
         ambiance = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
@@ -527,6 +533,24 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_access(self, obj):
             return get_translation_or_dict('access', self, obj)
+
+        def get_accessibility_advice(self, obj):
+            return get_translation_or_dict('accessibility_advice', self, obj)
+
+        def get_accessibility_covering(self, obj):
+            return get_translation_or_dict('accessibility_covering', self, obj)
+
+        def get_accessibility_exposure(self, obj):
+            return get_translation_or_dict('accessibility_exposure', self, obj)
+
+        def get_accessibility_signage(self, obj):
+            return get_translation_or_dict('accessibility_signage', self, obj)
+
+        def get_accessibility_slope(self, obj):
+            return get_translation_or_dict('accessibility_slope', self, obj)
+
+        def get_accessibility_width(self, obj):
+            return get_translation_or_dict('accessibility_width', self, obj)
 
         def get_ambiance(self, obj):
             return get_translation_or_dict('ambiance', self, obj)
@@ -609,13 +633,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.Trek
             fields = (
-                'id', 'access', 'accessibilities', 'advice', 'advised_parking',
-                'altimetric_profile', 'ambiance', 'arrival', 'ascent',
-                'attachments', 'children', 'cities', 'create_datetime',
+                'id', 'access', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
+                'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
+                'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival',
+                'ascent', 'attachments', 'children', 'cities', 'create_datetime',
                 'departure', 'departure_city', 'departure_geom', 'descent',
                 'description', 'description_teaser', 'difficulty',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',
-                'elevation_svg_url', 'external_id', 'geometry', 'gpx',
+                'elevation_svg_url', 'equipment', 'external_id', 'geometry', 'gpx',
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
                 'max_elevation', 'min_elevation', 'name', 'networks', 'next',
                 'parents', 'parking_location', 'pdf', 'points_reference',
@@ -713,6 +738,15 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Accessibility
             fields = ('id', 'name', 'pictogram')
 
+    class AccessibilityLevelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = trekking_models.AccessibilityLevel
+            fields = ('id', 'name')
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     class SensitiveAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

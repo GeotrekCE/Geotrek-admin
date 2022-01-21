@@ -50,6 +50,13 @@ class AccessibilityFactory(factory.django.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('accessibility.png')
 
 
+class AccessibilityLevelFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.AccessibilityLevel
+
+    name = "Easy"
+
+
 class RouteFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Route
@@ -105,6 +112,13 @@ class TrekFactory(TopologyFactory):
     disabled_infrastructure = "<p>Disabled infrastructure</p>"
     duration = 1.5  # hour
 
+    accessibility_level = factory.SubFactory(AccessibilityLevelFactory)
+    accessibility_slope = "<p>Accessibility slope</p>"
+    accessibility_signage = "<p>Accessibility signage</p>"
+    accessibility_covering = "<p>Accessibility covering</p>"
+    accessibility_exposure = "<p>Accessibility exposure</p>"
+    accessibility_width = "<p>Accessibility width</p>"
+    accessibility_advice = "<p>Accessibility advice</p>"
     advised_parking = "<p>Advised parking</p>"
     parking_location = Point(1, 1)
 
