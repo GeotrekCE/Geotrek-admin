@@ -1,6 +1,7 @@
 import io
 import os
 import uuid
+import requests
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -23,7 +24,7 @@ from geotrek.feedback.tests.factories import (ReportFactory,
                                               WorkflowManagerFactory)
 
 SURICATE_REPORT_SETTINGS = {
-    "URL": "http://suricate.example.com/",
+    "URL": "http://suricate.wsstandard.example.com/",
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
@@ -31,7 +32,7 @@ SURICATE_REPORT_SETTINGS = {
 }
 
 SURICATE_MANAGEMENT_SETTINGS = {
-    "URL": "http://suricate.example.com/",
+    "URL": "http://suricate.wsmanagement.example.com/",
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
@@ -112,7 +113,7 @@ class SuricateTests(TestCase):
         mock_response.status_code = 400
         mocked.return_value = mock_response
 
-    def build_extra_failed_request_patch(self, mocked: MagicMock):
+    def build_timeout_request_patch(self, mocked: MagicMock):
         """Mock error responses from Suricate API"""
         mock_response = mock.Mock()
         mock_response.status_code = 408  # reqest timeout
@@ -291,7 +292,7 @@ class SuricateAPITests(SuricateTests):
         """Test get request itself fails
         """
         # Mock error 408
-        self.build_extra_failed_request_patch(mock_get)
+        self.build_timeout_request_patch(mock_get)
         # Get raises an exception
         with self.assertRaises(Exception):
             SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
@@ -339,7 +340,7 @@ class SuricateAPITests(SuricateTests):
         """Assert connection test command outputs error when it fails on HTTP
         """
         # Mock error 408
-        self.build_extra_failed_request_patch(mock_get)
+        self.build_timeout_request_patch(mock_get)
         # Assert outputs KO
         call_command("sync_suricate", test=True)
         self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 408\nAPI Gestion :\nKO - Status code: 408\n")
@@ -413,7 +414,7 @@ class SuricateInterfaceTests(SuricateTests):
         """Test get request itself fails
         """
         # Mock error 408
-        self.build_extra_failed_request_patch(mock_get)
+        self.build_timeout_request_patch(mock_get)
         # Get raises an exception
         with self.assertRaises(Exception):
             SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")

@@ -65,29 +65,36 @@ class SuricateRequestManager:
             )
         return response
 
-    def get_from_suricate(self, endpoint, url_params={}):
+    def save_pending_request(self, request_type, endpoint, params, error_message):
+        # Save request to database
+        if "wsstandard" in self.URL:
+            which_api = "STA"
+        else:
+            which_api = "MAN"
+        # UUID cannot be JSON serialized, turn them into strings before
+        if "uid_alerte" in params:
+            uid = params.pop("uid_alerte")
+            params["uid_alerte"] = str(uid)
+        self.pending_requests_model.objects.create(
+            request_type=request_type,
+            api=which_api,
+            endpoint=endpoint,
+            params=json.dumps(params),
+            error_message=error_message
+        )
+
+    def get_suricate(self, endpoint, url_params={}):
         response = self.get_from_suricate_no_integrity_check(endpoint, url_params)
         return self.check_response_integrity(response)
 
     def get_or_retry_from_suricate(self, endpoint, url_params={}):
         try:
-            return self.get_from_suricate(endpoint, url_params)
+            return self.get_suricate(endpoint, url_params)
         except Exception as e:
             logger.exception(e)  # This sends an email to admins :)
-            # Save request to database
-            if "wsstandard" in self.URL:
-                which_api = "STA"
-            else:
-                which_api = "MAN"
-            self.pending_requests_model.objects.create(
-                request_type="GET",
-                api=which_api,
-                endpoint=endpoint,
-                url_params=url_params,
-                error_message=e.args
-            )
+            self.save_pending_request("GET", endpoint, url_params, e.args)
 
-    def post_to_suricate(self, endpoint, params=None):
+    def post_suricate(self, endpoint, params=None):
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.post(
@@ -101,20 +108,10 @@ class SuricateRequestManager:
 
     def post_or_retry_to_suricate(self, endpoint, params=None):
         try:
-            self.post_to_suricate(endpoint, params)
+            self.post_suricate(endpoint, params)
         except Exception as e:
-            # Save request to database
-            if "wsstandard" in self.URL:
-                which_api = "STA"
-            else:
-                which_api = 'MAN'
-            self.pending_requests_model.objects.create(
-                request_type="POST",
-                api=which_api,
-                endpoint=endpoint,
-                url_params=params,
-                error_message=e.args
-            )
+            logger.exception(e)  # Send alert to admins
+            self.save_pending_request("POST", endpoint, params, e.args)
 
     def get_attachment_from_suricate(self, url):
         if self.USE_AUTH:
@@ -149,7 +146,8 @@ class SuricateRequestManager:
 
 class SuricateStandardRequestManager(SuricateRequestManager):
 
-    def __init__(self):
+    def __init__(self, pending_requests_model):
+        self.pending_requests_model = pending_requests_model
         self.URL = settings.SURICATE_REPORT_SETTINGS["URL"]
         self.ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
         self.PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
@@ -169,7 +167,8 @@ class SuricateStandardRequestManager(SuricateRequestManager):
 
 class SuricateGestionRequestManager(SuricateRequestManager):
 
-    def __init__(self):
+    def __init__(self, pending_requests_model=None):
+        self.pending_requests_model = pending_requests_model
         self.URL = settings.SURICATE_MANAGEMENT_SETTINGS["URL"]
         self.ID_ORIGIN = settings.SURICATE_MANAGEMENT_SETTINGS["ID_ORIGIN"]
         self.PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_MANAGEMENT_SETTINGS[
@@ -197,9 +196,9 @@ def test_suricate_connection():
 class SuricateMessenger:
 
     def __init__(self, pending_requests_model=None):
-        self.standard_manager = SuricateStandardRequestManager()
-        self.gestion_manager = SuricateGestionRequestManager()
         self.pending_requests_model = pending_requests_model
+        self.standard_manager = SuricateStandardRequestManager(pending_requests_model)
+        self.gestion_manager = SuricateGestionRequestManager(pending_requests_model)
 
     def post_report(self, report):
         manager = self.standard_manager
@@ -285,21 +284,12 @@ class SuricateMessenger:
                 request_manager = self.standard_manager
             else:
                 request_manager = self.gestion_manager
-            # Retry for GET requests
-            if failed_request.request_type == "GET":
-                try:
-                    request_manager.get_from_suricate(failed_request.endpoint, failed_request.params)
-                    failed_request.delete()
-                except Exception as e:
-                    failed_request.retries += 1
-                    failed_request.error_message = str(e.args)  # Keep last exception message
-                    failed_request.save()
-            # Retry for POST requests
-            else:
-                try:
-                    request_manager.post_to_suricate(failed_request.endpoint, failed_request.params)
-                    failed_request.delete()
-                except Exception as e:
-                    failed_request.retries += 1
-                    failed_request.error_message = str(e.args)  # Keep last exception message
-                    failed_request.save()
+            try:
+                # Calls either request_manager.get_suricate() or request_manager.post_suricate()
+                getattr(request_manager, f"{failed_request.request_type.lower()}_suricate")(failed_request.endpoint, json.loads(failed_request.params))
+                # Delete this pending request if it was successful
+                failed_request.delete()
+            except Exception as e:
+                failed_request.retries += 1
+                failed_request.error_message = str(e.args)  # Keep last exception message
+                failed_request.save()
