@@ -10,7 +10,6 @@ from django.contrib.gis.geos import Point
 from django.core import management
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
-from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
 from geotrek import __version__
