@@ -12,7 +12,7 @@
 
 {% block detailspanel %}
     {% if not path.valid %}
-        <div class="alert alert-error"><strong>{% trans "Not validated" %}</strong></div>
+        <div class="alert alert-danger"><strong>{% trans "Not validated" %}</strong></div>
     {% endif %}
 
     {{ block.super }}
