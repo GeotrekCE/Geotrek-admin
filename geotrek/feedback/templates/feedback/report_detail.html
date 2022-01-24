@@ -1,10 +1,15 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load feedback_tags %}
+{% load feedback_tags i18n %}
 
 
 {% block detailspanel %}
-    {{ block.super }}
     {% suricate_management_enabled as suricate_management_enabled %}
+    {% if suricate_management_enabled and object.sync_error %}
+        <div class="alert alert-danger">
+            <strong>{% trans "Some data could not be forwarded to Suricate yet - Please come back later" %}</strong>
+        </div>
+    {% endif %}
+    {{ block.super }}
     {% if suricate_management_enabled %}
         <p hidden=true id="report_color">{{ report.color }}</p>
     {% endif %}

@@ -1,4 +1,5 @@
 import html
+import json
 import logging
 from datetime import timedelta
 
@@ -84,6 +85,30 @@ class PendingSuricateAPIRequest(models.Model):
     error_message = models.TextField(null=False, blank=False)
     retries = models.IntegerField(blank=False, default=0)
 
+    def raise_sync_error_flag_on_report(self, uid):
+        report = Report.objects.get(uid=uid)
+        report.sync_error = True
+        report.save()
+
+    def remove_sync_error_flag_on_report(self, uid):
+        report = Report.objects.get(uid=uid)
+        report.sync_error = False
+        report.save()
+
+    def save(self, *args, **kwargs):
+        # Set sync_error flag from report
+        if 'uid_alerte' in self.params:
+            uid = json.loads(self.params)["uid_alerte"]
+            self.raise_sync_error_flag_on_report(uid)
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Remove sync_error flag from report
+        if 'uid_alerte' in self.params:
+            uid = json.loads(self.params)["uid_alerte"]
+            self.remove_sync_error_flag_on_report(uid)
+        super().delete(*args, **kwargs)
+
 
 class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin):
     """User reports, submitted via *Geotrek-rando* or parsed from Suricate API."""
@@ -157,6 +182,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         related_name="reports"
     )
     uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
+    sync_error = models.BooleanField(verbose_name=_("Synchronisation error"), default=False, help_text=_("Synchronisation with Suricate is currently pending due to connection problems"))
 
     class Meta:
         verbose_name = _("Report")

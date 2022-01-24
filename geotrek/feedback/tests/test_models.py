@@ -10,13 +10,14 @@ from django.contrib.gis.geos import Point
 from django.core import management
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
 from geotrek import __version__
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.admin import WorkflowManagerAdmin
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import (PendingSuricateAPIRequest, SelectableUser,
+from geotrek.feedback.models import (PendingSuricateAPIRequest, Report, SelectableUser,
                                      TimerEvent, WorkflowManager)
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
@@ -140,6 +141,11 @@ class TestReportColor(TestCase):
 
 class TestPendingAPIRequests(SuricateTests):
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.status = ReportStatusFactory(identifier='waiting', label="En cours", color="#888888")
+        super().setUpTestData()
+
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_failed_get_on_management_api(self, mocked):
@@ -218,3 +224,55 @@ class TestPendingAPIRequests(SuricateTests):
         self.build_post_request_patch(mocked)
         management.call_command('retry_failed_requests_and_mails')
         self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_failed_get_on_standard_api(self, mocked):
+        pass  # Todo when implemnting get_or_retry for synchronous calls
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_failed_post_get_on_management_api(self, mocked):
+        # Create a report with an UID - emulates report from Suricate
+        uid = uuid.uuid4()
+        geom = Point(700000, 6600000, srid=settings.SRID)
+        report = Report.objects.create(uid=uid, status=self.status, geom=geom, email="john.doe@nowhere.com")
+        # Report update fails the first time
+        self.build_timeout_request_patch(mocked)
+        messenger = SuricateMessenger(PendingSuricateAPIRequest)
+        self.assertRaises(
+            Exception,
+            messenger.update_status(uid, self.status.identifier, "a nice and polite message")
+        )
+        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        report.refresh_from_db()
+        self.assertTrue(report.sync_error)
+        pending_post = PendingSuricateAPIRequest.objects.first()
+        self.assertEquals(pending_post.request_type, "POST")
+        self.assertEquals(pending_post.api, "MAN")
+        self.assertEquals(pending_post.endpoint, "wsUpdateStatus")
+        check = md5(
+            (messenger.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + messenger.gestion_manager.ID_ORIGIN + str(uid)).encode()
+        ).hexdigest()
+        # Point used in ReportFactory
+        params = json.dumps({
+            "id_origin": "geotrek",
+            "statut": "waiting",
+            "txt_changestatut": "a nice and polite message",
+            "check": check,
+            "uid_alerte": str(uid)
+        })
+        self.assertEquals(pending_post.params, params)
+        self.assertEquals(pending_post.retries, 0)
+        self.assertEquals(pending_post.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        # Report sent fails a second time
+        management.call_command('retry_failed_requests_and_mails')
+        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        pending_post.refresh_from_db()
+        self.assertEquals(pending_post.retries, 1)
+        # Report sent succeeds at second retry
+        self.build_post_request_patch(mocked)
+        management.call_command('retry_failed_requests_and_mails')
+        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
+        report.refresh_from_db()
+        self.assertFalse(report.sync_error)

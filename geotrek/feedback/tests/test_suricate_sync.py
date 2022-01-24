@@ -124,6 +124,10 @@ class SuricateTests(TestCase):
         cls.user = UserFactory()
         UserProfileFactory.create(user=cls.user)
         cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
+        cls.admin = SuperUserFactory(username="Admin", password="drowssap")
+
+    def setUp(self):
+        self.client.force_login(self.admin)
 
 
 class SuricateAPITests(SuricateTests):
