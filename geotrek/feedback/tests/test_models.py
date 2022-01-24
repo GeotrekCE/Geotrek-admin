@@ -1,17 +1,17 @@
-from hashlib import md5
 import json
 import uuid
 from datetime import timedelta
+from hashlib import md5
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.admin.sites import AdminSite
+from django.contrib.gis.geos import Point
 from django.core import management
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun.api import freeze_time
-from mapentity.tests.factories import SuperUserFactory, UserFactory
-
 from geotrek import __version__
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.admin import WorkflowManagerAdmin
@@ -21,6 +21,7 @@ from geotrek.feedback.models import (PendingSuricateAPIRequest, SelectableUser,
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SURICATE_MANAGEMENT_SETTINGS, SuricateTests, SuricateWorkflowTests)
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class TestFeedbackModel(TestCase):
@@ -190,11 +191,13 @@ class TestPendingAPIRequests(SuricateTests):
         check = md5(
             (SuricateMessenger().standard_manager.PRIVATE_KEY_CLIENT_SERVER + 'john.doe@nowhere.com').encode()
         ).hexdigest()
+        # Point used in ReportFactory
+        long, lat = Point(700000, 6600000, srid=settings.SRID).transform(4326, clone=True).coords
         params = json.dumps({
             'id_origin': 'geotrek',
             'id_user': 'john.doe@nowhere.com',
-            'lat': 46.49999999999994,
-            'long': 3.0000000000000004,
+            'lat': lat,
+            'long': long,
             'report': "This is a 'comment'",
             'activite': None,
             'nature_prb': None,
