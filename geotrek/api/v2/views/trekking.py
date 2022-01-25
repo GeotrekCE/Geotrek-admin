@@ -73,6 +73,10 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         return qs.distinct()
 
 
+class TrekDemViewSet(TrekViewSet):
+    serializer_class = api_serializers.TrekDemSerializer
+
+
 class TourViewSet(TrekViewSet):
     serializer_class = api_serializers.TourSerializer
 

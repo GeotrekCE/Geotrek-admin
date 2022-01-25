@@ -108,6 +108,17 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.RatingScale
             fields = ('id', 'name', 'practice')
 
+    if 'geotrek.altimetry' in settings.INSTALLED_APPS:
+        class TrekDemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+            dem = serializers.SerializerMethodField(read_only=True)
+
+            def get_dem(self, obj):
+                return obj.get_elevation_area()
+
+            class Meta:
+                model = trekking_models.Trek
+                fields = ('id', 'dem')
+
     class TrekRatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)

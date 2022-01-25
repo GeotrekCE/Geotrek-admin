@@ -43,6 +43,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('weblink_category', api_views.WebLinkCategoryViewSet, basename='weblink-category')
     router.register('service_type', api_views.ServiceTypeViewSet, basename='servicetype')
     router.register('service', api_views.ServiceViewSet, basename='service')
+    if 'geotrek.altimetry' in settings.INSTALLED_APPS:
+        router.register('dem', api_views.TrekDemViewSet, basename='dem')
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristiccontent_category', api_views.TouristicContentCategoryViewSet,
                     basename='touristiccontentcategory')
