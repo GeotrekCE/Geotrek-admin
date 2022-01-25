@@ -256,6 +256,17 @@ class GeotrekPOIFilter(BaseFilterBackend):
 
 
 class NearbyContentFilter(BaseFilterBackend):
+
+    def intersect_queryset_with_object(self, qs, model, obj_pk, ordering):
+        obj = model.objects.filter(pk=obj_pk).first()
+        if obj:
+            contents_intersecting = intersecting(qs, obj)
+            qs = contents_intersecting.order_by(*ordering)
+        else:
+            # Intersecting with a non-existing object results in empty data
+            qs = model.objects.none()
+        return qs
+
     def filter_queryset(self, request, queryset, view):
         ordering = ("name",)
         if queryset.model.__name__ == "SensitiveArea":
@@ -265,25 +276,20 @@ class NearbyContentFilter(BaseFilterBackend):
         qs = queryset
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
-            contents_intersecting = intersecting(qs, TouristicEvent.objects.get(pk=near_touristicevent))
-            qs = contents_intersecting.order_by(*ordering)
+            qs = self.intersect_queryset_with_object(qs, TouristicEvent, near_touristicevent, ordering)
         near_touristiccontent = request.GET.get('near_touristiccontent')
         if near_touristiccontent:
-            contents_intersecting = intersecting(qs, TouristicContent.objects.get(pk=near_touristiccontent))
-            qs = contents_intersecting.order_by(*ordering)
+            qs = self.intersect_queryset_with_object(qs, TouristicContent, near_touristiccontent, ordering)
         near_trek = request.GET.get('near_trek')
         if near_trek:
-            contents_intersecting = intersecting(qs, Trek.objects.get(pk=near_trek))
-            qs = contents_intersecting.order_by(*ordering)
+            qs = self.intersect_queryset_with_object(qs, Trek, near_trek, ordering)
         near_outdoorsite = request.GET.get('near_outdoorsite')
         if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             if near_outdoorsite:
-                contents_intersecting = intersecting(qs, Site.objects.get(pk=near_outdoorsite))
-                qs = contents_intersecting.order_by(*ordering)
+                qs = self.intersect_queryset_with_object(qs, Site, near_outdoorsite, ordering)
             near_outdoorcourse = request.GET.get('near_outdoorcourse')
             if near_outdoorcourse:
-                contents_intersecting = intersecting(qs, Course.objects.get(pk=near_outdoorcourse))
-                qs = contents_intersecting.order_by(*ordering)
+                qs = self.intersect_queryset_with_object(qs, Course, near_outdoorcourse, ordering)
         return qs
 
     def get_schema_fields(self, view):

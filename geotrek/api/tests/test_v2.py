@@ -1599,6 +1599,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_touristiccontent_list({'near_trek': self.treks[0].pk})
         self.assertEqual(len(response.json()['results']), 2)
 
+    def test_touristiccontent_near_missing_trek(self):
+        response = self.get_touristiccontent_list({'near_trek': 42666})
+        self.assertEqual(len(response.json()['results']), 0)
+
     def test_touristiccontent_categories(self):
         response = self.get_touristiccontent_list({'categories': self.content.category.pk})
         self.assertEqual(len(response.json()['results']), 1)
