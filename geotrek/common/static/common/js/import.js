@@ -42,7 +42,7 @@ function updateImportProgressBars() {
 
 			// Handle errors if any.
 			if (row.result.exc_message) {
-				element.querySelector('.alert').classList.add('alert-error');
+				element.querySelector('.alert').classList.add('alert-danger');
 				element.querySelector('.alert span').innerHTML = row.result.exc_type + " : " + row.result.exc_message;
 				element.querySelector('.alert').style.display = 'block';
 			}
