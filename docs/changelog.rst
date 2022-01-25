@@ -32,6 +32,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix missing trademark
+- Fix bootstrap theme in warning and error messages or alerts
 
 
 2.75.0     (2022-01-07)
