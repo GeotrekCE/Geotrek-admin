@@ -56,11 +56,6 @@ class PathInvisibleManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset()
 
-# GeoDjango note:
-# Django automatically creates indexes on geometry fields but it uses a
-# syntax which is not compatible with PostGIS 2.0. That's why index creation
-# is explicitly disbaled here (see manual index creation in custom SQL files).
-
 
 class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated, ClusterableModel):
