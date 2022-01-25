@@ -4,8 +4,9 @@ from geotrek.common.mixins import MergeActionMixin
 from geotrek.infrastructure.models import InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
 
 
+@admin.register(InfrastructureType)
 class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ('label', 'structure')
+    search_fields = ('label', 'structure__name')
     merge_field = "label"
 
     def get_queryset(self, request):
@@ -41,7 +42,7 @@ class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
 
 
 class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ('label', 'structure')
+    search_fields = ('label', 'structure__name')
     merge_field = "label"
 
     def get_queryset(self, request):
@@ -76,7 +77,6 @@ class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('structure',)
 
 
-admin.site.register(InfrastructureType, InfrastructureTypeAdmin)
 admin.site.register(InfrastructureCondition, InfrastructureSimpleFieldAdmin)
 admin.site.register(InfrastructureMaintenanceDifficultyLevel, InfrastructureSimpleFieldAdmin)
 admin.site.register(InfrastructureUsageDifficultyLevel, InfrastructureSimpleFieldAdmin)
