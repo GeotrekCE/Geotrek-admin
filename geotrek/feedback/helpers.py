@@ -67,7 +67,7 @@ class SuricateRequestManager:
 
     def save_pending_request(self, request_type, endpoint, params, error_message):
         # Save request to database
-        if "wsstandard" in self.URL:
+        if self.URL == settings.SURICATE_REPORT_SETTINGS["URL"]:
             which_api = "STA"
         else:
             which_api = "MAN"
