@@ -1,6 +1,6 @@
 CREATE VIEW {# geotrek.maintenance #}.v_interventions AS (
 
-	SELECT e.geom, i.*
+	SELECT e.geom, e.uuid, i.*
 	FROM maintenance_intervention AS i, core_topology AS e,  signage_blade as b
 	WHERE (i.target_id = e.id AND i.target_type_id NOT IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'blade')) OR
 	(i.target_id = b.id AND i.target_type_id IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'blade') AND e.id=b.signage_id)
