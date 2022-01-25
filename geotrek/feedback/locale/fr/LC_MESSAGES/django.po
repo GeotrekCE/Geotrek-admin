@@ -236,3 +236,12 @@ msgstr "Geotrek - Signalement à traiter en retard"
 
 msgid "Geotrek - A report must be solved"
 msgstr "Geotrek - Un Signalement est à clôturer"
+
+msgid "Synchronisation error"
+msgstr "Erreur de synchronisation"
+
+msgid "Synchronisation with Suricate is currently pending due to connection problems"
+msgstr "La synchronisation avec Suricate est en attente à cause d'un problème de connexion"
+
+msgid "Some data could not be forwarded to Suricate yet - Please come back later"
+msgstr "Des informations n'ont pas encore pu être transmises à Suricate - Merci de vérifier plus tard"

@@ -38,7 +38,7 @@ class SuricateParser(SuricateGestionRequestManager):
     def get_activities(self):
         """Get activities list from Suricate Rest API"""
 
-        data = self.get_from_suricate("wsGetActivities")
+        data = self.get_suricate("wsGetActivities")
 
         # Parse activities and create
         for activity in data["activites"]:
@@ -53,7 +53,7 @@ class SuricateParser(SuricateGestionRequestManager):
     def get_statuses(self):
         """Get statuses list from Suricate Rest API"""
 
-        data = self.get_from_suricate("wsGetStatusList")
+        data = self.get_suricate("wsGetStatusList")
 
         # Parse statuses and create
         for status in data["statuts"]:
@@ -155,7 +155,7 @@ class SuricateParser(SuricateGestionRequestManager):
         :return: returns True if and only if reports was imported (it is in bbox)
         """
         self.before_get_alerts(verbosity)
-        data = self.get_from_suricate("wsGetAlerts")
+        data = self.get_suricate("wsGetAlerts")
         total_reports = len(data["alertes"])
         current_report = 1
         reports_created = False

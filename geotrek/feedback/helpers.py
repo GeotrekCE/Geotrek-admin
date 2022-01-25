@@ -5,9 +5,6 @@ from hashlib import md5
 
 import requests
 from django.conf import settings
-from django.core.mail import mail_managers
-from django.template.loader import render_to_string
-from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +21,7 @@ class SuricateRequestManager:
     USE_AUTH = None
     AUTH = None
 
-    def check_response_integrity(self, response, id_alert=""):
+    def check_response_integrity(self, response):
         if response.status_code not in [200, 201]:
             raise Exception(
                 f"Failed to access Suricate API - Status code: {response.status_code}"
@@ -68,11 +65,36 @@ class SuricateRequestManager:
             )
         return response
 
-    def get_from_suricate(self, endpoint, url_params={}):
+    def save_pending_request(self, request_type, endpoint, params, error_message):
+        # Save request to database
+        if self.URL == settings.SURICATE_REPORT_SETTINGS["URL"]:
+            which_api = "STA"
+        else:
+            which_api = "MAN"
+        # UUID cannot be JSON serialized, turn them into strings before
+        if "uid_alerte" in params:
+            uid = params.pop("uid_alerte")
+            params["uid_alerte"] = str(uid)
+        self.pending_requests_model.objects.create(
+            request_type=request_type,
+            api=which_api,
+            endpoint=endpoint,
+            params=json.dumps(params),
+            error_message=error_message
+        )
+
+    def get_suricate(self, endpoint, url_params={}):
         response = self.get_from_suricate_no_integrity_check(endpoint, url_params)
         return self.check_response_integrity(response)
 
-    def post_to_suricate(self, endpoint, params=None):
+    def get_or_retry_from_suricate(self, endpoint, url_params={}):
+        try:
+            return self.get_suricate(endpoint, url_params)
+        except Exception as e:
+            logger.exception(e)  # This sends an email to admins :)
+            self.save_pending_request("GET", endpoint, url_params, e.args)
+
+    def post_suricate(self, endpoint, params=None):
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.post(
@@ -83,6 +105,13 @@ class SuricateRequestManager:
         else:
             response = requests.post(f"{self.URL}{endpoint}", params)
         self.check_response_integrity(response)
+
+    def post_or_retry_to_suricate(self, endpoint, params=None):
+        try:
+            self.post_suricate(endpoint, params)
+        except Exception as e:
+            logger.exception(e)  # Send alert to admins
+            self.save_pending_request("POST", endpoint, params, e.args)
 
     def get_attachment_from_suricate(self, url):
         if self.USE_AUTH:
@@ -117,7 +146,8 @@ class SuricateRequestManager:
 
 class SuricateStandardRequestManager(SuricateRequestManager):
 
-    def __init__(self):
+    def __init__(self, pending_requests_model=None):
+        self.pending_requests_model = pending_requests_model
         self.URL = settings.SURICATE_REPORT_SETTINGS["URL"]
         self.ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS["ID_ORIGIN"]
         self.PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS[
@@ -137,7 +167,8 @@ class SuricateStandardRequestManager(SuricateRequestManager):
 
 class SuricateGestionRequestManager(SuricateRequestManager):
 
-    def __init__(self):
+    def __init__(self, pending_requests_model=None):
+        self.pending_requests_model = pending_requests_model
         self.URL = settings.SURICATE_MANAGEMENT_SETTINGS["URL"]
         self.ID_ORIGIN = settings.SURICATE_MANAGEMENT_SETTINGS["ID_ORIGIN"]
         self.PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_MANAGEMENT_SETTINGS[
@@ -155,24 +186,19 @@ class SuricateGestionRequestManager(SuricateRequestManager):
         self.AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if self.USE_AUTH else None
 
 
-def test_suricate_connection():
+def test_suricate_connection():  # Todo update
     print("API Standard :")
     SuricateStandardRequestManager().test_suricate_connection()
     print("API Gestion :")
     SuricateGestionRequestManager().test_suricate_connection()
 
 
-def send_report_to_managers(report, template_name="feedback/report_email.html"):
-    subject = _("Feedback from {email}").format(email=report.email)
-    message = render_to_string(template_name, {"report": report})
-    mail_managers(subject, message, fail_silently=False)
-
-
 class SuricateMessenger:
 
-    def __init__(self):
-        self.standard_manager = SuricateStandardRequestManager()
-        self.gestion_manager = SuricateGestionRequestManager()
+    def __init__(self, pending_requests_model=None):
+        self.pending_requests_model = pending_requests_model
+        self.standard_manager = SuricateStandardRequestManager(pending_requests_model)
+        self.gestion_manager = SuricateGestionRequestManager(pending_requests_model)
 
     def post_report(self, report):
         manager = self.standard_manager
@@ -197,17 +223,17 @@ class SuricateMessenger:
             "os": "linux",
             "version": settings.VERSION,
         }
-        manager.post_to_suricate("wsSendReport", params)
+        manager.post_or_retry_to_suricate("wsSendReport", params)
 
     def lock_alert(self, id_alert):
         """Lock report on Suricate Rest API"""
-        return self.gestion_manager.get_from_suricate(
+        return self.gestion_manager.get_or_retry_from_suricate(
             "wsLockAlert", url_params={"uid_alerte": id_alert}
         )
 
     def unlock_alert(self, id_alert):
         """Unlock report on Suricate Rest API"""
-        return self.gestion_manager.get_from_suricate(
+        return self.gestion_manager.get_or_retry_from_suricate(
             "wsUnlockAlert", url_params={"uid_alerte": id_alert}
         )
 
@@ -224,12 +250,12 @@ class SuricateMessenger:
             "txt_changestatut": message,
             "check": check,
         }
-        self.gestion_manager.post_to_suricate("wsUpdateStatus", params)
+        self.gestion_manager.post_or_retry_to_suricate("wsUpdateStatus", params)
 
     # TODO TEST ON PREPROD
     def update_gps(self, id_alert, gps_lat, gps_long):
         """Update report GPS coordinates on Suricate Rest API"""
-        self.gestion_manager.get_from_suricate(
+        self.gestion_manager.get_or_retry_from_suricate(
             "wsUpdateGPS",
             url_params={
                 "uid_alerte": id_alert,
@@ -250,4 +276,20 @@ class SuricateMessenger:
             "check": check,
         }
 
-        self.gestion_manager.post_to_suricate("wsSendMessageSentinelle", params)
+        self.gestion_manager.post_or_retry_to_suricate("wsSendMessageSentinelle", params)
+
+    def retry_failed_requests(self):
+        for failed_request in self.pending_requests_model.objects.all():
+            if failed_request.api == "STA":
+                request_manager = self.standard_manager
+            else:
+                request_manager = self.gestion_manager
+            try:
+                # Calls either request_manager.get_suricate() or request_manager.post_suricate()
+                getattr(request_manager, f"{failed_request.request_type.lower()}_suricate")(failed_request.endpoint, json.loads(failed_request.params))
+                # Delete this pending request if it was successful
+                failed_request.delete()
+            except Exception as e:
+                failed_request.retries += 1
+                failed_request.error_message = str(e.args)  # Keep last exception message
+                failed_request.save()

@@ -23,7 +23,7 @@ from geotrek.feedback.tests.factories import (ReportFactory,
                                               WorkflowManagerFactory)
 
 SURICATE_REPORT_SETTINGS = {
-    "URL": "http://suricate.example.com/",
+    "URL": "http://suricate.wsstandard.example.com/",
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
@@ -31,7 +31,7 @@ SURICATE_REPORT_SETTINGS = {
 }
 
 SURICATE_MANAGEMENT_SETTINGS = {
-    "URL": "http://suricate.example.com/",
+    "URL": "http://suricate.wsmanagement.example.com/",
     "ID_ORIGIN": "geotrek",
     "PRIVATE_KEY_CLIENT_SERVER": "",
     "PRIVATE_KEY_SERVER_CLIENT": "",
@@ -112,7 +112,7 @@ class SuricateTests(TestCase):
         mock_response.status_code = 400
         mocked.return_value = mock_response
 
-    def build_extra_failed_request_patch(self, mocked: MagicMock):
+    def build_timeout_request_patch(self, mocked: MagicMock):
         """Mock error responses from Suricate API"""
         mock_response = mock.Mock()
         mock_response.status_code = 408  # reqest timeout
@@ -124,6 +124,10 @@ class SuricateTests(TestCase):
         cls.user = UserFactory()
         UserProfileFactory.create(user=cls.user)
         cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
+        cls.admin = SuperUserFactory(username="Admin", password="drowssap")
+
+    def setUp(self):
+        self.client.force_login(self.admin)
 
 
 class SuricateAPITests(SuricateTests):
@@ -270,31 +274,16 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(result, None)
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
-    @override_settings(SURICATE_REPORT_ENABLED=True)
-    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
-    @mock.patch("geotrek.feedback.helpers.requests.post")
-    def test_post_request_to_suricate_fails(self, mock_post):
-        """Test post request itself but fails
-        Request post is mock
-        """
-        # Define a mock response
-        self.build_failed_request_patch(mock_post)
-
-        # Create a report, should raise an exception
-        with self.assertRaises(Exception):
-            ReportFactory()
-
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_get_request_to_suricate_fails_1(self, mock_get):
         """Test get request itself fails
         """
         # Mock error 408
-        self.build_extra_failed_request_patch(mock_get)
+        self.build_timeout_request_patch(mock_get)
         # Get raises an exception
         with self.assertRaises(Exception):
-            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+            SuricateRequestManager().get_suricate(endpoint="wsGetStatusList")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
@@ -306,7 +295,7 @@ class SuricateAPITests(SuricateTests):
         self.build_failed_request_patch(mock_get)
         # Get raises an exception
         with self.assertRaises(Exception):
-            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+            SuricateRequestManager().get_suricate(endpoint="wsGetStatusList")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("sys.stdout", new_callable=io.StringIO)
@@ -339,7 +328,7 @@ class SuricateAPITests(SuricateTests):
         """Assert connection test command outputs error when it fails on HTTP
         """
         # Mock error 408
-        self.build_extra_failed_request_patch(mock_get)
+        self.build_timeout_request_patch(mock_get)
         # Assert outputs KO
         call_command("sync_suricate", test=True)
         self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 408\nAPI Gestion :\nKO - Status code: 408\n")
@@ -413,10 +402,10 @@ class SuricateInterfaceTests(SuricateTests):
         """Test get request itself fails
         """
         # Mock error 408
-        self.build_extra_failed_request_patch(mock_get)
+        self.build_timeout_request_patch(mock_get)
         # Get raises an exception
         with self.assertRaises(Exception):
-            SuricateRequestManager().get_from_suricate(endpoint="wsGetStatusList")
+            SuricateRequestManager().get_suricate(endpoint="wsGetStatusList")
 
 
 class SuricateWorkflowTests(SuricateTests):
