@@ -27,6 +27,7 @@ CHANGELOG
 - Fix missing trademark
 - Fix bootstrap theme in warning and error messages or alerts
 - Fix search in infrastructure admin panels
+- Fix APIv2 nearby content filter throws exceptions when queried for missing data
 
 
 2.75.0     (2022-01-07)
