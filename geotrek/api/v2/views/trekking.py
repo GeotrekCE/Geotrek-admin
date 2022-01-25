@@ -1,16 +1,16 @@
 from django.conf import settings
-from django.db.models import F, Q, Prefetch
+from django.db.models import F, Prefetch, Q
 from django.db.models.aggregates import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
-
-from rest_framework.response import Response
-
-from geotrek.api.v2 import serializers as api_serializers, \
-    viewsets as api_viewsets, filters as api_filters
-from geotrek.api.v2.functions import Transform, Length, Length3D
+from django_filters.rest_framework.backends import DjangoFilterBackend
+from geotrek.api.v2 import filters as api_filters
+from geotrek.api.v2 import serializers as api_serializers
+from geotrek.api.v2 import viewsets as api_viewsets
+from geotrek.api.v2.functions import Length, Length3D, Transform
 from geotrek.trekking import models as trekking_models
+from rest_framework.response import Response
 
 
 class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
@@ -74,6 +74,11 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class TrekDemViewSet(TrekViewSet):
+    filter_backends = (
+        DjangoFilterBackend,
+        api_filters.GeotrekPublishedFilter,
+        api_filters.UpdateOrCreateDateFilter,
+    )
     serializer_class = api_serializers.TrekDemSerializer
 
 
