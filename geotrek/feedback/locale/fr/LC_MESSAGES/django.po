@@ -245,3 +245,6 @@ msgstr "La synchronisation avec Suricate est en attente à cause d'un problème 
 
 msgid "Some data could not be forwarded to Suricate yet - Please come back later"
 msgstr "Des informations n'ont pas encore pu être transmises à Suricate - Merci de vérifier plus tard"
+
+msgid "to"
+msgstr "pour"
