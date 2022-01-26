@@ -4,25 +4,20 @@ from django.urls import reverse
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory
-
+from .factories import TrekFactory, DifficultyLevelFactory, RatingFactory
 from ..admin import RatingAdmin
 from ..models import Rating, Trek
-from .factories import TrekFactory, DifficultyLevelFactory, RatingFactory
 
 
 class DifficultyLevelTest(AuthentFixturesTest):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = TrekkingManagerFactory.create()
+        cls.difficulty = DifficultyLevelFactory.create()
+        cls.trek = TrekFactory.create(difficulty=cls.difficulty)
+
     def setUp(self):
-        self.user = TrekkingManagerFactory.create(password='booh')
-        self.difficulty = DifficultyLevelFactory.create()
-        self.trek = TrekFactory.create(difficulty=self.difficulty)
-
-    def tearDown(self):
-        self.client.logout()
-        self.user.delete()
-
-    def login(self):
-        success = self.client.login(username=self.user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(self.user)
 
     def get_csrf_token(self, response):
         csrf = 'name="csrfmiddlewaretoken" value="'
@@ -31,7 +26,6 @@ class DifficultyLevelTest(AuthentFixturesTest):
         return response.content[start:end]
 
     def test_cant_create_duplicate_id(self):
-        self.login()
         response = self.client.get(reverse('admin:trekking_difficultylevel_add'))
         csrf = self.get_csrf_token(response)
         post_data = {'id': self.difficulty.pk,
@@ -43,7 +37,6 @@ class DifficultyLevelTest(AuthentFixturesTest):
         self.assertContains(response, error_msg)
 
     def test_migrate_trek_difficulty(self):
-        self.login()
         self.assertEqual(self.trek.difficulty, self.difficulty)
         self.assertEqual(self.trek.difficulty_id, self.difficulty.pk)
         response = self.client.get(reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk]))
@@ -59,15 +52,13 @@ class DifficultyLevelTest(AuthentFixturesTest):
 
 
 class DeleteObjectTest(AuthentFixturesTest):
-    def setUp(self):
-        self.user = TrekkingManagerFactory.create(password='booh')
-        self.difficulty = DifficultyLevelFactory.create()
-        success = self.client.login(username=self.user.username, password='booh')
-        self.assertTrue(success)
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = TrekkingManagerFactory.create()
+        cls.difficulty = DifficultyLevelFactory.create()
 
-    def tearDown(self):
-        self.client.logout()
-        self.user.delete()
+    def setUp(self):
+        self.client.force_login(self.user)
 
     def test_weblink_can_be_deleted(self):
         delete_url = reverse('admin:trekking_difficultylevel_delete', args=[self.difficulty.pk])
