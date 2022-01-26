@@ -553,7 +553,7 @@ class ServeAttachmentAccessibility(View):
 
         attachments = AccessibilityAttachment.objects.filter(attachment_accessibility_file=original_path) or Attachment.objects.filter(attachment_file=original_path)
         obj = attachments.first().content_object
-        if not hasattr(obj._meta.model, 'attachments_accessibility'):
+        if not hasattr(obj._meta.model, 'attachments_accessibility') and not hasattr(obj._meta.model, 'attachments'):
             raise Http404
         if not obj.is_public():
             if not request.user.is_authenticated:
