@@ -1,19 +1,31 @@
 //
-// Signage
+// Infrastructure
 //
 
 $(window).on('entity:map', function (e, data) {
+    var modelname = 'signage';
+    var layername = `${modelname}_layer`;
+	var url = window.SETTINGS.urls[layername];
+    var loaded_infrastructure = false;
     var map = data.map;
 
-    // Show signage layer in application maps
+    // Show infrastructure layer in application maps
 	var layer = new L.ObjectsLayer(null, {
-		modelname: 'signage',
-		style: L.Util.extend(window.SETTINGS.map.styles['signage'] || {}, { clickable:false }),
-		pointToLayer: function (feature, latlng) {
-			return L.marker(latlng).bindLabel(feature.properties.name, { noHide: true });
-		}
+		modelname: modelname,
+		style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, { clickable:false }),
 	});
-	var url = window.SETTINGS.urls['signage_layer'];
-	layer.load(url);
-	map.layerscontrol.addOverlay(layer, tr('Signage'), tr('Infrastructure'));
+
+    if (data.modelname != modelname){
+	    map.layerscontrol.addOverlay(layer, tr('Signage'), tr('Infrastructure'));
+    };
+
+    map.on('layeradd', function (e) {
+        var options = e.layer.options || { 'modelname': 'None' };
+        if (! loaded_infrastructure) {
+            if (options.modelname == modelname && options.modelname != data.modelname) {
+                e.layer.load(url);
+                loaded_infrastructure = true;
+            }
+        }
+    });
 });
