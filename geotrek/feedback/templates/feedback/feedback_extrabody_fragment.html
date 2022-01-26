@@ -1,0 +1,8 @@
+{% load i18n %}
+
+<script type="text/javascript">
+    MapEntity.i18n['Feedback'] = "{% trans "Feedback" %}";
+    MapEntity.i18n['Report'] = "{% trans "Report" %}";
+
+    window.SETTINGS.urls['report_layer'] = "{% url "feedback:report_layer" %}";
+</script>
