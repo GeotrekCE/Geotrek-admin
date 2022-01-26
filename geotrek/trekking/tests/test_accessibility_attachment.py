@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.trekking.tests.factories import AttachmentAccessibilityFactory, TrekFactory
 from geotrek.trekking.models import AccessibilityAttachment
 from geotrek.trekking.views import TrekDetail
 
@@ -19,6 +19,18 @@ def add_url_for_obj(obj):
         'app_label': obj._meta.app_label,
         'model_name': obj._meta.model_name,
         'pk': obj.pk
+    })
+
+
+def update_url_for_obj(attachment):
+    return reverse('update_attachment_accessibility', kwargs={
+        'attachment_pk': attachment.pk
+    })
+
+
+def delete_url_for_obj(attachment):
+    return reverse('delete_attachment_accessibility', kwargs={
+        'attachment_pk': attachment.pk
     })
 
 
@@ -70,7 +82,7 @@ class EntityAttachmentTestCase(TestCase):
             self.assertIn(attachment.attachment_accessibility_file.url.encode(), html)
             self.assertIn(b'paperclip/fileicons/odt.png', html)
 
-    def test_form_in_details_if_perms(self):
+    def test_add_form_in_details_if_perms(self):
         self.user.has_perm = mock.MagicMock(return_value=True)
         view = TrekDetail.as_view()
         request = self.createRequest()
@@ -81,12 +93,24 @@ class EntityAttachmentTestCase(TestCase):
             '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
 
+    def test_update_form_in_details_if_perms(self):
+        self.user.has_perm = mock.MagicMock(return_value=True)
+        AttachmentAccessibilityFactory.create(content_object=self.object)
+        view = TrekDetail.as_view()
+        request = self.createRequest()
+        response = view(request, pk=self.object.pk)
+        html = response.render()
+        self.assertIn(b"Submit attachment", html.content)
+        self.assertIn(
+            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            html.content)
 
-class UploadAttachmentTestCase(TestCase):
+
+class UploadAddAttachmentTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.user = SuperUserFactory.create(password='booh')
+        cls.user = SuperUserFactory.create()
         cls.object = TrekFactory.create()
 
     def setUp(self):
@@ -101,7 +125,7 @@ class UploadAttachmentTestCase(TestCase):
         }
         return data
 
-    def test_upload_redirects_to_dummy_detail_url(self):
+    def test_upload_redirects_to_trek_detail_url(self):
         response = self.client.post(add_url_for_obj(self.object),
                                     data=self.attachmentPostData())
         self.assertEqual(response.status_code, 302)
@@ -126,3 +150,77 @@ class UploadAttachmentTestCase(TestCase):
         self.client.post(add_url_for_obj(self.object), data=data)
         att = AccessibilityAttachment.objects.attachments_for_object(self.object).get()
         self.assertTrue('face' in att.attachment_accessibility_file.name)
+
+
+class UploadUpdateAttachmentTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+        cls.object = TrekFactory.create()
+        cls.attachment = AttachmentAccessibilityFactory.create(content_object=cls.object)
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
+
+    def attachmentPostData(self):
+        data = {
+            'creator': self.user,
+            'title': "A title",
+            'legend': "A legend",
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg')
+        }
+        return data
+
+    def test_get_update_url(self):
+        response = self.client.get(update_url_for_obj(self.attachment))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'value="Update attachment"', response.content)
+
+    def test_post_update_url(self):
+        response = self.client.post(update_url_for_obj(self.attachment),
+                                    data=self.attachmentPostData())
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.attachment.refresh_from_db()
+        self.assertEqual(self.attachment.legend, "A legend")
+
+
+class UploadDeleteAttachmentTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.object = TrekFactory.create()
+        cls.attachment = AttachmentAccessibilityFactory.create(content_object=cls.object)
+
+    def test_get_delete_with_perms_url(self):
+        self.user = SuperUserFactory.create()
+        self.client.force_login(user=self.user)
+        response = self.client.get(delete_url_for_obj(self.attachment))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.assertEqual(0, AccessibilityAttachment.objects.count())
+
+    @mock.patch('django.contrib.auth.models.PermissionsMixin.has_perm')
+    def test_get_delete_without_perms_url(self, mocke):
+        def user_perms(p, obj=None):
+            return {'common.delete_attachment_others': False}.get(p, True)
+        self.user = UserFactory()
+        mocke.side_effect = user_perms
+        self.client.force_login(user=self.user)
+        response = self.client.get(delete_url_for_obj(self.attachment))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.assertEqual(1, AccessibilityAttachment.objects.count())
+        response = self.client.get(delete_url_for_obj(self.attachment), follow=True)
+        self.assertIn(b'You are not allowed to delete this attachment.', response.content)
+
+
+class ModelAttachmentAccessibilityTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.object = TrekFactory.create(name="iul")
+        cls.attachment = AttachmentAccessibilityFactory.create(attachment_accessibility_file=get_dummy_uploaded_image(name="bar"),
+                                                               creator=UserFactory(username='foo'),
+                                                               content_object=cls.object)
+
+    def test_str(self):
+        self.assertEqual(f"foo attached {self.attachment.attachment_accessibility_file.name}", str(self.attachment))
