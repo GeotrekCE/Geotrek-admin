@@ -5,6 +5,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 from django.test import TestCase, RequestFactory
+from django.test.utils import override_settings
 from django.urls import reverse
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
@@ -218,9 +219,50 @@ class ModelAttachmentAccessibilityTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.object = TrekFactory.create(name="iul")
-        cls.attachment = AttachmentAccessibilityFactory.create(attachment_accessibility_file=get_dummy_uploaded_image(name="bar"),
+        cls.attachment = AttachmentAccessibilityFactory.create(attachment_accessibility_file=get_dummy_uploaded_image(name="bar.png"),
                                                                creator=UserFactory(username='foo'),
-                                                               content_object=cls.object)
+                                                               content_object=cls.object,
+                                                               title="")
 
     def test_str(self):
-        self.assertEqual(f"foo attached {self.attachment.attachment_accessibility_file.name}", str(self.attachment))
+        self.assertEqual(f"foo attached paperclip/trekking_trek/{self.object.pk}/bar.png", str(self.attachment))
+
+
+class ServeAttachmentTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory(username='foo')
+        cls.superuser = SuperUserFactory(username='bar')
+        cls.object = TrekFactory.create(published=False, name="iul")
+        cls.attachment = AttachmentAccessibilityFactory.create(attachment_accessibility_file=get_dummy_uploaded_image(name="bar.png"),
+                                                               creator=cls.user,
+                                                               content_object=cls.object,
+                                                               title="")
+
+    def test_get_attachment_without_authenticated(self):
+        response = self.client.get(self.attachment.attachment_accessibility_file.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_attachment_without_permission_read_attachment(self):
+        self.client.force_login(user=self.user)
+        response = self.client.get(self.attachment.attachment_accessibility_file.url)
+        self.assertEqual(response.status_code, 403)
+
+    @mock.patch('django.contrib.auth.models.PermissionsMixin.has_perm')
+    def test_get_attachment_without_permission_read_object(self, mocke):
+        def user_perms(p, obj=None):
+            return {'common.read_attachment': True}.get(p, False)
+        mocke.side_effect = user_perms
+        self.client.force_login(user=self.user)
+        response = self.client.get(self.attachment.attachment_accessibility_file.url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_attachment_do_not_exist(self):
+        response = self.client.get(f'/media/paperclip/trekking_trek/{self.object.pk}/doesnotexist.png')
+        self.assertEqual(response.status_code, 404)
+
+    @override_settings(DEBUG=True)
+    def test_get_attachment_debug(self):
+        self.client.force_login(user=self.superuser)
+        response = self.client.get(self.attachment.attachment_accessibility_file.url)
+        self.assertEqual(response.status_code, 200)
