@@ -5,7 +5,6 @@ import os
 from PIL import Image
 import re
 import shutil
-import tempfile
 from time import sleep
 from zipfile import ZipFile
 import cairosvg

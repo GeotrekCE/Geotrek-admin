@@ -115,9 +115,10 @@ class RemoveDuplicatePathTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LoadPathsCommandTest(TestCase):
-    def setUp(self):
-        self.filename = os.path.join(os.path.dirname(__file__), 'data', 'paths.geojson')
-        self.structure = Structure.objects.create(name='huh')
+    @classmethod
+    def setUpTestData(cls):
+        cls.filename = os.path.join(os.path.dirname(__file__), 'data', 'paths.geojson')
+        cls.structure = Structure.objects.create(name='huh')
 
     def test_load_paths_without_file(self):
         with self.assertRaisesRegex(CommandError, 'Error: the following arguments are required: file_path'):
