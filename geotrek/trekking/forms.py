@@ -27,7 +27,7 @@ class TrekAttachmentAccessibilityForm(forms.ModelForm):
         self._object = kwargs.pop('object', None)
 
         super().__init__(*args, **kwargs)
-        self.fields['legend'].widget.attrs['placeholder'] = _('Sunset on lake')
+        self.fields['legend'].widget.attrs['placeholder'] = _('Here this place can be tricky')
 
         # Detect fields errors without uploading (using HTML5)
         self.fields['author'].widget.attrs['pattern'] = r'^\S.*'
@@ -72,7 +72,7 @@ class TrekAttachmentAccessibilityForm(forms.ModelForm):
 
     class Meta:
         model = AccessibilityAttachment
-        fields = ('attachment_accessibility_file', 'author', 'title', 'legend')
+        fields = ('attachment_accessibility_file', 'type_accessibility', 'author', 'title', 'legend')
 
     def success_url(self):
         obj = self._object

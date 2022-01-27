@@ -58,7 +58,8 @@ class EntityAttachmentTestCase(TestCase):
             'creator': self.user,
             'title': "Attachment title",
             'legend': "Attachment legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image()
+            'attachment_accessibility_file': get_dummy_uploaded_image(),
+            'type_accessibility': 'slope'
         }
         return AccessibilityAttachment.objects.create(**kwargs)
 
@@ -122,7 +123,8 @@ class UploadAddAttachmentTestCase(TestCase):
             'creator': self.user,
             'title': "A title",
             'legend': "A legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg')
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
+            'type_accessibility': 'slope'
         }
         return data
 
@@ -168,7 +170,8 @@ class UploadUpdateAttachmentTestCase(TestCase):
             'creator': self.user,
             'title': "A title",
             'legend': "A legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg')
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
+            'type_accessibility': 'slope'
         }
         return data
 
@@ -225,7 +228,7 @@ class ModelAttachmentAccessibilityTestCase(TestCase):
                                                                title="")
 
     def test_str(self):
-        self.assertEqual(f"foo attached paperclip/trekking_trek/{self.object.pk}/bar.png", str(self.attachment))
+        self.assertEqual(f"foo attached {self.attachment.attachment_accessibility_file}", str(self.attachment))
 
 
 class ServeAttachmentTestCase(TestCase):

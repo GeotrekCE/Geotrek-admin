@@ -8,6 +8,7 @@
     <table class="table">
         <thead>
         <th>{% trans "Filename" %}</th>
+        <th>{% trans "Accessibility type" %}</th>
         <th>{% trans "Legend" %}</th>
         <th>{% trans "Author" %}</th>
         <th>{% trans "Insertion date" %}</th>
@@ -26,6 +27,7 @@
                 </a>
                 {% endif %}
             </td>
+            <td>{{ att.type_accessibility_display }}</td>
             <td>{{ att.legend }}</td>
             <td>{{ att.author }}</td>
             <td>{{ att.date_insert }}</td>

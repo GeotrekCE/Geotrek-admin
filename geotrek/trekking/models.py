@@ -13,6 +13,7 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
 
+from extended_choices import Choices
 import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
@@ -121,6 +122,11 @@ class AccessibilityAttachmentManager(models.Manager):
                            object_id=obj.id)
 
 
+ACCESSIBILITY_CHOICES = Choices(('SLOPE', 'slope', _("Slope")),
+                                ('WIDTH', 'width', _("Width")),
+                                ('SIGNAGE', 'signage', _("Signage")))
+
+
 class AccessibilityAttachment(models.Model):
     objects = AccessibilityAttachmentManager()
 
@@ -128,10 +134,12 @@ class AccessibilityAttachment(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    attachment_accessibility_file = models.FileField(_('File'), blank=True,
-                                                     upload_to=attachment_upload,
-                                                     max_length=512)
-
+    attachment_accessibility_file = models.ImageField(_('Image'), blank=True,
+                                                      upload_to=attachment_upload,
+                                                      max_length=512)
+    type_accessibility = models.CharField(max_length=7,
+                                          choices=ACCESSIBILITY_CHOICES,
+                                          default=ACCESSIBILITY_CHOICES.SLOPE)
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -163,6 +171,10 @@ class AccessibilityAttachment(models.Model):
             self.creator.username,
             self.attachment_accessibility_file.name
         )
+
+    @property
+    def type_accessibility_display(self):
+        return str(ACCESSIBILITY_CHOICES.for_value(self.type_accessibility).display)
 
     @property
     def filename(self):
