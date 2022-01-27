@@ -13,7 +13,7 @@ class Structure(models.Model):
     """
     Represents an organisational structure, to which users are related.
     """
-    name = models.CharField(max_length=256, verbose_name=_("Nom"))
+    name = models.CharField(max_length=256, verbose_name=_("Nom"), db_index=True)
 
     def __str__(self):
         return self.name

@@ -140,7 +140,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
 
 class InfrastructureGISManager(NoDeleteManager):
-    """ Overide default typology mixin manager"""
+    """ Override default typology mixin manager"""
     def implantation_year_choices(self):
         all_years = self.get_queryset().existing().filter(implantation_year__isnull=False) \
             .order_by('-implantation_year').distinct('implantation_year') \

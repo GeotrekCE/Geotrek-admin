@@ -55,7 +55,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
 
 
 class SignageGISManager(NoDeleteManager):
-    """ Overide default typology mixin manager, and filter by type. """
+    """ Override default typology mixin manager, and filter by type. """
     def implantation_year_choices(self):
         choices = self.get_queryset().existing().filter(implantation_year__isnull=False)\
             .order_by('-implantation_year').distinct('implantation_year') \
