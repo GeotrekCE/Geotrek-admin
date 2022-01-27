@@ -2,6 +2,7 @@
 
 import django.contrib.gis.db.models.fields
 import django.contrib.postgres.indexes
+from django.conf import settings
 from django.db import migrations
 
 
@@ -15,17 +16,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='path',
             name='geom',
-            field=django.contrib.gis.db.models.fields.LineStringField(spatial_index=False, srid=2154),
+            field=django.contrib.gis.db.models.fields.LineStringField(spatial_index=False, srid=settings.SRID),
         ),
         migrations.AlterField(
             model_name='path',
             name='geom_cadastre',
-            field=django.contrib.gis.db.models.fields.LineStringField(editable=False, null=True, spatial_index=False, srid=2154),
+            field=django.contrib.gis.db.models.fields.LineStringField(editable=False, null=True, spatial_index=False, srid=settings.SRID),
         ),
         migrations.AlterField(
             model_name='topology',
             name='geom',
-            field=django.contrib.gis.db.models.fields.GeometryField(default=None, editable=False, null=True, spatial_index=False, srid=2154),
+            field=django.contrib.gis.db.models.fields.GeometryField(default=None, editable=False, null=True, spatial_index=False, srid=settings.SRID),
         ),
         migrations.AddIndex(
             model_name='path',
