@@ -50,10 +50,10 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script src="{% static "trekking/poilayer.js" %}"></script>
-    <script src="{% static "trekking/servicelayer.js" %}"></script>
-    <script src="{% static "trekking/signagelayer.js" %}"></script>
-    <script src="{% static "trekking/infrastructurelayer.js" %}"></script>
+    <script src="{% static 'trekking/poilayer.js' %}"></script>
+    <script src="{% static 'trekking/servicelayer.js' %}"></script>
+    <script src="{% static 'trekking/signagelayer.js' %}"></script>
+    <script src="{% static 'trekking/infrastructurelayer.js' %}"></script>
     <script type="text/javascript">
         $(window).on('detailmap:ready', function (e, data) {
             var map = data.map;
