@@ -206,7 +206,7 @@
               {% if label.pictogram %}
                 <img src="file://{{ label.pictogram.path }}">
               {% else %}
-                <img src="file://{{ STATIC_ROOT }}/trekking/information.svg">
+                <img src="file://{{ STATIC_ROOT }}/trekking/img/information.svg">
               {% endif %}
             </div>
             {{ label.name|safe }}
@@ -218,7 +218,7 @@
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="file://{{ STATIC_ROOT }}/trekking/advice.svg">
+              <img src="file://{{ STATIC_ROOT }}/trekking/img/advice.svg">
             </div>
             {% trans "Advices" %}
           </div>
@@ -229,7 +229,7 @@
         <div class="gear">
           <div class="gear-title">
             <div class="gear-icon">
-              <img src="file://{{ STATIC_ROOT }}/trekking/gear.svg">
+              <img src="file://{{ STATIC_ROOT }}/trekking/img/gear.svg">
             </div>
             {% trans "Gear" %}
           </div>
@@ -317,7 +317,7 @@
             <section class="information-desks">
               <h2>
                 <div class="information-desks-icon">
-                  <img src="file://{{ STATIC_ROOT}}/trekking/information.svg">
+                  <img src="file://{{ STATIC_ROOT}}/trekking/img/information.svg">
                 </div>
                 {% trans "Information desks" %}
               </h2>
