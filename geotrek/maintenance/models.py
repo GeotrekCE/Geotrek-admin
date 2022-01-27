@@ -1,26 +1,25 @@
 import os
 from datetime import datetime
-
-from django.db.models import Q, Min, Max
-from django.db.models.functions import ExtractYear
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
+from django.contrib.postgres.indexes import GistIndex
+from django.db.models import Q, Min, Max
+from django.db.models.functions import ExtractYear
+from django.utils.translation import gettext_lazy as _
 
-from mapentity.models import MapEntityMixin
-
-from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.altimetry.models import AltimetryMixin
-from geotrek.core.models import Topology, Path, Trail
-from geotrek.common.models import Organism
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, NoDeleteManager
+from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
+from geotrek.core.models import Topology, Path, Trail
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from mapentity.models import MapEntityMixin
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -53,7 +52,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"))
     subcontract_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Subcontract cost"))
 
-    # AltimetyMixin for denormalized fields from related topology, updated via trigger.
+    # AltimetryMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
 
     stake = models.ForeignKey('core.Stake', null=True, blank=True, on_delete=models.CASCADE,
@@ -80,6 +79,9 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     class Meta:
         verbose_name = _("Intervention")
         verbose_name_plural = _("Interventions")
+        indexes = [
+            GistIndex(name='intervention_geom_3d_gist_idx', fields=['geom_3d']),
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
