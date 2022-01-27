@@ -36,6 +36,10 @@ CHANGELOG
 - Fix search in infrastructure admin panels
 - Fix APIv2 nearby content filter throws exceptions when queried for missing data
 
+**Performances**
+
+- Add missing indexes on geometry fields (WARNING, if you add indexes manually you should delete them before applying migrations)
+
 
 2.75.0     (2022-01-07)
 -----------------------

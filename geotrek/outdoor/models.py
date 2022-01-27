@@ -1,9 +1,9 @@
 import uuid
-
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
+from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
 from django.db.models import Q
 from django.utils.html import escape
@@ -180,6 +180,9 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         verbose_name = _("Outdoor site")
         verbose_name_plural = _("Outdoor sites")
         ordering = ('name', )
+        indexes = [
+            GistIndex(name='site_geom_3d_gist_idx', fields=['geom_3d']),
+        ]
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -210,7 +213,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_practices_id(self):
-        "Return practices of itself and its descendants as ids"
+        """ Return practices of itself and its descendants as ids """
         practices_id = self.get_descendants(include_self=True) \
             .exclude(practice=None) \
             .values_list('practice_id', flat=True)
@@ -218,7 +221,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_practices(self):
-        "Return practices of itself and its descendants as objects"
+        """ Return practices of itself and its descendants as objects """
         return Practice.objects.filter(id__in=self.super_practices_id)  # Sorted and unique
 
     @property
@@ -235,7 +238,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_ratings_id(self):
-        "Return ratings of itself and its descendants as ids"
+        """ Return ratings of itself and its descendants as ids """
         ratings_id = self.get_descendants(include_self=True) \
             .exclude(ratings=None) \
             .values_list('ratings', flat=True)
@@ -243,12 +246,12 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_ratings(self):
-        "Return ratings of itself and its descendants as objects"
+        """ Return ratings of itself and its descendants as objects """
         return Rating.objects.filter(id__in=self.super_ratings_id)  # Sorted and unique
 
     @property
     def super_sectors(self):
-        "Return sectors of itself and its descendants"
+        """ Return sectors of itself and its descendants """
         sectors_id = self.get_descendants(include_self=True) \
             .exclude(practice=None) \
             .values_list('practice__sector_id', flat=True)
@@ -256,19 +259,19 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_orientation(self):
-        "Return orientation of itself and its descendants"
+        """ Return orientation of itself and its descendants """
         orientation = set(sum(self.get_descendants(include_self=True).values_list('orientation', flat=True), []))
         return [o for o, _o in self.ORIENTATION_CHOICES if o in orientation]  # Sorting
 
     @property
     def super_wind(self):
-        "Return wind of itself and its descendants"
+        """ Return wind of itself and its descendants """
         wind = set(sum(self.get_descendants(include_self=True).values_list('wind', flat=True), []))
         return [o for o, _o in self.WIND_CHOICES if o in wind]  # Sorting
 
     @property
     def super_managers(self):
-        "Return managers of itself and its descendants"
+        """ Return managers of itself and its descendants """
         sites = self.get_descendants(include_self=True)
         return Organism.objects.filter(site__in=sites)  # Sorted and unique
 
@@ -334,7 +337,8 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin,
+             AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     parent_sites = models.ManyToManyField(Site, related_name="children_courses", verbose_name=_("Sites"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -364,6 +368,10 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         verbose_name = _("Outdoor course")
         verbose_name_plural = _("Outdoor courses")
         ordering = ('name', )
+        indexes = [
+            GistIndex(name='course_points_ref_gist_idx', fields=['points_reference']),
+            GistIndex(name='course_geom_3d_gist_idx', fields=['geom_3d']),
+        ]
 
     def __str__(self):
         return self.name
