@@ -23,11 +23,11 @@ describe('Nav tabs properties/attachments', () => {
       .then((href) => {
         cy.visit(href)
     })
-    cy.get("a#tab-properties").should('contain', '.active')
-    cy.get("a#tab-attachments-accessibility").should('not.contain', '.active')
+    cy.get("a#tab-properties").should('have.class', 'active')
+    cy.get("a#tab-attachments-accessibility").should('not.have.class', 'active')
     cy.get("a#tab-attachments-accessibility").click()
-    cy.get("a#tab-attachments-accessibility").should('contain', '.active')
-    cy.get("a#tab-properties").should('not.contain', '.active')
+    cy.get("a#tab-attachments-accessibility").should('have.class', 'active')
+    cy.get("a#tab-properties").should('not.have.class', 'active')
   })
 
 })
