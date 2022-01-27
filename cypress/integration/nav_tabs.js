@@ -18,7 +18,11 @@ describe('Nav tabs properties/attachments', () => {
   })
 
   it('Use tabs', () => {
-    cy.visit('http://localhost:8000/trek/1/')
+    cy.visit('http://localhost:8000/trek/list')
+    cy.get("a[title='Trek number 1']").should('have.attr', 'href')
+      .then((href) => {
+        cy.visit(href)
+    })
     cy.get("a#tab-properties").should('contain', '.active')
     cy.get("a#tab-attachments-accessibility").should('not.contain', '.active')
     cy.get("a#tab-attachments-accessibility").click()
