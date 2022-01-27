@@ -1,10 +1,10 @@
 import logging
 import os
 import uuid
-
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.postgres.indexes import GistIndex
 from django.db.models.query_utils import Q
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
@@ -80,6 +80,9 @@ class InformationDesk(models.Model):
         verbose_name = _("Information desk")
         verbose_name_plural = _("Information desks")
         ordering = ['name']
+        indexes = [
+            GistIndex(name='informationdesk_geom_gist_idx', fields=['geom']),
+        ]
 
     def __str__(self):
         return self.name
