@@ -1,20 +1,18 @@
+import functools
 import json
 import logging
-import functools
-import uuid
-
 import simplekml
-from modelcluster.models import ClusterableModel
-from modelcluster.fields import ParentalKey
-
+import uuid
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
-from django.conf import settings
+from django.contrib.gis.geos import Point, fromstr, LineString, GEOSGeometry
+from django.contrib.postgres.indexes import GistIndex
+from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
-from django.contrib.gis.geos import fromstr, LineString, GEOSGeometry
-
-from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
@@ -23,11 +21,8 @@ from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-
-from django.db import connection, connections, DEFAULT_DB_ALIAS
-from django.db.models.query import QuerySet
-
-from django.contrib.gis.geos import Point
+from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 
 logger = logging.getLogger(__name__)
 
@@ -59,8 +54,9 @@ class PathInvisibleManager(models.Manager):
 
 class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated, ClusterableModel):
-    geom = models.LineStringField(srid=settings.SRID, spatial_index=True)
-    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=True,
+    """ Path model. Sptial indexes disabled because managed in Meta.indexes """
+    geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
+    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
     valid = models.BooleanField(default=True, verbose_name=_("Validity"),
                                 help_text=_("Approved by manager"))
@@ -141,10 +137,18 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     class Meta:
         verbose_name = _("Path")
         verbose_name_plural = _("Paths")
-        permissions = MapEntityMixin._meta.permissions + [("add_draft_path", "Can add draft Path"),
-                                                          ("change_draft_path", "Can change draft Path"),
-                                                          ("delete_draft_path", "Can delete draft Path"),
-                                                          ]
+        permissions = MapEntityMixin._meta.permissions + [
+            ("add_draft_path", "Can add draft Path"),
+            ("change_draft_path", "Can change draft Path"),
+            ("delete_draft_path", "Can delete draft Path"),
+        ]
+        indexes = [
+            GistIndex(name='path_geom_gist_idx', fields=['geom']),
+            GistIndex(name='path_geom_cadastre_gist_idx', fields=['geom_cadastre']),
+            GistIndex(name='path_geom_3d_gist_idx', fields=['geom_3d']),
+            # some other complex indexes can't be created by django and are created in migrations
+            # Gist (ST_STARTPOINT(geom)) and (ST_ENDPOINT(geom))
+        ]
 
     @classmethod
     def closest(cls, point, exclude=None):
@@ -384,7 +388,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
-                                default=None, spatial_index=True)
+                                default=None, spatial_index=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
@@ -393,6 +397,10 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
     class Meta:
         verbose_name = _("Topology")
         verbose_name_plural = _("Topologies")
+        indexes = [
+            GistIndex(name='topology_geom_gist_idx', fields=['geom']),
+            GistIndex(name='topology_geom_3d_gist_idx', fields=['geom_3d']),
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
