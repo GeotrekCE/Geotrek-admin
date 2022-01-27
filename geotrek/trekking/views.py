@@ -571,8 +571,6 @@ class ServeAttachmentAccessibility(View):
             response = HttpResponse()
             response[settings.MAPENTITY_CONFIG['SENDFILE_HTTP_HEADER']] = os.path.join(settings.MEDIA_URL_SECURE, path)
         response["Content-Type"] = content_type or 'application/octet-stream'
-        if encoding:
-            response["Content-Encoding"] = encoding
         if app_settings['SERVE_MEDIA_AS_ATTACHMENT']:
             response['Content-Disposition'] = "attachment; filename={0}".format(
                 os.path.basename(path))

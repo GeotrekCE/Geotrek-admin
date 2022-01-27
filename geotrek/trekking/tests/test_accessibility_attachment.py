@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.tests.factories import AttachmentAccessibilityFactory, TrekFactory
+from geotrek.trekking.tests.factories import AttachmentAccessibilityFactory, TrekFactory, PracticeFactory
 from geotrek.trekking.models import AccessibilityAttachment
 from geotrek.trekking.views import TrekDetail
 
@@ -269,3 +269,13 @@ class ServeAttachmentTestCase(TestCase):
         self.client.force_login(user=self.superuser)
         response = self.client.get(self.attachment.attachment_accessibility_file.url)
         self.assertEqual(response.status_code, 200)
+
+    def test_get_attachment_on_model_without_generic(self):
+        obj = PracticeFactory.create()
+        attachment = AttachmentAccessibilityFactory.create(attachment_accessibility_file=get_dummy_uploaded_image(name="bar.png"),
+                                                           creator=self.user,
+                                                           content_object=obj,
+                                                           title="")
+        self.client.force_login(user=self.superuser)
+        response = self.client.get(attachment.attachment_accessibility_file.url)
+        self.assertEqual(response.status_code, 404)
