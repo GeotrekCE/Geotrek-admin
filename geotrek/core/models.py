@@ -54,7 +54,7 @@ class PathInvisibleManager(models.Manager):
 
 class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated, ClusterableModel):
-    """ Path model. Sptial indexes disabled because managed in Meta.indexes """
+    """ Path model. Spatial indexes disabled because managed in Meta.indexes """
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
