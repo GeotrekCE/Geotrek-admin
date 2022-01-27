@@ -1,10 +1,11 @@
 from unittest import mock
+from django.conf import settings
 
 from django.test.utils import override_settings
 from django.core import mail, management
 from django.core.mail.backends.base import BaseEmailBackend
 from django.utils import translation
-from geotrek.feedback.models import PendingEmail, WorkflowManager
+from geotrek.feedback.models import AttachedMessage, PendingEmail, WorkflowManager
 
 from geotrek.feedback.parsers import SuricateParser
 from geotrek.feedback.tests.factories import ReportFactory
@@ -135,6 +136,7 @@ class TestPendingEmail(SuricateTests):
             self.assertEquals(pending_mail.subject, "Geotrek - New report to process")
             self.assertEquals(pending_mail.retries, 0)
             self.assertEquals(pending_mail.error_message, "('Fake problem',)")
+            self.assertEquals(AttachedMessage.objects.filter(report=report).count(), 0)
         # Email fails a second time
         with override_settings(EMAIL_BACKEND='geotrek.feedback.tests.test_email.FailingEmailBackend2'):
             management.call_command('retry_failed_requests_and_mails')
@@ -152,3 +154,7 @@ class TestPendingEmail(SuricateTests):
         self.assertEqual(sent_mail.to, [report.assigned_user.email])
         self.assertEqual(sent_mail.subject, "Geotrek - New report to process")
         self.assertIn("A nice and useful message", sent_mail.body)
+        self.assertEquals(AttachedMessage.objects.filter(report=report).count(), 1)
+        attached = AttachedMessage.objects.filter(report=report).first()
+        self.assertEquals(attached.author, settings.DEFAULT_FROM_EMAIL + " to " + report.assigned_user.email)
+        self.assertIn("You have been assigned a report on Geotrek", attached.content)
