@@ -4,7 +4,7 @@
 
 {% block mainform %}
 
-    <script type="text/javascript" src="{% static 'trekking/chosen.order.jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'trekking/js/chosen.order.jquery.min.js' %}"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
 
     <script type="text/javascript">
@@ -34,7 +34,7 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script type="text/javascript" src="{% static "common/js/form.js" %}"></script>
+    <script type="text/javascript" src="{% static 'common/js/form.js' %}"></script>
     <script type="text/javascript">
         MapEntity.i18n['Add a point of reference'] = "{% trans "Add a point of reference" %}";
         MapEntity.i18n['Move points of reference'] = "{% trans "Move points of reference" %}";

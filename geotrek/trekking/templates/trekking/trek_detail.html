@@ -6,10 +6,10 @@
   </div>
 
   <div class="btn-group pull-right">
-    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_gpx_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
-    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_kml_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
-    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
-    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print booklet" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_gpx_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static 'paperclip/fileicons/gpx.png' %}"/> {% trans "GPX" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_kml_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static 'paperclip/fileicons/kml.png' %}"/> {% trans "KML" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans 'Public print' %}" target="_blank"><img src="{% static 'paperclip/fileicons/pdf.png' %}"/> {% trans "Print" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans 'Public print booklet' %}" target="_blank"><img src="{% static 'paperclip/fileicons/pdf.png' %}"/> {% trans "Print booklet" %}</a>
 {% endblock download %}
 
 {% block after_attachments_extra_tab_nav %}
@@ -50,10 +50,10 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script src="{% static 'trekking/poilayer.js' %}"></script>
-    <script src="{% static 'trekking/servicelayer.js' %}"></script>
-    <script src="{% static 'trekking/signagelayer.js' %}"></script>
-    <script src="{% static 'trekking/infrastructurelayer.js' %}"></script>
+    <script src="{% static 'trekking/js/poilayer.js' %}"></script>
+    <script src="{% static 'trekking/js/servicelayer.js' %}"></script>
+    <script src="{% static 'trekking/js/signagelayer.js' %}"></script>
+    <script src="{% static 'trekking/js/infrastructurelayer.js' %}"></script>
     <script type="text/javascript">
         $(window).on('detailmap:ready', function (e, data) {
             var map = data.map;
@@ -62,7 +62,7 @@
             // Parking
             {% if object.parking_location %}
                 var parkingIcon = L.icon({
-                    iconUrl: "{% static "trekking/parking.png" %}",
+                    iconUrl: "{% static "trekking/img/parking.png" %}",
                     iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],
                     iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],
                 });

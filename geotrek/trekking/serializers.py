@@ -273,7 +273,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             data = {
                 'id': 'I',
                 'label': _("Itinerancy"),
-                'pictogram': '/static/trekking/itinerancy.svg',
+                'pictogram': '/static/trekking/img/itinerancy.svg',
                 # Translators: This is a slug (without space, accent or special char)
                 'slug': _('itinerancy'),
             }
@@ -288,7 +288,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             data = {
                 'id': trekking_models.Practice.id_prefix,
                 'label': _("Hike"),
-                'pictogram': '/static/trekking/trek.svg',
+                'pictogram': '/static/trekking/img/trek.svg',
                 # Translators: This is a slug (without space, accent or special char)
                 'slug': _('trek'),
             }

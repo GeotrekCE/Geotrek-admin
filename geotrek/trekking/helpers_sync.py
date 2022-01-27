@@ -22,8 +22,8 @@ class SyncRando:
         self.global_sync.sync_geojson(lang, views.POIViewSet, 'pois.geojson', zipfile=self.global_sync.zipfile)
         self.global_sync.sync_geojson(lang, views.TrekViewSet, 'treks.geojson', zipfile=self.global_sync.zipfile)
         self.global_sync.sync_geojson(lang, views.ServiceViewSet, 'services.geojson', zipfile=self.global_sync.zipfile)
-        self.global_sync.sync_static_file(lang, 'trekking/trek.svg')
-        self.global_sync.sync_static_file(lang, 'trekking/itinerancy.svg')
+        self.global_sync.sync_static_file(lang, 'trekking/img/trek.svg')
+        self.global_sync.sync_static_file(lang, 'trekking/img/itinerancy.svg')
         models_picto = [models.TrekNetwork, models.Practice, models.Accessibility, models.DifficultyLevel,
                         models.POIType, models.ServiceType, models.Route, models.WebLinkCategory]
         self.global_sync.sync_pictograms(lang, models_picto, zipfile=self.global_sync.zipfile)

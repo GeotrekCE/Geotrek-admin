@@ -3,7 +3,7 @@ var utils = require('./_nav-utils.js');
 casper.test.begin('Trek detail page', function(test) {
 
     casper.start(utils.baseurl + '/trek/9000/', function () {
-        casper.waitForSelector("img[src='/static/trekking/parking.png']");
+        casper.waitForSelector("img[src='/static/trekking/img/parking.png']");
     });
 
     casper.then(function () {

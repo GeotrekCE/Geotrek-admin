@@ -197,7 +197,7 @@ class TrekViewsTest(CommonTest):
                 'id': 'T',
                 'label': 'Hike',
                 'order': 1,
-                'pictogram': '/static/trekking/trek.svg',
+                'pictogram': '/static/trekking/img/trek.svg',
                 'slug': 'trek',
                 'type2_label': 'Accessibility type',
             },
@@ -313,8 +313,8 @@ class TrekViewsTest(CommonTest):
             'ambiance_en': '',
             'access_fr': '',
             'access_en': '',
-            'accessibility_infrastructure_fr': '',
-            'accessibility_infrastructure_en': '',
+            'disabled_infrastructure_fr': '',
+            'disabled_infrastructure_en': '',
             'duration': '0',
             'labels': [],
             'advised_parking': 'Very close',
@@ -322,8 +322,8 @@ class TrekViewsTest(CommonTest):
             'public_transport': 'huh',
             'advice_fr': '',
             'advice_en': '',
-            'gear_fr': '',
-            'gear_en': '',
+            'equipment_fr': '',
+            'equipment_en': '',
             'themes': ThemeFactory.create().pk,
             'networks': TrekNetworkFactory.create().pk,
             'practice': '',
@@ -910,14 +910,8 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         desk_type = self.information_desk.type
         self.maxDiff = None
         self.assertDictEqual(self.result['information_desks'][0],
-                             {'accessibility': self.information_desk.accessibility,
-                              'description': self.information_desk.description,
+                             {'description': self.information_desk.description,
                               'email': self.information_desk.email,
-                              'label_accessibility': {
-                                  'id': self.information_desk.label_accessibility.pk,
-                                  'pictogram': self.information_desk.label_accessibility.pictogram.url,
-                                  'label': self.information_desk.label_accessibility.label,
-                              },
                               'latitude': self.information_desk.latitude,
                               'longitude': self.information_desk.longitude,
                               'name': self.information_desk.name,
@@ -984,7 +978,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               "label": "Hike",
                               "slug": "trek",
                               "type2_label": "Accessibility type",
-                              "pictogram": "/static/trekking/trek.svg"})
+                              "pictogram": "/static/trekking/img/trek.svg"})
 
     def test_sources(self):
         self.assertDictEqual(self.result['source'][0], {
