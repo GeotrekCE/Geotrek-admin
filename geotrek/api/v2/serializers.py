@@ -280,6 +280,32 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
+class AttachmentAccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    url = serializers.SerializerMethodField(read_only=True)
+    thumbnail = serializers.SerializerMethodField(read_only=True)
+
+    def get_url(self, obj):
+        if obj.attachment_accessibility_file:
+            return build_url(self, obj.attachment_accessibility_file.url)
+        return ""
+
+    def get_thumbnail(self, obj):
+        thumbnailer = get_thumbnailer(obj.attachment_accessibility_file)
+        try:
+            thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
+        except (IOError, InvalidImageFormatError, DecompressionBombError):
+            return ""
+        thumbnail.author = obj.author
+        thumbnail.legend = obj.legend
+        return build_url(self, thumbnail.url)
+
+    class Meta:
+        model = trekking_models.AccessibilityAttachment
+        fields = (
+            'info_accessibility', 'author', 'thumbnail', 'legend', 'title', 'url', 'uuid',
+        )
+
+
 class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
     advice = serializers.SerializerMethodField(read_only=True)
@@ -496,6 +522,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
         pdf = serializers.SerializerMethodField('get_pdf_url')
@@ -636,7 +663,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'id', 'access', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
                 'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
                 'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival',
-                'ascent', 'attachments', 'children', 'cities', 'create_datetime',
+                'ascent', 'attachments', 'attachments_accessibility', 'children', 'cities', 'create_datetime',
                 'departure', 'departure_city', 'departure_geom', 'descent',
                 'description', 'description_teaser', 'difficulty',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',
