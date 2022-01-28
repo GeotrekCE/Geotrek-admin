@@ -272,15 +272,6 @@ class AttachmentSerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
     type = serializers.SerializerMethodField(read_only=True)
     backend = serializers.SerializerMethodField(read_only=True)
 
-    def get_url(self, obj):
-        if obj.attachment_file:
-            return build_url(self, obj.attachment_file.url)
-        if obj.attachment_video:
-            return obj.attachment_video
-        if obj.attachment_link:
-            return obj.attachment_link
-        return ""
-
     def get_type(self, obj):
         if obj.is_image or obj.attachment_link:
             return "image"
@@ -301,9 +292,6 @@ class AttachmentSerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
 
 
 class AttachmentAccessibilitySerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
-    url = serializers.SerializerMethodField(read_only=True)
-    thumbnail = serializers.SerializerMethodField(read_only=True)
-
     def get_attachment_file(self, obj):
         return obj.attachment_accessibility_file
 

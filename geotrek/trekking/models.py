@@ -13,7 +13,6 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
 
-from extended_choices import Choices
 import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
