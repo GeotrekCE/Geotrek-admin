@@ -235,10 +235,41 @@ class RecordSourceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'name', 'pictogram', 'website')
 
 
-class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class AttachmentsSerializerMixin(serializers.ModelSerializer):
     url = serializers.SerializerMethodField(read_only=True)
-    type = serializers.SerializerMethodField(read_only=True)
     thumbnail = serializers.SerializerMethodField(read_only=True)
+
+    def get_attachment_file(self, obj):
+        return obj.attachment_file
+
+    def get_thumbnail(self, obj):
+        thumbnailer = get_thumbnailer(self.get_attachment_file(obj))
+        try:
+            thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
+        except (IOError, InvalidImageFormatError, DecompressionBombError):
+            return ""
+        thumbnail.author = obj.author
+        thumbnail.legend = obj.legend
+        return build_url(self, thumbnail.url)
+
+    def get_url(self, obj):
+        if obj.attachment_file:
+            return build_url(self, obj.attachment_file.url)
+        if obj.attachment_video:
+            return obj.attachment_video
+        if obj.attachment_link:
+            return obj.attachment_link
+        return ""
+
+    class Meta:
+        model = common_models.Attachment
+        fields = (
+            'author', 'thumbnail', 'legend', 'title', 'url', 'uuid'
+        )
+
+
+class AttachmentSerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
+    type = serializers.SerializerMethodField(read_only=True)
     backend = serializers.SerializerMethodField(read_only=True)
 
     def get_url(self, obj):
@@ -257,16 +288,6 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             return "video"
         return "file"
 
-    def get_thumbnail(self, obj):
-        thumbnailer = get_thumbnailer(obj.attachment_file)
-        try:
-            thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
-        except (IOError, InvalidImageFormatError, DecompressionBombError):
-            return ""
-        thumbnail.author = obj.author
-        thumbnail.legend = obj.legend
-        return build_url(self, thumbnail.url)
-
     def get_backend(self, obj):
         if obj.attachment_video != '':
             return type(obj).__name__.replace('Backend', '')
@@ -275,35 +296,27 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.Attachment
         fields = (
-            'author', 'backend', 'thumbnail',
-            'legend', 'title', 'url', 'uuid', "type"
-        )
+            'backend', 'type'
+        ) + AttachmentsSerializerMixin.Meta.fields
 
 
-class AttachmentAccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class AttachmentAccessibilitySerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
     url = serializers.SerializerMethodField(read_only=True)
     thumbnail = serializers.SerializerMethodField(read_only=True)
+
+    def get_attachment_file(self, obj):
+        return obj.attachment_accessibility_file
 
     def get_url(self, obj):
         if obj.attachment_accessibility_file:
             return build_url(self, obj.attachment_accessibility_file.url)
         return ""
 
-    def get_thumbnail(self, obj):
-        thumbnailer = get_thumbnailer(obj.attachment_accessibility_file)
-        try:
-            thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
-        except (IOError, InvalidImageFormatError, DecompressionBombError):
-            return ""
-        thumbnail.author = obj.author
-        thumbnail.legend = obj.legend
-        return build_url(self, thumbnail.url)
-
     class Meta:
         model = trekking_models.AccessibilityAttachment
         fields = (
-            'info_accessibility', 'author', 'thumbnail', 'legend', 'title', 'url', 'uuid',
-        )
+            'info_accessibility',
+        ) + AttachmentsSerializerMixin.Meta.fields
 
 
 class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
