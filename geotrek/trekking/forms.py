@@ -72,7 +72,7 @@ class TrekAttachmentAccessibilityForm(forms.ModelForm):
 
     class Meta:
         model = AccessibilityAttachment
-        fields = ('attachment_accessibility_file', 'type_accessibility', 'author', 'title', 'legend')
+        fields = ('attachment_accessibility_file', 'info_accessibility', 'author', 'title', 'legend')
 
     def success_url(self):
         obj = self._object

@@ -137,7 +137,8 @@ class AccessibilityAttachment(models.Model):
     attachment_accessibility_file = models.ImageField(_('Image'), blank=True,
                                                       upload_to=attachment_upload,
                                                       max_length=512)
-    type_accessibility = models.CharField(max_length=7,
+    info_accessibility = models.CharField(verbose_name=_("Information accessibility"),
+                                          max_length=7,
                                           choices=ACCESSIBILITY_CHOICES,
                                           default=ACCESSIBILITY_CHOICES.SLOPE)
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
@@ -173,8 +174,8 @@ class AccessibilityAttachment(models.Model):
         )
 
     @property
-    def type_accessibility_display(self):
-        return str(ACCESSIBILITY_CHOICES.for_value(self.type_accessibility).display)
+    def info_accessibility_display(self):
+        return str(ACCESSIBILITY_CHOICES.for_value(self.info_accessibility).display)
 
     @property
     def filename(self):

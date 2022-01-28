@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-27 16:01+0000\n"
+"POT-Creation-Date: 2022-01-28 12:10+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -142,6 +142,9 @@ msgid "Signage"
 msgstr "Segnaletica"
 
 msgid "Image"
+msgstr ""
+
+msgid "Information accessibility"
 msgstr ""
 
 msgid "Creation Date"
@@ -537,7 +540,10 @@ msgstr "itinerari a tappe"
 msgid "Hike"
 msgstr "Escursione"
 
-msgid "Attached files"
+msgid "Photos to illustrate information related to the accessibility of treks."
+msgstr ""
+
+msgid "Attached files for accessibility"
 msgstr ""
 
 msgid "Accessibility type"

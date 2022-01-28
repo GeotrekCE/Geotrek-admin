@@ -59,7 +59,7 @@ class EntityAttachmentTestCase(TestCase):
             'title': "Attachment title",
             'legend': "Attachment legend",
             'attachment_accessibility_file': get_dummy_uploaded_image(),
-            'type_accessibility': 'slope'
+            'info_accessibility': 'slope'
         }
         return AccessibilityAttachment.objects.create(**kwargs)
 
@@ -124,7 +124,7 @@ class UploadAddAttachmentTestCase(TestCase):
             'title': "A title",
             'legend': "A legend",
             'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
-            'type_accessibility': 'slope'
+            'info_accessibility': 'slope'
         }
         return data
 
@@ -171,7 +171,7 @@ class UploadUpdateAttachmentTestCase(TestCase):
             'title': "A title",
             'legend': "A legend",
             'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
-            'type_accessibility': 'slope'
+            'info_accessibility': 'slope'
         }
         return data
 

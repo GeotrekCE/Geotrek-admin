@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-27 16:01+0000\n"
+"POT-Creation-Date: 2022-01-28 12:10+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -146,6 +146,9 @@ msgstr "Signalétique"
 
 msgid "Image"
 msgstr "Image"
+
+msgid "Information accessibility"
+msgstr "Information accessibilité"
 
 msgid "Creation Date"
 msgstr "Date de création"
@@ -555,8 +558,11 @@ msgstr "Itinérance"
 msgid "Hike"
 msgstr "Randonnée"
 
-msgid "Attached files"
-msgstr "Fichiers joints"
+msgid "Photos to illustrate information related to the accessibility of treks."
+msgstr "Photos pour illustrer les informations liées à l'accessibilité des randonnées."
+
+msgid "Attached files for accessibility"
+msgstr "Fichiers joint pour l'accessibilité"
 
 msgid "Accessibility type"
 msgstr "Type d'accessibilité"
