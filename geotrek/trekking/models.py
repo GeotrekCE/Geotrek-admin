@@ -122,12 +122,12 @@ class AccessibilityAttachmentManager(models.Manager):
                            object_id=obj.id)
 
 
-ACCESSIBILITY_CHOICES = Choices(('SLOPE', 'slope', _("Slope")),
-                                ('WIDTH', 'width', _("Width")),
-                                ('SIGNAGE', 'signage', _("Signage")))
-
-
 class AccessibilityAttachment(models.Model):
+    class InfoAccessibilityChoices(models.TextChoices):
+        SLOPE = 'slope', _('Slope')
+        WIDTH = 'width', _('Width')
+        SIGNAGE = 'signage', _('Signage')
+
     objects = AccessibilityAttachmentManager()
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -139,8 +139,8 @@ class AccessibilityAttachment(models.Model):
                                                       max_length=512)
     info_accessibility = models.CharField(verbose_name=_("Information accessibility"),
                                           max_length=7,
-                                          choices=ACCESSIBILITY_CHOICES,
-                                          default=ACCESSIBILITY_CHOICES.SLOPE)
+                                          choices=InfoAccessibilityChoices.choices,
+                                          default=InfoAccessibilityChoices.SLOPE)
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -175,7 +175,7 @@ class AccessibilityAttachment(models.Model):
 
     @property
     def info_accessibility_display(self):
-        return str(ACCESSIBILITY_CHOICES.for_value(self.info_accessibility).display)
+        return self.get_info_accessibility_display()
 
     @property
     def filename(self):
