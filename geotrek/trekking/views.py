@@ -1,38 +1,26 @@
-import mimetypes
-import os
-import re
-from django.apps import apps
 from django.conf import settings
-from django.contrib import messages
-from django.contrib.admin.models import LogEntry, CHANGE
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
-from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db.models.query import Prefetch
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
-from django.utils.encoding import force_text
+
 from django.utils.html import escape
-from django.utils.translation import gettext as _
-from django.views import static, View
-from django.views.decorators.http import require_POST, require_http_methods
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.registry import app_settings
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
-from paperclip.views import _handle_attachment_form
-from paperclip import settings as settings_paperclip
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.api.v2.functions import Length
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
@@ -44,8 +32,8 @@ from geotrek.zoning.models import District, City, RestrictedArea
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
-                    WebLinkCreateFormPopup, ServiceForm, TrekAttachmentAccessibilityForm)
-from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild, AccessibilityAttachment
+                    WebLinkCreateFormPopup, ServiceForm)
+from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer,
                           TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
 from geotrek.infrastructure.models import Infrastructure
@@ -145,7 +133,7 @@ class TrekDetail(MapEntityDetail):
         context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         context['labels'] = Label.objects.all()
-        context['accessibility_form'] = TrekAttachmentAccessibilityForm(request=self.request, object=self.get_object())
+        context['accessibility_form'] = AttachmentAccessibilityForm(request=self.request, object=self.get_object())
         return context
 
 
@@ -535,105 +523,3 @@ translation.gettext_noop("The national park is an unrestricted natural area but 
 translation.gettext_noop("This hike is in the core of the national park")
 translation.gettext_noop("Trek ascent")
 translation.gettext_noop("Useful information")
-
-
-class ServeAttachmentAccessibility(View):
-
-    def get(self, request, *args, **kwargs):
-        """
-            Serve media/ for authorized users only, since it can contain sensitive
-            information (uploaded documents)
-        """
-        path = kwargs['path']
-        original_path = re.sub(settings.MAPENTITY_CONFIG['REGEX_PATH_ATTACHMENTS'], '', path, count=1,
-                               flags=re.IGNORECASE)
-        if not AccessibilityAttachment.objects.filter(attachment_accessibility_file=original_path) \
-                and not Attachment.objects.filter(attachment_file=original_path):
-            raise Http404('No attachments matches the given query.')
-
-        attachments = AccessibilityAttachment.objects.filter(attachment_accessibility_file=original_path) or Attachment.objects.filter(attachment_file=original_path)
-        obj = attachments.first().content_object
-        if not hasattr(obj._meta.model, 'attachments_accessibility') and not hasattr(obj._meta.model, 'attachments'):
-            raise Http404
-        if not obj.is_public():
-            if not request.user.is_authenticated:
-                raise PermissionDenied
-            if not request.user.has_perm(settings_paperclip.get_attachment_permission('read_attachment')):
-                raise PermissionDenied
-            if not request.user.has_perm('{}.read_{}'.format(obj._meta.app_label, obj._meta.model_name)):
-                raise PermissionDenied
-
-        content_type, encoding = mimetypes.guess_type(path)
-
-        if settings.DEBUG:
-            response = static.serve(request, path, settings.MEDIA_ROOT)
-        else:
-            response = HttpResponse()
-            response[settings.MAPENTITY_CONFIG['SENDFILE_HTTP_HEADER']] = os.path.join(settings.MEDIA_URL_SECURE, path)
-        response["Content-Type"] = content_type or 'application/octet-stream'
-        if app_settings['SERVE_MEDIA_AS_ATTACHMENT']:
-            response['Content-Disposition'] = "attachment; filename={0}".format(
-                os.path.basename(path))
-        return response
-
-
-@require_POST
-@permission_required(settings_paperclip.get_attachment_permission('add_attachment'), raise_exception=True)
-def add_attachment_accessibility(request, app_label, model_name, pk,
-                                 attachment_form=TrekAttachmentAccessibilityForm,
-                                 extra_context=None):
-    model = apps.get_model(app_label, model_name)
-    obj = get_object_or_404(model, pk=pk)
-
-    form = attachment_form(request, request.POST, request.FILES, object=obj)
-    return _handle_attachment_form(request, obj, form,
-                                   _('Add attachment %s'),
-                                   _('Your attachment was uploaded.'),
-                                   extra_context)
-
-
-@require_http_methods(["GET", "POST"])
-@permission_required(settings_paperclip.get_attachment_permission('change_attachment'), raise_exception=True)
-def update_attachment_accessibility(request, attachment_pk,
-                                    attachment_form=TrekAttachmentAccessibilityForm,
-                                    extra_context=None):
-    attachment = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
-    obj = attachment.content_object
-    if request.method == 'POST':
-        form = attachment_form(
-            request, request.POST, request.FILES,
-            instance=attachment,
-            object=obj)
-    else:
-        form = attachment_form(
-            request,
-            instance=attachment,
-            object=obj)
-    return _handle_attachment_form(request, obj, form,
-                                   _('Update attachment %s'),
-                                   _('Your attachment was updated.'),
-                                   extra_context)
-
-
-@permission_required(settings_paperclip.get_attachment_permission('delete_attachment'), raise_exception=True)
-def delete_attachment_accessibility(request, attachment_pk):
-    g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
-    obj = g.content_object
-    can_delete = (request.user.has_perm(
-        settings_paperclip.get_attachment_permission('delete_attachment_others')) or request.user == g.creator)
-    if can_delete:
-        g.delete()
-        if settings_paperclip.PAPERCLIP_ACTION_HISTORY_ENABLED:
-            LogEntry.objects.log_action(
-                user_id=request.user.pk,
-                content_type_id=g.content_type.id,
-                object_id=g.object_id,
-                object_repr=force_text(obj),
-                action_flag=CHANGE,
-                change_message=_('Remove attachment %s') % g.title,
-            )
-        messages.success(request, _('Your attachment was deleted.'))
-    else:
-        error_msg = _('You are not allowed to delete this attachment.')
-        messages.error(request, error_msg)
-    return HttpResponseRedirect(f"{obj.get_detail_url()}?tab=attachments-accessibility")

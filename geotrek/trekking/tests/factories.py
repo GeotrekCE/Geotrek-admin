@@ -3,28 +3,11 @@ from django.conf import settings
 from django.contrib.gis.geos import Point
 
 from .. import models
-from geotrek.authent.tests.factories import UserFactory
 from geotrek.core.tests.factories import TopologyFactory, PointTopologyFactory
 from geotrek.common.tests.factories import ReservationSystemFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.signage.tests.factories import SignageFactory
-
-
-class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
-    """
-    Create an attachment. You must provide an 'obj' keywords,
-    the object (saved in db) to which the attachment will be bound.
-    """
-
-    class Meta:
-        model = models.AccessibilityAttachment
-
-    attachment_accessibility_file = get_dummy_uploaded_image()
-
-    creator = factory.SubFactory(UserFactory)
-    title = factory.Sequence("Title {0}".format)
-    legend = factory.Sequence("Legend {0}".format)
 
 
 class TrekNetworkFactory(factory.django.DjangoModelFactory):

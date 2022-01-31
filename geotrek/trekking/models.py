@@ -1,10 +1,8 @@
 import os
 import logging
-import uuid
 
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -16,7 +14,6 @@ from django.urls import reverse
 import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
-from paperclip.models import attachment_upload
 
 from geotrek.api.v2.functions import LineLocatePoint, Transform
 from geotrek.authent.models import StructureRelated
@@ -112,73 +109,6 @@ class Rating(RatingMixin):
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
         ordering = ('order', 'name')
-
-
-class AccessibilityAttachmentManager(models.Manager):
-    def attachments_for_object(self, obj):
-        object_type = ContentType.objects.get_for_model(obj)
-        return self.filter(content_type__pk=object_type.id,
-                           object_id=obj.id)
-
-
-class AccessibilityAttachment(models.Model):
-    class InfoAccessibilityChoices(models.TextChoices):
-        SLOPE = 'slope', _('Slope')
-        WIDTH = 'width', _('Width')
-        SIGNAGE = 'signage', _('Signage')
-
-    objects = AccessibilityAttachmentManager()
-
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    attachment_accessibility_file = models.ImageField(_('Image'), blank=True,
-                                                      upload_to=attachment_upload,
-                                                      max_length=512, null=False)
-    info_accessibility = models.CharField(verbose_name=_("Information accessibility"),
-                                          max_length=7,
-                                          choices=InfoAccessibilityChoices.choices,
-                                          default=InfoAccessibilityChoices.SLOPE)
-    creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                related_name="created_attachments_accessibility",
-                                verbose_name=_('Creator'),
-                                help_text=_("User that uploaded"), on_delete=models.CASCADE)
-    author = models.CharField(blank=True, default='', max_length=128,
-                              db_column='auteur', verbose_name=_('Author'),
-                              help_text=_("Original creator"))
-    title = models.CharField(blank=True, default='', max_length=128,
-                             db_column='titre', verbose_name=_(u"Filename"),
-                             help_text=_("Renames the file"))
-    legend = models.CharField(blank=True, default='', max_length=128,
-                              db_column='legende', verbose_name=_(u"Legend"),
-                              help_text=_("Details displayed"))
-    date_insert = models.DateTimeField(editable=False, auto_now_add=True,
-                                       verbose_name=_("Insertion date"))
-    date_update = models.DateTimeField(editable=False, auto_now=True,
-                                       verbose_name=_("Update date"))
-
-    class Meta:
-        ordering = ['-date_insert']
-        verbose_name = _("Attachment accessibility")
-        verbose_name_plural = _("Attachments accessibility")
-        default_permissions = ()
-
-    def __str__(self):
-        return '{} attached {}'.format(
-            self.creator.username,
-            self.attachment_accessibility_file.name
-        )
-
-    @property
-    def info_accessibility_display(self):
-        return self.get_info_accessibility_display()
-
-    @property
-    def filename(self):
-        return os.path.split(self.attachment_accessibility_file.name)[1]
 
 
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
@@ -278,7 +208,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                            on_delete=models.CASCADE, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
-    attachments_accessibility = GenericRelation('trekking.AccessibilityAttachment')
+    attachments_accessibility = GenericRelation('common.AccessibilityAttachment')
 
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 

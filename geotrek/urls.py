@@ -9,7 +9,7 @@ from mapentity.forms import AttachmentForm
 from mapentity.urls import _MEDIA_URL
 
 from geotrek.common import views as common_views
-from geotrek.trekking.views import add_attachment_accessibility, update_attachment_accessibility, \
+from geotrek.common.views import add_attachment_accessibility, update_attachment_accessibility, \
     delete_attachment_accessibility, ServeAttachmentAccessibility
 
 from paperclip import views as paperclip_views
@@ -21,7 +21,7 @@ urlpatterns = [
 
 if settings.DEBUG or settings.MAPENTITY_CONFIG['SENDFILE_HTTP_HEADER']:
     urlpatterns += [
-        re_path(r'^%s/(?P<path>paperclip/.*)$' % _MEDIA_URL, ServeAttachmentAccessibility.as_view()),
+        re_path(r'^%s/(?P<path>attachments_accessibility/.*)$' % _MEDIA_URL, ServeAttachmentAccessibility.as_view()),
     ]
 
 urlpatterns += [
