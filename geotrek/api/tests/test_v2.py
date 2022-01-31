@@ -59,7 +59,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'access', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
     'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
     'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival', 'ascent',
-    'attachments', 'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
+    'attachments', 'attachments_accessibility', 'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
     'descent', 'description', 'description_teaser', 'difficulty', 'departure_city',
     'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url', 'equipment',
     'external_id', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
@@ -269,6 +269,7 @@ class BaseApiTest(TestCase):
         common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='https://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='', attachment_link='https://geotrek.fr/assets/img/logo.svg')
         common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='', attachment_link='')
+        trek_factory.AttachmentAccessibilityFactory(content_object=cls.treks[0])
         cls.treks[3].parking_location = None
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
         cls.treks[3].save()

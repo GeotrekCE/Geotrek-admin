@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n l10n static geojson_tags thumbnail %}
+{% load i18n l10n static geojson_tags thumbnail mapentity_tags %}
 
 {% block download %}
     {{ block.super }}
@@ -12,6 +12,18 @@
     <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print booklet" %}</a>
 {% endblock download %}
 
+{% block after_attachments_extra_tab_nav %}
+    <li class="nav-item">
+      <a class="nav-link" id="tab-attachments-accessibility" href="#attachments-accessibility" data-toggle="tab"><i class="bi bi-eye-slash"></i>
+        <span class="d-none d-sm-inline">{% trans "Attached files accessibility" %} ({{ object.attachments_accessibility.count }})</span></a>
+    </li>
+{% endblock %}
+
+{% block after_attachments_extra_tab_content %}
+   <div id="attachments-accessibility" class="tab-pane">
+    {% include 'trekking/attachment_accessibility_list.html' %}
+  </div>
+{% endblock %}
 
 {% block attachmentspanel %}
     {% include "trekking/ratio_info_fragment.html" %}
