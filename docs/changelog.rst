@@ -10,6 +10,7 @@ CHANGELOG
 - Add ratings, rating scales on trekking
 - Add equipments on trekking
 - Add filters altimetry on all apps
+- Add attachments accessibility
 
 **Minor improvements**
 
