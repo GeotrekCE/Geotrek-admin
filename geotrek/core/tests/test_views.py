@@ -29,13 +29,15 @@ from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, Restric
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = PathManagerFactory.create(password='booh')
+
     def setUp(self):
         self.login()
 
     def login(self):
-        self.user = PathManagerFactory.create(password='booh')
-        success = self.client.login(username=self.user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(user=self.user)
 
     def logout(self):
         self.client.logout()
@@ -690,13 +692,13 @@ class PathViewsTest(CommonTest):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create(is_staff=True, is_superuser=True)
+        cls.path = PathFactory.create(comments='exportable path')
+
     def setUp(self):
-        super().setUp()
-        self.user = UserFactory.create(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
-
-        self.path = PathFactory.create(comments='exportable path')
-
         self.gpx_response = self.client.get(reverse('core:path_gpx_detail', args=('en', self.path.pk, 'slug')))
         self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
 
@@ -718,10 +720,11 @@ class PathKmlGPXTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class DenormalizedTrailTest(AuthentFixturesTest):
-    def setUp(self):
-        self.path = PathFactory()
-        self.trail1 = TrailFactory(paths=[self.path])
-        self.trail2 = TrailFactory(paths=[self.path])
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory()
+        cls.trail1 = TrailFactory(paths=[cls.path])
+        cls.trail2 = TrailFactory(paths=[cls.path])
 
     def test_path_and_trails_are_linked(self):
         self.assertIn(self.trail1, self.path.trails.all())
@@ -819,12 +822,13 @@ class TrailViewsTest(CommonTest):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):
-    def setUp(self):
-        super().setUp()
-        self.user = UserFactory.create(is_staff=True, is_superuser=True)
-        self.client.force_login(self.user)
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create(is_staff=True, is_superuser=True)
+        cls.trail = TrailFactory.create(comments='exportable trail')
 
-        self.trail = TrailFactory.create(comments='exportable trail')
+    def setUp(self):
+        self.client.force_login(self.user)
 
         self.gpx_response = self.client.get(reverse('core:trail_gpx_detail', args=('en', self.trail.pk, 'slug')))
         self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')

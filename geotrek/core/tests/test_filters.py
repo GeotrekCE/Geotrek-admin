@@ -34,9 +34,10 @@ class TopologyFilterTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyFilterTrailTest(TestCase):
-    def setUp(self):
-        self.path = PathFactory()
-        self.trail = TrailFactory(paths=[(self.path, 0, 1)])
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory()
+        cls.trail = TrailFactory(paths=[(cls.path, 0, 1)])
 
     def test_trail_filters(self):
         PathFactory()
@@ -49,12 +50,13 @@ class TopologyFilterTrailTest(TestCase):
 
 
 class ValidTopologyFilterTest(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.path = PathFactory()
-            self.trek = TrekFactory.create(name="Crossed", paths=[(self.path, 0, 1)])
+            cls.path = PathFactory()
+            cls.trek = TrekFactory.create(name="Crossed", paths=[(cls.path, 0, 1)])
         else:
-            self.trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
+            cls.trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_trek_filters_not_valid(self):

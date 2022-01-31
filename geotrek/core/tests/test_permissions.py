@@ -13,9 +13,9 @@ from geotrek.core.models import Path
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PermissionDraftPath(TestCase):
-
-    def setUp(self):
-        self.user = UserFactory.create(password='booh')
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create(password='booh')
 
     def get_good_data(self):
         return {

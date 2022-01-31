@@ -166,12 +166,13 @@ class ReportViewsTest(CommonTest):
 
 
 class BaseAPITest(TestCase):
-    def setUp(self):
-        self.user = UserFactory(password='booh')
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory(password='booh')
         perm = Permission.objects.get_by_natural_key('add_report', 'feedback', 'report')
-        self.user.user_permissions.add(perm)
+        cls.user.user_permissions.add(perm)
 
-        self.login_url = '/login/'
+        cls.login_url = '/login/'
 
     def login(self):
         response = self.client.get(self.login_url)
@@ -185,10 +186,10 @@ class BaseAPITest(TestCase):
 
 
 class CreateReportsAPITest(BaseAPITest):
-    def setUp(self):
-        super().setUp()
-        self.add_url = '/api/en/reports/report'
-        self.data = {
+    @classmethod
+    def setUpTestData(cls):
+        cls.add_url = '/api/en/reports/report'
+        cls.data = {
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
             'email': 'yeah@you.com',
             'activity': feedback_factories.ReportActivityFactory.create().pk,
@@ -224,9 +225,9 @@ class CreateReportsAPITest(BaseAPITest):
 
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
-    def setUp(self):
-        super().setUp()
-        self.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
+    @classmethod
+    def setUpTestData(cls):
+        cls.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
 
     def test_categories_can_be_obtained_as_json(self):
         response = self.client.get('/api/en/feedback/categories.json')
@@ -243,11 +244,11 @@ class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
 
 
 class ListOptionsTest(TranslationResetMixin, BaseAPITest):
-    def setUp(self):
-        super().setUp()
-        self.activity = feedback_factories.ReportActivityFactory(label_it='Hiking')
-        self.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
-        self.pb_magnitude = feedback_factories.ReportProblemMagnitudeFactory(label_it='Possible')
+    @classmethod
+    def setUpTestData(cls):
+        cls.activity = feedback_factories.ReportActivityFactory(label_it='Hiking')
+        cls.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
+        cls.pb_magnitude = feedback_factories.ReportProblemMagnitudeFactory(label_it='Possible')
 
     def test_options_can_be_obtained_as_json(self):
         response = self.client.get('/api/en/feedback/options.json')

@@ -13,12 +13,13 @@ from geotrek.core.models import Path
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SimpleGraph(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user('homer', 'h@s.com', 'dooh')
+        cls.url = reverse('core:path_json_graph')
 
     def setUp(self):
-        user = User.objects.create_user('homer', 'h@s.com', 'dooh')
-        success = self.client.login(username=user.username, password='dooh')
-        self.assertTrue(success)
-        self.url = reverse('core:path_json_graph')
+        self.client.force_login(user=self.user)
 
     def test_python_graph_from_path(self):
         p_1_1 = (1., 1.)

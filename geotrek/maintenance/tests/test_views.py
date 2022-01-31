@@ -646,21 +646,23 @@ class ExportTest(TranslationResetMixin, TestCase):
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
 class TestDetailedJobCostsExports(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+
+        cls.job1 = InterventionJobFactory(job="Worker", cost=12)
+        cls.job2 = InterventionJobFactory(job="Streamer", cost=60)
+        cls.job1_column_name = "Cost Worker"
+        cls.job2_column_name = "Cost Streamer"
+        cls.interv = InterventionFactory()
+        cls.manday1 = ManDayFactory(nb_days=3, job=cls.job1, intervention=cls.interv)
+        cls.manday2 = ManDayFactory(nb_days=2, job=cls.job2, intervention=cls.interv)
+
+        cls.job3 = InterventionJobFactory(job="Banker", cost=5000)
+        cls.job3_column_name = "Cost Banker"
 
     def setUp(self):
-        self.user = SuperUserFactory.create()
         self.client.force_login(self.user)
-
-        self.job1 = InterventionJobFactory(job="Worker", cost=12)
-        self.job2 = InterventionJobFactory(job="Streamer", cost=60)
-        self.job1_column_name = "Cost Worker"
-        self.job2_column_name = "Cost Streamer"
-        self.interv = InterventionFactory()
-        self.manday1 = ManDayFactory(nb_days=3, job=self.job1, intervention=self.interv)
-        self.manday2 = ManDayFactory(nb_days=2, job=self.job2, intervention=self.interv)
-
-        self.job3 = InterventionJobFactory(job="Banker", cost=5000)
-        self.job3_column_name = "Cost Banker"
 
     def test_detailed_mandays_export(self):
         '''Test detailed intervention job costs are exported properly, and follow data changes'''
@@ -752,13 +754,14 @@ class TestDetailedJobCostsExports(TestCase):
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
 class TestInterventionTargetExports(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+        cls.path = PathFactory(name="mypath")
+        cls.interv = InterventionFactory(target=cls.path)
 
     def setUp(self):
-        self.user = SuperUserFactory.create()
         self.client.force_login(self.user)
-
-        self.path = PathFactory(name="mypath")
-        self.interv = InterventionFactory(target=self.path)
 
     def test_csv_target_content(self):
         response = self.client.get('/intervention/list/export/', params={'format': 'csv'})
