@@ -135,7 +135,7 @@ class AccessibilityAttachment(models.Model):
 
     attachment_accessibility_file = models.ImageField(_('Image'), blank=True,
                                                       upload_to=attachment_upload,
-                                                      max_length=512)
+                                                      max_length=512, null=False)
     info_accessibility = models.CharField(verbose_name=_("Information accessibility"),
                                           max_length=7,
                                           choices=InfoAccessibilityChoices.choices,
