@@ -28,3 +28,10 @@ Management commands
 -------------------
 
 Replace ``sudo geotrek …`` commands by ``cd <install directory>; docker-compose run --rm web ./manage.py …``
+
+To load minimal data and create an application superuser, run :
+
+::
+
+   docker-compose run --rm web load_data.sh
+   docker-compose run --rm web ./manage.py createsuperuser
