@@ -73,7 +73,7 @@ class EntityAttachmentTestCase(TestCase):
 
         html = response.content
         self.assertTemplateUsed(response, template_name='paperclip/attachment_list.html')
-        self.assertTemplateUsed(response, template_name='trekking/attachment_accessibility_list.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
 
         self.assertEqual(1, len(AccessibilityAttachment.objects.attachments_for_object(self.object)))
 
