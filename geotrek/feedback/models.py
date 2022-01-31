@@ -364,7 +364,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     @classmethod
     def latest_updated_by_status(cls, status_id):
-        return cls.objects.existing().filter(status__identifier=status_id).latest('date_update').get_date_update()
+        reports = cls.objects.existing().filter(status__identifier=status_id)
+        if reports:
+            return reports.latest('date_update').get_date_update()
+        return cls.objects.none()
 
 
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))

@@ -57,12 +57,6 @@ msgstr "Date de création dans Suricate"
 msgid "Identifier"
 msgstr "Identifiant"
 
-msgid "Locked"
-msgstr ""
-
-msgid "Origin"
-msgstr ""
-
 msgid "Last updated in Suricate"
 msgstr "Date de modification dans Suricate"
 
@@ -159,14 +153,23 @@ msgstr "Géométrie invalide"
 msgid "Message for sentinel"
 msgstr "Message pour la sentinelle"
 
+msgid "Supervisor"
+msgstr "Gestionnaire"
+
+msgid "Locked"
+msgstr "Verouillé"
+
+msgid "Origin"
+msgstr "Origine"
+
 msgid "Use timers"
 msgstr "Lancer les comptes à rebours"
 
 msgid "Launch timers to alert supervisor if report is not being treated on time"
-msgstr "Lancer des comptes à rebours pour notifier le responsable si le signalement n'est pas traité dans les temps"
+msgstr "Lancer des comptes à rebours pour notifier le gestionnaire si le signalement n'est pas traité dans les temps"
 
 msgid "Message for supervisor"
-msgstr "Message pour le responsable"
+msgstr "Message pour le gestionnaire"
 
 msgid "Workflow manager"
 msgstr "Manager de gestion"
