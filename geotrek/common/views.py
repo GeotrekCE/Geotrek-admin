@@ -606,5 +606,4 @@ def delete_attachment_accessibility(request, attachment_pk):
     return HttpResponseRedirect(f"{obj.get_detail_url()}?tab=attachments-accessibility")
 
 
-
 home = last_list

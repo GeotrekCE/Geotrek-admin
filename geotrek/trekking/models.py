@@ -1,6 +1,5 @@
 import os
 import logging
-import uuid
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
