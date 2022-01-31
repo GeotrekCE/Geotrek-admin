@@ -1,28 +1,42 @@
+import mimetypes
+import re
+from django.apps import apps
+
 from geotrek.feedback.parsers import SuricateParser
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.admin.models import LogEntry, CHANGE
+from django.contrib.auth.decorators import permission_required
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import translation
-from django.http import JsonResponse, HttpResponse, HttpResponseNotFound
+from django.http import JsonResponse, Http404, HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django_celery_results.models import TaskResult
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.encoding import force_text
 from django.views import static
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.views.generic import RedirectView, View
-
+from django.views.decorators.http import require_POST, require_http_methods
 from mapentity.helpers import api_bbox
-from mapentity.registry import registry
+from mapentity.registry import registry, app_settings
 from mapentity import views as mapentity_views
+
+from paperclip.views import _handle_attachment_form
+from paperclip import settings as settings_paperclip
+
 from geotrek.celery import app as celery_app
+from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins import transform_pdf_booklet_callback
 from geotrek.common.utils import sql_extent
-from geotrek.common.models import FileType, Attachment, TargetPortal
+from geotrek.common.models import FileType, Attachment, TargetPortal, AccessibilityAttachment
 from geotrek import __version__
 
 from rest_framework import permissions as rest_permissions, viewsets
@@ -489,6 +503,108 @@ class SyncRandoRedirect(RedirectView):
                                          host=self.request.get_host())
         self.job = launch_sync_rando.delay(url=url)
         return super().post(request, *args, **kwargs)
+
+
+class ServeAttachmentAccessibility(View):
+
+    def get(self, request, *args, **kwargs):
+        """
+            Serve media/ for authorized users only, since it can contain sensitive
+            information (uploaded documents)
+        """
+        path = kwargs['path']
+        original_path = re.sub(settings.MAPENTITY_CONFIG['REGEX_PATH_ATTACHMENTS'], '', path, count=1,
+                               flags=re.IGNORECASE)
+        if not AccessibilityAttachment.objects.filter(attachment_accessibility_file=original_path):
+            raise Http404('No attachments for accessibility matches the given query.')
+
+        attachments = AccessibilityAttachment.objects.filter(attachment_accessibility_file=original_path)
+        obj = attachments.first().content_object
+        if not hasattr(obj._meta.model, 'attachments_accessibility'):
+            raise Http404
+        if not obj.is_public():
+            if not request.user.is_authenticated:
+                raise PermissionDenied
+            if not request.user.has_perm(settings_paperclip.get_attachment_permission('read_attachment')):
+                raise PermissionDenied
+            if not request.user.has_perm('{}.read_{}'.format(obj._meta.app_label, obj._meta.model_name)):
+                raise PermissionDenied
+
+        content_type, encoding = mimetypes.guess_type(path)
+
+        if settings.DEBUG:
+            response = static.serve(request, path, settings.MEDIA_ROOT)
+        else:
+            response = HttpResponse()
+            response[settings.MAPENTITY_CONFIG['SENDFILE_HTTP_HEADER']] = os.path.join(settings.MEDIA_URL_SECURE, path)
+        response["Content-Type"] = content_type or 'application/octet-stream'
+        if app_settings['SERVE_MEDIA_AS_ATTACHMENT']:
+            response['Content-Disposition'] = "attachment; filename={0}".format(
+                os.path.basename(path))
+        return response
+
+
+@require_POST
+@permission_required(settings_paperclip.get_attachment_permission('add_attachment'), raise_exception=True)
+def add_attachment_accessibility(request, app_label, model_name, pk,
+                                 attachment_form=AttachmentAccessibilityForm,
+                                 extra_context=None):
+    model = apps.get_model(app_label, model_name)
+    obj = get_object_or_404(model, pk=pk)
+
+    form = attachment_form(request, request.POST, request.FILES, object=obj)
+    return _handle_attachment_form(request, obj, form,
+                                   _('Add attachment %s'),
+                                   _('Your attachment was uploaded.'),
+                                   extra_context)
+
+
+@require_http_methods(["GET", "POST"])
+@permission_required(settings_paperclip.get_attachment_permission('change_attachment'), raise_exception=True)
+def update_attachment_accessibility(request, attachment_pk,
+                                    attachment_form=AttachmentAccessibilityForm,
+                                    extra_context=None):
+    attachment = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
+    obj = attachment.content_object
+    if request.method == 'POST':
+        form = attachment_form(
+            request, request.POST, request.FILES,
+            instance=attachment,
+            object=obj)
+    else:
+        form = attachment_form(
+            request,
+            instance=attachment,
+            object=obj)
+    return _handle_attachment_form(request, obj, form,
+                                   _('Update attachment %s'),
+                                   _('Your attachment was updated.'),
+                                   extra_context)
+
+
+@permission_required(settings_paperclip.get_attachment_permission('delete_attachment'), raise_exception=True)
+def delete_attachment_accessibility(request, attachment_pk):
+    g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
+    obj = g.content_object
+    can_delete = (request.user.has_perm(
+        settings_paperclip.get_attachment_permission('delete_attachment_others')) or request.user == g.creator)
+    if can_delete:
+        g.delete()
+        if settings_paperclip.PAPERCLIP_ACTION_HISTORY_ENABLED:
+            LogEntry.objects.log_action(
+                user_id=request.user.pk,
+                content_type_id=g.content_type.id,
+                object_id=g.object_id,
+                object_repr=force_text(obj),
+                action_flag=CHANGE,
+                change_message=_('Remove attachment %s') % g.title,
+            )
+        messages.success(request, _('Your attachment was deleted.'))
+    else:
+        error_msg = _('You are not allowed to delete this attachment.')
+        messages.error(request, error_msg)
+    return HttpResponseRedirect(f"{obj.get_detail_url()}?tab=attachments-accessibility")
+
 
 
 home = last_list

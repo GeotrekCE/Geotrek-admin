@@ -114,3 +114,19 @@ class LabelFactory(factory.django.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('label.png')
     advice = "Advice label"
     filter = True
+
+
+class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
+    """
+    Create an attachment. You must provide an 'obj' keywords,
+    the object (saved in db) to which the attachment will be bound.
+    """
+
+    class Meta:
+        model = models.AccessibilityAttachment
+
+    attachment_accessibility_file = get_dummy_uploaded_image()
+
+    creator = factory.SubFactory(UserFactory)
+    title = factory.Sequence("Title {0}".format)
+    legend = factory.Sequence("Legend {0}".format)

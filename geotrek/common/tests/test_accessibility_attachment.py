@@ -9,9 +9,10 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.tests.factories import AttachmentAccessibilityFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.tests.factories import AttachmentAccessibilityFactory, TrekFactory, PracticeFactory
-from geotrek.trekking.models import AccessibilityAttachment
+from geotrek.trekking.tests.factories import TrekFactory, PracticeFactory
 from geotrek.trekking.views import TrekDetail
 
 

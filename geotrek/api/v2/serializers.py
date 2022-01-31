@@ -299,7 +299,7 @@ class AttachmentAccessibilitySerializer(DynamicFieldsMixin, AttachmentsSerialize
         return build_url(self, obj.attachment_accessibility_file.url)
 
     class Meta:
-        model = trekking_models.AccessibilityAttachment
+        model = common_models.AccessibilityAttachment
         fields = (
             'info_accessibility',
         ) + AttachmentsSerializerMixin.Meta.fields
