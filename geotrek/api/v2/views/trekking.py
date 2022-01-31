@@ -1,16 +1,19 @@
 from django.conf import settings
-from django.db.models import F, Q, Prefetch
+from django.db.models import F, Prefetch, Q
 from django.db.models.aggregates import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
-
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from geotrek.api.v2 import serializers as api_serializers, \
-    viewsets as api_viewsets, filters as api_filters
-from geotrek.api.v2.functions import Transform, Length, Length3D
+from geotrek.api.v2 import filters as api_filters
+from geotrek.api.v2 import serializers as api_serializers
+from geotrek.api.v2 import viewsets as api_viewsets
+from geotrek.api.v2.functions import Length, Length3D, Transform
 from geotrek.trekking import models as trekking_models
+
+from geotrek.api.v2.utils import cached_json_response, cached_svg_response
 
 
 class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
@@ -71,6 +74,28 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
             field_name_parent = 'trek_parents__parent__published_{}'.format(language)
             qs = qs.filter(Q(**{field_name: True}) | Q(**{field_name_parent: True}))
         return qs.distinct()
+
+    @action(detail=True)
+    def dem(self, request, pk):
+        trek = self.get_object()
+        trek_date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f')
+        json_lookup = f"altimetry_dem_area_{trek.pk}_{trek_date_update}"
+        return cached_json_response(json_lookup, trek.get_elevation_area)
+
+    @action(detail=True)
+    def profile(self, request, pk):
+        trek = self.get_object()
+        trek_date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f')
+        json_lookup = f"altimetry_profile_{trek.pk}_{trek_date_update}"
+        return cached_json_response(json_lookup, trek.get_elevation_profile_and_limits)
+
+    @action(detail=True)
+    def profile_svg(self, request, pk):
+        trek = self.get_object()
+        lang = self.request.GET.get('language')
+        date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f'),
+        cache_lookup = f"altimetry_profile_{trek.pk}_{date_update}_svg_{lang}"
+        return cached_svg_response(cache_lookup, trek.get_elevation_profile_svg, request.GET.get('language'))
 
 
 class TourViewSet(TrekViewSet):

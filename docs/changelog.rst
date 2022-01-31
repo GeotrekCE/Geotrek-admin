@@ -16,6 +16,8 @@ CHANGELOG
 - Add translations NL, ES, DE, IT, EN for all apps
 - Change admin translations fields, add tab (#2892)
 - All rich text fields are updated according new TinyMCE theme.
+- Move trek DEM serialization to APIv2 (for 3D view)
+- Move trek altimetry profile serialization to APIv2
 
 **Maintenance**
 
@@ -28,10 +30,7 @@ CHANGELOG
 - Fix bootstrap theme in warning and error messages or alerts
 - Fix search in infrastructure admin panels
 - Fix APIv2 nearby content filter throws exceptions when queried for missing data
-
-**Performances**
-
-- Add missing indexes on geometry fields (WARNING, if you add indexes manually you should delete them before applying migrations)
+- Fix DEM cache does not invalidate on trek update
 
 
 2.75.0     (2022-01-07)
