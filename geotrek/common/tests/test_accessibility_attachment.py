@@ -262,11 +262,17 @@ class ServeAttachmentTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_get_attachment_do_not_exist(self):
-        response = self.client.get(f'/media/paperclip/trekking_trek/{self.object.pk}/doesnotexist.png')
+        response = self.client.get(f'/media/attachments_accessibility/trekking_trek/{self.object.pk}/doesnotexist.png')
         self.assertEqual(response.status_code, 404)
 
+    @override_settings(DEBUG=False)
+    def test_get_attachment_without_debug(self):
+        self.client.force_login(user=self.superuser)
+        response = self.client.get(self.attachment.attachment_accessibility_file.url)
+        self.assertEqual(response.status_code, 200)
+
     @override_settings(DEBUG=True)
-    def test_get_attachment_debug(self):
+    def test_get_attachment_with_debug(self):
         self.client.force_login(user=self.superuser)
         response = self.client.get(self.attachment.attachment_accessibility_file.url)
         self.assertEqual(response.status_code, 200)
