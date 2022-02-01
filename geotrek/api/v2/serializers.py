@@ -737,7 +737,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'description', 'external_id',
                 'geometry', 'name', 'attachments', 'published', 'type',
-                'type_label', 'type_pictogram', 'url', 'uuid'
+                'type_label', 'type_pictogram', 'url', 'uuid',
                 'create_datetime', 'update_datetime',
             )
 
