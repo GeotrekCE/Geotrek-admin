@@ -235,11 +235,22 @@ class RecordSourceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'name', 'pictogram', 'website')
 
 
-class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class AttachmentsSerializerMixin(serializers.ModelSerializer):
     url = serializers.SerializerMethodField(read_only=True)
-    type = serializers.SerializerMethodField(read_only=True)
     thumbnail = serializers.SerializerMethodField(read_only=True)
-    backend = serializers.SerializerMethodField(read_only=True)
+
+    def get_attachment_file(self, obj):
+        return obj.attachment_file
+
+    def get_thumbnail(self, obj):
+        thumbnailer = get_thumbnailer(self.get_attachment_file(obj))
+        try:
+            thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
+        except (IOError, InvalidImageFormatError, DecompressionBombError):
+            return ""
+        thumbnail.author = obj.author
+        thumbnail.legend = obj.legend
+        return build_url(self, thumbnail.url)
 
     def get_url(self, obj):
         if obj.attachment_file:
@@ -250,22 +261,23 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             return obj.attachment_link
         return ""
 
+    class Meta:
+        model = common_models.Attachment
+        fields = (
+            'author', 'thumbnail', 'legend', 'title', 'url', 'uuid'
+        )
+
+
+class AttachmentSerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
+    type = serializers.SerializerMethodField(read_only=True)
+    backend = serializers.SerializerMethodField(read_only=True)
+
     def get_type(self, obj):
         if obj.is_image or obj.attachment_link:
             return "image"
         if obj.attachment_video != '':
             return "video"
         return "file"
-
-    def get_thumbnail(self, obj):
-        thumbnailer = get_thumbnailer(obj.attachment_file)
-        try:
-            thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
-        except (IOError, InvalidImageFormatError, DecompressionBombError):
-            return ""
-        thumbnail.author = obj.author
-        thumbnail.legend = obj.legend
-        return build_url(self, thumbnail.url)
 
     def get_backend(self, obj):
         if obj.attachment_video != '':
@@ -275,9 +287,22 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.Attachment
         fields = (
-            'author', 'backend', 'thumbnail',
-            'legend', 'title', 'url', 'uuid', "type"
-        )
+            'backend', 'type'
+        ) + AttachmentsSerializerMixin.Meta.fields
+
+
+class AttachmentAccessibilitySerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
+    def get_attachment_file(self, obj):
+        return obj.attachment_accessibility_file
+
+    def get_url(self, obj):
+        return build_url(self, obj.attachment_accessibility_file.url)
+
+    class Meta:
+        model = common_models.AccessibilityAttachment
+        fields = (
+            'info_accessibility',
+        ) + AttachmentsSerializerMixin.Meta.fields
 
 
 class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -496,6 +521,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
         pdf = serializers.SerializerMethodField('get_pdf_url')
@@ -636,7 +662,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'id', 'access', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
                 'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
                 'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival',
-                'ascent', 'attachments', 'children', 'cities', 'create_datetime',
+                'ascent', 'attachments', 'attachments_accessibility', 'children', 'cities', 'create_datetime',
                 'departure', 'departure_city', 'departure_geom', 'descent',
                 'description', 'description_teaser', 'difficulty',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',
@@ -683,29 +709,25 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:poi-detail')
-        name = serializers.SerializerMethodField(read_only=True)
-        description = serializers.SerializerMethodField(read_only=True)
-        external_id = serializers.SerializerMethodField(read_only=True, help_text=_("External ID"))
-        published = serializers.SerializerMethodField(read_only=True)
-        create_datetime = serializers.SerializerMethodField(read_only=True)
-        update_datetime = serializers.SerializerMethodField(read_only=True)
+        type_label = serializers.SerializerMethodField()
+        type_pictogram = serializers.FileField(source='type.pictogram')
+        name = serializers.SerializerMethodField()
+        description = serializers.SerializerMethodField()
+        external_id = serializers.CharField(source='eid')
+        published = serializers.SerializerMethodField()
+        create_datetime = serializers.DateTimeField(source='topo_object.date_insert')
+        update_datetime = serializers.DateTimeField(source='topo_object.date_update')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+
+        def get_type_label(self, obj):
+            return get_translation_or_dict('label', self, obj.type)
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
 
-        def get_external_id(self, obj):
-            return obj.eid
-
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
-
-        def get_update_datetime(self, obj):
-            return obj.topo_object.date_update
-
-        def get_create_datetime(self, obj):
-            return obj.topo_object.date_insert
 
         def get_description(self, obj):
             return get_translation_or_dict('description', self, obj)
@@ -713,9 +735,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.POI
             fields = (
-                'id', 'create_datetime', 'description', 'external_id',
+                'id', 'description', 'external_id',
                 'geometry', 'name', 'attachments', 'published', 'type',
-                'update_datetime', 'url', 'uuid'
+                'type_label', 'type_pictogram', 'url', 'uuid',
+                'create_datetime', 'update_datetime',
             )
 
     class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

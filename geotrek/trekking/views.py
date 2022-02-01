@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
@@ -8,6 +7,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
+
 from django.utils.html import escape
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
@@ -20,6 +20,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.api.v2.functions import Length
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
@@ -132,6 +133,7 @@ class TrekDetail(MapEntityDetail):
         context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         context['labels'] = Label.objects.all()
+        context['accessibility_form'] = AttachmentAccessibilityForm(request=self.request, object=self.get_object())
         return context
 
 

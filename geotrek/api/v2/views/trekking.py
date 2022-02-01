@@ -34,7 +34,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return trekking_models.Trek.objects.existing() \
             .select_related('topo_object') \
-            .prefetch_related('topo_object__aggregations', 'accessibilities', 'attachments',
+            .prefetch_related('topo_object__aggregations', 'accessibilities', 'attachments', 'attachments_accessibility',
                               Prefetch('web_links',
                                        queryset=trekking_models.WebLink.objects.select_related('category'))) \
             .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),

@@ -10,6 +10,7 @@ CHANGELOG
 - Add ratings, rating scales on trekking
 - Add equipments on trekking
 - Add filters altimetry on all apps
+- Add attachments accessibility
 
 **Minor improvements**
 
@@ -18,6 +19,7 @@ CHANGELOG
 - All rich text fields are updated according new TinyMCE theme.
 - Move trek DEM serialization to APIv2 (for 3D view)
 - Move trek altimetry profile serialization to APIv2
+- Improve API v2 POI serializer to include type labels and pictograms
 
 **Maintenance**
 

@@ -2,6 +2,7 @@ import os
 import logging
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -207,6 +208,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                            on_delete=models.CASCADE, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
+    attachments_accessibility = GenericRelation('common.AccessibilityAttachment')
 
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
