@@ -738,7 +738,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'id', 'description', 'external_id',
                 'geometry', 'name', 'attachments', 'published', 'type',
                 'type_label', 'type_pictogram', 'url', 'uuid'
-                'create_datetime','update_datetime',
+                'create_datetime', 'update_datetime',
             )
 
     class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
