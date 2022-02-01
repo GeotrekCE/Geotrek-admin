@@ -709,6 +709,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:poi-detail')
+        type = POITypeSerializer()
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
         external_id = serializers.SerializerMethodField(read_only=True, help_text=_("External ID"))
