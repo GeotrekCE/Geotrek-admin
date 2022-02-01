@@ -98,6 +98,7 @@ class CourseFactory(StructureRelatedDefaultFactory):
     description = "Blah"
     advice = "Warning!"
     equipment = "Rope"
+    accessibility = "Accessible"
     height = 42
     published = True
     duration = 55

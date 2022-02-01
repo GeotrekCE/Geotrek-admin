@@ -85,8 +85,8 @@ TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
-    'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
-    'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'name', 'pdf',
+    'accessibility', 'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
+    'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'label_accessibility', 'name', 'pdf',
     'portal', 'practical_info', 'published', 'reservation_id', 'reservation_system',
     'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'uuid', 'website',
 ])
@@ -124,7 +124,7 @@ STRUCTURE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter', 'name', 'pictogram'])
 
 INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
-    'id', 'description', 'email', 'latitude', 'longitude',
+    'id', 'accessibility', 'description', 'email', 'label_accessibility', 'latitude', 'longitude',
     'municipality', 'name', 'phone', 'photo_url',
     'postal_code', 'street', 'type', 'website'
 ])
@@ -159,7 +159,7 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 ])
 
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'cities', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
+    'accessibility', 'advice', 'cities', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
     'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
     'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents',
     'pdf', 'points_reference', 'children', 'duration', 'gear', 'uuid'

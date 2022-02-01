@@ -11,6 +11,10 @@ CHANGELOG
 - Add equipments on trekking
 - Add filters altimetry on all apps
 - Add attachments accessibility
+- Add accessibility courses
+- Add accessibility touristic content
+- Add accessibility information desks
+- Add label accessibility touristic content and informations desks
 
 **Minor improvements**
 

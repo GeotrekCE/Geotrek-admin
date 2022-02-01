@@ -66,8 +66,8 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
-        'description', 'themes', 'contact', 'email', 'website', 'practical_info',
-        'review', 'published', 'publication_date', 'source', 'portal', 'date_insert', 'date_update',
+        'description', 'themes', 'contact', 'email', 'website', 'practical_info', 'label_accessibility',
+        'accessibility', 'review', 'published', 'publication_date', 'source', 'portal', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'approved', 'uuid',
     ]
 

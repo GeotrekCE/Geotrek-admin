@@ -47,6 +47,10 @@
             <td>{% if object.equipment %}{{ object.equipment|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"height" }}</th>
             <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>

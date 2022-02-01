@@ -9,6 +9,14 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from .. import models
 
 
+class LabelAccessibilityFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.LabelAccessibility
+
+    label = factory.Sequence("Label accessibility {0}".format)
+    pictogram = get_dummy_uploaded_image()
+
+
 class InformationDeskTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InformationDeskType
@@ -31,6 +39,7 @@ class InformationDeskFactory(factory.django.DjangoModelFactory):
     street = "42 Baker street"
     postal_code = '28300'
     municipality = "Bailleau L'évêque"
+    accessibility = "Accessible"
     geom = Point(3.14, 42)
 
 
@@ -73,6 +82,8 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     reservation_system = factory.SubFactory(ReservationSystemFactory)
     reservation_id = 'XXXXXXXXX'
     description = '<p>Blah CT</p>'
+    accessibility = "Accessible"
+    label_accessibility = factory.SubFactory(LabelAccessibilityFactory)
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):

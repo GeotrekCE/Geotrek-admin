@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-02-01 11:43+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: jean.lenormand\n"
 "Language-Team: \n"
@@ -46,6 +46,12 @@ msgstr "Art des Informationspunktes"
 msgid "Information desk types"
 msgstr "Art des Informationspunktes"
 
+msgid "Label accessibility"
+msgstr ""
+
+msgid "Labels accessibility"
+msgstr ""
+
 msgid "Title"
 msgstr "Titel"
 
@@ -78,6 +84,9 @@ msgstr "Postleitzahl"
 
 msgid "Municipality"
 msgstr "Stadt"
+
+msgid "Accessibility"
+msgstr "Zugänglichkeit"
 
 msgid "Emplacement"
 msgstr "Standort"
@@ -254,9 +263,6 @@ msgstr "Organisator"
 msgid "Speaker"
 msgstr "Lautsprecher"
 
-msgid "Accessibility"
-msgstr "Zugänglichkeit"
-
 msgid "Number of participants"
 msgstr "Anzahl der Plätze"
 
@@ -329,6 +335,9 @@ msgstr "Druck"
 msgid "Attributes"
 msgstr "Informationen"
 
+msgid "None"
+msgstr "Keine"
+
 msgid "yes,no"
 msgstr "Ja, nein,"
 
@@ -349,9 +358,6 @@ msgstr "Geographische Lage"
 
 msgid "All useful information"
 msgstr "Alle praktischen Informationen"
-
-msgid "None"
-msgstr "Keine"
 
 msgid "Date"
 msgstr "Datum"

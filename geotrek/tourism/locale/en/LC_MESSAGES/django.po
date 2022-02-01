@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-02-01 11:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,6 +45,12 @@ msgstr ""
 msgid "Information desk types"
 msgstr ""
 
+msgid "Label accessibility"
+msgstr ""
+
+msgid "Labels accessibility"
+msgstr ""
+
 msgid "Title"
 msgstr ""
 
@@ -76,6 +82,9 @@ msgid "Postal code"
 msgstr ""
 
 msgid "Municipality"
+msgstr ""
+
+msgid "Accessibility"
 msgstr ""
 
 msgid "Emplacement"
@@ -253,9 +262,6 @@ msgstr ""
 msgid "Speaker"
 msgstr ""
 
-msgid "Accessibility"
-msgstr ""
-
 msgid "Number of participants"
 msgstr ""
 
@@ -324,6 +330,9 @@ msgstr ""
 msgid "Attributes"
 msgstr ""
 
+msgid "None"
+msgstr ""
+
 msgid "yes,no"
 msgstr ""
 
@@ -343,9 +352,6 @@ msgid "Geographical location"
 msgstr ""
 
 msgid "All useful information"
-msgstr ""
-
-msgid "None"
 msgstr ""
 
 msgid "Date"
