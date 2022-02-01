@@ -29,6 +29,7 @@ class InformationDeskFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InformationDesk
 
+    label_accessibility = factory.SubFactory(LabelAccessibilityFactory)
     name = "Information desk"
     type = factory.SubFactory(InformationDeskTypeFactory)
     description = "<p>Description</p>"
