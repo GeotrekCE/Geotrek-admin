@@ -3773,24 +3773,24 @@ class AltimetryCacheTests(BaseApiTest):
     def test_cache_is_used_when_getting_trek_DEM(self):
         # There are 9 queries to get trek DEM
         with self.assertNumQueries(7):
-            response = self.client.get(reverse('apiv2:trek-detail', args=(self.trek.pk,)) + "dem/")
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         # When cache is used there are only 8 queries to get trek DEM
         with self.assertNumQueries(6):
-            response = self.client.get(reverse('apiv2:trek-detail', args=(self.trek.pk,)) + "dem/")
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_cache_is_used_when_getting_trek_profile(self):
         # There are 6 queries to get trek profile
         with self.assertNumQueries(7):
-            response = self.client.get(reverse('apiv2:trek-detail', args=(self.trek.pk,)) + "profile/")
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         # When cache is used there are only 2 queries to get trek profile
         with self.assertNumQueries(6):
-            response = self.client.get(reverse('apiv2:trek-detail', args=(self.trek.pk,)) + "profile/")
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
@@ -3799,11 +3799,11 @@ class AltimetryCacheTests(BaseApiTest):
     def test_cache_is_used_when_getting_trek_profile_svg(self):
         # There are 6 queries to get trek profile svg
         with self.assertNumQueries(7):
-            response = self.client.get(reverse('apiv2:trek-detail', args=(self.trek.pk,)) + "profile_svg/")
+            response = self.client.get(reverse('apiv2:trek-profile_svg', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')
         # When cache is used there are only 7 queries to get trek profile
         with self.assertNumQueries(6):
-            response = self.client.get(reverse('apiv2:trek-detail', args=(self.trek.pk,)) + "profile_svg/")
+            response = self.client.get(reverse('apiv2:trek-profile_svg', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')

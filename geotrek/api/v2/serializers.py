@@ -608,13 +608,13 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('public_transport', self, obj)
 
         def get_elevation_area_url(self, obj):
-            return build_url(self, reverse('apiv2:trek-detail', args=(obj.pk,)) + "dem/")
+            return build_url(self, reverse('apiv2:trek-dem', args=(obj.pk,)))
 
         def get_elevation_svg_url(self, obj):
-            return build_url(self, reverse('apiv2:trek-detail', args=(obj.pk,)) + "profile_svg/")
+            return build_url(self, reverse('apiv2:trek-profile_svg', args=(obj.pk,)))
 
         def get_altimetric_profile_url(self, obj):
-            return build_url(self, reverse('apiv2:trek-detail', args=(obj.pk,)) + "profile/")
+            return build_url(self, reverse('apiv2:trek-profile', args=(obj.pk,)))
 
         def get_points_reference(self, obj):
             if not obj.points_reference:

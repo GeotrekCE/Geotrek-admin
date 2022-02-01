@@ -30,6 +30,10 @@ CHANGELOG
 - Fix bootstrap theme in warning and error messages or alerts
 - Fix search in infrastructure admin panels
 - Fix APIv2 nearby content filter throws exceptions when queried for missing data
+
+**Performances**
+
+- Add missing indexes on geometry fields (WARNING, if you add indexes manually you should delete them before applying migrations)
 - Fix DEM cache does not invalidate on trek update
 
 

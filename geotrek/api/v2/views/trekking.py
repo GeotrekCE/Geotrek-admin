@@ -75,21 +75,21 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
             qs = qs.filter(Q(**{field_name: True}) | Q(**{field_name_parent: True}))
         return qs.distinct()
 
-    @action(detail=True)
+    @action(detail=True, url_name="dem")
     def dem(self, request, pk):
         trek = self.get_object()
         trek_date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f')
         json_lookup = f"altimetry_dem_area_{trek.pk}_{trek_date_update}"
         return cached_json_response(json_lookup, trek.get_elevation_area)
 
-    @action(detail=True)
+    @action(detail=True, url_name="profile")
     def profile(self, request, pk):
         trek = self.get_object()
         trek_date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f')
         json_lookup = f"altimetry_profile_{trek.pk}_{trek_date_update}"
         return cached_json_response(json_lookup, trek.get_elevation_profile_and_limits)
 
-    @action(detail=True)
+    @action(detail=True, url_name="profile_svg")
     def profile_svg(self, request, pk):
         trek = self.get_object()
         lang = self.request.GET.get('language')
