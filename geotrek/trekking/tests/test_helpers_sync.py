@@ -129,7 +129,7 @@ class SyncRandoTestCase(TestCase):
         synchro = SyncRando(command)
         with patch('geotrek.trekking.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync):
             synchro.sync('fr')
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'static', 'trekking', 'trek.svg')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'static', 'trekking', 'img', 'trek.svg')))
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_language_portal_source(self, stdout, mock_prepare):
