@@ -11,6 +11,12 @@ from geotrek.api.v2.functions import Transform
 from geotrek.tourism import models as tourism_models
 
 
+class LabelAccessibilityViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
+    serializer_class = api_serializers.LabelAccessibilitySerializer
+    queryset = tourism_models.LabelAccessibility.objects.order_by('pk')  # Required for reliable pagination
+
+
 class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TouristicContentRelatedPortalFilter,)
     serializer_class = api_serializers.TouristicContentCategorySerializer
@@ -36,16 +42,27 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
     def get_queryset(self):
         activate(self.request.GET.get('language'))
         return tourism_models.TouristicContent.objects.existing()\
-            .select_related('category', 'reservation_system') \
+            .select_related('category', 'reservation_system', 'label_accessibility') \
             .prefetch_related('source', 'themes', 'type1', 'type2') \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('name')  # Required for reliable pagination
 
 
+class InformationDeskTypeViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
+    serializer_class = api_serializers.InformationDeskTypeSerializer
+    queryset = tourism_models.InformationDeskType.objects.order_by('pk')
+
+
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter, api_filters.NearbyContentFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,
+                                                                     api_filters.NearbyContentFilter,
+                                                                     api_filters.GeotrekInformationDeskFilter)
     serializer_class = api_serializers.InformationDeskSerializer
-    queryset = tourism_models.InformationDesk.objects.order_by('name')
+
+    def get_queryset(self):
+        activate(self.request.GET.get('language'))
+        return tourism_models.InformationDesk.objects.select_related('label_accessibility').order_by('name')
 
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view

@@ -311,7 +311,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                     verbose_name=_("Portal"))
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     label_accessibility = models.ForeignKey(LabelAccessibility, verbose_name=_("Label accessibility"),
-                                            on_delete=models.CASCADE, related_name='touristiccontents', blank=True,
+                                            on_delete=models.CASCADE, related_name='contents', blank=True,
                                             null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),

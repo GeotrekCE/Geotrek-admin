@@ -402,7 +402,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicContentSerializer(TouristicModelSerializer):
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         departure_city = serializers.SerializerMethodField(read_only=True)
-        label_accessibility = LabelAccessibilitySerializer()
         types = serializers.SerializerMethodField(read_only=True)
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
 
@@ -466,7 +465,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class InformationDeskSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         accessibility = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
-        label_accessibility = LabelAccessibilitySerializer()
         name = serializers.SerializerMethodField(read_only=True)
         photo_url = serializers.SerializerMethodField(read_only=True)
         type = InformationDeskTypeSerializer()
