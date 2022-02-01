@@ -4,6 +4,7 @@ from django.core.cache import caches
 from rest_framework.response import Response
 from geotrek.altimetry.views import HttpSVGResponse
 
+
 def get_translation_or_dict(model_field_name, serializer, instance):
     """
     Return translated model field or dict with all translations
@@ -41,7 +42,7 @@ def build_url(serializer, url):
     return url
 
 
-def cached_json_response(cache_lookup, data_func):
+def build_json_response_from_cache(cache_lookup, data_func):
     json_cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
     content = json_cache.get(cache_lookup)
     if content:
@@ -52,7 +53,7 @@ def cached_json_response(cache_lookup, data_func):
     return response
 
 
-def cached_svg_response(cache_lookup, data_func, lang, **kwargs):
+def build_svg_response_from_cache(cache_lookup, data_func, lang, **kwargs):
     svg_cache = caches['default']
     content = svg_cache.get(cache_lookup)
     if content:
