@@ -15,6 +15,7 @@ CHANGELOG
 - Add accessibility field on touristic content (#2838)
 - Add accessibility field on information desks (#2838)
 - Add label accessibility field on touristic content and informations desks (#2838)
+- Add information desk type api v2
 
 **Minor improvements**
 
