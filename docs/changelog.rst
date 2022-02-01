@@ -29,6 +29,7 @@ CHANGELOG
 - Fix bootstrap theme in warning and error messages or alerts
 - Fix search in infrastructure admin panels
 - Fix APIv2 nearby content filter throws exceptions when queried for missing data
+- Prevent exceptions when parsers receive integers instead of strings
 
 **Performances**
 

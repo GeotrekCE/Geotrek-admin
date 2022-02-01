@@ -187,7 +187,7 @@ class Parser:
         if val == "" and not field.blank:
             raise RowImportError(_("Blank value not allowed for field '{src}'".format(src=src)))
         if isinstance(field, models.CharField):
-            val = val[:256]
+            val = str(val)[:256]
         if isinstance(field, models.ManyToManyField):
             fk = getattr(self.obj, dst)
             fk.set(val)
