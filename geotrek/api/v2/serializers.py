@@ -709,30 +709,25 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:poi-detail')
-        type = POITypeSerializer()
-        name = serializers.SerializerMethodField(read_only=True)
-        description = serializers.SerializerMethodField(read_only=True)
-        external_id = serializers.SerializerMethodField(read_only=True, help_text=_("External ID"))
-        published = serializers.SerializerMethodField(read_only=True)
-        create_datetime = serializers.SerializerMethodField(read_only=True)
-        update_datetime = serializers.SerializerMethodField(read_only=True)
+        type_label = serializers.SerializerMethodField()
+        type_pictogram = serializers.FileField(source='type.pictogram')
+        name = serializers.SerializerMethodField()
+        description = serializers.SerializerMethodField()
+        external_id = serializers.CharField(source='eid')
+        published = serializers.SerializerMethodField()
+        create_datetime = serializers.DateTimeField(source='topo_object.date_insert')
+        update_datetime = serializers.DateTimeField(source='topo_object.date_update')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+
+        def get_type_label(self, obj):
+            return get_translation_or_dict('label', self, obj.type)
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
 
-        def get_external_id(self, obj):
-            return obj.eid
-
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
-
-        def get_update_datetime(self, obj):
-            return obj.topo_object.date_update
-
-        def get_create_datetime(self, obj):
-            return obj.topo_object.date_insert
 
         def get_description(self, obj):
             return get_translation_or_dict('description', self, obj)
@@ -740,9 +735,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.POI
             fields = (
-                'id', 'create_datetime', 'description', 'external_id',
+                'id', 'description', 'external_id',
                 'geometry', 'name', 'attachments', 'published', 'type',
-                'update_datetime', 'url', 'uuid'
+                'type_label', 'type_pictogram', 'url', 'uuid'
+                'create_datetime','update_datetime',
             )
 
     class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

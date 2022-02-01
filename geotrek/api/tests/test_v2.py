@@ -76,7 +76,8 @@ TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + [
 
 POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id',
-    'name', 'attachments', 'published', 'type', 'update_datetime', 'url', 'uuid'
+    'name', 'attachments', 'published', 'type', 'type_label', 'type_pictogram',
+    'update_datetime', 'url', 'uuid'
 ])
 
 TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([

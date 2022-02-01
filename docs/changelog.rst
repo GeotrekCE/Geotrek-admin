@@ -17,7 +17,7 @@ CHANGELOG
 - Add translations NL, ES, DE, IT, EN for all apps
 - Change admin translations fields, add tab (#2892)
 - All rich text fields are updated according new TinyMCE theme.
-- Improve API v2 POI serializer to include type definition
+- Improve API v2 POI serializer to include type labels and pictograms
 
 **Maintenance**
 
