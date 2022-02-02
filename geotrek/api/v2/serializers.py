@@ -733,8 +733,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         description = serializers.SerializerMethodField()
         external_id = serializers.CharField(source='eid')
         published = serializers.SerializerMethodField()
-        create_datetime = serializers.SerializerMethodField(source='topo_object.date_insert')
-        update_datetime = serializers.SerializerMethodField(source='topo_object.date_update')
+        create_datetime = serializers.DateTimeField(source='topo_object.date_insert')
+        update_datetime = serializers.DateTimeField(source='topo_object.date_update')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
 
