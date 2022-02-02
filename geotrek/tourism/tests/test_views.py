@@ -315,9 +315,9 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual(sorted([
-            'approved', 'areas', 'category', 'cities', 'contact',
+            'accessibility', 'approved', 'areas', 'category', 'cities', 'contact',
             'description', 'description_teaser', 'districts', 'email',
-            'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
+            'filelist_url', 'files', 'id', 'label_accessibility', 'map_image_url', 'name', 'pictures',
             'pois', 'practical_info', 'printable', 'publication_date',
             'published', 'published_status', 'reservation_id', 'reservation_system',
             'slug', 'source', 'structure', 'portal', 'themes', 'thumbnail', 'touristic_contents',

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-02-01 11:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,6 +35,9 @@ msgstr "Orientation"
 msgid "Wind"
 msgstr "Vent"
 
+msgid "One of the rating scale use is not part of the practice chosen"
+msgstr "Une des échelles de cotation ne fait pas partie de la pratique choisie"
+
 msgid "Children"
 msgstr "Enfants"
 
@@ -48,10 +51,9 @@ msgid "Cannot add children because this course is itself a child."
 msgstr ""
 "Impossible d'ajouter des enfants car ce parcours est lui-même un enfant."
 
-#, python-brace-format
-msgid "Cannot use parent course {name} as a child course."
+msgid "Cannot use parent course {child.name} as a child course."
 msgstr ""
-"Impossible d'utiliser le parcours parent {name} comme itinéraire enfant."
+"Impossible d'utiliser le parcours parent {child.name} comme itinéraire enfant."
 
 msgid "Name"
 msgstr "Nom"
@@ -65,12 +67,6 @@ msgstr "Pratique"
 msgid "Practices"
 msgstr "Pratiques"
 
-msgid "Order"
-msgstr "Ordre"
-
-msgid "Within a practice. Alphabetical order if blank"
-msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
-
 msgid "Rating scale"
 msgstr "Échelle de cotation"
 
@@ -79,12 +75,6 @@ msgstr "Échelles de cotation"
 
 msgid "Scale"
 msgstr "Échelle"
-
-msgid "Description"
-msgstr "Description"
-
-msgid "Alphabetical order if blank"
-msgstr "Ordre alphabétique si vide"
 
 msgid "Rating"
 msgstr "Cotation"
@@ -157,6 +147,9 @@ msgstr "Emplacement"
 
 msgid "Parent"
 msgstr "Parent"
+
+msgid "Description"
+msgstr "Description"
 
 msgid "Complete description"
 msgstr "Description complète"
@@ -271,6 +264,9 @@ msgstr "Durée"
 
 msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
 
 msgid "Equipment"
 msgstr "Équipement"

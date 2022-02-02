@@ -105,6 +105,18 @@
                   {% for theme in object.themes.all %}<span class="meta-item-value">{{ theme.label }}</span>{% endfor %}
                 </span>
               {% endif %}
+              {% if object.label_accessibility %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{% trans "Label accessibility" %}</span>
+                  <span class="meta-item-value">{{ object.label_accessibility }}</span>
+                </span>
+              {% endif %}
+              {% if object.accessibility %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{% trans "Accessibility" %}</span>
+                  <span class="meta-item-value">{{ object.accessibility }}</span>
+                </span>
+              {% endif %}
             </div>
           </section>
         </div>

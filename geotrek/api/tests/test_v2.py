@@ -81,13 +81,17 @@ POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'update_datetime', 'url', 'uuid'
 ])
 
+LABEL_ACCESSIBILITY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram'
+])
+
 TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'label', 'order', 'pictogram', 'types'
 ])
 
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
-    'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
-    'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'name', 'pdf',
+    'accessibility', 'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
+    'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'label_accessibility', 'name', 'pdf',
     'portal', 'practical_info', 'published', 'reservation_id', 'reservation_system',
     'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'uuid', 'website',
 ])
@@ -124,8 +128,12 @@ STRUCTURE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter', 'name', 'pictogram'])
 
+INFORMATION_DESK_TYPE_PROPERTIES_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram'
+])
+
 INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
-    'id', 'description', 'email', 'latitude', 'longitude',
+    'id', 'accessibility', 'description', 'email', 'label_accessibility', 'latitude', 'longitude',
     'municipality', 'name', 'phone', 'photo_url',
     'postal_code', 'street', 'type', 'website'
 ])
@@ -160,7 +168,7 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 ])
 
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'cities', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
+    'accessibility', 'advice', 'cities', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
     'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
     'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents',
     'pdf', 'points_reference', 'children', 'duration', 'gear', 'uuid'
@@ -262,8 +270,8 @@ class BaseApiTest(TestCase):
         cls.treks[0].ratings.add(cls.rating)
         cls.treks[1].ratings.add(cls.rating2)
         trek_models.TrekRelationship(trek_a=cls.treks[0], trek_b=cls.treks[1]).save()
-        information_desk_type = tourism_factory.InformationDeskTypeFactory()
-        cls.info_desk = tourism_factory.InformationDeskFactory(type=information_desk_type)
+        cls.information_desk_type = tourism_factory.InformationDeskTypeFactory()
+        cls.info_desk = tourism_factory.InformationDeskFactory(type=cls.information_desk_type)
         cls.treks[0].information_desks.add(cls.info_desk)
         common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_image())
         common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_file())
@@ -299,8 +307,13 @@ class BaseApiTest(TestCase):
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
         cls.site = outdoor_factory.SiteFactory(managers=[cls.organism])
+        cls.label_accessibility = tourism_factory.LabelAccessibilityFactory()
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         cls.content2.category = cls.category
+        cls.content2.label_accessibility = cls.label_accessibility
+        cls.content2.save()
+        cls.info_desk.label_accessibility = cls.label_accessibility
+        cls.info_desk.save()
         cls.content2.portal.add(cls.portal)
         common_factory.FileTypeFactory.create(type='Topoguide')
         cls.sensitivearea = sensitivity_factory.SensitiveAreaFactory()
@@ -510,6 +523,12 @@ class BaseApiTest(TestCase):
     def get_touristiccontent_detail(self, id_content, params=None):
         return self.client.get(reverse('apiv2:touristiccontent-detail', args=(id_content,)), params)
 
+    def get_labelaccessibility_list(self, params=None):
+        return self.client.get(reverse('apiv2:labelaccessibility-list', params))
+
+    def get_labelaccessibility_detail(self, id_label_accessibility, params=None):
+        return self.client.get(reverse('apiv2:labelaccessibility-detail', args=(id_label_accessibility,)), params)
+
     def get_label_list(self, params=None):
         return self.client.get(reverse('apiv2:label-list'), params)
 
@@ -521,6 +540,12 @@ class BaseApiTest(TestCase):
 
     def get_informationdesk_detail(self, id_infodesk, params=None):
         return self.client.get(reverse('apiv2:informationdesk-detail', args=(id_infodesk,)), params)
+
+    def get_informationdesk_type_list(self, params=None):
+        return self.client.get(reverse('apiv2:informationdesktype-list'), params)
+
+    def get_informationdesk_type_detail(self, id_infodesk_type, params=None):
+        return self.client.get(reverse('apiv2:informationdesktype-detail', args=(id_infodesk_type,)), params)
 
     def get_source_list(self, params=None):
         return self.client.get(reverse('apiv2:source-list'), params)
@@ -1653,6 +1678,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_touristiccontent_list({'portals': self.content.portal.all()[0].pk})
         self.assertEqual(len(response.json()['results']), 1)
 
+    def test_touristiccontent_label_accessibility(self):
+        response = self.get_touristiccontent_list({'labels_accessibility': self.label_accessibility.pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
     def test_touristiccontent_q(self):
         response = self.get_touristiccontent_list({'q': 'Blah CT'})
         self.assertEqual(len(response.json()['results']), 2)
@@ -1662,6 +1691,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['results'][0]['pdf'],
                          f'http://testserver/api/en/touristiccontents/{self.content.pk}/touristic-content.pdf')
+
+    def test_labels_accessibility_detail(self):
+        self.check_structure_response(
+            self.get_labelaccessibility_detail(self.label_accessibility.pk),
+            LABEL_ACCESSIBILITY_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_labels_accessibility_list(self):
+        self.check_number_elems_response(
+            self.get_labelaccessibility_list(),
+            tourism_models.LabelAccessibility
+        )
 
     def test_labels_list(self):
         self.check_number_elems_response(
@@ -1685,6 +1726,28 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_informationdesk_detail(self.info_desk.pk),
             INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_infodesk_filter_type(self):
+        response = self.get_informationdesk_list({'types': self.information_desk_type.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
+
+    def test_infodesk_filter_label__accessibility(self):
+        response = self.get_informationdesk_list({'labels_accessibility': self.label_accessibility.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
+
+    def test_informationdesk_type_list(self):
+        self.check_number_elems_response(
+            self.get_informationdesk_type_list(),
+            tourism_models.InformationDeskType
+        )
+
+    def test_informationdesk_type_detail(self):
+        self.check_structure_response(
+            self.get_informationdesk_type_detail(self.information_desk_type.pk),
+            INFORMATION_DESK_TYPE_PROPERTIES_JSON_STRUCTURE
         )
 
     def test_source_list(self):

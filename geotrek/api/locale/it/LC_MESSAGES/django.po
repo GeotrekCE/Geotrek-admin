@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-20 16:34+0000\n"
+"POT-Creation-Date: 2022-02-02 08:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -321,15 +321,21 @@ msgid ""
 "or description."
 msgstr ""
 
+msgid ""
+"Filter by one or more types id, comma-separated. Logical OR for types in the "
+"same list, AND for types in different lists."
+msgstr ""
+
+msgid "Labels accessibility"
+msgstr ""
+
+msgid "Filter by one or more labels accessibility id, comma-separated."
+msgstr ""
+
 msgid "Categories"
 msgstr ""
 
 msgid "Filter by one or more category id, comma-separated."
-msgstr ""
-
-msgid ""
-"Filter by one or more types id, comma-separated. Logical OR for types in the "
-"same list, AND for types in different lists."
 msgstr ""
 
 msgid "Dates before"

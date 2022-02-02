@@ -11,7 +11,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
 
     class POIListSerializer(geo_serializers.GeoFeatureModelSerializer):
-        pictures = serializers.SerializerMethodField(read_only=True)
+        pictures = serializers.SerializerMethodField()
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         type = serializers.ReadOnlyField(source='type.pk')
 
@@ -30,10 +30,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             )
 
     class TrekBaseSerializer(geo_serializers.GeoFeatureModelSerializer):
-        cities = serializers.SerializerMethodField(read_only=True)
-        districts = serializers.SerializerMethodField(read_only=True)
-        length = serializers.SerializerMethodField(read_only=True)
-        departure_city = serializers.SerializerMethodField(read_only=True)
+        cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
+        length = serializers.SerializerMethodField()
+        departure_city = serializers.SerializerMethodField()
 
         def get_cities(self, obj):
             qs = City.objects.filter(published=True)
@@ -62,7 +62,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geo_field = 'geometry'
 
     class TrekListSerializer(TrekBaseSerializer):
-        first_picture = serializers.SerializerMethodField(read_only=True)
+        first_picture = serializers.SerializerMethodField()
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
 
         def get_first_picture(self, obj):
@@ -78,11 +78,11 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class TrekDetailSerializer(TrekBaseSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
-        pictures = serializers.SerializerMethodField(read_only=True)
-        arrival_city = serializers.SerializerMethodField(read_only=True)
+        pictures = serializers.SerializerMethodField()
+        arrival_city = serializers.SerializerMethodField()
         information_desks = serializers.SerializerMethodField()
-        parking_location = serializers.SerializerMethodField(read_only=True)
-        profile = serializers.SerializerMethodField(read_only=True)
+        parking_location = serializers.SerializerMethodField()
+        profile = serializers.SerializerMethodField()
         points_reference = serializers.SerializerMethodField()
         children = serializers.SerializerMethodField()
 

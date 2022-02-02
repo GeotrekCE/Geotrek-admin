@@ -50,6 +50,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristicevent', api_views.TouristicEventViewSet, basename='touristicevent')
     router.register('touristicevent_type', api_views.TouristicEventTypeViewSet, basename='touristiceventtype')
     router.register('informationdesk', api_views.InformationDeskViewSet, basename='informationdesk')
+    router.register('informationdesk_type', api_views.InformationDeskTypeViewSet, basename='informationdesktype')
+    router.register('label_accessibility', api_views.LabelAccessibilityViewSet, basename='labelaccessibility')
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     router.register('sensitivearea', api_views.SensitiveAreaViewSet, basename='sensitivearea')
     router.register('sensitivearea_practice', api_views.SportPracticeViewSet, basename='sportpractice')

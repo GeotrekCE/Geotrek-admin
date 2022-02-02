@@ -15,6 +15,12 @@ from geotrek.trekking import serializers as trekking_serializers
 from geotrek.tourism import models as tourism_models
 
 
+class LabelAccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = tourism_models.LabelAccessibility
+        fields = ('id', 'pictogram', 'label')
+
+
 class InformationDeskTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = tourism_models.InformationDeskType
@@ -23,11 +29,12 @@ class InformationDeskTypeSerializer(PictogramSerializerMixin, TranslatedModelSer
 
 class InformationDeskSerializer(TranslatedModelSerializer):
     type = InformationDeskTypeSerializer()
+    label_accessibility = LabelAccessibilitySerializer()
 
     class Meta:
         model = tourism_models.InformationDesk
         geo_field = 'geom'
-        fields = ('name', 'description', 'phone', 'email', 'website',
+        fields = ('name', 'description', 'accessibility', 'label_accessibility', 'phone', 'email', 'website',
                   'photo_url', 'street', 'postal_code', 'municipality',
                   'latitude', 'longitude', 'type')
 
@@ -81,6 +88,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
                                  ZoningSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     category = TouristicContentCategorySerializer()
+    label_accessibility = LabelAccessibilitySerializer()
     type1 = TouristicContentTypeSerializer(many=True)
     type2 = TouristicContentTypeSerializer(many=True)
     source = RecordSourceSerializer(many=True)
@@ -105,7 +113,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     class Meta:
         model = tourism_models.TouristicContent
         fields = ('id', 'description', 'description_teaser', 'category',
-                  'themes', 'contact', 'email', 'website', 'practical_info',
+                  'themes', 'contact', 'email', 'website', 'practical_info', 'accessibility', 'label_accessibility',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
                   'treks', 'pois', 'source', 'portal', 'approved',
                   'reservation_id', 'reservation_system', 'structure') + \

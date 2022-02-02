@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-02-01 11:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,6 +45,12 @@ msgstr "Tipo di punto informazioni"
 msgid "Information desk types"
 msgstr "Tipi di punti d'informazione"
 
+msgid "Label accessibility"
+msgstr ""
+
+msgid "Labels accessibility"
+msgstr ""
+
 msgid "Title"
 msgstr "Titolo"
 
@@ -77,6 +83,9 @@ msgstr "Codice postale"
 
 msgid "Municipality"
 msgstr "Comune"
+
+msgid "Accessibility"
+msgstr "Accessibilità"
 
 msgid "Emplacement"
 msgstr "Posizione"
@@ -253,9 +262,6 @@ msgstr "Organizzatore"
 msgid "Speaker"
 msgstr "Altoparlante"
 
-msgid "Accessibility"
-msgstr "Accessibilità"
-
 msgid "Number of participants"
 msgstr "Numero di partecipanti"
 
@@ -328,6 +334,9 @@ msgstr "Stampa"
 msgid "Attributes"
 msgstr "Attributi"
 
+msgid "None"
+msgstr "Nessuna"
+
 msgid "yes,no"
 msgstr "si, no"
 
@@ -348,9 +357,6 @@ msgstr "Posizione geografica"
 
 msgid "All useful information"
 msgstr "Tutte le informazioni utili"
-
-msgid "None"
-msgstr "Nessuna"
 
 msgid "Date"
 msgstr "Data"
