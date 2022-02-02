@@ -1936,6 +1936,9 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         """
         self.client.force_login(self.administrator)
 
+    def setUp(self):
+        self.login()
+
     def test_path_list(self):
         self.login()
         response = self.get_path_list()
@@ -3879,11 +3882,11 @@ class AltimetryCacheTests(BaseApiTest):
     def test_cache_is_used_when_getting_trek_profile_svg(self):
         # There are 8 queries to get trek profile svg
         with self.assertNumQueries(8):
-            response = self.client.get(reverse('apiv2:trek-profile_svg', args=(self.trek.pk,)))
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)) + "?format=svg")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')
         # When cache is used there are only 7 queries to get trek profile
         with self.assertNumQueries(7):
-            response = self.client.get(reverse('apiv2:trek-profile_svg', args=(self.trek.pk,)))
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)) + "?format=svg")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')
