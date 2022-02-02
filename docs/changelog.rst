@@ -2,7 +2,24 @@
 CHANGELOG
 =========
 
-2.75.0+dev (XXXX-XX-XX)
+2.76.0+dev (XXXX-XX-XX)
+-----------------------
+
+**New features**
+
+-
+
+**Minor improvements**
+
+- Move trek DEM serialization to APIv2 (for 3D view)
+- Move trek altimetry profile serialization to APIv2
+
+**Performances**
+
+- Fix DEM cache does not invalidate on trek update
+
+
+2.76.0     (2022-02-02)
 -----------------------
 
 **New features**
@@ -22,8 +39,6 @@ CHANGELOG
 - Add translations NL, ES, DE, IT, EN for all apps
 - Change admin translations fields, add tab (#2892)
 - All rich text fields are updated according new TinyMCE theme.
-- Move trek DEM serialization to APIv2 (for 3D view)
-- Move trek altimetry profile serialization to APIv2
 - Improve API v2 POI serializer to include type labels and pictograms
 
 **Maintenance**
@@ -41,8 +56,6 @@ CHANGELOG
 
 **Performances**
 
-- Add missing indexes on geometry fields (WARNING, if you add indexes manually you should delete them before applying migrations)
-- Fix DEM cache does not invalidate on trek update
 - Add missing indexes on geometry fields (WARNING, if you add indexes manually you should delete them before applying migrations) (#2933)
 
 
