@@ -1,4 +1,5 @@
 import pygal
+from django.conf import settings
 from django.utils import translation
 from django.utils.translation import gettext as _
 from pygal.style import LightSolarizedStyle
@@ -18,10 +19,6 @@ class SVGProfileRenderer(BaseRenderer):
         """
         ceil_elevation = data['limits']['ceil']
         floor_elevation = data['limits']['floor']
-        print('in renderer')
-        print(data['limits'])
-        print(ceil_elevation)
-        print(floor_elevation)
         profile = data['profile']
         config = dict(show_legend=False,
                       print_values=False,
