@@ -2,8 +2,6 @@ from django.conf import settings
 from django.core.cache import caches
 from rest_framework.response import Response
 
-from geotrek.altimetry.views import HttpSVGResponse
-
 
 def get_translation_or_dict(model_field_name, serializer, instance):
     """
