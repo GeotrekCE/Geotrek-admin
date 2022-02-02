@@ -731,7 +731,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         type_pictogram = serializers.FileField(source='type.pictogram')
         name = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
-        external_id = serializers.SerializerMethodField(help_text=_("External ID"))
+        external_id = serializers.CharField(source='eid')
         published = serializers.SerializerMethodField()
         create_datetime = serializers.SerializerMethodField(source='topo_object.date_insert')
         update_datetime = serializers.SerializerMethodField(source='topo_object.date_update')
