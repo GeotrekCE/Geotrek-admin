@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.cache import caches
-
 from rest_framework.response import Response
+
 from geotrek.altimetry.views import HttpSVGResponse
 
 
@@ -42,22 +42,17 @@ def build_url(serializer, url):
     return url
 
 
-def build_json_response_from_cache(cache_lookup, data_func):
-    json_cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
-    content = json_cache.get(cache_lookup)
+def build_response_from_cache(cache_lookup, data_func, content_type):
+    # Choose adequate cache
+    if content_type == "application/json":
+        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
+    else:
+        cache = caches['default']
+    # Retrieve data from cache
+    content = cache.get(cache_lookup)
     if content:
-        return Response(content)
+        return Response(content, content_type=content_type)
+    # Or set data to cache
     content = data_func()
-    json_cache.set(cache_lookup, content)
-    response = Response(content)
-    return response
-
-
-def build_svg_response_from_cache(cache_lookup, data_func, lang, **kwargs):
-    svg_cache = caches['default']
-    content = svg_cache.get(cache_lookup)
-    if content:
-        return HttpSVGResponse(content=content, **kwargs)
-    content = data_func(lang)
-    svg_cache.set(cache_lookup, content)
-    return HttpSVGResponse(content=content, **kwargs)
+    cache.set(cache_lookup, content)
+    return Response(content, content_type=content_type)

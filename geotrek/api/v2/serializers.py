@@ -1,14 +1,15 @@
 import json
 
-from easy_thumbnails.alias import aliases
-from easy_thumbnails.exceptions import InvalidImageFormatError
-from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
 from django.urls import reverse
-from django.utils.translation import get_language, gettext_lazy as _
+from django.utils.translation import get_language
+from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
+from easy_thumbnails.alias import aliases
+from easy_thumbnails.exceptions import InvalidImageFormatError
+from easy_thumbnails.files import get_thumbnailer
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
@@ -637,7 +638,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return build_url(self, reverse('apiv2:trek-dem', args=(obj.pk,)))
 
         def get_elevation_svg_url(self, obj):
-            return build_url(self, reverse('apiv2:trek-profile_svg', args=(obj.pk,)))
+            return build_url(self, reverse('apiv2:trek-profile', args=(obj.pk,)) + f"?language={get_language()}&format=svg")
 
         def get_altimetric_profile_url(self, obj):
             return build_url(self, reverse('apiv2:trek-profile', args=(obj.pk,)))

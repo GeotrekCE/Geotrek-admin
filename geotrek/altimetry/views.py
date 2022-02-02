@@ -60,7 +60,7 @@ class ElevationProfile(LastModifiedMixin, JSONResponseMixin,
         """
         Put elevation profile into response context.
         """
-        return self.object.get_elevation_profile_and_limits()
+        return self.object.get_formatted_elevation_profile_and_limits()
 
 
 class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,

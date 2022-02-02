@@ -4,16 +4,17 @@ from django.db.models.aggregates import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
-from rest_framework.decorators import action
+from rest_framework.decorators import action, renderer_classes
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.functions import Length, Length3D, Transform
+from geotrek.api.v2.renderers import SVGProfileRenderer
+from geotrek.api.v2.utils import build_response_from_cache
 from geotrek.trekking import models as trekking_models
-
-from geotrek.api.v2.utils import build_json_response_from_cache, build_svg_response_from_cache
 
 
 class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
@@ -21,6 +22,7 @@ class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
     queryset = trekking_models.WebLinkCategory.objects.all()
 
 
+@renderer_classes([JSONRenderer, SVGProfileRenderer])
 class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.GeotrekTrekQueryParamsFilter,
@@ -80,22 +82,17 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         trek = self.get_object()
         trek_date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f')
         json_lookup = f"altimetry_dem_area_{trek.pk}_{trek_date_update}"
-        return build_json_response_from_cache(json_lookup, trek.get_elevation_area)
+        return build_response_from_cache(json_lookup, trek.get_elevation_area, content_type="application/json")
 
     @action(detail=True, url_name="profile")
     def profile(self, request, pk):
         trek = self.get_object()
         trek_date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f')
-        json_lookup = f"altimetry_profile_{trek.pk}_{trek_date_update}"
-        return build_json_response_from_cache(json_lookup, trek.get_elevation_profile_and_limits)
-
-    @action(detail=True, url_name="profile_svg")
-    def profile_svg(self, request, pk):
-        trek = self.get_object()
-        lang = self.request.GET.get('language')
-        date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f'),
-        cache_lookup = f"altimetry_profile_{trek.pk}_{date_update}_svg_{lang}"
-        return build_svg_response_from_cache(cache_lookup, trek.get_elevation_profile_svg, request.GET.get('language'))
+        if request.accepted_renderer.format == 'svg':
+            json_lookup = f"altimetry_profile_{trek.pk}_{trek_date_update}_svg"
+            return build_response_from_cache(json_lookup, data_func=trek.get_elevation_profile_and_limits, content_type="image/svg+xml")
+        json_lookup = f"altimetry_profile_{trek.pk}_{trek_date_update}_formatted"
+        return build_response_from_cache(json_lookup, data_func=trek.get_formatted_elevation_profile_and_limits, content_type="application/json")
 
 
 class TourViewSet(TrekViewSet):
