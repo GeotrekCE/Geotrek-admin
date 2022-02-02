@@ -3772,25 +3772,40 @@ class AltimetryCacheTests(BaseApiTest):
         cls.path = core_factory.PathFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
         cls.trek = trek_factory.TrekFactory.create(paths=[cls.path])
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM(self):
-        # There are 9 queries to get trek DEM
+        # There are 8 queries to get trek DEM
         with self.assertNumQueries(8):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 8 queries to get trek DEM
+        # When cache is used there are only 7 queries to get trek DEM
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_cache_is_used_when_getting_trek_DEM_nds(self):
+        self.trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        # There are 8 queries to get trek DEM
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        # When cache is used there are only 7 queries to get trek DEM
         with self.assertNumQueries(7):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_cache_is_used_when_getting_trek_profile(self):
-        # There are 6 queries to get trek profile
+        # There are 8 queries to get trek profile
         with self.assertNumQueries(8):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 2 queries to get trek profile
+        # When cache is used there are only 7 queries to get trek profile
         with self.assertNumQueries(7):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
@@ -3799,7 +3814,7 @@ class AltimetryCacheTests(BaseApiTest):
     # Override default cache with fat cache since we can't use memcached in tests
     @override_settings(CACHES=TMP_CACHES)
     def test_cache_is_used_when_getting_trek_profile_svg(self):
-        # There are 6 queries to get trek profile svg
+        # There are 8 queries to get trek profile svg
         with self.assertNumQueries(8):
             response = self.client.get(reverse('apiv2:trek-profile_svg', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
