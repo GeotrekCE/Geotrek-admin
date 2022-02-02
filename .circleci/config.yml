@@ -4,12 +4,10 @@ orbs:
 jobs:
   codestyle:
     docker:
-      - image: ubuntu:bionic
+      - image: python:3.6
     environment:
       LANG: C.UTF-8
     steps:
-      - run: apt update
-      - run: apt install -y python3-pip
       - checkout
       - run: pip3 install flake8
       - run: flake8 --exclude "" --ignore=E501,F821 geotrek/settings

@@ -29,7 +29,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class InformationDeskTypeSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='label')
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:
@@ -43,7 +43,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class TouristicContentTypeSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='label')
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:
@@ -57,7 +57,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class TouristicEventTypeSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='type')
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:
@@ -71,7 +71,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class TouristicContentCategorySerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='label')
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:
@@ -87,7 +87,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class DifficultySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='difficulty')
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:
@@ -100,7 +100,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'name', 'pictogram')
 
     class PracticeSerializer(serializers.ModelSerializer):
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
@@ -111,7 +111,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'name', 'slug', 'pictogram', 'color')
 
     class AccessibilitySerializer(serializers.ModelSerializer):
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:
@@ -125,7 +125,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class RouteSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='route')
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:
@@ -139,7 +139,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class ThemeSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='label')
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
@@ -151,7 +151,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class NetworkSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='network')
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:
@@ -164,7 +164,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'name', 'pictogram')
 
     class POITypeSerializer(serializers.ModelSerializer):
-        pictogram = serializers.SerializerMethodField(read_only=True)
+        pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
             if not obj.pictogram:

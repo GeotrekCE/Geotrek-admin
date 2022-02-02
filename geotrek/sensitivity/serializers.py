@@ -27,7 +27,7 @@ class SpeciesSerializer(TranslatedModelSerializer, PictogramSerializerMixin):
 
 class SensitiveAreaSerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
-    kml_url = rest_serializers.SerializerMethodField(read_only=True)
+    kml_url = rest_serializers.SerializerMethodField()
 
     def get_kml_url(self, obj):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})

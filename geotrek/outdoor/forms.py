@@ -129,6 +129,7 @@ class CourseForm(CommonForm):
             'duration',
             'advice',
             'equipment',
+            'accessibility',
             'gear',
             'height',
             'pois_excluded',
@@ -140,7 +141,7 @@ class CourseForm(CommonForm):
 
     class Meta:
         fields = ['geom', 'structure', 'name', 'parent_sites', 'type', 'review', 'published', 'description', 'ratings_description', 'duration', 'pois_excluded',
-                  'points_reference', 'advice', 'gear', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
+                  'points_reference', 'advice', 'gear', 'equipment', 'accessibility', 'height', 'eid', 'children_course', 'hidden_ordered_children']
         model = Course
 
     def __init__(self, parent_sites=None, *args, **kwargs):

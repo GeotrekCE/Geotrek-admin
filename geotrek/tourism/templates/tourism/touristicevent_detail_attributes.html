@@ -75,7 +75,8 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"accessibility" }}</th>
-            <td>{{ object.accessibility }}</td>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+
         </tr>
         <tr>
             <th>{{ object|verbose:"participant_number" }}</th>

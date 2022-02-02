@@ -6,7 +6,7 @@ from geotrek.tourism import models as tourism_models
 
 
 class InformationDeskTO(TranslationOptions):
-    fields = ('name', 'description')
+    fields = ('name', 'description', 'accessibility')
 
 
 translator.register(tourism_models.InformationDesk, InformationDeskTO)
@@ -19,8 +19,15 @@ class InformationDeskTypeTO(TranslationOptions):
 translator.register(tourism_models.InformationDeskType, InformationDeskTypeTO)
 
 
+class LabelAccessibilityTO(TranslationOptions):
+    fields = ('label',)
+
+
+translator.register(tourism_models.LabelAccessibility, LabelAccessibilityTO)
+
+
 class TouristicContentTO(TranslationOptions):
-    fields = ('name', 'description_teaser', 'description', 'practical_info'
+    fields = ('name', 'description_teaser', 'description', 'practical_info', 'accessibility',
               ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 

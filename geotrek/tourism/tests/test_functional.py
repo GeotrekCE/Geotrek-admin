@@ -29,6 +29,7 @@ class TouristicContentViewsTests(CommonTest):
 
     def get_expected_json_attrs(self):
         return {
+            'accessibility': 'Accessible',
             'approved': False,
             'areas': [],
             'category': {
@@ -49,6 +50,11 @@ class TouristicContentViewsTests(CommonTest):
             'email': None,
             'filelist_url': '/paperclip/get/tourism/touristiccontent/{}/'.format(self.obj.pk),
             'files': [],
+            'label_accessibility': {
+                'id': self.obj.label_accessibility.pk,
+                'label': self.obj.label_accessibility.label,
+                'pictogram': '/media/upload/dummy_img.png'
+            },
             'map_image_url': '/image/touristiccontent-{}.png'.format(self.obj.pk),
             'name': 'Touristic content',
             'pictures': [],

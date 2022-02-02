@@ -405,6 +405,34 @@ class GeotrekZoningAndThemeFilter(NearbyContentFilter):
         )
 
 
+class GeotrekInformationDeskFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        types = request.GET.get('types')
+        if types:
+            qs = qs.filter(type__in=types.split(','))
+        labels_accessibility = request.GET.get('labels_accessibility')
+        if labels_accessibility:
+            qs = qs.filter(label_accessibility__in=labels_accessibility.split(','))
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='types', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Types"),
+                    description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
+                )
+            ), Field(
+                name='labels_accessibility', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Labels accessibility"),
+                    description=_("Filter by one or more labels accessibility id, comma-separated.")
+                )
+            )
+
+        )
+
+
 class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
@@ -418,6 +446,9 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
                 qs = qs.filter(Q(type1__in=types_id))
             if TouristicContentType.objects.filter(id__in=types_id, in_list=2).exists():
                 qs = qs.filter(Q(type2__in=types_id))
+        labels_accessibility = request.GET.get('labels_accessibility')
+        if labels_accessibility:
+            qs = qs.filter(label_accessibility__in=labels_accessibility.split(','))
         return self._filter_queryset(request, qs, view)
 
     def get_schema_fields(self, view):
@@ -432,7 +463,13 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
                     title=_("Types"),
                     description=_("Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.")
                 )
+            ), Field(
+                name='labels_accessibility', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Labels accessibility"),
+                    description=_("Filter by one or more labels accessibility id, comma-separated.")
+                )
             )
+
         )
 
 
