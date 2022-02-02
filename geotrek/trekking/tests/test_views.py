@@ -919,8 +919,14 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         desk_type = self.information_desk.type
         self.maxDiff = None
         self.assertDictEqual(self.result['information_desks'][0],
-                             {'description': self.information_desk.description,
+                             {'accessibility': self.information_desk.accessibility,
+                              'description': self.information_desk.description,
                               'email': self.information_desk.email,
+                              'label_accessibility': {
+                                  'id': self.information_desk.label_accessibility.pk,
+                                  'pictogram': self.information_desk.label_accessibility.pictogram.url,
+                                  'label': self.information_desk.label_accessibility.label,
+                              },
                               'latitude': self.information_desk.latitude,
                               'longitude': self.information_desk.longitude,
                               'name': self.information_desk.name,

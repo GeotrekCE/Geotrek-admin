@@ -14,6 +14,15 @@ else:
     from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin, TabularInline as TranslationTabularInline
 
 
+class LabelAccessibilityAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('label', 'pictogram_img')
+    search_fields = ('label', )
+    merge_field = 'label'
+
+
+admin.site.register(tourism_models.LabelAccessibility, LabelAccessibilityAdmin)
+
+
 class InformationDeskTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )

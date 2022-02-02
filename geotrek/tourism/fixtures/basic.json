@@ -27,6 +27,38 @@
 },
 {
     "pk": 1,
+    "model": "tourism.labelaccessibility",
+    "fields": {
+        "pictogram": "upload/handicap-auditif.jpg",
+        "label": "Marque Tourisme et Handicap - déficience auditive"
+    }
+},
+{
+    "pk": 2,
+    "model": "tourism.labelaccessibility",
+    "fields": {
+        "pictogram": "upload/handicap-mental.jpg",
+        "label": "Marque Tourisme et Handicap - déficience mentale"
+    }
+},
+{
+    "pk": 3,
+    "model": "tourism.labelaccessibility",
+    "fields": {
+        "pictogram": "upload/handicap-moteur.jpg",
+        "label": "Marque Tourisme et Handicap - déficience motrice"
+    }
+},
+{
+    "pk": 4,
+    "model": "tourism.labelaccessibility",
+    "fields": {
+        "pictogram": "upload/handicap-visuel.jpg",
+        "label": "Marque Tourisme et Handicap - déficience visuelle"
+    }
+},
+{
+    "pk": 1,
     "model": "tourism.touristiccontentcategory",
     "fields": {
         "pictogram": "upload/touristiccontent-accommodation.svg",

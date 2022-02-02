@@ -7,10 +7,15 @@ CHANGELOG
 
 **New features**
 
-- Add ratings, rating scales on trekking
-- Add equipments on trekking
+- Add ratings, rating scales fields on trekking (#2755)
+- Add equipments field on trekking (#2845)
 - Add filters altimetry on all apps
-- Add attachments accessibility
+- Add accessibility attachments on trekking (#2838)
+- Add accessibility field on courses (#2838)
+- Add accessibility field on touristic content (#2838)
+- Add accessibility field on information desks (#2838)
+- Add label accessibility field on touristic content and informations desks (#2838)
+- Add information desk type api v2
 
 **Minor improvements**
 
@@ -26,15 +31,15 @@ CHANGELOG
 
 **Bug fixes**
 
-- Fix missing trademark
-- Fix bootstrap theme in warning and error messages or alerts
-- Fix search in infrastructure admin panels
-- Fix APIv2 nearby content filter throws exceptions when queried for missing data
+- Fix missing trademark (#2921)
+- Fix bootstrap theme in warning and error messages or alerts (#2872)
+- Fix search in infrastructure admin panels (#2924)
+- Fix APIv2 nearby content filter throws exceptions when queried for missing data (#2926)
 - Prevent exceptions when parsers receive integers instead of strings
 
 **Performances**
 
-- Add missing indexes on geometry fields (WARNING, if you add indexes manually you should delete them before applying migrations)
+- Add missing indexes on geometry fields (WARNING, if you add indexes manually you should delete them before applying migrations) (#2933)
 
 
 2.75.0     (2022-01-07)

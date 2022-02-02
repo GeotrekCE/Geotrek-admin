@@ -25,6 +25,8 @@ class TouristicContentForm(CommonForm):
             'email',
             'website',
             'practical_info',
+            'accessibility',
+            'label_accessibility',
             'approved',
             'source',
             'portal',
@@ -37,8 +39,8 @@ class TouristicContentForm(CommonForm):
     class Meta:
         fields = ['structure', 'name', 'category', 'type1', 'type2', 'review', 'published',
                   'description_teaser', 'description', 'themes', 'contact',
-                  'email', 'website', 'practical_info', 'approved', 'source', 'portal',
-                  'geom', 'eid', 'reservation_system', 'reservation_id']
+                  'email', 'website', 'practical_info', 'accessibility', 'label_accessibility', 'approved', 'source',
+                  'portal', 'geom', 'eid', 'reservation_system', 'reservation_id']
         model = TouristicContent
 
     def __init__(self, *args, **kwargs):

@@ -116,6 +116,7 @@ class CourseViewsTests(CommonTest):
             'duration': 55.0,
             'eid': '43',
             'equipment': 'Rope',
+            'accessibility': 'Accessible',
             'filelist_url': '/paperclip/get/outdoor/course/{}/'.format(self.obj.pk),
             'gear': 'Shoes mandatory',
             'height': 42,

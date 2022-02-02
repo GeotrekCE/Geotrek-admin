@@ -53,6 +53,15 @@
             <td>{{ object.practical_info|safe }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"label_accessibility" }}</th>
+            <td>{{ object.label_accessibility }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+
+        </tr>
+        <tr>
             <th>{{ object|verbose:"approved" }}</th>
             <td>{{ object.approved|yesno:_("yes,no") }}</td>
         </tr>

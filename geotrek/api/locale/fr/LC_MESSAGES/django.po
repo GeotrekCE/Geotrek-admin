@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-20 16:34+0000\n"
+"POT-Creation-Date: 2022-02-02 08:51+0000\n"
 "PO-Revision-Date: 2020-10-20 16:33+0000\n"
 "Last-Translator: Bastien Potiron <bastien.potiron@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -352,12 +352,6 @@ msgstr ""
 "Filtrer par du texte insensible à la casse contenu dans le nom, le chapeau, "
 "ou la description"
 
-msgid "Categories"
-msgstr "Catégories"
-
-msgid "Filter by one or more category id, comma-separated."
-msgstr "Filtrer par un ou plusieurs id de catégorie, séparés par des virgules."
-
 msgid ""
 "Filter by one or more types id, comma-separated. Logical OR for types in the "
 "same list, AND for types in different lists."
@@ -365,6 +359,19 @@ msgstr ""
 "Filtrez par un ou plusieurs identifiants de types, séparés par des virgules. "
 "OU logiquepour les types dans la même liste, ET pour les types dans des "
 "listes différentes. "
+
+msgid "Labels accessibility"
+msgstr "Labels accessibilité"
+
+msgid "Filter by one or more labels accessibility id, comma-separated."
+msgstr ""
+"Filtrer par un ou plusieurs id de label d'accessibilité, séparés par des virgules."
+
+msgid "Categories"
+msgstr "Catégories"
+
+msgid "Filter by one or more category id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de catégorie, séparés par des virgules."
 
 msgid "Dates before"
 msgstr ""
@@ -459,7 +466,8 @@ msgstr "Niveau d'accessibilité"
 
 msgid "Filter by one or more accessibility level id, comma-separated."
 msgstr ""
-"Filtrer par un ou plusieurs id de niveau d'accessibilité, séparés par des virgules."
+"Filtrer par un ou plusieurs id de niveau d'accessibilité, séparés par des "
+"virgules."
 
 msgid "Filter by one or more theme id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de thème, séparés par des virgules."

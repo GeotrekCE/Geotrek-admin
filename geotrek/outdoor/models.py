@@ -350,6 +350,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
                                  validators=[MinValueValidator(0)])
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     equipment = models.TextField(verbose_name=_("Equipment"), blank=True)
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)

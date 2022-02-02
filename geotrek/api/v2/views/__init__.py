@@ -20,7 +20,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SportPracticeViewSet  # noqa
     from .sensitivity import SpeciesViewSet  # noqa
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
-    from .tourism import TouristicContentViewSet, TouristicEventViewSet, TouristicEventTypeViewSet, InformationDeskViewSet, TouristicContentCategoryViewSet  # noqa
+    from .tourism import TouristicContentViewSet, TouristicEventViewSet, TouristicEventTypeViewSet, InformationDeskViewSet, InformationDeskTypeViewSet, TouristicContentCategoryViewSet, LabelAccessibilityViewSet  # noqa
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from .zoning import CityViewSet, DistrictViewSet  # noqa
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:

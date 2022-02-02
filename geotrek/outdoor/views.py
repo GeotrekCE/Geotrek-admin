@@ -202,5 +202,5 @@ class CourseFormatList(MapEntityFormat, CourseList):
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'parent_sites', 'description',
-        'advice', 'equipment', 'eid', 'height', 'ratings', 'points_reference', 'uuid',
+        'advice', 'equipment', 'accessibility', 'eid', 'height', 'ratings', 'points_reference', 'uuid',
     ]

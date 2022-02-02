@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-02-01 11:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,6 +36,9 @@ msgstr ""
 msgid "Wind"
 msgstr ""
 
+msgid "One of the rating scale use is not part of the practice chosen"
+msgstr ""
+
 msgid "Children"
 msgstr ""
 
@@ -49,7 +52,7 @@ msgid "Cannot add children because this course is itself a child."
 msgstr ""
 
 #, python-brace-format
-msgid "Cannot use parent course {name} as a child course."
+msgid "Cannot use parent course {child.name} as a child course."
 msgstr ""
 
 msgid "Name"
@@ -64,12 +67,6 @@ msgstr ""
 msgid "Practices"
 msgstr ""
 
-msgid "Order"
-msgstr ""
-
-msgid "Within a practice. Alphabetical order if blank"
-msgstr ""
-
 msgid "Rating scale"
 msgstr ""
 
@@ -77,12 +74,6 @@ msgid "Rating scales"
 msgstr ""
 
 msgid "Scale"
-msgstr ""
-
-msgid "Description"
-msgstr ""
-
-msgid "Alphabetical order if blank"
 msgstr ""
 
 msgid "Rating"
@@ -155,6 +146,9 @@ msgid "Location"
 msgstr ""
 
 msgid "Parent"
+msgstr ""
+
+msgid "Description"
 msgstr ""
 
 msgid "Complete description"
@@ -269,6 +263,9 @@ msgid "Duration"
 msgstr ""
 
 msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr ""
+
+msgid "Accessibility"
 msgstr ""
 
 msgid "Equipment"
