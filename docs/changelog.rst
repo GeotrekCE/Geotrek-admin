@@ -17,6 +17,7 @@ CHANGELOG
 - Add translations NL, ES, DE, IT, EN for all apps
 - Change admin translations fields, add tab (#2892)
 - All rich text fields are updated according new TinyMCE theme.
+- Improve API v2 POI serializer to include type labels and pictograms
 
 **Maintenance**
 
@@ -36,6 +37,7 @@ CHANGELOG
 - Fix bootstrap theme in warning and error messages or alerts
 - Fix search in infrastructure admin panels
 - Fix APIv2 nearby content filter throws exceptions when queried for missing data
+- Prevent exceptions when parsers receive integers instead of strings
 
 **Performances**
 

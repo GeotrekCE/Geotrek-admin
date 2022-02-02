@@ -78,7 +78,7 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=0)
         self.assertEqual(Organism.objects.count(), 1)
         organism = Organism.objects.get()
-        self.assertEqual(organism.organism, "Comité Théodule")
+        self.assertEqual(organism.organism, "2.0")
 
     def test_duplicate_without_eid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -99,7 +99,7 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismEidParser', filename2, verbosity=0)
         self.assertEqual(Organism.objects.count(), 2)
         organisms = Organism.objects.order_by('pk')
-        self.assertEqual(organisms[0].organism, "Comité Théodule")
+        self.assertEqual(organisms[0].organism, "2.0")
         self.assertEqual(organisms[1].organism, "Comité Hippolyte")
 
     def test_report_format_text(self):

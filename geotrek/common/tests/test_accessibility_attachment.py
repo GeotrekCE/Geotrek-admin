@@ -9,9 +9,10 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.tests.factories import AttachmentAccessibilityFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.tests.factories import AttachmentAccessibilityFactory, TrekFactory, PracticeFactory
-from geotrek.trekking.models import AccessibilityAttachment
+from geotrek.trekking.tests.factories import TrekFactory, PracticeFactory
 from geotrek.trekking.views import TrekDetail
 
 
@@ -72,7 +73,7 @@ class EntityAttachmentTestCase(TestCase):
 
         html = response.content
         self.assertTemplateUsed(response, template_name='paperclip/attachment_list.html')
-        self.assertTemplateUsed(response, template_name='trekking/attachment_accessibility_list.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
 
         self.assertEqual(1, len(AccessibilityAttachment.objects.attachments_for_object(self.object)))
 
@@ -261,11 +262,17 @@ class ServeAttachmentTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_get_attachment_do_not_exist(self):
-        response = self.client.get(f'/media/paperclip/trekking_trek/{self.object.pk}/doesnotexist.png')
+        response = self.client.get(f'/media/attachments_accessibility/trekking_trek/{self.object.pk}/doesnotexist.png')
         self.assertEqual(response.status_code, 404)
 
+    @override_settings(DEBUG=False)
+    def test_get_attachment_without_debug(self):
+        self.client.force_login(user=self.superuser)
+        response = self.client.get(self.attachment.attachment_accessibility_file.url)
+        self.assertEqual(response.status_code, 200)
+
     @override_settings(DEBUG=True)
-    def test_get_attachment_debug(self):
+    def test_get_attachment_with_debug(self):
         self.client.force_login(user=self.superuser)
         response = self.client.get(self.attachment.attachment_accessibility_file.url)
         self.assertEqual(response.status_code, 200)

@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
+from geotrek.common.models import AccessibilityAttachment
 
 from .mixins import NoDeleteMixin
 
@@ -298,3 +299,66 @@ class SyncRandoForm(forms.Form):
                                    'disabled': 'disabled'}))
 
         return helper
+
+
+class AttachmentAccessibilityForm(forms.ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        self._object = kwargs.pop('object', None)
+
+        super().__init__(*args, **kwargs)
+        self.fields['legend'].widget.attrs['placeholder'] = _('Here this place can be tricky')
+
+        # Detect fields errors without uploading (using HTML5)
+        self.fields['author'].widget.attrs['pattern'] = r'^\S.*'
+        self.fields['legend'].widget.attrs['pattern'] = r'^\S.*'
+        self.fields['attachment_accessibility_file'].required = True
+        self.fields['attachment_accessibility_file'].widget = forms.FileInput()
+
+        self.helper = FormHelper(form=self)
+        self.helper.form_tag = True
+        self.helper.form_class = 'attachments-accessibility form-horizontal'
+        self.helper.help_text_inline = True
+        self.helper.form_style = "default"
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+
+        if not self.instance.pk:
+            form_actions = [
+                Submit('submit_attachment',
+                       _('Submit attachment'),
+                       css_class="btn-primary")
+            ]
+            self.form_url = reverse('add_attachment_accessibility', kwargs={
+                'app_label': self._object._meta.app_label,
+                'model_name': self._object._meta.model_name,
+                'pk': self._object.pk
+            })
+        else:
+            form_actions = [
+                Button('cancel', _('Cancel'), css_class=""),
+                Submit('submit_attachment',
+                       _('Update attachment'),
+                       css_class="btn-primary")
+            ]
+            self.fields['title'].widget.attrs['readonly'] = True
+            self.form_url = reverse('update_attachment_accessibility', kwargs={
+                'attachment_pk': self.instance.pk
+            })
+
+        self.helper.form_action = self.form_url
+        self.helper.layout.fields.append(
+            FormActions(*form_actions, css_class="form-actions"))
+
+    class Meta:
+        model = AccessibilityAttachment
+        fields = ('attachment_accessibility_file', 'info_accessibility', 'author', 'title', 'legend')
+
+    def success_url(self):
+        obj = self._object
+        return f"{obj.get_detail_url()}?tab=attachments-accessibility"
+
+    def save(self, request, *args, **kwargs):
+        obj = self._object
+        self.instance.creator = request.user
+        self.instance.content_object = obj
+        return super().save(*args, **kwargs)
