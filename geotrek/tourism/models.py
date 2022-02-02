@@ -84,7 +84,7 @@ class InformationDesk(models.Model):
                                     max_length=256)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     label_accessibility = models.ForeignKey(LabelAccessibility, verbose_name=_("Label accessibility"),
-                                            on_delete=models.CASCADE, related_name='desks', blank=True, null=True)
+                                            on_delete=models.PROTECT, related_name='desks', blank=True, null=True)
     geom = models.PointField(verbose_name=_("Emplacement"),
                              blank=True, null=True,
                              srid=settings.SRID, spatial_index=False)

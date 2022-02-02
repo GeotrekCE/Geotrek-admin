@@ -62,7 +62,7 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))
-        return tourism_models.InformationDesk.objects.select_related('label_accessibility').order_by('name')
+        return tourism_models.InformationDesk.objects.select_related('label_accessibility', 'type').order_by('name')
 
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
