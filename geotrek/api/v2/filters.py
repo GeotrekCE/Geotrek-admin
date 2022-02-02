@@ -412,7 +412,6 @@ class GeotrekInformationDeskFilter(BaseFilterBackend):
         if types:
             qs = qs.filter(type__in=types.split(','))
         labels_accessibility = request.GET.get('labels_accessibility')
-        print(labels_accessibility)
         if labels_accessibility:
             qs = qs.filter(label_accessibility__in=labels_accessibility.split(','))
         return qs

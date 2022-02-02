@@ -12,7 +12,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicContentListSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name', default="")
-        pictures = rest_serializers.SerializerMethodField(read_only=True)
+        pictures = rest_serializers.SerializerMethodField()
 
         def get_pictures(self, obj):
             if not obj.resized_pictures:
@@ -36,7 +36,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class TouristicEventListSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
-        pictures = rest_serializers.SerializerMethodField(read_only=True)
+        pictures = rest_serializers.SerializerMethodField()
 
         def get_pictures(self, obj):
             if not obj.resized_pictures:
@@ -62,7 +62,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                       'practical_info', 'approved', 'geometry')
 
     class InformationDeskSerializer(rest_serializers.ModelSerializer):
-        picture = rest_serializers.SerializerMethodField(read_only=True)
+        picture = rest_serializers.SerializerMethodField()
 
         class Meta:
             model = tourism_models.InformationDesk

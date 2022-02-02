@@ -12,7 +12,6 @@ from geotrek.tourism import models as tourism_models
 
 
 class LabelAccessibilityViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.LabelAccessibilitySerializer
     queryset = tourism_models.LabelAccessibility.objects.order_by('pk')  # Required for reliable pagination
 
@@ -49,7 +48,6 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class InformationDeskTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.InformationDeskTypeSerializer
     queryset = tourism_models.InformationDeskType.objects.order_by('pk')
 

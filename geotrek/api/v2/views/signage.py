@@ -23,24 +23,20 @@ class SignageTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class DirectionViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.DirectionSerializer
     queryset = signage_models.Direction.objects.all().order_by('pk')
 
 
 class SealingViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.SealingSerializer
     queryset = signage_models.Sealing.objects.all().order_by('pk')
 
 
 class ColorViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.ColorSerializer
     queryset = signage_models.Color.objects.all().order_by('pk')
 
 
 class BladeTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.BladeTypeSerializer
     queryset = signage_models.BladeType.objects.all().order_by('pk')

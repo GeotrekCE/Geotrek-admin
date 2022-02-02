@@ -26,18 +26,15 @@ class InfrastructureTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class InfrastructureUsageDifficultyLevelViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.InfrastructureUsageDifficultyLevelSerializer
     queryset = infra_models.InfrastructureUsageDifficultyLevel.objects.all().order_by('pk')
 
 
 class InfrastructureConditionViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.InfrastructureConditionSerializer
     queryset = infra_models.InfrastructureCondition.objects.all().order_by('pk')
 
 
 class InfrastructureMaintenanceDifficultyLevelViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
     serializer_class = api_serializers.InfrastructureMaintenanceDifficultyLevelSerializer
     queryset = infra_models.InfrastructureMaintenanceDifficultyLevel.objects.all().order_by('pk')

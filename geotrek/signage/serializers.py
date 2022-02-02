@@ -48,7 +48,7 @@ class BladeTypeSerializer(rest_serializers.ModelSerializer):
 class BladeSerializer(rest_serializers.ModelSerializer):
     type = BladeTypeSerializer()
     structure = StructureSerializer()
-    order_lines = rest_serializers.SerializerMethodField(read_only=True)
+    order_lines = rest_serializers.SerializerMethodField()
 
     def get_order_lines(self, obj):
         return obj.order_lines.values_list('pk', flat=True)
