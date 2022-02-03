@@ -5,13 +5,14 @@ CHANGELOG
 2.76.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add ACCESSIBILITY_ATTACHMENTS_ENABLED setting allowing to disable/enable menu attachments for accessibility
+
 **Minor improvements**
 
 - Text pasted in rich text fields (TinyMCE) are now cleaned up.
 - Facilitate the comprehension of the difference between fields label_accessibility and approved in tourism (#2838)
-
-**Minor improvements**
-
 - Move trek DEM serialization to APIv2 (for 3D view)
 - Move trek altimetry profile serialization to APIv2
 - Change fixture rating trekking
