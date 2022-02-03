@@ -9,6 +9,15 @@ CHANGELOG
 
 - Text pasted in rich text fields (TinyMCE) are now cleaned up.
 
+**Minor improvements**
+
+- Move trek DEM serialization to APIv2 (for 3D view)
+- Move trek altimetry profile serialization to APIv2
+
+**Performances**
+
+- Fix DEM cache does not invalidate on trek update
+
 
 2.76.0     (2022-02-02)
 -----------------------

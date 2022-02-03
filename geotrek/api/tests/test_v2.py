@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
                                      Point, Polygon)
 from django.contrib.gis.geos.collections import GeometryCollection
+from django.db import connection
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -1935,6 +1936,9 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         """
         self.client.force_login(self.administrator)
 
+    def setUp(self):
+        self.login()
+
     def test_path_list(self):
         self.login()
         response = self.get_path_list()
@@ -3808,3 +3812,81 @@ class OutdoorFilterByPortal(BaseApiTest):
             all_ids.append(type['id'])
         self.assertIn(self.course.pk, all_ids)
         self.assertNotIn(self.course2.pk, all_ids)
+
+
+class AltimetryCacheTests(BaseApiTest):
+    """ Test APIV2 DEM serialization is cached
+    """
+
+    TMP_CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': settings.CACHE_ROOT
+        }
+    }
+
+    @classmethod
+    def setUpTestData(cls):
+        # Create a simple fake DEM
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+            cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
+            demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+            for y in range(0, 5):
+                for x in range(0, 4):
+                    cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+        cls.path = core_factory.PathFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        cls.trek = trek_factory.TrekFactory.create(paths=[cls.path])
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_cache_is_used_when_getting_trek_DEM(self):
+        # There are 8 queries to get trek DEM
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        # When cache is used there are only 7 queries to get trek DEM
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_cache_is_used_when_getting_trek_DEM_nds(self):
+        self.trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        # There are 8 queries to get trek DEM
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        # When cache is used there are only 7 queries to get trek DEM
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_cache_is_used_when_getting_trek_profile(self):
+        # There are 8 queries to get trek profile
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        # When cache is used there are only 7 queries to get trek profile
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    # Override default cache with fat cache since we can't use memcached in tests
+    @override_settings(CACHES=TMP_CACHES)
+    def test_cache_is_used_when_getting_trek_profile_svg(self):
+        # There are 8 queries to get trek profile svg
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)) + "?format=svg")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'image/svg+xml')
+        # When cache is used there are only 7 queries to get trek profile
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)) + "?format=svg")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'image/svg+xml')
