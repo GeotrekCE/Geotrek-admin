@@ -106,7 +106,7 @@ class SiteFormatList(MapEntityFormat, SiteList):
     default_extra_columns = [
         'structure', 'name', 'practice', 'description',
         'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
-        'portal', 'source', 'information_desks', 'web_links', 'eid',
+        'portal', 'source', 'information_desks', 'web_links', 'accessibility', 'eid',
         'orientation', 'wind', 'ratings', 'managers', 'uuid',
     ]
 

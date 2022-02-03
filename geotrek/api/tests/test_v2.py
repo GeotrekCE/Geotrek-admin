@@ -143,8 +143,8 @@ SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'pictogram', 'website']
 RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'ambiance', 'attachments', 'children', 'cities', 'courses', 'description', 'description_teaser', 'eid', 'geometry', 'id',
-    'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent', 'period', 'portal',
+    'accessibility', 'advice', 'ambiance', 'attachments', 'children', 'cities', 'courses', 'description', 'description_teaser', 'eid',
+    'geometry', 'id', 'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent', 'period', 'portal',
     'practice', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid', 'wind', 'web_links',
 ])
 
