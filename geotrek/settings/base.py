@@ -644,6 +644,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "toolbar": "bold italic forecolor | bullist numlist link media | "
                "undo redo | "
                "removeformat | code",
+    "paste_as_text": True
 }
 
 SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
