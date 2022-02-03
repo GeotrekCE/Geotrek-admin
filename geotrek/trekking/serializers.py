@@ -233,7 +233,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'accessibility_width', 'accessibility_advice',
                   'usages', 'access', 'route',
                   'public_transport', 'advised_parking', 'web_links',
-                  'disabled_infrastructure', 'parking_location', 'relationships',
+                  'accessibility_infrastructure', 'parking_location', 'relationships',
                   'points_reference', 'gpx', 'kml', 'source', 'portal',
                   'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
                   'children', 'parents', 'previous', 'next', 'ratings', 'ratings_description') + \

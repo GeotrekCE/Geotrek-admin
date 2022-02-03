@@ -80,7 +80,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'themes', 'practice', 'ratings', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
         'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
         'accessibility_width', 'access', 'route', 'public_transport', 'advised_parking', 'web_links', 'labels',
-        'disabled_infrastructure', 'parking_location', 'points_reference',
+        'accessibility_infrastructure', 'parking_location', 'points_reference',
         'related', 'children', 'parents', 'pois', 'review', 'published',
         'publication_date', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'source', 'portal', 'length_2d', 'uuid',

@@ -292,10 +292,10 @@
         {% endif %}
       {% endblock parking %}
       {% block disabledInfrastructure %}
-        {% if object.disabled_infrastructure %}
+        {% if object.accessibility_infrastructure %}
           <section class="half-block disabled-infrastructure">
-            <h2>{% trans "Disabled Infrastructure" %}</h2>
-            <div class="text-content">{{ object.disabled_infrastructure|safe }}</div>
+            <h2>{% trans "Accessibility Infrastructure" %}</h2>
+            <div class="text-content">{{ object.accessibility_infrastructure|safe }}</div>
           </section>
         {% endif %}
       {% endblock disabledInfrastructure %}
