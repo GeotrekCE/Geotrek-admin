@@ -22,7 +22,7 @@ class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
     queryset = trekking_models.WebLinkCategory.objects.all()
 
 
-@renderer_classes([JSONRenderer, SVGProfileRenderer])
+@renderer_classes(api_viewsets.GeotrekGeometricViewset.renderer_classes + [SVGProfileRenderer, ])
 class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.GeotrekTrekQueryParamsFilter,
