@@ -124,7 +124,7 @@ class TrekFactory(TopologyFactory):
 
     public_transport = "<p>Public transport</p>"
     advice = "<p>Advice</p>"
-    equipment = "<p>Equipment</p>"
+    gear = "<p>Gear</p>"
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)

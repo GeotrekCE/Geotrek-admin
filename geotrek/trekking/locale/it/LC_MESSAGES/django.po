@@ -258,10 +258,10 @@ msgstr "Rischi, pericolo, periodo migliore, ..."
 msgid "Ratings description"
 msgstr ""
 
-msgid "Equipment"
+msgid "Gear"
 msgstr ""
 
-msgid "Equipment needed, adviced ..."
+msgid "Gear needed, adviced ..."
 msgstr ""
 
 msgid "Themes"
@@ -689,7 +689,7 @@ msgstr "Tutte le informazioni utili"
 msgid "Advices"
 msgstr "Consigli"
 
-msgid "Equipments"
+msgid "Gears"
 msgstr ""
 
 msgid "Environmental sensitive areas"

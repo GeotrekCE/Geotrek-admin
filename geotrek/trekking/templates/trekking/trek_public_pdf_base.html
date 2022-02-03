@@ -223,15 +223,15 @@
           <div class="advice-content">{{ object.advice | safe }}</div>
         </div>
       {% endif %}
-      {% if object.equipment %}
-        <div class="equipment">
-          <div class="equipment-title">
-            <div class="equipment-icon">
-              <img src="file://{{ STATIC_ROOT }}/trekking/equipment.svg">
+      {% if object.gear %}
+        <div class="gear">
+          <div class="gear-title">
+            <div class="gear-icon">
+              <img src="file://{{ STATIC_ROOT }}/trekking/gear.svg">
             </div>
-            {% trans "Equipments" %}
+            {% trans "Gears" %}
           </div>
-          <div class="equipment-content">{{ object.equipment | safe }}</div>
+          <div class="gear-content">{{ object.gear | safe }}</div>
         </div>
       {% endif %}
       {% if object.published_sensitive_areas %}

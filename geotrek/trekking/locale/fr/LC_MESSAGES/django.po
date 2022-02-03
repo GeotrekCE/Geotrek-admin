@@ -261,11 +261,11 @@ msgstr "Risques, danger, meilleure période, ..."
 msgid "Ratings description"
 msgstr "Description de cotation"
 
-msgid "Equipment"
-msgstr "Équipement"
+msgid "Gear"
+msgstr "Matériel"
 
-msgid "Equipment needed, adviced ..."
-msgstr "Équipement nécessaire, conseillé ..."
+msgid "Gear needed, adviced ..."
+msgstr "Matériel nécessaire, conseillé ..."
 
 msgid "Themes"
 msgstr "Thématiques"
@@ -707,8 +707,8 @@ msgstr "Toutes les infos pratiques"
 msgid "Advices"
 msgstr "Recommandations"
 
-msgid "Equipments"
-msgstr "Équipements"
+msgid "Gears"
+msgstr "Matériels"
 
 msgid "Environmental sensitive areas"
 msgstr "Zones de sensibilité environnementale"

@@ -16,10 +16,15 @@ CHANGELOG
 - Move trek DEM serialization to APIv2 (for 3D view)
 - Move trek altimetry profile serialization to APIv2
 - Change fixture rating trekking
+- Move gear field form and detail (#2838)
 
 **Performances**
 
 - Fix DEM cache does not invalidate on trek update
+
+**Bug fixes**
+
+- Fix translation equipment api v2 courses
 
 
 2.76.0     (2022-02-02)
