@@ -5,7 +5,6 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
 from rest_framework.decorators import action, renderer_classes
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from geotrek.api.v2 import filters as api_filters
