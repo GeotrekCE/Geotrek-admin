@@ -677,9 +677,6 @@ msgstr ""
 msgid "Advices"
 msgstr ""
 
-msgid "Gears"
-msgstr ""
-
 msgid "Environmental sensitive areas"
 msgstr ""
 

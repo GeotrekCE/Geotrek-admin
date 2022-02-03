@@ -541,7 +541,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         update_datetime = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
-        equipment = serializers.SerializerMethodField()
         gear = serializers.SerializerMethodField()
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')

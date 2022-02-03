@@ -707,9 +707,6 @@ msgstr "Toutes les infos pratiques"
 msgid "Advices"
 msgstr "Recommandations"
 
-msgid "Gears"
-msgstr "Matériels"
-
 msgid "Environmental sensitive areas"
 msgstr "Zones de sensibilité environnementale"
 

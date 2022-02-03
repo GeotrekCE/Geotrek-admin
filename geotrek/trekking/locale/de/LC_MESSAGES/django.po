@@ -692,9 +692,6 @@ msgstr "Alle praktischen Informationen"
 msgid "Advices"
 msgstr "Empfehlungen"
 
-msgid "Gears"
-msgstr ""
-
 msgid "Environmental sensitive areas"
 msgstr "Umweltsensible Bereiche"
 

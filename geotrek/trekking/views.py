@@ -509,7 +509,7 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
 
 # Translations for public PDF
 translation.gettext_noop("Advices")
-translation.gettext_noop("Gears")
+translation.gettext_noop("Gear")
 translation.gettext_noop("All useful information")
 translation.gettext_noop("Altimetric profile")
 translation.gettext_noop("Attribution")

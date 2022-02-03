@@ -689,9 +689,6 @@ msgstr "Tutte le informazioni utili"
 msgid "Advices"
 msgstr "Consigli"
 
-msgid "Gears"
-msgstr ""
-
 msgid "Environmental sensitive areas"
 msgstr "Aree di sensibilità ambientale"
 
