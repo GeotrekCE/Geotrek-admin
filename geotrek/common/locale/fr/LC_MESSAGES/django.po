@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-02-03 15:03+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -64,6 +64,18 @@ msgstr "Le fichier doit être de type ZIP."
 
 msgid "Launch Sync"
 msgstr "Lancer la synchro"
+
+msgid "Here this place can be tricky"
+msgstr "Ici, cet endroit peut être délicat"
+
+msgid "Submit attachment"
+msgstr "Soumettre le fichier"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Update attachment"
+msgstr "Modifier le fichier"
 
 msgid "Global tiles syncing ..."
 msgstr "Synchro des tuiles globales..."
@@ -139,14 +151,59 @@ msgstr "Pictogramme"
 msgid "Merge"
 msgstr "Fusionner"
 
+msgid "Slope"
+msgstr "Pente"
+
+msgid "Width"
+msgstr "Largeur"
+
+msgid "Signage"
+msgstr "Signalétique"
+
+msgid "Image"
+msgstr "Image"
+
+msgid "Information accessibility"
+msgstr "Information accessibilité"
+
+msgid "Creation Date"
+msgstr "Date de création"
+
+msgid "Creator"
+msgstr "Créateur"
+
+msgid "User that uploaded"
+msgstr "Utilisateur"
+
+msgid "Author"
+msgstr "Auteur"
+
+msgid "Original creator"
+msgstr "Créateur original"
+
+msgid "Filename"
+msgstr "Nom de fichier"
+
+msgid "Renames the file"
+msgstr "Renomme le fichier"
+
+msgid "Legend"
+msgstr "Légende"
+
+msgid "Details displayed"
+msgstr "Détails affichés"
+
+msgid "Attachment accessibility"
+msgstr "Pièce-jointe accéssibilité"
+
+msgid "Attachments accessibility"
+msgstr "Pièces-jointes accéssibilité"
+
 msgid "Organism"
 msgstr "Organisme"
 
 msgid "Organisms"
 msgstr "Organismes"
-
-msgid "Creation Date"
-msgstr "Date de création"
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
@@ -231,6 +288,18 @@ msgstr "Étiquette"
 
 msgid "Labels"
 msgstr "Étiquettes"
+
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Within a practice. Alphabetical order if blank"
+msgstr ""
+
+msgid "Alphabetical order if blank"
+msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
+
+msgid "Color"
+msgstr "Couleur"
 
 #, python-brace-format
 msgid "Line {line}"
@@ -333,6 +402,37 @@ msgstr "Importer du web."
 msgid "Init sync ..."
 msgstr "Début de synchro"
 
+msgid "Photos to illustrate information related to the accessibility of treks."
+msgstr "Photos pour illustrer les informations liées à l'accessibilité des randonnées."
+
+msgid "Attached files for accessibility"
+msgstr "Fichiers joint pour l'accessibilité"
+
+msgid "Accessibility type"
+msgstr "Type d'accessibilité"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Update"
+msgstr "Mettre à jour"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "No file attached for accessibility"
+msgstr "Pas de fichier attaché pour l'accessibilité"
+
+msgid "You are not allowed to see attachments."
+msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés."
+
+msgid "Confirm file deletion"
+msgstr "Confirmer la suppression du fichier"
+
+#, python-brace-format
+msgid "Are you sure to delete this file {file} ?"
+msgstr "Êtes vous sûr de vouloir supprimer ce fichier {file} ?"
+
 msgid "Paths"
 msgstr "Tronçons"
 
@@ -431,9 +531,6 @@ msgstr "Confirmation"
 msgid "Are you sure you want to sync ?"
 msgstr "Etes-vous certain de vouloir lancer la synchro ?"
 
-msgid "Cancel"
-msgstr "Annuler"
-
 msgid "Sync"
 msgstr "Sync"
 
@@ -477,6 +574,30 @@ msgstr "O"
 
 msgid "Reports"
 msgstr ""
+
+#, python-format
+msgid "Add attachment %s"
+msgstr "Ajout du fichier %s"
+
+msgid "Your attachment was uploaded."
+msgstr "Votre fichier a été ajouté."
+
+#, python-format
+msgid "Update attachment %s"
+msgstr "Modifier le fichier attaché %s"
+
+msgid "Your attachment was updated."
+msgstr "Votre fichier a été modifié."
+
+#, python-format
+msgid "Remove attachment %s"
+msgstr "Suppression du fichier %s"
+
+msgid "Your attachment was deleted."
+msgstr "Votre fichier a été supprimé."
+
+msgid "You are not allowed to delete this attachment."
+msgstr "Vous n'êtes pas autorisé à supprimer ce fichier attaché."
 
 msgid "Any year"
 msgstr "N'importe quelle année"
