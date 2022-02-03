@@ -5,9 +5,9 @@ CHANGELOG
 2.76.0+dev (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**Minor improvements**
 
--
+- Text pasted in rich text fields (TinyMCE) are now cleaned up.
 
 
 2.76.0     (2022-02-02)
