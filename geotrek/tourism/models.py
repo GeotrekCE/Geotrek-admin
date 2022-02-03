@@ -318,7 +318,8 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                            on_delete=models.CASCADE, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
-    approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    approved = models.BooleanField(verbose_name=_("Approved"), default=False,
+                                   help_text=_("Indicates whether the content has a label or brand"))
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     class Meta:

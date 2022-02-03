@@ -8,6 +8,7 @@ CHANGELOG
 **Minor improvements**
 
 - Text pasted in rich text fields (TinyMCE) are now cleaned up.
+- Facilitate the comprehension of the difference between fields label_accessibility and approved in tourism (#2838)
 
 
 2.76.0     (2022-02-02)
