@@ -422,7 +422,7 @@ msgstr ""
 msgid "Filter by maximum ascent (meters)."
 msgstr ""
 
-msgid "Types accessibilities"
+msgid "Types of accessibility"
 msgstr ""
 
 msgid "Filter by one or more type of accessibility id, comma-separated."

@@ -147,7 +147,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     practice = models.ForeignKey('Practice', related_name="treks", on_delete=models.CASCADE,
                                  blank=True, null=True, verbose_name=_("Practice"))
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
-                                             verbose_name=_("Type accessibility"))
+                                             verbose_name=_("Accessibility type"))
     accessibility_advice = models.TextField(verbose_name=_("Accessibility advice"),
                                             blank=True,
                                             help_text=_("Specific elements allowing to appreciate the context "

@@ -62,7 +62,7 @@ msgstr ""
 msgid "Launch Sync"
 msgstr ""
 
-msgid "Here this place can be tricky"
+msgid "Overview of the tricky passage"
 msgstr ""
 
 msgid "Submit attachment"

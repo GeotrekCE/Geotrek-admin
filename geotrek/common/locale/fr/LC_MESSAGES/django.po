@@ -65,8 +65,8 @@ msgstr "Le fichier doit être de type ZIP."
 msgid "Launch Sync"
 msgstr "Lancer la synchro"
 
-msgid "Here this place can be tricky"
-msgstr "Ici, cet endroit peut être délicat"
+msgid "Overview of the tricky passage"
+msgstr "Aperçu du passage délicat"
 
 msgid "Submit attachment"
 msgstr "Soumettre le fichier"
@@ -197,7 +197,7 @@ msgid "Attachment accessibility"
 msgstr "Pièce-jointe accéssibilité"
 
 msgid "Attachments accessibility"
-msgstr "Pièces-jointes accéssibilité"
+msgstr "Pièce-jointes accessibilité"
 
 msgid "Organism"
 msgstr "Organisme"
@@ -293,7 +293,7 @@ msgid "Order"
 msgstr "Ordre"
 
 msgid "Within a practice. Alphabetical order if blank"
-msgstr ""
+msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
 
 msgid "Alphabetical order if blank"
 msgstr "Au sein d'une pratique. Ordre alphabétique si vide"

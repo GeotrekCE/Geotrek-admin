@@ -458,7 +458,7 @@ msgstr "Dénivelé positif max"
 msgid "Filter by maximum ascent (meters)."
 msgstr "Filtrer par le dénivelé positif maximal (mètres)."
 
-msgid "Types accessibilities"
+msgid "Types of accessibility"
 msgstr "Types d'accessibilité"
 
 msgid "Filter by one or more type of accessibility id, comma-separated."
