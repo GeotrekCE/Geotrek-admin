@@ -76,7 +76,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = [
         'eid', 'eid2', 'structure', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
-        'description_teaser', 'networks', 'advice', 'equipment', 'ambiance', 'difficulty', 'information_desks',
+        'description_teaser', 'networks', 'advice', 'gear', 'ambiance', 'difficulty', 'information_desks',
         'themes', 'practice', 'ratings', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
         'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
         'accessibility_width', 'access', 'route', 'public_transport', 'advised_parking', 'web_links', 'labels',
@@ -509,7 +509,7 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
 
 # Translations for public PDF
 translation.gettext_noop("Advices")
-translation.gettext_noop("Equipments")
+translation.gettext_noop("Gear")
 translation.gettext_noop("All useful information")
 translation.gettext_noop("Altimetric profile")
 translation.gettext_noop("Attribution")

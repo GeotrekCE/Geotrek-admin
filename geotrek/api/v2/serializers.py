@@ -541,6 +541,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         update_datetime = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
+        gear = serializers.SerializerMethodField()
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
         pdf = serializers.SerializerMethodField('get_pdf_url')
@@ -560,6 +561,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         cities = serializers.SerializerMethodField()
         departure_city = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
+
+        def get_gear(self, obj):
+            return get_translation_or_dict('gear', self, obj)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -685,7 +689,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'departure', 'departure_city', 'departure_geom', 'descent',
                 'description', 'description_teaser', 'difficulty',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',
-                'elevation_svg_url', 'equipment', 'external_id', 'geometry', 'gpx',
+                'elevation_svg_url', 'external_id', 'gear', 'geometry', 'gpx',
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
                 'max_elevation', 'min_elevation', 'name', 'networks', 'next',
                 'parents', 'parking_location', 'pdf', 'points_reference',
@@ -1057,6 +1061,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         parents = serializers.ReadOnlyField(source='parents_id')
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        equipment = serializers.SerializerMethodField()
         gear = serializers.SerializerMethodField()
         ratings_description = serializers.SerializerMethodField()
         sites = serializers.SerializerMethodField()
@@ -1069,6 +1074,9 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+
+        def get_equipment(self, obj):
+            return get_translation_or_dict('equipment', self, obj)
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)

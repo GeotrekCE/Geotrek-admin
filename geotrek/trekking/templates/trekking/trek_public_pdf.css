@@ -245,18 +245,18 @@ header .url .geo {
   margin-top: .5cm;
 }
 
-.equipment {
+.gear {
   margin-top: .5cm;
   padding: .5cm .3cm;
   background-color: #eee;
 }
 
-.equipment-title {
+.gear-title {
   font-weight: bold;
   color: orange;
 }
 
-.equipment-content {
+.gear-content {
   margin-top: .5cm;
 }
 
@@ -403,7 +403,7 @@ header .url .geo {
 }
 
 .advice-icon,
-.equipment-icon,
+.gear-icon,
 .information-desks-icon,
 .network-icon {
   display: inline-block;
@@ -411,7 +411,7 @@ header .url .geo {
 }
 
 .advice-icon img,
-.equipment-icon img,
+.gear-icon img,
 .information-desks-icon img,
 .network-icon img {
   display: block;

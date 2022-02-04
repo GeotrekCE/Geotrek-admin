@@ -253,10 +253,10 @@ msgstr ""
 msgid "Ratings description"
 msgstr ""
 
-msgid "Equipment"
+msgid "Gear"
 msgstr ""
 
-msgid "Equipment needed, adviced ..."
+msgid "Gear needed, adviced ..."
 msgstr ""
 
 msgid "Themes"
@@ -676,9 +676,6 @@ msgstr "Información útil"
 
 msgid "Advices"
 msgstr "Recomendaciones"
-
-msgid "Equipments"
-msgstr ""
 
 msgid "Environmental sensitive areas"
 msgstr ""
