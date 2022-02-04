@@ -85,6 +85,17 @@ class EntityAttachmentTestCase(TestCase):
             self.assertIn(attachment.attachment_accessibility_file.url.encode(), html)
             self.assertIn(b'paperclip/fileicons/odt.png', html)
 
+    @override_settings(ACCESSIBILITY_ATTACHMENTS_ENABLED=False)
+    def test_list_attachments_not_in_details_attachments_accessibility_disabled(self):
+        self.createAttachmentAccessibility(self.object)
+        self.user.user_permissions.add(Permission.objects.get(codename='read_trek'))
+        self.user.user_permissions.add(Permission.objects.get(codename='read_attachment'))
+        self.client.force_login(self.user)
+        response = self.client.get(self.object.get_detail_url())
+
+        self.assertTemplateUsed(response, template_name='paperclip/attachment_list.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
+
     def test_add_form_in_details_if_perms(self):
         self.user.has_perm = mock.MagicMock(return_value=True)
         view = TrekDetail.as_view()

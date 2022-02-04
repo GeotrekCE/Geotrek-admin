@@ -817,6 +817,8 @@ HIDDEN_FORM_FIELDS = {}
 COLUMNS_LISTS = {}
 ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
+ACCESSIBILITY_ATTACHMENTS_ENABLED = True
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')

@@ -947,6 +947,15 @@ Show filter bbox by zoning.
 
 .. image:: images/options/zoning_bboxs.png
 
+
+|
+
+::
+
+   ACCESSIBILITY_ATTACHMENTS_ENABLED = True
+
+Show or not the accessibility menu for attachments
+
 **Translations**
 
 ::
