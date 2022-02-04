@@ -1043,8 +1043,8 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description', 'description_teaser',
-                'eid', 'geometry', 'information_desks', 'labels', 'managers',
+                'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
+                'description_teaser', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
                 'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice',
                 'ratings', 'sector', 'source', 'structure', 'themes',
                 'type', 'url', 'uuid', 'courses', 'web_links', 'wind',

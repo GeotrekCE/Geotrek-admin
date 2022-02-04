@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 - Add ACCESSIBILITY_ATTACHMENTS_ENABLED setting allowing to disable/enable menu attachments for accessibility
+- Add accessibility field on sites (#2838)
 
 **Minor improvements**
 
