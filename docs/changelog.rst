@@ -14,6 +14,7 @@ CHANGELOG
 
 - Move trek DEM serialization to APIv2 (for 3D view)
 - Move trek altimetry profile serialization to APIv2
+- Change fixture rating trekking
 
 **Performances**
 
