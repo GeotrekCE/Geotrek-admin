@@ -203,7 +203,7 @@ class TrekViewsTest(CommonTest):
                 'order': 1,
                 'pictogram': '/static/trekking/trek.svg',
                 'slug': 'trek',
-                'type2_label': 'Type accessibility',
+                'type2_label': 'Accessibility type',
             },
             'children': [],
             'cities': [],
@@ -992,7 +992,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               "order": 1,
                               "label": "Hike",
                               "slug": "trek",
-                              "type2_label": "Type accessibility",
+                              "type2_label": "Accessibility type",
                               "pictogram": "/static/trekking/trek.svg"})
 
     def test_sources(self):

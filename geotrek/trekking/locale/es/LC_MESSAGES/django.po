@@ -202,9 +202,6 @@ msgstr ""
 msgid "Hiking networks"
 msgstr ""
 
-msgid "Type accessibility"
-msgstr ""
-
 msgid "Accessibility advice"
 msgstr ""
 

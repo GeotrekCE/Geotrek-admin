@@ -207,9 +207,6 @@ msgstr "Reti"
 msgid "Hiking networks"
 msgstr "Reti escursionistiche"
 
-msgid "Type accessibility"
-msgstr ""
-
 msgid "Accessibility advice"
 msgstr ""
 
