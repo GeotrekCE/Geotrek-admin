@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-01 11:43+0000\n"
+"POT-Creation-Date: 2022-02-03 15:03+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -37,18 +37,6 @@ msgstr ""
 
 msgid "Trek"
 msgstr "Itinerario"
-
-msgid "Here this place can be tricky"
-msgstr ""
-
-msgid "Submit attachment"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "Update attachment"
-msgstr ""
 
 msgid "Children"
 msgstr ""
@@ -82,6 +70,9 @@ msgstr ""
 
 #, python-brace-format
 msgid "Cannot use parent trek {child.name} as a child trek."
+msgstr ""
+
+msgid "Cancel"
 msgstr ""
 
 msgid "Create"
@@ -127,60 +118,6 @@ msgstr ""
 msgid "Ratings"
 msgstr ""
 
-msgid "Slope"
-msgstr ""
-
-msgid "Width"
-msgstr ""
-
-msgid "Signage"
-msgstr ""
-
-msgid "Image"
-msgstr ""
-
-msgid "Information accessibility"
-msgstr ""
-
-msgid "Creation Date"
-msgstr ""
-
-msgid "Creator"
-msgstr ""
-
-msgid "User that uploaded"
-msgstr ""
-
-msgid "Author"
-msgstr ""
-
-msgid "Original creator"
-msgstr ""
-
-msgid "Filename"
-msgstr ""
-
-msgid "Renames the file"
-msgstr ""
-
-msgid "Legend"
-msgstr ""
-
-msgid "Details displayed"
-msgstr ""
-
-msgid "Insertion date"
-msgstr ""
-
-msgid "Update date"
-msgstr ""
-
-msgid "Attachment accessibility"
-msgstr ""
-
-msgid "Attachments accessibility"
-msgstr ""
-
 msgid "Departure"
 msgstr "Salida"
 
@@ -215,12 +152,6 @@ msgid "Access"
 msgstr "Acceso por carretera"
 
 msgid "Best way to go"
-msgstr ""
-
-msgid "Disabled infrastructure"
-msgstr ""
-
-msgid "Any specific infrastructure"
 msgstr ""
 
 msgid "Duration"
@@ -271,20 +202,15 @@ msgstr ""
 msgid "Hiking networks"
 msgstr ""
 
-msgid "Level"
+msgid "Accessibility advice"
 msgstr ""
 
 msgid ""
-"Beginner (Little drop – terrain without difficulties) / Experienced "
-"(Significant slope – Technical terrain, with obstacles)"
+"Specific elements allowing to appreciate the context of the itinerary for "
+"PRMs (advice, delicate passages, etc.)"
 msgstr ""
 
-msgid ""
-"Description of the slope: greater than 10% (Requires assistance when the "
-"slope is greater than 8%); slope break"
-msgstr ""
-
-msgid "Covering"
+msgid "Accessibility covering"
 msgstr ""
 
 msgid ""
@@ -292,7 +218,15 @@ msgid ""
 "road + type of surface (stony, presence of stones, sand, paving, slab...)"
 msgstr ""
 
-msgid "Exposure"
+msgid "Level accessibility"
+msgstr ""
+
+msgid ""
+"Beginner (Little drop – terrain without difficulties) / Experienced "
+"(Significant slope – Technical terrain, with obstacles)"
+msgstr ""
+
+msgid "Accessibility exposure"
 msgstr ""
 
 msgid ""
@@ -300,18 +234,33 @@ msgid ""
 "of shaded areas"
 msgstr ""
 
-msgid ""
-"Description of the narrowing of the trails and the minimum width for "
-"wheelchairs (Trail>0.90 m, Joëlette, Narrow trail requiring strong driving "
-"technique)"
+msgid "Accessibility infrastructure"
+msgstr ""
+
+msgid "Any specific accessibility infrastructure"
+msgstr ""
+
+msgid "Accessibility signage"
 msgstr ""
 
 msgid "Description of the size, shape and colors of signages."
 msgstr ""
 
+msgid "Accessibility slope"
+msgstr ""
+
 msgid ""
-"Specific elements allowing to appreciate the context of the itinerary for "
-"PRMs (advice, delicate passages, etc.)"
+"Description of the slope: greater than 10% (Requires assistance when the "
+"slope is greater than 8%); slope break"
+msgstr ""
+
+msgid "Accessibility width"
+msgstr ""
+
+msgid ""
+"Description of the narrowing of the trails and the minimum width for "
+"wheelchairs (Trail>0.90 m, Joëlette, Narrow trail requiring strong driving "
+"technique)"
 msgstr ""
 
 msgid "Route"
@@ -530,37 +479,6 @@ msgstr ""
 msgid "Hike"
 msgstr "Caminata"
 
-msgid "Photos to illustrate information related to the accessibility of treks."
-msgstr ""
-
-msgid "Attached files for accessibility"
-msgstr ""
-
-msgid "Accessibility type"
-msgstr ""
-
-msgid "Actions"
-msgstr ""
-
-msgid "Update"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "No file attached for accessibility"
-msgstr ""
-
-msgid "You are not allowed to see attachments."
-msgstr ""
-
-msgid " Confirm file deletion"
-msgstr ""
-
-#, python-brace-format
-msgid "Are you sure to delete this file {file} ?"
-msgstr ""
-
 msgid "Attributes"
 msgstr ""
 
@@ -709,9 +627,6 @@ msgstr "Altitud máx"
 msgid "Transports"
 msgstr "Transportes"
 
-msgid "Disabled Infrastructure"
-msgstr "Zona para personas con discapacidad"
-
 msgid "Add a new poi"
 msgstr ""
 
@@ -736,27 +651,3 @@ msgstr ""
 
 msgid "This hike is in the core of the national park"
 msgstr "Este itinerario está en el corazón del Parque nacional"
-
-#, python-format
-msgid "Add attachment %s"
-msgstr ""
-
-msgid "Your attachment was uploaded."
-msgstr ""
-
-#, python-format
-msgid "Update attachment %s"
-msgstr ""
-
-msgid "Your attachment was updated."
-msgstr ""
-
-#, python-format
-msgid "Remove attachment %s"
-msgstr ""
-
-msgid "Your attachment was deleted."
-msgstr ""
-
-msgid "You are not allowed to delete this attachment."
-msgstr ""

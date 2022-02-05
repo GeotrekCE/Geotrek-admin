@@ -159,7 +159,7 @@ class TrekForm(BaseTrekForm):
                 Div(
                     'accessibilities',
                     'accessibility_level',
-                    'disabled_infrastructure',
+                    'accessibility_infrastructure',
                     'accessibility_slope',
                     'accessibility_covering',
                     'accessibility_exposure',
@@ -315,7 +315,7 @@ class TrekForm(BaseTrekForm):
             ['structure', 'name', 'review', 'published', 'labels', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
              'access', 'description_teaser', 'description', 'ratings_description', 'points_reference',
-             'disabled_infrastructure', 'advised_parking', 'parking_location',
+             'accessibility_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'gear', 'themes', 'networks', 'practice', 'accessibilities',
              'accessibility_level', 'accessibility_signage', 'accessibility_slope', 'accessibility_covering',
              'accessibility_exposure', 'accessibility_width', 'accessibility_advice', 'web_links',

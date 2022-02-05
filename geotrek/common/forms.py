@@ -306,7 +306,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
         self._object = kwargs.pop('object', None)
 
         super().__init__(*args, **kwargs)
-        self.fields['legend'].widget.attrs['placeholder'] = _('Here this place can be tricky')
+        self.fields['legend'].widget.attrs['placeholder'] = _('Overview of the tricky passage')
 
         # Detect fields errors without uploading (using HTML5)
         self.fields['author'].widget.attrs['pattern'] = r'^\S.*'

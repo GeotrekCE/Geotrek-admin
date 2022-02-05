@@ -125,8 +125,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                 help_text=_("Main attraction and interest"))
     access = models.TextField(verbose_name=_("Access"), blank=True,
                               help_text=_("Best way to go"))
-    disabled_infrastructure = models.TextField(verbose_name=_("Disabled infrastructure"),
-                                               blank=True, help_text=_("Any specific infrastructure"))
     duration = models.FloatField(verbose_name=_("Duration"), null=True, blank=True,
                                  help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
                                  validators=[MinValueValidator(0)])
@@ -149,33 +147,36 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     practice = models.ForeignKey('Practice', related_name="treks", on_delete=models.CASCADE,
                                  blank=True, null=True, verbose_name=_("Practice"))
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
-                                             verbose_name=_("Accessibility"))
-    accessibility_level = models.ForeignKey('AccessibilityLevel', related_name="treks", blank=True,
-                                            verbose_name=_("Level"), null=True, on_delete=models.PROTECT,
-                                            help_text=_("Beginner (Little drop – terrain without difficulties) / Experienced "
-                                                        "(Significant slope – Technical terrain, with obstacles)"))
-    accessibility_slope = models.TextField(verbose_name=_("Slope"),
-                                           blank=True, help_text=_("Description of the slope: greater than 10% "
-                                                                   "(Requires assistance when the slope is greater "
-                                                                   "than 8%); slope break"))
-    accessibility_covering = models.TextField(verbose_name=_("Covering"),
+                                             verbose_name=_("Accessibility type"))
+    accessibility_advice = models.TextField(verbose_name=_("Accessibility advice"),
+                                            blank=True,
+                                            help_text=_("Specific elements allowing to appreciate the context "
+                                                        "of the itinerary for PRMs (advice, delicate passages, etc.)"))
+    accessibility_covering = models.TextField(verbose_name=_("Accessibility covering"),
                                               blank=True, help_text=_("Description of the surfaces encountered on the "
                                                                       "entire route. Track, path, road + type of "
                                                                       "surface (stony, presence of stones, sand, "
                                                                       "paving, slab...)"))
-    accessibility_exposure = models.TextField(verbose_name=_("Exposure"),
+    accessibility_level = models.ForeignKey('AccessibilityLevel', related_name="treks", blank=True,
+                                            verbose_name=_("Level accessibility"), null=True, on_delete=models.PROTECT,
+                                            help_text=_("Beginner (Little drop – terrain without difficulties) / Experienced "
+                                                        "(Significant slope – Technical terrain, with obstacles)"))
+    accessibility_exposure = models.TextField(verbose_name=_("Accessibility exposure"),
                                               blank=True, help_text=_("Description of exposures and shaded areas. "
                                                                       "Shaded, High exposure, Presence of shaded areas"))
-    accessibility_width = models.TextField(verbose_name=_("Width"),
+    accessibility_infrastructure = models.TextField(verbose_name=_("Accessibility infrastructure"),
+                                                    blank=True, help_text=_("Any specific accessibility infrastructure"))
+    accessibility_signage = models.TextField(verbose_name=_("Accessibility signage"),
+                                             blank=True, help_text=_("Description of the size, shape and colors of signages."))
+    accessibility_slope = models.TextField(verbose_name=_("Accessibility slope"),
+                                           blank=True, help_text=_("Description of the slope: greater than 10% "
+                                                                   "(Requires assistance when the slope is greater "
+                                                                   "than 8%); slope break"))
+    accessibility_width = models.TextField(verbose_name=_("Accessibility width"),
                                            blank=True, help_text=_("Description of the narrowing of the trails and the "
                                                                    "minimum width for wheelchairs (Trail>0.90 m, "
                                                                    "Joëlette, Narrow trail requiring strong driving "
                                                                    "technique)"))
-    accessibility_signage = models.TextField(verbose_name=_("Signage"),
-                                             blank=True, help_text=_("Description of the size, shape and colors of signages."))
-    accessibility_advice = models.TextField(verbose_name=_("Advice"),
-                                            blank=True, help_text=_("Specific elements allowing to appreciate the context "
-                                                                    "of the itinerary for PRMs (advice, delicate passages, etc.)"))
     route = models.ForeignKey('Route', related_name='treks', on_delete=models.CASCADE,
                               blank=True, null=True, verbose_name=_("Route"))
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.CASCADE,

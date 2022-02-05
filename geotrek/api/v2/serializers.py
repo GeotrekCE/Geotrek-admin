@@ -605,7 +605,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('ambiance', self, obj)
 
         def get_disabled_infrastructure(self, obj):
-            return get_translation_or_dict('disabled_infrastructure', self, obj)
+            return get_translation_or_dict('accessibility_infrastructure', self, obj)
 
         def get_departure(self, obj):
             return get_translation_or_dict('departure', self, obj)

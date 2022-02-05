@@ -93,7 +93,7 @@ class CirkwiPOISerializer:
 
 
 class CirkwiTrekSerializer(CirkwiPOISerializer):
-    ADDITIONNAL_INFO = ('departure', 'arrival', 'ambiance', 'access', 'disabled_infrastructure',
+    ADDITIONNAL_INFO = ('departure', 'arrival', 'ambiance', 'access', 'accessibility_infrastructure',
                         'advised_parking', 'public_transport', 'advice')
 
     def __init__(self, request, stream, get_params=None):

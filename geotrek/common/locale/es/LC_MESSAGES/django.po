@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-02-04 16:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivia Duval <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,6 +60,18 @@ msgid "File must be of ZIP type."
 msgstr ""
 
 msgid "Launch Sync"
+msgstr ""
+
+msgid "Overview of the tricky passage"
+msgstr ""
+
+msgid "Submit attachment"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Update attachment"
 msgstr ""
 
 msgid "Global tiles syncing ..."
@@ -133,14 +145,59 @@ msgstr "Pictograma"
 msgid "Merge"
 msgstr ""
 
+msgid "Slope"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Signage"
+msgstr ""
+
+msgid "Image"
+msgstr ""
+
+msgid "Information accessibility"
+msgstr ""
+
+msgid "Creation Date"
+msgstr ""
+
+msgid "Creator"
+msgstr ""
+
+msgid "User that uploaded"
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+msgid "Original creator"
+msgstr ""
+
+msgid "Filename"
+msgstr ""
+
+msgid "Renames the file"
+msgstr ""
+
+msgid "Legend"
+msgstr ""
+
+msgid "Details displayed"
+msgstr ""
+
+msgid "Attachment accessibility"
+msgstr ""
+
+msgid "Attachments accessibility"
+msgstr ""
+
 msgid "Organism"
 msgstr "Organismo"
 
 msgid "Organisms"
 msgstr "Organismos"
-
-msgid "Creation Date"
-msgstr ""
 
 msgid "Cirkwi tag"
 msgstr ""
@@ -224,6 +281,18 @@ msgid "Label"
 msgstr "Sello de calidad"
 
 msgid "Labels"
+msgstr ""
+
+msgid "Order"
+msgstr ""
+
+msgid "Within a practice. Alphabetical order if blank"
+msgstr ""
+
+msgid "Alphabetical order if blank"
+msgstr ""
+
+msgid "Color"
 msgstr ""
 
 #, python-brace-format
@@ -315,6 +384,37 @@ msgid "Import from web."
 msgstr ""
 
 msgid "Init sync ..."
+msgstr ""
+
+msgid "Photos to illustrate information related to the accessibility of treks."
+msgstr ""
+
+msgid "Photos accessibility"
+msgstr ""
+
+msgid "Accessibility type"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "No file attached for accessibility"
+msgstr ""
+
+msgid "You are not allowed to see attachments."
+msgstr ""
+
+msgid " Confirm file deletion"
+msgstr ""
+
+#, python-brace-format
+msgid "Are you sure to delete this file {file} ?"
 msgstr ""
 
 msgid "Paths"
@@ -413,9 +513,6 @@ msgstr ""
 msgid "Are you sure you want to sync ?"
 msgstr ""
 
-msgid "Cancel"
-msgstr ""
-
 msgid "Sync"
 msgstr ""
 
@@ -458,6 +555,29 @@ msgid "W"
 msgstr ""
 
 msgid "Reports"
+msgstr ""
+
+#, python-format
+msgid "Add attachment %s"
+msgstr ""
+
+msgid "Your attachment was uploaded."
+msgstr ""
+
+msgid "Update attachment %s"
+msgstr ""
+
+msgid "Your attachment was updated."
+msgstr ""
+
+#, python-format
+msgid "Remove attachment %s"
+msgstr ""
+
+msgid "Your attachment was deleted."
+msgstr ""
+
+msgid "You are not allowed to delete this attachment."
 msgstr ""
 
 msgid "Any year"

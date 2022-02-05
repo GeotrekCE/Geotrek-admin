@@ -203,7 +203,7 @@ class TrekViewsTest(CommonTest):
                 'order': 1,
                 'pictogram': '/static/trekking/trek.svg',
                 'slug': 'trek',
-                'type2_label': 'Accessibility',
+                'type2_label': 'Accessibility type',
             },
             'children': [],
             'cities': [],
@@ -216,7 +216,7 @@ class TrekViewsTest(CommonTest):
                 'label': 'Difficulty',
                 'pictogram': '/media/upload/difficulty.png',
             },
-            'disabled_infrastructure': '<p>Disabled infrastructure</p>',
+            'accessibility_infrastructure': '<p>Accessibility infrastructure</p>',
             'districts': [],
             'dives': [],
             'duration': 1.5,
@@ -317,8 +317,8 @@ class TrekViewsTest(CommonTest):
             'ambiance_en': '',
             'access_fr': '',
             'access_en': '',
-            'disabled_infrastructure_fr': '',
-            'disabled_infrastructure_en': '',
+            'accessibility_infrastructure_fr': '',
+            'accessibility_infrastructure_en': '',
             'duration': '0',
             'labels': [],
             'advised_parking': 'Very close',
@@ -992,7 +992,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               "order": 1,
                               "label": "Hike",
                               "slug": "trek",
-                              "type2_label": "Accessibility",
+                              "type2_label": "Accessibility type",
                               "pictogram": "/static/trekking/trek.svg"})
 
     def test_sources(self):
