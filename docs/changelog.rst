@@ -5,9 +5,9 @@ CHANGELOG
 2.76.1+dev (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**Bug fixes**
 
--
+- Remove multiple choice ratings by rating scale for treks
 
 
 2.76.1     (2022-02-07)

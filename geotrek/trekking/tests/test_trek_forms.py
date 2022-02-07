@@ -22,7 +22,7 @@ class TrekFormTest(TestCase):
         data = {
             'name_en': 'Trek',
             'practice': str(self.rating.scale.practice.pk),
-            'rating_scale_{}'.format(self.rating.scale.pk): [str(self.rating.pk)],
+            'rating_scale_{}'.format(self.rating.scale.pk): str(self.rating.pk),
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -56,7 +56,7 @@ class TrekFormTest(TestCase):
         data = {
             'name_en': 'Trek',
             'practice': str(self.rating.scale.practice.pk),
-            f'rating_scale_{other_rating.scale.pk}': [str(other_rating.pk)],
+            f'rating_scale_{other_rating.scale.pk}': str(other_rating.pk),
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
