@@ -264,6 +264,7 @@ class TrekForm(BaseTrekForm):
         try:
             return_value = super().save(self, *args, **kwargs)
             # Save ratings
+            # TODO : Go through practice and not rating_scales
             if return_value.practice:
                 field = getattr(return_value, 'ratings')
                 to_remove = list(field.exclude(scale__practice=return_value.practice).values_list('pk', flat=True))
