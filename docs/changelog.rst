@@ -5,9 +5,10 @@ CHANGELOG
 2.76.2+dev (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**Documentation**
 
--
+- Fix documentation trek with gear and not equipments
+
 
 2.76.2     (2022-02-08)
 -----------------------
