@@ -211,7 +211,7 @@ msgid "Hiking networks"
 msgstr "Réseaux de randonnée"
 
 msgid "Accessibility advice"
-msgstr "Conseil d'accessibilité"
+msgstr "Conseils d'accessibilité"
 
 msgid ""
 "Specific elements allowing to appreciate the context of the itinerary for "
@@ -242,7 +242,7 @@ msgstr ""
 "(Pente importante – Terrain technique, avec obstacles)"
 
 msgid "Accessibility exposure"
-msgstr "Exposition accessiblité"
+msgstr "Exposition accessibilité"
 
 msgid ""
 "Description of exposures and shaded areas. Shaded, High exposure, Presence "
@@ -258,7 +258,7 @@ msgid "Any specific accessibility infrastructure"
 msgstr "Infrastructure d'accessibilité spécifique à disposition"
 
 msgid "Accessibility signage"
-msgstr "Accessibilité signalétique"
+msgstr "Signalétique accessibilité"
 
 msgid "Description of the size, shape and colors of signages."
 msgstr "Description de taille, forme et couleurs des signalétiques."
@@ -550,8 +550,8 @@ msgstr "Impression livret grand public"
 msgid "Print booklet"
 msgstr "Impr. livret"
 
-msgid "Attached files accessibility"
-msgstr "Fichiers joint pour l'accessibilité"
+msgid "Photos accessibility"
+msgstr "Photos accessibilité"
 
 msgid "yes"
 msgstr "oui"

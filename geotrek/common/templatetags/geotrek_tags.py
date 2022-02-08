@@ -8,6 +8,11 @@ register = template.Library()
 
 
 @register.simple_tag
+def is_photos_accessibilities_enabled():
+    return settings.ACCESSIBILITY_ATTACHMENTS_ENABLED
+
+
+@register.simple_tag
 def settings_value(name):
     return getattr(settings, name, "")
 

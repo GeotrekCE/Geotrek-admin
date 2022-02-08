@@ -9,6 +9,12 @@ CHANGELOG
 
 - Fix documentation trek with gear and not equipments
 
+**Bug fixes**
+
+- Fix css caption detail
+- Fix ACCESSIBILITY_ATTACHMENTS_ENABLED setting work as intended
+- Fix attachment translations
+- Facilitate the comprehension of the difference between fields label_accessibility and approved in touristic content detail
 
 2.76.2     (2022-02-08)
 -----------------------

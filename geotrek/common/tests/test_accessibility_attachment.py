@@ -94,7 +94,7 @@ class EntityAttachmentTestCase(TestCase):
         response = self.client.get(self.object.get_detail_url())
 
         self.assertTemplateUsed(response, template_name='paperclip/attachment_list.html')
-        self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
+        self.assertTemplateNotUsed(response, template_name='common/attachment_accessibility_list.html')
 
     def test_add_form_in_details_if_perms(self):
         self.user.has_perm = mock.MagicMock(return_value=True)
