@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Remove multiple choice ratings by rating scale for treks
+- Fix translations equipment and disabled_infrastructure are recovered for gear and accessibility_infrastructure
 
 
 2.76.1     (2022-02-07)
