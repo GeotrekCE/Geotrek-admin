@@ -114,13 +114,11 @@ class POIViewsTest(CommonTest):
         element_not_published.published = False
         element_not_published.review = True
         element_not_published.save()
-        self.login()
         response = self.client.get(self.model.get_jsonlist_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Waiting for publication')
 
     def test_empty_topology(self):
-        self.login()
         data = self.get_good_data()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = ''
@@ -135,7 +133,6 @@ class POIViewsTest(CommonTest):
             self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
     def test_listing_number_queries(self):
-        self.login()
         # Create many instances
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
@@ -147,14 +144,12 @@ class POIViewsTest(CommonTest):
             self.client.get(self.model.get_format_list_url())
 
     def test_pois_on_treks_do_not_exist(self):
-        self.login()
         self.modelfactory.create()
 
         response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
         self.assertEqual(response.status_code, 404)
 
     def test_pois_on_treks_not_public(self):
-        self.login()
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
@@ -162,6 +157,7 @@ class POIViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_pois_on_treks_not_public_anonymous(self):
+        self.logout()
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
@@ -365,8 +361,6 @@ class TrekViewsTest(CommonTest):
         super().test_status()
 
     def test_badfield_goodgeom(self):
-        self.login()
-
         bad_data, form_error = self.get_bad_data()
         bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
 
@@ -384,13 +378,11 @@ class TrekViewsTest(CommonTest):
             self.assertEqual(response.status_code, 200)
 
     def test_no_pois_detached_in_create(self):
-        self.login()
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'pois_excluded')
 
     def test_pois_detached_update(self):
-        self.login()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
             trek = TrekFactory.create(paths=[p1])
@@ -404,7 +396,6 @@ class TrekViewsTest(CommonTest):
         self.assertIn(poi, trek.pois_excluded.all())
 
     def test_detail_lother_language(self):
-        self.login()
 
         bad_data, form_error = self.get_bad_data()
         bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
@@ -418,8 +409,6 @@ class TrekViewsTest(CommonTest):
     def test_list_in_csv(self):
         if self.model is None:
             return  # Abstract test should not run
-
-        self.login()
 
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
         self.city = CityFactory(geom=polygon, name="Trifouilli")
@@ -1391,7 +1380,6 @@ class ServiceViewsTest(CommonTest):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_empty_topology(self):
-        self.login()
         data = self.get_good_data()
         data['topology'] = ''
         response = self.client.post(self.model.get_add_url(), data)
@@ -1401,7 +1389,6 @@ class ServiceViewsTest(CommonTest):
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_empty_topology_nds(self):
-        self.login()
         data = self.get_good_data()
         data['geom'] = ''
         response = self.client.post(self.model.get_add_url(), data)
@@ -1410,7 +1397,6 @@ class ServiceViewsTest(CommonTest):
         self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
     def test_listing_number_queries(self):
-        self.login()
         # Create many instances
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
@@ -1424,14 +1410,12 @@ class ServiceViewsTest(CommonTest):
             self.client.get(self.model.get_format_list_url())
 
     def test_services_on_treks_do_not_exist(self):
-        self.login()
         self.modelfactory.create()
 
         response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
         self.assertEqual(response.status_code, 404)
 
     def test_services_on_treks_not_public(self):
-        self.login()
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
@@ -1439,6 +1423,7 @@ class ServiceViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_services_on_treks_not_public_anonymous(self):
+        self.logout()
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)

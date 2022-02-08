@@ -124,7 +124,6 @@ class TouristicContentViewsTests(CommonTest):
         CityFactory.create(name="Nor", code='09001',
                            geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
                                                      srid=settings.SRID)))
-        self.login()
         params = '?city=09000'
         response = self.client.get(self.model.get_jsonlist_url() + params)
         self.assertEqual(response.status_code, 200)
@@ -251,7 +250,6 @@ class TouristicEventViewsTests(CommonTest):
                                               title='mapimage')
         obj.attachment = attachment
         obj.save()
-        self.login()
         mock_requests.get.return_value.status_code = 200
         mock_requests.get.return_value.content = '<p id="properties">Mock</p>'
         response = self.client.get(obj.get_document_url())

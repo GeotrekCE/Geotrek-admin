@@ -98,7 +98,6 @@ class ReportViewsTest(CommonTest):
         """Test report created if `name` in data"""
         data = self.get_good_data()
         data['name'] = 'Anonymous'
-        self.login()
         response = self.client.post(self._get_add_url(), data)
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
@@ -108,8 +107,6 @@ class ReportViewsTest(CommonTest):
     def test_crud_status(self):
         if self.model is None:
             return  # Abstract test should not run
-
-        self.login()
 
         obj = self.modelfactory()
 
@@ -173,16 +170,6 @@ class BaseAPITest(TestCase):
         cls.user.user_permissions.add(perm)
 
         cls.login_url = '/login/'
-
-    def login(self):
-        response = self.client.get(self.login_url)
-        csrftoken = response.cookies.get('csrftoken', '')
-        response = self.client.post(self.login_url,
-                                    {'username': self.user.username,
-                                     'password': 'booh',
-                                     'csrfmiddlewaretoken': csrftoken},
-                                    allow_redirects=False)
-        self.assertEqual(response.status_code, 302)
 
 
 class CreateReportsAPITest(BaseAPITest):

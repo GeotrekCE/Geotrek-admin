@@ -97,7 +97,6 @@ class InterventionViewsTest(CommonTest):
         return good_data
 
     def test_creation_form_on_signage(self):
-        self.login()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             signa = SignageFactory.create()
         else:
@@ -121,7 +120,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(signa, Intervention.objects.get().target)
 
     def test_detail_target_objects(self):
-        self.login()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create(geom=LineString((200, 200), (300, 300)))
             signa = SignageFactory.create(paths=[(path, .5, .5)])
@@ -172,8 +170,6 @@ class InterventionViewsTest(CommonTest):
         self.assertNotContains(response, intervention_other.target_display)
 
     def test_creation_form_on_signage_with_errors(self):
-        self.login()
-
         if settings.TREKKING_TOPOLOGY_ENABLED:
             signa = SignageFactory.create()
         else:
@@ -199,8 +195,6 @@ class InterventionViewsTest(CommonTest):
         self.assertFalse(Intervention.objects.exists())
 
     def test_update_form_on_signage(self):
-        self.login()
-
         if settings.TREKKING_TOPOLOGY_ENABLED:
             signa = SignageFactory.create()
         else:
@@ -227,7 +221,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_update_signage(self):
-        self.login()
         target_year = 2017
         if settings.TREKKING_TOPOLOGY_ENABLED:
             intervention = SignageInterventionFactory.create()
@@ -254,7 +247,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(intervention.target.implantation_year, target_year)
 
     def test_creation_form_on_infrastructure(self):
-        self.login()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             infra = InfrastructureFactory.create()
         else:
@@ -273,8 +265,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_creation_form_on_infrastructure_with_errors(self):
-        self.login()
-
         if settings.TREKKING_TOPOLOGY_ENABLED:
             infra = InfrastructureFactory.create()
         else:
@@ -294,8 +284,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_update_form_on_infrastructure(self):
-        self.login()
-
         if settings.TREKKING_TOPOLOGY_ENABLED:
             infra = InfrastructureFactory.create()
         else:
@@ -322,14 +310,12 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_disorders_not_mandatory(self):
-        self.login()
         data = self.get_good_data()
         data.pop('disorders')
         response = self.client.post(Intervention.get_add_url(), data)
         self.assertEqual(response.status_code, 302)
 
     def test_update_infrastructure(self):
-        self.login()
         target_year = 2017
         if settings.TREKKING_TOPOLOGY_ENABLED:
             intervention = InfrastructureInterventionFactory.create()
@@ -358,7 +344,6 @@ class InterventionViewsTest(CommonTest):
         """
         Without segmentation dynamic we do not have paths so we can't put any stake by default coming from paths
         """
-        self.login()
         good_data = self.get_good_data()
         good_data['stake'] = ''
         good_data['topology'] = """
@@ -372,7 +357,6 @@ class InterventionViewsTest(CommonTest):
         self.assertFalse(intervention.stake is None)
 
     def test_form_deleted_projects(self):
-        self.login()
         p1 = ProjectFactory.create()
         p2 = ProjectFactory.create()
         i = InterventionFactory.create(project=p1)
@@ -388,7 +372,6 @@ class InterventionViewsTest(CommonTest):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_csv_on_topology_multiple_paths(self):
         # We create an intervention on multiple paths and we check in csv target's field we have all the paths
-        self.login()
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((4, 0), (8, 0)))
         InterventionFactory.create(target=TopologyFactory.create(paths=[(path_AB, 0.2, 1),
@@ -496,7 +479,6 @@ class ProjectViewsTest(CommonTest):
         pass
 
     def test_project_layer(self):
-        self.login()
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -515,8 +497,6 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(features[0]['properties']['pk'], p1.pk)
 
     def test_project_bbox_filter(self):
-        self.login()
-
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         ProjectFactory.create()
@@ -549,8 +529,6 @@ class ProjectViewsTest(CommonTest):
         else:
             intervention = InterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         project.interventions.add(intervention)
-
-        self.login()
         response = self.client.get(project.get_detail_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, intervention.name)

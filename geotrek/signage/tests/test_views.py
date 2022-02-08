@@ -111,8 +111,6 @@ class BladeViewsTest(CommonTest):
             self.assertContains(response, '.modifiable = false;')
 
     def test_creation_form_on_signage(self):
-        self.login()
-
         signa = SignageFactory.create()
         signage = "%s" % signa
 
@@ -128,7 +126,6 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_delete_redirection(self):
-        self.login()
         signage = SignageFactory.create()
         blade = BladeFactory.create(signage=signage)
 
@@ -137,8 +134,6 @@ class BladeViewsTest(CommonTest):
         self.assertRedirects(response, signage.get_detail_url(), status_code=302)
 
     def test_structure_is_set(self):
-        self.login()
-
         signa = SignageFactory.create()
 
         response = self.client.post(self._get_add_url() + '?signage=%s' % signa.pk, self.get_good_data())
@@ -147,7 +142,6 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(obj.structure, self.user.profile.structure)
 
     def test_basic_format_not_ascii(self):
-        self.login()
         signage = SignageFactory.create(name="ééé")
         BladeFactory.create(signage=signage)
         for fmt in ('csv', 'shp', 'gpx'):
@@ -155,7 +149,6 @@ class BladeViewsTest(CommonTest):
             self.assertEqual(response.status_code, 200, "")
 
     def test_csv_format_with_lines(self):
-        self.login()
         signage = SignageFactory.create(name="ééé")
         blade = BladeFactory.create(signage=signage)
         blade.lines.all().delete()
@@ -171,7 +164,6 @@ class BladeViewsTest(CommonTest):
     def test_set_structure_with_permission(self):
         # The structure do not change because it changes with the signage form.
         # Need to check blade structure and line
-        self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
@@ -184,10 +176,8 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
         self.assertEqual(obj.signage.structure, structure)
-        self.logout()
 
     def test_structure_is_not_changed_without_permission(self):
-        self.login()
         structure = StructureFactory()
         self.assertNotEqual(structure, self.user.profile.structure)
         self.assertFalse(self.user.has_perm('authent.can_bypass_structure'))
@@ -195,7 +185,6 @@ class BladeViewsTest(CommonTest):
         result = self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(result.status_code, 302)
         self.assertEqual(self.model.objects.first().structure, structure)
-        self.logout()
 
 
 class SignageViewsTest(CommonTest):
@@ -247,13 +236,11 @@ class SignageViewsTest(CommonTest):
 
     def test_content_in_detail_page(self):
         signa = SignageFactory.create(description="<b>Beautiful !</b>")
-        self.login()
         response = self.client.get(signa.get_detail_url())
         self.assertContains(response, "<b>Beautiful !</b>")
         self.assertContains(response, "(WGS 84 / Pseudo-Mercator)")
 
     def test_check_structure_or_none_related_are_visible(self):
-        self.login()
         signagetype = SignageTypeFactory.create(structure=None)
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
@@ -263,8 +250,6 @@ class SignageViewsTest(CommonTest):
         self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
 
     def test_no_pictogram(self):
-        self.login()
-
         self.obj = SignageNoPictogramFactory.create()
         response = self.client.get('/api/en/signages/{}'.format(self.obj.pk))
         self.assertEqual(response.status_code, 200)

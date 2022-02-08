@@ -126,8 +126,6 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        self.login()
-
         obj = self.modelfactory()
 
         response = self.client.get(obj.get_list_url())

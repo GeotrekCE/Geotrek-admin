@@ -388,15 +388,19 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
-        user = profile.user
-        user.groups.add(Group.objects.get(name="Référents communication"))
-        self.client.login(username=user.username, password='dooh')
-        self.event1 = TouristicEventFactory.create()
+        cls.user = profile.user
+        cls.user.groups.add(Group.objects.get(name="Référents communication"))
+
+        cls.event1 = TouristicEventFactory.create()
         structure = StructureFactory.create()
-        self.event2 = TouristicEventFactory.create(structure=structure)
+        cls.event2 = TouristicEventFactory.create(structure=structure)
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
 
     def test_can_edit_same_structure(self):
         url = "/touristicevent/edit/{pk}/".format(pk=self.event1.pk)

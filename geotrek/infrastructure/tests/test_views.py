@@ -74,12 +74,10 @@ class InfrastructureViewsTest(CommonTest):
 
     def test_description_in_detail_page(self):
         infra = InfrastructureFactory.create(description="<b>Beautiful !</b>")
-        self.login()
         response = self.client.get(infra.get_detail_url())
         self.assertContains(response, "<b>Beautiful !</b>")
 
     def test_check_structure_or_none_related_are_visible(self):
-        self.login()
         infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
@@ -124,14 +122,13 @@ class InfrastructureConditionTest(TestCase):
         self.assertCountEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
 
 
-class InfraFilterTestMixin():
+class InfraFilterTestMixin:
     factory = None
     filterset = None
 
     def login(self):
         user = PathManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(user=user)
 
     def test_intervention_filter(self):
         self.login()
