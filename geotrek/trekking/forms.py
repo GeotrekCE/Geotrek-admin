@@ -219,7 +219,7 @@ class TrekForm(BaseTrekForm):
             if self.instance.pk:
                 ratings = self.instance.ratings.filter(scale=scale)
             fieldname = f'rating_scale_{scale.pk}'
-            self.fields[fieldname] = forms.ModelMultipleChoiceField(
+            self.fields[fieldname] = forms.ModelChoiceField(
                 label=scale.name,
                 queryset=scale.ratings.all(),
                 required=False,
@@ -264,17 +264,17 @@ class TrekForm(BaseTrekForm):
         try:
             return_value = super().save(self, *args, **kwargs)
             # Save ratings
+            # TODO : Go through practice and not rating_scales
             if return_value.practice:
                 field = getattr(return_value, 'ratings')
                 to_remove = list(field.exclude(scale__practice=return_value.practice).values_list('pk', flat=True))
                 to_add = []
                 for scale in return_value.practice.rating_scales.all():
-                    ratings = self.cleaned_data.get(f'rating_scale_{scale.pk}')
+                    rating = self.cleaned_data.get(f'rating_scale_{scale.pk}')
                     needs_removal = field.filter(scale=scale)
-                    if ratings is not None:
-                        for rating in ratings:
-                            needs_removal = needs_removal.exclude(pk=rating.pk)
-                            to_add.append(rating.pk)
+                    if rating:
+                        needs_removal = needs_removal.exclude(pk=rating.pk)
+                        to_add.append(rating.pk)
                     to_remove += list(needs_removal.values_list('pk', flat=True))
                 field.remove(*to_remove)
                 field.add(*to_add)
