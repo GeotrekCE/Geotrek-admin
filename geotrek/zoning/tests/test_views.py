@@ -31,8 +31,8 @@ class RestrictedAreaViewsTest(TestCase):
 
 
 class RestrictedAreasSerializationTest(TestCase):
-
-    def setUp(cls):
+    @classmethod
+    def setUpTestData(cls):
         cls.type_1 = RestrictedAreaTypeFactory(name="ABC")
         cls.type_2 = RestrictedAreaTypeFactory(name="AAC")
         cls.type_3 = RestrictedAreaTypeFactory(name="ABB")

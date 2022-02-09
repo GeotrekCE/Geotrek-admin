@@ -55,14 +55,16 @@ class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):
 
 
 class SensitiveAreaTemplatesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.area = SensitiveAreaFactory.create()
+
     def setUp(self):
-        self.area = SensitiveAreaFactory.create()
         self.login()
 
     def login(self):
-        User.objects.create_superuser('splash', 'splash@toto.com', password='booh')
-        success = self.client.login(username='splash', password='booh')
-        self.assertTrue(success)
+        user = User.objects.create_superuser('splash', 'splash@toto.com', password='booh')
+        self.client.force_login(user=user)
 
     def tearDown(self):
         self.client.logout()

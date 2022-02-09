@@ -8,5 +8,4 @@ class TrekkingManagerTest(AuthentFixturesTest):
         cls.user = TrekkingManagerFactory(password='booh')
 
     def login(self):
-        success = self.client.login(username=self.user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(user=self.user)

@@ -40,15 +40,18 @@ PNG_BLACK_PIXEL = bytes.fromhex(
 
 
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
-        user = profile.user
-        user.groups.add(Group.objects.get(name="Référents communication"))
-        self.client.login(username=user.username, password='dooh')
-        self.content1 = TouristicContentFactory.create()
+        cls.user = profile.user
+        cls.user.groups.add(Group.objects.get(name="Référents communication"))
+        cls.content1 = TouristicContentFactory.create()
         structure = StructureFactory.create()
-        self.content2 = TouristicContentFactory.create(structure=structure)
+        cls.content2 = TouristicContentFactory.create(structure=structure)
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
 
     def tearDown(self):
         self.client.logout()
@@ -84,12 +87,16 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
 
 
 class TouristicContentTemplatesTest(TrekkingManagerTest):
-    def setUp(self):
-        self.content = TouristicContentFactory.create()
-        cat = self.content.category
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.content = TouristicContentFactory.create()
+        cat = cls.content.category
         cat.type1_label = 'Michelin'
         cat.save()
-        self.category2 = TouristicContentCategoryFactory(label="Another category")
+        cls.category2 = TouristicContentCategoryFactory(label="Another category")
+
+    def setUp(self):
         self.login()
 
     def tearDown(self):
@@ -119,8 +126,11 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
 
 
 class TouristicContentFormTest(TrekkingManagerTest):
+    @classmethod
+    def setUpTestData(cls):
+        cls.category = TouristicContentCategoryFactory()
+
     def setUp(self):
-        self.category = TouristicContentCategoryFactory()
         self.login()
 
     def test_no_category_selected_by_default(self):
