@@ -10,12 +10,13 @@ from geotrek.feedback.tests.factories import ReportFactory
 
 class TestRemoveEmailsOlders(TestCase):
     """Test command erase_emails, if older emails are removed"""
+    @classmethod
+    def setUpTestData(cls):
+        cls.recent_report = ReportFactory(email="yeah@you.com")
 
     def setUp(self):
         # Create two reports
         self.old_report = ReportFactory(email="to_erase@you.com")
-        self.recent_report = ReportFactory(email="yeah@you.com")
-
         # Modify date_insert for old_report
         one_year_one_day = timezone.timedelta(days=370)
         self.old_report.date_insert = timezone.now() - one_year_one_day

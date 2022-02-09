@@ -247,9 +247,9 @@ class SyncRandoFailTest(VarTmpTestCase):
 
 
 class SyncTest(VarTmpTestCase):
-    def setUp(self):
-        super().setUp()
-        self.trek = TrekWithPublishedPOIsFactory.create(published=True)
+    @classmethod
+    def setUpTestData(cls):
+        cls.trek = TrekWithPublishedPOIsFactory.create(published=True)
 
     def test_sync_multiple_time(self):
         management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000', skip_tiles=True, languages='en',
@@ -278,6 +278,7 @@ class SyncTest(VarTmpTestCase):
                                  trekking_models.Trek.objects.filter(published=True).count())
 
     def test_sync_2028(self):
+        old_description = self.trek.description
         self.trek.description = 'toto\u2028tata'
         self.trek.save()
 
@@ -289,6 +290,8 @@ class SyncTest(VarTmpTestCase):
                 treks = json.load(f)
                 # \u2028 is translated to \n
                 self.assertEqual(treks['features'][0]['properties']['description'], 'toto\ntata')
+        self.trek.description = old_description
+        self.trek.save()
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
@@ -331,30 +334,30 @@ class SyncTest(VarTmpTestCase):
 
 
 class SyncComplexTest(VarTmpTestCase):
-    def setUp(self):
-        super().setUp()
-        self.information_desks = InformationDeskFactory.create()
-        self.trek = TrekWithPublishedPOIsFactory.create(published=True)
+    @classmethod
+    def setUpTestData(cls):
+        cls.information_desks = InformationDeskFactory.create()
+        cls.trek = TrekWithPublishedPOIsFactory.create(published=True)
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            InfrastructureFactory.create(paths=[(self.trek.paths.first(), 0, 0)], name="INFRA_1")
-            SignageFactory.create(paths=[(self.trek.paths.first(), 0, 0)], name="SIGNA_1")
+            InfrastructureFactory.create(paths=[(cls.trek.paths.first(), 0, 0)], name="INFRA_1")
+            SignageFactory.create(paths=[(cls.trek.paths.first(), 0, 0)], name="SIGNA_1")
         else:
             InfrastructureFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="INFRA_1")
             SignageFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="SIGNA_1")
         area = SensitiveAreaFactory.create(published=True)
         area.species.practices.add(SportPracticeFactory.create(name='Terrestre'))
         area.save()
-        self.touristic_content = TouristicContentFactory(
+        cls.touristic_content = TouristicContentFactory(
             geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
-        self.touristic_event = TouristicEventFactory(
+        cls.touristic_event = TouristicEventFactory(
             geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
-        self.attachment_touristic_content = AttachmentFactory.create(content_object=self.touristic_content,
-                                                                     attachment_file=get_dummy_uploaded_image())
-        self.attachment_touristic_event = AttachmentFactory.create(content_object=self.touristic_event,
-                                                                   attachment_file=get_dummy_uploaded_image())
-        self.touristic_content_without_attachment = TouristicContentFactory(
+        cls.attachment_touristic_content = AttachmentFactory.create(content_object=cls.touristic_content,
+                                                                    attachment_file=get_dummy_uploaded_image())
+        cls.attachment_touristic_event = AttachmentFactory.create(content_object=cls.touristic_event,
+                                                                  attachment_file=get_dummy_uploaded_image())
+        cls.touristic_content_without_attachment = TouristicContentFactory(
             geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True)
-        self.touristic_event_without_attachment = TouristicEventFactory(
+        cls.touristic_event_without_attachment = TouristicEventFactory(
             geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True)
 
     def get_coordinates(self, geojsonfilename):
