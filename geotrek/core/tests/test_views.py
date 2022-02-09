@@ -1,3 +1,4 @@
+import os
 import re
 from unittest import skipIf, mock
 
@@ -737,9 +738,11 @@ class TrailViewsTest(CommonTest):
     @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
     def test_document_export(self, get_attributes_html):
         get_attributes_html.return_value = b'<p>mock</p>'
-        trail = TrailFactory()
+        trail = TrailFactory(date_update="2000-01-01")
         with open(trail.get_map_image_path(), 'wb') as f:
             f.write(b'***' * 1000)
+
+        self.assertEqual(os.path.getsize(trail.get_map_image_path()), 3000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)
 
