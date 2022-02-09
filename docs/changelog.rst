@@ -15,9 +15,13 @@ CHANGELOG
 - Fix ACCESSIBILITY_ATTACHMENTS_ENABLED setting work as intended
 - Fix attachment translations
 - Facilitate the comprehension of the difference between fields label_accessibility and approved in touristic content detail
+- Fix migration translations equipment and disabled_infrastructure
+
 
 2.76.2     (2022-02-08)
 -----------------------
+
+**DO NOT USE IT!**
 
 **Bug fixes**
 

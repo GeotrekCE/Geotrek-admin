@@ -252,7 +252,7 @@ msgstr ""
 "expositions, Présence de zone ombragées"
 
 msgid "Accessibility infrastructure"
-msgstr "Accessibilité aménagement"
+msgstr "Aménagements d'accessibilité"
 
 msgid "Any specific accessibility infrastructure"
 msgstr "Infrastructure d'accessibilité spécifique à disposition"
