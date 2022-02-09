@@ -532,7 +532,7 @@ msgstr "Stampa pubblica opuscolo"
 msgid "Print booklet"
 msgstr "Stampa opuscolo"
 
-msgid "Attached files accessibility"
+msgid "Photos accessibility"
 msgstr ""
 
 msgid "yes"

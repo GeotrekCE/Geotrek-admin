@@ -520,7 +520,7 @@ msgstr ""
 msgid "Print booklet"
 msgstr ""
 
-msgid "Attached files accessibility"
+msgid "Photos accessibility"
 msgstr ""
 
 msgid "yes"

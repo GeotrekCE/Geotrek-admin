@@ -13,21 +13,26 @@
 {% endblock download %}
 
 {% block after_attachments_extra_tab_nav %}
-    <li class="nav-item">
-      <a class="nav-link" id="tab-attachments-accessibility" href="#attachments-accessibility" data-toggle="tab"><i class="bi bi-eye-slash"></i>
-        <span class="d-none d-sm-inline">{% trans "Attached files accessibility" %} ({{ object.attachments_accessibility.count }})</span></a>
-    </li>
+   {% is_photos_accessibilities_enabled as enabled %}
+   {% if enabled %}
+        <li class="nav-item">
+          <a class="nav-link" id="tab-attachments-accessibility" href="#attachments-accessibility" data-toggle="tab"><i class="bi bi-eye-slash"></i>
+            <span class="d-none d-sm-inline">{% trans "Photos accessibility" %} ({{ object.attachments_accessibility.count }})</span></a>
+        </li>
+   {% endif %}
 {% endblock %}
 
-{% settings_value "ACCESSIBILITY_ATTACHMENTS_ENABLED" as accessibility_attachments_enabled %}
 
-{% if accessibility_attachments_enabled %}
-    {% block after_attachments_extra_tab_content %}
-    <div id="attachments-accessibility" class="tab-pane">
-        {% include 'common/attachment_accessibility_list.html' %}
-    </div>
-    {% endblock %}
-{% endif %}
+{% block after_attachments_extra_tab_content %}
+   {% is_photos_accessibilities_enabled as enabled %}
+   {% if enabled %}
+        <div id="attachments-accessibility" class="tab-pane">
+            {{ accessibility_attachments_enabled }}
+            {% include 'common/attachment_accessibility_list.html' %}
+        </div>
+   {% endif %}
+{% endblock %}
+
 {% block attachmentspanel %}
     {% include "trekking/ratio_info_fragment.html" %}
     {{ block.super }}
