@@ -168,6 +168,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
                                            blank=True)
     web_links = models.ManyToManyField('trekking.WebLink', related_name="sites", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)

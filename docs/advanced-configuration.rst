@@ -947,6 +947,15 @@ Show filter bbox by zoning.
 
 .. image:: images/options/zoning_bboxs.png
 
+
+|
+
+::
+
+   ACCESSIBILITY_ATTACHMENTS_ENABLED = True
+
+Show or not the accessibility menu for attachments
+
 **Translations**
 
 ::
@@ -1584,12 +1593,12 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "duration",
             "description_teaser",
             "description",
-            "equipment",
+            "gear",
             "route",
             "difficulty",
             "ambiance",
             "access",
-            "disabled_infrastructure",
+            "accessibility_infrastructure",
             "advised_parking",
             "parking_location",
             "public_transport",
@@ -1741,6 +1750,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "description_teaser",
             "ambiance",
             "advice",
+            "accessibility",
             "period",
             "labels",
             "themes",
@@ -1963,7 +1973,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "duration_pretty",
             "description",
             "description_teaser",
-            "equipment",
+            "gear",
             "networks",
             "advice",
             "ambiance",
@@ -1987,7 +1997,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "advised_parking",
             "web_links",
             "labels",
-            "disabled_infrastructure",
+            "accessibility_infrastructure",
             "parking_location",
             "points_reference",
             "related",
@@ -2170,6 +2180,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "description_teaser",
             "ambiance",
             "advice",
+            "accessibility",
             "period",
             "labels",
             "themes",
@@ -2248,14 +2259,14 @@ An exhaustive list of form fields hideable in each module.
             "arrival",
             "duration",
             "difficulty",
-            "equipment",
+            "gear",
             "route",
             "ambiance",
             "access",
             "description_teaser",
             "description",
             "points_reference",
-            "disabled_infrastructure",
+            "accessibility_infrastructure",
             "advised_parking",
             "parking_location",
             "public_transport",

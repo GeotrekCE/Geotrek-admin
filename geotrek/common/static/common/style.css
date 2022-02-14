@@ -1,3 +1,16 @@
 #mainfilter input.minmax-field {
     width: calc(60% - 1.9rem);
 }
+
+.caption-detail {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  color: black;
+  text-align: left;
+  caption-side: top;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border: 1px solid #cccccc;
+  padding-left: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}

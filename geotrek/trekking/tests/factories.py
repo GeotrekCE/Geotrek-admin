@@ -109,7 +109,7 @@ class TrekFactory(TopologyFactory):
     description = "<p>Description</p>"
     ambiance = "<p>Ambiance</p>"
     access = "<p>Access</p>"
-    disabled_infrastructure = "<p>Disabled infrastructure</p>"
+    accessibility_infrastructure = "<p>Accessibility infrastructure</p>"
     duration = 1.5  # hour
 
     accessibility_level = factory.SubFactory(AccessibilityLevelFactory)
@@ -124,7 +124,7 @@ class TrekFactory(TopologyFactory):
 
     public_transport = "<p>Public transport</p>"
     advice = "<p>Advice</p>"
-    equipment = "<p>Equipment</p>"
+    gear = "<p>Gear</p>"
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)

@@ -45,7 +45,7 @@ class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Translat
 
     class Meta:
         model = Site
-        fields = ('id', 'structure', 'name', 'practice', 'description', 'description_teaser',
+        fields = ('id', 'structure', 'name', 'practice', 'accessibility', 'description', 'description_teaser',
                   'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
                   'information_desks', 'web_links', 'type', 'parent', 'children', 'eid',
                   'orientation', 'wind', 'ratings') + \

@@ -137,7 +137,7 @@ class TrekForm(BaseTrekForm):
                     'parking_location',
                     'public_transport',
                     'advice',
-                    'equipment',
+                    'gear',
                     'themes',
                     'labels',
                     'networks',
@@ -159,7 +159,7 @@ class TrekForm(BaseTrekForm):
                 Div(
                     'accessibilities',
                     'accessibility_level',
-                    'disabled_infrastructure',
+                    'accessibility_infrastructure',
                     'accessibility_slope',
                     'accessibility_covering',
                     'accessibility_exposure',
@@ -219,7 +219,7 @@ class TrekForm(BaseTrekForm):
             if self.instance.pk:
                 ratings = self.instance.ratings.filter(scale=scale)
             fieldname = f'rating_scale_{scale.pk}'
-            self.fields[fieldname] = forms.ModelMultipleChoiceField(
+            self.fields[fieldname] = forms.ModelChoiceField(
                 label=scale.name,
                 queryset=scale.ratings.all(),
                 required=False,
@@ -264,17 +264,17 @@ class TrekForm(BaseTrekForm):
         try:
             return_value = super().save(self, *args, **kwargs)
             # Save ratings
+            # TODO : Go through practice and not rating_scales
             if return_value.practice:
                 field = getattr(return_value, 'ratings')
                 to_remove = list(field.exclude(scale__practice=return_value.practice).values_list('pk', flat=True))
                 to_add = []
                 for scale in return_value.practice.rating_scales.all():
-                    ratings = self.cleaned_data.get(f'rating_scale_{scale.pk}')
+                    rating = self.cleaned_data.get(f'rating_scale_{scale.pk}')
                     needs_removal = field.filter(scale=scale)
-                    if ratings is not None:
-                        for rating in ratings:
-                            needs_removal = needs_removal.exclude(pk=rating.pk)
-                            to_add.append(rating.pk)
+                    if rating:
+                        needs_removal = needs_removal.exclude(pk=rating.pk)
+                        to_add.append(rating.pk)
                     to_remove += list(needs_removal.values_list('pk', flat=True))
                 field.remove(*to_remove)
                 field.add(*to_add)
@@ -315,8 +315,8 @@ class TrekForm(BaseTrekForm):
             ['structure', 'name', 'review', 'published', 'labels', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
              'access', 'description_teaser', 'description', 'ratings_description', 'points_reference',
-             'disabled_infrastructure', 'advised_parking', 'parking_location',
-             'public_transport', 'advice', 'equipment', 'themes', 'networks', 'practice', 'accessibilities',
+             'accessibility_infrastructure', 'advised_parking', 'parking_location',
+             'public_transport', 'advice', 'gear', 'themes', 'networks', 'practice', 'accessibilities',
              'accessibility_level', 'accessibility_signage', 'accessibility_slope', 'accessibility_covering',
              'accessibility_exposure', 'accessibility_width', 'accessibility_advice', 'web_links',
              'information_desks', 'source', 'portal', 'children_trek', 'eid', 'eid2', 'reservation_system',

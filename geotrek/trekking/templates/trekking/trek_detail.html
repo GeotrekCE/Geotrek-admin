@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n l10n static geojson_tags thumbnail mapentity_tags %}
+{% load i18n l10n static geojson_tags thumbnail geotrek_tags mapentity_tags %}
 
 {% block download %}
     {{ block.super }}
@@ -13,16 +13,24 @@
 {% endblock download %}
 
 {% block after_attachments_extra_tab_nav %}
-    <li class="nav-item">
-      <a class="nav-link" id="tab-attachments-accessibility" href="#attachments-accessibility" data-toggle="tab"><i class="bi bi-eye-slash"></i>
-        <span class="d-none d-sm-inline">{% trans "Attached files accessibility" %} ({{ object.attachments_accessibility.count }})</span></a>
-    </li>
+   {% is_photos_accessibilities_enabled as enabled %}
+   {% if enabled %}
+        <li class="nav-item">
+          <a class="nav-link" id="tab-attachments-accessibility" href="#attachments-accessibility" data-toggle="tab"><i class="bi bi-eye-slash"></i>
+            <span class="d-none d-sm-inline">{% trans "Photos accessibility" %} ({{ object.attachments_accessibility.count }})</span></a>
+        </li>
+   {% endif %}
 {% endblock %}
 
+
 {% block after_attachments_extra_tab_content %}
-   <div id="attachments-accessibility" class="tab-pane">
-    {% include 'common/attachment_accessibility_list.html' %}
-  </div>
+   {% is_photos_accessibilities_enabled as enabled %}
+   {% if enabled %}
+        <div id="attachments-accessibility" class="tab-pane">
+            {{ accessibility_attachments_enabled }}
+            {% include 'common/attachment_accessibility_list.html' %}
+        </div>
+   {% endif %}
 {% endblock %}
 
 {% block attachmentspanel %}

@@ -1,14 +1,15 @@
 import json
 
-from easy_thumbnails.alias import aliases
-from easy_thumbnails.exceptions import InvalidImageFormatError
-from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
 from django.urls import reverse
-from django.utils.translation import get_language, gettext_lazy as _
+from django.utils.translation import get_language
+from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
+from easy_thumbnails.alias import aliases
+from easy_thumbnails.exceptions import InvalidImageFormatError
+from easy_thumbnails.files import get_thumbnailer
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
@@ -540,6 +541,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         update_datetime = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
+        gear = serializers.SerializerMethodField()
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
         pdf = serializers.SerializerMethodField('get_pdf_url')
@@ -559,6 +561,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         cities = serializers.SerializerMethodField()
         departure_city = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
+
+        def get_gear(self, obj):
+            return get_translation_or_dict('gear', self, obj)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -600,7 +605,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('ambiance', self, obj)
 
         def get_disabled_infrastructure(self, obj):
-            return get_translation_or_dict('disabled_infrastructure', self, obj)
+            return get_translation_or_dict('accessibility_infrastructure', self, obj)
 
         def get_departure(self, obj):
             return get_translation_or_dict('departure', self, obj)
@@ -652,13 +657,13 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('public_transport', self, obj)
 
         def get_elevation_area_url(self, obj):
-            return build_url(self, reverse('trekking:trek_elevation_area', kwargs={'lang': get_language(), 'pk': obj.pk}))
+            return build_url(self, reverse('apiv2:trek-dem', args=(obj.pk,)))
 
         def get_elevation_svg_url(self, obj):
-            return build_url(self, reverse('trekking:trek_profile_svg', kwargs={'lang': get_language(), 'pk': obj.pk}))
+            return build_url(self, reverse('apiv2:trek-profile', args=(obj.pk,)) + f"?language={get_language()}&format=svg")
 
         def get_altimetric_profile_url(self, obj):
-            return build_url(self, reverse('trekking:trek_profile', kwargs={'lang': get_language(), 'pk': obj.pk}))
+            return build_url(self, reverse('apiv2:trek-profile', args=(obj.pk,)))
 
         def get_points_reference(self, obj):
             if not obj.points_reference:
@@ -684,7 +689,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'departure', 'departure_city', 'departure_geom', 'descent',
                 'description', 'description_teaser', 'difficulty',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',
-                'elevation_svg_url', 'equipment', 'external_id', 'geometry', 'gpx',
+                'elevation_svg_url', 'external_id', 'gear', 'geometry', 'gpx',
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
                 'max_elevation', 'min_elevation', 'name', 'networks', 'next',
                 'parents', 'parking_location', 'pdf', 'points_reference',
@@ -1042,8 +1047,8 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description', 'description_teaser',
-                'eid', 'geometry', 'information_desks', 'labels', 'managers',
+                'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
+                'description_teaser', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
                 'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice',
                 'ratings', 'sector', 'source', 'structure', 'themes',
                 'type', 'url', 'uuid', 'courses', 'web_links', 'wind',
@@ -1056,6 +1061,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         parents = serializers.ReadOnlyField(source='parents_id')
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        equipment = serializers.SerializerMethodField()
         gear = serializers.SerializerMethodField()
         ratings_description = serializers.SerializerMethodField()
         sites = serializers.SerializerMethodField()
@@ -1068,6 +1074,9 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+
+        def get_equipment(self, obj):
+            return get_translation_or_dict('equipment', self, obj)
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)

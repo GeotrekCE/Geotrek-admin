@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-02 08:51+0000\n"
+"POT-Creation-Date: 2022-02-03 15:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -422,7 +422,10 @@ msgstr ""
 msgid "Filter by maximum ascent (meters)."
 msgstr ""
 
-msgid "Filter by one or more accessibility id, comma-separated."
+msgid "Types of accessibility"
+msgstr ""
+
+msgid "Filter by one or more type of accessibility id, comma-separated."
 msgstr ""
 
 msgid "Accessibility level"
@@ -518,7 +521,4 @@ msgid "Filter by one or more source id, comma-separated."
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name or content."
-msgstr ""
-
-msgid "External ID"
 msgstr ""

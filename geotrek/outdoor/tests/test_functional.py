@@ -19,6 +19,7 @@ class SiteViewsTests(CommonTest):
 
     def get_expected_json_attrs(self):
         return {
+            'accessibility': 'Accessible',
             'advice': 'Warning!',
             'ambiance': 'Party time!',
             'areas': [],

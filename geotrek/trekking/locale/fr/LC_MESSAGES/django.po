@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-01 11:43+0000\n"
+"POT-Creation-Date: 2022-02-03 15:03+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -38,18 +38,6 @@ msgstr "Itinéraire"
 
 msgid "Trek"
 msgstr "Itinéraire"
-
-msgid "Here this place can be tricky"
-msgstr "Ici, cet endroit peut être délicat"
-
-msgid "Submit attachment"
-msgstr "Soumettre la pièce jointe "
-
-msgid "Cancel"
-msgstr "Annuler"
-
-msgid "Update attachment"
-msgstr "Mettre à jour la pièce jointe"
 
 msgid "Children"
 msgstr "Enfants"
@@ -89,6 +77,9 @@ msgid "Cannot use parent trek {child.name} as a child trek."
 msgstr ""
 "Impossible d'utiliser l'itinéraire parent {child.name} comme itinéraire "
 "enfant."
+
+msgid "Cancel"
+msgstr "Annuler"
 
 msgid "Create"
 msgstr "Créer"
@@ -135,60 +126,6 @@ msgstr "Cotation"
 msgid "Ratings"
 msgstr "Cotations"
 
-msgid "Slope"
-msgstr "Pente"
-
-msgid "Width"
-msgstr "Largeur"
-
-msgid "Signage"
-msgstr "Signalétique"
-
-msgid "Image"
-msgstr "Image"
-
-msgid "Information accessibility"
-msgstr "Information accessibilité"
-
-msgid "Creation Date"
-msgstr "Date de création"
-
-msgid "Creator"
-msgstr "Créateur"
-
-msgid "User that uploaded"
-msgstr "Utilisateur qui a téléchargé"
-
-msgid "Author"
-msgstr "Auteur"
-
-msgid "Original creator"
-msgstr "Créateur d'origine "
-
-msgid "Filename"
-msgstr "Nom de fichier"
-
-msgid "Renames the file"
-msgstr "Renomme le fichier"
-
-msgid "Legend"
-msgstr "Légende"
-
-msgid "Details displayed"
-msgstr "Détails affichés"
-
-msgid "Insertion date"
-msgstr "Date d'insertion"
-
-msgid "Update date"
-msgstr "Date de mise à jour"
-
-msgid "Attachment accessibility"
-msgstr "Pièce jointe pour l'accéssibilité"
-
-msgid "Attachments accessibility"
-msgstr "Pièces jointes pour l'accéssibilité"
-
 msgid "Departure"
 msgstr "Départ"
 
@@ -225,12 +162,6 @@ msgstr "Accès routier"
 msgid "Best way to go"
 msgstr "Accès recommandé"
 
-msgid "Disabled infrastructure"
-msgstr "Aménagement handicapés"
-
-msgid "Any specific infrastructure"
-msgstr "Infrastructure à disposition"
-
 msgid "Duration"
 msgstr "Durée"
 
@@ -261,11 +192,11 @@ msgstr "Risques, danger, meilleure période, ..."
 msgid "Ratings description"
 msgstr "Description de cotation"
 
-msgid "Equipment"
-msgstr "Équipement"
+msgid "Gear"
+msgstr "Matériel"
 
-msgid "Equipment needed, adviced ..."
-msgstr "Équipement nécessaire, conseillé ..."
+msgid "Gear needed, adviced ..."
+msgstr "Matériel nécessaire, conseillé ..."
 
 msgid "Themes"
 msgstr "Thématiques"
@@ -279,25 +210,18 @@ msgstr "Réseaux de randonnée"
 msgid "Hiking networks"
 msgstr "Réseaux de randonnée"
 
-msgid "Level"
-msgstr "Niveau "
+msgid "Accessibility advice"
+msgstr "Conseils d'accessibilité"
 
 msgid ""
-"Beginner (Little drop – terrain without difficulties) / Experienced "
-"(Significant slope – Technical terrain, with obstacles)"
+"Specific elements allowing to appreciate the context of the itinerary for "
+"PRMs (advice, delicate passages, etc.)"
 msgstr ""
-"Débutant (Peu de dénivelé – terrain sans de difficultés) / Expérimenté "
-"(Pente importante – Terrain technique, avec obstacles)"
+"Eléments particuliers permettant d’apprécier le contexte de l’itinéraire "
+"pour les PMR (conseils, passages délicats, etc.)"
 
-msgid ""
-"Description of the slope: greater than 10% (Requires assistance when the "
-"slope is greater than 8%); slope break"
-msgstr ""
-"Description de la pente : supérieure à 10 % (Nécessite une assistance quand "
-"la pente est supérieur à 8%) ; rupture de pente"
-
-msgid "Covering"
-msgstr "Revêtement"
+msgid "Accessibility covering"
+msgstr "Revêtement accessibilité"
 
 msgid ""
 "Description of the surfaces encountered on the entire route. Track, path, "
@@ -307,8 +231,18 @@ msgstr ""
 "Piste, sentier, route + type de Revêtement (Caillouteux, présence de "
 "pierres, sable, pavettage, dalle...)"
 
-msgid "Exposure"
-msgstr "Revêtement"
+msgid "Level accessibility"
+msgstr "Niveau d'Accessibilité"
+
+msgid ""
+"Beginner (Little drop – terrain without difficulties) / Experienced "
+"(Significant slope – Technical terrain, with obstacles)"
+msgstr ""
+"Débutant (Peu de dénivelé – terrain sans de difficultés) / Expérimenté "
+"(Pente importante – Terrain technique, avec obstacles)"
+
+msgid "Accessibility exposure"
+msgstr "Exposition accessibilité"
 
 msgid ""
 "Description of exposures and shaded areas. Shaded, High exposure, Presence "
@@ -316,6 +250,31 @@ msgid ""
 msgstr ""
 "Description des expositions et des zones ombragées. Ombragé, Forte "
 "expositions, Présence de zone ombragées"
+
+msgid "Accessibility infrastructure"
+msgstr "Aménagements d'accessibilité"
+
+msgid "Any specific accessibility infrastructure"
+msgstr "Infrastructure d'accessibilité spécifique à disposition"
+
+msgid "Accessibility signage"
+msgstr "Signalétique accessibilité"
+
+msgid "Description of the size, shape and colors of signages."
+msgstr "Description de taille, forme et couleurs des signalétiques."
+
+msgid "Accessibility slope"
+msgstr "Pente accessibilité"
+
+msgid ""
+"Description of the slope: greater than 10% (Requires assistance when the "
+"slope is greater than 8%); slope break"
+msgstr ""
+"Description de la pente : supérieure à 10 % (Nécessite une assistance quand "
+"la pente est supérieur à 8%) ; rupture de pente"
+
+msgid "Accessibility width"
+msgstr "Largeur accessibilité"
 
 msgid ""
 "Description of the narrowing of the trails and the minimum width for "
@@ -325,16 +284,6 @@ msgstr ""
 "Description des rétrécissements des sentiers et la largueur minimum pour les "
 "fauteuils (Sentier>0,90 m, Joëlette, Sentier étroit demandant une forte "
 "technique de conduite)"
-
-msgid "Description of the size, shape and colors of signages."
-msgstr "Description de taille, forme et couleurs des signalétiques."
-
-msgid ""
-"Specific elements allowing to appreciate the context of the itinerary for "
-"PRMs (advice, delicate passages, etc.)"
-msgstr ""
-"Eléments particuliers permettant d’apprécier le contexte de l’itinéraire "
-"pour les PMR (conseils, passages délicats, etc.)"
 
 msgid "Route"
 msgstr "Parcours"
@@ -558,37 +507,6 @@ msgstr "Itinérance"
 msgid "Hike"
 msgstr "Randonnée"
 
-msgid "Photos to illustrate information related to the accessibility of treks."
-msgstr "Photos pour illustrer les informations liées à l'accessibilité des randonnées."
-
-msgid "Attached files for accessibility"
-msgstr "Fichiers joint pour l'accessibilité"
-
-msgid "Accessibility type"
-msgstr "Type d'accessibilité"
-
-msgid "Actions"
-msgstr "Actions"
-
-msgid "Update"
-msgstr "Mise à jour"
-
-msgid "Delete"
-msgstr "Supprimer"
-
-msgid "No file attached for accessibility"
-msgstr "Aucun fichier joint pour l'accessibilité"
-
-msgid "You are not allowed to see attachments."
-msgstr "Vous n'êtes pas autorisé à voir les pièces jointes."
-
-msgid " Confirm file deletion"
-msgstr " Confirmer la suppression du fichier"
-
-#, python-brace-format
-msgid "Are you sure to delete this file {file} ?"
-msgstr "Êtes-vous sûr de vouloir supprimer ce fichier {file} ?"
-
 msgid "Attributes"
 msgstr "Informations"
 
@@ -632,8 +550,8 @@ msgstr "Impression livret grand public"
 msgid "Print booklet"
 msgstr "Impr. livret"
 
-msgid "Attached files accessibility"
-msgstr "Fichiers joint pour l'accessibilité"
+msgid "Photos accessibility"
+msgstr "Photos accessibilité"
 
 msgid "yes"
 msgstr "oui"
@@ -707,9 +625,6 @@ msgstr "Toutes les infos pratiques"
 msgid "Advices"
 msgstr "Recommandations"
 
-msgid "Equipments"
-msgstr "Équipements"
-
 msgid "Environmental sensitive areas"
 msgstr "Zones de sensibilité environnementale"
 
@@ -748,9 +663,6 @@ msgstr "Altitude max"
 msgid "Transports"
 msgstr "Transports"
 
-msgid "Disabled Infrastructure"
-msgstr "Aménagement handicapés"
-
 msgid "Add a new poi"
 msgstr "Ajouter un POI"
 
@@ -775,27 +687,3 @@ msgstr ""
 
 msgid "This hike is in the core of the national park"
 msgstr "Cet itinéraire est dans le cœur du Parc national"
-
-#, python-format
-msgid "Add attachment %s"
-msgstr ""
-
-msgid "Your attachment was uploaded."
-msgstr ""
-
-#, python-format
-msgid "Update attachment %s"
-msgstr ""
-
-msgid "Your attachment was updated."
-msgstr ""
-
-#, python-format
-msgid "Remove attachment %s"
-msgstr ""
-
-msgid "Your attachment was deleted."
-msgstr ""
-
-msgid "You are not allowed to delete this attachment."
-msgstr ""

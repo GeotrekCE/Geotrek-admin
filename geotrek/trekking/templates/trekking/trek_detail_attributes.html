@@ -80,8 +80,8 @@
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"equipment" }}</th>
-            <td>{% if trek.equipment %}{{ trek.equipment|safe }}
+            <th>{{ trek|verbose:"gear" }}</th>
+            <td>{% if trek.gear %}{{ trek.gear|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
@@ -209,8 +209,8 @@
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"disabled_infrastructure" }}</th>
-            <td>{% if trek.disabled_infrastructure %}{{ trek.disabled_infrastructure|safe }}
+            <th>{{ trek|verbose:"accessibility_infrastructure" }}</th>
+            <td>{% if trek.accessibility_infrastructure %}{{ trek.accessibility_infrastructure|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.core.cache import caches
 from django.views import static
 
 from mapentity.decorators import view_cache_response_content
@@ -27,26 +28,39 @@ class HttpSVGResponse(HttpResponse):
 class ElevationChart(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
     def render_to_response(self, context, **response_kwargs):
-        return HttpSVGResponse(self.get_object().get_elevation_profile_svg(self.kwargs['lang']),
-                               **response_kwargs)
+        svg_cache = caches['default']
+        lang = self.kwargs['lang']
+        obj = self.get_object()
+        date_update = obj.get_date_update().strftime('%y%m%d%H%M%S%f'),
+        cache_lookup = f"altimetry_profile_{obj.pk}_{date_update}_svg_{lang}"
+        content = svg_cache.get(cache_lookup)
+        if content:
+            return HttpSVGResponse(content=content, **response_kwargs)
+        profile_svg = obj.get_elevation_profile_svg(lang)
+        svg_cache.set(cache_lookup, profile_svg)
+        return HttpSVGResponse(profile_svg, **response_kwargs)
 
 
 class ElevationProfile(LastModifiedMixin, JSONResponseMixin,
                        PublicOrReadPermMixin, BaseDetailView):
     """Extract elevation profile from a path and return it as JSON"""
 
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator.
+        """
+        obj = self.get_object()
+        date_update = obj.get_date_update().strftime('%y%m%d%H%M%S%f'),
+        return f"altimetry_profile_{obj.pk}_{date_update}"
+
+    @view_cache_response_content()
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         """
         Put elevation profile into response context.
         """
-        data = {}
-        elevation_profile = self.object.get_elevation_profile()
-        # Formatted as distance, elevation, [lng, lat]
-        for step in elevation_profile:
-            formatted = step[0], step[3], step[1:3]
-            data.setdefault('profile', []).append(formatted)
-        data['limits'] = dict(zip(['ceil', 'floor'], self.object.get_elevation_limits()))
-        return data
+        return self.object.get_formatted_elevation_profile_and_limits()
 
 
 class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,
@@ -57,7 +71,8 @@ class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,
         """Used by the ``view_cache_response_content`` decorator.
         """
         obj = self.get_object()
-        return 'altimetry_dem_area_%s' % obj.pk
+        date_update = obj.get_date_update().strftime('%y%m%d%H%M%S%f'),
+        return f"altimetry_dem_area_{obj.pk}_{date_update}"
 
     @view_cache_response_content()
     def dispatch(self, *args, **kwargs):

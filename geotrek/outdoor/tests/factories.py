@@ -63,6 +63,7 @@ class SiteFactory(StructureRelatedDefaultFactory):
     description_teaser = "More blah"
     ambiance = "Party time!"
     advice = "Warning!"
+    accessibility = "Accessible"
     period = "Summer"
     orientation = ['S', 'SW']
     wind = ['N']

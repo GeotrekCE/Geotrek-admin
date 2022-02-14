@@ -734,8 +734,8 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 )
             ), Field(
                 name='accessibilities', required=False, location='query', schema=coreschema.String(
-                    title=_("Accessibilities"),
-                    description=_('Filter by one or more accessibility id, comma-separated.')
+                    title=_("Types of accessibility"),
+                    description=_('Filter by one or more type of accessibility id, comma-separated.')
                 )
             ), Field(
                 name='accessibility_level', required=False, location='query', schema=coreschema.String(

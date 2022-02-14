@@ -67,6 +67,10 @@
             <th>{{ object|verbose:"advice" }}</th>
             <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
+        <tr>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
         {% regroup  object.super_ratings by scale as scales_list %}
         {% for scale in scales_list%}
             <tr>

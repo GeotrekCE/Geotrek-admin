@@ -26,6 +26,7 @@ class SiteForm(CommonForm):
             'ambiance',
             'description',
             'advice',
+            'accessibility',
             'period',
             'orientation',
             'wind',
@@ -44,7 +45,7 @@ class SiteForm(CommonForm):
     class Meta:
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
                   'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
-                  'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'eid',
+                  'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'accessibility', 'eid',
                   'orientation', 'wind', 'managers', 'pois_excluded']
         model = Site
 
@@ -128,9 +129,9 @@ class CourseForm(CommonForm):
             'ratings_description',
             'duration',
             'advice',
+            'gear',
             'equipment',
             'accessibility',
-            'gear',
             'height',
             'pois_excluded',
             'children_course',

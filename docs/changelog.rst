@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.76.0+dev (XXXX-XX-XX)
+2.76.3+dev (XXXX-XX-XX)
 -----------------------
 
 **New features**
@@ -16,6 +16,60 @@ CHANGELOG
 - Force workflow when SURICATE_MANAGEMENT_WORKFLOW setting is enabled
 - Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
 
+
+
+2.76.3     (2022-02-09)
+-----------------------
+
+**Documentation**
+
+- Fix documentation trek with gear and not equipments
+
+**Bug fixes**
+
+- Fix css caption detail
+- Fix ACCESSIBILITY_ATTACHMENTS_ENABLED setting work as intended
+- Fix attachment translations
+- Facilitate the comprehension of the difference between fields label_accessibility and approved in touristic content detail
+- Fix migration translations equipment and disabled_infrastructure
+
+
+2.76.2     (2022-02-08)
+-----------------------
+
+**DO NOT USE IT!**
+
+**Bug fixes**
+
+- Remove multiple choice ratings by rating scale for treks
+- Fix translations equipment and disabled_infrastructure are recovered for gear and accessibility_infrastructure
+
+
+2.76.1     (2022-02-07)
+-----------------------
+
+**New features**
+
+- Add ACCESSIBILITY_ATTACHMENTS_ENABLED setting allowing to disable/enable menu attachments for accessibility
+- Add accessibility field on sites (#2838)
+- Change field disabled_infrastructure for accessibility_infrastructure (#2838)
+
+**Minor improvements**
+
+- Text pasted in rich text fields (TinyMCE) are now cleaned up.
+- Facilitate the comprehension of the difference between fields label_accessibility and approved in tourism (#2838)
+- Move trek DEM serialization to APIv2 (for 3D view)
+- Move trek altimetry profile serialization to APIv2
+- Change fixture rating trekking
+- Move gear field form and detail (#2838)
+
+**Performances**
+
+- Fix DEM cache does not invalidate on trek update
+
+**Bug fixes**
+
+- Fix translation equipment api v2 courses
 
 
 2.76.0     (2022-02-02)

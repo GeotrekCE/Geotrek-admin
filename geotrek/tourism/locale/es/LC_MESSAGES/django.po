@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-01 11:43+0000\n"
+"POT-Creation-Date: 2022-02-03 17:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -212,6 +212,9 @@ msgid "Reservation ID"
 msgstr ""
 
 msgid "Approved"
+msgstr ""
+
+msgid "Indicates whether the content has a label or brand"
 msgstr ""
 
 msgid "Touristic content"

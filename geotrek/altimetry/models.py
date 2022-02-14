@@ -56,6 +56,23 @@ class AltimetryMixin(models.Model):
     def get_elevation_profile_svg(self, language=None):
         return AltimetryHelper.profile_svg(self.get_elevation_profile(), language)
 
+    def get_formatted_elevation_profile_and_limits(self, **kwargs):
+        data = {}
+        elevation_profile = self.get_elevation_profile()
+        # Formatted as distance, elevation, [lng, lat]
+        for step in elevation_profile:
+            formatted = step[0], step[3], step[1:3]
+            data.setdefault('profile', []).append(formatted)
+        data['limits'] = dict(zip(['ceil', 'floor'], AltimetryHelper.altimetry_limits(elevation_profile)))
+        return data
+
+    def get_elevation_profile_and_limits(self, **kwargs):
+        data = {}
+        elevation_profile = self.get_elevation_profile()
+        data['profile'] = elevation_profile
+        data['limits'] = dict(zip(['ceil', 'floor'], AltimetryHelper.altimetry_limits(elevation_profile)))
+        return data
+
     def get_elevation_chart_url(self, language=None):
         """Generic url. Will fail if there is no such url defined
         for the required model (see core.Path and trekking.Trek)
