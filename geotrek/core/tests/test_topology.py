@@ -94,7 +94,7 @@ class TopologyTest(TestCase):
         self.assertEqual(Path.objects.count(), 1)
 
         # custom manager see 2 paths
-        self.assertEqual(len(Path.include_invisible.all()), 2)
+        self.assertEqual(Path.include_invisible.count(), 2)
 
         # create topo on visible path
         topology = Topology._topologypoint(0, 0, None)
