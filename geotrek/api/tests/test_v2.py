@@ -1,5 +1,4 @@
 import datetime
-import json
 from unittest import skipIf
 
 from dateutil.relativedelta import relativedelta
@@ -3872,13 +3871,13 @@ class AltimetryCacheTests(BaseApiTest):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        self.assertIn("profile", json.loads(response.content.decode()).keys())
+        self.assertIn("profile", response.json().keys())
         # When cache is used there are only 7 queries to get trek profile
         with self.assertNumQueries(7):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        self.assertIn("profile", json.loads(response.content.decode()).keys())
+        self.assertIn("profile", response.json().keys())
 
     # Override default cache with fat cache since we can't use memcached in tests
     @override_settings(CACHES=TMP_CACHES)
