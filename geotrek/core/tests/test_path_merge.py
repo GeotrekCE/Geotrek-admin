@@ -216,7 +216,7 @@ class MergePathTest(TestCase):
         last = PathAggregation.objects.last()
         self.assertEqual((first.start_position, first.end_position), (0.25, 0.5))
         self.assertEqual((last.start_position, last.end_position), (0.5, 0.75))
-        self.assertEqual(Topology.objects.count(), 1)
+        self.assertEqual(len(Topology.objects.all()), 1)
 
     def test_recompute_pk_reverse_AB(self):
         """
