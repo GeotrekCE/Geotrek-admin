@@ -1,4 +1,5 @@
 import datetime
+import json
 from unittest import skipIf
 
 from dateutil.relativedelta import relativedelta
@@ -12,34 +13,34 @@ from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek import __version__
-from geotrek.authent.tests import factories as authent_factory
 from geotrek.authent import models as authent_models
-from geotrek.common.tests import factories as common_factory
+from geotrek.authent.tests import factories as authent_factory
 from geotrek.common import models as common_models
+from geotrek.common.tests import factories as common_factory
 from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_file,
                                            get_dummy_uploaded_image)
-from geotrek.core.tests import factories as core_factory
 from geotrek.core import models as path_models
+from geotrek.core.tests import factories as core_factory
 from geotrek.feedback.tests import factories as feedback_factory
 from geotrek.flatpages.tests import factories as flatpages_factory
-from geotrek.infrastructure.tests import factories as infrastructure_factory
 from geotrek.infrastructure import models as infrastructure_models
-from geotrek.outdoor.tests import factories as outdoor_factory
+from geotrek.infrastructure.tests import factories as infrastructure_factory
 from geotrek.outdoor import models as outdoor_models
-from geotrek.sensitivity.tests import factories as sensitivity_factory
+from geotrek.outdoor.tests import factories as outdoor_factory
 from geotrek.sensitivity import models as sensitivity_models
-from geotrek.tourism.tests import factories as tourism_factory
-from geotrek.tourism import models as tourism_models
-from geotrek.trekking.tests import factories as trek_factory
-from geotrek.trekking import models as trek_models
-from geotrek.zoning.tests import factories as zoning_factory
-from geotrek.zoning import models as zoning_models
-from geotrek.signage.tests import factories as signage_factory
+from geotrek.sensitivity.tests import factories as sensitivity_factory
 from geotrek.signage import models as signage_models
-from mapentity.tests.factories import SuperUserFactory
+from geotrek.signage.tests import factories as signage_factory
+from geotrek.tourism import models as tourism_models
+from geotrek.tourism.tests import factories as tourism_factory
+from geotrek.trekking import models as trek_models
+from geotrek.trekking.tests import factories as trek_factory
+from geotrek.zoning import models as zoning_models
+from geotrek.zoning.tests import factories as zoning_factory
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -3871,22 +3872,24 @@ class AltimetryCacheTests(BaseApiTest):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertIn("profile", json.loads(response.content.decode()).keys())
         # When cache is used there are only 7 queries to get trek profile
         with self.assertNumQueries(7):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertIn("profile", json.loads(response.content.decode()).keys())
 
     # Override default cache with fat cache since we can't use memcached in tests
     @override_settings(CACHES=TMP_CACHES)
     def test_cache_is_used_when_getting_trek_profile_svg(self):
         # There are 8 queries to get trek profile svg
         with self.assertNumQueries(8):
-            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)) + "?format=svg")
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')
         # When cache is used there are only 7 queries to get trek profile
         with self.assertNumQueries(7):
-            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)) + "?format=svg")
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')

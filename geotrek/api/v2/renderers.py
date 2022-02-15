@@ -11,7 +11,6 @@ class SVGProfileRenderer(BaseRenderer):
     format = "svg"
 
     def render(self, data, media_type=None, renderer_context=None):
-        print("IN RENDERER")
         """
         Plot the altimetric graph in SVG using PyGal.
         Most of the job done here is dedicated to preparing

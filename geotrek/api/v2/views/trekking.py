@@ -4,7 +4,7 @@ from django.db.models.aggregates import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
-from rest_framework.decorators import action, renderer_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from geotrek.api.v2 import filters as api_filters
@@ -21,7 +21,6 @@ class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
     queryset = trekking_models.WebLinkCategory.objects.all()
 
 
-@renderer_classes(api_viewsets.GeotrekGeometricViewset.renderer_classes + [SVGProfileRenderer, ])
 class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.GeotrekTrekQueryParamsFilter,
@@ -83,7 +82,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         json_lookup = f"altimetry_dem_area_{trek.pk}_{trek_date_update}"
         return build_response_from_cache(json_lookup, trek.get_elevation_area, content_type="application/json")
 
-    @action(detail=True, url_name="profile")
+    @action(detail=True, url_name="profile", renderer_classes=api_viewsets.GeotrekGeometricViewset.renderer_classes + [SVGProfileRenderer, ])
     def profile(self, request, pk):
         trek = self.get_object()
         trek_date_update = trek.get_date_update().strftime('%y%m%d%H%M%S%f')
