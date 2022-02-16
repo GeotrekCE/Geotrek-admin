@@ -27,7 +27,7 @@ jobs:
 
   docker_image:
     machine:
-      image: ubuntu-2004
+      image: ubuntu-2004:202201-02
     steps:
       - checkout
       - run: BASE_IMAGE_TAG=focal-3.8 make build
@@ -36,7 +36,7 @@ jobs:
       - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
   docker_image_18_04:
     machine:
-      image: ubuntu-2004
+      image: ubuntu-2004:202201-02
     steps:
       - checkout
       - run: BASE_IMAGE_TAG=bionic-3.6 make build
@@ -45,7 +45,7 @@ jobs:
       - run: docker push geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
   docker_test:
     machine:
-      image: ubuntu-2004
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -64,7 +64,7 @@ jobs:
           when: on_success
   docker_test_18_04:
     machine:
-      image: ubuntu-2004
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -77,7 +77,7 @@ jobs:
       - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
   docker_test_nds:
     machine:
-      image: ubuntu-2004
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -95,7 +95,7 @@ jobs:
           when: on_success
   docker_test_nds_18_04:
     machine:
-      image: ubuntu-2004
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -125,7 +125,7 @@ jobs:
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
   docker_test_integration:
     machine:
-      image: ubuntu-2004
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -162,7 +162,7 @@ jobs:
 
   docker_publish:
     machine:
-      image: ubuntu-2004
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
