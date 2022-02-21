@@ -708,7 +708,7 @@ class TrekJSONSetUp(TrekkingManagerTest):
                 **trek_args
             )
         cls.attachment = AttachmentFactory.create(content_object=cls.trek,
-                                                   attachment_file=get_dummy_uploaded_image())
+                                                  attachment_file=get_dummy_uploaded_image())
 
         cls.information_desk = tourism_factories.InformationDeskFactory.create()
         cls.trek.information_desks.add(cls.information_desk)
@@ -756,7 +756,7 @@ class TrekJSONSetUp(TrekkingManagerTest):
                                        trek_b=cls.trek_b)
 
         cls.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                                                           published=True)
+                                                                          published=True)
         tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
                                                   published=False)  # not published
         tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
@@ -764,7 +764,7 @@ class TrekJSONSetUp(TrekkingManagerTest):
         tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID,
                                                   published=True)  # too far
         cls.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
-                                                                       published=True)
+                                                                      published=True)
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
                                                 published=False)  # not published
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,

@@ -128,6 +128,7 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
 class TouristicContentFormTest(TrekkingManagerTest):
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         cls.category = TouristicContentCategoryFactory()
 
     def setUp(self):
