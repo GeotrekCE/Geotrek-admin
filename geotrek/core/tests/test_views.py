@@ -735,10 +735,11 @@ class TrailViewsTest(CommonTest):
         response = self.client.get(trail.get_detail_url())
         self.assertEqual(response.status_code, 200)
 
-    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
-    def test_document_export(self, get_attributes_html):
-        get_attributes_html.return_value = b'<p>mock</p>'
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_export(self, mock_requests):
         trail = TrailFactory(date_update="2000-01-01")
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
         with open(trail.get_map_image_path(), 'wb') as f:
             f.write(b'***' * 1000)
 
