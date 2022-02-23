@@ -155,6 +155,7 @@ class InterventionForm(CommonForm):
             elif 'status' in self.changed_data and self.instance.status_id == 3:
                 resolved_status = ReportStatus.objects.get(identifier='solved_intervention')
                 target.status = resolved_status
+                target.assigned_user = WorkflowManager.objects.first().user
                 target.save()
                 WorkflowManager.objects.first().notify_report_to_solve(target)
         if not target.pk:

@@ -15,7 +15,7 @@ from tinymce.widgets import TinyMCE
 
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import TimerEvent
+from geotrek.feedback.models import TimerEvent, WorkflowManager
 from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SuricateWorkflowTests, test_for_management_and_workflow_modes,
@@ -247,6 +247,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.save()
         # Assert report changes status and manager is notified
         self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
+        self.assertEqual(self.interv_report.status.assigned_user, WorkflowManager.objects.first().user)
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(mail.outbox[-1].subject, "Geotrek - Un Signalement est à clôturer")
         self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])

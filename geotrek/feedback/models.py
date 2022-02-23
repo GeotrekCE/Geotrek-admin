@@ -260,12 +260,24 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             self.get_suricate_messenger().post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
-    def save_suricate_management_or_workflow_mode(self, *args, **kwargs):
+    def save_suricate_management_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
             if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : save
+                super().save(*args, **kwargs)
+        else:  # Report updates should do nothing more
+            super().save(*args, **kwargs)
+
+    def save_suricate_workflow_mode(self, *args, **kwargs):
+        """Save method for Suricate Management mode"""
+        if self.pk is None:  # This is a new report
+            if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
+                self.get_suricate_messenger().post_report(self)
+            else:  # This new report comes from Suricate : assign workflow manager if needed and save
+                if self.status.identifier == 'filed':
+                    self.assigned_user = WorkflowManager.objects.first().user
                 super().save(*args, **kwargs)
         else:  # Report updates should do nothing more
             super().save(*args, **kwargs)
@@ -334,8 +346,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             self.save_no_suricate(*args, **kwargs)  # No Suricate Mode
         elif settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
             self.save_suricate_report_mode(*args, **kwargs)  # Suricate Report Mode
-        elif settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:
-            self.save_suricate_management_or_workflow_mode(*args, **kwargs)  # Suricate Management Mode
+        elif settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
+            self.save_suricate_management_mode(*args, **kwargs)  # Suricate Management Mode
+        elif settings.SURICATE_WORKFLOW_ENABLED:
+            self.save_suricate_workflow_mode(*args, **kwargs)  # Suricate Workflow Mode
 
     @property
     def created_in_suricate_display(self):
