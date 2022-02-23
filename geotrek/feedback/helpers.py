@@ -293,3 +293,7 @@ class SuricateMessenger:
                 failed_request.retries += 1
                 failed_request.error_message = str(e.args)  # Keep last exception message
                 failed_request.save()
+
+    def flush_failed_requests(self):
+        for failed_request in self.pending_requests_model.objects.all():
+            failed_request.delete()
