@@ -38,7 +38,7 @@ class TestRemoveEmailsOlders(TestCase):
 
 class TestFlushPendingRequests(TestCase):
     def test_flush_all(self):
-        PendingSuricateAPIRequest.objects.create(params="\{\}")
+        PendingSuricateAPIRequest.objects.create(params="{}")
         PendingEmail.objects.create()
         self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
         self.assertEquals(PendingEmail.objects.count(), 1)
