@@ -18,8 +18,8 @@ from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import TimerEvent
 from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.feedback.tests.test_suricate_sync import (
-    SuricateWorkflowTests, test_for_management_mode,
-    test_for_report_and_basic_modes)
+    SuricateWorkflowTests, test_for_management_and_workflow_modes,
+    test_for_report_and_basic_modes, test_for_workflow_mode, test_for_management_mode)
 from geotrek.maintenance.forms import InterventionForm
 from geotrek.maintenance.models import InterventionStatus
 from geotrek.maintenance.tests.factories import InterventionFactory
@@ -57,7 +57,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
         self.assertNotIn('message_supervisor', keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)
 
@@ -70,16 +70,16 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["comment"].widget, TinyMCE)
         self.assertIsInstance(form.fields["activity"].widget, Select)
         self.assertIsInstance(form.fields["category"].widget, Select)
-        self.assertIsInstance(form.fields["status"].widget, Select)
+        self.assertIsInstance(form.fields["status"].widget, Select)  # Remove this in report mode
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
         self.assertNotIn('message_supervisor', keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)  # assert form is valid
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     def test_creation_form_specifics_2(self):
         data = {
             'email': 'test@test.fr',
@@ -101,7 +101,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     def test_update_form_specifics_2(self):
         form = ReportForm(instance=self.filed_report)
         keys = form.fields.keys()
@@ -117,9 +117,47 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
-        # Todo ajouter les contraintes de contenu de status selon old_status / pas de contrainte si autres modes
 
     @test_for_management_mode
+    def test_creation_form_specifics_2_management(self):
+        data = {
+            'email': 'test@test.fr',
+            'geom': Point(700000, 6600000, srid=settings.SRID)
+        }
+        form = ReportForm(data)
+        keys = form.fields.keys()
+
+        self.assertIsInstance(form.fields["geom"].widget, MapWidget)
+        self.assertIsInstance(form.fields["email"].widget, EmailInput)
+        self.assertIsInstance(form.fields["comment"].widget, TinyMCE)
+        self.assertIsInstance(form.fields["activity"].widget, Select)
+        self.assertIsInstance(form.fields["category"].widget, Select)
+        self.assertIsInstance(form.fields["status"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
+        self.assertIsInstance(form.fields["related_trek"].widget, Select)
+        self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_supervisor', keys)
+        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
+        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+
+    @test_for_management_mode
+    def test_update_form_specifics_2_management(self):
+        form = ReportForm(instance=self.filed_report)
+        keys = form.fields.keys()
+        self.assertIsInstance(form.fields["geom"].widget, MapWidget)
+        self.assertIsInstance(form.fields["email"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["comment"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["activity"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["category"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["status"].widget, Select)
+        self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["related_trek"].widget, Select)
+        self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_supervisor', keys)
+        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
+        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+
+    @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_workflow_assign_step(self, mocked_post, mocked_get):
@@ -165,7 +203,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(mail.outbox[-1].subject, "Geotrek - Nouveau Signalement à traiter")
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     @override_settings()
     def test_workflow_program_step(self):
         # When creating an intervention for a report
@@ -185,7 +223,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.waiting_report.refresh_from_db()
         self.assertEquals(self.waiting_report.status.identifier, "programmed")
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_solving_report_intervention(self, mocked_post):
         translation.activate('fr')
@@ -219,19 +257,19 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(response.status_code, 200)
         self.assertIn("Ajouter une intervention", response.content.decode("utf-8"))
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     def test_can_only_create_intervention_once_1(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
         self.assertNotIn("Ajouter une intervention", response.content.decode("utf-8"))
 
-    @test_for_management_mode
+    @test_for_management_and_workflow_modes
     def test_can_only_create_intervention_once_2(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.waiting_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
         self.assertIn("Ajouter une intervention", response.content.decode("utf-8"))
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_workflow_resolve_step(self, mocked_post, mocked_get):
@@ -268,7 +306,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             auth=('', '')
         )
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_relocate_report(self, mocked_get):
         self.build_get_request_patch(mocked_get)

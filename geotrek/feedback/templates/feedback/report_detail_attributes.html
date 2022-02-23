@@ -33,26 +33,18 @@
             <th>{{ report|verbose:"related_trek" }}</th>
             <td>{{ report.related_trek }}</td>
         </tr>
-        {% suricate_management_enabled as suricate_management_enabled %}
-        {% if suricate_management_enabled %}
         <tr>
             <th>{{ report|verbose:"assigned_user" }}</th>
             <td>{{ report.assigned_user }}</td>
         </tr>
-        <tr>
-            <th>{{ report|verbose:"uses_timers" }}</th>
-            <td>{{ report.uses_timers }}</td>
-        </tr>
+        {% suricate_management_enabled as suricate_management_enabled %}
+        {% if suricate_management_enabled %}
         <tr>
             <th>{{ report|verbose:"created_in_suricate" }}</th>
             <td>{{ report.created_in_suricate }}</td>
         <tr>
             <th>{{ report|verbose:"last_updated_in_suricate" }}</th>
             <td>{{ report.last_updated_in_suricate }}</td>
-        </tr>
-        <tr>
-            <th>{{ report|verbose:"locked" }}</th>
-            <td>{{ report.locked }}</td>
         </tr>
         <tr>
             <th>{{ report|verbose:"uid" }}</th>
@@ -82,6 +74,17 @@
             </td>
         </tr>
         {% endif %}
+        {% suricate_workflow_enabled as suricate_workflow_enabled %}
+        {% if suricate_workflow_enabled %}
+        <tr>
+            <th>{{ report|verbose:"uses_timers" }}</th>
+            <td>{{ report.uses_timers }}</td>
+        </tr>
+        <tr>
+            <th>{{ report|verbose:"locked" }}</th>
+            <td>{{ report.locked }}</td>
+        </tr>
+        {% endif %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     
@@ -93,14 +96,14 @@
                     {% with columns="name,status,stake,total_cost,date" %}
                             {% valuetable report.interventions.all columns=columns %}
                     {% endwith %}
-                    {% if not suricate_management_enabled %}
+                    {% if not suricate_workflow_enabled %}
                         <p class="spacer"></p>
                         <p class="autohide">
                             <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"
                             class="btn btn-sm btn-success">
                             <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
                         </p>
-                    {% elif suricate_management_enabled and report.interventions.all|length == 0 and report.status.identifier == "waiting" %}
+                    {% elif suricate_workflow_enabled and report.interventions.all|length == 0 and report.status.identifier == "waiting" %}
                         <p class="spacer"></p>
                         <p class="autohide">
                             <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"

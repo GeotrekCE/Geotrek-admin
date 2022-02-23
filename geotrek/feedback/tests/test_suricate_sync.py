@@ -166,7 +166,7 @@ class SuricateAPITests(SuricateTests):
     def test_command_disabled(self, mocked):
         """Test sync_suricate command is disabled when setting is False"""
         call_command("sync_suricate", activities=True, statuses=True)
-        mocked.error.assert_called_with("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED.")
+        mocked.error.assert_called_with("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED or SURICATE_WORKFLOW_ENABLED..")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.logger")
@@ -440,22 +440,28 @@ def test_for_all_suricate_modes(test_func):
     def inner(self, *args, **kwargs):
         exceptions = []
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'No Suricate' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Report' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Management' mode",)
+            exceptions.append(e)
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=True, LANGUAGE_CODE='fr'):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Workflow' mode",)
             exceptions.append(e)
         raise_multiple(exceptions)
     return inner
@@ -465,13 +471,13 @@ def test_for_report_and_basic_modes(test_func):
     def inner(self, *args, **kwargs):
         exceptions = []
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_MANAGEMENT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'No Suricate' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Report' mode",)
@@ -480,10 +486,39 @@ def test_for_report_and_basic_modes(test_func):
     return inner
 
 
+def test_for_management_and_workflow_modes(test_func):
+    def inner(self, *args, **kwargs):
+        exceptions = []
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Management' mode",)
+            exceptions.append(e)
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=True, LANGUAGE_CODE='fr'):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Workflow' mode",)
+        raise_multiple(exceptions)
+    return inner
+
+
+def test_for_workflow_mode(test_func):
+    def inner(self, *args, **kwargs):
+        try:
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=True, LANGUAGE_CODE='fr'):
+                test_func(self, *args, **kwargs)
+        except AssertionError as e:
+            e.args += ("Failed for 'Suricate Workflow' mode",)
+            raise
+    return inner
+
+
 def test_for_management_mode(test_func):
     def inner(self, *args, **kwargs):
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_MANAGEMENT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Management' mode",)
@@ -499,12 +534,12 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         cls.report_filed_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.report_filed_2 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
-    def test_classify_alert_notifies_suricate_when_management_enabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
+    def test_classify_alert_notifies_suricate_when_workflow_enabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
         form = ReportForm(
             instance=self.report_filed_1,
             data={
@@ -519,12 +554,12 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.uid, "Problème déjà réglé")
         mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.uid, self.classified_status.identifier, "Problème déjà réglé")
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
+    @override_settings(SURICATE_WORKFLOW_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.message_sentinel")
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.update_status")
-    def test_classify_alert_does_not_notify_suricate_when_management_disabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
+    def test_classify_alert_does_not_notify_suricate_when_workflow_disabled(self, mocked_notify_suricate_status, mocked_mail_sentinel, mocked_post, mocked_get):
         form = ReportForm(
             instance=self.report_filed_2,
             data={

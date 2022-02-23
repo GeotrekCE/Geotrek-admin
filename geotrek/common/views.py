@@ -343,7 +343,7 @@ def import_view(request):
 
         if 'import-suricate' in request.POST:
             form_suricate = ImportSuricateForm(choices_suricate, request.POST)
-            if form_suricate.is_valid() and settings.SURICATE_MANAGEMENT_ENABLED:
+            if form_suricate.is_valid() and (settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED):
                 parser = SuricateParser()
                 parser.get_statuses()
                 parser.get_activities()
@@ -354,7 +354,7 @@ def import_view(request):
         render_dict['form'] = form
     if choices_url:
         render_dict['form_without_file'] = form_without_file
-    if settings.SURICATE_MANAGEMENT_ENABLED:
+    if settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:
         render_dict['form_suricate'] = form_suricate
 
     return render(request, 'common/import_dataset.html', render_dict)

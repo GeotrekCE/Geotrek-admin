@@ -144,7 +144,7 @@ class InterventionForm(CommonForm):
 
     def save(self, *args, **kwargs):
         target = self.instance.target
-        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_MANAGEMENT_ENABLED and isinstance(target, Report):
+        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED and isinstance(target, Report):
             # If this is an intervention programmed for a report, change report status
             if 'status' in self.changed_data and self.instance.status_id == 2:
                 programmed_status = ReportStatus.objects.get(identifier='programmed')

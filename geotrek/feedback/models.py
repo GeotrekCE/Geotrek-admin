@@ -260,7 +260,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             self.get_suricate_messenger().post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
-    def save_suricate_management_mode(self, *args, **kwargs):
+    def save_suricate_management_or_workflow_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
             if self.uid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
@@ -330,12 +330,12 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             self.get_suricate_messenger().message_sentinel(self.uid, message)
 
     def save(self, *args, **kwargs):
-        if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:
+        if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
             self.save_no_suricate(*args, **kwargs)  # No Suricate Mode
-        elif settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED:
+        elif settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
             self.save_suricate_report_mode(*args, **kwargs)  # Suricate Report Mode
-        elif settings.SURICATE_MANAGEMENT_ENABLED:
-            self.save_suricate_management_mode(*args, **kwargs)  # Suricate Management Mode
+        elif settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:
+            self.save_suricate_management_or_workflow_mode(*args, **kwargs)  # Suricate Management Mode
 
     @property
     def created_in_suricate_display(self):

@@ -13,6 +13,11 @@ def suricate_management_enabled():
 
 
 @register.simple_tag
+def suricate_workflow_enabled():
+    return settings.SURICATE_WORKFLOW_ENABLED
+
+
+@register.simple_tag
 def enable_report_colors_per_status():
     return settings.ENABLE_REPORT_COLORS_PER_STATUS
 

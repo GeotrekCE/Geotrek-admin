@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbosity = options['verbosity']
-        if settings.SURICATE_MANAGEMENT_ENABLED:
+        if settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:
             parser = SuricateParser()
             has_no_params = not (options["statuses"] | options["activities"] | options["test"])
             if options['test']:
@@ -50,4 +50,4 @@ class Command(BaseCommand):
                 if has_no_params:
                     parser.get_alerts(verbosity=verbosity)
         else:
-            logger.error("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED.")
+            logger.error("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED or SURICATE_WORKFLOW_ENABLED.")
