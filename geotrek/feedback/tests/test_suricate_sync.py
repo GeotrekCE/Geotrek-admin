@@ -166,7 +166,7 @@ class SuricateAPITests(SuricateTests):
     def test_command_disabled(self, mocked):
         """Test sync_suricate command is disabled when setting is False"""
         call_command("sync_suricate", activities=True, statuses=True)
-        mocked.error.assert_called_with("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED or SURICATE_WORKFLOW_ENABLED..")
+        mocked.error.assert_called_with("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED or SURICATE_WORKFLOW_ENABLED.")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.logger")
