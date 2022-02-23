@@ -247,7 +247,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.save()
         # Assert report changes status and manager is notified
         self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
-        self.assertEqual(self.interv_report.status.assigned_user, WorkflowManager.objects.first().user)
+        self.assertEqual(self.interv_report.assigned_user, WorkflowManager.objects.first().user)
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(mail.outbox[-1].subject, "Geotrek - Un Signalement est à clôturer")
         self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])
