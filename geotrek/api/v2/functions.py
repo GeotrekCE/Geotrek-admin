@@ -34,17 +34,11 @@ class Area(Func):
     output_field = FloatField()
 
 
-class StartPoint(Func):
-    """
-    ST_StartPoint postgis function
-    """
-    function = 'ST_StartPoint'
+class StartPoint(GeoFunc):
+    """ ST_StartPoint postgis function """
     output_field = PointField()
 
 
-class EndPoint(Func):
-    """
-    ST_EndPoint postgis function
-    """
-    function = 'ST_EndPoint'
+class EndPoint(GeoFunc):
+    """ ST_EndPoint postgis function """
     output_field = PointField()

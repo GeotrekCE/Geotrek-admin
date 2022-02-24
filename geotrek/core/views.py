@@ -167,7 +167,7 @@ class PathCreate(MapEntityCreate):
 
     def dispatch(self, *args, **kwargs):
         if self.request.user.has_perm('core.add_path') or self.request.user.has_perm('core.add_draft_path'):
-            return super(MapEntityCreate, self).dispatch(*args, **kwargs)
+            return super().dispatch(*args, **kwargs)
         return super().dispatch(*args, **kwargs)
 
 
