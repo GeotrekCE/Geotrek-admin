@@ -18,7 +18,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
 from rest_framework import permissions as rest_permissions, viewsets
 
-from geotrek.api.v2.functions import Length
+from ..common.functions import Length
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins import CustomColumnsMixin

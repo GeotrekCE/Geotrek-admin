@@ -36,7 +36,7 @@ from . import graph as graph_lib
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Sum
-from geotrek.api.v2.functions import Length
+from ..common.functions import Length
 from django.db.models.fields import FloatField
 
 

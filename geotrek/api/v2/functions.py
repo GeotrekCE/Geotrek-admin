@@ -31,14 +31,6 @@ def LineLocatePoint(line, geom):
     return Func(line, geom, function='ST_LINELOCATEPOINT', output_field=FloatField())
 
 
-class Length(Func):
-    """
-    ST_Length postgis function
-    """
-    function = 'ST_Length'
-    output_field = FloatField()
-
-
 class Length3D(Func):
     """
     ST_3DLENGTH postgis function

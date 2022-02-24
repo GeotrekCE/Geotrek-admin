@@ -15,7 +15,8 @@ from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
-from geotrek.api.v2.functions import Length, Length3D, Transform
+from geotrek.api.v2.functions import Length3D, Transform
+from geotrek.common.functions import Length
 from geotrek.api.v2.mixins import PDFSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
