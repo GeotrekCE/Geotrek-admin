@@ -32,7 +32,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.1.*',
-        'mapentity>=7.1.3',
+        'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@paginate_list_geotrek_integration#egg=mapentity',
         'env_file',
         # pinned by requirements.txt
         'python-memcached',

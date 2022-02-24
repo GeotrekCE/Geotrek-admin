@@ -125,10 +125,13 @@ django-weasyprint==0.5.5
     # via mapentity
 djangorestframework==3.12.2
     # via
+    #   djangorestframework-datatables
     #   djangorestframework-gis
     #   drf-extensions
     #   drf-yasg
     #   mapentity
+djangorestframework-datatables==0.7.0
+    # via mapentity
 djangorestframework-gis==0.16
     # via mapentity
 docutils==0.16
@@ -183,7 +186,7 @@ landez==2.5.0
     # via geotrek (setup.py)
 lxml==4.7.1
     # via mapentity
-mapentity==7.1.3
+mapentity @ git+https://github.com/makinacorpus/django-mapentity.git@paginate_list_geotrek_integration
     # via geotrek (setup.py)
 markupsafe==1.1.1
     # via jinja2
@@ -236,6 +239,7 @@ pytz==2019.3
     #   datetime
     #   django
     #   django-modelcluster
+    #   djangorestframework-datatables
 raven==6.10.0
     # via geotrek (setup.py)
 rcssmin==1.0.6
