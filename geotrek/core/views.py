@@ -22,7 +22,6 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin,)
 
-
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
@@ -37,7 +36,6 @@ from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Sum
 from ..common.functions import Length
-from django.db.models.fields import FloatField
 
 
 logger = logging.getLogger(__name__)
@@ -97,15 +95,6 @@ class PathList(CustomColumnsMixin, MapEntityList):
     filterform = PathFilterSet
     mandatory_columns = ['id', 'checkbox', 'name', 'length']
     default_extra_columns = ['length_2d']
-
-
-class PathJsonList(MapEntityJsonList, PathList):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["sumPath"] = round((self.object_list.aggregate(
-            sumPath=Sum(Length('geom'), output_field=FloatField())
-        ).get('sumPath') or 0) / 1000, 1)
-        return context
 
 
 class PathFormatList(MapEntityFormat, PathList):
@@ -272,10 +261,18 @@ class PathViewSet(MapEntityViewSet):
     model = Path
     serializer_class = PathSerializer
     geojson_serializer_class = PathGeojsonSerializer
+    filterset_class = PathFilterSet
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Path.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
+        return Path.objects.annotate(api_geom=Transform("geom", settings.API_SRID),
+                                     length_2d=Length('geom'),
+                                     ).defer('geom')
+
+    def get_filter_count_infos(self, qs):
+        """ Add total path length to count infos in List dropdown menu """
+        data = super().get_filter_count_infos(qs)
+        return f"{data} ({round(qs.aggregate(sumPath=Sum(Length('geom') / 1000)).get('sumPath') or 0, 1)} km)"
 
 
 @login_required
