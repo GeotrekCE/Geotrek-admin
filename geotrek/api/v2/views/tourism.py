@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
@@ -7,7 +8,6 @@ from rest_framework.response import Response
 
 from geotrek.api.v2 import serializers as api_serializers, \
     filters as api_filters, viewsets as api_viewsets
-from geotrek.api.v2.functions import Transform
 from geotrek.tourism import models as tourism_models
 
 

@@ -4,6 +4,7 @@ import logging
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import F, Value
@@ -15,7 +16,7 @@ import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
-from geotrek.api.v2.functions import LineLocatePoint, Transform
+from geotrek.api.v2.functions import LineLocatePoint
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.utils import intersecting, classproperty

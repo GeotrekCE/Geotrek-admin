@@ -1,7 +1,7 @@
-
 import json
 import logging
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
@@ -10,7 +10,7 @@ from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, M
                              MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
-from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
+from geotrek.api.v2.functions import Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
 
 from geotrek.common.mixins import CustomColumnsMixin

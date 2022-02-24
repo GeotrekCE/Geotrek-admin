@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Prefetch, Q
 from django.db.models.aggregates import Count
 from django.http import Http404
@@ -10,7 +11,7 @@ from rest_framework.response import Response
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
-from geotrek.api.v2.functions import Length3D, Transform
+from geotrek.api.v2.functions import Length3D
 from geotrek.common.functions import Length
 from geotrek.api.v2.renderers import SVGProfileRenderer
 from geotrek.api.v2.utils import build_response_from_cache

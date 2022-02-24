@@ -1,12 +1,12 @@
-
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Count, F, Q
 from django_filters.rest_framework.backends import DjangoFilterBackend
 
 from geotrek.api.mobile.serializers import trekking as api_serializers_trekking
 from geotrek.api.mobile.serializers import tourism as api_serializers_tourism
 
-from geotrek.api.v2.functions import Transform, StartPoint, EndPoint
+from geotrek.api.v2.functions import StartPoint, EndPoint
 from geotrek.common.functions import Length
 from geotrek.trekking import models as trekking_models
 
