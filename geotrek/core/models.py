@@ -100,13 +100,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     def topology_set(self):
         return Topology.objects.filter(aggregations__path=self)
 
-    @property
-    def length_2d(self):
-        if self.geom:
-            return self.geom.length
-        else:
-            return None
-
     @classproperty
     def length_2d_verbose_name(cls):
         return _("2D Length")
