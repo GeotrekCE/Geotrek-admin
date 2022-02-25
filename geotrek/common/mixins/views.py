@@ -7,9 +7,7 @@ from geotrek.common.utils import logger
 
 
 class CustomColumnsMixin:
-    """
-    Customize columns in List views
-    """
+    """ Customize columns in List views """
 
     MAP_SETTINGS = {
         'PathList': 'path_view',
@@ -117,7 +115,6 @@ class CustomColumnsMixin:
 
 
 class BookletMixin:
-
     def get(self, request, pk, slug, lang=None):
         response = super().get(request, pk, slug)
         response.add_post_render_callback(transform_pdf_booklet_callback)
