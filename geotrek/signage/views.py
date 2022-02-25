@@ -7,7 +7,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.core.models import AltimetryMixin
 

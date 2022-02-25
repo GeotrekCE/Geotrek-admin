@@ -14,7 +14,7 @@ from paperclip.models import Attachment as BaseAttachment
 from paperclip.models import FileType as BaseFileType
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins import OptionalPictogramMixin, PictogramMixin
+from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin
 
 
 class AccessibilityAttachmentManager(models.Manager):

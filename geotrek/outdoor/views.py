@@ -1,4 +1,4 @@
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform

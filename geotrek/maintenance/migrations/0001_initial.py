@@ -3,8 +3,8 @@ from django.db import migrations, models
 import datetime
 import mapentity.models
 import django.contrib.gis.db.models.fields
-import geotrek.common.mixins
 import geotrek.authent.models
+import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Intervention',
                 'verbose_name_plural': 'Interventions',
             },
-            bases=(geotrek.common.mixins.AddPropertyMixin, mapentity.models.MapEntityMixin, models.Model),
+            bases=(geotrek.common.mixins.models.AddPropertyMixin, mapentity.models.MapEntityMixin, models.Model),
         ),
         migrations.CreateModel(
             name='InterventionDisorder',
@@ -167,7 +167,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Project',
                 'verbose_name_plural': 'Projects',
             },
-            bases=(geotrek.common.mixins.AddPropertyMixin, mapentity.models.MapEntityMixin, models.Model),
+            bases=(geotrek.common.mixins.models.AddPropertyMixin, mapentity.models.MapEntityMixin, models.Model),
         ),
         migrations.CreateModel(
             name='ProjectDomain',

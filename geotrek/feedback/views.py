@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.urls.base import reverse
 from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback import serializers as feedback_serializers

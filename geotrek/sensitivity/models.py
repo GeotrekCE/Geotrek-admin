@@ -12,7 +12,7 @@ from django.utils.translation import pgettext_lazy, gettext_lazy as _
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
+from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import simplify_coords
 

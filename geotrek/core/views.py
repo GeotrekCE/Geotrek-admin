@@ -18,12 +18,12 @@ from django.http import HttpResponseRedirect
 from rest_framework import permissions as rest_permissions
 
 from mapentity.serializers import GPXSerializer
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityViewSet,
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin,)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 

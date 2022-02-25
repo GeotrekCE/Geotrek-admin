@@ -1,32 +1,23 @@
-from io import BytesIO
-import os
-import logging
-import shutil
 import datetime
 import hashlib
+import os
+import shutil
 
-from pdfimpose import PageList
-
+from PIL.Image import DecompressionBombError
 from django.conf import settings
-from django.db.models import Manager as DefaultManager
-from django.db import models, transaction
+from django.db import models
 from django.db.models import Q
-from django.db.models.fields.related import ForeignKey, ManyToManyField
-
-from django.utils.safestring import mark_safe
-from django.utils.formats import date_format
-from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import slugify
-
+from django.utils.formats import date_format
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
+from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from easy_thumbnails.alias import aliases
 from embed_video.backends import detect_backend, VideoDoesntExistException
-from PIL.Image import DecompressionBombError
 
-from geotrek.common.utils import classproperty
-
-logger = logging.getLogger(__name__)
+from geotrek.common.mixins.managers import NoDeleteManager
+from geotrek.common.utils import classproperty, logger
 
 
 class TimeStampedModelMixin(models.Model):
@@ -53,23 +44,6 @@ class TimeStampedModelMixin(models.Model):
         return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
 
     date_update_verbose_name = _("Update date")
-
-
-class NoDeleteQuerySet(models.QuerySet):
-    def existing(self):
-        return self.filter(deleted=False)
-
-
-class NoDeleteManager(DefaultManager):
-    # Use this manager when walking through FK/M2M relationships
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        return NoDeleteQuerySet(self.model, using=self._db)
-
-    # Filter out deleted objects
-    def existing(self):
-        return self.get_queryset().filter(deleted=False)
 
 
 class NoDeleteMixin(models.Model):
@@ -415,11 +389,12 @@ class PictogramMixin(models.Model):
 
 
 class OptionalPictogramMixin(PictogramMixin):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pictogram.blank = True  # allow blank values
+
     class Meta:
         abstract = True
-
-
-OptionalPictogramMixin._meta.get_field('pictogram').blank = True
 
 
 class AddPropertyMixin:
@@ -429,163 +404,3 @@ class AddPropertyMixin:
             raise AttributeError("%s has already an attribute %s" % (cls, name))
         setattr(cls, name, property(func))
         setattr(cls, '%s_verbose_name' % name, verbose_name)
-
-
-def transform_pdf_booklet_callback(response):
-    content = response.content
-    content_b = BytesIO(content)
-    import pdfimpose
-
-    pages = PageList([content_b])
-    for x in pages:
-        x.pdf.strict = False
-    new_pdf = pdfimpose._legacy_pypdf_impose(
-        matrix=pdfimpose.ImpositionMatrix([pdfimpose.Direction.horizontal], 'left'),
-        pages=pages,
-        last=0
-    )
-    result = BytesIO()
-    new_pdf.write(result)
-    response.content = result.getvalue()
-
-
-@transaction.atomic
-def apply_merge(modeladmin, request, queryset):
-    main = queryset[0]
-    tail = queryset[1:]
-    if not tail:
-        return
-    name = ' + '.join(queryset.values_list(modeladmin.merge_field, flat=True))
-    fields = main._meta.get_fields()
-
-    for field in fields:
-        if field.remote_field:
-            remote_field = field.remote_field.name
-            if isinstance(field.remote_field, ForeignKey):
-                field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}).update(**{remote_field: main})
-            elif isinstance(field.remote_field, ManyToManyField):
-                for element in field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}):
-                    getattr(element, remote_field).add(main)
-    max_length = main._meta.get_field(modeladmin.merge_field).max_length
-    name = name if not len(name) > max_length - 4 else '%s ...' % name[:max_length - 4]
-    setattr(main, modeladmin.merge_field, name)
-    main.save()
-    for element_to_delete in tail:
-        element_to_delete.delete()
-
-
-apply_merge.short_description = _('Merge')
-
-
-class MergeActionMixin:
-    actions = [apply_merge]
-
-
-class CustomColumnsMixin:
-    """
-    Customize columns in List views
-    """
-
-    MAP_SETTINGS = {
-        'PathList': 'path_view',
-        'PathJsonList': 'path_view',
-        'PathFormatList': 'path_export',
-        'TrailList': 'trail_view',
-        'TrailJsonList': 'trail_view',
-        'TrailFormatList': 'trail_export',
-        'LandEdgeList': 'landedge_view',
-        'LandEdgeJsonList': 'landedge_view',
-        'LandEdgeFormatList': 'landedge_export',
-        'PhysicalEdgeList': 'physicaledge_view',
-        'PhysicalEdgeJsonList': 'physicaledge_view',
-        'PhysicalEdgeFormatList': 'physicaledge_export',
-        'CompetenceEdgeList': 'competenceedge_view',
-        'CompetenceEdgeJsonList': 'competenceedge_view',
-        'CompetenceEdgeFormatList': 'competenceedge_export',
-        'SignageManagementEdgeList': 'signagemanagementedge_view',
-        'SignageManagementEdgeJsonList': 'signagemanagementedge_view',
-        'SignageManagementEdgeFormatList': 'signagemanagementedge_export',
-        'WorkManagementEdgeList': 'workmanagementedge_view',
-        'WorkManagementEdgeJsonList': 'workmanagementedge_view',
-        'WorkManagementEdgeFormatList': 'workmanagementedge_export',
-        'InfrastructureList': 'infrastructure_view',
-        'InfrastructureJsonList': 'infrastructure_view',
-        'InfrastructureFormatList': 'infrastructure_export',
-        'SignageList': 'signage_view',
-        'SignageJsonList': 'signage_view',
-        'SignageFormatList': 'signage_export',
-        'InterventionList': 'intervention_view',
-        'InterventionJsonList': 'intervention_view',
-        'InterventionFormatList': 'intervention_export',
-        'ProjectList': 'project_view',
-        'ProjectJsonList': 'project_view',
-        'ProjectFormatList': 'project_export',
-        'TrekList': 'trek_view',
-        'TrekJsonList': 'trek_view',
-        'TrekFormatList': 'trek_export',
-        'POIList': 'poi_view',
-        'POIJsonList': 'poi_view',
-        'POIFormatList': 'poi_export',
-        'ServiceList': 'service_view',
-        'ServiceJsonList': 'service_view',
-        'ServiceFormatList': 'service_export',
-        'DiveList': 'dive_view',
-        'DiveJsonList': 'dive_view',
-        'DiveFormatList': 'dive_export',
-        'TouristicContentList': 'touristic_content_view',
-        'TouristicContentJsonList': 'touristic_content_view',
-        'TouristicContentFormatList': 'touristic_content_export',
-        'TouristicEventList': 'touristic_event_view',
-        'TouristicEventJsonList': 'touristic_event_view',
-        'TouristicEventFormatList': 'touristic_event_export',
-        'ReportList': 'feedback_view',
-        'ReportJsonList': 'feedback_view',
-        'ReportFormatList': 'feedback_export',
-        'SensitiveAreaList': 'sensitivity_view',
-        'SensitiveAreaJsonList': 'sensitivity_view',
-        'SensitiveAreaFormatList': 'sensitivity_export',
-        'SiteList': 'outdoor_site_view',
-        'SiteJsonList': 'outdoor_site_view',
-        'SiteFormatList': 'outdoor_site_export',
-        'CourseList': 'outdoor_course_view',
-        'CourseJsonList': 'outdoor_course_view',
-        'CourseFormatList': 'outdoor_course_export',
-    }
-
-    def get_mandatory_columns(self):
-        mandatory_cols = getattr(self, 'mandatory_columns', None)
-        if (mandatory_cols is None):
-            logger.error(
-                f"Cannot build columns for class {self.__class__.__name__}.\n"
-                + "Please define on this class either : \n"
-                + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
-                + "OR \n"
-                + "  - two fields 'mandatory_columns' AND 'default_extra_columns'"
-            )
-        return mandatory_cols
-
-    def get_default_extra_columns(self):
-        default_extra_columns = getattr(self, 'default_extra_columns', None)
-        if (default_extra_columns is None):
-            logger.error(
-                f"Cannot build columns for class {self.__class__.__name__}.\n"
-                + "Please define on this class either : \n"
-                + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
-                + "OR \n"
-                + "  - two fields 'mandatory_columns' AND 'default_extra_columns'"
-            )
-        return default_extra_columns
-
-    @property
-    def columns(self):
-        mandatory_cols = self.get_mandatory_columns()
-        default_extra_cols = self.get_default_extra_columns()
-        settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, '')
-        if (mandatory_cols is None or default_extra_cols is None):
-            return []
-        else:
-            # Get extra columns names from instance settings, or use default extra columns
-            extra_columns = settings.COLUMNS_LISTS.get(settings_key, default_extra_cols)
-            # Some columns are mandatory to prevent crashes
-            columns = mandatory_cols + extra_columns
-            return columns

@@ -1,6 +1,6 @@
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,

@@ -9,7 +9,8 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.utils import classproperty
-from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin, NoDeleteManager
+from geotrek.common.mixins.models import BasePublishableMixin, OptionalPictogramMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.core.models import Topology, Path
 
 INFRASTRUCTURE_TYPES = Choices(

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from geotrek.common.api.mixins.serializers import TimeStampedModelSerializerMixin
+from geotrek.common.mixins.serializers import TimeStampedModelSerializerMixin
 from geotrek.core.models import Path, Trail
 
 

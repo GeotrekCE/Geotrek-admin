@@ -34,7 +34,6 @@ from paperclip import settings as settings_paperclip
 
 from geotrek.celery import app as celery_app
 from geotrek.common.forms import AttachmentAccessibilityForm
-from geotrek.common.mixins import transform_pdf_booklet_callback
 from geotrek.common.utils import sql_extent
 from geotrek.common.utils.portals import smart_get_template_by_portal
 from geotrek.common.models import FileType, Attachment, TargetPortal, AccessibilityAttachment
@@ -52,6 +51,7 @@ from zipfile import ZipFile
 
 from datetime import timedelta
 
+from .mixins.views import BookletMixin
 from .permissions import PublicOrReadPermMixin
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
@@ -193,6 +193,7 @@ class DocumentPublicMixin:
         return context
 
 
+class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
 class BookletMixin:
 
     def get(self, request, pk, slug, lang=None):

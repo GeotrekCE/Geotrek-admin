@@ -12,9 +12,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import (AddPropertyMixin, OptionalPictogramMixin,
-                                   PicturesMixin, PublishableMixin,
-                                   TimeStampedModelMixin)
+from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin,
+                                          TimeStampedModelMixin)
 from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting

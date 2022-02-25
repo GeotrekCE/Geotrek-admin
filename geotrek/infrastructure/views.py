@@ -6,7 +6,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.core.models import AltimetryMixin
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.core.views import CreateFromTopologyMixin
 
 from .filters import InfrastructureFilterSet

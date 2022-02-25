@@ -5,7 +5,7 @@ import django.contrib.gis.db.models.fields
 from django.db import migrations, models
 import django.db.models.deletion
 import geotrek.authent.models
-import geotrek.common.mixins
+import geotrek.common.mixins.models
 import geotrek.zoning.mixins
 
 
@@ -40,6 +40,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Outdoor courses',
                 'ordering': ('name',),
             },
-            bases=(geotrek.zoning.mixins.ZoningPropertiesMixin, geotrek.common.mixins.AddPropertyMixin, models.Model),
+            bases=(geotrek.zoning.mixins.ZoningPropertiesMixin, geotrek.common.mixins.models.AddPropertyMixin, models.Model),
         ),
     ]

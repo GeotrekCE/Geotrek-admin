@@ -15,6 +15,7 @@ from django.urls import reverse
 
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 from mapentity.views.generic import MapEntityList
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.parsers import Parser

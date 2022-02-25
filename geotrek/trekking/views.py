@@ -21,7 +21,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from ..common.functions import Length
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)

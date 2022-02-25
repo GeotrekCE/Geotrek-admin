@@ -6,7 +6,7 @@ import django.contrib.gis.db.models.fields
 from django.db import migrations, models
 import django.db.models.deletion
 import geotrek.authent.models
-import geotrek.common.mixins
+import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
@@ -61,7 +61,8 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Dive',
                 'verbose_name_plural': 'Dives',
             },
-            bases=(geotrek.common.mixins.AddPropertyMixin, geotrek.common.mixins.PicturesMixin, models.Model),
+            bases=(
+                geotrek.common.mixins.models.AddPropertyMixin, geotrek.common.mixins.models.PicturesMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Level',

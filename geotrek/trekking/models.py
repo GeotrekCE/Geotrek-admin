@@ -19,8 +19,8 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
-from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
-                                   PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
+from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 
