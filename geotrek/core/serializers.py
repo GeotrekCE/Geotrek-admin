@@ -1,20 +1,17 @@
-from mapentity.serializers.fields import MapentityBooleanField
+from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityModelSerializer
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from geotrek.common.mixins.serializers import TimeStampedModelSerializerMixin
 from geotrek.core.models import Path, Trail
 
 
-class PathSerializer(TimeStampedModelSerializerMixin, serializers.ModelSerializer):
+class PathSerializer(DynamicFieldsMixin, MapentityModelSerializer):
     checkbox = serializers.CharField()
     length_2d = serializers.SerializerMethodField()
     length = serializers.FloatField(source='length_display')
     name = serializers.CharField(source='name_display')
-    valid = MapentityBooleanField()
-    draft = MapentityBooleanField()
-    visible = MapentityBooleanField()
     usages = serializers.CharField(source='usages_display')
     networks = serializers.CharField(source='networks_display')
     trails = serializers.CharField(source='trails_display')
@@ -31,8 +28,9 @@ class PathSerializer(TimeStampedModelSerializerMixin, serializers.ModelSerialize
         fields = (
             'id', 'checkbox', 'arrival', 'ascent', 'departure', 'descent', 'draft', 'eid', 'length', 'length_2d',
             'max_elevation', 'min_elevation', 'name', 'slope', 'valid', 'visible', 'structure',
-            'stake', 'networks', 'comments', "comfort", "source", "usages", "draft", "trails", "uuid",
-        ) + TimeStampedModelSerializerMixin.Meta.fields
+            'stake', 'networks', 'comments', 'comfort', "source", "usages", 'draft', "trails", "uuid", 'date_update',
+            'date_insert'
+        )
 
 
 class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
@@ -44,14 +42,15 @@ class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
         fields = PathSerializer.Meta.fields + ('api_geom', )
 
 
-class TrailSerializer(TimeStampedModelSerializerMixin, serializers.ModelSerializer):
+class TrailSerializer(DynamicFieldsMixin, MapentityModelSerializer):
     length = serializers.FloatField(source='length_display')
 
     class Meta:
         model = Trail
         fields = (
             'id', 'arrival', 'departure', 'comments', 'name', 'length', 'uuid',
-            'length_2d', 'structure', 'min_elevation', 'max_elevation') + TimeStampedModelSerializerMixin.Meta.fields
+            'length_2d', 'structure', 'min_elevation', 'max_elevation', 'date_update', 'date_insert'
+        )
 
 
 class TrailGeojsonSerializer(GeoFeatureModelSerializer, TrailSerializer):

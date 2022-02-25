@@ -36,7 +36,7 @@ from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Sum
 from ..common.functions import Length
-
+from ..common.viewsets import GeotrekMapentityViewSet
 
 logger = logging.getLogger(__name__)
 
@@ -257,16 +257,19 @@ class PathDelete(MapEntityDelete):
         return context
 
 
-class PathViewSet(MapEntityViewSet):
+class PathViewSet(GeotrekMapentityViewSet):
     model = Path
     serializer_class = PathSerializer
     geojson_serializer_class = PathGeojsonSerializer
     filterset_class = PathFilterSet
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Path.objects.annotate(api_geom=Transform("geom", settings.API_SRID),
-                                     length_2d=Length('geom')).defer('geom')
+        return Path.objects.annotate(length_2d=Length('geom')).defer('geom', 'geom_cadastre', 'geom_3d')
+                           # .select_related('structure', 'comfort', 'source', 'stake')\
+                           # .prefetch_related('usages', 'networks')\
+
+    def get_columns(self):
+        return ['id', 'checkbox', 'name', 'length'] + settings.COLUMNS_LISTS.get('PathList', ['length_2d'])
 
     def get_filter_count_infos(self, qs):
         """ Add total path length to count infos in List dropdown menu """
@@ -384,7 +387,7 @@ class TrailViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Trail.objects.existing().annotate(api_geom=Transform("geom", settings.API_SRID))
+        return Trail.objects.existing().prefetch_related('aggregations').defer('geom_3d')
 
 
 @permission_required('core.change_path')
