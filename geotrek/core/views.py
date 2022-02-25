@@ -266,8 +266,7 @@ class PathViewSet(MapEntityViewSet):
 
     def get_queryset(self):
         return Path.objects.annotate(api_geom=Transform("geom", settings.API_SRID),
-                                     length_2d=Length('geom'),
-                                     ).defer('geom')
+                                     length_2d=Length('geom')).defer('geom')
 
     def get_filter_count_infos(self, qs):
         """ Add total path length to count infos in List dropdown menu """
@@ -310,10 +309,6 @@ class TrailList(CustomColumnsMixin, MapEntityList):
     filterform = TrailFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['departure', 'arrival', 'length']
-
-
-class TrailJsonList(MapEntityJsonList, TrailList):
-    pass
 
 
 class TrailFormatList(MapEntityFormat, TrailList):
@@ -385,6 +380,7 @@ class TrailViewSet(MapEntityViewSet):
     model = Trail
     serializer_class = TrailSerializer
     geojson_serializer_class = TrailGeojsonSerializer
+    filterset_class = TrailFilterSet
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):

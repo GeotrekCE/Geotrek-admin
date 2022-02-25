@@ -1,12 +1,13 @@
-from mapentity.serializers.fields import MapentityBooleanField, MapentityDateTimeField
+from mapentity.serializers.fields import MapentityBooleanField
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
+from geotrek.common.api.mixins.serializers import TimeStampedModelSerializerMixin
 from geotrek.core.models import Path, Trail
 
 
-class PathSerializer(serializers.ModelSerializer):
+class PathSerializer(TimeStampedModelSerializerMixin, serializers.ModelSerializer):
     checkbox = serializers.CharField()
     length_2d = serializers.SerializerMethodField()
     length = serializers.FloatField(source='length_display')
@@ -14,8 +15,6 @@ class PathSerializer(serializers.ModelSerializer):
     valid = MapentityBooleanField()
     draft = MapentityBooleanField()
     visible = MapentityBooleanField()
-    date_update = MapentityDateTimeField()
-    date_insert = MapentityDateTimeField()
     usages = serializers.CharField(source='usages_display')
     networks = serializers.CharField(source='networks_display')
     trails = serializers.CharField(source='trails_display')
@@ -31,13 +30,12 @@ class PathSerializer(serializers.ModelSerializer):
         model = Path
         fields = (
             'id', 'checkbox', 'arrival', 'ascent', 'departure', 'descent', 'draft', 'eid', 'length', 'length_2d',
-            'max_elevation', 'min_elevation', 'name', 'slope', 'valid', 'visible', 'structure', 'date_update',
-            'date_insert', 'stake', 'networks', 'comments', "comfort", "source", "usages", "draft", "trails", "uuid",
-        )
+            'max_elevation', 'min_elevation', 'name', 'slope', 'valid', 'visible', 'structure',
+            'stake', 'networks', 'comments', "comfort", "source", "usages", "draft", "trails", "uuid",
+        ) + TimeStampedModelSerializerMixin.Meta.fields
 
 
 class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
-    # Annotated geom field with API_SRID
     api_geom = GeometryField(read_only=True, precision=7)
 
     class Meta(PathSerializer.Meta):
@@ -46,17 +44,20 @@ class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
         fields = PathSerializer.Meta.fields + ('api_geom', )
 
 
-class TrailSerializer(serializers.ModelSerializer):
+class TrailSerializer(TimeStampedModelSerializerMixin, serializers.ModelSerializer):
+    length = serializers.FloatField(source='length_display')
+
     class Meta:
         model = Trail
-        id_field = 'id'
-        fields = ('id', 'arrival', 'departure', 'comments', 'name')
+        fields = (
+            'id', 'arrival', 'departure', 'comments', 'name', 'length', 'uuid',
+            'length_2d', 'structure', 'min_elevation', 'max_elevation') + TimeStampedModelSerializerMixin.Meta.fields
 
 
 class TrailGeojsonSerializer(GeoFeatureModelSerializer, TrailSerializer):
-    # Annotated geom field with API_SRID
     api_geom = GeometryField(read_only=True, precision=7)
 
     class Meta(TrailSerializer.Meta):
         geo_field = 'api_geom'
+        id_field = 'id'
         fields = TrailSerializer.Meta.fields + ('api_geom', )

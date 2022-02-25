@@ -868,7 +868,6 @@ class PathSource(StructureOrNoneRelated):
 
 @functools.total_ordering
 class Stake(StructureOrNoneRelated):
-
     stake = models.CharField(verbose_name=_("Stake"), max_length=50)
 
     class Meta:
