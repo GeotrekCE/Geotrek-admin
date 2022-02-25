@@ -269,7 +269,7 @@ class PathViewSet(GeotrekMapentityViewSet):
                            # .prefetch_related('usages', 'networks')\
 
     def get_columns(self):
-        return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('PathList', PathList.default_extra_columns)
+        return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('path_view', PathList.default_extra_columns)
 
     def get_filter_count_infos(self, qs):
         """ Add total path length to count infos in List dropdown menu """
@@ -386,10 +386,10 @@ class TrailViewSet(GeotrekMapentityViewSet):
     filterset_class = TrailFilterSet
 
     def get_columns(self):
-        return TrailList.mandatory_columns + settings.COLUMNS_LISTS.get('TrailList', TrailList.default_extra_columns)
+        return TrailList.mandatory_columns + settings.COLUMNS_LISTS.get('trail_view', TrailList.default_extra_columns)
 
     def get_queryset(self):
-        return Trail.objects.existing().prefetch_related('aggregations').defer('geom', 'geom_3d')
+        return Trail.objects.existing().defer('geom', 'geom_3d')
 
 
 @permission_required('core.change_path')
