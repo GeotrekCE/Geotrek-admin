@@ -1,3 +1,4 @@
+from django.conf import settings
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from geotrek.common.mixins.views import CustomColumnsMixin
@@ -7,6 +8,8 @@ from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
                      WorkManagementEdge, SignageManagementEdge)
 from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, SignageManagementEdgeFilterSet
 from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
+from .serializers import LandEdgeSerializer
+from ..common.viewsets import GeotrekMapentityViewSet
 
 
 class PhysicalEdgeLayer(MapEntityLayer):
@@ -66,10 +69,6 @@ class LandEdgeList(CustomColumnsMixin, MapEntityList):
     default_extra_columns = ['length']
 
 
-class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
-    pass
-
-
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     mandatory_columns = ['id']
     default_extra_columns = [
@@ -99,6 +98,19 @@ class LandEdgeUpdate(MapEntityUpdate):
 
 class LandEdgeDelete(MapEntityDelete):
     model = LandEdge
+
+
+class LandEdgeViewSet(GeotrekMapentityViewSet):
+    model = LandEdge
+    serializer_class = LandEdgeSerializer
+    filterset_class = LandEdgeFilterSet
+
+    def get_columns(self):
+        return LandEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('landedge_view',
+                                                                           LandEdgeList.default_extra_columns)
+
+    def get_queryset(self):
+        return LandEdge.objects.existing().select_related('land_type').defer('geom', 'geom_3d')
 
 
 class CompetenceEdgeLayer(MapEntityLayer):
