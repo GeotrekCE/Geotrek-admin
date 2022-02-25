@@ -17,7 +17,6 @@ class GeotrekMapentityViewSet(MapEntityViewSet):
 
         if columns:
             context['request'].query_params._mutable = True
-            columns = ['id', 'checkbox', 'name', 'length'] + settings.COLUMNS_LISTS.get('Path', ['length_2d'])
             # in combination with DynamicFieldsMixin on serializer
             # this permit to optimize data serialization with only required columns
             context['request'].query_params['fields'] = ','.join(columns)

@@ -269,7 +269,7 @@ class PathViewSet(GeotrekMapentityViewSet):
                            # .prefetch_related('usages', 'networks')\
 
     def get_columns(self):
-        return ['id', 'checkbox', 'name', 'length'] + settings.COLUMNS_LISTS.get('PathList', ['length_2d'])
+        return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('PathList', PathList.default_extra_columns)
 
     def get_filter_count_infos(self, qs):
         """ Add total path length to count infos in List dropdown menu """
@@ -379,15 +379,17 @@ class TrailDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class TrailViewSet(MapEntityViewSet):
+class TrailViewSet(GeotrekMapentityViewSet):
     model = Trail
     serializer_class = TrailSerializer
     geojson_serializer_class = TrailGeojsonSerializer
     filterset_class = TrailFilterSet
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_columns(self):
+        return TrailList.mandatory_columns + settings.COLUMNS_LISTS.get('TrailList', TrailList.default_extra_columns)
 
     def get_queryset(self):
-        return Trail.objects.existing().prefetch_related('aggregations').defer('geom_3d')
+        return Trail.objects.existing().prefetch_related('aggregations').defer('geom', 'geom_3d')
 
 
 @permission_required('core.change_path')
