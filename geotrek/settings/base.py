@@ -223,11 +223,11 @@ TEMPLATES = [
                 'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                # 'django.template.loaders.eggs.Loader',
-            ],
+            # 'loaders': [
+            #     'django.template.loaders.filesystem.Loader',
+            #     'django.template.loaders.app_directories.Loader',
+            #     # 'django.template.loaders.eggs.Loader',
+            # ],
             'debug': True,
         },
     },
