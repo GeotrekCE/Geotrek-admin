@@ -141,7 +141,3 @@ class SyncRandoTestCase(TestCase):
             synchro.sync('fr')
         self.assertEqual(len(mock_trek.call_args_list), 1)
         mock_trek.assert_called_with('fr', self.trek_fr)
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

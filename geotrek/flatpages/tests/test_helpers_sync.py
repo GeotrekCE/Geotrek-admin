@@ -39,7 +39,3 @@ class SyncRandoTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'flatpages.geojson')))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'meta', 'en', 'informations',
                                                     'test', 'index.html')))
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

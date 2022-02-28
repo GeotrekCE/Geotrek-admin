@@ -24,7 +24,3 @@ class SyncRandoTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'sensitiveareas.geojson')))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'sensitiveareas',
                                                     '{obj.pk}.kml'.format(obj=self.area))))
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

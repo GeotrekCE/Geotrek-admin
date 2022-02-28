@@ -35,14 +35,10 @@ from geotrek.tourism.models import TouristicEventType
 
 class VarTmpTestCase(TestCase):
     def setUp(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         if os.path.exists(os.path.join('var', 'tmp')):
             shutil.rmtree(os.path.join('var', 'tmp'))
 
     def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         if os.path.exists(os.path.join('var', 'tmp')):
             shutil.rmtree(os.path.join('var', 'tmp'))
 
@@ -137,15 +133,6 @@ class SyncMobileFailTest(VarTmpTestCase):
     def test_fail_directory_not_empty(self):
         os.makedirs('var/tmp/other')
         with self.assertRaisesRegex(CommandError, "Destination directory contains extra data"):
-            management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2)
-
-    def test_fail_sync_already_running(self):
-        os.makedirs('var/tmp_sync_mobile')
-        msg = "The var/tmp_sync_mobile/ directory already exists. " \
-              "Please check no other sync_mobile command is already running. " \
-              "If not, please delete this directory."
-        with self.assertRaisesRegex(CommandError, msg):
             management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
 

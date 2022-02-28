@@ -114,7 +114,3 @@ class SyncRandoTestCase(TestCase):
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'touristiccontents',
                                                     str(self.touristic_content.pk),
                                                     '%s.pdf' % self.touristic_content.slug)))
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

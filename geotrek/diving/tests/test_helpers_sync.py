@@ -99,7 +99,3 @@ class SyncRandoTestCase(TestCase):
             synchro.sync('en')
         self.assertEqual(len(mock_dive.call_args_list), 1)
         mock_dive.assert_called_with('en', self.dive_portal_source)
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

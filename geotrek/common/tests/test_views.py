@@ -246,8 +246,6 @@ class SyncRandoViewTest(TestCase):
         cls.simple_user = User.objects.create_user(username='homer', password='doooh')
 
     def setUp(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         if os.path.exists(os.path.join('var', 'tmp')):
             shutil.rmtree(os.path.join('var', 'tmp'))
 
@@ -295,8 +293,6 @@ class SyncRandoViewTest(TestCase):
                                                                       'skip_dem': True, 'skip_profile_png': True})
     def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
         self.client.login(username='admin', password='super')
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         launch_sync_rando.apply()
         response = self.client.post(reverse('common:sync_randos_state'), data={})
         self.assertEqual(response.status_code, 200)
@@ -311,8 +307,6 @@ class SyncRandoViewTest(TestCase):
                                                                   'skip_dem': True, 'skip_profile_png': True})
     def test_get_sync_rando_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
         self.client.login(username='admin', password='super')
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         launch_sync_rando.apply()
         response = self.client.post(reverse('common:sync_randos_state'), data={})
         self.assertEqual(response.status_code, 200)
@@ -325,14 +319,10 @@ class SyncRandoViewTest(TestCase):
                                                                       'skip_pdf': False,
                                                                       'skip_dem': False, 'skip_profile_png': False})
     def test_launch_sync_rando(self, mock_tile, mock_map_image, mocked_stdout):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         task = launch_sync_rando.apply()
         log = mocked_stdout.getvalue()
         self.assertIn("Done", log)
         self.assertEqual(task.status, "SUCCESS")
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
 
     @mock.patch('geotrek.common.management.commands.sync_rando.Command.handle', return_value=None,
                 side_effect=Exception('This is a test'))
@@ -358,7 +348,5 @@ class SyncRandoViewTest(TestCase):
         self.assertEqual(task.status, "FAILURE")
 
     def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         if os.path.exists(os.path.join('var', 'tmp')):
             shutil.rmtree(os.path.join('var', 'tmp'))

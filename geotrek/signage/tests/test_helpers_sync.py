@@ -23,7 +23,3 @@ class SyncRandoTestCase(TestCase):
         synchro.sync('en')
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'signages.geojson')))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'static', 'signage', 'picto-signage.png')))
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

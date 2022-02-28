@@ -23,7 +23,3 @@ class SyncRandoTestCase(TestCase):
         synchro.sync('en')
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'feedback',
                                                     'categories.json')))
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

@@ -5,6 +5,7 @@ import os
 from PIL import Image
 import re
 import shutil
+import tempfile
 from time import sleep
 from zipfile import ZipFile
 import cairosvg
@@ -501,33 +502,23 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
-
-        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_mobile')
-        try:
-            os.mkdir(self.tmp_root)
-        except OSError as e:
-            if e.errno != 17:
+        with tempfile.TemporaryDirectory(dir=os.path.dirname(self.dst_root)) as self.tmp_root:
+            try:
+                self.sync()
+                if self.celery_task:
+                    self.celery_task.update_state(
+                        state='PROGRESS',
+                        meta={
+                            'name': self.celery_task.name,
+                            'current': 100,
+                            'total': 100,
+                            'infos': "{}".format(_("Sync mobile ended"))
+                        }
+                    )
+            except Exception:
+                shutil.rmtree(self.tmp_root)
                 raise
-            raise CommandError(
-                "The {}/ directory already exists. Please check no other sync_mobile command is already running."
-                " If not, please delete this directory.".format(self.tmp_root)
-            )
-        try:
-            self.sync()
-            if self.celery_task:
-                self.celery_task.update_state(
-                    state='PROGRESS',
-                    meta={
-                        'name': self.celery_task.name,
-                        'current': 100,
-                        'total': 100,
-                        'infos': "{}".format(_("Sync mobile ended"))
-                    }
-                )
-        except Exception:
-            shutil.rmtree(self.tmp_root)
-            raise
-        self.rename_root()
+            self.rename_root()
 
         done_message = 'Done'
         if self.successfull:

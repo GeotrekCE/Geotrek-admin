@@ -60,8 +60,6 @@ class SyncMobileViewTest(TestCase):
                                                                     'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile(self, mocked_stdout):
         self.client.force_login(self.super_user)
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         launch_sync_mobile.apply()
         response = self.client.post(reverse('apimobile:sync_mobiles_state'), data={})
         self.assertEqual(response.status_code, 200)
@@ -74,8 +72,6 @@ class SyncMobileViewTest(TestCase):
                                                                     'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
         self.client.force_login(self.super_user)
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         launch_sync_mobile.apply()
         response = self.client.post(reverse('apimobile:sync_mobiles_state'), data={})
         self.assertEqual(response.status_code, 200)
@@ -85,15 +81,11 @@ class SyncMobileViewTest(TestCase):
     @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
                                                                     'skip_tiles': True})
     def test_launch_sync_mobile(self, mocked_stdout):
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
         self.assertIn("Done", log)
         self.assertIn('Sync mobile ended', log)
         self.assertEqual(task.status, "SUCCESS")
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
 
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
