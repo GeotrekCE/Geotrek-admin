@@ -746,6 +746,7 @@ class TestDetailedJobCostsExports(TestCase):
             datasource = gdal.DataSource(os.path.join(temp_directory.name, shapefiles[0]))
             l_point = datasource[0]
         feature_point = l_point[0]
+        print(str(feature_point['cost_worke']))
         self.assertEqual(Decimal(str(feature_point['cost_worke'])), self.job1.cost * self.manday1.nb_days)
         self.assertEqual(Decimal(str(feature_point['cost_strea'])), self.job2.cost * self.manday2.nb_days)
 
