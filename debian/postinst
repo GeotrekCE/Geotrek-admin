@@ -86,7 +86,6 @@ END
 done
 
 # Install config files
-rm /etc/nginx/sites-enabled/default
 ln -sf $CONF_DIR/nginx.conf /etc/nginx/sites-available/geotrek.conf
 ln -sf /etc/nginx/sites-available/geotrek.conf /etc/nginx/sites-enabled/geotrek.conf
 
@@ -133,6 +132,8 @@ if [ -f /etc/init.d/nginx ] ; then
 			/etc/init.d/nginx reload 3>/dev/null || true
 		fi
 	fi
+else
+  rm /etc/nginx/sites-available/default
 fi
 
 # TODO: geotrek user, crontab, certbot
