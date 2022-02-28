@@ -324,7 +324,7 @@ jobs:
 
       - name: Install package
         run: |
-          sudo fuser -k 80/tcp
+          sudo fuser -k 80/tcp > /dev/null
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl status nginx
           sudo systemctl restart nginx
