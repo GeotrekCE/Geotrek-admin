@@ -166,9 +166,6 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get -q update
-          service apache2 stop
-          apt-get purge apache2 apache2-utils apache2.2-bin
-          apt-get autoremove
           apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev nginx
       - name: Building package debian 18.04
         run: |
