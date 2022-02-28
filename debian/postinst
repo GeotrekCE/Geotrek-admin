@@ -86,6 +86,7 @@ END
 done
 
 # Install config files
+rm /etc/nginx/sites-enabled/default
 ln -sf $CONF_DIR/nginx.conf /etc/nginx/sites-available/geotrek.conf
 ln -sf /etc/nginx/sites-available/geotrek.conf /etc/nginx/sites-enabled/geotrek.conf
 
