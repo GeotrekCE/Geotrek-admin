@@ -325,6 +325,7 @@ jobs:
       - name: Install package
         run: |
           sudo netstat -tunlp
+          sudo rm /etc/nginx/sites-enabled/default
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl status nginx
           sudo systemctl restart nginx
