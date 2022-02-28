@@ -166,7 +166,10 @@ jobs:
       - name: Install build dependencies
         run: |
           apt-get -q update
-          apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
+          service apache2 stop
+          apt-get purge apache2 apache2-utils apache2.2-bin
+          apt-get autoremove
+          apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev nginx
       - name: Building package debian 18.04
         run: |
           dpkg-buildpackage -uc -us -b
@@ -308,9 +311,6 @@ jobs:
 
       - name: Simulate install.sh procedure
         run: |
-          sudo service apache2 stop
-          sudo apt-get purge apache2 apache2-utils apache2.2-bin
-          sudo apt-get autoremove
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
           sudo apt-get -q update
