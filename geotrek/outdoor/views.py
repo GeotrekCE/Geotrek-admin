@@ -1,17 +1,15 @@
-from geotrek.common.mixins.views import CustomColumnsMixin
-from django.db.models import Q
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
-from rest_framework import permissions as rest_permissions
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDelete, MapEntityFormat)
+
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.views import DocumentPublic, MarkupPublic
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.forms import SiteForm, CourseForm
 from geotrek.outdoor.models import Site, Course
-from geotrek.outdoor.serializers import SiteSerializer, SiteGeojsonSerializer, CourseSerializer, CourseGeojsonSerializer
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityDetail, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityViewSet, MapEntityFormat)
+from geotrek.outdoor.serializers import SiteSerializer, CourseSerializer
 
 
 class SiteLayer(MapEntityLayer):
@@ -25,10 +23,6 @@ class SiteList(CustomColumnsMixin, MapEntityList):
     default_extra_columns = ['super_practices', 'date_update']
     filterform = SiteFilterSet
     queryset = Site.objects.all()
-
-
-class SiteJsonList(MapEntityJsonList, SiteList):
-    pass
 
 
 class SiteDetail(MapEntityDetail):
@@ -67,21 +61,6 @@ class SiteDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class SiteViewSet(MapEntityViewSet):
-    model = Site
-    serializer_class = SiteSerializer
-    geojson_serializer_class = SiteGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        qs = Site.objects.filter(published=True)
-        if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
-        return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
 class SiteDocumentPublicMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -111,6 +90,19 @@ class SiteFormatList(MapEntityFormat, SiteList):
     ]
 
 
+class SiteViewSet(GeotrekMapentityViewSet):
+    model = Site
+    serializer_class = SiteSerializer
+    filterset_class = SiteFilterSet
+
+    def get_columns(self):
+        return SiteList.mandatory_columns + settings.COLUMNS_LISTS.get('site_view',
+                                                                       SiteList.default_extra_columns)
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+
 class CourseLayer(MapEntityLayer):
     properties = ['name']
     filterform = CourseFilterSet
@@ -122,10 +114,6 @@ class CourseList(CustomColumnsMixin, MapEntityList):
     default_extra_columns = ['parent_sites', 'date_update']
     filterform = CourseFilterSet
     queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
-
-
-class CourseJsonList(MapEntityJsonList, CourseList):
-    pass
 
 
 class CourseDetail(MapEntityDetail):
@@ -164,21 +152,6 @@ class CourseDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class CourseViewSet(MapEntityViewSet):
-    model = Course
-    serializer_class = CourseSerializer
-    geojson_serializer_class = CourseGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        qs = Course.objects.filter(published=True)
-        if 'source' in self.request.GET:
-            qs = qs.filter(parent_sites__source__name__in=self.request.GET['source'].split(','))
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(parent_sites__portal__name=self.request.GET['portal']) | Q(parent_sites__portal=None))
-        return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
 class CourseDocumentPublicMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -204,3 +177,16 @@ class CourseFormatList(MapEntityFormat, CourseList):
         'structure', 'name', 'parent_sites', 'description', 'advice', 'equipment', 'accessibility',
         'eid', 'height', 'ratings', 'ratings_description', 'points_reference', 'uuid',
     ]
+
+
+class CourseViewSet(GeotrekMapentityViewSet):
+    model = Course
+    serializer_class = CourseSerializer
+    filterset_class = CourseFilterSet
+
+    def get_columns(self):
+        return CourseList.mandatory_columns + settings.COLUMNS_LISTS.get('course_view',
+                                                                         CourseList.default_extra_columns)
+
+    def get_queryset(self):
+        return self.model.objects.all()

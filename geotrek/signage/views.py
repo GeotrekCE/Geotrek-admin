@@ -177,17 +177,6 @@ class BladeDelete(MapEntityDelete):
         return self.signage.get_detail_url()
 
 
-class BladeViewSet(GeotrekMapentityViewSet):
-    model = Blade
-    serializer_class = BladeSerializer
-    filterset_class = BladeFilterSet
-    filter_backends = [DatatablesFilterBackend, DjangoFilterBackend]  #TODO : fix filter topology
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        return self.model.objects.all()
-
-
 class BladeList(CustomColumnsMixin, MapEntityList):
     queryset = Blade.objects.all()
     filterform = BladeFilterSet
@@ -221,3 +210,18 @@ class BladeFormatList(MapEntityFormat, BladeList):
                              stream=response, fields=self.columns)
         response['Content-length'] = str(len(response.content))
         return response
+
+
+class BladeViewSet(GeotrekMapentityViewSet):
+    model = Blade
+    serializer_class = BladeSerializer
+    filterset_class = BladeFilterSet
+    filter_backends = [DatatablesFilterBackend, DjangoFilterBackend]  # TODO : fix filter topology
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_columns(self):
+        return BladeList.mandatory_columns + settings.COLUMNS_LISTS.get('blade_view',
+                                                                        BladeList.default_extra_columns)
+
+    def get_queryset(self):
+        return self.model.objects.all()
