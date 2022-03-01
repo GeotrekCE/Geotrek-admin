@@ -1,3 +1,5 @@
+from drf_dynamic_fields import DynamicFieldsMixin
+from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -12,12 +14,26 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class InfrastructureSerializer(BasePublishableSerializerMixin):
-    type = InfrastructureTypeSerializer()
-    structure = StructureSerializer()
+class InfrastructureSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin):
+    type = serializers.SlugRelatedField('label', read_only=True)
+    condition = serializers.SlugRelatedField('label', read_only=True)
+    cities = serializers.SerializerMethodField()
+
+    def get_cities(self, obj):
+        return obj.cities_display
 
     class Meta:
         model = infrastructure_models.Infrastructure
+        fields = ('id', 'name', 'type', 'condition', 'type', 'cities')
+
+
+class InfrastructureRandoV2GeojsonSerializer(GeoFeatureModelSerializer, serializers.ModelSerializer):
+    # Annotated geom field with API_SRID
+    type = InfrastructureTypeSerializer()
+    structure = StructureSerializer()
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta:
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = ('id', ) + \
             ('id', 'structure', 'name', 'type', 'accessibility') + \
@@ -30,4 +46,4 @@ class InfrastructureGeojsonSerializer(GeoFeatureModelSerializer, InfrastructureS
 
     class Meta(InfrastructureSerializer.Meta):
         geo_field = 'api_geom'
-        fields = InfrastructureSerializer.Meta.fields + ('api_geom', )
+        fields = ('id', 'structure', 'name', 'type', 'api_geom',)

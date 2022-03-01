@@ -1,4 +1,3 @@
-from django.conf import settings
 from mapentity.views import MapEntityViewSet
 from rest_framework import permissions
 

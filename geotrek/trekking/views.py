@@ -38,7 +38,7 @@ from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, Serv
                           TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
-from geotrek.infrastructure.serializers import InfrastructureGeojsonSerializer
+from geotrek.infrastructure.serializers import InfrastructureRandoV2GeojsonSerializer
 from geotrek.signage.serializers import SignageGeojsonSerializer
 
 
@@ -419,7 +419,7 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
 
 class TrekInfrastructureViewSet(viewsets.ModelViewSet):
     model = Infrastructure
-    serializer_class = InfrastructureGeojsonSerializer
+    serializer_class = InfrastructureRandoV2GeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
