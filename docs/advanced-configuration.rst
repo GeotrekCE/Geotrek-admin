@@ -1551,10 +1551,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "accessibility",
         "date_update",
         "date_insert",
-        "date_insert",
         "implantation_year",
         "usage_difficulty",
-        "maintenance_difficulty"
+        "maintenance_difficulty",
         "published",
         "uuid",
     ]
@@ -1563,10 +1562,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "type",
         "condition",
         "structure",
-        "min_elevation",
         "description",
         "date_update",
-        "min_elevation",
         "date_insert",
         "implantation_year",
         "printed_elevation",

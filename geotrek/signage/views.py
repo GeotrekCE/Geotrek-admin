@@ -1,25 +1,27 @@
+import logging
+
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
-
-import logging
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
-                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from django_filters.rest_framework import DjangoFilterBackend
+from mapentity.renderers import GeoJSONRenderer
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail,
+                             MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from rest_framework import permissions as rest_permissions, renderers
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework_datatables.filters import DatatablesFilterBackend
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.views import FormsetMixin
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
-
 from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
 from geotrek.signage.forms import SignageForm, BladeForm, LineFormset
 from geotrek.signage.models import Signage, Blade
 from geotrek.signage.serializers import (SignageSerializer, BladeSerializer,
-                                         SignageGeojsonSerializer, BladeGeojsonSerializer,
-                                         CSVBladeSerializer, ZipBladeShapeSerializer)
-
-from rest_framework import permissions as rest_permissions
-
+                                         SignageRandoV2GeojsonSerializer, CSVBladeSerializer, ZipBladeShapeSerializer)
 
 logger = logging.getLogger(__name__)
 
@@ -39,10 +41,6 @@ class SignageList(CustomColumnsMixin, MapEntityList):
     filterform = SignageFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['code', 'type', 'condition']
-
-
-class SignageJsonList(MapEntityJsonList, SignageList):
-    pass
 
 
 class SignageFormatList(MapEntityFormat, SignageList):
@@ -90,14 +88,30 @@ class SignageDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class SignageViewSet(MapEntityViewSet):
+class SignageViewSet(GeotrekMapentityViewSet):
     model = Signage
     serializer_class = SignageSerializer
-    geojson_serializer_class = SignageGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    filterset_class = SignageFilterSet
 
     def get_queryset(self):
-        return Signage.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
+        qs = Signage.objects.existing().select_related('structure', 'manager', 'sealing', 'type', 'condition')
+        if self.action != 'rando-v2-geojson':
+            qs = qs.defer('geom', 'geom_3d')
+        else:
+            qs = qs.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
+        return qs
+
+    def get_columns(self):
+        return SignageList.mandatory_columns + settings.COLUMNS_LISTS.get('signage_view',
+                                                                          SignageList.default_extra_columns)
+
+    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
+            serializer_class=SignageRandoV2GeojsonSerializer)
+    def rando_v2_geojson(self, request, lang=None):
+        """ GeoJSON for RandoV2. """
+        qs = self.get_queryset()
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class BladeDetail(MapEntityDetail):
@@ -163,15 +177,15 @@ class BladeDelete(MapEntityDelete):
         return self.signage.get_detail_url()
 
 
-class BladeViewSet(MapEntityViewSet):
+class BladeViewSet(GeotrekMapentityViewSet):
     model = Blade
     serializer_class = BladeSerializer
-    geojson_serializer_class = BladeGeojsonSerializer
-    queryset = Blade.objects.all()
+    filterset_class = BladeFilterSet
+    filter_backends = [DatatablesFilterBackend, DjangoFilterBackend]  #TODO : fix filter topology
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Blade.objects.all().annotate(api_geom=Transform("signage__geom", settings.API_SRID))
+        return self.model.objects.all()
 
 
 class BladeList(CustomColumnsMixin, MapEntityList):
@@ -179,10 +193,6 @@ class BladeList(CustomColumnsMixin, MapEntityList):
     filterform = BladeFilterSet
     mandatory_columns = ['id', 'number']
     default_extra_columns = ['direction', 'type', 'color']
-
-
-class BladeJsonList(MapEntityJsonList, BladeList):
-    pass
 
 
 class BladeLayer(MapEntityLayer):

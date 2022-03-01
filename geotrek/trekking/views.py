@@ -39,7 +39,7 @@ from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, Serv
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
 from geotrek.infrastructure.serializers import InfrastructureRandoV2GeojsonSerializer
-from geotrek.signage.serializers import SignageGeojsonSerializer
+from geotrek.signage.serializers import SignageRandoV2GeojsonSerializer
 
 
 class FlattenPicturesMixin:
@@ -406,7 +406,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
 
 class TrekSignageViewSet(viewsets.ModelViewSet):
     model = Signage
-    serializer_class = SignageGeojsonSerializer
+    serializer_class = SignageRandoV2GeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
