@@ -1,5 +1,4 @@
 from io import StringIO
-import shutil
 import os
 from unittest.mock import patch
 
@@ -21,6 +20,6 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync('en')
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'sensitiveareas.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'sensitiveareas',
+        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'en', 'sensitiveareas.geojson')))
+        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'en', 'sensitiveareas',
                                                     '{obj.pk}.kml'.format(obj=self.area))))

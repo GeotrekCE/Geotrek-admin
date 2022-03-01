@@ -137,7 +137,7 @@ class SyncMobileFailTest(VarTmpTestCase):
                                     skip_tiles=True, verbosity=2)
 
     @mock.patch('os.mkdir')
-    def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
+    def test_fail_sync_permission_denied(self, mkdir):
         mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
         with self.assertRaisesRegex(OSError, r"\[Errno 13\] Permission Denied"):
             management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',

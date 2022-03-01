@@ -28,14 +28,10 @@ from geotrek.trekking import models as trekking_models
 
 class VarTmpTestCase(TestCase):
     def setUp(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         if os.path.exists(os.path.join('var', 'tmp')):
             shutil.rmtree(os.path.join('var', 'tmp'))
 
     def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         if os.path.exists(os.path.join('var', 'tmp')):
             shutil.rmtree(os.path.join('var', 'tmp'))
 
@@ -176,17 +172,8 @@ class SyncRandoFailTest(VarTmpTestCase):
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO(), stderr=StringIO())
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
 
-    def test_fail_sync_already_running(self):
-        os.makedirs(os.path.join('var', 'tmp_sync_rando'))
-        msg = "The var/tmp_sync_rando/ directory already exists. " \
-              "Please check no other sync_rando command is already running. " \
-              "If not, please delete this directory."
-        with self.assertRaisesRegex(CommandError, msg):
-            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2)
-
     @mock.patch('os.mkdir')
-    def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
+    def test_fail_sync_permission_denied(self, mkdir):
         mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
         with self.assertRaisesRegex(OSError, r'\[Errno 13\] Permission Denied'):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',

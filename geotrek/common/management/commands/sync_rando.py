@@ -185,7 +185,7 @@ class Command(BaseCommand):
         # If new file is identical to old one, don't recreate it. This will help backup
         if os.path.isfile(oldfilename) and filecmp.cmp(fullname, oldfilename):
             os.unlink(fullname)
-            os.link(oldfilename, fullname)
+            shutil.copy(oldfilename, fullname)
             if self.verbosity == 2:
                 self.stdout.write("unchanged")
         else:
@@ -261,7 +261,7 @@ class Command(BaseCommand):
                 self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[31mfile does not exist\x1b[0m".format(lang=lang, url=url, name=name))
             return
         if not os.path.isfile(dst):
-            os.link(src, dst)
+            shutil.copy(src, dst)
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
@@ -367,7 +367,7 @@ class Command(BaseCommand):
             dst = os.path.join(self.tmp_root, 'api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk),
                                obj.slug + '.pdf')
             self.mkdirs(dst)
-            os.link(src, dst)
+            shutil.copy(src, dst)
             if self.verbosity == 2:
                 self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{dst}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang,
                                                                                                            dst=dst))
@@ -443,10 +443,10 @@ class Command(BaseCommand):
         if os.path.exists(self.dst_root):
             tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_rando')
             os.rename(self.dst_root, tmp_root2)
-            os.rename(self.tmp_root, self.dst_root)
+            shutil.copytree(self.tmp_root, self.dst_root)
             shutil.rmtree(tmp_root2)
         else:
-            os.rename(self.tmp_root, self.dst_root)
+            shutil.copytree(self.tmp_root, self.dst_root)
 
     def handle(self, *args, **options):
         self.options = options
@@ -503,7 +503,7 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
-        with tempfile.TemporaryDirectory(dir=os.path.dirname(self.dst_root)) as self.tmp_root:
+        with tempfile.TemporaryDirectory(dir='/tmp') as self.tmp_root:
             try:
                 self.sync()
                 if self.celery_task:
@@ -516,12 +516,9 @@ class Command(BaseCommand):
                             'infos': "{}".format(_("Sync ended"))
                         }
                     )
-
+                self.rename_root()
             except Exception:
-                shutil.rmtree(self.tmp_root)
                 raise
-
-            self.rename_root()
 
         done_message = 'Done'
         if self.successfull:
