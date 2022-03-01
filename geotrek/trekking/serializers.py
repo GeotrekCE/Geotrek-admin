@@ -5,24 +5,22 @@ import gpxpy.gpx
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
-
-from rest_framework import serializers as rest_serializers
+from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import GPXSerializer, MapentityModelSerializer
+from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from mapentity.serializers import GPXSerializer
-
+from geotrek.altimetry.serializers import AltimetrySerializerMixin
+from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (
     PictogramSerializerMixin, ThemeSerializer,
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin, RecordSourceSerializer,
     TargetPortalSerializer, LabelSerializer,
 )
-from geotrek.authent.serializers import StructureSerializer
-
-from geotrek.zoning.serializers import ZoningSerializerMixin
-from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
+from geotrek.zoning.serializers import ZoningSerializerMixin
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -39,7 +37,7 @@ class TrekGPXSerializer(GPXSerializer):
 
 
 class DifficultyLevelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.ReadOnlyField(source='difficulty')
+    label = serializers.ReadOnlyField(source='difficulty')
 
     class Meta:
         model = trekking_models.DifficultyLevel
@@ -47,7 +45,7 @@ class DifficultyLevelSerializer(PictogramSerializerMixin, TranslatedModelSeriali
 
 
 class RouteSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.ReadOnlyField(source='route')
+    label = serializers.ReadOnlyField(source='route')
 
     class Meta:
         model = trekking_models.Route
@@ -55,7 +53,7 @@ class RouteSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    name = rest_serializers.ReadOnlyField(source='network')
+    name = serializers.ReadOnlyField(source='network')
 
     class Meta:
         model = trekking_models.Route
@@ -63,7 +61,7 @@ class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.ReadOnlyField(source='name')
+    label = serializers.ReadOnlyField(source='name')
 
     class Meta:
         model = trekking_models.Practice
@@ -71,7 +69,7 @@ class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.ReadOnlyField(source='name')
+    label = serializers.ReadOnlyField(source='name')
 
     class Meta:
         model = trekking_models.Accessibility
@@ -79,7 +77,7 @@ class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerialize
 
 
 class AccessibilityLevelSerializer(TranslatedModelSerializer):
-    label = rest_serializers.ReadOnlyField(source='name')
+    label = serializers.ReadOnlyField(source='name')
 
     class Meta:
         model = trekking_models.AccessibilityLevel
@@ -107,7 +105,7 @@ class WebLinkSerializer(TranslatedModelSerializer):
 
 
 class CloseTrekSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
+    category_id = serializers.ReadOnlyField(source='prefixed_category_id')
 
     class Meta:
         model = trekking_models.Trek
@@ -115,8 +113,8 @@ class CloseTrekSerializer(TranslatedModelSerializer):
 
 
 class RelatedTrekSerializer(TranslatedModelSerializer):
-    pk = rest_serializers.ReadOnlyField(source='id')
-    category_slug = rest_serializers.SerializerMethodField()
+    pk = serializers.ReadOnlyField(source='id')
+    category_slug = serializers.SerializerMethodField()
 
     class Meta:
         model = trekking_models.Trek
@@ -133,8 +131,8 @@ class RelatedTrekSerializer(TranslatedModelSerializer):
             return _('trek')
 
 
-class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
-    published = rest_serializers.ReadOnlyField(source='trek_b.published')
+class TrekRelationshipSerializer(serializers.ModelSerializer):
+    published = serializers.ReadOnlyField(source='trek_b.published')
     trek = RelatedTrekSerializer(source='trek_b')
 
     class Meta:
@@ -143,15 +141,28 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
                   'trek', 'published')
 
 
-class ChildSerializer(TranslatedModelSerializer):
+class TrekSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+    length_2d = serializers.ReadOnlyField()
+    name = serializers.CharField(source='name_display')
+    difficulty = serializers.SlugRelatedField('difficulty', read_only=True)
+    practice = serializers.SlugRelatedField('name', read_only=True)
+    themes = serializers.CharField(source='themes_display')
+    thumbnail = serializers.CharField(source='thumbnail_display')
+    structure = serializers.SlugRelatedField('name', read_only=True)
+    reservation_system = serializers.SlugRelatedField('name', read_only=True)
+    accessibilities = serializers.CharField(source='accessibilities_display')
+    portal = serializers.CharField(source='portal_display')
+    source = serializers.CharField(source='source_display')
+
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', )
+        fields = "__all__"
 
 
-class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                     AltimetrySerializerMixin, ZoningSerializerMixin,
-                     TranslatedModelSerializer):
+class TrekRandoV2GeoJSONSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
+                                   AltimetrySerializerMixin, ZoningSerializerMixin,
+                                   TranslatedModelSerializer, GeoFeatureModelSerializer):
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
     networks = NetworkSerializer(many=True)
@@ -166,28 +177,28 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
-    children = rest_serializers.ReadOnlyField(source='children_id')
-    parents = rest_serializers.ReadOnlyField(source='parents_id')
-    previous = rest_serializers.ReadOnlyField(source='previous_id')
-    next = rest_serializers.ReadOnlyField(source='next_id')
-    reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name', default="")
+    children = serializers.ReadOnlyField(source='children_id')
+    parents = serializers.ReadOnlyField(source='parents_id')
+    previous = serializers.ReadOnlyField(source='previous_id')
+    next = serializers.ReadOnlyField(source='next_id')
+    reservation_system = serializers.ReadOnlyField(source='reservation_system.name', default="")
 
     # Idea: use rest-framework-gis
-    parking_location = rest_serializers.SerializerMethodField()
-    points_reference = rest_serializers.SerializerMethodField()
+    parking_location = serializers.SerializerMethodField()
+    points_reference = serializers.SerializerMethodField()
 
-    gpx = rest_serializers.SerializerMethodField('get_gpx_url')
-    kml = rest_serializers.SerializerMethodField('get_kml_url')
+    gpx = serializers.SerializerMethodField('get_gpx_url')
+    kml = serializers.SerializerMethodField('get_kml_url')
     structure = StructureSerializer()
 
     # For consistency with touristic contents
     type2 = TypeSerializer(source='accessibilities', many=True)
-    category = rest_serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
 
     # Method called to retrieve relevant pictures based on settings
-    pictures = rest_serializers.SerializerMethodField()
+    pictures = serializers.SerializerMethodField()
 
-    length = rest_serializers.ReadOnlyField(source='length_2d_m')
+    length = serializers.ReadOnlyField(source='length_2d_m')
 
     def __init__(self, instance=None, *args, **kwargs):
         # duplicate each trek for each one of its accessibilities
@@ -221,26 +232,6 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             from geotrek.diving.serializers import CloseDiveSerializer
 
             self.fields['dives'] = CloseDiveSerializer(many=True, source='published_dives')
-
-    class Meta:
-        model = trekking_models.Trek
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
-                  'description', 'description_teaser', 'networks', 'advice', 'gear',
-                  'ambiance', 'difficulty', 'information_desks', 'themes',
-                  'labels', 'practice', 'accessibilities', 'accessibility_level',
-                  'accessibility_signage', 'accessibility_slope', 'accessibility_covering', 'accessibility_exposure',
-                  'accessibility_width', 'accessibility_advice',
-                  'usages', 'access', 'route',
-                  'public_transport', 'advised_parking', 'web_links',
-                  'accessibility_infrastructure', 'parking_location', 'relationships',
-                  'points_reference', 'gpx', 'kml', 'source', 'portal',
-                  'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
-                  'children', 'parents', 'previous', 'next', 'ratings', 'ratings_description') + \
-            AltimetrySerializerMixin.Meta.fields + \
-            ZoningSerializerMixin.Meta.fields + \
-            PublishableSerializerMixin.Meta.fields + \
-            PicturesSerializerMixin.Meta.fields
 
     def get_pictures(self, obj):
         pictures_list = []
@@ -302,14 +293,25 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             data['type2_label'] = obj._meta.get_field('accessibilities').verbose_name
         return data
 
-
-class TrekGeojsonSerializer(GeoFeatureModelSerializer, TrekSerializer):
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
-
-    class Meta(TrekSerializer.Meta):
-        geo_field = 'api_geom'
-        fields = TrekSerializer.Meta.fields + ('api_geom', )
+    class Meta:
+        model = trekking_models.Trek
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
+                  'description', 'description_teaser', 'networks', 'advice', 'gear',
+                  'ambiance', 'difficulty', 'information_desks', 'themes',
+                  'labels', 'practice', 'accessibilities', 'accessibility_level',
+                  'accessibility_signage', 'accessibility_slope', 'accessibility_covering', 'accessibility_exposure',
+                  'accessibility_width', 'accessibility_advice',
+                  'usages', 'access', 'route',
+                  'public_transport', 'advised_parking', 'web_links',
+                  'accessibility_infrastructure', 'parking_location', 'relationships',
+                  'points_reference', 'gpx', 'kml', 'source', 'portal',
+                  'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
+                  'children', 'parents', 'previous', 'next', 'ratings', 'ratings_description') + \
+                 AltimetrySerializerMixin.Meta.fields + \
+                 ZoningSerializerMixin.Meta.fields + \
+                 PublishableSerializerMixin.Meta.fields + \
+                 PicturesSerializerMixin.Meta.fields
 
 
 class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -356,7 +358,7 @@ class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer)
         fields = ('id', 'pictogram', 'name')
 
 
-class ServiceSerializer(rest_serializers.ModelSerializer):
+class ServiceSerializer(serializers.ModelSerializer):
     type = ServiceTypeSerializer()
     structure = StructureSerializer()
 

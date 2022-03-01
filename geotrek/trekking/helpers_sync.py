@@ -20,7 +20,7 @@ class SyncRando:
 
     def sync(self, lang):
         self.global_sync.sync_geojson(lang, views.POIViewSet, 'pois.geojson', zipfile=self.global_sync.zipfile)
-        self.global_sync.sync_geojson(lang, views.TrekViewSet, 'treks.geojson', zipfile=self.global_sync.zipfile)
+        self.global_sync.sync_geojson(lang, views.TrekViewSet, 'treks.geojson', type_view={"get": "rando-v2-geojson"}, zipfile=self.global_sync.zipfile)
         self.global_sync.sync_geojson(lang, views.ServiceViewSet, 'services.geojson', zipfile=self.global_sync.zipfile)
         self.global_sync.sync_static_file(lang, 'trekking/trek.svg')
         self.global_sync.sync_static_file(lang, 'trekking/itinerancy.svg')

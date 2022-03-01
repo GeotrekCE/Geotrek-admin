@@ -7,39 +7,41 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
-
 from django.utils.html import escape
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
+from mapentity.renderers import GeoJSONRenderer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
-from rest_framework import permissions as rest_permissions, viewsets
+from rest_framework import permissions as rest_permissions, viewsets, renderers
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
-from ..common.functions import Length
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
+from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
-from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.infrastructure.serializers import InfrastructureRandoV2GeojsonSerializer
+from geotrek.signage.models import Signage
+from geotrek.signage.serializers import SignageRandoV2GeojsonSerializer
 from geotrek.zoning.models import District, City, RestrictedArea
-
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer,
-                          TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
-from geotrek.infrastructure.serializers import InfrastructureRandoV2GeojsonSerializer
-from geotrek.signage.serializers import SignageRandoV2GeojsonSerializer
+                          TrekRandoV2GeoJSONSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
+from ..common.functions import Length
+from ..common.viewsets import GeotrekMapentityViewSet
 
 
 class FlattenPicturesMixin:
@@ -66,10 +68,6 @@ class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = Trek.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
-
-
-class TrekJsonList(MapEntityJsonList, TrekList):
-    pass
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
@@ -244,6 +242,46 @@ class TrekMeta(MetaMixin, DetailView):
     template_name = 'trekking/trek_meta.html'
 
 
+class TrekViewSet(GeotrekMapentityViewSet):
+    model = Trek
+    serializer_class = TrekSerializer
+    filterset_class = TrekFilterSet
+
+    def get_queryset(self):
+        return self.model.objects.existing().prefetch_related('attachments')
+
+    def get_columns(self):
+        return TrekList.mandatory_columns + settings.COLUMNS_LISTS.get('trek_view',
+                                                                       TrekList.default_extra_columns)
+
+    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
+            serializer_class=TrekRandoV2GeoJSONSerializer)
+    def rando_v2_geojson(self, request, *args, **kwargs):
+        """ GeoJSON for RandoV2. """
+        qs = self.model.objects.existing()
+        qs = qs.select_related('structure', 'difficulty', 'practice', 'route', 'accessibility_level')
+        qs = qs.prefetch_related(
+            'networks', 'source', 'portal', 'web_links', 'accessibilities', 'themes', 'aggregations',
+            'information_desks', 'attachments',
+            Prefetch('trek_relationship_a', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
+            Prefetch('trek_relationship_b', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
+            Prefetch('trek_children', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
+            Prefetch('trek_parents', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
+        )
+        qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True)).distinct('practice__order', 'pk'). \
+            order_by('-practice__order', 'pk')
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
+
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        qs = qs.annotate(length_2d_m=Length('geom'))
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
     properties = ['name', 'published']
@@ -348,37 +386,6 @@ class WebLinkCreatePopup(CreateView):
         return HttpResponse("""
             <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
         """ % (escape(form.instance._get_pk_val()), escape(form.instance)))
-
-
-class TrekViewSet(MapEntityViewSet):
-    model = Trek
-    serializer_class = TrekSerializer
-    geojson_serializer_class = TrekGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        qs = self.model.objects.existing()
-        qs = qs.select_related('structure', 'difficulty', 'practice', 'route', 'accessibility_level')
-        qs = qs.prefetch_related(
-            'networks', 'source', 'portal', 'web_links', 'accessibilities', 'themes', 'aggregations',
-            'information_desks', 'attachments',
-            Prefetch('trek_relationship_a', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
-            Prefetch('trek_relationship_b', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
-            Prefetch('trek_children', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
-            Prefetch('trek_parents', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
-        )
-        qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True)).distinct('practice__order', 'pk').\
-            order_by('-practice__order', 'pk')
-        if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
-
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
-
-        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        qs = qs.annotate(length_2d_m=Length('geom'))
-
-        return qs
 
 
 class POIViewSet(MapEntityViewSet):

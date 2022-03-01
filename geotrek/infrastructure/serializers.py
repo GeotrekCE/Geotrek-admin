@@ -57,4 +57,5 @@ class InfrastructureGeojsonSerializer(GeoFeatureModelSerializer, InfrastructureS
 
     class Meta(InfrastructureSerializer.Meta):
         geo_field = 'api_geom'
+        model = infrastructure_models.Infrastructure
         fields = ('id', 'structure', 'name', 'type', 'api_geom',)
