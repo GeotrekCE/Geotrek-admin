@@ -345,7 +345,7 @@ class POIRandoV2GeojsonSerializer(PublishableSerializerMixin, PicturesSerializer
     structure = StructureSerializer()
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(POISerializer.Meta):
+    class Meta:
         model = trekking_models.POI
         geo_field = 'api_geom'
         id_field = 'id'
@@ -361,20 +361,22 @@ class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer)
         fields = ('id', 'pictogram', 'name')
 
 
-class ServiceSerializer(serializers.ModelSerializer):
-    type = ServiceTypeSerializer()
-    structure = StructureSerializer()
+class ServiceSerializer(MapentityModelSerializer):
+    name = serializers.CharField(source='name_display')
+    type = serializers.CharField(source='name_display')
 
     class Meta:
         model = trekking_models.Service
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', 'type', 'structure')
+        fields = "__all__"
 
 
-class ServiceGeojsonSerializer(GeoFeatureModelSerializer, ServiceSerializer):
-    # Annotated geom field with API_SRID
+class ServiceGeojsonSerializer(GeoFeatureModelSerializer):
+    type = ServiceTypeSerializer()
+    structure = StructureSerializer()
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(ServiceSerializer.Meta):
+    class Meta:
+        model = trekking_models.Service
         geo_field = 'api_geom'
-        fields = ServiceSerializer.Meta.fields + ('api_geom', )
+        id_field = 'id'
+        fields = ('id', 'type', 'structure', 'api_geom', )

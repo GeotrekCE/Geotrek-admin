@@ -12,10 +12,9 @@ from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
 from mapentity.renderers import GeoJSONRenderer
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityFormat, MapEntityDetail, MapEntityMapImage,
-                             MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail,
+                             MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDelete, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets, renderers
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -455,10 +454,6 @@ class ServiceList(CustomColumnsMixin, MapEntityList):
     queryset = Service.objects.existing()
 
 
-class ServiceJsonList(MapEntityJsonList, ServiceList):
-    pass
-
-
 class ServiceFormatList(MapEntityFormat, ServiceList):
     mandatory_columns = ['id']
     default_extra_columns = [
@@ -497,14 +492,23 @@ class ServiceDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class ServiceViewSet(MapEntityViewSet):
+class ServiceViewSet(GeotrekMapentityViewSet):
     model = Service
     serializer_class = ServiceSerializer
-    geojson_serializer_class = ServiceGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Service.objects.existing().filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
+        return self.model.objects.existing()
+
+    def get_columns(self):
+        return ServiceList.mandatory_columns + settings.COLUMNS_LISTS.get('service_view',
+                                                                          ServiceList.default_extra_columns)
+
+    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
+            serializer_class=ServiceGeojsonSerializer)
+    def rando_v2_geojson(self, request, *args, **kwargs):
+        qs = Service.objects.existing().filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class TrekServiceViewSet(viewsets.ModelViewSet):
