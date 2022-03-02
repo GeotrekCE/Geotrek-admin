@@ -94,9 +94,6 @@ class TouristicContentSerializer(DynamicFieldsMixin, MapentityModelSerializer):
     label_accessibility = rest_serializers.SlugRelatedField('label', read_only=True)
     reservation_system = rest_serializers.SlugRelatedField('name', read_only=True)
 
-    def get_source(self, obj):
-        return ', '.join(obj.source.values_list('name', flat=True))
-
     class Meta:
         model = tourism_models.TouristicContent
         fields = "__all__"
@@ -152,6 +149,9 @@ class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSeri
 
 
 class TouristicEventSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+    name = rest_serializers.CharField(source='name_display')
+    type = rest_serializers.SlugRelatedField('type', read_only=True)
+    structure = rest_serializers.SlugRelatedField('name', read_only=True)
 
     class Meta:
         model = tourism_models.TouristicEvent

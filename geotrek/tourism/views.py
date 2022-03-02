@@ -8,12 +8,10 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
-from django_filters.rest_framework import DjangoFilterBackend
 from mapentity.renderers import GeoJSONRenderer
 from mapentity.views import (MapEntityCreate,
-                             MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityDetail, MapEntityDelete, MapEntityViewSet,
-                             MapEntityFormat, MapEntityDocument)
+                             MapEntityUpdate, MapEntityLayer, MapEntityList,
+                             MapEntityDetail, MapEntityDelete, MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets, renderers
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -196,10 +194,6 @@ class TouristicEventList(CustomColumnsMixin, MapEntityList):
     default_extra_columns = ['type', 'begin_date', 'end_date']
 
 
-class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
-    pass
-
-
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
     mandatory_columns = ['id']
     default_extra_columns = [
@@ -287,18 +281,25 @@ class TouristicEventMeta(MetaMixin, DetailView):
     template_name = 'tourism/touristicevent_meta.html'
 
 
-class TouristicEventViewSet(MapEntityViewSet):
+class TouristicEventViewSet(GeotrekMapentityViewSet):
     model = TouristicEvent
     serializer_class = TouristicEventSerializer
-    geojson_serializer_class = TouristicEventGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-    filter_backends = [DjangoFilterBackend, ]
-    filterset_class = TouristicEventApiFilterSet
+    filterset_class = TouristicEventFilterSet
 
     def get_queryset(self):
+        return TouristicEvent.objects.existing()
+
+    def get_columns(self):
+        return TouristicEventList.mandatory_columns + settings.COLUMNS_LISTS.get('touristic_event_view',
+                                                                                 TouristicEventList.default_extra_columns)
+
+    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
+            serializer_class=TouristicEventGeojsonSerializer, filterset_class=TouristicEventApiFilterSet)
+    def rando_v2_geojson(self, request, *args, **kwargs):
+        """ GeoJSON for RandoV2. """
         qs = TouristicEvent.objects.existing()
         qs = qs.filter(published=True)
-
+        qs = self.filter_queryset(qs)
         if 'source' in self.request.GET:
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
@@ -306,7 +307,8 @@ class TouristicEventViewSet(MapEntityViewSet):
             qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        return qs
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class InformationDeskViewSet(viewsets.ModelViewSet):
