@@ -23,7 +23,7 @@ from .models import Dive
 from .serializers import DiveSerializer, DiveGeojsonSerializer
 
 from geotrek.trekking.models import POI, Service
-from geotrek.trekking.serializers import POIGeojsonSerializer, ServiceGeojsonSerializer
+from geotrek.trekking.serializers import POIRandoV2GeojsonSerializer, ServiceGeojsonSerializer
 from geotrek.trekking.views import FlattenPicturesMixin
 
 
@@ -170,7 +170,7 @@ class DiveViewSet(MapEntityViewSet):
 
 class DivePOIViewSet(viewsets.ModelViewSet):
     model = POI
-    serializer_class = POIGeojsonSerializer
+    serializer_class = POIRandoV2GeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):

@@ -39,7 +39,7 @@ from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer,
-                          TrekRandoV2GeoJSONSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
+                          TrekRandoV2GeoJSONSerializer, POIRandoV2GeojsonSerializer, ServiceGeojsonSerializer)
 from ..common.functions import Length
 from ..common.viewsets import GeotrekMapentityViewSet
 
@@ -295,10 +295,6 @@ class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     default_extra_columns = ['type', 'thumbnail']
 
 
-class POIJsonList(MapEntityJsonList, POIList):
-    pass
-
-
 class POIFormatList(MapEntityFormat, POIList):
     mandatory_columns = ['id']
     default_extra_columns = [
@@ -388,19 +384,29 @@ class WebLinkCreatePopup(CreateView):
         """ % (escape(form.instance._get_pk_val()), escape(form.instance)))
 
 
-class POIViewSet(MapEntityViewSet):
+class POIViewSet(GeotrekMapentityViewSet):
     model = POI
     serializer_class = POISerializer
-    geojson_serializer_class = POIGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    filterset_class = POIFilterSet
+
+    def get_columns(self):
+        return POIList.mandatory_columns + settings.COLUMNS_LISTS.get('poi_view',
+                                                                      POIList.default_extra_columns)
 
     def get_queryset(self):
-        return POI.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
+        return POI.objects.existing()
+
+    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
+            serializer_class=POIRandoV2GeojsonSerializer)
+    def rando_v2_geojson(self, request, *args, **kwargs):
+        qs = POI.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class TrekPOIViewSet(viewsets.ModelViewSet):
     model = POI
-    serializer_class = POIGeojsonSerializer
+    serializer_class = POIRandoV2GeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):

@@ -328,28 +328,31 @@ class ClosePOISerializer(TranslatedModelSerializer):
         fields = ('id', 'slug', 'name', 'type')
 
 
-class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                    ZoningSerializerMixin, TranslatedModelSerializer):
-    type = POITypeSerializer()
-    structure = StructureSerializer()
+class POISerializer(DynamicFieldsMixin, MapentityModelSerializer):
+    name = serializers.CharField(source='name_display')
+    type = serializers.SlugRelatedField('label', read_only=True)
+    thumbnail = serializers.CharField(source='thumbnail_display')
+    structure = serializers.SlugRelatedField('name', read_only=True)
 
     class Meta:
-        model = trekking_models.Trek
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', 'description', 'type',) + \
-            ('min_elevation', 'max_elevation', 'structure') + \
-            ZoningSerializerMixin.Meta.fields + \
-            PublishableSerializerMixin.Meta.fields + \
-            PicturesSerializerMixin.Meta.fields
+        model = trekking_models.POI
+        fields = "__all__"
 
 
-class POIGeojsonSerializer(GeoFeatureModelSerializer, POISerializer):
-    # Annotated geom field with API_SRID
+class POIRandoV2GeojsonSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
+                                  ZoningSerializerMixin, TranslatedModelSerializer, GeoFeatureModelSerializer):
+    type = POITypeSerializer()
+    structure = StructureSerializer()
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     class Meta(POISerializer.Meta):
+        model = trekking_models.POI
         geo_field = 'api_geom'
-        fields = POISerializer.Meta.fields + ('api_geom', )
+        id_field = 'id'
+        fields = ('id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure', 'api_geom') + \
+                 ZoningSerializerMixin.Meta.fields + \
+                 PublishableSerializerMixin.Meta.fields + \
+                 PicturesSerializerMixin.Meta.fields
 
 
 class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
