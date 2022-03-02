@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -8,6 +7,7 @@ from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback import serializers as feedback_serializers
 from geotrek.feedback.filters import ReportFilterSet
@@ -19,6 +19,8 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from geotrek.feedback.serializers import ReportGeojsonSerializer
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
@@ -40,10 +42,6 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     filterform = ReportFilterSet
     mandatory_columns = ['id', 'email', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
-
-
-class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
-    pass
 
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
@@ -98,30 +96,21 @@ class ReportCreate(MapEntityCreate):
         return reverse('feedback:report_list')
 
 
-class ReportViewSet(mapentity_views.MapEntityViewSet):
-    """Disable permissions requirement"""
-
+class ReportViewSet(GeotrekMapentityViewSet):
     model = feedback_models.Report
-    queryset = (
-        feedback_models.Report.objects.existing()
-        .select_related(
-            "activity", "category", "problem_magnitude", "status", "related_trek"
-        )
-        .prefetch_related("attachments")
-    )
-    parser_classes = [FormParser, MultiPartParser]
     serializer_class = feedback_serializers.ReportSerializer
-    geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer
-    authentication_classes = []
-    permission_classes = [AllowAny]
+
+    def get_columns(self):
+        return ReportList.mandatory_columns + settings.COLUMNS_LISTS.get('feedback_view',
+                                                                         ReportList.default_extra_columns)
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.select_related(
+        return self.model.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
-        )
+        ).prefetch_related("attachments")
 
-    @action(detail=False, methods=["post"])
+    @action(detail=False, methods=["post"], authentication_classes=[], parser_classes=[FormParser, MultiPartParser],
+            permission_classes=[AllowAny], serializer_class=ReportGeojsonSerializer)
     def report(self, request, lang=None):
         response = super().create(request)
         creator, created = get_user_model().objects.get_or_create(
