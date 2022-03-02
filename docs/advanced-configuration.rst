@@ -1685,7 +1685,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "portal",
         "date_update",
         "date_insert",
-        "uuid",
     ]
     COLUMNS_LISTS["touristic_content_view"] = [
         "structure",

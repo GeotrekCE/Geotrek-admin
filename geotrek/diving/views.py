@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.db.models import Q
 from django.contrib.gis.db.models.functions import Transform
@@ -6,11 +5,14 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.views.generic import DetailView
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
+from mapentity.renderers import GeoJSONRenderer
+from mapentity.views import (MapEntityLayer, MapEntityList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityViewSet)
-from rest_framework import permissions as rest_permissions, viewsets
+from rest_framework import permissions as rest_permissions, viewsets, renderers
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CustomColumnsMixin
@@ -20,11 +22,12 @@ from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
 from .filters import DiveFilterSet
 from .forms import DiveForm
 from .models import Dive
-from .serializers import DiveSerializer, DiveGeojsonSerializer
+from .serializers import DiveSerializer, DiveRandoV2GeojsonSerializer
 
 from geotrek.trekking.models import POI, Service
 from geotrek.trekking.serializers import POIRandoV2GeojsonSerializer, ServiceGeojsonSerializer
 from geotrek.trekking.views import FlattenPicturesMixin
+from ..common.viewsets import GeotrekMapentityViewSet
 
 
 class DiveLayer(MapEntityLayer):
@@ -37,10 +40,6 @@ class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = Dive.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['levels', 'thumbnail']
-
-
-class DiveJsonList(MapEntityJsonList, DiveList):
-    pass
 
 
 class DiveFormatList(MapEntityFormat, DiveList):
@@ -146,13 +145,22 @@ class DiveMeta(MetaMixin, DetailView):
     template_name = 'diving/dive_meta.html'
 
 
-class DiveViewSet(MapEntityViewSet):
+class DiveViewSet(GeotrekMapentityViewSet):
     model = Dive
     serializer_class = DiveSerializer
-    geojson_serializer_class = DiveGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    filterset_class = DiveFilterSet
 
     def get_queryset(self):
+        return self.model.objects.existing()
+
+    def get_columns(self):
+        return DiveList.mandatory_columns + settings.COLUMNS_LISTS.get('dive_view',
+                                                                       DiveList.default_extra_columns)
+
+    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
+            serializer_class=DiveRandoV2GeojsonSerializer)
+    def rando_v2_geojson(self, request, *args, **kwargs):
+        """ GeoJSON for RandoV2. """
         qs = self.model.objects.existing()
         qs = qs.select_related('structure', 'difficulty', 'practice')
         qs = qs.prefetch_related('levels', 'source', 'portal', 'themes', 'attachments')
@@ -164,8 +172,8 @@ class DiveViewSet(MapEntityViewSet):
             qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-
-        return qs
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class DivePOIViewSet(viewsets.ModelViewSet):
