@@ -1,3 +1,5 @@
+from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -84,8 +86,25 @@ class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedMod
         return _('touristic-content')
 
 
-class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                                 ZoningSerializerMixin, TranslatedModelSerializer):
+class TouristicContentSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+    name = rest_serializers.CharField(source='name_display')
+    structure = rest_serializers.SlugRelatedField('name', read_only=True)
+    themes = rest_serializers.CharField(source='themes_display')
+    category = rest_serializers.SlugRelatedField('label', read_only=True)
+    label_accessibility = rest_serializers.SlugRelatedField('label', read_only=True)
+    reservation_system = rest_serializers.SlugRelatedField('name', read_only=True)
+
+    def get_source(self, obj):
+        return ', '.join(obj.source.values_list('name', flat=True))
+
+    class Meta:
+        model = tourism_models.TouristicContent
+        fields = "__all__"
+
+
+class TouristicContentRandoV2GeojsonSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
+                                               ZoningSerializerMixin, TranslatedModelSerializer,
+                                               GeoFeatureModelSerializer):
     themes = ThemeSerializer(many=True)
     category = TouristicContentCategorySerializer()
     label_accessibility = LabelAccessibilitySerializer()
@@ -101,6 +120,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     touristic_events = CloseTouristicEventSerializer(many=True, source='published_touristic_events')
     treks = trekking_serializers.CloseTrekSerializer(many=True, source='published_treks')
     pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     def __init__(self, instance=None, *args, **kwargs):
         super().__init__(instance, *args, **kwargs)
@@ -112,23 +132,15 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
 
     class Meta:
         model = tourism_models.TouristicContent
+        geo_field = 'api_geom'
         fields = ('id', 'description', 'description_teaser', 'category',
                   'themes', 'contact', 'email', 'website', 'practical_info', 'accessibility', 'label_accessibility',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
                   'treks', 'pois', 'source', 'portal', 'approved',
-                  'reservation_id', 'reservation_system', 'structure') + \
-            ZoningSerializerMixin.Meta.fields + \
-            PublishableSerializerMixin.Meta.fields + \
-            PicturesSerializerMixin.Meta.fields
-
-
-class TouristicContentGeojsonSerializer(GeoFeatureModelSerializer, TouristicContentSerializer):
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
-
-    class Meta(TouristicContentSerializer.Meta):
-        geo_field = 'api_geom'
-        fields = TouristicContentSerializer.Meta.fields + ('api_geom', )
+                  'reservation_id', 'reservation_system', 'structure', 'api_geom') + \
+                 ZoningSerializerMixin.Meta.fields + \
+                 PublishableSerializerMixin.Meta.fields + \
+                 PicturesSerializerMixin.Meta.fields
 
 
 class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -139,8 +151,14 @@ class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSeri
         fields = ('id', 'name', 'pictogram')
 
 
-class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                               ZoningSerializerMixin, TranslatedModelSerializer):
+class TouristicEventSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+
+    class Meta:
+        model = tourism_models.TouristicEvent
+        fields = "__all__"
+
+
+class TouristicEventGeojsonSerializer(GeoFeatureModelSerializer):
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
     source = RecordSourceSerializer(many=True)
@@ -156,6 +174,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     # For consistency with touristic contents
     type1 = TouristicEventTypeSerializer(many=True)
     category = rest_serializers.SerializerMethodField()
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     def __init__(self, instance=None, *args, **kwargs):
         super().__init__(instance, *args, **kwargs)
@@ -163,19 +182,6 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
             from geotrek.diving.serializers import CloseDiveSerializer
 
             self.fields['dives'] = CloseDiveSerializer(many=True, source='published_dives')
-
-    class Meta:
-        model = tourism_models.TouristicEvent
-        fields = ('id', 'description_teaser', 'description', 'themes',
-                  'begin_date', 'end_date', 'duration', 'meeting_point',
-                  'meeting_time', 'contact', 'email', 'website', 'structure',
-                  'organizer', 'speaker', 'type', 'accessibility',
-                  'participant_number', 'booking', 'target_audience',
-                  'practical_info', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'type1', 'category', 'source', 'portal', 'approved') + \
-            ZoningSerializerMixin.Meta.fields + \
-            PublishableSerializerMixin.Meta.fields + \
-            PicturesSerializerMixin.Meta.fields
 
     def get_category(self, obj):
         return {
@@ -187,11 +193,16 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
             'slug': _('touristic-event'),
         }
 
-
-class TouristicEventGeojsonSerializer(GeoFeatureModelSerializer, TouristicEventSerializer):
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
-
-    class Meta(TouristicEventSerializer.Meta):
+    class Meta:
+        model = tourism_models.TouristicEvent
         geo_field = 'api_geom'
-        fields = TouristicEventSerializer.Meta.fields + ('api_geom', )
+        fields = ('id', 'description_teaser', 'description', 'themes',
+                  'begin_date', 'end_date', 'duration', 'meeting_point',
+                  'meeting_time', 'contact', 'email', 'website', 'structure',
+                  'organizer', 'speaker', 'type', 'accessibility',
+                  'participant_number', 'booking', 'target_audience',
+                  'practical_info', 'touristic_contents', 'touristic_events',
+                  'treks', 'pois', 'type1', 'category', 'source', 'portal', 'approved', 'api_geom') + \
+                 ZoningSerializerMixin.Meta.fields + \
+                 PublishableSerializerMixin.Meta.fields + \
+                 PicturesSerializerMixin.Meta.fields

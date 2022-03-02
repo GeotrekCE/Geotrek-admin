@@ -1,20 +1,22 @@
-
 import logging
 import os
 
-from django.utils.translation import gettext as _
-
 from django.conf import settings
-from django.db.models import Q
 from django.contrib.gis.db.models.functions import Transform
+from django.db.models import Q
 from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
 from django.views.generic import DetailView
+from django_filters.rest_framework import DjangoFilterBackend
+from mapentity.renderers import GeoJSONRenderer
 from mapentity.views import (MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
-from rest_framework import permissions as rest_permissions, viewsets
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions as rest_permissions, viewsets, renderers
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,16 +25,14 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
-from django.shortcuts import get_object_or_404
 from geotrek.trekking.models import Trek
-
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
 from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
-                          TouristicContentGeojsonSerializer, TouristicEventGeojsonSerializer,
+                          TouristicContentRandoV2GeojsonSerializer, TouristicEventGeojsonSerializer,
                           InformationDeskGeojsonSerializer)
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from ..common.viewsets import GeotrekMapentityViewSet
 
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
@@ -56,10 +56,6 @@ class TouristicContentList(CustomColumnsMixin, MapEntityList):
     def categories_list(self):
         used = TouristicContent.objects.values_list('category__pk')
         return TouristicContentCategory.objects.filter(pk__in=used)
-
-
-class TouristicContentJsonList(MapEntityJsonList, TouristicContentList):
-    pass
 
 
 class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
@@ -157,6 +153,35 @@ class TouristicContentMarkupPublic(TouristicContentDocumentPublicMixin, MarkupPu
 class TouristicContentMeta(MetaMixin, DetailView):
     model = TouristicContent
     template_name = 'tourism/touristiccontent_meta.html'
+
+
+class TouristicContentViewSet(GeotrekMapentityViewSet):
+    model = TouristicContent
+    serializer_class = TouristicContentSerializer
+
+    def get_queryset(self):
+        return self.model.objects.existing()
+
+    def get_columns(self):
+        return TouristicContentList.mandatory_columns + settings.COLUMNS_LISTS.get('touristic_content_view',
+                                                                                   TouristicContentList.default_extra_columns)
+
+    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
+            serializer_class=TouristicContentRandoV2GeojsonSerializer)
+    def rando_v2_geojson(self, request, *args, **kwargs):
+        """ GeoJSON for RandoV2. """
+        qs = TouristicContent.objects.existing()
+        qs = qs.filter(published=True)
+
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
+
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class TouristicEventLayer(MapEntityLayer):
@@ -262,26 +287,6 @@ class TouristicEventMeta(MetaMixin, DetailView):
     template_name = 'tourism/touristicevent_meta.html'
 
 
-class TouristicContentViewSet(MapEntityViewSet):
-    model = TouristicContent
-    serializer_class = TouristicContentSerializer
-    geojson_serializer_class = TouristicContentGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        qs = TouristicContent.objects.existing()
-        qs = qs.filter(published=True)
-
-        if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
-
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
-
-        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        return qs
-
-
 class TouristicEventViewSet(MapEntityViewSet):
     model = TouristicEvent
     serializer_class = TouristicEventSerializer
@@ -331,7 +336,7 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
 
 class TrekTouristicContentViewSet(viewsets.ModelViewSet):
     model = TouristicContent
-    serializer_class = TouristicContentGeojsonSerializer
+    serializer_class = TouristicContentRandoV2GeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -380,7 +385,7 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
         def get_serializer_class(self):
             renderer, media_type = self.perform_content_negotiation(self.request)
             if getattr(renderer, 'format') == 'geojson':
-                return TouristicContentGeojsonSerializer
+                return TouristicContentRandoV2GeojsonSerializer
             else:
                 return TouristicContentSerializer
 

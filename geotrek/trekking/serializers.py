@@ -361,7 +361,7 @@ class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer)
         fields = ('id', 'pictogram', 'name')
 
 
-class ServiceSerializer(MapentityModelSerializer):
+class ServiceSerializer(DynamicFieldsMixin, MapentityModelSerializer):
     name = serializers.CharField(source='name_display')
     type = serializers.CharField(source='name_display')
 
