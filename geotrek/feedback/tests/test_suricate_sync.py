@@ -583,8 +583,8 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         )
         self.assertTrue(form.is_valid)
         form.save()
-        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.uid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.uid, self.classified_status.identifier, "Problème déjà réglé")
+        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.translated_uid, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.translated_uid, self.classified_status.identifier, "Problème déjà réglé")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")
