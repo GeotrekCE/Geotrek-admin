@@ -177,6 +177,12 @@ msgstr "Manager de gestion"
 msgid "Workflow managers"
 msgstr "Managers de gestion"
 
+msgid "Workflow Manager"
+msgstr "Manager de gestion"
+
+msgid "Workflow Managers"
+msgstr "Managers de gestion"
+
 msgid "Intervention terminée"
 msgstr "Intervention terminée"
 

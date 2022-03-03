@@ -15,7 +15,7 @@ from .models import PredefinedEmail, Report, ReportStatus, TimerEvent
 # Empty status should not be changed from this form
 SURICATE_WORKFLOW_STEPS = {
     'filed': ['classified', 'filed'],
-    'solved_intervention': ['resolved', 'solved_intervention'],
+    'solved_intervention': ['solved', 'solved_intervention'],
 }
 
 
