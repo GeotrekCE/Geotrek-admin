@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
     'filed': ['classified', 'waiting'],
-    'solved_intervention': ['resolved']
+    'solved_intervention': ['solved']
 }
 
 STATUS_WHEN_REPORT_IS_LATE = {
@@ -315,6 +315,17 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             if success == 1:
                 self.attach_email(message, self.assigned_user.email)
 
+    @property
+    def translated_uid(self):
+        """
+        Formatted UUIDs as they are found in Suricate
+        stored:   13D3CBEF-ED65-1184-53DC-47EBCC7BE0FD
+        expected: 13D3CBEF-ED65-1184-53DC47EBCC7BE0FD
+        """
+        uid = str(self.uid).upper()
+        translated_uid = "".join(str(uid).rsplit("-", 1))
+        return translated_uid
+
     def notify_assigned_user(self, message):
         subject = _("Geotrek - New report to process")
         message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
@@ -326,20 +337,20 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         self.try_send_email(subject, message)
 
     def lock_in_suricate(self):
-        self.get_suricate_messenger().lock_alert(self.uid)
+        self.get_suricate_messenger().lock_alert(self.translated_uid)
 
     def unlock_in_suricate(self):
-        self.get_suricate_messenger().unlock_alert(self.uid)
+        self.get_suricate_messenger().unlock_alert(self.translated_uid)
 
     def change_position_in_suricate(self):
         rep_gps = self.geom.transform(4326, clone=True)
         long, lat = rep_gps
-        self.get_suricate_messenger().update_gps(self.uid, lat, long)
+        self.get_suricate_messenger().update_gps(self.translated_uid, lat, long)
 
     def send_notifications_on_status_change(self, old_status_identifier, message):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
-            self.get_suricate_messenger().update_status(self.uid, self.status.identifier, message)
-            self.get_suricate_messenger().message_sentinel(self.uid, message)
+            self.get_suricate_messenger().update_status(self.translated_uid, self.status.identifier, message)
+            self.get_suricate_messenger().message_sentinel(self.translated_uid, message)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:

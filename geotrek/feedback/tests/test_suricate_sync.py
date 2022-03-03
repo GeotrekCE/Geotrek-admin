@@ -453,7 +453,7 @@ class SuricateWorkflowTests(SuricateTests):
         cls.late_intervention_status = ReportStatusFactory(identifier='late_intervention', label="Intervention en retard")
         cls.late_resolution_status = ReportStatusFactory(identifier='late_resolution', label="Resolution en retard")
         cls.solved_intervention_status = ReportStatusFactory(identifier='solved_intervention', label="Intervention terminée")
-        cls.resolved_status = ReportStatusFactory(identifier='resolved', label="Résolu")
+        cls.resolved_status = ReportStatusFactory(identifier='solved', label="Résolu")
         cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
         cls.interv_report = ReportFactory(status=cls.programmed_status)

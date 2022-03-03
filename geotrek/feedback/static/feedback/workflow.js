@@ -18,7 +18,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
 function display_message_fields_on_status_change() {
     var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
     var selected = $('#id_status').val() || null;
-    do_display = ((status_ids_and_colors[selected]['id'] == "resolved") || (status_ids_and_colors[selected]['id'] == "classified"))
+    do_display = ((status_ids_and_colors[selected]['id'] == "solved") || (status_ids_and_colors[selected]['id'] == "classified"))
     $('#div_id_message_sentinel').prop('hidden', !do_display);
     $('#div_id_message_sentinel_predefined').prop('hidden', !do_display);
     // Prevent assigning and classifying at the same time
