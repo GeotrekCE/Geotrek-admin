@@ -1,3 +1,4 @@
+from django import forms
 from django.forms import CheckboxInput
 from crispy_forms.layout import Div
 from django.conf import settings
@@ -7,7 +8,7 @@ from django.utils.translation import gettext as _
 
 from geotrek.common.forms import CommonForm
 
-from .models import Report, ReportStatus, TimerEvent
+from .models import PredefinedEmail, Report, ReportStatus, TimerEvent
 
 # This dict stores constraints for status changes in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
@@ -78,7 +79,14 @@ class ReportForm(CommonForm):
                     self.fields["message_sentinel"] = CharField(required=False, widget=Textarea())
                     self.fields["message_sentinel"].label = _("Message for sentinel")
                     right_after_status_index = self.fieldslayout[0].fields.index('status') + 1
+                    self.fields['message_sentinel_predefined'] = forms.ModelChoiceField(
+                        label=_("Predefined email"),
+                        queryset=PredefinedEmail.objects.all(),
+                        required=False,
+                        initial=None
+                    )
                     self.fieldslayout[0].insert(right_after_status_index, 'message_sentinel')
+                    self.fieldslayout[0].insert(right_after_status_index, 'message_sentinel_predefined')
                     # message for supervisor
                     self.fields["message_supervisor"] = CharField(required=False, widget=Textarea())
                     self.fields["message_supervisor"].label = _("Message for supervisor")

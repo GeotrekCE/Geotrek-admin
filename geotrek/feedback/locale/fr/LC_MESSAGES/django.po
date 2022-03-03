@@ -251,3 +251,15 @@ msgstr "Des informations n'ont pas encore pu être transmises à Suricate - Merc
 
 msgid "to"
 msgstr "pour"
+
+msgid "Predefined email"
+msgstr "Email prédéfini"
+
+msgid "Predefined emails"
+msgstr "Emails prédéfinis"
+
+msgid "Mail body"
+msgstr "Corps du mail"
+
+msgid "Content"
+msgstr "Contenu"

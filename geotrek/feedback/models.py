@@ -593,3 +593,18 @@ class WorkflowManager(models.Model):
         subject = _("Geotrek - New reports from Suricate")
         message = render_to_string("feedback/reports_email.html")
         self.try_send_email(subject, message)
+
+
+class PredefinedEmail(models.Model):
+    """
+    An email with predefined content to be sent through Suricate Workflow
+    """
+    label = models.CharField(blank=False, max_length=500, verbose_name='Predefined email')
+    text = models.TextField(blank=True, help_text='Mail body', verbose_name='Content')
+
+    class Meta:
+        verbose_name = _("Predefined email")
+        verbose_name_plural = _("Predefined emails")
+
+    def __str__(self):
+        return self.label
