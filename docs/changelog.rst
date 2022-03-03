@@ -32,7 +32,7 @@ CHANGELOG
 - Add TimerEvent class, used to alert Report supervisors when timer expires, with `check_timers` command
 - Force workflow when SURICATE_MANAGEMENT_WORKFLOW setting is enabled
 - Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
-
+- Add editable predefined emails
 
 2.76.3     (2022-02-09)
 -----------------------
