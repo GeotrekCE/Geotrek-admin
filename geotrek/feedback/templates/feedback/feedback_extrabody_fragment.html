@@ -3,15 +3,26 @@
 {% suricate_workflow_enabled as suricate_workflow_enabled %}
 {% enable_report_colors_per_status as enable_report_colors_per_status %}
 
-{% if enable_report_colors_per_status or suricate_workflow_enabled %}
-    <script type="application/json" id="status_ids_and_colors">
-        {% status_ids_and_colors as status_ids_and_colors %}
-        {{ status_ids_and_colors|safe }}
-    </script>
-{% endif %}
+{% if modelname == "report" %}
 
-{% if suricate_workflow_enabled %}
-    <script type="text/javascript" src="{% static "feedback/workflow.js" %}"></script>
+    {% if enable_report_colors_per_status or suricate_workflow_enabled %}
+        <script type="application/json" id="status_ids_and_colors">
+            {% status_ids_and_colors as status_ids_and_colors %}
+            {{ status_ids_and_colors|safe }}
+        </script>
+    {% endif %}
+
+    {% if suricate_workflow_enabled %}
+        <script type="text/javascript" src="{% static "feedback/workflow.js" %}"></script>
+        <script type="application/json" id="predefined_emails">
+            {% predefined_emails as predefined_emails %}
+            {{ predefined_emails|safe }}
+        </script>
+        <script type="application/json" id="resolved_intervention_info">
+            {% resolved_intervention_info report as resolved_intervention_info %}
+            {{ resolved_intervention_info|safe }}
+        </script>
+    {% endif %}
 {% endif %}
 
 {% if enable_report_colors_per_status %}

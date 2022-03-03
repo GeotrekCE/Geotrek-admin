@@ -26,5 +26,6 @@ class WorkflowManagerAdmin(admin.ModelAdmin):
 admin.site.register(feedback_models.WorkflowManager, WorkflowManagerAdmin)
 admin.site.register(feedback_models.ReportCategory, TabbedTranslationAdmin)
 admin.site.register(feedback_models.ReportStatus)
+admin.site.register(feedback_models.PredefinedEmail)
 admin.site.register(feedback_models.ReportActivity, TabbedTranslationAdmin)
 admin.site.register(feedback_models.ReportProblemMagnitude, TabbedTranslationAdmin)
