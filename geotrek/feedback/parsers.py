@@ -149,6 +149,26 @@ class SuricateParser(SuricateGestionRequestManager):
         if reports_created:
             self.send_workflow_manager_new_reports_email()
 
+    def get_alert(self, verbosity=1, pk=0):
+        """
+        Get reports list from Suricate Rest API
+        :return: returns True if and only if reports was imported (it is in bbox)
+        """
+        data = self.get_suricate("wsGetAlerts")
+        pk = int(pk)
+        if pk:
+            uid = str(Report.objects.get(pk=pk).uid).upper()
+            formatted_uid = "".join(str(uid).rsplit("-", 1))
+            report = next(report for report in data["alertes"] if report["uid"] == formatted_uid)
+        else:
+            report = data["alertes"][0]
+        if verbosity >= 2:
+            logger.info(f"Processing report {report['uid']}\n")
+        self.to_delete = set()
+        report_created = self.parse_report(report)
+        if verbosity >= 1:
+            logger.info(f"Created : {report_created}")
+
     def get_alerts(self, verbosity=1):
         """
         Get reports list from Suricate Rest API
