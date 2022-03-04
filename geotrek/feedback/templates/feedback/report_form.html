@@ -1,0 +1,19 @@
+{% extends "mapentity/mapentity_form.html" %}
+
+{% load static feedback_tags %}
+
+{% block extrabody %}
+    {% suricate_workflow_enabled as suricate_workflow_enabled %}
+    {{ block.super }}
+    {% if suricate_workflow_enabled %}
+        <script type="text/javascript" src="{% static "feedback/workflow.js" %}"></script>
+        <script type="application/json" id="predefined_emails">
+            {% predefined_emails as predefined_emails %}
+            {{ predefined_emails|safe }}
+        </script>
+        <script type="application/json" id="resolved_intervention_info">
+            {% resolved_intervention_info report as resolved_intervention_info %}
+            {{ resolved_intervention_info|safe }}
+        </script>
+    {% endif %}
+{% endblock extrabody %}
