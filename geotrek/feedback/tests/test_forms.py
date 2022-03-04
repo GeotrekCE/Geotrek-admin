@@ -181,21 +181,21 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
         # Assert data forwarded to Suricate
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.translated_uid)).encode()
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'message': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.translated_uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.translated_uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsLockAlert?id_origin=geotrek&uid_alerte={self.filed_report.uid}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsLockAlert?id_origin=geotrek&uid_alerte={self.filed_report.translated_uid}&check={check}",
             auth=('', '')
         )
         # Assert user is notified
@@ -286,24 +286,24 @@ class TestSuricateForms(SuricateWorkflowTests):
         form = ReportForm(instance=self.solved_intervention_report, data=data)
         form.save()
         # Assert report status changes
-        self.assertEquals(self.solved_intervention_report.status.identifier, "resolved")
+        self.assertEquals(self.solved_intervention_report.status.identifier, "solved")
         # Assert data forwarded to Suricate
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.translated_uid)).encode()
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'message': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.translated_uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'statut': 'resolved', 'txt_changestatut': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.translated_uid, 'statut': 'solved', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.uid}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.translated_uid}&check={check}",
             auth=('', '')
         )
 
@@ -322,9 +322,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Assert relocation is forwarded to Suricate
         long, lat = new_geom.transform(4326, clone=True).coords
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.translated_uid)).encode()
         ).hexdigest()
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.translated_uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
             auth=('', '')
         )
