@@ -5,6 +5,7 @@
 {% block extrabody %}
     {% suricate_workflow_enabled as suricate_workflow_enabled %}
     {{ block.super }}
+
     {% if suricate_workflow_enabled %}
         <script type="text/javascript" src="{% static "feedback/workflow.js" %}"></script>
         <script type="application/json" id="predefined_emails">

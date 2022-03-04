@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 from hashlib import md5
 from unittest import mock
@@ -16,13 +17,13 @@ from tinymce.widgets import TinyMCE
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import TimerEvent, WorkflowManager
-from geotrek.feedback.tests.factories import ReportFactory
+from geotrek.feedback.tests.factories import PredefinedEmailFactory, ReportFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SuricateWorkflowTests, test_for_management_and_workflow_modes,
     test_for_report_and_basic_modes, test_for_workflow_mode, test_for_management_mode)
 from geotrek.maintenance.forms import InterventionForm
 from geotrek.maintenance.models import InterventionStatus
-from geotrek.maintenance.tests.factories import InterventionFactory
+from geotrek.maintenance.tests.factories import InterventionFactory, ReportInterventionFactory
 
 
 class TestSuricateForms(SuricateWorkflowTests):
@@ -34,7 +35,11 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.filed_report_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
+        cls.intervention = ReportInterventionFactory(date=datetime(year=1997, month=4, day=4).date())
+        cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
         cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uid=uuid.uuid4())
+        cls.predefined_email_1 = PredefinedEmailFactory()
+        cls.predefined_email_2 = PredefinedEmailFactory()
 
     def setUp(self):
         self.client.login(username="Admiin", password="drowssap")
@@ -269,6 +274,23 @@ class TestSuricateForms(SuricateWorkflowTests):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
         self.assertNotIn("Ajouter une intervention", response.content.decode("utf-8"))
+
+    @test_for_workflow_mode
+    def test_predefined_emails_serialized(self):
+        response = self.client.get(reverse('feedback:report_add'), follow=True)
+        emails_data = "{\"1\": {\"label\": \"Predefined Email 0\", \"text\": \"Some email body content 0\"}, \"2\": {\"label\": \"Predefined Email 1\", \"text\": \"Some email body content 1\"}"
+        self.assertEquals(response.status_code, 200)
+        self.assertIn(emails_data, response.content.decode("utf-8"))
+
+    @test_for_workflow_mode
+    def test_date_intervention_serialized(self):
+        report = self.intervention.target
+        report.assigned_user = self.admin
+        report.save()
+        response = self.client.get(f"/report/edit/{self.intervention.target.pk}/")
+        emails_data = ""
+        self.assertEquals(response.status_code, 200)
+        self.assertIn(emails_data, response.content.decode("utf-8"))
 
     @test_for_management_and_workflow_modes
     def test_can_only_create_intervention_once_2(self):
