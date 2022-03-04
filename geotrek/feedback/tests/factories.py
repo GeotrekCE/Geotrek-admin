@@ -27,6 +27,14 @@ class ReportCategoryFactory(factory.django.DjangoModelFactory):
     label = factory.Sequence(lambda n: "Category %s" % n)
 
 
+class PredefinedEmailFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = feedback_models.PredefinedEmail
+
+    label = factory.Sequence(lambda n: "Predefined Email %s" % n)
+    text = factory.Sequence(lambda n: "Some email body content %s" % n)
+
+
 class ReportProblemMagnitudeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportProblemMagnitude

@@ -21,10 +21,12 @@ from mapentity.models import MapEntityMixin
 from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
                                    PicturesMixin, TimeStampedModelMixin)
 from geotrek.common.utils import intersecting
-from geotrek.maintenance.models import Intervention
 from geotrek.trekking.models import POI, Service, Trek
 
 from .helpers import SuricateMessenger
+
+if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+    from geotrek.maintenance.models import Intervention
 
 logger = logging.getLogger(__name__)
 
@@ -383,9 +385,11 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return settings.REPORT_INTERSECTION_MARGIN
 
     def report_interventions(self):
-        report_content_type = ContentType.objects.get_for_model(Report)
-        qs = Q(target_type=report_content_type, target_id=self.id)
-        return Intervention.objects.existing().filter(qs).distinct('pk')
+        if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+            report_content_type = ContentType.objects.get_for_model(Report)
+            qs = Q(target_type=report_content_type, target_id=self.id)
+            return Intervention.objects.existing().filter(qs).distinct('pk')
+        return None
 
     @classmethod
     def latest_updated_by_status(cls, status_id):
@@ -398,7 +402,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Report.add_property('services', lambda self: intersecting(Service, self), _("Services"))
-Report.add_property('interventions', lambda self: Report.report_interventions(self), _("Interventions"))
+if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+    Report.add_property('interventions', lambda self: Report.report_interventions(self), _("Interventions"))
 
 
 class ReportActivity(models.Model):
