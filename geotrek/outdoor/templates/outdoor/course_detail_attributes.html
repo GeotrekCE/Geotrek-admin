@@ -30,6 +30,16 @@
             <th>{{ object.parent_sites.first|verbose:"practice" }}</th>
             <td>{% if object.parent_sites.first.practice %}{{ object.parent_sites.first.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
+        {% for rating in object.ratings.all %}
+            <tr>
+                <th>{{ rating.scale.name }}</th>
+                <td>{{ rating.name }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th>{{ object|verbose:"ratings_description" }}</th>
+            <td>{% if object.ratings_description %}{{ object.ratings_description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
         <tr>
             <th>{{ object|verbose:"type" }}</th>
             <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
@@ -58,19 +68,9 @@
             <th>{{ object|verbose:"height" }}</th>
             <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
-        {% for rating in object.ratings.all %}
-            <tr>
-                <th>{{ rating.scale.name }}</th>
-                <td>{{ rating.name }}</td>
-            </tr>
-        {% endfor %}
         <tr>
             <th>{{ object|verbose:"duration" }}</th>
             <td>{{ object.duration|duration }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"ratings_description" }}</th>
-            <td>{% if object.ratings_description %}{{ object.ratings_description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "Itinerancy" %}</th>

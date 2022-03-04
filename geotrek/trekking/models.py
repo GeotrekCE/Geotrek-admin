@@ -136,7 +136,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                         help_text=_("Train, bus (see web links)"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
-    ratings = models.ManyToManyField(Rating, related_name='treks', blank=True)
+    ratings = models.ManyToManyField(Rating, related_name='treks', blank=True, verbose_name=_("Ratings"))
     ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
     gear = models.TextField(verbose_name=_("Gear"), blank=True,
                             help_text=_("Gear needed, adviced ..."))

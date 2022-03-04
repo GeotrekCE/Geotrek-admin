@@ -147,7 +147,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
                                 help_text=_("Main attraction and interest"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
-    ratings = models.ManyToManyField(Rating, related_name='sites', blank=True)
+    ratings = models.ManyToManyField(Rating, related_name='sites', blank=True, verbose_name=_("Ratings"))
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
     orientation = models.JSONField(verbose_name=_("Orientation"), default=list, blank=True)
     wind = models.JSONField(verbose_name=_("Wind"), default=list, blank=True)
@@ -353,7 +353,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
                               help_text=_("Risks, danger, best period, ..."))
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     equipment = models.TextField(verbose_name=_("Equipment"), blank=True)
-    ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
+    ratings = models.ManyToManyField(Rating, related_name='courses', blank=True, verbose_name=_("Ratings"))
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,

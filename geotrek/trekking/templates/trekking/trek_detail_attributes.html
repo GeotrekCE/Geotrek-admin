@@ -33,12 +33,6 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        <tr>
-            <th>{{ trek|verbose:"difficulty" }}</th>
-            <td>{% if trek.difficulty %}{{ trek.difficulty|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
         {% for label in labels %}
             <tr>
                 <th>{{ label.name }}</th>
@@ -104,6 +98,12 @@
             </td>
         </tr>
         <tr>
+            <th>{{ trek|verbose:"difficulty" }}</th>
+            <td>{% if trek.difficulty %}{{ trek.difficulty|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{{ trek|verbose:"practice" }}</th>
             <td>{% if trek.practice %}{{ trek.practice|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
@@ -115,6 +115,10 @@
                 <td>{{ rating.name }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <th>{{ trek|verbose:"ratings_description" }}</th>
+            <td>{{ trek.ratings_description }}</td>
+        </tr>
         <tr>
             <th>{{ trek|verbose:"networks" }}</th>
             <td>
@@ -172,11 +176,15 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{{ trek.eid }}</td>
+            <td>{% if trek.eid %}{{ trek.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Second external id" %}</th>
-            <td>{{ trek.eid2 }}</td>
+            <td>{% if trek.eid2 %}{{ trek.eid2|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Reservation system" %}</th>
