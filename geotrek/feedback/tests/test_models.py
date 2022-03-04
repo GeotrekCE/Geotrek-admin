@@ -161,7 +161,7 @@ class TestPendingAPIRequests(SuricateTests):
         self.assertEquals(pending_lock_report.request_type, "GET")
         self.assertEquals(pending_lock_report.api, "MAN")
         self.assertEquals(pending_lock_report.endpoint, "wsLockAlert")
-        self.assertEquals(pending_lock_report.params, json.dumps({"uid_alerte": str(report.translated_uid)}))
+        self.assertEquals(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_uid)}))
         self.assertEquals(pending_lock_report.retries, 0)
         self.assertEquals(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report lock fails a second time
