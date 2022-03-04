@@ -196,6 +196,20 @@ class SuricateAPITests(SuricateTests):
         self.assertIsNone(r.assigned_user)
         # Assert no new mail on update
         self.assertEqual(len(mail.outbox), 1)
+        # Test sync specific report overwrites local info
+        r.comment = ""
+        r.save()
+        call_command("sync_suricate", report=r.pk, verbosity=2)
+        r.refresh_from_db()
+        self.assertEquals(r.comment, "Ne pas prendre la route Départementale 155 en direction de Malons")
+        # Test sync last report overwrites local info
+        r = Report.objects.get(uid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
+        self.assertEquals(r.comment, "Lames cassées")
+        r.comment = ""
+        r.save()
+        call_command("sync_suricate", report=0, verbosity=2)
+        r.refresh_from_db()
+        self.assertEquals(r.comment, "Lames cassées")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.logger")
