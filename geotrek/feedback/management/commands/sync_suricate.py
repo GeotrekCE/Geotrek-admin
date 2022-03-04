@@ -32,7 +32,7 @@ class Command(BaseCommand):
             dest="report",
             action='store',
             help="Import only one report by PK",
-            default=False,
+            default=None,
         )
         parser.add_argument(
             "--connection-test",
@@ -50,7 +50,7 @@ class Command(BaseCommand):
             report = options["report"]
             if options['test']:
                 test_suricate_connection()
-            elif report:
+            elif report is not None:
                 parser.get_alert(verbosity, report)
             else:
                 if options["activities"] or has_no_params:
