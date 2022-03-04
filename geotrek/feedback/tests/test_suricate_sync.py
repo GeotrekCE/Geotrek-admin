@@ -199,6 +199,8 @@ class SuricateAPITests(SuricateTests):
         # Test sync specific report overwrites local info
         r.comment = ""
         r.save()
+        r.refresh_from_db()
+        self.assertEquals(r.comment, "")
         call_command("sync_suricate", report=r.pk, verbosity=2)
         r.refresh_from_db()
         self.assertEquals(r.comment, "Ne pas prendre la route Départementale 155 en direction de Malons")
@@ -207,6 +209,8 @@ class SuricateAPITests(SuricateTests):
         self.assertEquals(r.comment, "Lames cassées")
         r.comment = ""
         r.save()
+        r.refresh_from_db()
+        self.assertEquals(r.comment, "")
         call_command("sync_suricate", report=0, verbosity=2)
         r.refresh_from_db()
         self.assertEquals(r.comment, "Lames cassées")
