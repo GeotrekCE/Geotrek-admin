@@ -47,6 +47,20 @@
                 {% endfor %}
             </td>
         </tr>
+        {% regroup  object.super_ratings by scale as scales_list %}
+        {% for scale in scales_list%}
+            <tr>
+                <th>{{ scale.grouper.name }}</th>
+                <td>{% for rating in scale.list %}
+                        {% if not forloop.last %}
+                            <span{% if not rating in object.ratings.all %} style="font-style: italic;"{% endif %}>{{ rating.name }},<span>
+                        {% else %}
+                            <span{% if not rating in object.ratings.all %} style="font-style: italic;"{% endif %}>{{ rating.name }}<span>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
         <tr>
             <th>{{ object|verbose:"type" }}</th>
             <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
@@ -71,20 +85,6 @@
             <th>{{ object|verbose:"accessibility" }}</th>
             <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
-        {% regroup  object.super_ratings by scale as scales_list %}
-        {% for scale in scales_list%}
-            <tr>
-                <th>{{ scale.grouper.name }}</th>
-                <td>{% for rating in scale.list %}
-                        {% if not forloop.last %}
-                            <span{% if not rating in object.ratings.all %} style="font-style: italic;"{% endif %}>{{ rating.name }},<span>
-                        {% else %}
-                            <span{% if not rating in object.ratings.all %} style="font-style: italic;"{% endif %}>{{ rating.name }}<span>
-                        {% endif %}
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endfor %}
         <tr>
             <th>{{ object|verbose:"period" }}</th>
             <td>{% if object.period %}{{ object.period }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>

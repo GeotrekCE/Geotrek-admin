@@ -255,7 +255,7 @@ class RatingMixin(OptionalPictogramMixin, models.Model):
     color = ColorField(verbose_name=_("Color"), blank=True)
 
     def __str__(self):
-        return self.name
+        return "{} : {}".format(self.scale.name, self.name)
 
     class Meta:
         abstract = True
