@@ -610,8 +610,8 @@ class PredefinedEmail(models.Model):
     """
     An email with predefined content to be sent through Suricate Workflow
     """
-    label = models.CharField(blank=False, max_length=500, verbose_name='Predefined email')
-    text = models.TextField(blank=True, help_text='Mail body', verbose_name='Content')
+    label = models.CharField(blank=False, max_length=500, verbose_name=_('Predefined email'))
+    text = models.TextField(blank=True, help_text='Mail body', verbose_name=_('Content'))
 
     class Meta:
         verbose_name = _("Predefined email")
