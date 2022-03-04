@@ -5,11 +5,6 @@ CHANGELOG
 2.76.3+dev (XXXX-XX-XX)
 -----------------------
 
-**Minor improvements**
-
-- Move fields in forms and details (#2755)
-- Add information rating scale in csv for treks (#2755)
-
 **New features**
 
 -
