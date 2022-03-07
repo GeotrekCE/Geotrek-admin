@@ -841,7 +841,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
         city3 = zoning_factory.CityFactory(code='03000',
                                            geom='SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, -9 -10, -10 -10)))')
-        trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        else:
+            trek_factory.TrekFactory.create(geom='SRID=2154;LINESTRING(-10 -9, -9 -9)')
         response = self.get_trek_list({'cities': city3.pk})
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -858,7 +861,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
         dist3 = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, '
                                                     '-9 -10, -10 -10)))')
-        trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        else:
+            trek_factory.TrekFactory.create(geom='SRID=2154;LINESTRING(-10 -9, -9 -9)')
         response = self.get_trek_list({'districts': dist3.pk})
         #  test response code
         self.assertEqual(response.status_code, 200)
