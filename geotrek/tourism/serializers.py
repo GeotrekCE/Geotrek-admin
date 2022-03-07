@@ -129,14 +129,14 @@ class TouristicContentRandoV2GeojsonSerializer(PicturesSerializerMixin, Publisha
     class Meta:
         model = tourism_models.TouristicContent
         geo_field = 'api_geom'
-        fields = ('id', 'description', 'description_teaser', 'category',
-                  'themes', 'contact', 'email', 'website', 'practical_info', 'accessibility', 'label_accessibility',
-                  'type1', 'type2', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'source', 'portal', 'approved',
-                  'reservation_id', 'reservation_system', 'structure', 'api_geom') + \
-                 ZoningSerializerMixin.Meta.fields + \
-                 PublishableSerializerMixin.Meta.fields + \
-                 PicturesSerializerMixin.Meta.fields
+        fields = (
+            'id', 'description', 'description_teaser', 'category',
+            'themes', 'contact', 'email', 'website', 'practical_info', 'accessibility', 'label_accessibility',
+            'type1', 'type2', 'touristic_contents', 'touristic_events',
+            'treks', 'pois', 'source', 'portal', 'approved',
+            'reservation_id', 'reservation_system', 'structure', 'api_geom'
+        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
+            PicturesSerializerMixin.Meta.fields
 
 
 class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -195,13 +195,13 @@ class TouristicEventGeojsonSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = tourism_models.TouristicEvent
         geo_field = 'api_geom'
-        fields = ('id', 'description_teaser', 'description', 'themes',
-                  'begin_date', 'end_date', 'duration', 'meeting_point',
-                  'meeting_time', 'contact', 'email', 'website', 'structure',
-                  'organizer', 'speaker', 'type', 'accessibility',
-                  'participant_number', 'booking', 'target_audience',
-                  'practical_info', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'type1', 'category', 'source', 'portal', 'approved', 'api_geom') + \
-                 ZoningSerializerMixin.Meta.fields + \
-                 PublishableSerializerMixin.Meta.fields + \
-                 PicturesSerializerMixin.Meta.fields
+        fields = (
+            'id', 'description_teaser', 'description', 'themes',
+            'begin_date', 'end_date', 'duration', 'meeting_point',
+            'meeting_time', 'contact', 'email', 'website', 'structure',
+            'organizer', 'speaker', 'type', 'accessibility',
+            'participant_number', 'booking', 'target_audience',
+            'practical_info', 'touristic_contents', 'touristic_events',
+            'treks', 'pois', 'type1', 'category', 'source', 'portal', 'approved', 'api_geom'
+        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
+            PicturesSerializerMixin.Meta.fields

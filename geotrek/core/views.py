@@ -2,7 +2,6 @@ import json
 import logging
 from collections import defaultdict
 
-from django.contrib.gis.db.models.functions import Transform
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -15,12 +14,10 @@ from django.utils.translation import gettext as _
 from django.core.cache import caches
 from django.views.generic.detail import BaseDetailView
 from django.http import HttpResponseRedirect
-from rest_framework import permissions as rest_permissions
 
 from mapentity.serializers import GPXSerializer
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityViewSet,
-                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin,)
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
+                             MapEntityUpdate, MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin)
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CustomColumnsMixin
@@ -264,9 +261,9 @@ class PathViewSet(GeotrekMapentityViewSet):
     filterset_class = PathFilterSet
 
     def get_queryset(self):
-        return Path.objects.annotate(length_2d=Length('geom')).defer('geom', 'geom_cadastre', 'geom_3d')
-                           # .select_related('structure', 'comfort', 'source', 'stake')\
-                           # .prefetch_related('usages', 'networks')\
+        return Path.objects.annotate(length_2d=Length('geom')).defer('geom', 'geom_cadastre', 'geom_3d')\
+                           .select_related('structure', 'comfort', 'source', 'stake')\
+                           .prefetch_related('usages', 'networks')
 
     def get_columns(self):
         return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('path_view', PathList.default_extra_columns)

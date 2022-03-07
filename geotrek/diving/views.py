@@ -6,10 +6,8 @@ from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.views.generic import DetailView
 from mapentity.renderers import GeoJSONRenderer
-from mapentity.views import (MapEntityLayer, MapEntityList,
-                             MapEntityFormat, MapEntityDetail, MapEntityMapImage,
-                             MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityViewSet)
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+                             MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from rest_framework import permissions as rest_permissions, viewsets, renderers
 from rest_framework.decorators import action
 from rest_framework.response import Response

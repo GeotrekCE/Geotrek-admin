@@ -9,7 +9,7 @@ from geotrek.signage import models as signage_models
 from mapentity.serializers.commasv import CSVSerializer
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
-from rest_framework import serializers as rest_serializers
+from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -20,7 +20,7 @@ class SignageTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, rest_serializers.ModelSerializer):
+class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, serializers.ModelSerializer):
     structure = serializers.SlugRelatedField('name', read_only=True)
     type = serializers.SlugRelatedField('label', read_only=True)
     condition = serializers.SlugRelatedField('label', read_only=True)
@@ -47,13 +47,13 @@ class SignageRandoV2GeojsonSerializer(GeoFeatureModelSerializer, BasePublishable
                   'manager', 'sealing', 'api_geom', ) + BasePublishableSerializerMixin.Meta.fields
 
 
-class BladeTypeSerializer(rest_serializers.ModelSerializer):
+class BladeTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = signage_models.BladeType
         fields = ('label', )
 
 
-class BladeSerializer(rest_serializers.ModelSerializer):
+class BladeSerializer(serializers.ModelSerializer):
     type = serializers.SlugRelatedField('label', read_only=True)
     direction = serializers.SlugRelatedField('label', read_only=True)
     color = serializers.SlugRelatedField('label', read_only=True)
@@ -67,7 +67,7 @@ class BladeSerializer(rest_serializers.ModelSerializer):
 class BladeGeojsonSerializer(GeoFeatureModelSerializer):
     type = BladeTypeSerializer()
     structure = StructureSerializer()
-    order_lines = rest_serializers.SerializerMethodField()
+    order_lines = serializers.SerializerMethodField()
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     def get_order_lines(self, obj):

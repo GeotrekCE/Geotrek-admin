@@ -296,22 +296,22 @@ class TrekRandoV2GeoJSONSerializer(PublishableSerializerMixin, PicturesSerialize
     class Meta:
         model = trekking_models.Trek
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
-                  'description', 'description_teaser', 'networks', 'advice', 'gear',
-                  'ambiance', 'difficulty', 'information_desks', 'themes',
-                  'labels', 'practice', 'accessibilities', 'accessibility_level',
-                  'accessibility_signage', 'accessibility_slope', 'accessibility_covering', 'accessibility_exposure',
-                  'accessibility_width', 'accessibility_advice',
-                  'usages', 'access', 'route',
-                  'public_transport', 'advised_parking', 'web_links',
-                  'accessibility_infrastructure', 'parking_location', 'relationships',
-                  'points_reference', 'gpx', 'kml', 'source', 'portal',
-                  'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
-                  'children', 'parents', 'previous', 'next', 'ratings', 'ratings_description') + \
-                 AltimetrySerializerMixin.Meta.fields + \
-                 ZoningSerializerMixin.Meta.fields + \
-                 PublishableSerializerMixin.Meta.fields + \
-                 PicturesSerializerMixin.Meta.fields
+        fields = (
+            'id', 'departure', 'arrival', 'duration', 'duration_pretty',
+            'description', 'description_teaser', 'networks', 'advice', 'gear',
+            'ambiance', 'difficulty', 'information_desks', 'themes',
+            'labels', 'practice', 'accessibilities', 'accessibility_level',
+            'accessibility_signage', 'accessibility_slope', 'accessibility_covering', 'accessibility_exposure',
+            'accessibility_width', 'accessibility_advice',
+            'usages', 'access', 'route',
+            'public_transport', 'advised_parking', 'web_links',
+            'accessibility_infrastructure', 'parking_location', 'relationships',
+            'points_reference', 'gpx', 'kml', 'source', 'portal',
+            'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
+            'children', 'parents', 'previous', 'next', 'ratings',
+            'ratings_description'
+        ) + AltimetrySerializerMixin.Meta.fields + ZoningSerializerMixin.Meta.fields + \
+            PublishableSerializerMixin.Meta.fields + PicturesSerializerMixin.Meta.fields
 
 
 class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -349,10 +349,10 @@ class POIRandoV2GeojsonSerializer(PublishableSerializerMixin, PicturesSerializer
         model = trekking_models.POI
         geo_field = 'api_geom'
         id_field = 'id'
-        fields = ('id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure', 'api_geom') + \
-                 ZoningSerializerMixin.Meta.fields + \
-                 PublishableSerializerMixin.Meta.fields + \
-                 PicturesSerializerMixin.Meta.fields
+        fields = (
+            'id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure', 'api_geom'
+        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
+            PicturesSerializerMixin.Meta.fields
 
 
 class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
