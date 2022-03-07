@@ -23,7 +23,6 @@ CHANGELOG
 - Display only some reports depending on which user is logged in
 
 
-
 2.76.4     (2022-03-07)
 -----------------------
 
