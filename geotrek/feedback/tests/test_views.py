@@ -8,8 +8,11 @@ from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.urls.base import reverse
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
+from geotrek.authent.tests.base import AuthentFixturesMixin
+from geotrek.authent.tests.factories import UserProfileFactory
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from rest_framework.test import APIClient
 
@@ -19,7 +22,7 @@ from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factories
-from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS
+from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS, SuricateWorkflowTests, test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
 
 
 class ReportViewsetMailSend(TestCase):
@@ -294,3 +297,56 @@ class ListOptionsTest(TranslationResetMixin, BaseAPITest):
         r = feedback_factories.ReportFactory(created_in_suricate=date_time_1, last_updated_in_suricate=date_time_2)
         self.assertEqual("03/24/2021 8:51 p.m.", r.created_in_suricate_display)
         self.assertEqual("03/28/2021 5:51 a.m.", r.last_updated_in_suricate_display)
+
+
+class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.workflow_manager_user = UserFactory()
+        cls.normal_user = UserFactory()
+        cls.super_user = SuperUserFactory()
+        #UserProfileFactory.create(user=cls.workflow_manager_user)
+        feedback_factories.WorkflowManagerFactory(user=cls.workflow_manager_user)
+        cls.admin = SuperUserFactory(username="Admin", password="drowssap")
+        cls.report = feedback_factories.ReportFactory(assigned_user=cls.normal_user)
+        cls.report = feedback_factories.ReportFactory(assigned_user=cls.workflow_manager_user)
+        cls.report = feedback_factories.ReportFactory()
+        permission = Permission.objects.get(name__contains='Can read Report')
+        cls.workflow_manager_user.user_permissions.add(permission)
+        cls.normal_user.user_permissions.add(permission)
+
+    @test_for_workflow_mode
+    def test_manager_sees_everything(self):
+        self.client.force_login(user=self.workflow_manager_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 3)
+
+    @test_for_workflow_mode
+    def test_normal_user_sees_only_assigned_reports(self):
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 1)
+
+    @test_for_workflow_mode
+    def test_super_user_sees_everything(self):
+        self.client.force_login(user=self.super_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 3)
+
+    @test_for_report_and_basic_modes
+    def test_normal_user_sees_everything_1(self):
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 3)
+
+    @test_for_management_mode
+    def test_normal_user_sees_everything_2(self):
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 3)
