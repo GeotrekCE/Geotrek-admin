@@ -71,9 +71,8 @@ class InfrastructureInterventionFactory(InterventionFactory):
     target = factory.SubFactory(InfrastructureFactory)
 
 
-if 'geotrek.feedback' in settings.INSTALLED_APPS:
-    class ReportInterventionFactory(InterventionFactory):
-        target = factory.SubFactory(ReportFactory)
+class ReportInterventionFactory(InterventionFactory):
+    target = factory.SubFactory(ReportFactory)
 
 
 class InfrastructurePointInterventionFactory(InterventionFactory):
