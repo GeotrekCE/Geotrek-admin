@@ -5,9 +5,14 @@ CHANGELOG
 2.76.4+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Add ratings_description field in export (#2755)
+
 **Bug fixes**
 
 - Remove width and height in SVG generating problems in Geotrek-rando V3 by Camille Monchicourt
+- Fix labels filter api v2 (#2764)
 
 **Maintenance**
 
