@@ -201,6 +201,6 @@ class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
 class CourseFormatList(MapEntityFormat, CourseList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'structure', 'name', 'parent_sites', 'description',
-        'advice', 'equipment', 'accessibility', 'eid', 'height', 'ratings', 'points_reference', 'uuid',
+        'structure', 'name', 'parent_sites', 'description', 'advice', 'equipment', 'accessibility',
+        'eid', 'height', 'ratings', 'ratings_description', 'points_reference', 'uuid',
     ]
