@@ -33,7 +33,7 @@ class TrekFormTest(TestCase):
         form = TrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(self.trek.ratings.all(), ['<Rating: Rating>'])
+        self.assertQuerysetEqual(self.trek.ratings.all(), ['<Rating: RatingScale : Rating>'])
 
     def test_no_rating_save(self):
         data = {

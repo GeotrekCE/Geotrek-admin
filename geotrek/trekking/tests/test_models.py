@@ -474,4 +474,4 @@ class RatingScaleTest(TestCase):
 class RatingTest(TestCase):
     def test_rating_str(self):
         scale = RatingFactory.create(name='Bar')
-        self.assertEqual(str(scale), 'Bar')
+        self.assertEqual(str(scale), 'RatingScale : Bar')

@@ -20,7 +20,7 @@ class SiteFormTest(TestCase):
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(site.ratings.all(), ['<Rating: Rating>'])
+        self.assertQuerysetEqual(site.ratings.all(), ['<Rating: RatingScale : Rating>'])
 
     def test_ratings_clean(self):
         user = UserFactory()
@@ -56,7 +56,7 @@ class CourseFormTest(TestCase):
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(self.course.ratings.all(), ['<Rating: Rating>'])
+        self.assertQuerysetEqual(self.course.ratings.all(), ['<Rating: RatingScale : Rating>'])
 
     def test_no_rating_save(self):
         form = CourseForm(user=self.user, instance=self.course, data={
