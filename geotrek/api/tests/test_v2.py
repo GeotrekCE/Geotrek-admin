@@ -3090,7 +3090,6 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     def test_updated_after_filter(self):
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
-        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'updated_after': two_years_ago})
         self.assertEqual(response.json().get("count"), 2)
 

@@ -9,6 +9,10 @@ CHANGELOG
 
 - Remove width and height in SVG generating problems in Geotrek-rando V3 by Camille Monchicourt
 
+**Maintenance**
+
+- Update to mapentity 7.1.3
+
 
 2.76.4     (2022-03-07)
 -----------------------

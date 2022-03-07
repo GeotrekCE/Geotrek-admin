@@ -40,15 +40,18 @@ PNG_BLACK_PIXEL = bytes.fromhex(
 
 
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
-        user = profile.user
-        user.groups.add(Group.objects.get(name="Référents communication"))
-        self.client.login(username=user.username, password='dooh')
-        self.content1 = TouristicContentFactory.create()
+        cls.user = profile.user
+        cls.user.groups.add(Group.objects.get(name="Référents communication"))
+        cls.content1 = TouristicContentFactory.create()
         structure = StructureFactory.create()
-        self.content2 = TouristicContentFactory.create(structure=structure)
+        cls.content2 = TouristicContentFactory.create(structure=structure)
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
 
     def tearDown(self):
         self.client.logout()
@@ -84,12 +87,16 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
 
 
 class TouristicContentTemplatesTest(TrekkingManagerTest):
-    def setUp(self):
-        self.content = TouristicContentFactory.create()
-        cat = self.content.category
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.content = TouristicContentFactory.create()
+        cat = cls.content.category
         cat.type1_label = 'Michelin'
         cat.save()
-        self.category2 = TouristicContentCategoryFactory(label="Another category")
+        cls.category2 = TouristicContentCategoryFactory(label="Another category")
+
+    def setUp(self):
         self.login()
 
     def tearDown(self):
@@ -119,8 +126,12 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
 
 
 class TouristicContentFormTest(TrekkingManagerTest):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.category = TouristicContentCategoryFactory()
+
     def setUp(self):
-        self.category = TouristicContentCategoryFactory()
         self.login()
 
     def test_no_category_selected_by_default(self):
@@ -137,43 +148,42 @@ class TouristicContentFormTest(TrekkingManagerTest):
 class BasicJSONAPITest(TranslationResetMixin):
     factory = None
 
+    @classmethod
+    def setUpTestData(cls):
+        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
+        cls.city = zoning_factories.CityFactory(geom=polygon)
+        cls.district = zoning_factories.DistrictFactory(geom=polygon)
+        cls.portal = common_factories.TargetPortalFactory()
+        cls.theme = common_factories.ThemeFactory()
+
+        cls.content = cls.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                  portals=[cls.portal], themes=[cls.theme])
+
+        cls.picture = common_factories.AttachmentFactory(content_object=cls.content,
+                                                         attachment_file=get_dummy_uploaded_image())
+        cls.document = common_factories.AttachmentFactory(content_object=cls.content,
+                                                          attachment_file=get_dummy_uploaded_document())
+
+        cls.content.themes.add(cls.theme)
+        cls.source = common_factories.RecordSourceFactory()
+        cls.content.source.add(cls.source)
+
+        cls.content.portal.add(cls.portal)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
+            cls.trek = trekking_factories.TrekFactory(paths=[path])
+            cls.poi = trekking_factories.POIFactory(paths=[(path, 0.5, 0.5)])
+        else:
+            cls.trek = trekking_factories.TrekFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
+            cls.poi = trekking_factories.POIFactory(geom='SRID=%s;POINT(0 5)' % settings.SRID)
+
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
         super().setUp()
-        self._build_object()
-
         self.pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=self.pk)
         self.response = self.client.get(url)
         self.result = self.response.json()
-
-    def _build_object(self):
-        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
-        self.city = zoning_factories.CityFactory(geom=polygon)
-        self.district = zoning_factories.DistrictFactory(geom=polygon)
-        self.portal = common_factories.TargetPortalFactory()
-        self.theme = common_factories.ThemeFactory()
-
-        self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                    portals=[self.portal], themes=[self.theme])
-
-        self.picture = common_factories.AttachmentFactory(content_object=self.content,
-                                                          attachment_file=get_dummy_uploaded_image())
-        self.document = common_factories.AttachmentFactory(content_object=self.content,
-                                                           attachment_file=get_dummy_uploaded_document())
-
-        self.content.themes.add(self.theme)
-        self.source = common_factories.RecordSourceFactory()
-        self.content.source.add(self.source)
-
-        self.content.portal.add(self.portal)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
-            self.trek = trekking_factories.TrekFactory(paths=[path])
-            self.poi = trekking_factories.POIFactory(paths=[(path, 0.5, 0.5)])
-        else:
-            self.trek = trekking_factories.TrekFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
-            self.poi = trekking_factories.POIFactory(geom='SRID=%s;POINT(0 5)' % settings.SRID)
 
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
@@ -305,13 +315,14 @@ class BasicJSONAPITest(TranslationResetMixin):
 class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicContentFactory
 
-    def _build_object(self):
-        super()._build_object()
-        self.category = self.content.category
-        self.type1 = TouristicContentType1Factory(category=self.category)
-        self.type2 = TouristicContentType2Factory(category=self.category, pictogram=None)
-        self.content.type1.set([self.type1])
-        self.content.type2.set([self.type2])
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.category = cls.content.category
+        cls.type1 = TouristicContentType1Factory(category=cls.category)
+        cls.type2 = TouristicContentType2Factory(category=cls.category, pictogram=None)
+        cls.content.type1.set([cls.type1])
+        cls.content.type2.set([cls.type2])
 
     def test_expected_properties(self):
         self.assertEqual(sorted([
@@ -388,15 +399,19 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
-        user = profile.user
-        user.groups.add(Group.objects.get(name="Référents communication"))
-        self.client.login(username=user.username, password='dooh')
-        self.event1 = TouristicEventFactory.create()
+        cls.user = profile.user
+        cls.user.groups.add(Group.objects.get(name="Référents communication"))
+
+        cls.event1 = TouristicEventFactory.create()
         structure = StructureFactory.create()
-        self.event2 = TouristicEventFactory.create(structure=structure)
+        cls.event2 = TouristicEventFactory.create(structure=structure)
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
 
     def test_can_edit_same_structure(self):
         url = "/touristicevent/edit/{pk}/".format(pk=self.event1.pk)

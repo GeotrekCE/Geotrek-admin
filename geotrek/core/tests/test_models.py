@@ -138,9 +138,10 @@ class TrailTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathVisibilityTest(TestCase):
-    def setUp(self):
-        self.path = PathFactory()
-        self.invisible = PathFactory(visible=False)
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory()
+        cls.invisible = PathFactory(visible=False)
 
     def test_paths_are_visible_by_default(self):
         self.assertTrue(self.path.visible)

@@ -5,8 +5,9 @@ from geotrek.feedback.tests.factories import ReportFactory
 
 
 class TestFeedbackModel(TestCase):
-    def setUp(self):
-        self.report = ReportFactory(email="mail@mail.fr")
+    @classmethod
+    def setUpTestData(cls):
+        cls.report = ReportFactory(email="mail@mail.fr")
 
     def test_get_display_name(self):
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title="mail@mail.fr">mail@mail.fr</a>'

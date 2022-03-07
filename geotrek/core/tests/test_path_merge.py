@@ -13,8 +13,11 @@ from geotrek.core.models import PathAggregation, Topology
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class MergePathTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+
     def setUp(self):
-        self.user = SuperUserFactory.create()
         self.client.force_login(self.user)
 
     def test_path_merge_without_snap(self):

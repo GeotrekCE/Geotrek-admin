@@ -18,11 +18,12 @@ from geotrek.trekking.models import Path
 
 
 class ViewsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create(username='homer', password='dooh')
+
     def setUp(self):
-        self.user = UserFactory.create(username='homer', password='dooh')
-        success = self.client.login(
-            username=self.user.username, password='dooh')
-        self.assertTrue(success)
+        self.client.force_login(user=self.user)
 
     def test_settings_json(self):
         url = reverse('common:settings_json')
@@ -52,11 +53,12 @@ class ViewsTest(TestCase):
 
 
 class ViewsImportTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create(username='homer', password='dooh')
 
     def setUp(self):
-        self.user = UserFactory.create(username='homer', password='dooh')
-        success = self.client.login(username=self.user.username, password='dooh')
-        self.assertTrue(success)
+        self.client.force_login(user=self.user)
 
     def test_import_form_access(self):
         url = reverse('common:import_dataset')
@@ -161,13 +163,16 @@ class ViewsImportTest(TestCase):
 
 
 class SyncRandoViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.super_user = SuperUserFactory.create(username='admin', password='super')
+        cls.simple_user = User.objects.create_user(username='homer', password='doooh')
+
     def setUp(self):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         if os.path.exists(os.path.join('var', 'tmp')):
             shutil.rmtree(os.path.join('var', 'tmp'))
-        self.super_user = SuperUserFactory.create(username='admin', password='super')
-        self.simple_user = User.objects.create_user(username='homer', password='doooh')
 
     def test_get_sync_superuser(self):
         self.client.login(username='admin', password='super')

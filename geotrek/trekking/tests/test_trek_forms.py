@@ -73,12 +73,12 @@ class TrekFormTest(TestCase):
 
 
 class TrekItinerancyTestCase(TestCase):
-
-    def setUp(self):
-        self.user = UserFactory()
-        self.trek1 = TrekFactory(name="1")
-        self.trek2 = TrekFactory(name="2")
-        self.trek3 = TrekFactory(name="3")
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.trek1 = TrekFactory(name="1")
+        cls.trek2 = TrekFactory(name="2")
+        cls.trek3 = TrekFactory(name="3")
 
     def test_two_children(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()

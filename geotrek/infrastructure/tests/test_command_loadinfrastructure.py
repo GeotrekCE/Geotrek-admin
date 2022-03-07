@@ -16,8 +16,9 @@ class InfrastructureCommandTest(TestCase):
     """
     There are 2 infrastructures in the file infrastructure.shp
     """
-    def setUp(self):
-        self.path = PathFactory.create()
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory.create()
 
     def test_load_infrastructure(self):
         output = StringIO()
