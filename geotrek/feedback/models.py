@@ -387,8 +387,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def report_interventions(self):
         if 'geotrek.maintenance' in settings.INSTALLED_APPS:
             report_content_type = ContentType.objects.get_for_model(Report)
-            qs = Q(target_type=report_content_type, target_id=self.id)
-            return Intervention.objects.existing().filter(qs).distinct('pk')
+            filters = Q(target_type=report_content_type, target_id=self.id)
+            return Intervention.objects.existing().filter(filters).distinct('pk')
         return None
 
     @classmethod
