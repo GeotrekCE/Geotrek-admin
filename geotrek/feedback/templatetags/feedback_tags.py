@@ -1,5 +1,5 @@
 import json
-from geotrek.feedback.models import ReportStatus
+from geotrek.feedback.models import PredefinedEmail, ReportStatus
 from django import template
 from django.conf import settings
 
@@ -32,3 +32,26 @@ def status_ids_and_colors():
         for status in ReportStatus.objects.all()
     }
     return json.dumps(status_ids_and_colors)
+
+
+@register.simple_tag
+def predefined_emails():
+    predefined_emails = {
+        email.pk: {
+            "label": str(email.label),
+            "text": str(email.text)
+        }
+        for email in PredefinedEmail.objects.all()
+    }
+    return json.dumps(predefined_emails)
+
+
+@register.simple_tag
+def resolved_intervention_info(report):
+    if report:
+        resolved_intervention_info = {
+            "date": report.interventions.first().date.strftime("%d/%m/%Y") if report.interventions else None,
+            "user": report.assigned_user.username if report.assigned_user else None
+        }
+        return json.dumps(resolved_intervention_info)
+    return json.dumps({})

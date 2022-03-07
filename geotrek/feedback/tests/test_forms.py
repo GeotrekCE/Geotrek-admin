@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 from hashlib import md5
 from unittest import mock
@@ -16,13 +17,13 @@ from tinymce.widgets import TinyMCE
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import TimerEvent, WorkflowManager
-from geotrek.feedback.tests.factories import ReportFactory
+from geotrek.feedback.tests.factories import PredefinedEmailFactory, ReportFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SuricateWorkflowTests, test_for_management_and_workflow_modes,
     test_for_report_and_basic_modes, test_for_workflow_mode, test_for_management_mode)
 from geotrek.maintenance.forms import InterventionForm
 from geotrek.maintenance.models import InterventionStatus
-from geotrek.maintenance.tests.factories import InterventionFactory
+from geotrek.maintenance.tests.factories import InterventionFactory, ReportInterventionFactory
 
 
 class TestSuricateForms(SuricateWorkflowTests):
@@ -34,7 +35,11 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.filed_report_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
+        cls.intervention = ReportInterventionFactory(date=datetime(year=1997, month=4, day=4).date())
+        cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
         cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uid=uuid.uuid4())
+        cls.predefined_email_1 = PredefinedEmailFactory()
+        cls.predefined_email_2 = PredefinedEmailFactory()
 
     def setUp(self):
         self.client.login(username="Admiin", password="drowssap")
@@ -56,6 +61,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
@@ -74,6 +80,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
@@ -97,6 +104,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
@@ -114,6 +122,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertIn('message_sentinel', keys)
+        self.assertIn('message_sentinel_predefined', keys)
         self.assertIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
@@ -136,6 +145,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
@@ -153,6 +163,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
@@ -181,21 +192,21 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
         # Assert data forwarded to Suricate
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.formatted_uid)).encode()
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'message': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsLockAlert?id_origin=geotrek&uid_alerte={self.filed_report.uid}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsLockAlert?id_origin=geotrek&uid_alerte={self.filed_report.formatted_uid}&check={check}",
             auth=('', '')
         )
         # Assert user is notified
@@ -264,6 +275,23 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(response.status_code, 200)
         self.assertNotIn("Ajouter une intervention", response.content.decode("utf-8"))
 
+    @test_for_workflow_mode
+    def test_predefined_emails_serialized(self):
+        response = self.client.get(reverse('feedback:report_add'), follow=True)
+        emails_data = "{\"1\": {\"label\": \"Predefined Email 0\", \"text\": \"Some email body content 0\"}, \"2\": {\"label\": \"Predefined Email 1\", \"text\": \"Some email body content 1\"}"
+        self.assertEquals(response.status_code, 200)
+        self.assertIn(emails_data, response.content.decode("utf-8"))
+
+    @test_for_workflow_mode
+    def test_date_intervention_serialized(self):
+        report = self.intervention.target
+        report.assigned_user = self.admin
+        report.save()
+        response = self.client.get(f"/report/edit/{self.intervention.target.pk}/")
+        emails_data = ""
+        self.assertEquals(response.status_code, 200)
+        self.assertIn(emails_data, response.content.decode("utf-8"))
+
     @test_for_management_and_workflow_modes
     def test_can_only_create_intervention_once_2(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.waiting_report.pk}), follow=True)
@@ -286,24 +314,24 @@ class TestSuricateForms(SuricateWorkflowTests):
         form = ReportForm(instance=self.solved_intervention_report, data=data)
         form.save()
         # Assert report status changes
-        self.assertEquals(self.solved_intervention_report.status.identifier, "resolved")
+        self.assertEquals(self.solved_intervention_report.status.identifier, "solved")
         # Assert data forwarded to Suricate
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.formatted_uid)).encode()
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'message': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_uid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.uid, 'statut': 'resolved', 'txt_changestatut': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_uid, 'statut': 'solved', 'txt_changestatut': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.uid}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.formatted_uid}&check={check}",
             auth=('', '')
         )
 
@@ -322,9 +350,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Assert relocation is forwarded to Suricate
         long, lat = new_geom.transform(4326, clone=True).coords
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.formatted_uid)).encode()
         ).hexdigest()
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.formatted_uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
             auth=('', '')
         )

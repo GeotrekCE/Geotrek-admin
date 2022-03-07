@@ -4,6 +4,7 @@ from django.conf import settings
 
 from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.common.tests.factories import OrganismFactory
+from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.signage.tests.factories import SignageFactory
 from .. import models
@@ -68,6 +69,10 @@ class InterventionFactory(LightInterventionFactory):
 
 class InfrastructureInterventionFactory(InterventionFactory):
     target = factory.SubFactory(InfrastructureFactory)
+
+
+class ReportInterventionFactory(InterventionFactory):
+    target = factory.SubFactory(ReportFactory)
 
 
 class InfrastructurePointInterventionFactory(InterventionFactory):

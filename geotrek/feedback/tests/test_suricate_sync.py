@@ -196,6 +196,24 @@ class SuricateAPITests(SuricateTests):
         self.assertIsNone(r.assigned_user)
         # Assert no new mail on update
         self.assertEqual(len(mail.outbox), 1)
+        # Test sync specific report overwrites local info
+        r.comment = ""
+        r.save()
+        r.refresh_from_db()
+        self.assertEquals(r.comment, "")
+        call_command("sync_suricate", report=r.pk, verbosity=2)
+        r.refresh_from_db()
+        self.assertEquals(r.comment, "Ne pas prendre la route Départementale 155 en direction de Malons")
+        # Test sync last report overwrites local info
+        r = Report.objects.get(uid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
+        self.assertEquals(r.comment, "Lames cassées")
+        r.comment = ""
+        r.save()
+        r.refresh_from_db()
+        self.assertEquals(r.comment, "")
+        call_command("sync_suricate", report=0, verbosity=2)
+        r.refresh_from_db()
+        self.assertEquals(r.comment, "Lames cassées")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.logger")
@@ -453,7 +471,7 @@ class SuricateWorkflowTests(SuricateTests):
         cls.late_intervention_status = ReportStatusFactory(identifier='late_intervention', label="Intervention en retard")
         cls.late_resolution_status = ReportStatusFactory(identifier='late_resolution', label="Resolution en retard")
         cls.solved_intervention_status = ReportStatusFactory(identifier='solved_intervention', label="Intervention terminée")
-        cls.resolved_status = ReportStatusFactory(identifier='resolved', label="Résolu")
+        cls.resolved_status = ReportStatusFactory(identifier='solved', label="Résolu")
         cls.report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
         cls.interv_report = ReportFactory(status=cls.programmed_status)
@@ -583,8 +601,8 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         )
         self.assertTrue(form.is_valid)
         form.save()
-        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.uid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.uid, self.classified_status.identifier, "Problème déjà réglé")
+        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.formatted_uid, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.formatted_uid, self.classified_status.identifier, "Problème déjà réglé")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")

@@ -21,10 +21,12 @@ from mapentity.models import MapEntityMixin
 from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
                                    PicturesMixin, TimeStampedModelMixin)
 from geotrek.common.utils import intersecting
-from geotrek.maintenance.models import Intervention
 from geotrek.trekking.models import POI, Service, Trek
 
 from .helpers import SuricateMessenger
+
+if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+    from geotrek.maintenance.models import Intervention
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +34,7 @@ logger = logging.getLogger(__name__)
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
     'filed': ['classified', 'waiting'],
-    'solved_intervention': ['resolved']
+    'solved_intervention': ['solved']
 }
 
 STATUS_WHEN_REPORT_IS_LATE = {
@@ -315,6 +317,17 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             if success == 1:
                 self.attach_email(message, self.assigned_user.email)
 
+    @property
+    def formatted_uid(self):
+        """
+        Formatted UUIDs as they are found in Suricate
+        stored:   13D3CBEF-ED65-1184-53DC-47EBCC7BE0FD
+        expected: 13D3CBEF-ED65-1184-53DC47EBCC7BE0FD
+        """
+        uid = str(self.uid).upper()
+        formatted_uid = "".join(str(uid).rsplit("-", 1))
+        return formatted_uid
+
     def notify_assigned_user(self, message):
         subject = _("Geotrek - New report to process")
         message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
@@ -326,20 +339,20 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         self.try_send_email(subject, message)
 
     def lock_in_suricate(self):
-        self.get_suricate_messenger().lock_alert(self.uid)
+        self.get_suricate_messenger().lock_alert(self.formatted_uid)
 
     def unlock_in_suricate(self):
-        self.get_suricate_messenger().unlock_alert(self.uid)
+        self.get_suricate_messenger().unlock_alert(self.formatted_uid)
 
     def change_position_in_suricate(self):
         rep_gps = self.geom.transform(4326, clone=True)
         long, lat = rep_gps
-        self.get_suricate_messenger().update_gps(self.uid, lat, long)
+        self.get_suricate_messenger().update_gps(self.formatted_uid, lat, long)
 
     def send_notifications_on_status_change(self, old_status_identifier, message):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
-            self.get_suricate_messenger().update_status(self.uid, self.status.identifier, message)
-            self.get_suricate_messenger().message_sentinel(self.uid, message)
+            self.get_suricate_messenger().update_status(self.formatted_uid, self.status.identifier, message)
+            self.get_suricate_messenger().message_sentinel(self.formatted_uid, message)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
@@ -372,9 +385,11 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return settings.REPORT_INTERSECTION_MARGIN
 
     def report_interventions(self):
-        report_content_type = ContentType.objects.get_for_model(Report)
-        qs = Q(target_type=report_content_type, target_id=self.id)
-        return Intervention.objects.existing().filter(qs).distinct('pk')
+        if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+            report_content_type = ContentType.objects.get_for_model(Report)
+            filters = Q(target_type=report_content_type, target_id=self.id)
+            return Intervention.objects.existing().filter(filters).distinct('pk')
+        return None
 
     @classmethod
     def latest_updated_by_status(cls, status_id):
@@ -387,7 +402,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Report.add_property('services', lambda self: intersecting(Service, self), _("Services"))
-Report.add_property('interventions', lambda self: Report.report_interventions(self), _("Interventions"))
+if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+    Report.add_property('interventions', lambda self: Report.report_interventions(self), _("Interventions"))
 
 
 class ReportActivity(models.Model):
@@ -593,3 +609,18 @@ class WorkflowManager(models.Model):
         subject = _("Geotrek - New reports from Suricate")
         message = render_to_string("feedback/reports_email.html")
         self.try_send_email(subject, message)
+
+
+class PredefinedEmail(models.Model):
+    """
+    An email with predefined content to be sent through Suricate Workflow
+    """
+    label = models.CharField(blank=False, max_length=500, verbose_name=_('Predefined email'))
+    text = models.TextField(blank=True, help_text='Mail body', verbose_name=_('Content'))
+
+    class Meta:
+        verbose_name = _("Predefined email")
+        verbose_name_plural = _("Predefined emails")
+
+    def __str__(self):
+        return self.label

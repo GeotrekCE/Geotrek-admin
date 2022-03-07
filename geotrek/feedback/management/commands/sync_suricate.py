@@ -28,6 +28,13 @@ class Command(BaseCommand):
             default=False,
         )
         parser.add_argument(
+            "--report",
+            dest="report",
+            action='store',
+            help="Import only one report by PK",
+            default=None,
+        )
+        parser.add_argument(
             "--connection-test",
             dest="test",
             action='store_true',
@@ -40,8 +47,11 @@ class Command(BaseCommand):
         if settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:
             parser = SuricateParser()
             has_no_params = not (options["statuses"] | options["activities"] | options["test"])
+            report = options["report"]
             if options['test']:
                 test_suricate_connection()
+            elif report is not None:
+                parser.get_alert(verbosity, report)
             else:
                 if options["activities"] or has_no_params:
                     parser.get_activities()
