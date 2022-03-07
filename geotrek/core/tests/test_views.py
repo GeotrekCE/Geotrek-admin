@@ -692,7 +692,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         TrailFactory.create_batch(size=50)
         self.login()
         with self.assertNumQueries(7):
-            self.client.get(reverse('core:path_json_list'))
+            self.client.get(reverse('core:paths-drf-list', kwargs={'format': 'datatables'}))
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

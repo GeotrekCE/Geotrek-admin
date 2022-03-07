@@ -1,5 +1,4 @@
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import MapentityModelSerializer
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -7,7 +6,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from geotrek.core.models import Path, Trail
 
 
-class PathSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     checkbox = serializers.CharField()
     length_2d = serializers.SerializerMethodField()
     length = serializers.FloatField(source='length_display')
@@ -42,7 +41,7 @@ class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
         fields = PathSerializer.Meta.fields + ('api_geom', )
 
 
-class TrailSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     length = serializers.FloatField(source='length_display')
 
     class Meta:

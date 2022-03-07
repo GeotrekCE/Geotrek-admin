@@ -1,11 +1,10 @@
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import MapentityModelSerializer
 from rest_framework import serializers
 
 from geotrek.land.models import LandEdge, PhysicalEdge, CompetenceEdge, SignageManagementEdge, WorkManagementEdge
 
 
-class LandEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class LandEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     land_type = serializers.SlugRelatedField('name', read_only=True)
     length = serializers.FloatField(source='length_display')
 
@@ -17,7 +16,7 @@ class LandEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializer):
         )
 
 
-class PhysicalEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     physical_type = serializers.SlugRelatedField('name', read_only=True)
     length = serializers.FloatField(source='length_display')
 
@@ -29,7 +28,7 @@ class PhysicalEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializer):
         )
 
 
-class CompetenceEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     organization = serializers.SlugRelatedField('organism', read_only=True)
     length = serializers.FloatField(source='length_display')
 
@@ -41,7 +40,7 @@ class CompetenceEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializer):
         )
 
 
-class SignageManagementEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     organization = serializers.SlugRelatedField('organism', read_only=True)
     length = serializers.FloatField(source='length_display')
 
@@ -53,7 +52,7 @@ class SignageManagementEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializ
         )
 
 
-class WorkManagementEdgeSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class WorkManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     organization = serializers.SlugRelatedField('organism', read_only=True)
     length = serializers.FloatField(source='length_display')
 

@@ -1,65 +1,61 @@
+import ast
+import json
 import mimetypes
+import os
 import re
-from django.apps import apps
+from datetime import timedelta
+from urllib.parse import urljoin
+from zipfile import ZipFile
 
-from geotrek.feedback.parsers import SuricateParser
-from django.core.exceptions import ValidationError
-from django.urls import reverse
-from django.utils.decorators import method_decorator
+import redis
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.models import LogEntry, CHANGE
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.utils import translation
 from django.http import JsonResponse, Http404, HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django_celery_results.models import TaskResult
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import force_text
-from django.views import static
+from django.utils import translation
+from django.utils.decorators import method_decorator
+from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
+from django.views import static
+from django.views.decorators.http import require_POST, require_http_methods
+from django.views.generic import RedirectView, View
 from django.views.generic import TemplateView
+from django_celery_results.models import TaskResult
+from mapentity import views as mapentity_views
+from mapentity.helpers import api_bbox
 from django.views.generic import RedirectView, View
 from django.views.decorators.http import require_POST, require_http_methods
 from mapentity.helpers import api_bbox, suffix_for
 from mapentity.registry import registry, app_settings
-from mapentity import views as mapentity_views
-
-from paperclip.views import _handle_attachment_form
 from paperclip import settings as settings_paperclip
+from paperclip.views import _handle_attachment_form
+from rest_framework import permissions as rest_permissions, viewsets
 
+from geotrek import __version__
 from geotrek.celery import app as celery_app
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.utils import sql_extent
 from geotrek.common.utils.portals import smart_get_template_by_portal
 from geotrek.common.models import FileType, Attachment, TargetPortal, AccessibilityAttachment
-from geotrek import __version__
-
-from rest_framework import permissions as rest_permissions, viewsets
-
-# async data imports
-import ast
-import os
-import json
-import redis
-from urllib.parse import urljoin
-from zipfile import ZipFile
-
-from datetime import timedelta
-
-from .mixins.views import BookletMixin
-from .permissions import PublicOrReadPermMixin
-from .utils.import_celery import create_tmp_destination, discover_available_parsers
-
-from .tasks import import_datas, import_datas_from_web
+from geotrek.common.utils import sql_extent
+from geotrek.feedback.parsers import SuricateParser
 from .forms import ImportDatasetForm, ImportSuricateForm, ImportDatasetFormWithFile, SyncRandoForm
+from .mixins.views import BookletMixin
 from .models import Theme
+from .permissions import PublicOrReadPermMixin
 from .serializers import ThemeSerializer
+from .tasks import import_datas, import_datas_from_web
 from .tasks import launch_sync_rando
+from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
 
 class MetaMixin:
@@ -127,36 +123,6 @@ class Meta(MetaMixin, TemplateView):
         return context
 
 
-class FormsetMixin:
-    context_name = None
-    formset_class = None
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        formset_form = context[self.context_name]
-
-        if formset_form.is_valid():
-            response = super().form_valid(form)
-            formset_form.instance = self.object
-            formset_form.save()
-        else:
-            response = self.form_invalid(form)
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            try:
-                context[self.context_name] = self.formset_class(
-                    self.request.POST, instance=self.object)
-            except ValidationError:
-                pass
-        else:
-            context[self.context_name] = self.formset_class(
-                instance=self.object)
-        return context
-
-
 class DocumentPublicMixin:
     template_name_suffix = "_public"
 
@@ -193,9 +159,7 @@ class DocumentPublicMixin:
         return context
 
 
-class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
 class BookletMixin:
-
     def get(self, request, pk, slug, lang=None):
         response = super().get(request, pk, slug)
         response.add_post_render_callback(transform_pdf_booklet_callback)
@@ -619,7 +583,7 @@ def delete_attachment_accessibility(request, attachment_pk):
                 user_id=request.user.pk,
                 content_type_id=g.content_type.id,
                 object_id=g.object_id,
-                object_repr=force_text(obj),
+                object_repr=force_str(obj),
                 action_flag=CHANGE,
                 change_message=_('Remove attachment %s') % g.title,
             )

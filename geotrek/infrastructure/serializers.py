@@ -1,5 +1,4 @@
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import MapentityModelSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -15,7 +14,7 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class InfrastructureSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, MapentityModelSerializer):
+class InfrastructureSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, serializers.ModelSerializer):
     type = serializers.SlugRelatedField('label', read_only=True)
     condition = serializers.SlugRelatedField('label', read_only=True)
     cities = serializers.SerializerMethodField()

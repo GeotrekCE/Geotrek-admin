@@ -6,7 +6,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import GPXSerializer, MapentityModelSerializer
+from mapentity.serializers import GPXSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -141,7 +141,7 @@ class TrekRelationshipSerializer(serializers.ModelSerializer):
                   'trek', 'published')
 
 
-class TrekSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     length_2d = serializers.ReadOnlyField()
     name = serializers.CharField(source='name_display')
     difficulty = serializers.SlugRelatedField('difficulty', read_only=True)
@@ -328,7 +328,7 @@ class ClosePOISerializer(TranslatedModelSerializer):
         fields = ('id', 'slug', 'name', 'type')
 
 
-class POISerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='name_display')
     type = serializers.SlugRelatedField('label', read_only=True)
     thumbnail = serializers.CharField(source='thumbnail_display')
@@ -361,7 +361,7 @@ class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer)
         fields = ('id', 'pictogram', 'name')
 
 
-class ServiceSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='name_display')
     type = serializers.CharField(source='name_display')
 

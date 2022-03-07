@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import MapentityModelSerializer
 
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
@@ -47,7 +46,7 @@ class CloseDiveSerializer(TranslatedModelSerializer):
         fields = ('id', 'category_id')
 
 
-class DiveSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class DiveSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
     thumbnail = rest_serializers.CharField(source='thumbnail_display')
     levels = rest_serializers.CharField(source='levels_display')
     structure = rest_serializers.SlugRelatedField('name', read_only=True)

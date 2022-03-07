@@ -1,5 +1,4 @@
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import MapentityModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -86,7 +85,7 @@ class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedMod
         return _('touristic-content')
 
 
-class TouristicContentSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class TouristicContentSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
     name = rest_serializers.CharField(source='name_display')
     structure = rest_serializers.SlugRelatedField('name', read_only=True)
     themes = rest_serializers.CharField(source='themes_display')
@@ -148,7 +147,7 @@ class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSeri
         fields = ('id', 'name', 'pictogram')
 
 
-class TouristicEventSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class TouristicEventSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
     name = rest_serializers.CharField(source='name_display')
     type = rest_serializers.SlugRelatedField('type', read_only=True)
     structure = rest_serializers.SlugRelatedField('name', read_only=True)

@@ -1,7 +1,6 @@
 from django.urls import reverse
 from django.utils.translation import get_language
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import MapentityModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -27,7 +26,7 @@ class SpeciesSerializer(TranslatedModelSerializer, PictogramSerializerMixin):
         fields = ['id', 'name', 'practices', 'url', 'pictogram', 'period']
 
 
-class SensitiveAreaSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class SensitiveAreaSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
     category = rest_serializers.CharField(source='category_display')
     structure = rest_serializers.SlugRelatedField('name', read_only=True)
     species = rest_serializers.CharField(source='species_display')

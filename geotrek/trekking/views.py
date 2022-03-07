@@ -24,8 +24,9 @@ from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
-from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
+from geotrek.common.views import (MetaMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
+from ..common.mixins.forms import FormsetMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.infrastructure.models import Infrastructure

@@ -1,7 +1,6 @@
 import csv
 
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import MapentityModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import PictogramSerializerMixin, BasePublishableSerializerMixin
@@ -10,7 +9,7 @@ from geotrek.signage import models as signage_models
 from mapentity.serializers.commasv import CSVSerializer
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
-from rest_framework import serializers as rest_serializers, serializers
+from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -21,7 +20,7 @@ class SignageTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, MapentityModelSerializer):
+class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, rest_serializers.ModelSerializer):
     structure = serializers.SlugRelatedField('name', read_only=True)
     type = serializers.SlugRelatedField('label', read_only=True)
     condition = serializers.SlugRelatedField('label', read_only=True)
@@ -54,7 +53,7 @@ class BladeTypeSerializer(rest_serializers.ModelSerializer):
         fields = ('label', )
 
 
-class BladeSerializer(MapentityModelSerializer):
+class BladeSerializer(rest_serializers.ModelSerializer):
     type = serializers.SlugRelatedField('label', read_only=True)
     direction = serializers.SlugRelatedField('label', read_only=True)
     color = serializers.SlugRelatedField('label', read_only=True)

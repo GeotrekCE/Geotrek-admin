@@ -28,16 +28,16 @@ class PathFilterTest(AuthentFixturesTest):
             """Return range form parameter as used in geotrek.core.filters.PathFilter"""
             return {'length_min': range_start, 'length_max': range_end}
 
-        def test_response_content(length_range, queryset):
-            response = self.client.get(reverse('core:path_json_list'), data=create_form_params(*length_range))
-            self.assertEqual(response.status_code, 200)
-            # We check the 'map_obj_pk' json attribute that should contain the paths' pk (used by map)
-            jsondict = response.json()
-            # The JSON should only contain filtered paths
-            self.assertListEqual(
-                sorted(jsondict['map_obj_pk']),
-                sorted(list(queryset.values_list('pk', flat=True))),
-            )
+        # def test_response_content(length_range, queryset):
+        #     response = self.client.get(reverse('core:path_json_list'), data=create_form_params(*length_range))
+        #     self.assertEqual(response.status_code, 200)
+        #     # We check the 'map_obj_pk' json attribute that should contain the paths' pk (used by map)
+        #     jsondict = response.json()
+        #     # The JSON should only contain filtered paths
+        #     self.assertListEqual(
+        #         sorted(jsondict['map_obj_pk']),
+        #         sorted(list(queryset.values_list('pk', flat=True))),
+        #     )
 
         # Simulate ajax call to populate the list
         # The path returned as json should be all paths

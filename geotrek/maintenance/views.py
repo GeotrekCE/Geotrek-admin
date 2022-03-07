@@ -10,7 +10,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, M
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.views import FormsetMixin
+from ..common.mixins.forms import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
 from .models import Intervention, Project, ManDay
 from .filters import InterventionFilterSet, ProjectFilterSet

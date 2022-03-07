@@ -119,7 +119,7 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @override_settings(COLUMNS_LISTS={})
-    @mock.patch('geotrek.common.mixins.logger')
+    @mock.patch('geotrek.common.mixins.views.logger')
     def test_custom_columns_mixin_error_log(self, mock_logger):
         # Create view where columns fields are omitted
         class MissingColumns(CustomColumnsMixin, MapEntityList):

@@ -1,11 +1,10 @@
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import MapentityModelSerializer
 from rest_framework import serializers
 
 from geotrek.outdoor.models import Course, Site
 
 
-class SiteSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     super_practices = serializers.CharField()
     structure = serializers.SlugRelatedField('name', read_only=True)
 
@@ -14,7 +13,7 @@ class SiteSerializer(DynamicFieldsMixin, MapentityModelSerializer):
         fields = ('id', 'structure', 'name', 'super_practices', 'date_update', 'date_insert')
 
 
-class CourseSerializer(DynamicFieldsMixin, MapentityModelSerializer):
+class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     structure = serializers.SlugRelatedField('name', read_only=True)
     parent_sites = serializers.CharField(source='parent_sites_display')
 

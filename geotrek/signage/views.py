@@ -14,7 +14,7 @@ from rest_framework_datatables.filters import DatatablesFilterBackend
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.views import FormsetMixin
+from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
