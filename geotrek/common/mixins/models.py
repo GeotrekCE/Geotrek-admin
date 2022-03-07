@@ -389,9 +389,8 @@ class PictogramMixin(models.Model):
 
 
 class OptionalPictogramMixin(PictogramMixin):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.pictogram.blank = True  # allow blank values
+    pictogram = models.FileField(verbose_name=_("Pictogram"), upload_to=settings.UPLOAD_DIR,
+                                 max_length=512, null=True, blank=True)
 
     class Meta:
         abstract = True
