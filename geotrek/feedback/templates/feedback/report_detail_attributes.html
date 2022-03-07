@@ -34,6 +34,22 @@
             <td>{{ report.related_trek }}</td>
         </tr>
         <tr>
+            <th>{% trans "Districts" %}</th>
+            <td>
+                {% for district in report.districts %}
+                    {{ district.name }}{% if not forloop.last %}, {% endif %}
+                {%endfor%}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Cities" %}</th>
+            <td>
+                {% for city in report.cities %}
+                    {{ city.name }}{% if not forloop.last %}, {% endif %}
+                {%endfor%}
+            </td>
+        </tr>
+        <tr>
             <th>{{ report|verbose:"assigned_user" }}</th>
             <td>{{ report.assigned_user }}</td>
         </tr>
