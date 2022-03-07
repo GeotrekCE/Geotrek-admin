@@ -65,6 +65,7 @@ class ReportSerializationOptimizeTests(TestCase):
     def setUp(cls):
         cls.client.force_login(cls.user)
 
+    @test_for_workflow_mode
     def test_report_layer_cache(self):
         """
         This test check report's per status cache work independently
@@ -78,7 +79,7 @@ class ReportSerializationOptimizeTests(TestCase):
 
         # We check the content was created and cached
         last_update_status = feedback_models.Report.latest_updated_by_status("classified")
-        geojson_lookup_status = 'en_report_%s_classified_json_layer' % last_update_status.isoformat()
+        geojson_lookup_status = f"fr_report_{last_update_status.isoformat()}_classified_{self.user.pk}_geojson_layer"
         content_per_status = cache.get(geojson_lookup_status)
 
         self.assertEqual(response.content, content_per_status)
@@ -88,6 +89,8 @@ class ReportSerializationOptimizeTests(TestCase):
             self.client.get("/api/report/report.geojson?_status_id=classified")
 
         self.classified_report_4 = feedback_factories.ReportFactory(status=self.classified_status)
+        # Bypass workflow's save method does not actually save
+        self.classified_report_4.save_no_suricate()
 
         # Cache is updated when we add a report
         with self.assertNumQueries(6):

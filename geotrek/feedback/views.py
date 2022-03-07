@@ -49,19 +49,12 @@ class ReportLayer(mapentity_views.MapEntityLayer):
         else:
             latest_saved = feedback_models.Report.latest_updated()
         if latest_saved:
-            if settings.SURICATE_WORKFLOW_ENABLED:
-                geojson_lookup = '%s_report_%s_%s_%s_geojson_layer' % (
-                    language,
-                    latest_saved.isoformat(),
-                    status_id if status_id else '',
-                    self.request.user.pk
-                )
-            else:
-                geojson_lookup = '%s_report_%s_%s_geojson_layer' % (
-                    language,
-                    latest_saved.isoformat(),
-                    status_id if status_id else ''
-                )
+            geojson_lookup = '%s_report_%s_%s_%s_geojson_layer' % (
+                language,
+                latest_saved.isoformat(),
+                status_id if status_id else '',
+                self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else ''
+            )
         return geojson_lookup
 
 
@@ -98,19 +91,12 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
         else:
             latest_saved = feedback_models.Report.latest_updated()
         if latest_saved:
-            if settings.SURICATE_WORKFLOW_ENABLED:
-                geojson_lookup = '%s_report_%s_%s_%s_json_layer' % (
-                    language,
-                    latest_saved.isoformat(),
-                    status_id if status_id else '',
-                    self.request.user.pk
-                )
-            else:
-                geojson_lookup = '%s_report_%s_%s_json_layer' % (
-                    language,
-                    latest_saved.isoformat(),
-                    status_id if status_id else ''
-                )
+            geojson_lookup = '%s_report_%s_%s_%s_json_layer' % (
+                language,
+                latest_saved.isoformat(),
+                status_id if status_id else '',
+                self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else ''
+            )
         return geojson_lookup
 
 
