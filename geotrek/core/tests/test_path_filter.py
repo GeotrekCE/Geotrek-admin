@@ -19,8 +19,7 @@ class PathFilterTest(AuthentFixturesTest):
 
         password = 'toto'
         user = PathManagerFactory(password=password)
-        result = self.client.login(username=user.username, password=password)
-        self.assertTrue(result, "The client successfully logged in")
+        self.client.force_login(user=user)
 
         response = self.client.get(reverse('core:path_list'))
         self.assertEqual(response.status_code, 200)

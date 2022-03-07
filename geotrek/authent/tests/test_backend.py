@@ -40,10 +40,11 @@ def password2md5(password):
                    AUTHENT_TABLENAME='authent_table',
                    AUTHENTICATION_BACKENDS=('geotrek.authent.backend.DatabaseBackend',))
 class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
-    def setUp(self):
-        self.backend = DatabaseBackend()
+    @classmethod
+    def setUpTestData(cls):
+        cls.backend = DatabaseBackend()
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)
-        self.deleted = False
+        cls.deleted = False
 
     def tearDown(self):
         if not self.deleted:

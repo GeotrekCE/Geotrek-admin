@@ -2,7 +2,19 @@
 CHANGELOG
 =========
 
-2.76.3+dev (XXXX-XX-XX)
+2.76.4+dev (XXXX-XX-XX)
+-----------------------
+
+**Bug fixes**
+
+- Remove width and height in SVG generating problems in Geotrek-rando V3 by Camille Monchicourt
+
+**Maintenance**
+
+- Update to mapentity 7.1.3
+
+
+2.76.4     (2022-03-07)
 -----------------------
 
 **Minor improvements**
@@ -20,7 +32,6 @@ CHANGELOG
 - Add TimerEvent class, used to alert Report supervisors when timer expires, with `check_timers` command
 - Force workflow when SURICATE_MANAGEMENT_WORKFLOW setting is enabled
 - Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
-
 
 
 2.76.3     (2022-02-09)

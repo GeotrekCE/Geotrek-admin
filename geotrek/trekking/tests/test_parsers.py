@@ -105,14 +105,15 @@ WKT = (
 
 
 class TrekParserTests(TestCase):
-    def setUp(self):
-        self.difficulty = DifficultyLevel.objects.create(difficulty="Facile")
-        self.route = Route.objects.create(route="Boucle")
-        self.themes = (
+    @classmethod
+    def setUpTestData(cls):
+        cls.difficulty = DifficultyLevel.objects.create(difficulty="Facile")
+        cls.route = Route.objects.create(route="Boucle")
+        cls.themes = (
             Theme.objects.create(label="Littoral"),
             Theme.objects.create(label="Marais"),
         )
-        self.filetype = FileType.objects.create(type="Photographie")
+        cls.filetype = FileType.objects.create(type="Photographie")
 
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'trek.shp')

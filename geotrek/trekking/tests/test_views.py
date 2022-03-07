@@ -114,13 +114,11 @@ class POIViewsTest(CommonTest):
         element_not_published.published = False
         element_not_published.review = True
         element_not_published.save()
-        self.login()
         response = self.client.get(self.model.get_jsonlist_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Waiting for publication')
 
     def test_empty_topology(self):
-        self.login()
         data = self.get_good_data()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = ''
@@ -135,7 +133,6 @@ class POIViewsTest(CommonTest):
             self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
     def test_listing_number_queries(self):
-        self.login()
         # Create many instances
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
@@ -147,14 +144,12 @@ class POIViewsTest(CommonTest):
             self.client.get(self.model.get_format_list_url())
 
     def test_pois_on_treks_do_not_exist(self):
-        self.login()
         self.modelfactory.create()
 
         response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
         self.assertEqual(response.status_code, 404)
 
     def test_pois_on_treks_not_public(self):
-        self.login()
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
@@ -162,6 +157,7 @@ class POIViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_pois_on_treks_not_public_anonymous(self):
+        self.logout()
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
@@ -365,8 +361,6 @@ class TrekViewsTest(CommonTest):
         super().test_status()
 
     def test_badfield_goodgeom(self):
-        self.login()
-
         bad_data, form_error = self.get_bad_data()
         bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
 
@@ -384,13 +378,11 @@ class TrekViewsTest(CommonTest):
             self.assertEqual(response.status_code, 200)
 
     def test_no_pois_detached_in_create(self):
-        self.login()
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'pois_excluded')
 
     def test_pois_detached_update(self):
-        self.login()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
             trek = TrekFactory.create(paths=[p1])
@@ -404,7 +396,6 @@ class TrekViewsTest(CommonTest):
         self.assertIn(poi, trek.pois_excluded.all())
 
     def test_detail_lother_language(self):
-        self.login()
 
         bad_data, form_error = self.get_bad_data()
         bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
@@ -418,8 +409,6 @@ class TrekViewsTest(CommonTest):
     def test_list_in_csv(self):
         if self.model is None:
             return  # Abstract test should not run
-
-        self.login()
 
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
         self.city = CityFactory(geom=polygon, name="Trifouilli")
@@ -697,65 +686,64 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
 
 
 class TrekJSONSetUp(TrekkingManagerTest):
-    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
-    def setUp(self):
-        self.login()
-
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
-        self.city = CityFactory(geom=polygon)
-        self.district = DistrictFactory(geom=polygon)
+        cls.city = CityFactory(geom=polygon)
+        cls.district = DistrictFactory(geom=polygon)
 
         trek_args = {'name': 'Step 2',
                      'points_reference': MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
                      'parking_location': Point(0, 0, srid=settings.SRID)}
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
-            self.trek = TrekFactory.create(
+            cls.trek = TrekFactory.create(
                 paths=[path1],
                 **trek_args
             )
         else:
-            self.trek = TrekFactory.create(
+            cls.trek = TrekFactory.create(
                 geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID,
                 **trek_args
             )
-        self.attachment = AttachmentFactory.create(content_object=self.trek,
-                                                   attachment_file=get_dummy_uploaded_image())
+        cls.attachment = AttachmentFactory.create(content_object=cls.trek,
+                                                  attachment_file=get_dummy_uploaded_image())
 
-        self.information_desk = tourism_factories.InformationDeskFactory.create()
-        self.trek.information_desks.add(self.information_desk)
+        cls.information_desk = tourism_factories.InformationDeskFactory.create()
+        cls.trek.information_desks.add(cls.information_desk)
 
-        self.theme = ThemeFactory.create()
-        self.trek.themes.add(self.theme)
+        cls.theme = ThemeFactory.create()
+        cls.trek.themes.add(cls.theme)
 
-        self.accessibility = AccessibilityFactory.create()
-        self.trek.accessibilities.add(self.accessibility)
+        cls.accessibility = AccessibilityFactory.create()
+        cls.trek.accessibilities.add(cls.accessibility)
 
-        self.network = TrekNetworkFactory.create()
-        self.trek.networks.add(self.network)
+        cls.network = TrekNetworkFactory.create()
+        cls.trek.networks.add(cls.network)
 
-        self.weblink = WebLinkFactory.create()
-        self.trek.web_links.add(self.weblink)
+        cls.weblink = WebLinkFactory.create()
+        cls.trek.web_links.add(cls.weblink)
 
-        self.label = LabelFactory.create()
-        self.trek.labels.add(self.label)
+        cls.label = LabelFactory.create()
+        cls.trek.labels.add(cls.label)
 
-        self.source = RecordSourceFactory.create()
-        self.trek.source.add(self.source)
+        cls.source = RecordSourceFactory.create()
+        cls.trek.source.add(cls.source)
 
-        self.portal = TargetPortalFactory.create()
-        self.trek.portal.add(self.portal)
+        cls.portal = TargetPortalFactory.create()
+        cls.trek.portal.add(cls.portal)
         trek_b_args = {'published': True}
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path2 = PathFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID)
-            self.trek_b = TrekFactory.create(paths=[path2], **trek_b_args)
+            cls.trek_b = TrekFactory.create(paths=[path2], **trek_b_args)
             TrekFactory(paths=[path2], published=False)  # not published
-            self.trek3 = TrekFactory(paths=[path2], published=True)  # deleted
-            self.trek3.delete()
+            cls.trek3 = TrekFactory(paths=[path2], published=True)  # deleted
+            cls.trek3.delete()
             TrekFactory(paths=[PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID)],
                         published=True)  # too far
         else:
-            self.trek_b = TrekFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, **trek_b_args)
+            cls.trek_b = TrekFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, **trek_b_args)
             TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=False)
             trek3 = TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=True)
             trek3.delete()
@@ -764,19 +752,19 @@ class TrekJSONSetUp(TrekkingManagerTest):
         TrekRelationshipFactory.create(has_common_departure=True,
                                        has_common_edge=False,
                                        is_circuit_step=True,
-                                       trek_a=self.trek,
-                                       trek_b=self.trek_b)
+                                       trek_a=cls.trek,
+                                       trek_b=cls.trek_b)
 
-        self.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                                                           published=True)
+        cls.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                                                          published=True)
         tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
                                                   published=False)  # not published
         tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
                                                   published=True).delete()  # deleted
         tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID,
                                                   published=True)  # too far
-        self.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
-                                                                       published=True)
+        cls.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
+                                                                      published=True)
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
                                                 published=False)  # not published
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
@@ -784,16 +772,19 @@ class TrekJSONSetUp(TrekkingManagerTest):
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID,
                                                 published=True)  # too far
 
-        self.parent = TrekFactory.create(published=True, name='Parent')
-        self.child1 = TrekFactory.create(published=False, name='Child 1')
-        self.child2 = TrekFactory.create(published=True, name='Child 2')
-        self.sibling = TrekFactory.create(published=True, name='Sibling')
-        OrderedTrekChild(parent=self.parent, child=self.trek, order=0).save()
-        OrderedTrekChild(parent=self.trek, child=self.child1, order=3).save()
-        OrderedTrekChild(parent=self.trek, child=self.child2, order=2).save()
-        OrderedTrekChild(parent=self.parent, child=self.sibling, order=1).save()
+        cls.parent = TrekFactory.create(published=True, name='Parent')
+        cls.child1 = TrekFactory.create(published=False, name='Child 1')
+        cls.child2 = TrekFactory.create(published=True, name='Child 2')
+        cls.sibling = TrekFactory.create(published=True, name='Sibling')
+        OrderedTrekChild(parent=cls.parent, child=cls.trek, order=0).save()
+        OrderedTrekChild(parent=cls.trek, child=cls.child1, order=3).save()
+        OrderedTrekChild(parent=cls.trek, child=cls.child2, order=2).save()
+        OrderedTrekChild(parent=cls.parent, child=cls.sibling, order=1).save()
+        cls.pk = cls.trek.pk
 
-        self.pk = self.trek.pk
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
+    def setUp(self):
+        self.login()
         url = '/api/en/treks/{pk}.json'.format(pk=self.pk)
         self.response = self.client.get(url)
         self.result = self.response.json()
@@ -1038,12 +1029,15 @@ class TrekJSONDetailTest(TrekJSONSetUp):
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.trek = TrekFactory.create()
+        cls.trek.points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
+        cls.trek.save()
+
     def setUp(self):
         self.login()
-
-        self.trek = TrekFactory.create()
-        self.trek.points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
-        self.trek.save()
 
     def test_points_reference_editable_as_hidden_input(self):
         url = self.trek.get_update_url()
@@ -1058,30 +1052,33 @@ class TrekPointsReferenceTest(TrekkingManagerTest):
 
 
 class TrekGPXTest(TrekkingManagerTest):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
         # Create a simple fake DEM
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
-        cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))',
-                    [settings.SRID])
+        cur.execute(
+            'INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))',
+            [settings.SRID])
         cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
         for y in range(0, 1):
             for x in range(0, 1):
                 cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, 42])
 
-        self.login()
+        cls.trek = TrekWithPOIsFactory.create()
+        cls.trek.description_en = 'Nice trek'
+        cls.trek.description_it = 'Bonnito iti'
+        cls.trek.description_fr = 'Jolie rando'
+        cls.trek.save()
 
-        self.trek = TrekWithPOIsFactory.create()
-        self.trek.description_en = 'Nice trek'
-        self.trek.description_it = 'Bonnito iti'
-        self.trek.description_fr = 'Jolie rando'
-        self.trek.save()
-
-        for poi in self.trek.pois.all():
+        for poi in cls.trek.pois.all():
             poi.description_it = poi.description
             poi.published_it = True
             poi.save()
 
+    def setUp(self):
+        self.login()
         url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
         self.response = self.client.get(url)
         self.parsed = BeautifulSoup(self.response.content, 'lxml')
@@ -1121,15 +1118,17 @@ class TrekGPXTest(TrekkingManagerTest):
 
 
 class TrekViewTranslationTest(TrekkingManagerTest):
-    def setUp(self):
-        self.trek = TrekFactory.create()
-        self.trek.name_fr = 'Voie lactee'
-        self.trek.name_en = 'Milky way'
-        self.trek.name_it = 'Via Lattea'
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.trek = TrekFactory.create()
+        cls.trek.name_fr = 'Voie lactee'
+        cls.trek.name_en = 'Milky way'
+        cls.trek.name_it = 'Via Lattea'
 
-        self.trek.published_fr = True
-        self.trek.published_it = False
-        self.trek.save()
+        cls.trek.published_fr = True
+        cls.trek.published_it = False
+        cls.trek.save()
 
     def tearDown(self):
         translation.deactivate()
@@ -1217,15 +1216,18 @@ class TemplateTagsTest(TestCase):
 
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):
+    @classmethod
+    def setUpTestData(cls):
+        cls.content1 = TrekFactory.create()
+        structure = StructureFactory.create()
+        cls.content2 = TrekFactory.create(structure=structure)
+
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
         self.user = profile.user
         self.user.groups.add(Group.objects.get(name="Référents communication"))
-        self.client.login(username='homer', password='dooh')
-        self.content1 = TrekFactory.create()
-        structure = StructureFactory.create()
-        self.content2 = TrekFactory.create(structure=structure)
+        self.client.force_login(user=self.user)
 
     def add_bypass_perm(self):
         perm = Permission.objects.get(codename='can_bypass_structure')
@@ -1294,15 +1296,18 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
 
 
 class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
+    @classmethod
+    def setUpTestData(cls):
+        cls.content1 = POIFactory.create()
+        structure = StructureFactory.create()
+        cls.content2 = POIFactory.create(structure=structure)
+
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
         user = profile.user
         user.groups.add(Group.objects.get(name="Référents communication"))
-        self.client.login(username=user.username, password='dooh')
-        self.content1 = POIFactory.create()
-        structure = StructureFactory.create()
-        self.content2 = POIFactory.create(structure=structure)
+        self.client.force_login(user=user)
 
     def tearDown(self):
         self.client.logout()
@@ -1329,13 +1334,16 @@ class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
 
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         call_command('update_geotrek_permissions', verbosity=0)
-        self.trek = TrekFactory.create(published=False)
-        self.user = User.objects.create_user('omer', password='booh')
-        self.user.user_permissions.add(Permission.objects.get(codename='add_trek'))
-        self.user.user_permissions.add(Permission.objects.get(codename='change_trek'))
-        self.client.login(username='omer', password='booh')
+        cls.trek = TrekFactory.create(published=False)
+        cls.user = User.objects.create_user('omer', password='booh')
+        cls.user.user_permissions.add(Permission.objects.get(codename='add_trek'))
+        cls.user.user_permissions.add(Permission.objects.get(codename='change_trek'))
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
 
     def tearDown(self):
         self.client.logout()
@@ -1391,7 +1399,6 @@ class ServiceViewsTest(CommonTest):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_empty_topology(self):
-        self.login()
         data = self.get_good_data()
         data['topology'] = ''
         response = self.client.post(self.model.get_add_url(), data)
@@ -1401,7 +1408,6 @@ class ServiceViewsTest(CommonTest):
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_empty_topology_nds(self):
-        self.login()
         data = self.get_good_data()
         data['geom'] = ''
         response = self.client.post(self.model.get_add_url(), data)
@@ -1410,7 +1416,6 @@ class ServiceViewsTest(CommonTest):
         self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
     def test_listing_number_queries(self):
-        self.login()
         # Create many instances
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
@@ -1424,14 +1429,12 @@ class ServiceViewsTest(CommonTest):
             self.client.get(self.model.get_format_list_url())
 
     def test_services_on_treks_do_not_exist(self):
-        self.login()
         self.modelfactory.create()
 
         response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
         self.assertEqual(response.status_code, 404)
 
     def test_services_on_treks_not_public(self):
-        self.login()
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
@@ -1439,6 +1442,7 @@ class ServiceViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_services_on_treks_not_public_anonymous(self):
+        self.logout()
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
@@ -1447,10 +1451,14 @@ class ServiceViewsTest(CommonTest):
 
 
 class ServiceJSONTest(TrekkingManagerTest):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.service = ServiceFactory.create(type__published=True)
+        cls.pk = cls.service.pk
+
     def setUp(self):
         self.login()
-        self.service = ServiceFactory.create(type__published=True)
-        self.pk = self.service.pk
 
     def test_list(self):
         url = '/api/en/services.json'

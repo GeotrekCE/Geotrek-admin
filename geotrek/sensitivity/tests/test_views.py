@@ -12,19 +12,23 @@ from geotrek.sensitivity.models import SportPractice
 
 
 class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
-        user = profile.user
-        user.user_permissions.add(Permission.objects.get(codename="add_sensitivearea"))
-        user.user_permissions.add(Permission.objects.get(codename="change_sensitivearea"))
-        user.user_permissions.add(Permission.objects.get(codename="delete_sensitivearea"))
-        user.user_permissions.add(Permission.objects.get(codename="read_sensitivearea"))
-        user.user_permissions.add(Permission.objects.get(codename="export_sensitivearea"))
-        self.client.login(username=user.username, password='dooh')
-        self.area1 = SensitiveAreaFactory.create()
+        cls.user = profile.user
+        cls.user.user_permissions.add(Permission.objects.get(codename="add_sensitivearea"))
+        cls.user.user_permissions.add(Permission.objects.get(codename="change_sensitivearea"))
+        cls.user.user_permissions.add(Permission.objects.get(codename="delete_sensitivearea"))
+        cls.user.user_permissions.add(Permission.objects.get(codename="read_sensitivearea"))
+        cls.user.user_permissions.add(Permission.objects.get(codename="export_sensitivearea"))
+
+        cls.area1 = SensitiveAreaFactory.create()
         structure = StructureFactory.create()
-        self.area2 = SensitiveAreaFactory.create(structure=structure)
+        cls.area2 = SensitiveAreaFactory.create(structure=structure)
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
 
     def tearDown(self):
         self.client.logout()
@@ -51,14 +55,16 @@ class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):
 
 
 class SensitiveAreaTemplatesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.area = SensitiveAreaFactory.create()
+
     def setUp(self):
-        self.area = SensitiveAreaFactory.create()
         self.login()
 
     def login(self):
-        User.objects.create_superuser('splash', 'splash@toto.com', password='booh')
-        success = self.client.login(username='splash', password='booh')
-        self.assertTrue(success)
+        user = User.objects.create_superuser('splash', 'splash@toto.com', password='booh')
+        self.client.force_login(user=user)
 
     def tearDown(self):
         self.client.logout()

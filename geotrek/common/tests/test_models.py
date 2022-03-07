@@ -6,9 +6,10 @@ import os
 
 
 class ThemeModelTest(TestCase):
-    def setUp(self):
-        self.directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
-        self.files = [f for f in os.listdir(self.directory)]
+    @classmethod
+    def setUpTestData(cls):
+        cls.directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
+        cls.files = [f for f in os.listdir(cls.directory)]
 
     def test_pictogram(self):
         self.path = os.path.join(self.directory, 'picto.png')

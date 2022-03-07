@@ -865,23 +865,23 @@ class TopologyDerialization(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyOverlappingTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.path1 = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        cls.path2 = PathFactory.create(geom=LineString((0, 20), (0, 10)))
+        cls.path3 = PathFactory.create(geom=LineString((0, 20), (0, 30)))
+        cls.path4 = PathFactory.create(geom=LineString((0, 30), (0, 40)))
 
-    def setUp(self):
-        self.path1 = PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        self.path2 = PathFactory.create(geom=LineString((0, 20), (0, 10)))
-        self.path3 = PathFactory.create(geom=LineString((0, 20), (0, 30)))
-        self.path4 = PathFactory.create(geom=LineString((0, 30), (0, 40)))
+        cls.topo1 = TopologyFactory.create(paths=[(cls.path1, 0.5, 1), (cls.path2, 1, 0), cls.path3,
+                                                  (cls.path4, 0, 0.5)])
 
-        self.topo1 = TopologyFactory.create(paths=[(self.path1, 0.5, 1), (self.path2, 1, 0), self.path3,
-                                                   (self.path4, 0, 0.5)])
+        cls.topo2 = TopologyFactory.create(paths=[cls.path2])
 
-        self.topo2 = TopologyFactory.create(paths=[self.path2])
+        cls.point1 = TopologyFactory.create(paths=[(cls.path2, 0.4, 0.4)])
 
-        self.point1 = TopologyFactory.create(paths=[(self.path2, 0.4, 0.4)])
+        cls.point2 = TopologyFactory.create(paths=[(cls.path2, 0.8, 0.8)])
 
-        self.point2 = TopologyFactory.create(paths=[(self.path2, 0.8, 0.8)])
-
-        self.point3 = TopologyFactory.create(paths=[(self.path2, 0.6, 0.6)])
+        cls.point3 = TopologyFactory.create(paths=[(cls.path2, 0.6, 0.6)])
 
     def test_overlapping_returned_can_be_filtered(self):
         overlaps = Topology.overlapping(self.topo1)

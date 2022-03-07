@@ -39,7 +39,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_structure_is_set(self):
         if not hasattr(self.model, 'structure'):
             return
-        self.login()
         response = self.client.post(self._get_add_url(), self.get_good_data())
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
@@ -51,8 +50,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        self.login()
-
         obj = self.modelfactory()
 
         response = self.client.get(obj.get_list_url())
@@ -63,7 +60,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_structure_is_not_changed_without_permission(self):
         if not hasattr(self.model, 'structure'):
             return
-        self.login()
         structure = StructureFactory()
         self.assertNotEqual(structure, self.user.profile.structure)
         self.assertFalse(self.user.has_perm('authent.can_bypass_structure'))
@@ -76,7 +72,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_structure_is_changed_with_permission(self):
         if not self.model or 'structure' not in self.model._meta.get_fields():
             return
-        self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
@@ -92,7 +87,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_set_structure_with_permission(self):
         if not hasattr(self.model, 'structure'):
             return
-        self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
@@ -109,8 +103,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        self.login()
-
         obj = self.modelfactory()
 
         response = self.client.get('%s?lang=fr' % obj.get_detail_url())
@@ -119,8 +111,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_detail_with_context(self):
         if self.model is None:
             return  # Abstract test should not run
-
-        self.login()
 
         obj = self.modelfactory()
 
@@ -164,8 +154,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.user.user_permissions.remove(perm)
         self.user.save()
         self.user = get_object_or_404(User, pk=self.user.pk)
-        success = self.client.login(username=self.user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(user=self.user)
         obj = self.modelfactory(published=True)
 
         response = self.client.post(obj.get_update_url(), self.get_good_data())
@@ -195,8 +184,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.login(username='Superuser', password='booh')
+        user = SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)')
 
@@ -224,8 +213,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.login(username='Superuser', password='booh')
+        user = SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
 
@@ -270,8 +259,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        UserFactory.create(username='user', password='booh')
-        self.client.login(username='user', password='booh')
+        user = UserFactory.create(username='user', password='booh')
+        self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
 
@@ -295,8 +284,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
         app_settings['SENDFILE_HTTP_HEADER'] = 'X-Accel-Redirect'
-        SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.login(username='Superuser', password='booh')
+        user = SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)')
 

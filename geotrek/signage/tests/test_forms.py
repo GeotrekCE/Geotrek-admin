@@ -7,9 +7,10 @@ from geotrek.signage.models import Line
 
 
 class BladeFormTest(TestCase):
-    def setUp(self):
-        self.user = UserFactory()
-        self.signage = SignageFactory()
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.signage = SignageFactory()
 
     def test_first_int(self):
         form = BladeForm(user=self.user, initial={'signage': self.signage})
