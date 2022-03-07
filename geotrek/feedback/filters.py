@@ -6,4 +6,4 @@ from .models import Report
 class ReportFilterSet(ZoningFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = Report
-        fields = ['activity', 'email', 'category', 'status', 'problem_magnitude']
+        fields = ['activity', 'email', 'category', 'status', 'problem_magnitude', 'assigned_user']
