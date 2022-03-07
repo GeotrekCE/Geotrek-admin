@@ -2,17 +2,13 @@
 CHANGELOG
 =========
 
-2.76.3+dev (XXXX-XX-XX)
+2.76.4     (2022-03-07)
 -----------------------
 
 **Minor improvements**
 
 - Move fields in forms and details (#2755)
 - Add information rating scale in csv for treks (#2755)
-
-**New features**
-
--
 
 
 2.76.3     (2022-02-09)
