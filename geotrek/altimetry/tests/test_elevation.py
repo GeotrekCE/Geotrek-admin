@@ -313,7 +313,7 @@ class SamplingTestPath(TestCase):
     @classmethod
     def setUpTestData(cls):
         if cls.model is None:
-            SkipTest(reason="None")
+            SkipTest(reason="No model")
         # Create a fake empty DEM to prevent trigger optimisation to skip sampling
         with connection.cursor() as cur:
             cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_AddBand(ST_MakeEmptyRaster(100, 100, 0, 100, 25, -25, 0, 0, %s), \'16BSI\'))',
