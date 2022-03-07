@@ -12,7 +12,6 @@ from django.urls.base import reverse
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from geotrek.authent.tests.base import AuthentFixturesMixin
-from geotrek.authent.tests.factories import UserProfileFactory
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from rest_framework.test import APIClient
 
@@ -22,7 +21,7 @@ from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factories
-from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS, SuricateWorkflowTests, test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
+from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS, test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
 
 
 class ReportViewsetMailSend(TestCase):
@@ -306,7 +305,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         cls.workflow_manager_user = UserFactory()
         cls.normal_user = UserFactory()
         cls.super_user = SuperUserFactory()
-        #UserProfileFactory.create(user=cls.workflow_manager_user)
         feedback_factories.WorkflowManagerFactory(user=cls.workflow_manager_user)
         cls.admin = SuperUserFactory(username="Admin", password="drowssap")
         cls.report = feedback_factories.ReportFactory(assigned_user=cls.normal_user)
