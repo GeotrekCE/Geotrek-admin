@@ -798,6 +798,150 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
+    def test_trek_theme_filter(self):
+        response = self.get_trek_list({'themes': self.theme2.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'themes': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_portal_filter(self):
+        response = self.get_trek_list({'portals': self.portal.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'portals': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_label_filter(self):
+        response = self.get_trek_list({'labels': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'labels': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_city_filter(self):
+        path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
+        city3 = zoning_factory.CityFactory(code='03000',
+                                           geom='SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, -9 -10, -10 -10)))')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        else:
+            trek_factory.TrekFactory.create(geom='SRID=2154;LINESTRING(-10 -9, -9 -9)')
+        response = self.get_trek_list({'cities': city3.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'cities': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_district_filter(self):
+        path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
+        dist3 = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, '
+                                                    '-9 -10, -10 -10)))')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        else:
+            trek_factory.TrekFactory.create(geom='SRID=2154;LINESTRING(-10 -9, -9 -9)')
+        response = self.get_trek_list({'districts': dist3.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'districts': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_structure_filter(self):
+        response = self.get_trek_list({'structures': self.structure.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'cities': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_practice_filter(self):
+        response = self.get_trek_list({'practices': self.practice.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'practices': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_accessibility_level_filter(self):
+        response = self.get_trek_list({'accessibility_level': self.accessibility_level.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'accessibility_level': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_routes_filter(self):
+        response = self.get_trek_list({'routes': self.route.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'routes': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_ratings_filter(self):
+        response = self.get_trek_list({'ratings': self.rating.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'ratings': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
     def test_version_route(self):
         response = self.client.get("/api/v2/version")
         self.assertEqual(response.status_code, 200)

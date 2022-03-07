@@ -663,7 +663,7 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(route__in=route.split(','))
         labels = request.GET.get('labels')
         if labels:
-            qs = qs.filter(portal__in=labels.split(','))
+            qs = qs.filter(labels__in=labels.split(','))
         practices = request.GET.get('practices')
         if practices:
             qs = qs.filter(practice__in=practices.split(','))
