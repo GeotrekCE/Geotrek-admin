@@ -30,7 +30,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     properties = ["email"]
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super().get_queryset()  # Filtered by FilterSet
         status_id = self.request.GET.get('_status_id')
         if status_id:
             qs = qs.filter(status__identifier=status_id)
@@ -72,32 +72,10 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     default_extra_columns = ['category', 'status', 'date_update']
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        status_id = self.request.GET.get('_status_id')
-        if status_id:
-            qs = qs.filter(status__identifier=status_id)
+        qs = super().get_queryset()  # Filtered by FilterSet
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk == feedback_models.WorkflowManager.objects.first().user.pk):
             qs = qs.filter(assigned_user=self.request.user)
         return qs
-
-    def view_cache_key(self):
-        """Used by the ``view_cache_response_content`` decorator.
-        """
-        language = self.request.LANGUAGE_CODE
-        status_id = self.request.GET.get('_status_id')
-        geojson_lookup = None
-        if status_id:
-            latest_saved = feedback_models.Report.latest_updated_by_status(status_id)
-        else:
-            latest_saved = feedback_models.Report.latest_updated()
-        if latest_saved:
-            geojson_lookup = '%s_report_%s_%s_%s_json_layer' % (
-                language,
-                latest_saved.isoformat(),
-                status_id if status_id else '',
-                self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else ''
-            )
-        return geojson_lookup
 
 
 class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
