@@ -19,7 +19,7 @@
         </tr>
         <tr>
             <th>{{ poi|verbose:"description" }}</th>
-            <td>{% if poi.description %}{{ poi.description|safe }}
+            <td>{% if poi.description %}{{ poi.description|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>

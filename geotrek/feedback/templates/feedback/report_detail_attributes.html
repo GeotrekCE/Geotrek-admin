@@ -11,7 +11,7 @@
         </tr>
         <tr>
             <th>{{ report|verbose:"comment" }}</th>
-            <td>{{ report.comment|safe }}</td>
+            <td>{{ report.comment|safe|linebreaks }}</td>
         </tr>
         <tr>
             <th>{{ report|verbose:"activity" }}</th>
@@ -58,7 +58,7 @@
                         <thead><th>{% trans "Text" %}</th><th>{% trans "Author" %}</th><th>{% trans "Date" %}</th></thead>
                         <tbody>
                         {% endif %}
-                        <tr><td>{{ msg.content }}</td><td>{{ msg.author }}</td><td>{{ msg.date }}</td></tr>
+                        <tr><td>{{ msg.content|safe|linebreaks }}</td><td>{{ msg.author }}</td><td>{{ msg.date }}</td></tr>
                         {% if forloop.last %}
                         </tbody>
                         </table>
