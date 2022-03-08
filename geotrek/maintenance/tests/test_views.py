@@ -326,8 +326,9 @@ class InterventionViewsTest(CommonTest):
         response = self.client.get(infra.get_update_url())
         form = response.context['form']
         data = form.initial
-        data['name'] = 'modified'
+        data['name_en'] = 'modified'
         data['implantation_year'] = target_year
+        data['accessibility'] = ''
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:
