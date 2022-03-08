@@ -15,6 +15,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 from mapentity.models import MapEntityMixin
 
@@ -112,7 +113,7 @@ class PendingSuricateAPIRequest(models.Model):
         super().delete(*args, **kwargs)
 
 
-class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin):
+class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, ZoningPropertiesMixin):
     """User reports, submitted via *Geotrek-rando* or parsed from Suricate API."""
 
     email = models.EmailField(verbose_name=_("Email"))
