@@ -308,11 +308,12 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         cls.workflow_manager_user = UserFactory()
         cls.normal_user = UserFactory()
         cls.super_user = SuperUserFactory()
+        cls.classified_status = feedback_factories.ReportStatusFactory(identifier="classified")
         feedback_factories.WorkflowManagerFactory(user=cls.workflow_manager_user)
         cls.admin = SuperUserFactory(username="Admin", password="drowssap")
-        cls.report = feedback_factories.ReportFactory(assigned_user=cls.normal_user)
-        cls.report = feedback_factories.ReportFactory(assigned_user=cls.workflow_manager_user)
-        cls.report = feedback_factories.ReportFactory()
+        cls.report = feedback_factories.ReportFactory(assigned_user=cls.normal_user, status=cls.classified_status)
+        cls.report = feedback_factories.ReportFactory(assigned_user=cls.workflow_manager_user, status=cls.classified_status)
+        cls.report = feedback_factories.ReportFactory(status=cls.classified_status)
         permission = Permission.objects.get(name__contains='Can read Report')
         cls.workflow_manager_user.user_permissions.add(permission)
         cls.normal_user.user_permissions.add(permission)
@@ -323,6 +324,8 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 3)
+        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_workflow_mode
     def test_normal_user_sees_only_assigned_reports(self):
@@ -330,6 +333,8 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 1)
+        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        self.assertEqual(len(response.json()['features']), 1)
 
     @test_for_workflow_mode
     def test_super_user_sees_everything(self):
@@ -337,6 +342,8 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 3)
+        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_report_and_basic_modes
     def test_normal_user_sees_everything_1(self):
@@ -344,6 +351,8 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 3)
+        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_management_mode
     def test_normal_user_sees_everything_2(self):
@@ -351,3 +360,5 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 3)
+        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        self.assertEqual(len(response.json()['features']), 3)
