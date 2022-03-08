@@ -8,11 +8,11 @@ CHANGELOG
 **New features**
 
 - Add filter label sites outdoor api v2
+- Add accessibility field on Infrastructure
 
 **Minor improvements**
 
 - Add ratings_description field in export (#2755)
-- Add accessibility field on Infrastructure
 
 **Bug fixes**
 
