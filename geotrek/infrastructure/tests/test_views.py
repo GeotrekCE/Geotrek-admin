@@ -38,11 +38,12 @@ class InfrastructureViewsTest(CommonTest):
 
     def get_expected_json_attrs(self):
         return {
+            'accessibility': '',
             'name': self.obj.name,
-            'publication_date': None,
+            'publication_date': '2020-03-17',
             'published': True,
             'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': False},
+                {'lang': 'en', 'language': 'English', 'status': True},
                 {'lang': 'es', 'language': 'Spanish', 'status': False},
                 {'lang': 'fr', 'language': 'French', 'status': False},
                 {'lang': 'it', 'language': 'Italian', 'status': False}
@@ -60,10 +61,12 @@ class InfrastructureViewsTest(CommonTest):
 
     def get_good_data(self):
         good_data = {
-            'name': 'test',
+            'name_fr': 'test',
+            'name_en': 'test_en',
             'description': 'oh',
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
             'condition': InfrastructureConditionFactory.create().pk,
+            'accessibility': 'description accessibility'
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
@@ -100,7 +103,9 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
 
     def get_good_data(self):
         good_data = {
-            'name': 'test',
+            'accessibility': 'description accessibility',
+            'name_fr': 'test',
+            'name_en': 'test_en',
             'description': 'oh',
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
             'condition': InfrastructureConditionFactory.create().pk,

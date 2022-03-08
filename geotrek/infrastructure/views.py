@@ -37,7 +37,7 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'id', 'name', 'type', 'condition', 'description',
+        'id', 'name', 'type', 'condition', 'description', 'accessibility',
         'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'usage_difficulty', 'maintenance_difficulty', 'uuid',
     ] + AltimetryMixin.COLUMNS

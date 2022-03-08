@@ -164,6 +164,7 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
                                          blank=True, null=True,
                                          on_delete=models.SET_NULL,
                                          related_name='infrastructures_set')
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
 
     class Meta:
         verbose_name = _("Infrastructure")
