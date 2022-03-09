@@ -20,7 +20,7 @@
             <td>{{ trail.arrival }}</td>
         </tr><tr>
             <th>{{ trail|verbose:"comments" }}</th>
-            <td>{{ trail.comments|safe }}</td>
+            <td>{{ trail.comments|safe|linebreaks }}</td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
