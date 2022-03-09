@@ -152,31 +152,6 @@ jobs:
         with:
           image: "geotrek:latest"
 
-  build_deb_18_04:
-    name: Build 18.04 package
-    runs-on: ubuntu-latest
-    container: ubuntu:bionic
-    #needs: [test]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Prepare debian 18.04 versioning
-        run: |
-          grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-          sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) bionic;/' debian/changelog
-      - name: Install build dependencies
-        run: |
-          apt-get -q update
-          apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
-      - name: Building package debian 18.04
-        run: |
-          dpkg-buildpackage -uc -us -b
-      - name: Archive package artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: debian-18-04
-          path: |
-            /home/runner/work/Geotrek-admin/*.deb
-
   build_deb_20_04:
     name: Build 20.04 package
     runs-on: ubuntu-latest
@@ -203,7 +178,6 @@ jobs:
           name: debian-20-04
           path: |
             /home/runner/work/Geotrek-admin/*.deb
-
 
 
 
@@ -257,6 +231,7 @@ jobs:
 
       - name: install Cypress
         run: |
+          cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/package.json /home/runner/work/Geotrek-admin/Geotrek-admin/package.json
           npm install cypress
           echo "Waiting for container..."
           while ! nc -z "127.0.0.1" "8000"; do
@@ -276,91 +251,6 @@ jobs:
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
-
-
-  e2e_deb_18_04:
-    name: Tests E2E 18.04
-    runs-on: ubuntu-18.04
-    needs: [ build_deb_18_04 ]
-
-    env:
-      CYPRESS_BASE_URL: http://localhost
-      CYPRESS_CACHE_FOLDER: ~/cypress/cache
-
-    services:
-      postgres:
-        image: postgis/postgis:10-2.5
-        env:
-          POSTGRES_DB: ci_test
-          POSTGRES_PASSWORD: ci_test
-          POSTGRES_USER: ci_test
-        ports:
-          - 5432:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: debian-18-04
-
-      - name: Simulate install.sh procedure
-        run: |
-          sudo service apache2 stop
-          sudo apt-get purge apache2 apache2-utils apache2.2-bin
-          sudo apt-get autoremove
-          echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
-          wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
-          sudo apt-get -q update
-          sudo ss -ltnp
-          echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/SERVER_NAME string localhost" >> .debian_settings
-          cat .debian_settings
-          sudo debconf-set-selections .debian_settings
-
-      - name: Install package
-        run: |
-          sudo netstat -tunlp
-          sudo rm /etc/nginx/sites-enabled/default
-          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          sudo systemctl status nginx
-          sudo systemctl restart nginx
-          sleep 2
-          curl "localhost"
-          sudo systemctl status geotrek
-          sudo journalctl -xe
-
-      - name: Load Data
-        run: |
-          sudo geotrek loaddata minimal
-          sudo geotrek loaddata cirkwi
-          sudo geotrek loaddata basic
-          sudo geotrek loaddata test-integration
-          for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
-          	cd $dir > /dev/null
-          	sudo cp -r * /opt/geotrek-admin/var/media/upload/
-          done
-
-      - name: Install cypress
-        run: |
-          npm install cypress
-
-      - name: E2E test
-        run: |
-          ./node_modules/.bin/cypress run
-        continue-on-error: false
-
-      - name: Archive results as artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: cypress-18.04
-          path: |
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
   e2e_deb_20_04:
     name: Tests E2E 20.04
