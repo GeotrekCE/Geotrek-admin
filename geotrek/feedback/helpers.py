@@ -259,8 +259,8 @@ class SuricateMessenger:
             "wsUpdateGPS",
             url_params={
                 "uid_alerte": id_alert,
-                "gpslatitude": gps_lat,
-                "gpslongitude": gps_long,
+                "gpslatitude": '{0:.6f}'.format(gps_lat),
+                "gpslongitude": '{0:.6f}'.format(gps_long),
             },
         )
 

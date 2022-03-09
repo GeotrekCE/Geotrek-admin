@@ -21,18 +21,21 @@ from rest_framework.views import APIView
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
-    queryset = feedback_models.Report.objects.existing()
+    queryset = feedback_models.Report.objects.existing() \
+        .select_related(
+            "activity", "category", "problem_magnitude", "status", "related_trek", "assigned_user"
+    )
     model = feedback_models.Report
     filterform = ReportFilterSet
     properties = ["email"]
 
     def get_queryset(self):
-        qs = self.queryset.select_related(
-            "activity", "category", "problem_magnitude", "status", "related_trek"
-        )
+        qs = super().get_queryset()  # Filtered by FilterSet
         status_id = self.request.GET.get('_status_id')
         if status_id:
             qs = qs.filter(status__identifier=status_id)
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk == feedback_models.WorkflowManager.objects.first().user.pk):
+            qs = qs.filter(assigned_user=self.request.user)
         return qs
 
     def view_cache_key(self):
@@ -46,10 +49,11 @@ class ReportLayer(mapentity_views.MapEntityLayer):
         else:
             latest_saved = feedback_models.Report.latest_updated()
         if latest_saved:
-            geojson_lookup = '%s_report_%s_%s_json_layer' % (
+            geojson_lookup = '%s_report_%s_%s_%s_geojson_layer' % (
                 language,
                 latest_saved.isoformat(),
-                status_id if status_id else ''
+                status_id if status_id else '',
+                self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else ''
             )
         return geojson_lookup
 
@@ -58,7 +62,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     queryset = (
         feedback_models.Report.objects.existing()
         .select_related(
-            "activity", "category", "problem_magnitude", "status", "related_trek"
+            "activity", "category", "problem_magnitude", "status", "related_trek", "assigned_user"
         )
         .prefetch_related("attachments")
     )
@@ -66,6 +70,12 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     filterform = ReportFilterSet
     mandatory_columns = ['id', 'email', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
+
+    def get_queryset(self):
+        qs = super().get_queryset()  # Filtered by FilterSet
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk == feedback_models.WorkflowManager.objects.first().user.pk):
+            qs = qs.filter(assigned_user=self.request.user)
+        return qs
 
 
 class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
