@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 - Add filter label sites outdoor api v2
+- Add accessibility field on Infrastructure
 
 **Minor improvements**
 

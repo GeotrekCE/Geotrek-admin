@@ -23,9 +23,14 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{{ object.description|safe }}
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe|linebreaks }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"implantation_year" }}</th>
