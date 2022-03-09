@@ -821,6 +821,9 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
         types = request.GET.get('types')
         if types:
             queryset = queryset.filter(type__in=types.split(','))
+        labels = request.GET.get('labels')
+        if labels:
+            queryset = queryset.filter(labels__in=labels.split(','))
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
@@ -840,6 +843,11 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
                 name='types', required=False, location='query', schema=coreschema.String(
                     title=_("Types"),
                     description=_('Filter by one or more site type id, comma-separated.')
+                )
+            ), Field(
+                name='labels', required=False, location='query', schema=coreschema.String(
+                    title=_("Labels"),
+                    description=_('Filter by one or more label id, comma-separated.')
                 )
             ),
             Field(

@@ -3338,6 +3338,43 @@ class SitesTypesFilterTestCase(BaseApiTest):
         self.assertIn(self.site3.pk, all_ids)
 
 
+class SitesLabelsFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.label1 = common_factory.LabelFactory()
+        cls.label2 = common_factory.LabelFactory()
+        cls.site1 = outdoor_factory.SiteFactory()
+        cls.site1.labels.add(cls.label1)
+        cls.site2 = outdoor_factory.SiteFactory()
+        cls.site2.labels.add(cls.label2)
+        cls.site3 = outdoor_factory.SiteFactory()
+
+    def test_sites_label_filter_1(self):
+        response = self.get_site_list({'labels': self.label1.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertNotIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+
+    def test_sites_label_filter_2(self):
+        response = self.get_site_list({'labels': f"{self.label1.pk},{self.label2.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+
+
 class CoursesTypesFilterTestCase(BaseApiTest):
 
     @classmethod

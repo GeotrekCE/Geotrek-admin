@@ -5,6 +5,10 @@ CHANGELOG
 2.76.4+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add filter label sites outdoor api v2
+
 **Minor improvements**
 
 - Add ratings_description field in export (#2755)
