@@ -152,6 +152,31 @@ jobs:
         with:
           image: "geotrek:latest"
 
+  build_deb_18_04:
+      name: Build 18.04 package
+      runs-on: ubuntu-latest
+      container: ubuntu:bionic
+      #needs: [test]
+      steps:
+        - uses: actions/checkout@v2
+        - name: Prepare debian 18.04 versioning
+          run: |
+            grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
+            sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) bionic;/' debian/changelog
+        - name: Install build dependencies
+          run: |
+            apt-get -q update
+            apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
+        - name: Building package debian 18.04
+          run: |
+            dpkg-buildpackage -uc -us -b
+        - name: Archive package artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: debian-18-04
+            path: |
+              /home/runner/work/Geotrek-admin/*.deb
+
   build_deb_20_04:
     name: Build 20.04 package
     runs-on: ubuntu-latest
