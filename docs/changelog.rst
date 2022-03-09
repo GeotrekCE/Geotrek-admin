@@ -26,6 +26,7 @@ CHANGELOG
 - Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
 - Add editable predefined emails
 - Display only some reports depending on which user is logged in
+- Add City and District information to Report detail page
 
 
 2.76.4     (2022-03-07)

@@ -349,10 +349,12 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.save()
         # Assert relocation is forwarded to Suricate
         long, lat = new_geom.transform(4326, clone=True).coords
+        long_txt = '{0:.6f}'.format(long)
+        lat_txt = '{0:.6f}'.format(lat)
         check = md5(
             (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.formatted_uid)).encode()
         ).hexdigest()
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.formatted_uid}&gpslatitude={lat}&gpslongitude={long}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.formatted_uid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&check={check}",
             auth=('', '')
         )
