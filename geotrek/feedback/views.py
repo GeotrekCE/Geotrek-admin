@@ -34,7 +34,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
         status_id = self.request.GET.get('_status_id')
         if status_id:
             qs = qs.filter(status__identifier=status_id)
-        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk == feedback_models.WorkflowManager.objects.first().user.pk):
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
         return qs
 
@@ -73,7 +73,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
-        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk == feedback_models.WorkflowManager.objects.first().user.pk):
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
         return qs
 
