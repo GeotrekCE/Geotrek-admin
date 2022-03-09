@@ -257,7 +257,8 @@ jobs:
       - name: install Cypress
         run: |
           cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/package.json /home/runner/work/Geotrek-admin/Geotrek-admin/package.json
-          npm install .
+          cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/package-lock.json /home/runner/work/Geotrek-admin/Geotrek-admin/package-lock.json
+          npm ci
           npm list
           echo "Waiting for container..."
           while ! nc -z "127.0.0.1" "8000"; do
@@ -341,7 +342,8 @@ jobs:
       - name: Install cypress
         run: |
           cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/package.json /home/runner/work/Geotrek-admin/Geotrek-admin/package.json
-          npm install .
+          cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/package-lock.json /home/runner/work/Geotrek-admin/Geotrek-admin/package-lock.json
+          npm ci
           npm list
 
       - name: E2E test
