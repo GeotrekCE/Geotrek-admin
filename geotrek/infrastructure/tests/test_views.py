@@ -76,9 +76,9 @@ class InfrastructureViewsTest(CommonTest):
         return good_data
 
     def test_description_in_detail_page(self):
-        infra = InfrastructureFactory.create(description="Beautiful !")
+        infra = InfrastructureFactory.create(description="<b>Beautiful !</b>")
         response = self.client.get(infra.get_detail_url())
-        self.assertContains(response, "Beautiful !")
+        self.assertContains(response, "<b>Beautiful !</b>")
 
     def test_check_structure_or_none_related_are_visible(self):
         infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
