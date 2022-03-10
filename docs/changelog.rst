@@ -2,8 +2,21 @@
 CHANGELOG
 =========
 
-2.76.4+dev (XXXX-XX-XX)
+2.77.0+dev (XXXX-XX-XX)
 -----------------------
+
+**Bug fixes**
+
+-
+
+
+2.77.0     (2022-03-09)
+-----------------------
+
+**New features**
+
+- Add filter label sites outdoor api v2
+- Add accessibility field on Infrastructure
 
 **Minor improvements**
 
@@ -13,6 +26,7 @@ CHANGELOG
 
 - Remove width and height in SVG generating problems in Geotrek-rando V3 by Camille Monchicourt
 - Fix labels filter api v2 (#2764)
+- Fix linebreaks template detail
 
 **Maintenance**
 

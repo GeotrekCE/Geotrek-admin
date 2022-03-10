@@ -20,7 +20,7 @@ class InfrastructureSerializer(BasePublishableSerializerMixin):
         model = infrastructure_models.Infrastructure
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = ('id', ) + \
-            ('id', 'structure', 'name', 'type') + \
+            ('id', 'structure', 'name', 'type', 'accessibility') + \
             BasePublishableSerializerMixin.Meta.fields
 
 

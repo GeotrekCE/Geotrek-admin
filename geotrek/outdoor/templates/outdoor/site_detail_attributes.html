@@ -67,23 +67,23 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"description_teaser" }}</th>
-            <td>{% if object.description_teaser %}{{ object.description_teaser|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.description_teaser %}{{ object.description_teaser|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"ambiance" }}</th>
-            <td>{% if object.ambiance %}{{ object.ambiance|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.ambiance %}{{ object.ambiance|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"advice" }}</th>
-            <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.advice %}{{ object.advice|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"accessibility" }}</th>
-            <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"period" }}</th>

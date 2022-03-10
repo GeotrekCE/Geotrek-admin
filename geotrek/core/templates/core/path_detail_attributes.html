@@ -6,7 +6,7 @@
     <h3>{% trans "Attributes" %}</h3>
     <div class="groupfields">
         <h4>{{ path|verbose:"comments" }}</h4>
-        {{ path.comments|default:_("None")|safe }}
+        {{ path.comments|default:_("None")|safe|linebreaks }}
     </div>
 
     <table class="table-striped table-bordered table">

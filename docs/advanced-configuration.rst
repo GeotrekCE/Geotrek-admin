@@ -1523,6 +1523,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "structure",
             "type",
             "description",
+            "accessibility",
             "date_update",
             "date_insert",
             "date_insert",
@@ -1863,6 +1864,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "type",
             "condition",
             "description",
+            "accessibility",
             "implantation_year",
             "published",
             "publication_date",
@@ -2308,6 +2310,7 @@ An exhaustive list of form fields hideable in each module.
     HIDDEN_FORM_FIELDS["infrastructure"] = [
             "condition",
             "description",
+            "accessibility",
             "published",
             "implantation_year",
             "usage_difficulty",
