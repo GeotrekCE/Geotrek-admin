@@ -16,8 +16,6 @@ from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPrope
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 
@@ -281,14 +279,14 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     @property
     def signages(self):
-        if self.target_type == ContentType.objects.get_for_model(Signage):
-            return [self.target]
+        if hasattr(self.target, 'signages'):
+            return self.target.signages
         return []
 
     @property
     def infrastructures(self):
-        if self.target_type == ContentType.objects.get_for_model(Infrastructure):
-            return [self.target]
+        if hasattr(self.target, 'infrastructures'):
+            return self.target.infrastructures
         return []
 
     def distance(self, to_cls):

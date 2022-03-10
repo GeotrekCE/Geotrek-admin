@@ -1,3 +1,4 @@
+from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 from django.utils import translation
 from django.conf import settings
@@ -89,21 +90,37 @@ class InterventionTest(TestCase):
         self.assertQuerysetEqual(intervention.trails, ['<Trail: trail_1>', '<Trail: trail_2>'])
 
     def test_helpers(self):
+        # We was showing only intervention's signages / infrastructures and not all signages and infrastructures near/ link to the intervention
         infra = InfrastructureFactory.create()
         sign = SignageFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            geometry_extern = LineString(Point(700200, 6600100),
+                                         Point(700300, 6600300),
+                                         rid=settings.SRID)
+            path_extern = PathFactory.create(geom=geometry_extern)
+            SignageFactory.create(paths=[(path_extern,
+                                          1,
+                                          1)])
+            InfrastructureFactory.create(paths=[(path_extern,
+                                                 1,
+                                                 1)])
+        else:
+            geometry_extern = Point(700300, 6600300, srid=settings.SRID)
+            SignageFactory.create(geom=geometry_extern)
+            InfrastructureFactory.create(geom=geometry_extern)
         interv = InterventionFactory.create(target=infra)
         proj = ProjectFactory.create()
 
         self.assertEqual(interv.target, infra)
 
-        self.assertEqual(interv.signages, [])
-        self.assertEqual(interv.infrastructures, [infra])
+        self.assertEqual(list(interv.signages), [sign])
+        self.assertEqual(list(interv.infrastructures), [infra])
 
         interv.target = sign
         interv.save()
 
-        self.assertEqual(interv.signages, [sign])
-        self.assertEqual(interv.infrastructures, [])
+        self.assertEqual(list(interv.signages), [sign])
+        self.assertEqual(list(interv.infrastructures), [infra])
 
         self.assertFalse(interv.in_project)
         interv.project = proj
