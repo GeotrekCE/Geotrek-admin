@@ -733,8 +733,8 @@ class TestDetailedJobCostsExports(TestCase):
         feature_point = l_point[0]
         self.assertEqual(Decimal(str(feature_linestring['cost_worke'])), self.job1.cost * self.manday1.nb_days)
         self.assertEqual(Decimal(str(feature_linestring['cost_strea'])), self.job2.cost * self.manday2.nb_days)
-        self.assertEqual(str(feature_point['cost_worke']), 'None')
-        self.assertEqual(str(feature_point['cost_strea']), 'None')
+        self.assertIsNone(feature_point.get('cost_worke'))
+        self.assertIsNone(feature_point.get('cost_strea'))
 
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
