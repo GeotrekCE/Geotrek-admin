@@ -5,9 +5,13 @@ CHANGELOG
 2.77.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Show all infrastructures and signages on interventions
+
 **Bug fixes**
 
--
+- Show trail and path on intervention
 
 
 2.77.0     (2022-03-09)
