@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Show trail and path on intervention
 
 
 2.77.0     (2022-03-09)

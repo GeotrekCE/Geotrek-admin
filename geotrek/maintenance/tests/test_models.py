@@ -13,7 +13,7 @@ from geotrek.maintenance.tests.factories import (InterventionFactory,
                                                  SignageInterventionFactory,
                                                  ProjectFactory, ManDayFactory, InterventionJobFactory,
                                                  InterventionDisorderFactory)
-from geotrek.core.tests.factories import PathFactory, TopologyFactory, StakeFactory
+from geotrek.core.tests.factories import PathFactory, TopologyFactory, StakeFactory, TrailFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -79,6 +79,14 @@ class InterventionTest(TestCase):
         proj.interventions.add(i2)
 
         self.assertCountEqual(p.projects, [proj])
+
+    def test_trails_property(self):
+        p = PathFactory.create()
+        TrailFactory.create(paths=[p], name='trail_1')
+        TrailFactory.create(paths=[p], name='trail_2')
+        infra = InfrastructureFactory.create(paths=[p])
+        intervention = InterventionFactory.create(target=infra)
+        self.assertQuerysetEqual(intervention.trails, ['<Trail: trail_1>', '<Trail: trail_2>'])
 
     def test_helpers(self):
         infra = InfrastructureFactory.create()

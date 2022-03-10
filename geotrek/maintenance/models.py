@@ -159,6 +159,15 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         return Path.objects.none()
 
     @property
+    def trails(self):
+        s = []
+        for p in self.target.paths.all():
+            for t in p.trails.all():
+                s.append(t.pk)
+
+        return Trail.objects.filter(pk__in=s)
+
+    @property
     def total_manday(self):
         total = 0.0
         for md in self.manday_set.all():

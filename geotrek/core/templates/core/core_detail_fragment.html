@@ -12,7 +12,7 @@
       {% elif object.aggregations %}
         {% include "core/aggregations_list_fragment.html" %}
       {% elif object.target_id %}
-        {% include "core/aggregations_list_fragment.html" with object=object.target.topology %}
+        {% include "core/aggregations_list_fragment.html" with object=object.target %}
       {% else %}
         <span class="none">{% trans "No information" %}</span>
       {% endif %}
