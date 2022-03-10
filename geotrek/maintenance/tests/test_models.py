@@ -90,7 +90,9 @@ class InterventionTest(TestCase):
         self.assertQuerysetEqual(intervention.trails, ['<Trail: trail_1>', '<Trail: trail_2>'])
 
     def test_helpers(self):
-        # We was showing only intervention's signages / infrastructures and not all signages and infrastructures near/ link to the intervention
+        """
+        We check that all infrastructures and signages near/linked to the intervention are displayed
+        """
         infra = InfrastructureFactory.create()
         sign = SignageFactory.create()
         if settings.TREKKING_TOPOLOGY_ENABLED:
