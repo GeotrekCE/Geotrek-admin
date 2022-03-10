@@ -129,6 +129,12 @@ class CommonForm(MapEntityForm):
                 else:
                     self.fields[field_to_hide].widget = HiddenInput()
 
+        # If COMPLETENESS_MODE is 'error', set completeness fields required
+        if settings.COMPLETENESS_LEVEL == 'error':
+            for field_key in settings.COMPLETENESS_FIELDS[self._meta.model._meta.model_name]:
+                self.fields[field_key].required = True
+
+
     def clean(self):
         structure = self.cleaned_data.get('structure')
         if not structure:
