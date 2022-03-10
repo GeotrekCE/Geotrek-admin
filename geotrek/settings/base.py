@@ -514,6 +514,8 @@ COMPLETENESS_FIELDS = {
     'dive': ['practice', 'difficulty', 'description_teaser'],
 }
 
+COMPLETENESS_LEVEL = 'warning' # Set 'error' to avoid publication without completeness fields
+
 EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.YoutubeBackend',
     'geotrek.common.embed.backends.DailymotionBackend',
