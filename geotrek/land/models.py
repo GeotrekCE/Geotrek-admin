@@ -9,7 +9,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
-from geotrek.common.mixins import NoDeleteManager
+from geotrek.common.mixins import NoDeleteManager, NoDeleteQuerySet
 from geotrek.maintenance.models import Intervention, Project
 
 
@@ -17,7 +17,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
-class LengthQuerySet(models.QuerySet):
+class LengthQuerySet(NoDeleteQuerySet):
     def annotate_length2d(self):
         return self.annotate(length_2d_m=Length('geom', output_field=FloatField()))
 
@@ -26,9 +26,6 @@ class Length2DManager(NoDeleteManager):
 
     def get_queryset(self):
         return LengthQuerySet(self.model, using=self._db)
-
-    def annotate_length2d(self):
-        return self.get_queryset().annotate_length2d()
 
 
 class Length2DMixin(models.Model):
