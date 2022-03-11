@@ -7,7 +7,7 @@ from django.db import migrations
 def forward(apps, schema_editor):
     with schema_editor.connection.cursor() as cursor:
         cursor.execute(
-            f"SELECT 1 FROM information_schema.columns WHERE table_name='infrastructure_infrastructure' AND column_name='published'"
+            "SELECT 1 FROM information_schema.columns WHERE table_name='infrastructure_infrastructure' AND column_name='published'"
         )
         if cursor.fetchone():
             for lang in settings.MODELTRANSLATION_LANGUAGES:

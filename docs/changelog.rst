@@ -13,10 +13,13 @@ CHANGELOG
 
 - Show trail and path on intervention
 - Remove duplicate id POI export (#2893)
+- Fix migration 2.77.0 publication
 
 
 2.77.0     (2022-03-09)
 -----------------------
+
+**DO NOT USE IT!**
 
 **New features**
 
