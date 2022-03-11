@@ -19,12 +19,10 @@ class SyncRando:
         self.global_sync = sync
 
     def sync(self, lang):
-        self.global_sync.sync_geojson(lang, views.POIViewSet, 'pois.geojson', type_view={"get": "rando-v2-geojson"},
+        self.global_sync.sync_geojson(lang, views.POIAPIViewSet, 'pois.geojson', zipfile=self.global_sync.zipfile)
+        self.global_sync.sync_geojson(lang, views.TrekAPIViewSet, 'treks.geojson', zipfile=self.global_sync.zipfile)
+        self.global_sync.sync_geojson(lang, views.ServiceAPIViewSet, 'services.geojson',
                                       zipfile=self.global_sync.zipfile)
-        self.global_sync.sync_geojson(lang, views.TrekViewSet, 'treks.geojson', type_view={"get": "rando-v2-geojson"},
-                                      zipfile=self.global_sync.zipfile)
-        self.global_sync.sync_geojson(lang, views.ServiceViewSet, 'services.geojson',
-                                      type_view={"get": "rando-v2-geojson"}, zipfile=self.global_sync.zipfile)
         self.global_sync.sync_static_file(lang, 'trekking/trek.svg')
         self.global_sync.sync_static_file(lang, 'trekking/itinerancy.svg')
         models_picto = [models.TrekNetwork, models.Practice, models.Accessibility, models.DifficultyLevel,

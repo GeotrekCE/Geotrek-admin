@@ -11,13 +11,10 @@ from django.utils.html import escape
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.renderers import GeoJSONRenderer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, LastModifiedMixin)
-from rest_framework import permissions as rest_permissions, viewsets, renderers
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
@@ -26,20 +23,22 @@ from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import (MetaMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
+from ..common.mixins.api import APIViewSet
 from ..common.mixins.forms import FormsetMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.infrastructure.serializers import InfrastructureRandoV2GeojsonSerializer
+from geotrek.infrastructure.serializers import InfrastructureAPIGeojsonSerializer
 from geotrek.signage.models import Signage
-from geotrek.signage.serializers import SignageRandoV2GeojsonSerializer
+from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import District, City, RestrictedArea
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer,
-                          TrekRandoV2GeoJSONSerializer, POIRandoV2GeojsonSerializer, ServiceGeojsonSerializer)
+                          POIAPIGeojsonSerializer, ServiceAPIGeojsonSerializer,
+                          TrekAPISerializer, TrekAPIGeojsonSerializer, POIAPISerializer, ServiceAPISerializer)
 from ..common.functions import Length
 from ..common.viewsets import GeotrekMapentityViewSet
 
@@ -254,10 +253,13 @@ class TrekViewSet(GeotrekMapentityViewSet):
         return TrekList.mandatory_columns + settings.COLUMNS_LISTS.get('trek_view',
                                                                        TrekList.default_extra_columns)
 
-    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
-            serializer_class=TrekRandoV2GeoJSONSerializer)
-    def rando_v2_geojson(self, request, *args, **kwargs):
-        """ GeoJSON for RandoV2. """
+
+class TrekAPIViewSet(APIViewSet):
+    model = Trek
+    serializer_class = TrekAPISerializer
+    geojson_serializer_class = TrekAPIGeojsonSerializer
+
+    def get_queryset(self):
         qs = self.model.objects.existing()
         qs = qs.select_related('structure', 'difficulty', 'practice', 'route', 'accessibility_level')
         qs = qs.prefetch_related(
@@ -278,8 +280,8 @@ class TrekViewSet(GeotrekMapentityViewSet):
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         qs = qs.annotate(length_2d_m=Length('geom'))
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+
+        return qs
 
 
 class POILayer(MapEntityLayer):
@@ -396,17 +398,19 @@ class POIViewSet(GeotrekMapentityViewSet):
     def get_queryset(self):
         return POI.objects.existing()
 
-    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
-            serializer_class=POIRandoV2GeojsonSerializer)
-    def rando_v2_geojson(self, request, *args, **kwargs):
-        qs = POI.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+
+class POIAPIViewSet(APIViewSet):
+    model = POI
+    serializer_class = POIAPISerializer
+    geojson_serializer_class = POIAPIGeojsonSerializer
+
+    def get_queryset(self):
+        return POI.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class TrekPOIViewSet(viewsets.ModelViewSet):
     model = POI
-    serializer_class = POIRandoV2GeojsonSerializer
+    serializer_class = POIAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -419,7 +423,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
 
 class TrekSignageViewSet(viewsets.ModelViewSet):
     model = Signage
-    serializer_class = SignageRandoV2GeojsonSerializer
+    serializer_class = SignageAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -432,7 +436,7 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
 
 class TrekInfrastructureViewSet(viewsets.ModelViewSet):
     model = Infrastructure
-    serializer_class = InfrastructureRandoV2GeojsonSerializer
+    serializer_class = InfrastructureAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -504,17 +508,19 @@ class ServiceViewSet(GeotrekMapentityViewSet):
         return ServiceList.mandatory_columns + settings.COLUMNS_LISTS.get('service_view',
                                                                           ServiceList.default_extra_columns)
 
-    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
-            serializer_class=ServiceGeojsonSerializer)
-    def rando_v2_geojson(self, request, *args, **kwargs):
-        qs = Service.objects.existing().filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+
+class ServiceAPIViewSet(APIViewSet):
+    model = Service
+    serializer_class = ServiceAPISerializer
+    geojson_serializer_class = ServiceAPIGeojsonSerializer
+
+    def get_queryset(self):
+        return Service.objects.existing().filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class TrekServiceViewSet(viewsets.ModelViewSet):
     model = Service
-    serializer_class = ServiceGeojsonSerializer
+    serializer_class = ServiceAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):

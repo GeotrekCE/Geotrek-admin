@@ -808,6 +808,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         structure = serializers.CharField(source='structure.name')
         create_datetime = serializers.DateTimeField(source='date_insert')
         update_datetime = serializers.DateTimeField(source='date_update')
+        published = serializers.BooleanField()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         species_id = serializers.SerializerMethodField()
         kml_url = serializers.SerializerMethodField()

@@ -16,6 +16,7 @@ from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.common.functions import Length
 from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
@@ -41,7 +42,7 @@ class PathManager(models.Manager):
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible.
         """
-        return super().get_queryset().filter(visible=True)
+        return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
 
 
 class PathInvisibleManager(models.Manager):

@@ -193,7 +193,7 @@ class SyncRandoFailTest(VarTmpTestCase):
                                     skip_tiles=True, verbosity=2)
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
-    @mock.patch('geotrek.trekking.views.TrekViewSet.as_view')
+    @mock.patch('geotrek.trekking.views.TrekAPIViewSet.as_view')
     def test_response_500(self, mock_view, mocke_map_image):
         error = StringIO()
         mock_view.return_value.return_value = HttpResponse(status=500)
@@ -203,7 +203,7 @@ class SyncRandoFailTest(VarTmpTestCase):
                                     skip_tiles=True, verbosity=2, stdout=StringIO(), stderr=error)
         self.assertIn("failed (HTTP 500)", error.getvalue())
 
-    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    @mock.patch('geotrek.trekking.views.TrekAPIViewSet.list')
     def test_response_view_exception(self, mocke):
         output = StringIO()
         mocke.side_effect = Exception('This is a test')
@@ -215,7 +215,7 @@ class SyncRandoFailTest(VarTmpTestCase):
         self.assertIn("failed (This is a test)", output.getvalue())
 
     @override_settings(DEBUG=True)
-    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    @mock.patch('geotrek.trekking.views.TrekAPIViewSet.list')
     def test_response_view_exception_with_debug(self, mocke):
         output = StringIO()
         mocke.side_effect = ValueError('This is a test')
@@ -414,7 +414,7 @@ class SyncComplexTest(VarTmpTestCase):
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=output)
         self.assertIn('Done', output.getvalue())
 
-    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    @mock.patch('geotrek.trekking.views.TrekAPIViewSet.list')
     def test_streaminghttpresponse(self, mocke):
         output = StringIO()
         mocke.return_value = StreamingHttpResponse()

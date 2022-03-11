@@ -45,7 +45,7 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
 
 
 class BladeFilterSet(MapEntityFilterSet):
-    # in_bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
+    bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
     structure = ModelChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all())
 
     def __init__(self, *args, **kwargs):

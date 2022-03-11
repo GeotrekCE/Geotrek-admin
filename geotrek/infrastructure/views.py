@@ -1,11 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from mapentity.renderers import GeoJSONRenderer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from rest_framework import renderers
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CustomColumnsMixin
@@ -14,7 +10,8 @@ from geotrek.core.views import CreateFromTopologyMixin
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
 from .models import Infrastructure
-from .serializers import InfrastructureSerializer, InfrastructureRandoV2GeojsonSerializer
+from .serializers import InfrastructureSerializer, InfrastructureAPIGeojsonSerializer, InfrastructureAPISerializer
+from ..common.mixins.api import APIViewSet
 from ..common.viewsets import GeotrekMapentityViewSet
 
 
@@ -85,16 +82,13 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = Infrastructure.objects.existing().select_related('type', 'maintenance_difficulty', 'usage_difficulty')
-        if self.action != 'rando-v2-geojson':
-            qs = qs.defer('geom', 'geom_3d')
-        else:
-            qs = qs.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
 
-    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
-            serializer_class=InfrastructureRandoV2GeojsonSerializer)
-    def rando_v2_geojson(self, request, lang=None):
-        """ GeoJSON for RandoV2. """
-        qs = self.get_queryset()
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+
+class InfrastructureAPIViewSet(APIViewSet):
+    model = Infrastructure
+    serializer_class = InfrastructureAPISerializer
+    geojson_serializer_class = InfrastructureAPIGeojsonSerializer
+
+    def get_queryset(self):
+        return Infrastructure.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))

@@ -12,10 +12,8 @@ class SyncRando:
         self.global_sync = sync
 
     def sync(self, lang):
-        self.global_sync.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents.geojson',
-                                      type_view={"get": "rando-v2-geojson"})
-        self.global_sync.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents.geojson',
-                                      type_view={"get": "rando-v2-geojson"},
+        self.global_sync.sync_geojson(lang, tourism_views.TouristicContentAPIViewSet, 'touristiccontents.geojson')
+        self.global_sync.sync_geojson(lang, tourism_views.TouristicEventAPIViewSet, 'touristicevents.geojson',
                                       params={'ends_after': timezone.now().strftime('%Y-%m-%d')})
 
         # picto touristic events

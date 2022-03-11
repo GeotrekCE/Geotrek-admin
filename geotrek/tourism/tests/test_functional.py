@@ -127,11 +127,11 @@ class TouristicContentViewsTests(CommonTest):
         params = '?city=09000'
         response = self.client.get(self.model.get_jsonlist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["map_obj_pk"]), 1)
+        self.assertEqual(len(response.json()["object_list"]), 1)
         params = '?city=09001'
         response = self.client.get(self.model.get_jsonlist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["map_obj_pk"]), 0)
+        self.assertEqual(len(response.json()["object_list"]), 0)
 
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns

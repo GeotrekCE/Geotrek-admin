@@ -57,8 +57,7 @@ class DiveSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
         fields = "__all__"
 
 
-class DiveRandoV2GeojsonSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                                   TranslatedModelSerializer, GeoFeatureModelSerializer):
+class DiveAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     practice = PracticeSerializer()
     difficulty = DifficultySerializer()
@@ -69,7 +68,26 @@ class DiveRandoV2GeojsonSerializer(PicturesSerializerMixin, PublishableSerialize
     dives = CloseDiveSerializer(many=True, source='published_dives')
     treks = trekking_serializers.CloseTrekSerializer(many=True, source='published_treks')
     pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    def __init__(self, instance=None, *args, **kwargs):
+        super().__init__(instance, *args, **kwargs)
+        if 'geotrek.tourism' in settings.INSTALLED_APPS:
+
+            from geotrek.tourism import serializers as tourism_serializers
+
+            self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True,
+                                                                                                    source='published_touristic_contents')
+            self.fields['touristic_events'] = tourism_serializers.CloseTouristicEventSerializer(many=True,
+                                                                                                source='published_touristic_events')
+
+    class Meta:
+        model = diving_models.Dive
+        fields = (
+            'id', 'practice', 'description_teaser', 'description', 'advice',
+            'difficulty', 'levels', 'themes', 'owner', 'depth',
+            'facilities', 'departure', 'disabled_sport', 'category',
+            'source', 'portal', 'eid', 'dives', 'treks', 'pois'
+        ) + PublishableSerializerMixin.Meta.fields + PicturesSerializerMixin.Meta.fields
 
     def get_category(self, obj):
         if settings.SPLIT_DIVES_CATEGORIES_BY_PRACTICE and obj.practice:
@@ -93,23 +111,11 @@ class DiveRandoV2GeojsonSerializer(PicturesSerializerMixin, PublishableSerialize
             data['order'] = settings.DIVE_CATEGORY_ORDER
         return data
 
-    def __init__(self, instance=None, *args, **kwargs):
-        super().__init__(instance, *args, **kwargs)
-        if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
-            from geotrek.tourism import serializers as tourism_serializers
+class DiveAPIGeojsonSerializer(GeoFeatureModelSerializer, DiveAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-            self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True,
-                                                                                                    source='published_touristic_contents')
-            self.fields['touristic_events'] = tourism_serializers.CloseTouristicEventSerializer(many=True,
-                                                                                                source='published_touristic_events')
-
-    class Meta:
-        model = diving_models.Dive
+    class Meta(DiveAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = (
-            'id', 'practice', 'description_teaser', 'description', 'advice',
-            'difficulty', 'levels', 'themes', 'owner', 'depth',
-            'facilities', 'departure', 'disabled_sport', 'category',
-            'source', 'portal', 'eid', 'dives', 'treks', 'pois', 'api_geom'
-        ) + PublishableSerializerMixin.Meta.fields + PicturesSerializerMixin.Meta.fields
+        fields = DiveAPISerializer.Meta.fields + ('api_geom', )

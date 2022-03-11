@@ -4,15 +4,13 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from mapentity.renderers import GeoJSONRenderer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from rest_framework import permissions as rest_permissions, renderers
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework import permissions as rest_permissions
 from rest_framework_datatables.filters import DatatablesFilterBackend
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -21,7 +19,8 @@ from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
 from geotrek.signage.forms import SignageForm, BladeForm, LineFormset
 from geotrek.signage.models import Signage, Blade
 from geotrek.signage.serializers import (SignageSerializer, BladeSerializer,
-                                         SignageRandoV2GeojsonSerializer, CSVBladeSerializer, ZipBladeShapeSerializer)
+                                         SignageAPIGeojsonSerializer, CSVBladeSerializer, ZipBladeShapeSerializer,
+                                         SignageAPISerializer, BladeAPISerializer, BladeAPIGeojsonSerializer)
 
 logger = logging.getLogger(__name__)
 
@@ -95,23 +94,20 @@ class SignageViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = Signage.objects.existing().select_related('structure', 'manager', 'sealing', 'type', 'condition')
-        if self.action != 'rando-v2-geojson':
-            qs = qs.defer('geom', 'geom_3d')
-        else:
-            qs = qs.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
 
     def get_columns(self):
         return SignageList.mandatory_columns + settings.COLUMNS_LISTS.get('signage_view',
                                                                           SignageList.default_extra_columns)
 
-    @action(methods=['GET'], detail=False, renderer_classes=[renderers.BrowsableAPIRenderer, GeoJSONRenderer],
-            serializer_class=SignageRandoV2GeojsonSerializer)
-    def rando_v2_geojson(self, request, lang=None):
-        """ GeoJSON for RandoV2. """
-        qs = self.get_queryset()
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+
+class SignageAPIViewSet(APIViewSet):
+    model = Signage
+    serializer_class = SignageAPISerializer
+    geojson_serializer_class = SignageAPIGeojsonSerializer
+
+    def get_queryset(self):
+        return Signage.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class BladeDetail(MapEntityDetail):
@@ -225,3 +221,12 @@ class BladeViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         return self.model.objects.all()
+
+
+class BladeAPIViewSet(APIViewSet):
+    model = Blade
+    serializer_class = BladeAPISerializer
+    geojson_serializer_class = BladeAPIGeojsonSerializer
+
+    def get_queryset(self):
+        return Blade.objects.all().annotate(api_geom=Transform("signage__geom", settings.API_SRID))

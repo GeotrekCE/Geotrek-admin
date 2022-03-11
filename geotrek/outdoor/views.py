@@ -1,15 +1,19 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
+from django.db.models import Q
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat)
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.views import DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.forms import SiteForm, CourseForm
 from geotrek.outdoor.models import Site, Course
-from geotrek.outdoor.serializers import SiteSerializer, CourseSerializer
+from geotrek.outdoor.serializers import SiteSerializer, CourseSerializer, CourseAPISerializer, \
+    CourseAPIGeojsonSerializer, SiteAPISerializer, SiteAPIGeojsonSerializer
 
 
 class SiteLayer(MapEntityLayer):
@@ -103,6 +107,20 @@ class SiteViewSet(GeotrekMapentityViewSet):
         return self.model.objects.all()
 
 
+class SiteAPIViewSet(APIViewSet):
+    model = Site
+    serializer_class = SiteAPISerializer
+    geojson_serializer_class = SiteAPIGeojsonSerializer
+
+    def get_queryset(self):
+        qs = Site.objects.filter(published=True)
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
+        return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+
+
 class CourseLayer(MapEntityLayer):
     properties = ['name']
     filterform = CourseFilterSet
@@ -190,3 +208,17 @@ class CourseViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         return self.model.objects.all().prefetch_related('sites')
+
+
+class CourseAPIViewSet(APIViewSet):
+    model = Course
+    serializer_class = CourseAPISerializer
+    geojson_serializer_class = CourseAPIGeojsonSerializer
+
+    def get_queryset(self):
+        qs = Course.objects.filter(published=True)
+        if 'source' in self.request.GET:
+            qs = qs.filter(parent_sites__source__name__in=self.request.GET['source'].split(','))
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(parent_sites__portal__name=self.request.GET['portal']) | Q(parent_sites__portal=None))
+        return qs.annotate(api_geom=Transform("geom", settings.API_SRID))

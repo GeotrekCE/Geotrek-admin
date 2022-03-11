@@ -36,15 +36,22 @@ class SensitiveAreaSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializ
         fields = "__all__"
 
 
-class SensitiveAreaRandoV2GeojsonSerializer(TranslatedModelSerializer, GeoFeatureModelSerializer):
+class SensitiveAreaAPISerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
     kml_url = rest_serializers.SerializerMethodField()
-    geom2d_transformed = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     def get_kml_url(self, obj):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
 
     class Meta:
         model = sensitivity_models.SensitiveArea
+        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url')
+
+
+class SensitiveAreaAPIGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaAPISerializer):
+    # Annotated geom field with API_SRID
+    geom2d_transformed = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(SensitiveAreaAPISerializer.Meta):
         geo_field = 'geom2d_transformed'
-        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url', 'geom2d_transformed', )
+        fields = SensitiveAreaAPISerializer.Meta.fields + ('geom2d_transformed', )

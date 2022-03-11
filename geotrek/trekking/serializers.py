@@ -159,10 +159,8 @@ class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TrekRandoV2GeoJSONSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                                   AltimetrySerializerMixin, ZoningSerializerMixin,
-                                   TranslatedModelSerializer, GeoFeatureModelSerializer):
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+class TrekAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, AltimetrySerializerMixin,
+                        ZoningSerializerMixin, TranslatedModelSerializer):
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
     networks = NetworkSerializer(many=True)
@@ -233,6 +231,25 @@ class TrekRandoV2GeoJSONSerializer(PublishableSerializerMixin, PicturesSerialize
 
             self.fields['dives'] = CloseDiveSerializer(many=True, source='published_dives')
 
+    class Meta:
+        model = trekking_models.Trek
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        fields = (
+            'id', 'departure', 'arrival', 'duration', 'duration_pretty',
+            'description', 'description_teaser', 'networks', 'advice', 'gear',
+            'ambiance', 'difficulty', 'information_desks', 'themes',
+            'labels', 'practice', 'accessibilities', 'accessibility_level',
+            'accessibility_signage', 'accessibility_slope', 'accessibility_covering', 'accessibility_exposure',
+            'accessibility_width', 'accessibility_advice',
+            'usages', 'access', 'route',
+            'public_transport', 'advised_parking', 'web_links',
+            'accessibility_infrastructure', 'parking_location', 'relationships',
+            'points_reference', 'gpx', 'kml', 'source', 'portal',
+            'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
+            'children', 'parents', 'previous', 'next', 'ratings', 'ratings_description'
+        ) + AltimetrySerializerMixin.Meta.fields + ZoningSerializerMixin.Meta.fields + \
+            PublishableSerializerMixin.Meta.fields + PicturesSerializerMixin.Meta.fields
+
     def get_pictures(self, obj):
         pictures_list = []
         pictures_list.extend(obj.serializable_pictures)
@@ -293,25 +310,14 @@ class TrekRandoV2GeoJSONSerializer(PublishableSerializerMixin, PicturesSerialize
             data['type2_label'] = obj._meta.get_field('accessibilities').verbose_name
         return data
 
-    class Meta:
-        model = trekking_models.Trek
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = (
-            'id', 'departure', 'arrival', 'duration', 'duration_pretty',
-            'description', 'description_teaser', 'networks', 'advice', 'gear',
-            'ambiance', 'difficulty', 'information_desks', 'themes',
-            'labels', 'practice', 'accessibilities', 'accessibility_level',
-            'accessibility_signage', 'accessibility_slope', 'accessibility_covering', 'accessibility_exposure',
-            'accessibility_width', 'accessibility_advice',
-            'usages', 'access', 'route',
-            'public_transport', 'advised_parking', 'web_links',
-            'accessibility_infrastructure', 'parking_location', 'relationships',
-            'points_reference', 'gpx', 'kml', 'source', 'portal',
-            'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
-            'children', 'parents', 'previous', 'next', 'ratings',
-            'ratings_description'
-        ) + AltimetrySerializerMixin.Meta.fields + ZoningSerializerMixin.Meta.fields + \
-            PublishableSerializerMixin.Meta.fields + PicturesSerializerMixin.Meta.fields
+
+class TrekAPIGeojsonSerializer(GeoFeatureModelSerializer, TrekAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(TrekAPISerializer.Meta):
+        geo_field = 'api_geom'
+        fields = TrekAPISerializer.Meta.fields + ('api_geom', )
 
 
 class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -339,20 +345,27 @@ class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class POIRandoV2GeojsonSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
-                                  ZoningSerializerMixin, TranslatedModelSerializer, GeoFeatureModelSerializer):
+class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, ZoningSerializerMixin,
+                       TranslatedModelSerializer):
     type = POITypeSerializer()
     structure = StructureSerializer()
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     class Meta:
-        model = trekking_models.POI
-        geo_field = 'api_geom'
-        id_field = 'id'
+        model = trekking_models.Trek
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = (
-            'id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure', 'api_geom'
+            'id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure'
         ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
+
+
+class POIAPIGeojsonSerializer(GeoFeatureModelSerializer, POIAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(POIAPISerializer.Meta):
+        geo_field = 'api_geom'
+        fields = POIAPISerializer.Meta.fields + ('api_geom', )
 
 
 class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -370,13 +383,20 @@ class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ServiceGeojsonSerializer(GeoFeatureModelSerializer):
+class ServiceAPISerializer(serializers.ModelSerializer):
     type = ServiceTypeSerializer()
     structure = StructureSerializer()
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     class Meta:
         model = trekking_models.Service
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        fields = ('id', 'type', 'structure')
+
+
+class ServiceAPIGeojsonSerializer(GeoFeatureModelSerializer, ServiceAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(ServiceAPISerializer.Meta):
         geo_field = 'api_geom'
-        id_field = 'id'
-        fields = ('id', 'type', 'structure', 'api_geom', )
+        fields = ServiceAPISerializer.Meta.fields + ('api_geom', )

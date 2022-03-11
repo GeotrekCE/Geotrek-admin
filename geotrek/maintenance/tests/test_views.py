@@ -512,7 +512,7 @@ class ProjectViewsTest(CommonTest):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             jsondict = response.json()
-            return jsondict['aaData']
+            return jsondict['object_list']
 
         # Check that projects without interventions are always present
         self.assertEqual(len(Project.objects.all()), 3)

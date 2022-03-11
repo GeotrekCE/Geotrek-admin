@@ -99,6 +99,8 @@ class ReportCreate(MapEntityCreate):
 class ReportViewSet(GeotrekMapentityViewSet):
     model = feedback_models.Report
     serializer_class = feedback_serializers.ReportSerializer
+    authentication_classes = []
+    permission_classes = [AllowAny]
 
     def get_columns(self):
         return ReportList.mandatory_columns + settings.COLUMNS_LISTS.get('feedback_view',

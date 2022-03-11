@@ -161,9 +161,7 @@ class InfraFilterTestMixin:
         response = self.client.get(model.get_jsonlist_url(), data)
 
         self.assertEqual(response.status_code, 200)
-        topo_pk = response.json()['map_obj_pk']
-
-        self.assertCountEqual(topo_pk, [good_topo.pk])
+        self.assertEqual(len(response.json()['object_list']), 1)
 
     def test_duplicate_implantation_year_filter(self):
         self.login()
@@ -190,7 +188,6 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     filterset = InfrastructureFilterSet
 
     def test_none_implantation_year_filter(self):
-
         self.login()
         model = self.factory._meta.model
         InfrastructureFactory.create()

@@ -187,7 +187,7 @@ class CreateReportsAPITest(BaseAPITest):
         client = APIClient()
         response = client.post(self.add_url, data=data,
                                allow_redirects=False)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, self.add_url)
 
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)

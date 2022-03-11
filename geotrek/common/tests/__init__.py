@@ -28,7 +28,7 @@ class TranslationResetMixin:
 
 
 class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
-    api_prefix = '/api/en/'
+    api_prefix = '/api/'
 
     def get_bad_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:

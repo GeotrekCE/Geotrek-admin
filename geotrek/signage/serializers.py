@@ -34,17 +34,24 @@ class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, seri
             BasePublishableSerializerMixin.Meta.fields
 
 
-class SignageRandoV2GeojsonSerializer(GeoFeatureModelSerializer, BasePublishableSerializerMixin):
+class SignageAPISerializer(BasePublishableSerializerMixin):
     type = SignageTypeSerializer()
     structure = StructureSerializer()
+
+    class Meta:
+        model = signage_models.Signage
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        fields = ('id', 'structure', 'name', 'type', 'code', 'printed_elevation', 'condition',
+                  'manager', 'sealing') + BasePublishableSerializerMixin.Meta.fields
+
+
+class SignageAPIGeojsonSerializer(GeoFeatureModelSerializer, SignageAPISerializer):
+    # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(SignageSerializer.Meta):
-        model = signage_models.Signage
+    class Meta(SignageAPISerializer.Meta):
         geo_field = 'api_geom'
-        id_field = 'id'
-        fields = ('id', 'structure', 'name', 'type', 'code', 'printed_elevation', 'condition',
-                  'manager', 'sealing', 'api_geom', ) + BasePublishableSerializerMixin.Meta.fields
+        fields = SignageAPISerializer.Meta.fields + ('api_geom', )
 
 
 class BladeTypeSerializer(serializers.ModelSerializer):
@@ -55,6 +62,7 @@ class BladeTypeSerializer(serializers.ModelSerializer):
 
 class BladeSerializer(serializers.ModelSerializer):
     type = serializers.SlugRelatedField('label', read_only=True)
+    structure = serializers.SlugRelatedField('name', read_only=True)
     direction = serializers.SlugRelatedField('label', read_only=True)
     color = serializers.SlugRelatedField('label', read_only=True)
     condition = serializers.SlugRelatedField('label', read_only=True)
@@ -64,19 +72,28 @@ class BladeSerializer(serializers.ModelSerializer):
         fields = ('id', 'structure', 'number', 'order_lines', 'type', 'color', 'condition', 'direction')
 
 
-class BladeGeojsonSerializer(GeoFeatureModelSerializer):
+class BladeAPISerializer(serializers.ModelSerializer):
     type = BladeTypeSerializer()
     structure = StructureSerializer()
     order_lines = serializers.SerializerMethodField()
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     def get_order_lines(self, obj):
         return obj.order_lines.values_list('pk', flat=True)
 
-    class Meta(BladeSerializer.Meta):
+    class Meta:
+        model = signage_models.Blade
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        fields = ('id', 'structure', 'number', 'order_lines', 'type', 'color', 'condition', 'direction')
+        # TODO: Do a lineserializer for order_lines
+
+
+class BladeAPIGeojsonSerializer(GeoFeatureModelSerializer, BladeAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(BladeAPISerializer.Meta):
         geo_field = 'api_geom'
-        id_field = 'id'
-        fields = BladeSerializer.Meta.fields + ('api_geom', )
+        fields = BladeAPISerializer.Meta.fields + ('api_geom', )
 
 
 class CSVBladeSerializer(CSVSerializer):

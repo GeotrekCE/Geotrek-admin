@@ -37,24 +37,20 @@ class InfrastructureSerializer(DynamicFieldsMixin, BasePublishableSerializerMixi
                   "uuid",)
 
 
-class InfrastructureRandoV2GeojsonSerializer(GeoFeatureModelSerializer, serializers.ModelSerializer):
-    # Annotated geom field with API_SRID
+class InfrastructureAPISerializer(BasePublishableSerializerMixin):
     type = InfrastructureTypeSerializer()
     structure = StructureSerializer()
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     class Meta:
+        model = infrastructure_models.Infrastructure
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', ) + \
-            ('id', 'structure', 'name', 'type', 'accessibility') + \
-            BasePublishableSerializerMixin.Meta.fields
+        fields = ('id', 'structure', 'name', 'type', ) + BasePublishableSerializerMixin.Meta.fields
 
 
-class InfrastructureGeojsonSerializer(GeoFeatureModelSerializer, InfrastructureSerializer):
+class InfrastructureAPIGeojsonSerializer(GeoFeatureModelSerializer, InfrastructureAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(InfrastructureSerializer.Meta):
+    class Meta(InfrastructureAPISerializer.Meta):
         geo_field = 'api_geom'
-        model = infrastructure_models.Infrastructure
-        fields = ('id', 'structure', 'name', 'type', 'api_geom',)
+        fields = InfrastructureAPISerializer.Meta.fields + ('api_geom', )

@@ -99,7 +99,7 @@ class PathViewsTest(CommonTest):
         'type': 'LineString',
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
-    length = 141.42135623731
+    length = 141.4
     extra_column_list = ['length', 'eid']
     expected_column_list_extra = ['id', 'checkbox', 'name', 'length', 'length', 'eid']
     expected_column_formatlist_extra = ['id', 'length', 'eid']
@@ -273,16 +273,16 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_sum_path_zero(self):
-        response = self.client.get('/api/path/paths.json')
+        response = self.client.get('/api/path/drf/paths/filter_infos.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 0.0)
+        self.assertEqual(response.json()['count'], '0 (0 km)')
 
     def test_sum_path_two(self):
         PathFactory()
         PathFactory()
-        response = self.client.get('/api/path/paths.json')
+        response = self.client.get('/api/path/drf/paths/filter_infos.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 0.3)
+        self.assertEqual(response.json()['count'], '2 (0.3 km)')
 
     def test_sum_path_filter_cities(self):
         p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
@@ -290,12 +290,12 @@ class PathViewsTest(CommonTest):
         city2 = CityFactory(code='09001', geom=MultiPolygon(
             Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
         self.assertEqual(len(p1.cities), 1)
-        response = self.client.get('/api/path/paths.json?city=%s' % city.code)
+        response = self.client.get('/api/path/drf/paths/filter_infos.json?city=%s' % city.code)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 0.0)
-        response = self.client.get('/api/path/paths.json?city=%s' % city2.code)
+        self.assertEqual(response.json()['count'], '0 (0 km)')
+        response = self.client.get('/api/path/drf/paths/filter_infos.json?city=%s' % city2.code)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 1.0)
+        self.assertEqual(response.json()['count'], '1 (1.0 km)')
 
     def test_sum_path_filter_districts(self):
         p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
@@ -303,12 +303,12 @@ class PathViewsTest(CommonTest):
         district2 = DistrictFactory(geom=MultiPolygon(
             Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
         self.assertEqual(len(p1.districts), 1)
-        response = self.client.get('/api/path/paths.json?district=%s' % district.pk)
+        response = self.client.get('/api/path/drf/paths/filter_infos.json?district=%s' % district.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 0.0)
-        response = self.client.get('/api/path/paths.json?district=%s' % district2.pk)
+        self.assertEqual(response.json()['count'], '0 (0 km)')
+        response = self.client.get('/api/path/drf/paths/filter_infos.json?district=%s' % district2.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 1.0)
+        self.assertEqual(response.json()['count'], '1 (1.0 km)')
 
     def test_merge_fails_parameters(self):
         """
@@ -691,8 +691,8 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(7):
-            self.client.get(reverse('core:paths-drf-list', kwargs={'format': 'datatables'}))
+        with self.assertNumQueries(8):
+            self.client.get(reverse('core:path-drf-list', kwargs={'format': 'datatables'}))
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
