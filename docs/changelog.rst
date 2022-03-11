@@ -12,6 +12,12 @@ CHANGELOG
 - Add eid on InformationDesk
 - Add parser InformationDesk for Apidae
 
+
+**Minor improvements**
+
+- Add length 2d for land's app for exports and lists
+
+
 **Bug fixes**
 
 - Log entry menu is now only displayed if user has permission
@@ -76,7 +82,6 @@ CHANGELOG
 - Add image widget to tinymce editors by default
 - Delete filenames in captions of attachments when importing from Apidae (#2698)
 - Add copyright when importing from Apidae on attachments (#2698)
-- Improve basic fixture for Feedback app allowing to initialize Report form in one go
 
 **Maintenance**
 

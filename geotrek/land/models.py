@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models import FloatField
+from django.contrib.gis.db.models.functions import Length
 from django.utils.translation import gettext_lazy as _
 
 from mapentity.models import MapEntityMixin
@@ -7,11 +9,38 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
+from geotrek.common.mixins import NoDeleteManager
 from geotrek.maintenance.models import Intervention, Project
 
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
+
+
+class LengthQuerySet(models.QuerySet):
+    def annotate_length2d(self):
+        return self.annotate(length_2d_m=Length('geom', output_field=FloatField()))
+
+
+class Length2DManager(NoDeleteManager):
+
+    def get_queryset(self):
+        return LengthQuerySet(self.model, using=self._db)
+
+    def annotate_length2d(self):
+        return self.get_queryset().annotate_length2d()
+
+
+class Length2DMixin(models.Model):
+    objects = Length2DManager()
+    length_2d_m_verbose_name = _("2D Length")
+
+    @property
+    def length_2d_m_display(self):
+        return round(self.length_2d_m, 1)
+
+    class Meta:
+        abstract = True
 
 
 class Status(MapEntityMixin):
@@ -37,7 +66,7 @@ class PhysicalType(StructureOrNoneRelated):
         return self.name
 
 
-class PhysicalEdge(MapEntityMixin, Topology):
+class PhysicalEdge(Length2DMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"),
                                       on_delete=models.CASCADE)
@@ -104,7 +133,7 @@ class LandType(StructureOrNoneRelated):
         return self.name
 
 
-class LandEdge(MapEntityMixin, Topology):
+class LandEdge(Length2DMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     land_type = models.ForeignKey(LandType, verbose_name=_("Land type"), on_delete=models.CASCADE)
     owner = models.TextField(verbose_name=_("Owner"), blank=True)
@@ -157,7 +186,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('land_edges', lambda self: self.signage.land_edges, _("Land edges"))
 
 
-class CompetenceEdge(MapEntityMixin, Topology):
+class CompetenceEdge(Length2DMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -208,7 +237,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('competence_edges', lambda self: self.signage.competence_edges, _("Competence edges"))
 
 
-class WorkManagementEdge(MapEntityMixin, Topology):
+class WorkManagementEdge(Length2DMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -259,7 +288,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('work_edges', lambda self: self.signage.work_edges, _("Work management edges"))
 
 
-class SignageManagementEdge(MapEntityMixin, Topology):
+class SignageManagementEdge(Length2DMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
