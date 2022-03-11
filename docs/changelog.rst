@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Show trail and path on intervention
+- Remove duplicate id POI export (#2893)
 
 
 2.77.0     (2022-03-09)
