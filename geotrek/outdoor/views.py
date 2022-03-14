@@ -8,7 +8,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, Map
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
+from geotrek.common.views import CompletenessMixin, DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.forms import SiteForm, CourseForm
@@ -153,7 +153,7 @@ class CourseList(CustomColumnsMixin, MapEntityList):
     searchable_columns = ['id', 'name']
 
 
-class CourseDetail(MapEntityDetail):
+class CourseDetail(CompletenessMixin, MapEntityDetail):
     queryset = Course.objects.prefetch_related('type').all()
 
     def get_context_data(self, *args, **kwargs):

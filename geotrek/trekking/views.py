@@ -338,7 +338,7 @@ class POIFormatList(MapEntityFormat, POIList):
             yield poi
 
 
-class POIDetail(MapEntityDetail):
+class POIDetail(CompletenessMixin, MapEntityDetail):
     queryset = POI.objects.existing()
 
     def get_context_data(self, *args, **kwargs):

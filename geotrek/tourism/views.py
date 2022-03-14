@@ -21,7 +21,7 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
+from geotrek.common.views import CompletenessMixin, DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.trekking.models import Trek
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
@@ -66,7 +66,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     ]
 
 
-class TouristicContentDetail(MapEntityDetail):
+class TouristicContentDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -215,7 +215,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
     ]
 
 
-class TouristicEventDetail(MapEntityDetail):
+class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicEvent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
