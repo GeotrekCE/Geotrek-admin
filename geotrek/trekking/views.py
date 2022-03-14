@@ -264,7 +264,7 @@ class POIJsonList(MapEntityJsonList, POIList):
 class POIFormatList(MapEntityFormat, POIList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'id', 'structure', 'eid', 'name', 'type', 'description', 'treks',
+        'structure', 'eid', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',

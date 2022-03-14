@@ -79,7 +79,6 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
                 # Annotate queryset with this cost query
                 params = {column_name: job_cost_query}
                 queryset = queryset.annotate(**params)
-
         return queryset
 
     def get_mandatory_columns(cls):

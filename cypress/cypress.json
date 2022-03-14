@@ -1,9 +1,10 @@
 {
   "fixturesFolder": false,
-  "supportFile": "cypress/support",
-  "integrationFolder": "cypress/integration",
+  "supportFile": "support",
+  "integrationFolder": "integration",
   "pluginsFile": false,
-  "screenshotsFolder": "cypress/screenshots",
+  "screenshotsFolder": "screenshots",
+  "videosFolder": "screenshots",
   "baseUrl": "http://localhost:8000",
   "video": true,
   "requestTimeout": 50000,

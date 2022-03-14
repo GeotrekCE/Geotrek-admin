@@ -724,11 +724,17 @@ class TestDetailedJobCostsExports(TestCase):
             temp_directory = TemporaryDirectory()
             mzip.extractall(path=temp_directory.name)
             shapefiles = [shapefile for shapefile in os.listdir(temp_directory.name) if shapefile[-3:] == "shp"]
-            datasource = gdal.DataSource(os.path.join(temp_directory.name, shapefiles[0]))
-            l_point = datasource[0]
+            layers = {
+                s: gdal.DataSource(os.path.join(temp_directory.name, s))[0] for s in shapefiles
+            }
+            l_linestring = layers['LineString.shp']
+            l_point = layers['Point.shp']
+        feature_linestring = l_linestring[0]
         feature_point = l_point[0]
-        self.assertEqual(Decimal(str(feature_point['cost_worke'])), self.job1.cost * self.manday1.nb_days)
-        self.assertEqual(Decimal(str(feature_point['cost_strea'])), self.job2.cost * self.manday2.nb_days)
+        self.assertEqual(Decimal(str(feature_linestring['cost_worke'])), self.job1.cost * self.manday1.nb_days)
+        self.assertEqual(Decimal(str(feature_linestring['cost_strea'])), self.job2.cost * self.manday2.nb_days)
+        self.assertIsNone(feature_point.get('cost_worke'))
+        self.assertIsNone(feature_point.get('cost_strea'))
 
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
