@@ -15,6 +15,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
+from geotrek.core.models import Path
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 from mapentity.models import MapEntityMixin
@@ -399,7 +400,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             return reports.latest('date_update').get_date_update()
         return cls.objects.none()
 
-
+Report.add_property('treks', lambda self: intersecting(Path, self), _("Paths"))
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Report.add_property('services', lambda self: intersecting(Service, self), _("Services"))
