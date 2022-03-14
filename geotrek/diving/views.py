@@ -15,7 +15,8 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic, MetaMixin
+from geotrek.common.views import (CompletenessMixin, MetaMixin,
+                                  DocumentPublic, DocumentBookletPublic, MarkupPublic)
 
 from .filters import DiveFilterSet
 from .forms import DiveForm
@@ -55,7 +56,7 @@ class DiveFormatList(MapEntityFormat, DiveList):
     ]
 
 
-class DiveDetail(MapEntityDetail):
+class DiveDetail(CompletenessMixin, MapEntityDetail):
     queryset = Dive.objects.existing()
 
     def dispatch(self, *args, **kwargs):
