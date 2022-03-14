@@ -7,6 +7,20 @@ CHANGELOG
 
 **Minor improvements**
 
+
+**Suricate Workflow**  (#2366)
+- Add `assigned_user` field to Report model
+- Add `color` field to Report Status model
+- Add TimerEvent class, used to alert Report supervisors when timer expires, with `check_timers` command
+- Force workflow when SURICATE_MANAGEMENT_WORKFLOW setting is enabled
+- Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
+- Add editable predefined emails
+- Display only some reports depending on which user is logged in
+- Add City and District information to Report detail page
+
+
+**Bug fixes**
+
 -
 
 
@@ -47,16 +61,6 @@ CHANGELOG
 **Maintenance**
 
 - Update to mapentity 7.1.3
-
-**Suricate Workflow**  (#2366)
-- Add `assigned_user` field to Report model
-- Add `color` field to Report Status model
-- Add TimerEvent class, used to alert Report supervisors when timer expires, with `check_timers` command
-- Force workflow when SURICATE_MANAGEMENT_WORKFLOW setting is enabled
-- Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
-- Add editable predefined emails
-- Display only some reports depending on which user is logged in
-- Add City and District information to Report detail page
 
 
 2.76.4     (2022-03-07)
