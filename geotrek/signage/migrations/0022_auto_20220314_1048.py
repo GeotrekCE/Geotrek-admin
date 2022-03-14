@@ -18,9 +18,6 @@ def forward(apps, schema_editor):
                     cursor.execute(
                         f"ALTER TABLE signage_signage ADD published_{lang} Boolean DEFAULT FALSE;"
                     )
-                    cursor.execute(
-                        f"UPDATE signage_signage SET published_{lang} = True WHERE published = True;"
-                    )
 
 
 def backward(apps, schema_editor):
