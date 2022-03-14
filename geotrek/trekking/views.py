@@ -22,8 +22,10 @@ from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
+from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
+                                  DocumentBookletPublic, MarkupPublic)
 from geotrek.common.permissions import PublicOrReadPermMixin
-from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
+from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic, CompletenessMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -32,6 +34,7 @@ from geotrek.infrastructure.serializers import InfrastructureAPIGeojsonSerialize
 from geotrek.signage.models import Signage
 from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import District, City, RestrictedArea
+
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup, ServiceForm
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
@@ -104,7 +107,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         return response
 
 
-class TrekDetail(MapEntityDetail):
+class TrekDetail(CompletenessMixin, MapEntityDetail):
     queryset = Trek.objects.existing()
 
     @property
