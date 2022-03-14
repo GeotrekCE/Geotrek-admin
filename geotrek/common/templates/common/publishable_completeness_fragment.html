@@ -9,7 +9,11 @@
 {% else %}
     {% if not object.is_publishable %}
         <div class="alert alert-danger"><strong>{% trans "Object is published but" %}</strong>
-        {% if not object.is_complete %}{% trans "looks incomplete;" %}{% endif %}
+        {% if not object.is_complete %}
+            {% trans "looks incomplete;" %}
+            {% trans "these fields should be completed:" %}<br/>
+            {{ completeness_fields|join:', ' }}
+        {% endif %}
         {% if not object.has_geom_valid %}{% trans "has invalid geometry;" %}{% endif %}
         </div>
     {% endif %}

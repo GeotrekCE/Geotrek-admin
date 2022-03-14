@@ -23,8 +23,8 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
-from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
-                                  DocumentBookletPublic, MarkupPublic)
+from geotrek.common.views import (FormsetMixin, MetaMixin, CompletenessMixin,
+                                  DocumentPublic, DocumentBookletPublic, MarkupPublic)
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -108,7 +108,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         return response
 
 
-class TrekDetail(MapEntityDetail):
+class TrekDetail(CompletenessMixin, MapEntityDetail):
     queryset = Trek.objects.existing()
 
     @property
