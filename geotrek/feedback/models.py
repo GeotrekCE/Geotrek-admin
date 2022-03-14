@@ -1,5 +1,6 @@
 import html
 import logging
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -196,6 +197,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
 
+Report.add_property('paths', lambda self: intersecting(Path, self), _("Paths"))
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Report.add_property('services', lambda self: intersecting(Service, self), _("Services"))
