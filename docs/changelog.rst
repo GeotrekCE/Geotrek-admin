@@ -5,9 +5,9 @@ CHANGELOG
 2.77.1+dev (XXXX-XX-XX)
 -----------------------
 
-**Minor improvements**
+**Bug fixes**
 
--
+- Fix migration 2.77.1 publication
 
 
 2.77.1     (2022-03-11)
