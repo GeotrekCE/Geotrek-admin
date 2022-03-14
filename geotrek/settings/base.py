@@ -506,11 +506,11 @@ EXPORT_HEADER_IMAGE_SIZE = {
 }
 
 COMPLETENESS_FIELDS = {
-    'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+    'trek': ['practice', 'duration', 'difficulty', ],
     'dive': ['practice', 'difficulty', 'description_teaser'],
 }
 
-COMPLETENESS_LEVEL = 'warning' # Set 'error' to avoid publication without completeness fields
+COMPLETENESS_LEVEL = 'error_on_publication' # Set 'error_on_publication' to avoid publication without completeness fields
 
 EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.YoutubeBackend',

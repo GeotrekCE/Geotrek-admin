@@ -7,7 +7,7 @@ from django.core.checks.messages import Error
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 from django.utils.text import format_lazy
@@ -129,12 +129,6 @@ class CommonForm(MapEntityForm):
                 else:
                     self.fields[field_to_hide].widget = HiddenInput()
 
-        # If COMPLETENESS_MODE is 'error', set completeness fields required
-        if settings.COMPLETENESS_LEVEL == 'error':
-            for field_key in settings.COMPLETENESS_FIELDS[self._meta.model._meta.model_name]:
-                self.fields[field_key].required = True
-
-
     def clean(self):
         structure = self.cleaned_data.get('structure')
         if not structure:
@@ -158,6 +152,22 @@ class CommonForm(MapEntityForm):
                     self.check_structure(value, structure, name)
             else:
                 self.check_structure(field, structure, name)
+
+        # If COMPLETENESS_MODE is 'error_on_publication', set completeness fields required
+        if self.instance.any_published and settings.COMPLETENESS_LEVEL == 'error_on_publication':
+            self.completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
+            if self.completeness_fields:
+                msg = _('This field is required to publish object.')
+                missing_fields = []
+                for field_required in self.completeness_fields:
+                    if not self.cleaned_data[field_required]:
+                        self.add_error(field_required, msg)
+                        missing_fields.append(field_required)
+                if missing_fields:
+                    raise ValidationError(
+                        _('Fields are missing to publish object: %(fields)s'),
+                        params={'fields': ', '.join(missing_fields)},
+                    )
         return self.cleaned_data
 
     def check_structure(self, obj, structure, name):
