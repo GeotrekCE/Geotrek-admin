@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from rest_framework import permissions as rest_permissions
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
+from geotrek.common.views import CompletenessMixin, DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.forms import SiteForm, CourseForm
 from geotrek.outdoor.models import Site, Course
@@ -32,7 +32,7 @@ class SiteJsonList(MapEntityJsonList, SiteList):
     pass
 
 
-class SiteDetail(MapEntityDetail):
+class SiteDetail(CompletenessMixin, MapEntityDetail):
     queryset = Site.objects.all()
 
     def get_context_data(self, *args, **kwargs):
@@ -145,7 +145,7 @@ class CourseJsonList(MapEntityJsonList, CourseList):
     pass
 
 
-class CourseDetail(MapEntityDetail):
+class CourseDetail(CompletenessMixin, MapEntityDetail):
     queryset = Course.objects.prefetch_related('type').all()
 
     def get_context_data(self, *args, **kwargs):

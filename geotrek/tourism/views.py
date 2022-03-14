@@ -22,7 +22,7 @@ from rest_framework.views import APIView
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic, MetaMixin
+from geotrek.common.views import CompletenessMixin, DocumentPublic, DocumentBookletPublic, MarkupPublic, MetaMixin
 from django.shortcuts import get_object_or_404
 from geotrek.trekking.models import Trek
 
@@ -72,7 +72,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     ]
 
 
-class TouristicContentDetail(MapEntityDetail):
+class TouristicContentDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -192,7 +192,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
     ]
 
 
-class TouristicEventDetail(MapEntityDetail):
+class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicEvent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
