@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Bug fixes**
+
+- Fix Intervention detail page breaks when target is a Report
+
 
 2.77.1     (2022-03-11)
 -----------------------

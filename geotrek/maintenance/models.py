@@ -159,9 +159,10 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     @property
     def trails(self):
         s = []
-        for p in self.target.paths.all():
-            for t in p.trails.all():
-                s.append(t.pk)
+        if hasattr(self.target, 'paths'):
+            for p in self.target.paths.all():
+                for t in p.trails.all():
+                    s.append(t.pk)
 
         return Trail.objects.filter(pk__in=s)
 
