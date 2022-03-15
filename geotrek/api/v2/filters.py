@@ -913,10 +913,7 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
         related_object = qs.model._meta.get_field(related_name).remote_field
         fields_on_related_object = related_object.model._meta.get_fields()
         associated_published_fields = [f.name for f in fields_on_related_object if f.name.startswith('published')]
-        if len(associated_published_fields) == 1:
-            related_field_name = '{}__published'.format(related_name)
-            q &= Q(**{related_field_name: True})
-        elif len(associated_published_fields) > 1:
+        if associated_published_fields:
             language = request.GET.get('language')
             if language:
                 # one language is specified
