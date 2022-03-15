@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin, PicturesMixin,
                                    TimeStampedModelMixin)
 from geotrek.common.utils import intersecting
+from geotrek.core.models import Path
 from geotrek.maintenance.models import Intervention
 from geotrek.trekking.models import POI, Service, Trek
 from mapentity.models import MapEntityMixin
@@ -196,6 +197,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
 
+Report.add_property('paths', lambda self: intersecting(Path, self), _("Paths"))
 Report.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Report.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 Report.add_property('services', lambda self: intersecting(Service, self), _("Services"))
