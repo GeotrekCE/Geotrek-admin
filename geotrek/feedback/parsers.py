@@ -66,7 +66,8 @@ class SuricateParser(SuricateGestionRequestManager):
                 )
 
     def send_workflow_manager_new_reports_email(self):
-        WorkflowManager.objects.first().notify_new_reports()
+        for manager in WorkflowManager.objects.all():
+            manager.notify_new_reports()
 
     def parse_report(self, report):
         """

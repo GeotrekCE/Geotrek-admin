@@ -240,7 +240,7 @@ class SuricateAPITests(SuricateTests):
         self.assertIsNone(r.category)
         # Test new filed report are assigned to workflow manager
         r = Report.objects.get(uid="E7C73347-5056-AA2B-DDBFDCD9328CD742")
-        self.assertEqual(r.assigned_user, WorkflowManager.objects.first().user)
+        self.assertIn(r.assigned_user.pk, list(WorkflowManager.objects.values_list('user', flat=True)))
         # Assert no new mail on update
         self.assertEqual(len(mail.outbox), 1)
 
