@@ -1040,19 +1040,19 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
 
 class GeotrekLabelFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        filter_label = request.GET.get('filter')
+        filter_label = request.GET.get('only_filters')
         if filter_label:
             try:
                 # Allow to filter with many values for exemple for True : yes, true, t, True ...
                 queryset = queryset.filter(filter=bool(strtobool(filter_label)))
             except ValueError:
-                pass
+                return queryset.none()
         return queryset
 
     def get_schema_fields(self, view):
         return (
             Field(
-                name='filter', required=False, location='query', schema=coreschema.Boolean(
+                name='only_filters', required=False, location='query', schema=coreschema.Boolean(
                     title=_("Filter"),
                     description=_("Filter by the fact that this label can be used as filter. "
                                   "'y', 'yes', 't', 'true', 'on', '1' are possible values"),

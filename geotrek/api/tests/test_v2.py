@@ -1858,14 +1858,17 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         label_1 = common_factory.LabelFactory.create(filter=False)
         label_2 = common_factory.LabelFactory.create(filter=True)
         self.treks[0].labels.add(label_1, label_2)
-        response = self.get_label_list({'filter': True})
+        response = self.get_label_list({'only_filters': True})
         self.assertEqual(response.json()["count"], 2)
         self.assertSetEqual({result["id"] for result in response.json()["results"]}, {self.label.pk, label_2.pk})
-        response = self.get_label_list({'filter': False})
+        response = self.get_label_list({'only_filters': False})
         self.assertEqual(response.json()["results"][0]["id"], label_1.pk)
         self.assertEqual(response.json()["count"], 1)
         response = self.get_label_list()
         self.assertEqual(response.json()["count"], 3)
+
+        response = self.get_label_list({'only_filters': 'None'})
+        self.assertEqual(response.json()["count"], 0)
 
     def test_labels_detail(self):
         self.check_structure_response(
