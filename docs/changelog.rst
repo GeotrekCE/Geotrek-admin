@@ -5,9 +5,6 @@ CHANGELOG
 2.77.1+dev (XXXX-XX-XX)
 -----------------------
 
-**Minor improvements**
-
-
 **Suricate Workflow**  (#2366)
 - Add `assigned_user` field to Report model
 - Add `color` field to Report Status model
@@ -21,7 +18,9 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix migration 2.77.1 publication
+- Add publication informations by lang on infrastructure
+- Remove table Infrastructure on infrastructure
 
 
 2.77.1     (2022-03-11)
