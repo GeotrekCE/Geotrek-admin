@@ -247,4 +247,4 @@ class SuricateParser(SuricateGestionRequestManager):
                 )
 
             # Parse documents attached to message
-            # self.create_documents(message["documents"], message_obj, "AttachedMessage")
+            self.create_documents(message["documents"], parent)
