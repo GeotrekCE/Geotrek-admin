@@ -664,6 +664,9 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         labels = request.GET.get('labels')
         if labels:
             qs = qs.filter(labels__in=labels.split(','))
+        labels_exclude = request.GET.get('labels_exclude')
+        if labels_exclude:
+            qs = qs.exclude(labels__in=labels_exclude.split(','))
         practices = request.GET.get('practices')
         if practices:
             qs = qs.filter(practice__in=practices.split(','))
@@ -763,6 +766,12 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                     description=_('Filter by one or more label id, comma-separated.')
                 )
             ), Field(
+                name='labels_exclude', required=False, location='query', schema=coreschema.String(
+                    title=_("Labels exclusion"),
+                    description=_('Exclude one or more label id, comma-separated.')
+                )
+            ),
+            Field(
                 name='practices', required=False, location='query', schema=coreschema.String(
                     title=_("Practices"),
                     description=_('Filter by one or more practice id, comma-separated.')
@@ -824,6 +833,9 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
         labels = request.GET.get('labels')
         if labels:
             queryset = queryset.filter(labels__in=labels.split(','))
+        labels_exclude = request.GET.get('labels_exclude')
+        if labels_exclude:
+            queryset = queryset.exclude(labels__in=labels_exclude.split(','))
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
@@ -848,6 +860,12 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
                 name='labels', required=False, location='query', schema=coreschema.String(
                     title=_("Labels"),
                     description=_('Filter by one or more label id, comma-separated.')
+                )
+            ),
+            Field(
+                name='labels_exclude', required=False, location='query', schema=coreschema.String(
+                    title=_("Labels exclusion"),
+                    description=_('Exclude one or more label id, comma-separated.')
                 )
             ),
             Field(
