@@ -1,5 +1,5 @@
 from datetime import date, datetime
-
+from distutils.util import strtobool
 import coreschema
 
 from coreapi.document import Field
@@ -1033,6 +1033,28 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
                 name='q', required=False, location='query', schema=coreschema.String(
                     title=_("Query string"),
                     description=_('Filter by some case-insensitive text contained in name.')
+                )
+            ),
+        )
+
+
+class GeotrekLabelFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        filter_label = request.GET.get('filter')
+        if filter_label:
+            try:
+                # Allow to filter with many values for exemple for True : yes, true, t, True ...
+                queryset = queryset.filter(filter=bool(strtobool(filter_label)))
+            except ValueError:
+                pass
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='filter', required=False, location='query', schema=coreschema.Boolean(
+                    title=_("Filter"),
+                    description=_('Filter by the fact that this label can be used as filter.')
                 )
             ),
         )
