@@ -21,6 +21,7 @@ CHANGELOG
 
 - Add publication informations by lang on infrastructure
 - Remove table Infrastructure on infrastructure
+- Fix Intervention detail page breaks when target is a Report
 - Add translation signage
 
 
