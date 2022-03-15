@@ -2,7 +2,15 @@
 CHANGELOG
 =========
 
-2.77.1+dev (XXXX-XX-XX)
+2.77.2+dev (XXXX-XX-XX)
+-----------------------
+
+**Bug fixes**
+
+-
+
+
+2.77.2     (2022-03-15)
 -----------------------
 
 **Suricate Workflow**  (#2366)
@@ -19,8 +27,13 @@ CHANGELOG
 **Bug fixes**
 
 - Fix migration 2.77.1 publication
+
+**Minor improvements**
+
 - Add publication informations by lang on infrastructure
 - Remove table Infrastructure on infrastructure
+- Fix Intervention detail page breaks when target is a Report
+- Add translation signage
 
 
 2.77.1     (2022-03-11)

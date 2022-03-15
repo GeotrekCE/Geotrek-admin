@@ -203,10 +203,10 @@ class SignageViewsTest(CommonTest):
             'manager': None,
             'name': 'Signage',
             'printed_elevation': 4807,
-            'publication_date': None,
+            'publication_date': '2020-03-17',
             'published': True,
             'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': False},
+                {'lang': 'en', 'language': 'English', 'status': True},
                 {'lang': 'es', 'language': 'Spanish', 'status': False},
                 {'lang': 'fr', 'language': 'French', 'status': False},
                 {'lang': 'it', 'language': 'Italian', 'status': False}
@@ -222,8 +222,10 @@ class SignageViewsTest(CommonTest):
 
     def get_good_data(self):
         good_data = {
-            'name': 'test',
-            'description': 'oh',
+            'name_fr': 'test',
+            'name_en': 'test_en',
+            'description_fr': 'oh',
+            'publication_date': '2020-03-17',
             'type': SignageTypeFactory.create().pk,
             'condition': InfrastructureConditionFactory.create().pk,
         }
@@ -250,7 +252,7 @@ class SignageViewsTest(CommonTest):
         self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
 
     def test_no_pictogram(self):
-        self.obj = SignageNoPictogramFactory.create()
+        self.obj = SignageNoPictogramFactory.create(publication_date='2020-03-17')
         response = self.client.get('/api/en/signages/{}'.format(self.obj.pk))
         self.assertEqual(response.status_code, 200)
         expected_json_attrs = {'id': self.obj.pk, **self.get_expected_json_attrs()}

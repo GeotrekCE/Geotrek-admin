@@ -51,11 +51,8 @@
             <th>{{ object|verbose:"manager" }}</th>
             <td>{{ object.manager|default:"" }}</td>
         </tr>
-        <tr>
-            <th>{{ object|verbose:"published" }}</th>
-            <td>{{ object.published|yesno|title }}</td>
-        </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
+        {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
