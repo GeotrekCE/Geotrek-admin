@@ -8,6 +8,8 @@ CHANGELOG
 **Bug fixes**
 
 - Fix migration 2.77.1 publication
+- Add publication informations by lang on infrastructure
+- Remove table Infrastructure on infrastructure
 
 
 2.77.1     (2022-03-11)
