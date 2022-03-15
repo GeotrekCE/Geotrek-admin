@@ -4,10 +4,17 @@
 
 {% block detailspanel %}
     {% suricate_workflow_enabled as suricate_workflow_enabled %}
-    {% if suricate_workflow_enabled and object.sync_error %}
+    {% if suricate_workflow_enabled %}
+        {% if object.sync_error %}
+            <div class="alert alert-danger">
+                <strong>{% trans "Some data could not be forwarded to Suricate yet - Please come back later" %}</strong>
+            </div>
+        {% endif %}
+        {% if object.mail_error %}
         <div class="alert alert-danger">
-            <strong>{% trans "Some data could not be forwarded to Suricate yet - Please come back later" %}</strong>
+            <strong>{% trans "A notification email could not be sent. Please contact an administrator" %}</strong>
         </div>
+        {% endif %}
     {% endif %}
     {{ block.super }}
     <p hidden=true id="report_color">{{ report.color }}</p>
