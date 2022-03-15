@@ -1054,7 +1054,9 @@ class GeotrekLabelFilter(BaseFilterBackend):
             Field(
                 name='filter', required=False, location='query', schema=coreschema.Boolean(
                     title=_("Filter"),
-                    description=_('Filter by the fact that this label can be used as filter.')
+                    description=_("Filter by the fact that this label can be used as filter. "
+                                  "'y', 'yes', 't', 'true', 'on', '1' are possible values"),
+
                 )
             ),
         )
