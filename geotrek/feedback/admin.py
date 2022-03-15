@@ -23,9 +23,10 @@ class WorkflowManagerAdmin(admin.ModelAdmin):
         return perms
 
 
-admin.site.register(feedback_models.WorkflowManager, WorkflowManagerAdmin)
 admin.site.register(feedback_models.ReportCategory, TabbedTranslationAdmin)
 admin.site.register(feedback_models.ReportStatus)
-admin.site.register(feedback_models.PredefinedEmail)
 admin.site.register(feedback_models.ReportActivity, TabbedTranslationAdmin)
 admin.site.register(feedback_models.ReportProblemMagnitude, TabbedTranslationAdmin)
+if settings.SURICATE_WORKFLOW_ENABLED:
+    admin.site.register(feedback_models.PredefinedEmail)
+    admin.site.register(feedback_models.WorkflowManager, WorkflowManagerAdmin)
