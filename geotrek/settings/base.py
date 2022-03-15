@@ -506,7 +506,7 @@ EXPORT_HEADER_IMAGE_SIZE = {
 }
 
 COMPLETENESS_FIELDS = {
-    'trek': ['practice', 'duration', 'difficulty', ],
+    'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
     'dive': ['practice', 'difficulty', 'description_teaser'],
 }
 
