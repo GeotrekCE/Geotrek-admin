@@ -2,6 +2,7 @@ import json
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.core.tests.factories import PathFactory
@@ -70,6 +71,34 @@ class TrekFormTest(TestCase):
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(ValidationError, 'One of the rating scale used is not part of the practice chosen'):
             form.clean()
+
+
+class TreckCompletenessTest(TestCase):
+    """Test completeness fields on error if empty"""
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create()
+        cls.path = PathFactory.create()
+        cls.trek = TrekFactory()
+
+    def test_completeness_error(self):
+        """Test completeness fields on error if empty"""
+        data = {
+            'name_en': 'Trek',
+            'published_en': True,
+        }
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            data['topology'] = json.dumps({"paths": [self.path.pk]})
+
+        else:
+            data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+
+        with override_settings(COMPLETENESS_MODE='error_on_publication'):
+            form = TrekForm(user=self.user, instance=self.trek, data=data)
+            self.assertFalse(form.is_valid())
+            with self.assertRaises(ValidationError, 'One of the rating scale used is not part of the practice chosen'):
+                form.clean()
 
 
 class TrekItinerancyTestCase(TestCase):

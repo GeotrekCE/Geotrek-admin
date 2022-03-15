@@ -17,6 +17,7 @@ from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
 from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.utils.translation import get_translated_fields
 
 from .mixins.models import NoDeleteMixin
 
@@ -154,12 +155,16 @@ class CommonForm(MapEntityForm):
                 self.check_structure(field, structure, name)
 
         # If COMPLETENESS_MODE is 'error_on_publication', set completeness fields required
-        if self.instance.any_published and settings.COMPLETENESS_LEVEL == 'error_on_publication':
+        translated_fields = get_translated_fields(self._meta.model)
+
+        if 'published' in translated_fields and self.instance.any_published and settings.COMPLETENESS_LEVEL == 'error_on_publication':
             self.completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
             if self.completeness_fields:
                 msg = _('This field is required to publish object.')
                 missing_fields = []
                 for field_required in self.completeness_fields:
+                    if field_required in translated_fields:
+                        field_required = f'{field_required}_fr'
                     if not self.cleaned_data[field_required]:
                         self.add_error(field_required, msg)
                         missing_fields.append(field_required)

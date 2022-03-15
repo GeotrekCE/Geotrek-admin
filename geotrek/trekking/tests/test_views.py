@@ -469,16 +469,6 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
             self.assertEqual(row['Cities'], "Trifouilli, Refouilli")
             self.assertEqual(row['Districts'], self.district.name)
 
-    def test_completeness_publish(self):
-        """Test form post with completeness level"""
-        with override_settings(COMPLETENESS_MODE='error_on_publication'):
-            self.client.force_login(user=self.user)
-            data = self.get_good_data()
-            data['published'] = True
-
-            response = self.client.post(self.get_add_url(), data)
-            self.assertEqual(response.status_code, 302)
-
 
 class TrekViewsLiveTests(CommonLiveTest):
     model = Trek
