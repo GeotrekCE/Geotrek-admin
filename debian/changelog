@@ -1,3 +1,9 @@
+geotrek-admin (2.77.2+dev) UNRELEASED; urgency=medium
+
+  *
+
+ -- Timothee DE MONTETY <timothee.montety@gmail.com>  Tue, 15 Mar 2022 11:51:10 +0100
+
 geotrek-admin (2.77.2) RELEASED; urgency=medium
 
   * New package release
