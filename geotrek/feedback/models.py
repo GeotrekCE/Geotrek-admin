@@ -4,28 +4,24 @@ import logging
 from datetime import timedelta
 
 from colorfield.fields import ColorField
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
-from django.core.mail import send_mail, mail_managers
+from django.core.mail import mail_managers, send_mail
 from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
-from geotrek.core.models import Path
-from geotrek.zoning.mixins import ZoningPropertiesMixin
-
 from mapentity.models import MapEntityMixin
 
 from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
                                    PicturesMixin, TimeStampedModelMixin)
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path
-from geotrek.maintenance.models import Intervention
 from geotrek.trekking.models import POI, Service, Trek
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 from .helpers import SuricateMessenger
 
