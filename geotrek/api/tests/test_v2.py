@@ -1854,6 +1854,22 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             common_models.Label
         )
 
+    def test_labels_filter_filter(self):
+        label_1 = common_factory.LabelFactory.create(filter=False)
+        label_2 = common_factory.LabelFactory.create(filter=True)
+        self.treks[0].labels.add(label_1, label_2)
+        response = self.get_label_list({'only_filters': True})
+        self.assertEqual(response.json()["count"], 2)
+        self.assertSetEqual({result["id"] for result in response.json()["results"]}, {self.label.pk, label_2.pk})
+        response = self.get_label_list({'only_filters': False})
+        self.assertEqual(response.json()["results"][0]["id"], label_1.pk)
+        self.assertEqual(response.json()["count"], 1)
+        response = self.get_label_list()
+        self.assertEqual(response.json()["count"], 3)
+
+        response = self.get_label_list({'only_filters': 'None'})
+        self.assertEqual(response.json()["count"], 0)
+
     def test_labels_detail(self):
         self.check_structure_response(
             self.get_label_detail(self.label.pk),
@@ -1877,7 +1893,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
 
-    def test_infodesk_filter_label__accessibility(self):
+    def test_infodesk_filter_label_accessibility(self):
         response = self.get_informationdesk_list({'labels_accessibility': self.label_accessibility.pk})
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)

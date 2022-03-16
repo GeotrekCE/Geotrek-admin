@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 15:03+0000\n"
+"POT-Creation-Date: 2022-03-15 14:19+0000\n"
 "PO-Revision-Date: 2020-10-20 16:33+0000\n"
 "Last-Translator: Bastien Potiron <bastien.potiron@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -547,6 +547,15 @@ msgstr ""
 msgid "Filter by some case-insensitive text contained in name."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom."
 
+msgid "Filter"
+msgstr "Filtre"
+
+msgid ""
+"Filter by the fact that this label can be used as filter. 'y', 'yes', 't', "
+"'true', 'on', '1' are possible values"
+msgstr "Filtrer par le fait que cette étiquette peut être utilisée comme filtre. 'y', 'yes', 't', "
+"'true', 'on', '1' sont des valeurs possibles"
+
 msgid "Rating scale"
 msgstr "Échelle de cotation"
 
@@ -578,3 +587,12 @@ msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name or content."
 msgstr ""
+
+msgid "Distance (m)"
+msgstr "Distance (m)"
+
+msgid "Altitude (m)"
+msgstr ""
+
+msgid "Altimetry data not available"
+msgstr "Données altimétriques non disponibles"
