@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.core.mail import mail_managers, send_mail
+from django.db.models import F
 from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -88,14 +89,12 @@ class PendingSuricateAPIRequest(models.Model):
     retries = models.IntegerField(blank=False, default=0)
 
     def raise_sync_error_flag_on_report(self, uid):
-        report = Report.objects.get(uid=uid)
-        report.sync_errors += 1
-        report.save()
+        report = Report.objects.filter(uid=uid)
+        report.update(sync_errors=F('sync_errors') + 1)
 
     def remove_sync_error_flag_on_report(self, uid):
-        report = Report.objects.get(uid=uid)
-        report.sync_errors -= 1
-        report.save()
+        report = Report.objects.filter(uid=uid)
+        report.update(sync_errors=F('sync_errors') - 1)
 
     def save(self, *args, **kwargs):
         # Set sync_errors flag on report
@@ -559,7 +558,7 @@ class PendingEmail(models.Model):
         # Set mail_error flag on report
         report = self.report
         if report and self.pk is None:
-            report.mail_errors += 1
+            report.mail_errors = F('mail_errors') + 1
             report.save()
         super().save(*args, **kwargs)
 
@@ -567,7 +566,7 @@ class PendingEmail(models.Model):
         # Remove mail_error flag from report
         report = self.report
         if report:
-            report.mail_errors -= 1
+            report.mail_errors = F('mail_errors') - 1
             report.save()
         super().delete(*args, **kwargs)
 
