@@ -581,8 +581,8 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
     @classmethod
     def setUpTestData(cls):
         SuricateWorkflowTests.setUpTestData()
-        cls.report_filed_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
-        cls.report_filed_2 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
+        cls.report_filed_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4(), assigned_user=cls.admin)
+        cls.report_filed_2 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4(), assigned_user=cls.admin)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")

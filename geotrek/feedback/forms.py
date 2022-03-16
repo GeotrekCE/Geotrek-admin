@@ -67,6 +67,7 @@ class ReportForm(CommonForm):
                 if settings.SURICATE_WORKFLOW_ENABLED:  # On Workflow
                     # Store current status
                     self.old_status_identifier = self.instance.status.identifier
+                    self.old_supervisor = self.instance.assigned_user
                     # Add fields that are used only in Workflow mode
                     # status
                     next_statuses = SURICATE_WORKFLOW_STEPS.get(self.instance.status.identifier, [self.instance.status.identifier])
@@ -102,9 +103,10 @@ class ReportForm(CommonForm):
                     self.fields["assigned_user"].widget = HiddenInput()
 
     def save(self, *args, **kwargs):
+        print(self.errors)
         report = super().save(self, *args, **kwargs)
         if self.instance.pk and settings.SURICATE_WORKFLOW_ENABLED:
-            if self.old_status_identifier == 'filed' and 'assigned_user' in self.changed_data:
+            if self.old_status_identifier == 'filed' and self.old_supervisor != report.assigned_user:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
                 waiting_status = ReportStatus.objects.get(identifier='waiting')
@@ -112,10 +114,10 @@ class ReportForm(CommonForm):
                 report.save()
                 report.lock_in_suricate()
                 TimerEvent.objects.create(step=waiting_status, report=report)
-            if 'status' in self.changed_data or 'assigned_user' in self.changed_data:
+            if self.old_status_identifier != report.status.identifier or self.old_supervisor != report.assigned_user:
                 msg = self.cleaned_data.get('message_sentinel', "")
                 report.send_notifications_on_status_change(self.old_status_identifier, msg)
-            if 'status' in self.changed_data and self.old_status_identifier == 'solved_intervention':
+            if self.old_status_identifier != report.status.identifier and self.old_status_identifier == 'solved_intervention':
                 report.unlock_in_suricate()
             if 'geom' in self.changed_data:
                 report.change_position_in_suricate()
