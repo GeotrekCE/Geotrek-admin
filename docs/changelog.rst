@@ -7,7 +7,7 @@ CHANGELOG
 
 **Minor improvements**
 
-- Add only_filters filter api v2 for labels
+- Add `only_filters` filter api v2 for labels (#3002)
 
 **Bug fixes**
 
@@ -34,11 +34,11 @@ CHANGELOG
 
 **Minor improvements**
 
-- Show all infrastructures and signages on interventions
+- Show all infrastructures and signages on interventions (#2851)
 
 **Bug fixes**
 
-- Show trail and path on intervention
+- Show trail and path on intervention (#2851)
 - Remove duplicate id POI export (#2893)
 - Fix migration 2.77.0 publication
 
