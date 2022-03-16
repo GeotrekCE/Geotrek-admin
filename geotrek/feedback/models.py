@@ -89,23 +89,23 @@ class PendingSuricateAPIRequest(models.Model):
 
     def raise_sync_error_flag_on_report(self, uid):
         report = Report.objects.get(uid=uid)
-        report.sync_error = True
+        report.sync_errors += 1
         report.save()
 
     def remove_sync_error_flag_on_report(self, uid):
         report = Report.objects.get(uid=uid)
-        report.sync_error = False
+        report.sync_errors -= 1
         report.save()
 
     def save(self, *args, **kwargs):
-        # Set sync_error flag on report
-        if 'uid_alerte' in self.params:
+        # Set sync_errors flag on report
+        if 'uid_alerte' in self.params and self.pk is None:
             uid = json.loads(self.params)["uid_alerte"]
             self.raise_sync_error_flag_on_report(uid)
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        # Remove sync_error flag from report
+        # Remove sync_errors flag from report
         if 'uid_alerte' in self.params:
             uid = json.loads(self.params)["uid_alerte"]
             self.remove_sync_error_flag_on_report(uid)
@@ -184,8 +184,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         related_name="reports"
     )
     uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
-    sync_error = models.BooleanField(verbose_name=_("Synchronisation error"), default=False, help_text=_("Synchronisation with Suricate is currently pending due to connection problems"))
-    mail_error = models.BooleanField(verbose_name=_("Mail error"), default=False, help_text=_("A notification email could not be sent. Please contact an administrator"))
+    sync_errors = models.IntegerField(verbose_name=_("Synchronisation error"), default=0, help_text=_("Synchronisation with Suricate is currently pending due to connection problems"))
+    mail_errors = models.IntegerField(verbose_name=_("Mail error"), default=0, help_text=_("A notification email could not be sent. Please contact an administrator"))
 
     class Meta:
         verbose_name = _("Report")
@@ -558,8 +558,8 @@ class PendingEmail(models.Model):
     def save(self, *args, **kwargs):
         # Set mail_error flag on report
         report = self.report
-        if report:
-            report.mail_error = True
+        if report and self.pk is None:
+            report.mail_errors += 1
             report.save()
         super().save(*args, **kwargs)
 
@@ -567,7 +567,7 @@ class PendingEmail(models.Model):
         # Remove mail_error flag from report
         report = self.report
         if report:
-            report.mail_error = False
+            report.mail_errors -= 1
             report.save()
         super().delete(*args, **kwargs)
 

@@ -5,12 +5,12 @@
 {% block detailspanel %}
     {% suricate_workflow_enabled as suricate_workflow_enabled %}
     {% if suricate_workflow_enabled %}
-        {% if object.sync_error %}
+        {% if object.sync_errors > 0 %}
             <div class="alert alert-danger">
                 <strong>{% trans "Some data could not be forwarded to Suricate yet - Please come back later" %}</strong>
             </div>
         {% endif %}
-        {% if object.mail_error %}
+        {% if object.mail_errors > 0 %}
         <div class="alert alert-danger">
             <strong>{% trans "A notification email could not be sent. Please contact an administrator" %}</strong>
         </div>

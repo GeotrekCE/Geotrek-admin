@@ -22,6 +22,7 @@ CHANGELOG
 - Add editable predefined emails
 - Display only some reports depending on which user is logged in
 - Add City and District information to Report detail page
+- Alert user about synchronization problems in Suricate Workflow mode
 
 
 **Bug fixes**
