@@ -32,7 +32,18 @@
                     "texte": "Ce signalement a le statut \"En cours de traitement\" depuis 4 mois. Pensez à envoyer un message à la sentinelle, afin de la tenir informée de la situation. Merci.",
                     "id": 90224,
                     "type": "delai",
-                    "documents": []
+                    "documents": [
+                        {
+                            "nomfichier": "doc_3.jpg",
+                            "id": 31523,
+                            "url": "http://sentinelles-preprod.sportsdenature.fr/docs/alertes/64629/doc_3.jpg"
+                        },
+                        {
+                            "nomfichier": "doc_4.jpg",
+                            "id": 31524,
+                            "url": "http://sentinelles-preprod.sportsdenature.fr/docs/alertes/64629/doc_4.jpg"
+                        }
+                    ]
                 },
                 {
                     "date": "November, 06 2018 10:12:46",

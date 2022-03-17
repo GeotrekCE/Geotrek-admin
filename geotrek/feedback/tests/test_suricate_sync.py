@@ -180,7 +180,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
         self.assertEqual(AttachedMessage.objects.count(), 44)
-        self.assertEqual(Attachment.objects.count(), 4)
+        self.assertEqual(Attachment.objects.count(), 6)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject, "Geotrek - New reports from Suricate")
@@ -227,7 +227,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
         self.assertEqual(AttachedMessage.objects.count(), 44)
-        self.assertEqual(Attachment.objects.count(), 4)
+        self.assertEqual(Attachment.objects.count(), 6)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject, "Geotrek - New reports from Suricate")
@@ -253,20 +253,20 @@ class SuricateAPITests(SuricateTests):
         # Fail to download all images
         self.build_get_request_patch(mocked_get, cause_JPG_error=True)
         call_command("sync_suricate", verbosity=2)
-        self.assertEqual(Attachment.objects.count(), 4)
+        self.assertEqual(Attachment.objects.count(), 6)
         for atta in Attachment.objects.all():
             # All attachments are missing their image file
             self.assertFalse(atta.attachment_file.name)
         # Succesfully download all images
         self.build_get_request_patch(mocked_get, cause_JPG_error=False)
         call_command("sync_suricate", verbosity=2)
-        self.assertEqual(Attachment.objects.count(), 4)
+        self.assertEqual(Attachment.objects.count(), 6)
         for atta in Attachment.objects.all():
             # No attachments are missing their image file
             self.assertTrue(atta.attachment_file.name)
         # Succesfully download all images a second time to cover "skip file" case
         call_command("sync_suricate", verbosity=2)
-        self.assertEqual(Attachment.objects.count(), 4)
+        self.assertEqual(Attachment.objects.count(), 6)
         for atta in Attachment.objects.all():
             # No attachments are missing their image file
             self.assertTrue(atta.attachment_file.name)

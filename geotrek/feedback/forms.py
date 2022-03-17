@@ -103,10 +103,9 @@ class ReportForm(CommonForm):
                     self.fields["assigned_user"].widget = HiddenInput()
 
     def save(self, *args, **kwargs):
-        print(self.errors)
         report = super().save(self, *args, **kwargs)
         if self.instance.pk and settings.SURICATE_WORKFLOW_ENABLED:
-            if self.old_status_identifier == 'filed' and self.old_supervisor != report.assigned_user:
+            if self.old_status_identifier == 'filed' and report.assigned_user and self.old_supervisor != report.assigned_user:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
                 waiting_status = ReportStatus.objects.get(identifier='waiting')
