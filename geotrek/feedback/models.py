@@ -622,9 +622,12 @@ class WorkflowManager(models.Model):
         message = render_to_string("feedback/cloture_email.html", {"report": report})
         self.try_send_email(subject, message, report)
 
-    def notify_new_reports(self):
+    def notify_new_reports(self, reports):
+        reports_urls = []
+        for report in Report.objects.filter(pk__in=reports):
+            reports_urls.append(report.full_url)
         subject = _("Geotrek - New reports from Suricate")
-        message = render_to_string("feedback/reports_email.html")
+        message = render_to_string("feedback/reports_email.html", {"reports_urls": reports_urls})
         self.try_send_email(subject, message)
 
 
