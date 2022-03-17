@@ -98,8 +98,14 @@ class ReportForm(CommonForm):
             else:
                 # On new reports
                 self.fields["status"].widget = HiddenInput()
+                self.fields["email"].required = True
+                self.fields["comment"].required = True
+                self.fields["activity"].required = True
+                self.fields["category"].required = True
+                self.fields["problem_magnitude"].required = True
                 if settings.SURICATE_WORKFLOW_ENABLED:
                     self.old_status_identifier = None
+                    self.old_supervisor = None
                     self.fields["assigned_user"].widget = HiddenInput()
 
     def save(self, *args, **kwargs):
