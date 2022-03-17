@@ -56,7 +56,7 @@ json_test_sport_practice_2 = {
 
 json_test_species = {
     "count": 2,
-    "next": None,
+    "next": "next_page",
     "previous": None,
     "results": [
         {
@@ -174,13 +174,19 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_create_with_practice(self, mocked):
+        self.page = 1
+
         def side_effect(url, allow_redirects, params=None):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
                 response.json = lambda: json_test_sport_practice_2
             else:
-                response.json = lambda: json_test_species
+                if self.page == 1:
+                    response.json = lambda: json_test_species
+                    self.page += 1
+                else:
+                    response.json = lambda: json_test_species_page_2
             return response
         mocked.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithPracticeParser', verbosity=0)
