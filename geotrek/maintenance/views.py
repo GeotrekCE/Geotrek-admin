@@ -145,6 +145,17 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # If deletion is allowed
+        if kwargs['can_delete']:
+            intervention = self.get_object()
+            # Disallow deletion if this intervention is part of Suricate Workflow
+            not_workflow = not(settings.SURICATE_WORKFLOW_ENABLED)
+            not_report = not(intervention.target and intervention.target.__class__.__name__ == "Report")
+            kwargs["can_delete"] = not_workflow or not_report
+        return kwargs
+
 
 class InterventionDelete(MapEntityDelete):
     model = Intervention

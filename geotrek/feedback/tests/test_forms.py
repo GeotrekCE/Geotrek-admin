@@ -215,7 +215,6 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
 
     @test_for_workflow_mode
-    @override_settings()
     def test_workflow_program_step(self):
         # When creating an intervention for a report
         user = SuperUserFactory(username="admin", password="dadadad")

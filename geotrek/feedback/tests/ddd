@@ -1,0 +1,177 @@
+ssertionError: ('\'disabled delete\' not found in \'\\n
+<!DOCTYPE html>\\n<html>\\n
+
+<head>\\n
+    <!-- version 2.77.2+dev -->\\n\\n\\n <title>Geotrek</title>\\n
+    <meta name="viewport" content="width=device-width,initial-scale=1">\\n
+    <meta charset="UTF-8">\\n
+    <link rel="icon" type="image/png" href="/static/images/favicon.png" />\\n\\n \\n \\n
+    <link rel="stylesheet" href="/static/mapentity/vendor/bootstrap-4.6.0/css/bootstrap.min.css" />\\n
+    <link rel="stylesheet" type="text/css"
+        href="/static/mapentity/vendor/DataTables-1.10.23/css/dataTables.bootstrap4.min.css">\\n
+    <link rel="stylesheet" type="text/css"
+        href="/static/mapentity/vendor/bootstrap-datepicker-1.9.0/css/bootstrap-datepicker.min.css">\\n \\n
+    <link rel="stylesheet" type="text/css"
+        href="/static/mapentity/vendor/bootstrap-icons-1.2.2/font/bootstrap-icons.css">\\n
+    <link rel="stylesheet" type="text/css" href="/static/mapentity/vendor/chosen-1.8.7/chosen.css">\\n \\n
+    <link rel="stylesheet" href="/static/leaflet/leaflet.css" />\\n
+    <!--[if lte IE 8]>\\n    <link rel="stylesheet" href="/static/leaflet/leaflet.ie.css" />\\n<![endif]-->\\n<style>
+        .leaflet-container-default {
+            min-height: 300px;
+        }
+    </style>\\n\\n \\n
+    <link rel="stylesheet" href="/static/mapentity/Leaflet.label/dist/leaflet.label.css" type="text/css" />\\n \\n
+    <link rel="stylesheet" href="/static/leaflet/draw/leaflet.draw.css" type="text/css" />\\n \\n
+    <link rel="stylesheet" href="/static/mapentity/Leaflet.MeasureControl/leaflet.measurecontrol.css" type="text/css" />
+    \\n \\n
+    <link rel="stylesheet" href="/static/mapentity/leaflet.fullscreen/Control.FullScreen.css" type="text/css" />\\n \\n
+    <link rel="stylesheet" href="/static/mapentity/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.css"
+        type="text/css" />\\n \\n\\n\\n\\n <style>
+        \\n \\n \\n .map-error {
+            border: 0px;
+        }
+
+        \\n \\n
+    </style>\\n
+    <link rel="stylesheet" href="/static/mapentity/style.css" />\\n\\n \\n\\n
+    <link rel="stylesheet" href="/static/common/style.css" />\\n\\n\\n
+    <link rel="stylesheet" href="/static/altimetry/style.css" />\\n\\n\\n
+    <link rel="stylesheet" href="/static/core/style.css" />\\n\\n\\n
+    <link rel="stylesheet" href="/static/infrastructure/style.css" />\\n\\n\\n
+    <link rel="stylesheet" href="/static/signage/style.css" />\\n\\n\\n
+    <link rel="stylesheet" href="/static/maintenance/style.css" />\\n\\n\\n
+    <link rel="stylesheet" href="/static/land/style.css" />\\n\\n\\n
+    <link rel="stylesheet" href="/static/trekking/css/style.css" />\\n
+    <link rel="stylesheet" href="/static/common/css/points_reference.css" />\\n\\n\\n
+    <link rel="stylesheet" href="/static/tourism/style.css" />\\n\\n\\n\\n
+    <link rel="stylesheet" href="/static/common/css/points_reference.css" />\\n\\n\\n \\n\\n \\n
+    <script type="text/javascript" src="/static/mapentity/vendor/jquery/jquery-1.9.1.min.js"></script>\\n
+    \\n\\n\\n\\n\\n
+</head>\\n
+
+<body data-viewname="" \\n data-appname="" \\n data-modelname="" \\n data-objectsname="" \\n data-pk="">\\n\\n\\n\\n \\n
+    \\n \\n\\n<nav class="navbar fixed-top navbar-expand-sm navbar-light bg-white">\\n\\n <div class="d-flex">\\n <ul
+                class="navbar-nav mr-2">\\n \\n </ul>\\n </div>\\n\\n <button class="navbar-toggler" type="button" \\n
+            data-toggle="collapse" data-target="#navbarToggler" \\n aria-controls="navbarToggler" aria-expanded="false"
+            aria-label="Toggle navigation history">\\n <span class="navbar-toggler-icon"></span>\\n </button>\\n\\n <div
+            class="collapse navbar-collapse" id="navbarToggler">\\n\\n <ul id="historylist" class="navbar-nav ">\\n \\n
+                \\n \\n </ul>\\n\\n <ul class="navbar-nav user-menu">\\n \\n </ul>\\n\\n </div>\\n\\n</nav>\\n\\n \\n\\n
+    \\n<h1>Cette page n’a pas été trouvée</h1>\\n\\n \\n\\n\\n \\n\\n \\n \\n\\n \\n
+    <script src="/api/settings.json?callback=window.SETTINGS%3D"></script>\\n \\n \\n\\n \\n
+    <script type="text/javascript" src="/static/mapentity/vendor/bootstrap-4.6.0/js/bootstrap.bundle.min.js"></script>
+    \\n
+    <script type="text/javascript"
+        src="/static/mapentity/vendor/bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.min.js"></script>\\n \\n
+    <script src="/static/mapentity/jquery.hoverIntent.js"></script>\\n
+    <script src="/static/paperclip/bootstrap-4-confirm.js"></script>\\n \\n \\n \\n
+    <script type="text/javascript"
+        src="/static/mapentity/vendor/bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.fr.min.js"
+        charset="UTF-8"></script>\\n \\n
+    <script type="text/javascript"
+        src="/static/mapentity/vendor/bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.it.min.js"
+        charset="UTF-8"></script>\\n \\n
+    <script type="text/javascript"
+        src="/static/mapentity/vendor/bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.es.min.js"
+        charset="UTF-8"></script>\\n \\n\\n \\n\\n\\n
+    <script src="/static/leaflet/leaflet.js" type="text/javascript"></script>\\n\\n\\n\\n \\n
+    <script src="/static/mapentity/Leaflet.OverIntent/leaflet.overintent.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/Leaflet.label/dist/leaflet.label.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/paperclip/spin.min.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/Leaflet.Spin/leaflet.spin.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/RTree/src/rtree.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/Leaflet.LayerIndex/leaflet.layerindex.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/togeojson/togeojson.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/Leaflet.FileLayer/leaflet.filelayer.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/Leaflet.GeometryUtil/dist/leaflet.geometryutil.js" type="text/javascript"></script>
+    \\n \\n
+    <script src="/static/leaflet/draw/leaflet.draw.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/leaflet/leaflet.extras.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/leaflet/leaflet.forms.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/Leaflet.Snap/leaflet.snap.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/Leaflet.MeasureControl/leaflet.measurecontrol.js" type="text/javascript"></script>\\n
+    \\n
+    <script src="/static/mapentity/leaflet.fullscreen/Control.FullScreen.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.js"
+        type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/mapentity.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/mapentity/mapentity.forms.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/core/leaflet.lineextremities.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/core/leaflet.textpath.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/common/points_reference.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/trekking/parking_location.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/core/geotrek.forms.snap.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/core/geotrek.forms.topology.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/core/dijkstra.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/core/multipath.js" type="text/javascript"></script>\\n \\n
+    <script src="/static/core/topology_helper.js" type="text/javascript"></script>\\n \\n\\n
+    <script src="/static/leaflet/leaflet.extras.js" type="text/javascript"></script>\\n
+    <script
+        type="text/javascript">\\n    \\nL.drawLocal = { \\n    draw: { \\n        toolbar: { \\n            actions: { \\n                title: "Annuler le dessin", \\n                text: "Annuler"\\n }, \\n            undo: { \\n                title: "Supprimer le dernier point dessiné", \\n                text: "Supprimer le dernier point"\\n }, \\n            buttons: { \\n                polyline: "Dessiner une ligne", \\n                polygon: "Dessiner un polygone", \\n                rectangle: "Dessiner un rectangle", \\n                circle: "Dessiner un cercle", \\n                circlemarker: "Dessiner un cercle", \\n                marker: "Draw a circlemarker"\\n }\\n }, \\n        handlers: { \\n            circle: { \\n                tooltip: { \\n                    start: "Cliquer et glisser pour dessiner le cercle."\\n }\\n }, \\n            circlemarker: { \\n                tooltip: { \\n                    start: "Click and drag to draw circlemarker."\\n }\\n }, \\n            marker: { \\n                tooltip: { \\n                    start: "Cliquer sur la carte pour placer le point."\\n }\\n }, \\n            polygon: { \\n                tooltip: { \\n                    start: "Cliquer pour commencer le dessin de la forme.", \\n                    cont: "Cliquer pour continuer le dessin de la forme.", \\n                    end: "Cliquer le premier point pour fermer la forme"\\n }\\n }, \\n            polyline: { \\n                error: "<strong>Erreur:</strong> les segments ne peuvent se croiser!", \\n                tooltip: { \\n                    start: "Cliquer pour commencer le dessin de la ligne.", \\n                    cont: "Cliquer pour continuer le dessin de la ligne.", \\n                    end: "Cliquer sur le dernier point pour terminer la ligne."\\n }\\n }, \\n            rectangle: { \\n                tooltip: { \\n                    start: "Cliquer et glisser pour dessiner le rectangle."\\n }\\n }, \\n            simpleshape: { \\n                tooltip: { \\n                    end: "Relâcher la souris pour terminer le dessin."\\n }\\n }\\n }\\n }, \\n    edit: { \\n        toolbar: { \\n            actions: { \\n                save: { \\n                    title: "Sauvegarder les changements.", \\n                    text: "Enregistrer"\\n }, \\n                cancel: { \\n                    title: "Annuler l\\\'édition, annule tous les changements.", \\n                    text: "Annuler"\\n }\\n }, \\n            buttons: { \\n                edit: "Éditer les objets", \\n                editDisabled: "Aucun objet à éditer", \\n                remove: "Supprimer des objets", \\n                removeDisabled: "Aucun objet à supprimer."\\n }\\n }, \\n        handlers: { \\n            edit: { \\n                tooltip: { \\n                    text: "Déplacer les poignées ou marqueurs pour éditer la forme.", \\n                    subtext: "Cliquer sur annuler pour annuler les changements."\\n }\\n }, \\n            remove: { \\n                tooltip: { \\n                    text: "Cliquer sur une forme pour la supprimer"\\n }\\n }\\n }\\n }\\n }; \\n    L.Control.ResetView.TITLE = "Réinitialiser la vue"; \\n    L.Control.ResetView.ICON = "url(/static/leaflet/images/reset-view.png)"; \\n    \\n</script>
+    \\n\\n\\n
+    <script type="text/javascript" src="/static/mapentity/mapentity.helpers.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/mapentity.views.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/mapentity.history.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/mapentity.map.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/mapentity.context.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/mapentity.filter.js"></script>\\n\\n
+    <script
+        type="text/javascript">\\n            L.Icon.Default.imagePath = "/static/leaflet/images/"; \\n            L.Control.MeasureControl.TITLE = "Mesurer les distances"; \\n            L.Control.Screenshot.TITLE = "Sauvegarder l\\\'image"; \\n            L.Control.FileLayerLoad.LABEL = \\\'<i class="bi bi-folder2-open"></i>\\\';\\n            L.Control.FileLayerLoad.TITLE = "Charger un fichier local (GPX, KML, GeoJSON)";\\n            L.GeometryField.unsavedText = "La géométrie n\\\'a pas été sauvegardée";\\n\\n            MapEntity.i18n = {\\n              \\\'Objects\\\': "Objets",\\n              \\\'Search\\\': "Rechercher",\\n              \\\'results\\\': "résultats",\\n              \\\'Current criteria\\\': "Critères choisis",\\n              \\\'No filter\\\': "Aucun filtre",\\n            };\\n        </script>
+    \\n\\n
+    <script type="text/javascript" src="/static/mapentity/jquery.deserialize.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/vendor/chosen-1.8.7/chosen.jquery.min.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/dataTables/js/jquery.dataTables.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/dataTables/js/dataTables.ajax_list.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/dataTables/js/dataTables.plugins.js"></script>\\n\\n
+    <script type="text/javascript" src="/static/mapentity/leaflet-objectslayer.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/leaflet-serializers.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/leaflet-datatables.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/leaflet.informationcontrol.js"></script>\\n
+    <script type="text/javascript" src="/static/mapentity/leaflet.enumeration.js"></script>\\n\\n
+    <!-- Forms -->\\n
+    <script src="/static/mapentity/RelatedObjectLookups.js"></script>\\n
+    <script src="/static/mapentity/jquery.formset-patched.js"></script>\\n\\n \\n\\n\\n\\n
+    <script type="text/javascript" src="/static/tourism/main.js"></script>\\n\\n\\n\\n
+    <script type="text/javascript" src="/static/sensitivity/main.js"></script>\\n\\n\\n\\n\\n
+    <script type="text/javascript" src="/static/outdoor/main.js"></script>\\n\\n\\n\\n \\n\\n \\n
+    <script type="text/javascript" src="/static/common/main.js"></script>\\n\\n
+    <script
+        type="text/javascript">\\n    MapEntity.i18n[\\\'Paths\\\'] = "Tronçons";\\n\\n    window.SETTINGS.urls[\\\'path_layer\\\'] = "/api/path/path.geojson";\\n    window.SETTINGS.urls[\\\'path_graph\\\'] = "/api/graph.json";\\n</script>
+    \\n
+    <script type="text/javascript" src="/static/core/main.js"></script>\\n\\n\\n
+    <script type="text/javascript">\\n    MapEntity.i18n[\\\'Infrastructures\\\'] = "Aménagements";\\n</script>\\n\\n\\n
+    <script type="text/javascript">\\n    MapEntity.i18n[\\\'Signages\\\'] = "Signalétiques";\\n</script>\\n\\n
+    <script
+        type="text/javascript">\\n    MapEntity.i18n[\\\'Zoning\\\'] = "Zonage";\\n    MapEntity.i18n[\\\'Districts\\\'] = "Secteurs";\\n    MapEntity.i18n[\\\'Cities\\\'] = "Communes";\\n\\n    window.SETTINGS.urls[\\\'city_layer\\\'] = "/api/city/city.geojson";\\n    window.SETTINGS.urls[\\\'district_layer\\\'] = "/api/district/district.geojson";\\n\\n    \\n    window.SETTINGS.map[\\\'restricted_area_types\\\'] = [];\\n</script>
+    \\n
+    <script type="text/javascript" src="/static/zoning/main.js"></script>\\n
+    <script type="application/json" id="restricted_areas_by_type">\\n    \\n    {}\\n</script>\\n
+    <script type="application/json" id="all_restricted_areas">\\n    \\n    []\\n</script>\\n\\n
+    <script
+        type="text/javascript">\\n    MapEntity.i18n[\\\'Land edges\\\'] = "Types fonciers";\\n    MapEntity.i18n[\\\'Status\\\'] = "Statut";\\n    MapEntity.i18n[\\\'Land type\\\'] = "Type foncier";\\n    MapEntity.i18n[\\\'Physical type\\\'] = "Type de voie";\\n    MapEntity.i18n[\\\'Competence\\\'] = "Compétence";\\n    MapEntity.i18n[\\\'Signage management edge\\\'] = "Gestionnaire signalétique";\\n    MapEntity.i18n[\\\'Signage management edges\\\'] = "Gestionnaires signalétique";\\n    MapEntity.i18n[\\\'Work management edge\\\'] = "Gestionnaire travaux";\\n    MapEntity.i18n[\\\'Work management edges\\\'] = "Gestionnaires travaux";\\n    MapEntity.i18n[\\\'Land\\\'] = "Statuts";\\n\\n    window.SETTINGS.urls[\\\'landedge_layer\\\'] = "/api/landedge/landedge.geojson";\\n    window.SETTINGS.urls[\\\'physicaledge_layer\\\'] = "/api/physicaledge/physicaledge.geojson";\\n    window.SETTINGS.urls[\\\'competenceedge_layer\\\'] = "/api/competenceedge/competenceedge.geojson";\\n    window.SETTINGS.urls[\\\'signagemanagementedge_layer\\\'] = "/api/signagemanagementedge/signagemanagementedge.geojson";\\n    window.SETTINGS.urls[\\\'workmanagementedge_layer\\\'] = "/api/workmanagementedge/workmanagementedge.geojson";\\n</script>
+    \\n
+    <script type="text/javascript" src="/static/land/main.js"></script>\\n\\n\\n
+    <script type="text/javascript">\\n    MapEntity.i18n[\\\'Services\\\'] = "Services";\\n</script>\\n\\n\\n\\n\\n\\n
+    <script type="leaflet-template"
+        id="tourism-popup-template">\\n  <span class=title>Titre</span>: {title}<br/>\\n  <span class=title>Description</span>: {description}<br/>\\n  <span class=title>Site web</span>: {website}\\n</script>
+    \\n\\n
+    <script
+        type="text/javascript">\\n    MapEntity.i18n[\\\'Tourism\\\'] = "Tourisme";\\n    MapEntity.i18n[\\\'Data sources\\\'] = "Sources de données externes";\\n\\n    MapEntity.i18n[\\\'No result\\\'] = "Pas de résultat";\\n    MapEntity.i18n[\\\'Choose value(s)\\\'] = "Choisir valeur(s)";\\n\\n    MapEntity.i18n[\\\'touristiccontent\\\'] = "Contenu touristique";\\n    MapEntity.i18n[\\\'touristicevent\\\'] = "Évènement touristique";\\n\\n    window.SETTINGS.urls[\\\'touristiccontent_layer\\\'] = "/api/touristiccontent/touristiccontent.geojson";\\n    window.SETTINGS.urls[\\\'touristicevent_layer\\\'] = "/api/touristicevent/touristicevent.geojson";\\n</script>
+    \\n\\n\\n\\n\\n\\n\\n\\n\\n\\n
+    <script type="application/json"
+        id="status_ids_and_colors">\\n        \\n        {"1": {"id": "classified", "color": "#444444"}, "2": {"id": "ID 1", "color": "#444444"}}\\n    </script>
+    \\n\\n\\n\\n\\n
+    <script
+        type="text/javascript">\\n    MapEntity.i18n[\\\'Dives\\\'] = "Plongées";\\n    window.SETTINGS.urls[\\\'dive_layer\\\'] = "/api/dive/dive.geojson";\\n</script>
+    \\n
+    <script type="text/javascript" src="/static/diving/main.js"></script>\\n\\n
+    <script
+        type="text/javascript">\\n    MapEntity.i18n[\\\'Sensitivity\\\'] = "Sensibilité";\\n    MapEntity.i18n[\\\'sensitivearea\\\'] = "Zone de sensibilité";\\n    window.SETTINGS.urls[\\\'sensitivearea_layer\\\'] = "/api/sensitivearea/sensitivearea.geojson";\\n</script>
+    \\n\\n\\n\\n\\n\\n
+    <script
+        type="text/javascript">\\n    MapEntity.i18n[\\\'Outdoor\\\'] = "Outdoor";\\n    MapEntity.i18n[\\\'site\\\'] = "Site outdoor";\\n    MapEntity.i18n[\\\'course\\\'] = "Parcours outdoor";\\n\\n    window.SETTINGS.urls[\\\'site_layer\\\'] = "/api/site/site.geojson";\\n    window.SETTINGS.urls[\\\'course_layer\\\'] = "/api/course/course.geojson";\\n</script>
+    \\n\\n\\n\\n
+    <script type="application/json" id="all-ratings-scales">\\n        \\n        {}\\n    </script>\\n\\n\\n \\n\\n \\n
+    <input type="hidden" value="NO FORCED LAYER : []" />\\n \\n\\n\\n
+</body>\\n
+
+</html>\\n\\n\'', "Failed for 'Suricate Workflow' mode")
