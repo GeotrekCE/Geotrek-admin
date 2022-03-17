@@ -5,6 +5,10 @@ CHANGELOG
 2.77.2+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Add only_filters filter api v2 for labels
+
 **Bug fixes**
 
 -
