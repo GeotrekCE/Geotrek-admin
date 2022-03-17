@@ -7,7 +7,6 @@ from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core import mail
 from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
-from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils import translation
 from mapentity.tests.factories import SuperUserFactory
