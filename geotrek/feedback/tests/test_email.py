@@ -131,6 +131,7 @@ class TestPendingEmail(SuricateTests):
             self.assertRaises(Exception, report.notify_assigned_user("A nice and useful message"))
             mocked.error.assert_called_with("Email could not be sent to report's assigned user.")
             self.assertEquals(PendingEmail.objects.count(), 1)
+            report.refresh_from_db()
             self.assertEquals(1, report.mail_errors)
             pending_mail = PendingEmail.objects.first()
             self.assertEquals(pending_mail.recipient, report.assigned_user.email)
@@ -142,6 +143,7 @@ class TestPendingEmail(SuricateTests):
         with override_settings(EMAIL_BACKEND='geotrek.feedback.tests.test_email.FailingEmailBackend2'):
             management.call_command('retry_failed_requests_and_mails')
             self.assertEquals(PendingEmail.objects.count(), 1)
+            report.refresh_from_db()
             self.assertEquals(1, report.mail_errors)
             pending_mail.refresh_from_db()
             self.assertEquals(pending_mail.recipient, report.assigned_user.email)
