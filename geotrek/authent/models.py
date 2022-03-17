@@ -77,6 +77,7 @@ class UserProfile(StructureRelated):
     A custom user profile
     """
     user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
+    extended_username = models.CharField(blank=True, max_length=200, null=True, verbose_name='Extended username')
 
     class Meta:
         verbose_name = _("User's profile")
