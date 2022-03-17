@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.core.mail import mail_managers, send_mail
+from django.db.models import F
 from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -88,24 +89,22 @@ class PendingSuricateAPIRequest(models.Model):
     retries = models.IntegerField(blank=False, default=0)
 
     def raise_sync_error_flag_on_report(self, uid):
-        report = Report.objects.get(uid=uid)
-        report.sync_error = True
-        report.save()
+        report = Report.objects.filter(uid=uid)
+        report.update(sync_errors=F('sync_errors') + 1)
 
     def remove_sync_error_flag_on_report(self, uid):
-        report = Report.objects.get(uid=uid)
-        report.sync_error = False
-        report.save()
+        report = Report.objects.filter(uid=uid)
+        report.update(sync_errors=F('sync_errors') - 1)
 
     def save(self, *args, **kwargs):
-        # Set sync_error flag from report
-        if 'uid_alerte' in self.params:
+        # Set sync_errors flag on report
+        if 'uid_alerte' in self.params and self.pk is None:
             uid = json.loads(self.params)["uid_alerte"]
             self.raise_sync_error_flag_on_report(uid)
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        # Remove sync_error flag from report
+        # Remove sync_errors flag from report
         if 'uid_alerte' in self.params:
             uid = json.loads(self.params)["uid_alerte"]
             self.remove_sync_error_flag_on_report(uid)
@@ -184,7 +183,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         related_name="reports"
     )
     uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
-    sync_error = models.BooleanField(verbose_name=_("Synchronisation error"), default=False, help_text=_("Synchronisation with Suricate is currently pending due to connection problems"))
+    sync_errors = models.IntegerField(verbose_name=_("Synchronisation error"), default=0, help_text=_("Synchronisation with Suricate is currently pending due to connection problems"))
+    mail_errors = models.IntegerField(verbose_name=_("Mail error"), default=0, help_text=_("A notification email could not be sent. Please contact an administrator"))
 
     class Meta:
         verbose_name = _("Report")
@@ -553,6 +553,22 @@ class PendingEmail(models.Model):
         finally:
             if success == 1 and self.report:
                 self.report.attach_email(self.message, self.recipient)
+
+    def save(self, *args, **kwargs):
+        # Set mail_error flag on report
+        report = self.report
+        if report and self.pk is None:
+            report.mail_errors = F('mail_errors') + 1
+            report.save()
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Remove mail_error flag from report
+        report = self.report
+        if report:
+            report.mail_errors = F('mail_errors') - 1
+            report.save()
+        super().delete(*args, **kwargs)
 
 
 class WorkflowManager(models.Model):
