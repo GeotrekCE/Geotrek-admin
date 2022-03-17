@@ -364,6 +364,17 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertIn("disabled delete", response.content.decode("utf-8"))
 
+    @test_for_workflow_mode
+    def test_can_delete_closed_report_intervention(self):
+        self.client.force_login(user=self.admin)
+        report = self.intervention.target
+        report.status = feedback_factories.ReportStatusFactory(identifier='solved')
+        report.save()
+        response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("delete", response.content.decode("utf-8"))
+        self.assertNotIn("disabled delete", response.content.decode("utf-8"))
+
     @test_for_report_and_basic_modes
     @test_for_management_mode
     def test_can_delete_report_intervention(self):
