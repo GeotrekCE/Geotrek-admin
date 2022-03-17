@@ -81,6 +81,14 @@ json_test_species = {
             "create_datetime": "2017-11-29T14:49:01.317155Z",
             "radius": None
         },
+    ]
+}
+
+json_test_species_page_2 = {
+    "count": 2,
+    "next": None,
+    "previous": None,
+    "results": [
         {
             "id": 2,
             "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
@@ -112,23 +120,35 @@ json_test_species = {
 }
 
 
+class BiodivWithoutPracticeParser(BiodivParser):
+    size = 1
+
+
 class BiodivWithPracticeParser(BiodivParser):
     practices = "1"
+    size = 1
 
 
 class BiodivParserTests(TranslationResetMixin, TestCase):
     @mock.patch('requests.get')
     def test_create(self, mocked):
+        self.page = 1
+
         def side_effect(url, allow_redirects, params=None):
             response = requests.Response()
             response.status_code = 200
+
             if 'sportpractice' in url:
                 response.json = lambda: json_test_sport_practice
             else:
-                response.json = lambda: json_test_species
+                if self.page == 1:
+                    response.json = lambda: json_test_species
+                    self.page += 1
+                else:
+                    response.json = lambda: json_test_species_page_2
             return response
         mocked.side_effect = side_effect
-        call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
+        call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithPracticeParser', verbosity=0)
         practice = SportPractice.objects.get()
         species = Species.objects.first()
         area_1 = SensitiveArea.objects.first()
@@ -175,7 +195,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             return response
         mocked.side_effect = side_effect
         with self.assertRaisesRegex(CommandError, "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/"):
-            call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
+            call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithoutPracticeParser', verbosity=0)
 
     @mock.patch('requests.get')
     def test_status_code_404_practice(self, mocked):
@@ -190,23 +210,28 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             return response
         mocked.side_effect = side_effect
         with self.assertRaisesRegex(CommandError, "Failed to download https://rhododendron.com. HTTP status code 404"):
-            call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
+            call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithoutPracticeParser', verbosity=0)
 
     @mock.patch('requests.get')
     def test_create_no_id(self, mocked):
+        self.page = 1
+
         def side_effect(url, allow_redirects, params=None):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
                 response.json = lambda: json_test_sport_practice
             else:
-                json_test_species_without_id = json_test_species.copy()
+                if self.page == 1:
+                    json_test_species_without_id = json_test_species.copy()
+                    self.page += 1
+                else:
+                    json_test_species_without_id = json_test_species_page_2.copy()
                 json_test_species_without_id['results'][0]['species_id'] = None
-                json_test_species_without_id['results'][1]['species_id'] = None
                 response.json = lambda: json_test_species_without_id
             return response
         mocked.side_effect = side_effect
-        call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
+        call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithoutPracticeParser', verbosity=0)
         practice = SportPractice.objects.first()
         species = Species.objects.first()
         area = SensitiveArea.objects.first()
@@ -220,37 +245,47 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_create_species_url(self, mocked):
+        self.page = 1
+
         def side_effect(url, allow_redirects, params=None):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
                 response.json = lambda: json_test_sport_practice
             else:
-                json_test_species_without_id = json_test_species.copy()
+                if self.page == 1:
+                    json_test_species_without_id = json_test_species.copy()
+                    self.page += 1
+                else:
+                    json_test_species_without_id = json_test_species_page_2.copy()
                 json_test_species_without_id['results'][0]['info_url'] = "toto.com"
-                json_test_species_without_id['results'][1]['info_url'] = "toto.com"
                 response.json = lambda: json_test_species_without_id
             return response
         mocked.side_effect = side_effect
-        call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
+        call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithoutPracticeParser', verbosity=0)
         species = Species.objects.first()
         self.assertEqual(species.url, "toto.com")
 
     @mock.patch('requests.get')
     def test_create_species_radius(self, mocked):
+        self.page = 1
+
         def side_effect(url, allow_redirects, params=None):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
                 response.json = lambda: json_test_sport_practice
             else:
-                json_test_species_without_id = json_test_species.copy()
+                if self.page == 1:
+                    json_test_species_without_id = json_test_species.copy()
+                    self.page += 1
+                else:
+                    json_test_species_without_id = json_test_species_page_2.copy()
                 json_test_species_without_id['results'][0]['radius'] = 5
-                json_test_species_without_id['results'][1]['radius'] = 5
                 response.json = lambda: json_test_species_without_id
             return response
         mocked.side_effect = side_effect
-        call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
+        call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithoutPracticeParser', verbosity=0)
         species = Species.objects.first()
         self.assertEqual(species.radius, 5)
 
