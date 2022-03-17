@@ -13,10 +13,6 @@ CHANGELOG
 
 -
 
-
-2.77.2     (2022-03-15)
------------------------
-
 **Suricate Workflow**  (#2366)
 - Add `assigned_user` field to Report model
 - Add `color` field to Report Status model
@@ -28,6 +24,9 @@ CHANGELOG
 - Add City and District information to Report detail page
 - Alert user about synchronization problems in Suricate Workflow mode
 
+
+2.77.2     (2022-03-15)
+-----------------------
 
 **Bug fixes**
 
