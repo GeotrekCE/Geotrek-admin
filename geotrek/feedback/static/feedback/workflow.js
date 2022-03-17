@@ -49,5 +49,6 @@ function display_predefined_email_in_email_field() {
     text = predefined_emails[selected]["text"]
     text = text.replace(/##supervisor##/g, resolved_intervention_info["user"])
     text = text.replace(/##intervention_date##/g, resolved_intervention_info["date"])
+    $('#id_message_supervisor').val(text)
     $('#id_message_sentinel').val(text)
 }
