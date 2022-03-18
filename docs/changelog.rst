@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.77.2+dev (XXXX-XX-XX)
+2.77.3     (2022-03-18)
 -----------------------
 
 **Minor improvements**
