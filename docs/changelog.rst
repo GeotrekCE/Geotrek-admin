@@ -8,10 +8,11 @@ CHANGELOG
 **Minor improvements**
 
 - Add `only_filters` filter api v2 for labels (#3002)
+- Add filter labels_exclude for api v2 allowing to exclude particular label on treks, 
 
 **Bug fixes**
 
--
+- Fix parser biodiv didn't collect all sensitive areas (#2966)
 
 
 2.77.2     (2022-03-15)

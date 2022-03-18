@@ -13,6 +13,7 @@ class BiodivParser(Parser):
     separator = None
     delete = True
     practices = None
+    next_url = ''
     fields = {
         'eid': 'id',
         'geom': 'geometry',
@@ -53,17 +54,21 @@ class BiodivParser(Parser):
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
         bbox.transform(4326)  # WGS84
-        url = self.url
-        url += '&in_bbox={}'.format(','.join([str(coord) for coord in bbox.extent]))
-        if self.practices:
-            url += '&practices={}'.format(','.join([str(practice) for practice in self.practices]))
-        response = self.request_or_retry(url)
+        self.next_url = self.url
+        while self.next_url:
+            params = {
+                'in_bbox': ','.join([str(coord) for coord in bbox.extent]),
+            }
+            if self.practices:
+                params['practices'] = ','.join([str(practice) for practice in self.practices])
+            response = self.request_or_retry(self.next_url, params=params)
 
-        self.root = response.json()
-        self.nb = int(self.root['count'])
+            self.root = response.json()
+            self.nb = int(self.root['count'])
 
-        for row in self.items:
-            yield row
+            for row in self.items:
+                yield row
+            self.next_url = self.root['next']
 
     def normalize_field_name(self, name):
         return name
