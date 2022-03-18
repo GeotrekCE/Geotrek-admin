@@ -13,6 +13,11 @@ CHANGELOG
 **Bug fixes**
 
 - Fix parser biodiv didn't collect all sensitive areas (#2966)
+- Fix attachments external links (#3001)
+
+**Maintenance**
+
+- Update to paperclip 2.4.1
 
 
 2.77.2     (2022-03-15)
