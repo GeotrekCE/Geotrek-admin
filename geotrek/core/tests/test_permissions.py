@@ -32,33 +32,24 @@ class PermissionDraftPath(TestCase):
         }
 
     def test_permission_view_add_path_with_draft_permission(self):
-        """
-        Check draft checkbox not visible if user have only add_path permission
-        """
-        self.client.force_login(user=self.user)
+        """ Check draft checkbox visible if user have add_draft_path permission """
+        user = UserFactory.create()
+        user.user_permissions.add(Permission.objects.get(codename='add_path'))
+        user.user_permissions.add(Permission.objects.get(codename='add_draft_path'))
 
-        response = self.client.get('/path/add/')
-        self.assertEqual(response.status_code, 302)
-
-        self.user.user_permissions.add(Permission.objects.get(codename='add_draft_path'))
-        self.client.login(username=self.user.username, password='booh')
+        self.client.force_login(user=user)
 
         response = self.client.get('/path/add/')
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, 'name="draft"')
+        self.assertContains(response, 'name="draft"')
 
     def test_permission_view_add_path_without_draft_permission(self):
-        """
-        Check draft checkbox not visible if user have only add_path permission
-        """
-        self.client.force_login(user=self.user)
+        """ Check draft checkbox not visible if user have only add_path permission"""
+        user = UserFactory.create()
 
-        response = self.client.get('/path/add/')
-        self.assertEqual(response.status_code, 302)
+        user.user_permissions.add(Permission.objects.get(codename='add_path'))
 
-        self.user.user_permissions.add(Permission.objects.get(codename='add_path'))
-        self.client.login(username=self.user.username, password='booh')
-
+        user.force_login(user=user)
         response = self.client.get('/path/add/')
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'name="draft"')
