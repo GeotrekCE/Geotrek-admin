@@ -11,7 +11,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix parser biodiv didn't collect all sensitive areas (#2966)
 
 
 2.77.2     (2022-03-15)
