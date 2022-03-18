@@ -200,7 +200,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
@@ -324,7 +324,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_uid, 'statut': 'solved', 'txt_changestatut': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_uid, 'statut': 'solved', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)

@@ -248,6 +248,7 @@ class SuricateMessenger:
             "uid_alerte": id_alert,
             "statut": new_status,
             "txt_changestatut": message,
+            "txt_changestatut_sentinelle": message,
             "check": check,
         }
         self.gestion_manager.post_or_retry_to_suricate("wsUpdateStatus", params)

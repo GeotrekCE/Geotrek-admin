@@ -232,7 +232,7 @@ class TestPendingAPIRequests(SuricateTests):
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.post")
-    def test_failed_post_get_on_management_api(self, mocked):
+    def test_failed_post_on_management_api(self, mocked):
         # Create a report with an UID - emulates report from Suricate
         uid = uuid.uuid4()
         geom = Point(700000, 6600000, srid=settings.SRID)
@@ -259,6 +259,7 @@ class TestPendingAPIRequests(SuricateTests):
             "id_origin": "geotrek",
             "statut": "waiting",
             "txt_changestatut": "a nice and polite message",
+            "txt_changestatut_sentinelle": "a nice and polite message",
             "check": check,
             "uid_alerte": str(uid)
         })
