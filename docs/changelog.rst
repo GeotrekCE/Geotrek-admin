@@ -8,6 +8,7 @@ CHANGELOG
 **Minor improvements**
 
 - Add only_filters filter api v2 for labels
+- Add filter labels_exclude for api v2 allowing to exclude particular label on treks, sites
 
 **Bug fixes**
 
