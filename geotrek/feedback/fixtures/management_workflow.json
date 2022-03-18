@@ -45,7 +45,7 @@
             "label": "R\u00e9solu",
             "label_en": "Resolved",
             "label_fr": "R\u00e9solu",
-            "identifier": "resolved",
+            "identifier": "solved",
             "color": "#999999"
         }
     }

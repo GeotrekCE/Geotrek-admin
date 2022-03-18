@@ -7,7 +7,6 @@ from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core import mail
 from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
-from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils import translation
 from mapentity.tests.factories import SuperUserFactory
@@ -215,7 +214,6 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
 
     @test_for_workflow_mode
-    @override_settings()
     def test_workflow_program_step(self):
         # When creating an intervention for a report
         user = SuperUserFactory(username="admin", password="dadadad")
