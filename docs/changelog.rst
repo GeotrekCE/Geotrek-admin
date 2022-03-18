@@ -7,7 +7,7 @@ CHANGELOG
 
 **Minor improvements**
 
--
+- Add block logo public templates
 
 
 2.77.3     (2022-03-18)

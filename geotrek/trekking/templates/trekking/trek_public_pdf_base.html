@@ -26,7 +26,9 @@
     {% block body %}
       <header>
         <div class="logo">
-          <img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}" alt="">
+          {% block logo %}
+            <img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}" alt="">
+          {% endblock %}
         </div>
         <div class="url">
           {% block url %}
