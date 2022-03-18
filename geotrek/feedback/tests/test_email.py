@@ -59,7 +59,7 @@ class EmailSendingTest(SuricateTests):
     @override_settings(EMAIL_BACKEND='geotrek.feedback.tests.test_email.FailingEmailBackend')
     @mock.patch("geotrek.feedback.models.logger")
     def test_email_failed_warns_and_is_stored_as_pending(self, mocked):
-        self.assertRaises(Exception, SuricateParser().send_workflow_manager_new_reports_email())
+        self.assertRaises(Exception, SuricateParser().send_workflow_manager_new_reports_email(set()))
         mocked.error.assert_called_with("Email could not be sent to Workflow Managers.")
         self.assertEquals(PendingEmail.objects.count(), 1)
         pending_mail = PendingEmail.objects.first()
@@ -96,7 +96,7 @@ class TestPendingEmail(SuricateTests):
     def test_email_failing_for_manager(self, mocked):
         # Email fails the first time
         with override_settings(EMAIL_BACKEND='geotrek.feedback.tests.test_email.FailingEmailBackend'):
-            self.assertRaises(Exception, SuricateParser().send_workflow_manager_new_reports_email())
+            self.assertRaises(Exception, SuricateParser().send_workflow_manager_new_reports_email(set()))
             mocked.error.assert_called_with("Email could not be sent to Workflow Managers.")
             self.assertEquals(PendingEmail.objects.count(), 1)
             pending_mail = PendingEmail.objects.first()

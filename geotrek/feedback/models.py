@@ -237,7 +237,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def comment_text(self):
         return html.unescape(self.comment)
 
-    def send_report_to_managers(self, template_name="feedback/report_email.html"):
+    def send_report_to_managers(self, template_name="feedback/report_email.txt"):
         subject = _("Feedback from {email}").format(email=self.email)
         message = render_to_string(template_name, {"report": self})
         mail_managers(subject, message, fail_silently=False)
@@ -330,12 +330,12 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def notify_assigned_user(self, message):
         subject = _("Geotrek - New report to process")
-        message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
+        message = render_to_string("feedback/affectation_email.txt", {"report": self, "message": message})
         self.try_send_email(subject, message)
 
     def notify_late_report(self, status_id):
         subject = _("Geotrek - Late report processsing")
-        message = render_to_string(f"feedback/late_{status_id}_email.html", {"report": self})
+        message = render_to_string(f"feedback/late_{status_id}_email.txt", {"report": self})
         self.try_send_email(subject, message)
 
     def lock_in_suricate(self):
@@ -619,12 +619,15 @@ class WorkflowManager(models.Model):
 
     def notify_report_to_solve(self, report):
         subject = _("Geotrek - A report must be solved")
-        message = render_to_string("feedback/cloture_email.html", {"report": report})
+        message = render_to_string("feedback/cloture_email.txt", {"report": report})
         self.try_send_email(subject, message, report)
 
-    def notify_new_reports(self):
+    def notify_new_reports(self, reports):
+        reports_urls = []
+        for report in Report.objects.filter(pk__in=reports):
+            reports_urls.append(report.full_url)
         subject = _("Geotrek - New reports from Suricate")
-        message = render_to_string("feedback/reports_email.html")
+        message = render_to_string("feedback/reports_email.txt", {"reports_urls": reports_urls})
         self.try_send_email(subject, message)
 
 

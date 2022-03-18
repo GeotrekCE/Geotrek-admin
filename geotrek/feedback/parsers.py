@@ -65,9 +65,9 @@ class SuricateParser(SuricateGestionRequestManager):
                     f"New status - id: {status['id']}, label: {status['libelle']}"
                 )
 
-    def send_workflow_manager_new_reports_email(self):
+    def send_workflow_manager_new_reports_email(self, reports):
         for manager in WorkflowManager.objects.all():
-            manager.notify_new_reports()
+            manager.notify_new_reports(reports)
 
     def parse_report(self, report):
         """
@@ -138,7 +138,7 @@ class SuricateParser(SuricateGestionRequestManager):
             # Parse messages attached to report
             self.create_messages(report["messages"], report_obj)
 
-            return created
+            return report_obj.pk if created else 0
 
     def before_get_alerts(self, verbosity=1):
         self.to_delete = set(Report.objects.values_list('pk', flat=True))
@@ -148,7 +148,7 @@ class SuricateParser(SuricateGestionRequestManager):
     def after_get_alerts(self, reports_created):
         Report.objects.filter(pk__in=self.to_delete).delete()
         if reports_created:
-            self.send_workflow_manager_new_reports_email()
+            self.send_workflow_manager_new_reports_email(reports_created)
 
     def get_alert(self, verbosity=1, pk=0):
         """
@@ -179,13 +179,14 @@ class SuricateParser(SuricateGestionRequestManager):
         data = self.get_suricate("wsGetAlerts")
         total_reports = len(data["alertes"])
         current_report = 1
-        reports_created = False
+        reports_created = set()
         # Parse alerts
         for report in data["alertes"]:
             if verbosity == 2:
                 logger.info(f"Processing report {report['uid']} - {current_report}/{total_reports} \n")
             report_created = self.parse_report(report)
-            reports_created = reports_created or report_created
+            if report_created:
+                reports_created.add(report_created)
             current_report += 1
         if verbosity >= 1:
             logger.info(f"Parsed {total_reports} reports from Suricate\n")
