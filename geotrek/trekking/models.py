@@ -7,7 +7,7 @@ from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Transform, LineLocatePoint
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db.models import F, Value
+from django.db.models import F
 from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse

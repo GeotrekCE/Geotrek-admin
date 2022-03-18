@@ -5,6 +5,13 @@ from django.core.mail import send_mail
 from django.urls.base import reverse
 from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
+from mapentity import views as mapentity_views
+from mapentity.views.generic import MapEntityCreate
+from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
@@ -14,13 +21,6 @@ from geotrek.feedback import models as feedback_models
 from geotrek.feedback import serializers as feedback_serializers
 from geotrek.feedback.filters import ReportFilterSet
 from geotrek.feedback.forms import ReportForm
-from mapentity import views as mapentity_views
-from mapentity.views.generic import MapEntityCreate
-from rest_framework.decorators import action
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
