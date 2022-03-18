@@ -49,7 +49,7 @@ class PermissionDraftPath(TestCase):
 
         user.user_permissions.add(Permission.objects.get(codename='add_path'))
 
-        user.force_login(user=user)
+        self.client.force_login(user=user)
         response = self.client.get('/path/add/')
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'name="draft"')
@@ -271,11 +271,11 @@ class PermissionDraftPath(TestCase):
         self.assertEqual(Path.objects.count(), 0)
 
     def test_save_path_with_only_add_draft_path(self):
-        """
-        Check save path without permission add_path save with draft=True
-        """
-        self.user.user_permissions.add(Permission.objects.get(codename='add_draft_path'))
-        self.client.force_login(user=self.user)
+        """ Check save path without permission add_path save with draft=True """
+        user = UserFactory.create()
+        user.user_permissions.add(Permission.objects.get(codename='add_draft_path'))
+
+        self.client.force_login(user=user)
 
         response = self.client.post('/path/add/', self.get_good_data())
         self.assertEqual(response.status_code, 302)
