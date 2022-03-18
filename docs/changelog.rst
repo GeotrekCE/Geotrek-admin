@@ -2,16 +2,30 @@
 CHANGELOG
 =========
 
-2.77.2+dev (XXXX-XX-XX)
+2.77.3+dev (XXXX-XX-XX)
 -----------------------
 
 **Minor improvements**
 
-- Add only_filters filter api v2 for labels
+-
+
+
+2.77.3     (2022-03-18)
+-----------------------
+
+**Minor improvements**
+
+- Add `only_filters` filter api v2 for labels (#3002)
+- Add filter labels_exclude for api v2 allowing to exclude particular label on treks, sites
 
 **Bug fixes**
 
--
+- Fix parser biodiv didn't collect all sensitive areas (#2966)
+- Fix attachments external links (#3001)
+
+**Maintenance**
+
+- Update to paperclip 2.4.1
 
 **Suricate Workflow**  (#2366)
 - Add `assigned_user` field to Report model
@@ -45,11 +59,11 @@ CHANGELOG
 
 **Minor improvements**
 
-- Show all infrastructures and signages on interventions
+- Show all infrastructures and signages on interventions (#2851)
 
 **Bug fixes**
 
-- Show trail and path on intervention
+- Show trail and path on intervention (#2851)
 - Remove duplicate id POI export (#2893)
 - Fix migration 2.77.0 publication
 

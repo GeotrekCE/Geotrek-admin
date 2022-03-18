@@ -837,6 +837,37 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
+    def test_trek_labels_exclude_filter(self):
+        response = self.get_trek_list({'labels_exclude': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        trek = trek_factory.TrekFactory.create()
+        label = common_factory.LabelFactory.create()
+        trek.labels.add(label, self.label)
+
+        response = self.get_trek_list({'labels_exclude': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        trek = trek_factory.TrekFactory.create()
+        label_2 = common_factory.LabelFactory.create()
+        trek.labels.add(label, label_2)
+
+        response = self.get_trek_list({'labels_exclude': f'{self.label.pk},{label.pk}'})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        response = self.get_trek_list({'labels_exclude': label_2.pk})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 20)
+
     def test_trek_city_filter(self):
         path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
         city3 = zoning_factory.CityFactory(code='03000',
@@ -3393,6 +3424,45 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         self.assertIn(self.site1.pk, all_ids)
         self.assertIn(self.site2.pk, all_ids)
         self.assertNotIn(self.site3.pk, all_ids)
+
+    def test_sites_labels_exclude_filter(self):
+        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        site_a = outdoor_factory.SiteFactory()
+        label = common_factory.LabelFactory.create()
+        site_a.labels.add(label, self.label1)
+
+        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        site_b = outdoor_factory.SiteFactory()
+        label_2 = common_factory.LabelFactory.create()
+        site_b.labels.add(label, label_2)
+
+        response = self.get_site_list({'labels_exclude': f'{self.label1.pk},{label.pk}'})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        response = self.get_site_list({'labels_exclude': label_2.pk})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 4)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site1.pk, self.site2.pk, self.site3.pk, site_a.pk})
 
 
 class CoursesTypesFilterTestCase(BaseApiTest):
