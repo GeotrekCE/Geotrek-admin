@@ -114,7 +114,7 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         element_not_published.published = False
         element_not_published.review = True
         element_not_published.save()
-        response = self.client.get(self.model.get_jsonlist_url())
+        response = self.client.get(self.model.get_datatablelist_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Waiting for publication')
 
