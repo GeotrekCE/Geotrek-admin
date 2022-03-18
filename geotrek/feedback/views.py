@@ -5,6 +5,8 @@ from django.core.mail import send_mail
 from django.urls.base import reverse
 from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
+
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -19,8 +21,6 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from geotrek.feedback.serializers import ReportGeojsonSerializer
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
@@ -111,8 +111,24 @@ class ReportViewSet(GeotrekMapentityViewSet):
             "activity", "category", "problem_magnitude", "status", "related_trek"
         ).prefetch_related("attachments")
 
-    @action(detail=False, methods=["post"], authentication_classes=[], parser_classes=[FormParser, MultiPartParser],
-            permission_classes=[AllowAny], serializer_class=ReportGeojsonSerializer)
+
+class ReportAPIViewSet(APIViewSet):
+    queryset = feedback_models.Report.objects.existing()\
+                              .select_related("activity", "category", "problem_magnitude", "status", "related_trek")\
+                              .prefetch_related("attachments")
+    parser_classes = [FormParser, MultiPartParser]
+    serializer_class = feedback_serializers.ReportAPISerializer
+    geojson_serializer_class = feedback_serializers.ReportAPIGeojsonSerializer
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.select_related(
+            "activity", "category", "problem_magnitude", "status", "related_trek"
+        )
+
+    @action(detail=False, methods=["post"])
     def report(self, request, lang=None):
         response = super().create(request)
         creator, created = get_user_model().objects.get_or_create(

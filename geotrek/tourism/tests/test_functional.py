@@ -8,7 +8,7 @@ import filecmp
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.authent.tests.factories import TrekkingManagerFactory
 from geotrek.common.tests.factories import AttachmentFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.tests.factories import (TouristicContentFactory,
@@ -20,7 +20,7 @@ from unittest.mock import patch
 import os
 
 
-class TouristicContentViewsTests(CommonTest):
+class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
     model = TouristicContent
     modelfactory = TouristicContentFactory
     userfactory = TrekkingManagerFactory
@@ -150,7 +150,7 @@ class TouristicContentViewsTests(CommonTest):
                              ['id', 'type1', 'type2', 'eid'])
 
 
-class TouristicEventViewsTests(CommonTest):
+class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
     userfactory = TrekkingManagerFactory

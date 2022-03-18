@@ -68,7 +68,7 @@ class SiteAPIGeojsonSerializer(GeoFeatureModelSerializer, SiteAPISerializer):
 
     class Meta(SiteAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = SiteSerializer.Meta.fields + ('api_geom', )
+        fields = SiteAPISerializer.Meta.fields + ('api_geom', )
 
 
 class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -108,4 +108,4 @@ class CourseAPIGeojsonSerializer(GeoFeatureModelSerializer, CourseAPISerializer)
 
     class Meta(CourseAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = CourseSerializer.Meta.fields + ('api_geom', )
+        fields = CourseAPISerializer.Meta.fields + ('api_geom', )

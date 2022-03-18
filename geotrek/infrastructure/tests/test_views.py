@@ -3,7 +3,7 @@ import datetime
 from django.conf import settings
 from django.test import TestCase
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
@@ -27,7 +27,7 @@ class InfrastructureTest(TestCase):
         self.assertCountEqual(p.infrastructures, [infra])
 
 
-class InfrastructureViewsTest(CommonTest):
+class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory

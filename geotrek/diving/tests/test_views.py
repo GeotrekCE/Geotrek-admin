@@ -3,14 +3,14 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.tests import CommonLiveTest, CommonTest
+from geotrek.common.tests import CommonLiveTest, CommonTest, GeotrekAPITestCase
 from geotrek.diving.models import Dive, Level
 from geotrek.diving.tests.factories import DiveWithLevelsFactory, DiveFactory, DivingManagerFactory, PracticeFactory
 
 from mapentity.tests.factories import SuperUserFactory
 
 
-class DiveViewsTests(CommonTest):
+class DiveViewsTests(GeotrekAPITestCase, CommonTest):
     model = Dive
     modelfactory = DiveWithLevelsFactory
     userfactory = DivingManagerFactory

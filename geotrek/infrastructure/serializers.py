@@ -44,7 +44,7 @@ class InfrastructureAPISerializer(BasePublishableSerializerMixin):
     class Meta:
         model = infrastructure_models.Infrastructure
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', 'structure', 'name', 'type', ) + BasePublishableSerializerMixin.Meta.fields
+        fields = ('id', 'structure', 'name', 'type', 'accessibility') + BasePublishableSerializerMixin.Meta.fields
 
 
 class InfrastructureAPIGeojsonSerializer(GeoFeatureModelSerializer, InfrastructureAPISerializer):

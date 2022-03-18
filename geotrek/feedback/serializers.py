@@ -17,23 +17,28 @@ class ReportSerializer(rest_serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ReportGeojsonSerializer(GeoFeatureModelSerializer):
-    # Annotated geom field with API_SRID
-    api_geom = GeometryField(read_only=True, precision=7)
+class ReportAPISerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = feedback_models.Report
+        id_field = 'id'
+        fields = ('id', 'email', 'activity', 'comment', 'category',
+                  'status', 'problem_magnitude', 'related_trek',
+                  'geom')
+        extra_kwargs = {
+            'geom': {'write_only': True},
+        }
 
     def validate_geom(self, value):
         return GEOSGeometry(value, srid=4326)
 
-    class Meta:
-        model = feedback_models.Report
-        id_field = 'id'
+
+class ReportAPIGeojsonSerializer(GeoFeatureModelSerializer, ReportAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = GeometryField(read_only=True, precision=7)
+
+    class Meta(ReportAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = ('id', 'email', 'activity', 'comment', 'category',
-                  'status', 'problem_magnitude', 'related_trek',
-                  'geom', 'api_geom', )
-        extra_kwargs = {
-            'geom': {'write_only': True},
-        }
+        fields = ReportAPISerializer.Meta.fields + ('api_geom', )
 
 
 class ReportActivitySerializer(rest_serializers.ModelSerializer):

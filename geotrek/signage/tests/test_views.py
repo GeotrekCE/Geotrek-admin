@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.signage.models import Signage, Blade
@@ -29,7 +29,7 @@ class SignageTest(TestCase):
         self.assertCountEqual(p.signages, [sign])
 
 
-class BladeViewsTest(CommonTest):
+class BladeViewsTest(GeotrekAPITestCase, CommonTest):
     model = Blade
     modelfactory = BladeFactory
     userfactory = PathManagerFactory
@@ -187,7 +187,7 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(self.model.objects.first().structure, structure)
 
 
-class SignageViewsTest(CommonTest):
+class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     model = Signage
     modelfactory = SignageFactory
     userfactory = PathManagerFactory

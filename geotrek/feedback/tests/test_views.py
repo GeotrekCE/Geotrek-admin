@@ -12,7 +12,7 @@ from django.utils.module_loading import import_string
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
-from geotrek.common.tests import CommonTest, TranslationResetMixin
+from geotrek.common.tests import CommonTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factories
@@ -62,7 +62,7 @@ class ReportViewsetMailSend(TestCase):
         self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
 
 
-class ReportViewsTest(CommonTest):
+class ReportViewsTest(GeotrekAPITestCase, CommonTest):
     model = feedback_models.Report
     modelfactory = feedback_factories.ReportFactory
     userfactory = SuperUserFactory

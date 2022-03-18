@@ -2,38 +2,35 @@ import json
 import logging
 from collections import defaultdict
 
-from django.contrib.auth.decorators import permission_required
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from django.shortcuts import redirect
-from django.views.decorators.http import last_modified as cache_last_modified
-from django.views.decorators.cache import cache_control
-from django.views.generic import TemplateView
-from django.utils.translation import gettext as _
+from django.contrib.auth.decorators import permission_required
 from django.core.cache import caches
-from django.views.generic.detail import BaseDetailView
+from django.db.models import Sum
 from django.http import HttpResponseRedirect
-
+from django.http.response import HttpResponse, JsonResponse
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.views.decorators.cache import cache_control
+from django.views.decorators.http import last_modified as cache_last_modified
+from django.views.generic import TemplateView
+from django.views.generic.detail import BaseDetailView
 from mapentity.serializers import GPXSerializer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
                              MapEntityUpdate, MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin)
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.functions import Length
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
-from geotrek.core.models import AltimetryMixin
-
-from .models import Path, Trail, Topology
-from .forms import PathForm, TrailForm
-from .filters import PathFilterSet, TrailFilterSet
-from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from . import graph as graph_lib
-from django.http.response import HttpResponse, JsonResponse
-from django.contrib import messages
-from django.db.models import Sum
-from ..common.functions import Length
-from ..common.viewsets import GeotrekMapentityViewSet
+from .filters import PathFilterSet, TrailFilterSet
+from .forms import PathForm, TrailForm
+from .models import AltimetryMixin, Path, Trail, Topology
+from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
 
 logger = logging.getLogger(__name__)
 

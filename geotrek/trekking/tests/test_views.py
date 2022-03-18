@@ -26,7 +26,7 @@ from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
                                             RecordSourceFactory, TargetPortalFactory)
-from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
+from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -52,7 +52,7 @@ from geotrek.trekking import urls  # NOQA
 from .base import TrekkingManagerTest
 
 
-class POIViewsTest(CommonTest):
+class POIViewsTest(GeotrekAPITestCase, CommonTest):
     model = POI
     modelfactory = POIFactory
     userfactory = TrekkingManagerFactory
@@ -165,7 +165,7 @@ class POIViewsTest(CommonTest):
         self.assertEqual(response.status_code, 404)
 
 
-class TrekViewsTest(CommonTest):
+class TrekViewsTest(GeotrekAPITestCase, CommonTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
@@ -1362,7 +1362,7 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         self.assertContains(response, 'Published')
 
 
-class ServiceViewsTest(CommonTest):
+class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
     model = Service
     modelfactory = ServiceFactory
     userfactory = TrekkingManagerFactory

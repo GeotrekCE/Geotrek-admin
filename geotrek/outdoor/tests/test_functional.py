@@ -1,4 +1,4 @@
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
 from geotrek.authent.tests.factories import StructureFactory
@@ -7,7 +7,7 @@ from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
 
-class SiteViewsTests(CommonTest):
+class SiteViewsTests(GeotrekAPITestCase, CommonTest):
     model = Site
     modelfactory = SiteFactory
     userfactory = OutdoorManagerFactory
@@ -97,7 +97,7 @@ class SiteViewsTests(CommonTest):
                              ['id', 'orientation', 'ratings', 'period'])
 
 
-class CourseViewsTests(CommonTest):
+class CourseViewsTests(GeotrekAPITestCase, CommonTest):
     model = Course
     modelfactory = CourseFactory
     userfactory = OutdoorManagerFactory
