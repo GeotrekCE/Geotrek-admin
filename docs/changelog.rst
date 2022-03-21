@@ -7,7 +7,7 @@ CHANGELOG
 
 **Minor improvements**
 
--
+- Refer to Reports by a label instead of email addresses
 
 
 2.77.3     (2022-03-18)

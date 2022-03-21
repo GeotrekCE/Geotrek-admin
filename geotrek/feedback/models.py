@@ -98,19 +98,20 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         verbose_name_plural = _("Reports")
         ordering = ["-date_insert"]
 
+    @property
+    def label(self):
+        return f"{_('Report')} n°{self.pk}"
+
     def __str__(self):
-        if self.email:
-            return self.email
-        return "Anonymous report"
+        return self.label
 
     @property
-    def email_display(self):
-        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+    def id_display(self):
+        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                             self.get_detail_url(),
+                                                             self.label,
+                                                             self.label)
+        return s
 
     @property
     def full_url(self):
@@ -183,8 +184,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def name_display(self):
         s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
                                                              self.get_detail_url(),
-                                                             self.email,
-                                                             self.email)
+                                                             self.label,
+                                                             self.label)
         return s
 
     def distance(self, to_cls):

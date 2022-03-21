@@ -38,7 +38,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    mandatory_columns = ['id', 'email', 'activity']
+    mandatory_columns = ['id', 'id', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
 
 
