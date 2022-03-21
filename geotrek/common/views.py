@@ -201,47 +201,33 @@ class BookletMixin:
         return response
 
 
-class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
+class DocumentPortalMixin(object):
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+
         portal = self.request.GET.get('portal')
         if portal:
             suffix = suffix_for(self.template_name_suffix, "_pdf", "html")
+
             template_portal = smart_get_template_by_portal(self.model, portal, suffix)
             if template_portal:
                 self.template_name = template_portal
-            template_attribute_portal = smart_get_template_by_portal(self.model, portal,
-                                                                     suffix_for(self.template_name_suffix,
-                                                                                "_attributes", "html"))
-            if template_attribute_portal:
-                self.template_attributes = template_attribute_portal
+
             template_css_portal = smart_get_template_by_portal(self.model, portal,
                                                                suffix_for(self.template_name_suffix, "_pdf", "css"))
             if template_css_portal:
                 self.template_css = template_css_portal
+        context = super().get_context_data(**kwargs)
         return context
 
 
-class DocumentBookletPublic(PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
+class DocumentPublic(DocumentPortalMixin, PublicOrReadPermMixin, DocumentPublicMixin,
+                     mapentity_views.MapEntityDocumentWeasyprint):
+    pass
+
+
+class DocumentBookletPublic(DocumentPortalMixin, PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
                             mapentity_views.MapEntityDocumentWeasyprint):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        portal = self.request.GET.get('portal')
-        if portal:
-            suffix = suffix_for(self.template_name_suffix, "_pdf", "html")
-            template_portal = smart_get_template_by_portal(self.model, portal, suffix)
-            if template_portal:
-                self.template_name = template_portal
-            template_attribute_portal = smart_get_template_by_portal(self.model, portal,
-                                                                     suffix_for(self.template_name_suffix,
-                                                                                "_attributes", "html"))
-            if template_attribute_portal:
-                self.template_attributes = template_attribute_portal
-            template_css_portal = smart_get_template_by_portal(self.model, portal,
-                                                               suffix_for(self.template_name_suffix, "_pdf", "css"))
-            if template_css_portal:
-                self.template_css = template_css_portal
-        return context
+    pass
 
 
 class MarkupPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityMarkupWeasyprint):
