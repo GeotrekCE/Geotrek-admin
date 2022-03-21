@@ -225,11 +225,6 @@ class TestPendingAPIRequests(SuricateTests):
         management.call_command('retry_failed_requests_and_mails')
         self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
-    @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_failed_get_on_standard_api(self, mocked):
-        pass  # Todo when implemnting get_or_retry for synchronous calls
-
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_failed_post_on_management_api(self, mocked):
