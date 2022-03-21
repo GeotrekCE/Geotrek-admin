@@ -52,12 +52,9 @@ def resolved_intervention_info(report):
     if report:
         username = "'?'"
         intervention = report.report_interventions().first()
-        creation_entry = LogEntry.objects.filter(
-            content_type_id=intervention.get_content_type_id(),
-            object_id=intervention.pk
-        ).order_by('id').first()
-        if creation_entry and creation_entry.user:
-            user = creation_entry.user
+        authors = intervention.authors
+        if authors:
+            user = authors.last()  # oldest author is the one that created the intervention
             if user.profile and user.profile.extended_username:
                 username = user.profile.extended_username
             else:
