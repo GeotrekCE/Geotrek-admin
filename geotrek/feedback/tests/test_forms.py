@@ -205,7 +205,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsLockAlert?id_origin=geotrek&uid_alerte={self.filed_report.formatted_uid}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report.formatted_uid}&id_origin=geotrek&check={check}",
             auth=('', '')
         )
         # Assert user is notified
@@ -329,7 +329,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?id_origin=geotrek&uid_alerte={self.solved_intervention_report.formatted_uid}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.solved_intervention_report.formatted_uid}&id_origin=geotrek&check={check}",
             auth=('', '')
         )
 
@@ -353,6 +353,6 @@ class TestSuricateForms(SuricateWorkflowTests):
             (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.formatted_uid)).encode()
         ).hexdigest()
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?id_origin=geotrek&uid_alerte={self.filed_report_1.formatted_uid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_uid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
             auth=('', '')
         )

@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 import urllib.parse
@@ -44,16 +45,17 @@ class SuricateRequestManager:
 
     def get_from_suricate_no_integrity_check(self, endpoint, url_params={}):
         # Build ever-present URL parameter
-        url_params["id_origin"] = self.ID_ORIGIN
+        all_url_params = copy.deepcopy(url_params)
+        all_url_params["id_origin"] = self.ID_ORIGIN
         # Include alert ID in check when needed
         if "uid_alerte" in url_params:
             id_alert = str(url_params["uid_alerte"])
             check = md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()).hexdigest()
         else:
             check = self.CHECK_CLIENT
-        url_params["check"] = check
+        all_url_params["check"] = check
         # Add URL parameters
-        encoded_url_params = urllib.parse.urlencode(url_params)
+        encoded_url_params = urllib.parse.urlencode(all_url_params)
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.get(
