@@ -11,12 +11,13 @@ from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 from django.utils.text import format_lazy
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 
 from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
 from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.mixins import PublishableMixin
 from geotrek.common.utils.translation import get_translated_fields
 
 from .mixins.models import NoDeleteMixin
@@ -152,27 +153,31 @@ class CommonForm(MapEntityForm):
                 else:
                     self.check_structure(field, structure, name)
 
-        # If COMPLETENESS_MODE is 'error_on_publication', set completeness fields required
-        translated_fields = get_translated_fields(self._meta.model)
+        # If model is publishable or reviewable, check completeness fields
+        if issubclass(self._meta.model, PublishableMixin):
+            lang = get_language()
+            translated_fields = get_translated_fields(self._meta.model)
 
-        if 'published' in translated_fields and self.instance.any_published and settings.COMPLETENESS_LEVEL == 'error_on_publication':
-            completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
+            # If COMPLETENESS_MODE is 'error_on_publication', check publishable and set completeness fields required
+            if settings.COMPLETENESS_LEVEL == 'error_on_publication' \
+                    and ('published' in translated_fields or self.instance.any_published):
+                completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
 
-            if completeness_fields:
-                msg = _('This field is required to publish object.')
-                missing_fields = []
-                for field_required in completeness_fields:
-                    if field_required in translated_fields:
-                        field_required = f'{field_required}_fr'
-                    if not self.cleaned_data.get(field_required):
-                        self.add_error(field_required, msg)
-                        missing_fields.append(field_required)
+                if completeness_fields:
+                    msg = _('This field is required to publish object.')
+                    missing_fields = []
+                    for field_required in completeness_fields:
+                        if field_required in translated_fields:
+                            field_required = f'{field_required}_{lang}'
+                        if not self.cleaned_data.get(field_required):
+                            self.add_error(field_required, msg)
+                            missing_fields.append(field_required)
 
-                if missing_fields:
-                    raise ValidationError(
-                        _('Fields are missing to publish object: %(fields)s'),
-                        params={'fields': ', '.join(missing_fields)},
-                    )
+                    if missing_fields:
+                        raise ValidationError(
+                            _('Fields are missing to publish object: %(fields)s'),
+                            params={'fields': ', '.join(missing_fields)},
+                        )
 
         return self.cleaned_data
 
