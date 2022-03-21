@@ -56,12 +56,12 @@ class SuricateRequestManager:
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.get(
-                f"{self.URL}{endpoint}{origin_param}&{extra_url_params}{check}",
+                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
                 auth=self.AUTH,
             )
         else:
             response = requests.get(
-                f"{self.URL}{endpoint}{origin_param}&{extra_url_params}{check}",
+                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
             )
         return response
 
@@ -157,7 +157,7 @@ class SuricateStandardRequestManager(SuricateRequestManager):
             "PRIVATE_KEY_SERVER_CLIENT"
         ]
         self.CHECK_CLIENT = (
-            f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()).hexdigest()}"
+            f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER).encode()).hexdigest()}"
         )
         self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
 
