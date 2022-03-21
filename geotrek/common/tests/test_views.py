@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 from io import StringIO
 import shutil
@@ -32,21 +33,21 @@ class DocumentPublicPortalTest(TestCase):
         cls.user = UserFactory.create(username='homer', password='dooh')
 
     def init_temp_directory(self):
-        settings_template = settings.TEMPLATES
+        settings_template = deepcopy(settings.TEMPLATES)
 
         dirs = list(settings_template[1]['DIRS'])
-        temp_directory = tempfile.mkdtemp()
-        shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal'), temp_directory,
+        self.temp_directory = tempfile.mkdtemp()
+        shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal'), self.temp_directory,
                         dirs_exist_ok=True)
-        shutil.move(os.path.join(temp_directory, 'trekking', 'portal'), os.path.join(temp_directory, 'trekking',
-                                                                                     f'portal_{self.portal_1.pk}'))
-        dirs[0] = temp_directory
+        shutil.move(os.path.join(self.temp_directory, 'trekking', 'portal'),
+                    os.path.join(self.temp_directory, 'trekking', f'portal_{self.portal_1.pk}'))
+        dirs[0] = self.temp_directory
         new_dir_template = tuple(dirs)
         settings_template[1]['DIRS'] = new_dir_template
         return settings_template
 
     @mock.patch('mapentity.helpers.requests.get')
-    def test_trek_document__portal(self, mock_request_get):
+    def test_trek_document_portal(self, mock_request_get):
         mock_request_get.return_value.status_code = 200
         mock_request_get.return_value.content = b'xxx'
 
@@ -59,6 +60,23 @@ class DocumentPublicPortalTest(TestCase):
         self.assertTemplateUsed(response, template_name=f'trekking/portal_{self.portal_1.pk}/trek_public_pdf.css')
         self.assertTemplateUsed(response, template_name=f'trekking/portal_{self.portal_1.pk}/trek_public_pdf.html')
         self.assertTemplateUsed(response, template_name='trekking/trek_public_pdf.html')
+        self.assertTemplateUsed(response, template_name='trekking/trek_public_pdf_base.html')
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_trek_document_booklet_portal(self, mock_request_get):
+        mock_request_get.return_value.status_code = 200
+        mock_request_get.return_value.content = b'xxx'
+
+        with override_settings(TEMPLATES=self.init_temp_directory()):
+            response = self.client.get(reverse('trekking:trek_booklet_printable',
+                                               kwargs={'lang': 'fr', 'pk': self.trek.pk,
+                                                       'slug': self.trek.slug,
+                                                       }), {'portal': self.portal_1.pk})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response,
+                                template_name=f'trekking/portal_{self.portal_1.pk}/trek_public_booklet_pdf.html')
+        self.assertTemplateUsed(response, template_name='trekking/trek_public_booklet_pdf.html')
         self.assertTemplateUsed(response, template_name='trekking/trek_public_pdf_base.html')
 
     @mock.patch('mapentity.helpers.requests.get')
