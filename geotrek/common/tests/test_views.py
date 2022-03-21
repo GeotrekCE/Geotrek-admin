@@ -2,6 +2,7 @@ from copy import deepcopy
 import os
 from io import StringIO
 import shutil
+import sys
 import tempfile
 
 from unittest import mock
@@ -37,8 +38,11 @@ class DocumentPublicPortalTest(TestCase):
 
         dirs = list(settings_template[1]['DIRS'])
         self.temp_directory = tempfile.mkdtemp()
-        shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal'), self.temp_directory,
-                        dirs_exist_ok=True)
+        if sys.version_info[1] >= 8:
+            shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal'), self.temp_directory,
+                            dirs_exist_ok=True)
+        else:
+            shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal'), self.temp_directory)
         shutil.move(os.path.join(self.temp_directory, 'trekking', 'portal'),
                     os.path.join(self.temp_directory, 'trekking', f'portal_{self.portal_1.pk}'))
         dirs[0] = self.temp_directory
