@@ -8,7 +8,7 @@
   "baseUrl": "http://localhost:8000",
   "video": true,
   "requestTimeout": 60000,
-  "defaultCommandTimeout": 20000,
+  "defaultCommandTimeout": 60000,
   "pageLoadTimeout": 60000,
   "responseTimeout": 60000,
   "projectId": "ktpy7v"
