@@ -82,6 +82,7 @@ class TreckCompletenessTest(TestCase):
         cls.path = PathFactory.create()
         cls.trek = TrekFactory.create(structure=structure)
 
+    @override_settings(COMPLETENESS_LEVEL='error_on_publication')
     def test_completeness_error(self):
         """Test completeness fields on error if empty"""
         data = {
@@ -95,13 +96,12 @@ class TreckCompletenessTest(TestCase):
         else:
             data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
 
-        with override_settings(COMPLETENESS_MODE='error_on_publication'):
-            form = TrekForm(user=self.user, instance=self.trek, data=data)
+        form = TrekForm(user=self.user, instance=self.trek, data=data)
 
-            self.assertFalse(form.is_valid())
-            with self.assertRaisesRegex(ValidationError,
-                                        'Fields are missing to publish object: practice, departure_fr, duration, difficulty, description_teaser_fr'):
-                form.clean()
+        self.assertFalse(form.is_valid())
+        with self.assertRaisesRegex(ValidationError,
+                                    'Fields are missing to publish object: practice, departure_fr, duration, difficulty, description_teaser_fr'):
+            form.clean()
 
 
 class TrekItinerancyTestCase(TestCase):
