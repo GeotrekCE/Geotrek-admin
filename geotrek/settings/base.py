@@ -511,7 +511,7 @@ COMPLETENESS_FIELDS = {
 }
 
 # Set 'error_on_publication' to avoid publication without completeness fields
-COMPLETENESS_LEVEL = 'error_on_publication'
+COMPLETENESS_LEVEL = 'warning'
 
 EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.YoutubeBackend',
