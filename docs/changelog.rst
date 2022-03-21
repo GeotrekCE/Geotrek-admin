@@ -5,9 +5,17 @@ CHANGELOG
 2.77.3+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add pdf by portals in override templates directory
+
 **Minor improvements**
 
 - Add block logo in public PDF templates
+
+**Bug fixes**
+
+- Fix pdf booklet use the right template
 
 
 2.77.3     (2022-03-18)
