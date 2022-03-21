@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from geotrek.authent.tests.factories import UserFactory
+from geotrek.authent.tests.factories import UserFactory, StructureFactory
 from geotrek.core.tests.factories import PathFactory
 from .factories import TrekFactory, RatingFactory
 from ..models import OrderedTrekChild
@@ -78,8 +78,9 @@ class TreckCompletenessTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory.create()
+        structure = StructureFactory.create()
         cls.path = PathFactory.create()
-        cls.trek = TrekFactory()
+        cls.trek = TrekFactory.create(structure=structure)
 
     def test_completeness_error(self):
         """Test completeness fields on error if empty"""
@@ -96,8 +97,10 @@ class TreckCompletenessTest(TestCase):
 
         with override_settings(COMPLETENESS_MODE='error_on_publication'):
             form = TrekForm(user=self.user, instance=self.trek, data=data)
+
             self.assertFalse(form.is_valid())
-            with self.assertRaises(ValidationError, 'One of the rating scale used is not part of the practice chosen'):
+            with self.assertRaisesRegex(ValidationError,
+                                        'Fields are missing to publish object: practice, departure_fr, duration, difficulty, description_teaser_fr'):
                 form.clean()
 
 

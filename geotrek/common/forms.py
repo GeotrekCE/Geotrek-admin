@@ -132,47 +132,48 @@ class CommonForm(MapEntityForm):
 
     def clean(self):
         structure = self.cleaned_data.get('structure')
-        if not structure:
-            return self.cleaned_data
-
-        # Copy cleaned_data because self.add_error may remove an item
-        for name, field in self.cleaned_data.copy().items():
-            try:
-                modelfield = self.instance._meta.get_field(name)
-            except FieldDoesNotExist:
-                continue
-            if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
-                continue
-            model = modelfield.remote_field.model
-            if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
-                continue
-            if not model.check_structure_in_forms:
-                continue
-            if isinstance(field, QuerySet):
-                for value in field:
-                    self.check_structure(value, structure, name)
-            else:
-                self.check_structure(field, structure, name)
+        if structure:
+            # Copy cleaned_data because self.add_error may remove an item
+            for name, field in self.cleaned_data.copy().items():
+                try:
+                    modelfield = self.instance._meta.get_field(name)
+                except FieldDoesNotExist:
+                    continue
+                if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
+                    continue
+                model = modelfield.remote_field.model
+                if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
+                    continue
+                if not model.check_structure_in_forms:
+                    continue
+                if isinstance(field, QuerySet):
+                    for value in field:
+                        self.check_structure(value, structure, name)
+                else:
+                    self.check_structure(field, structure, name)
 
         # If COMPLETENESS_MODE is 'error_on_publication', set completeness fields required
         translated_fields = get_translated_fields(self._meta.model)
 
         if 'published' in translated_fields and self.instance.any_published and settings.COMPLETENESS_LEVEL == 'error_on_publication':
-            self.completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
-            if self.completeness_fields:
+            completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
+
+            if completeness_fields:
                 msg = _('This field is required to publish object.')
                 missing_fields = []
-                for field_required in self.completeness_fields:
+                for field_required in completeness_fields:
                     if field_required in translated_fields:
                         field_required = f'{field_required}_fr'
-                    if not self.cleaned_data[field_required]:
+                    if not self.cleaned_data.get(field_required):
                         self.add_error(field_required, msg)
                         missing_fields.append(field_required)
+
                 if missing_fields:
                     raise ValidationError(
                         _('Fields are missing to publish object: %(fields)s'),
                         params={'fields': ', '.join(missing_fields)},
                     )
+
         return self.cleaned_data
 
     def check_structure(self, obj, structure, name):
