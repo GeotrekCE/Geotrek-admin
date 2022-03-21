@@ -122,7 +122,7 @@ class ReportForm(CommonForm):
             if self.old_status_identifier != report.status.identifier or self.old_supervisor != report.assigned_user:
                 msg = self.cleaned_data.get('message_sentinel', "")
                 report.send_notifications_on_status_change(self.old_status_identifier, msg)
-            if self.old_status_identifier != report.status.identifier and self.old_status_identifier == 'solved_intervention':
+            if self.old_status_identifier != report.status.identifier and report.status.identifier in ['solved', 'classified']:
                 report.unlock_in_suricate()
             if 'geom' in self.changed_data:
                 report.change_position_in_suricate()
