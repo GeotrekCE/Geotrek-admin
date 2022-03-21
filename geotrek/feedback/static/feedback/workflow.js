@@ -40,6 +40,7 @@ function display_message_fields_on_supervisor_change() {
     $('#div_id_message_sentinel_predefined').prop('hidden', (selected == null));
     $('#div_id_message_supervisor').prop('hidden', (selected == null));
     $('#div_id_uses_timers').prop('hidden', (selected == null));
+    $('#div_id_status').prop('hidden', (selected != null));
 }
 
 function display_predefined_email_in_email_field() {
