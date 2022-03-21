@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.test import TestCase
+from django.utils.encoding import force_str
 
 from geotrek.authent.tests.factories import UserFactory, UserProfileFactory
 from geotrek.feedback.templatetags.feedback_tags import (
@@ -8,6 +9,8 @@ from geotrek.feedback.templatetags.feedback_tags import (
 from geotrek.feedback.tests.factories import (PredefinedEmailFactory,
                                               ReportStatusFactory)
 from geotrek.maintenance.tests.factories import ReportInterventionFactory
+
+from mapentity.models import LogEntry, ADDITION
 
 
 class TestFeedbackTemplateTags(TestCase):
@@ -20,16 +23,32 @@ class TestFeedbackTemplateTags(TestCase):
         UserProfileFactory.create(user=cls.user2)
         cls.solved_status = ReportStatusFactory(identifier='solved_intervention', color="#448654")
         cls.intervention_solved_1 = ReportInterventionFactory(date=datetime(year=1997, month=4, day=4).date())
+        # Simulate user created intervention
+        LogEntry.objects.log_action(
+            user_id=cls.user1.pk,
+            content_type_id=cls.intervention_solved_1.get_content_type_id(),
+            object_id=cls.intervention_solved_1.pk,
+            object_repr=force_str(cls.intervention_solved_1),
+            action_flag=ADDITION
+        )
+        # Intervention is linked to a solved report
         cls.report_1 = cls.intervention_solved_1.target
         cls.status_1 = cls.report_1.status
         cls.report_1.status = cls.solved_status
-        cls.report_1.assigned_user = cls.user1
         cls.report_1.save()
         cls.intervention_solved_2 = ReportInterventionFactory(date=datetime(year=1997, month=5, day=4).date())
+        # Simulate user created intervention
+        LogEntry.objects.log_action(
+            user_id=cls.user2.pk,
+            content_type_id=cls.intervention_solved_2.get_content_type_id(),
+            object_id=cls.intervention_solved_2.pk,
+            object_repr=force_str(cls.intervention_solved_2),
+            action_flag=ADDITION
+        )
+        # Intervention is linked to a solved report
         cls.report_2 = cls.intervention_solved_2.target
         cls.status_2 = cls.report_2.status
         cls.report_2.status = cls.solved_status
-        cls.report_2.assigned_user = cls.user2
         cls.report_2.save()
         cls.email1 = PredefinedEmailFactory()
         cls.email2 = PredefinedEmailFactory()

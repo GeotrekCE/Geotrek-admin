@@ -1,5 +1,6 @@
 import json
 from geotrek.feedback.models import PredefinedEmail, ReportStatus
+from mapentity.models import LogEntry
 from django import template
 from django.conf import settings
 
@@ -50,8 +51,13 @@ def predefined_emails():
 def resolved_intervention_info(report):
     if report:
         username = "'?'"
-        user = report.assigned_user
-        if user:
+        intervention = report.report_interventions().first()
+        creation_entry = LogEntry.objects.filter(
+            content_type_id=intervention.get_content_type_id(),
+            object_id=intervention.pk
+        ).order_by('id').first()
+        if creation_entry and creation_entry.user:
+            user = creation_entry.user
             if user.profile and user.profile.extended_username:
                 username = user.profile.extended_username
             else:
