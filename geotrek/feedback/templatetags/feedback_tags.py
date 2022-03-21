@@ -1,6 +1,5 @@
 import json
 from geotrek.feedback.models import PredefinedEmail, ReportStatus
-from mapentity.models import LogEntry
 from django import template
 from django.conf import settings
 
