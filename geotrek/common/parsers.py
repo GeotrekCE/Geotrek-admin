@@ -29,10 +29,10 @@ from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment
+from geotrek.common.utils.translation import get_translated_fields
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.fields import TranslationField
-    from modeltranslation.translator import translator, NotRegistered
 
 logger = logging.getLogger(__name__)
 
@@ -90,13 +90,7 @@ class Parser:
         self.user = user
         self.structure = user and user.profile.structure or default_structure()
         self.encoding = encoding
-
-        try:
-            mto = translator.get_options_for_model(self.model)
-        except NotRegistered:
-            self.translated_fields = []
-        else:
-            self.translated_fields = mto.fields.keys()
+        self.translated_fields = get_translated_fields(self.model)
 
         if self.fields is None:
             self.fields = {
