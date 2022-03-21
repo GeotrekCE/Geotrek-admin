@@ -275,3 +275,6 @@ msgstr "Mail en erreur"
 
 msgid "A notification email could not be sent. Please contact an administrator"
 msgstr "Un email de notification n'a pas pu être envoyé. Contactez un administrateur"
+
+msgid "Extended username"
+msgstr "Dénomination complète"

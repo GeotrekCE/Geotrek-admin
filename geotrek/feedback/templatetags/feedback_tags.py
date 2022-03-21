@@ -49,9 +49,17 @@ def predefined_emails():
 @register.simple_tag
 def resolved_intervention_info(report):
     if report:
+        username = "'?'"
+        user = report.assigned_user
+        if user:
+            if user.profile and user.profile.extended_username:
+                username = user.profile.extended_username
+            else:
+                username = user.username
+
         resolved_intervention_info = {
             "date": report.interventions.first().date.strftime("%d/%m/%Y") if report.interventions else None,
-            "user": report.assigned_user.username if report.assigned_user else None
+            "username": username
         }
         return json.dumps(resolved_intervention_info)
     return json.dumps({})
