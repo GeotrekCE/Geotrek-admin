@@ -44,24 +44,25 @@ class SuricateRequestManager:
 
     def get_from_suricate_no_integrity_check(self, endpoint, url_params={}):
         # Build ever-present URL parameter
-        origin_param = f"?id_origin={self.ID_ORIGIN}"
-        # Add specific URL parameters
-        extra_url_params = urllib.parse.urlencode(url_params)
+        url_params["id_origin"] = self.ID_ORIGIN
         # Include alert ID in check when needed
         if "uid_alerte" in url_params:
             id_alert = str(url_params["uid_alerte"])
-            check = f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()).hexdigest()}"
+            check = md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()).hexdigest()
         else:
             check = self.CHECK_CLIENT
+        url_params["check"] = check
+        # Add URL parameters
+        encoded_url_params = urllib.parse.urlencode(url_params)
         # If HTTP Auth required, add to request
         if self.USE_AUTH:
             response = requests.get(
-                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
+                f"{self.URL}{endpoint}?{encoded_url_params}",
                 auth=self.AUTH,
             )
         else:
             response = requests.get(
-                f"{self.URL}{endpoint}{origin_param}{extra_url_params}{check}",
+                f"{self.URL}{endpoint}?{encoded_url_params}",
             )
         return response
 
@@ -156,9 +157,7 @@ class SuricateStandardRequestManager(SuricateRequestManager):
         self.PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_REPORT_SETTINGS[
             "PRIVATE_KEY_SERVER_CLIENT"
         ]
-        self.CHECK_CLIENT = (
-            f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER).encode()).hexdigest()}"
-        )
+        self.CHECK_CLIENT = md5((self.PRIVATE_KEY_CLIENT_SERVER).encode()).hexdigest()
         self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
 
         self.USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
@@ -177,16 +176,14 @@ class SuricateGestionRequestManager(SuricateRequestManager):
         self.PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_MANAGEMENT_SETTINGS[
             "PRIVATE_KEY_SERVER_CLIENT"
         ]
-        self.CHECK_CLIENT = (
-            f"&check={md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()).hexdigest()}"
-        )
+        self.CHECK_CLIENT = md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()).hexdigest()
         self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
 
         self.USE_AUTH = "AUTH" in settings.SURICATE_MANAGEMENT_SETTINGS.keys()
         self.AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if self.USE_AUTH else None
 
 
-def test_suricate_connection():  # Todo update
+def test_suricate_connection():
     print("API Standard :")
     SuricateStandardRequestManager().test_suricate_connection()
     print("API Gestion :")
@@ -253,7 +250,6 @@ class SuricateMessenger:
         }
         self.gestion_manager.post_or_retry_to_suricate("wsUpdateStatus", params)
 
-    # TODO TEST ON PREPROD
     def update_gps(self, id_alert, gps_lat, gps_long):
         """Update report GPS coordinates on Suricate Rest API"""
         self.gestion_manager.get_or_retry_from_suricate(
