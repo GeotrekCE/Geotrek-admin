@@ -97,7 +97,6 @@ class CommonForm(MapEntityForm):
         if issubclass(model, NoDeleteMixin):
             field.queryset = field.queryset.filter(deleted=False)
 
-
     def __init__(self, *args, **kwargs):
 
         # Get settings key for this Form

@@ -509,7 +509,8 @@ COMPLETENESS_FIELDS = {
     'dive': ['practice', 'difficulty', 'description_teaser'],
 }
 
-COMPLETENESS_LEVEL = 'error_on_publication' # Set 'error_on_publication' to avoid publication without completeness fields
+# Set 'error_on_publication' to avoid publication without completeness fields
+COMPLETENESS_LEVEL = 'error_on_publication'
 
 EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.YoutubeBackend',

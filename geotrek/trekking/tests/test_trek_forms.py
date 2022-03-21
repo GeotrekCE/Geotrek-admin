@@ -103,6 +103,7 @@ class TreckCompletenessTest(TestCase):
                                         'Fields are missing to publish object: practice, departure_fr, duration, difficulty, description_teaser_fr'):
                 form.clean()
 
+
 class TrekItinerancyTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
