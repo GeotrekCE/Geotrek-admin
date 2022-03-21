@@ -984,7 +984,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               "label": "Hike",
                               "slug": "trek",
                               "type2_label": "Accessibility type",
-                              "pictogram": "/static/trekking/trek.svg"})
+                              "pictogram": "/static/trekking/img/trek.svg"})
 
     def test_sources(self):
         self.assertDictEqual(self.result['source'][0], {
