@@ -510,6 +510,7 @@ COMPLETENESS_FIELDS = {
 }
 
 # Set 'error_on_publication' to avoid publication without completeness fields
+# and 'error_on_review' if you want this fields to be required before sending to review.
 COMPLETENESS_LEVEL = 'warning'
 
 EMBED_VIDEO_BACKENDS = (

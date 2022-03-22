@@ -81,21 +81,36 @@ class TreckCompletenessTest(TestCase):
         structure = StructureFactory.create()
         cls.path = PathFactory.create()
         cls.trek = TrekFactory.create(structure=structure)
-
-    @override_settings(COMPLETENESS_LEVEL='error_on_publication')
-    @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
-    def test_completeness_error(self):
-        """Test completeness fields on error if empty"""
-        data = {
+        cls.data = {
             'name_en': 'Trek',
-            'published_en': True,
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            data['topology'] = json.dumps({"paths": [self.path.pk]})
+            cls.data['topology'] = json.dumps({"paths": [cls.path.pk]})
 
         else:
-            data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+            cls.data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+
+    @override_settings(COMPLETENESS_LEVEL='error_on_publication')
+    @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
+    def test_completeness_on_publish(self):
+        """Test completeness fields on error if empty"""
+        data = self.data
+        data['published_en'] = True
+
+        form = TrekForm(user=self.user, instance=self.trek, data=data)
+
+        self.assertFalse(form.is_valid())
+        with self.assertRaisesRegex(ValidationError,
+                                    'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
+            form.clean()
+
+    @override_settings(COMPLETENESS_LEVEL='error_on_review')
+    @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
+    def test_completeness_error_on_review(self):
+        """Test completeness fields on error if empty"""
+        data = self.data
+        data['review'] = True
 
         form = TrekForm(user=self.user, instance=self.trek, data=data)
 

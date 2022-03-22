@@ -133,6 +133,7 @@ class CommonForm(MapEntityForm):
 
     def clean(self):
         structure = self.cleaned_data.get('structure')
+
         if structure:
             # Copy cleaned_data because self.add_error may remove an item
             for name, field in self.cleaned_data.copy().items():
@@ -154,30 +155,22 @@ class CommonForm(MapEntityForm):
                     self.check_structure(field, structure, name)
 
         # If model is publishable or reviewable, check completeness fields
-        if issubclass(self._meta.model, PublishableMixin):
-            lang = get_language()
-            translated_fields = get_translated_fields(self._meta.model)
+        if self.completeness_fields_required:
+            completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
+            msg = _('This field is required.')
+            if settings.COMPLETENESS_LEVEL == 'error_on_publication':
+                msg = _('This field is required to publish object.')
+            elif settings.COMPLETENESS_LEVEL == 'error_on_review':
+                msg = _('This field is required to review object.')
+            missing_fields = self.get_missing_completeness_fields(completeness_fields, msg)
 
-            # If COMPLETENESS_MODE is 'error_on_publication', check publishable and set completeness fields required
-            if settings.COMPLETENESS_LEVEL == 'error_on_publication' \
-                    and ('published' in translated_fields or self.instance.any_published):
-                completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
-
-                if completeness_fields:
-                    msg = _('This field is required to publish object.')
-                    missing_fields = []
-                    for field_required in completeness_fields:
-                        if field_required in translated_fields:
-                            field_required = f'{field_required}_{lang}'
-                        if not self.cleaned_data.get(field_required):
-                            self.add_error(field_required, msg)
-                            missing_fields.append(field_required)
-
-                    if missing_fields:
-                        raise ValidationError(
-                            _('Fields are missing to publish object: %(fields)s'),
-                            params={'fields': ', '.join(missing_fields)},
-                        )
+            if missing_fields:
+                raise ValidationError(
+                    _('Fields are missing to publish object: %(fields)s'),
+                    params={
+                        'fields': ', '.join(missing_fields)
+                    },
+                )
 
         return self.cleaned_data
 
@@ -186,6 +179,40 @@ class CommonForm(MapEntityForm):
             if obj.structure and structure != obj.structure:
                 self.add_error(name, format_lazy(_("Please select a choice related to all structures (without brackets) "
                                                    "or related to the structure {struc} (in brackets)"), struc=structure))
+
+    @property
+    def completeness_fields_required(self):
+        """Return if the completeness fields are required"""
+        if not issubclass(self._meta.model, PublishableMixin):
+            return False
+
+        completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
+        if completeness_fields:
+            if settings.COMPLETENESS_LEVEL == 'error_on_publication':
+                if self.instance.any_published:
+                    return True
+            elif settings.COMPLETENESS_LEVEL == 'error_on_review':
+                # Error on review implies error on publication
+                if self.instance.review or self.instance.any_published:
+                    return True
+
+        return False
+
+    def get_missing_completeness_fields(self, completeness_fields, msg):
+        """Check fields completeness and add error message if field is empty"""
+
+        missing_fields = []
+        lang = get_language()
+        translated_fields = get_translated_fields(self._meta.model)
+
+        # Add error on each field if it is empty
+        for field_required in completeness_fields:
+            if field_required in translated_fields:
+                field_required = f'{field_required}_{lang}'
+            if not self.cleaned_data.get(field_required):
+                self.add_error(field_required, msg)
+                missing_fields.append(field_required)
+        return missing_fields
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""
