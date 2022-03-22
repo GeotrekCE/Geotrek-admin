@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-- Add pdf by portals in override templates directory (#2691)
+- Ability to customize public PDF by portal  (#2691)
 
 **Minor improvements**
 
