@@ -67,6 +67,7 @@ class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = Trek.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
+    unorderable_columns = ['thumbnail']
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
@@ -295,6 +296,7 @@ class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = POIFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'thumbnail']
+    unorderable_columns = ['thumbnail']
 
 
 class POIFormatList(MapEntityFormat, POIList):

@@ -85,10 +85,11 @@ class PathLayer(MapEntityLayer):
 
 
 class PathList(CustomColumnsMixin, MapEntityList):
-    queryset = Path.objects.all().annotate(length_2d=Length('geom'))
+    queryset = Path.objects.all()
     filterform = PathFilterSet
     mandatory_columns = ['id', 'checkbox', 'name', 'length']
     default_extra_columns = ['length_2d']
+    unorderable_columns = ['checkbox']
 
 
 class PathFormatList(MapEntityFormat, PathList):

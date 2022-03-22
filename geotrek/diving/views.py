@@ -36,6 +36,7 @@ class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = Dive.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['levels', 'thumbnail']
+    unorderable_columns = ['thumbnail']
 
 
 class DiveFormatList(MapEntityFormat, DiveList):
