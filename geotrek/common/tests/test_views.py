@@ -2,7 +2,6 @@ from copy import deepcopy
 import os
 from io import StringIO
 import shutil
-import sys
 import tempfile
 
 from unittest import mock
