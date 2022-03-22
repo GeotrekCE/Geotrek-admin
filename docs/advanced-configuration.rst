@@ -567,11 +567,13 @@ Override public PDF templates
 -----------------------------
 
 PDF are generated from HTML templates, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
-Trekkings, touristic contents and events can be exported in PDF files.
+Trekkings, touristic contents, sites, courses and touristic events can be exported in PDF files.
 
 - Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
 - Touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
 - Touristic events : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+- Sites : ``geotrek/outdoor/templates/outdoor/site_public_pdf.html``
+- Courses : ``geotrek/outdoor/templates/outdoor/course_public_pdf.html``
 
 Overriden templates have to be located in ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, with ``<appname>`` = ``trekking`` or ``tourism``.
 To override trekking PDF for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
