@@ -25,7 +25,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.views.generic import RedirectView, View
 from django.views.decorators.http import require_POST, require_http_methods
-from mapentity.helpers import api_bbox
+from mapentity.helpers import api_bbox, suffix_for
 from mapentity.registry import registry, app_settings
 from mapentity import views as mapentity_views
 
@@ -36,6 +36,7 @@ from geotrek.celery import app as celery_app
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins import transform_pdf_booklet_callback
 from geotrek.common.utils import sql_extent
+from geotrek.common.utils.portals import smart_get_template_by_portal
 from geotrek.common.models import FileType, Attachment, TargetPortal, AccessibilityAttachment
 from geotrek import __version__
 
@@ -200,13 +201,35 @@ class BookletMixin:
         return response
 
 
-class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
+class DocumentPortalMixin(object):
+    def get_context_data(self, **kwargs):
+
+        portal = self.request.GET.get('portal')
+        if portal:
+            suffix = suffix_for(self.template_name_suffix, "_pdf", "html")
+
+            template_portal = smart_get_template_by_portal(self.model, portal, suffix)
+            if template_portal:
+                self.template_name = template_portal
+
+            template_css_portal = smart_get_template_by_portal(self.model, portal,
+                                                               suffix_for(self.template_name_suffix, "_pdf", "css"))
+            if template_css_portal:
+                self.template_css = template_css_portal
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class DocumentPublic(DocumentPortalMixin, PublicOrReadPermMixin, DocumentPublicMixin,
+                     mapentity_views.MapEntityDocumentWeasyprint):
     pass
 
 
-class DocumentBookletPublic(PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
+class DocumentBookletPublic(DocumentPortalMixin, PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
                             mapentity_views.MapEntityDocumentWeasyprint):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        self.template_name_suffix = '_public_booklet'
 
 
 class MarkupPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityMarkupWeasyprint):

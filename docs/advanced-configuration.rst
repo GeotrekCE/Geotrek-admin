@@ -17,7 +17,7 @@ After any change in ``custom.py``, run:
 
     sudo service geotrek restart
 
-Sometimes you must also run :
+Sometimes you also have to run:
 
 ::
 
@@ -567,15 +567,22 @@ Override public PDF templates
 -----------------------------
 
 PDF are generated from HTML templates, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
-Trekkings, touristic contents and events can be exported in PDF files.
+Treks, touristic contents, touristic events, outdoor sites and courses can be exported in PDF files.
 
 - Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
 - Touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
 - Touristic events : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+- Outdoor sites : ``geotrek/outdoor/templates/outdoor/site_public_pdf.html``
+- Outdoor courses : ``geotrek/outdoor/templates/outdoor/course_public_pdf.html``
 
 Overriden templates have to be located in ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, with ``<appname>`` = ``trekking`` or ``tourism``.
 To override trekking PDF for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
-to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``.
+to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``. Or add inside your file :
+
+::
+
+    {% extends "trekking/trek_public_pdf.html" %}
+
 
 These templates derive from base templates, which content is organized in blocks.
 To override for example the description block of trek PDF, copy and change the ``{% block description }…{% endblock description %}``
@@ -588,7 +595,26 @@ It is also possible to use color defined for practice for pictogram by adding in
 
     {% block picto_attr %}style="background-color: {{ object.practice.color }};"{% endblock picto_attr %}
 
-CSS can be overriden like html templates : copy them to ``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` folder
+CSS can be overriden like html templates: copy them to ``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` folder
+``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.css`` for example.
+
+You can also create a template for each portal.
+
+Add a folder ``portal_{id_portal}`` (portal ids are located in the portal url path ``/admin/common/targetportal/{id_portal}``) in
+``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, as the first template, and add at the top of your file:
+
+::
+
+    {% extends "trekking/trek_public_pdf.html" %}
+
+
+The template for a specific portal will use the modification made on the overriden template in  ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``
+( except if you change specific  block)
+
+.. note ::
+
+    This modification is not mandatory, if you have multiple portal and you want to modify the template of only one portal, you create one folder for this specific portal
+
 
 .. note ::
 

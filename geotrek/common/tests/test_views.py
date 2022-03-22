@@ -1,8 +1,12 @@
+from copy import deepcopy
 import os
 from io import StringIO
 import shutil
+import tempfile
+
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
@@ -12,9 +16,83 @@ from django.urls import reverse
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 from mapentity.views.generic import MapEntityList
 from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import launch_sync_rando
-from geotrek.trekking.models import Path
+from geotrek.core.models import Path
+from geotrek.trekking.tests.factories import TrekFactory
+
+
+class DocumentPublicPortalTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.portal_1 = TargetPortalFactory.create()
+        cls.portal_2 = TargetPortalFactory.create()
+        cls.trek = TrekFactory.create()
+        cls.trek.portal.add(cls.portal_1)
+
+    def init_temp_directory(self):
+        settings_template = deepcopy(settings.TEMPLATES)
+
+        dirs = list(settings_template[1]['DIRS'])
+        self.temp_directory = tempfile.mkdtemp()
+        shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal', 'trekking'),
+                        os.path.join(self.temp_directory, 'trekking'))
+        shutil.move(os.path.join(self.temp_directory, 'trekking', 'portal'),
+                    os.path.join(self.temp_directory, 'trekking', f'portal_{self.portal_1.pk}'))
+        dirs[0] = self.temp_directory
+        new_dir_template = tuple(dirs)
+        settings_template[1]['DIRS'] = new_dir_template
+        return settings_template
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_trek_document_portal(self, mock_request_get):
+        mock_request_get.return_value.status_code = 200
+        mock_request_get.return_value.content = b'xxx'
+
+        with override_settings(TEMPLATES=self.init_temp_directory()):
+            response = self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk,
+                                                                                  'slug': self.trek.slug,
+                                                                                  }), {'portal': self.portal_1.pk})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, template_name=f'trekking/portal_{self.portal_1.pk}/trek_public_pdf.css')
+        self.assertTemplateUsed(response, template_name=f'trekking/portal_{self.portal_1.pk}/trek_public_pdf.html')
+        self.assertTemplateUsed(response, template_name='trekking/trek_public_pdf.html')
+        self.assertTemplateUsed(response, template_name='trekking/trek_public_pdf_base.html')
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_trek_document_booklet_portal(self, mock_request_get):
+        mock_request_get.return_value.status_code = 200
+        mock_request_get.return_value.content = b'xxx'
+
+        with override_settings(TEMPLATES=self.init_temp_directory()):
+            response = self.client.get(reverse('trekking:trek_booklet_printable',
+                                               kwargs={'lang': 'fr', 'pk': self.trek.pk,
+                                                       'slug': self.trek.slug,
+                                                       }), {'portal': self.portal_1.pk})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response,
+                                template_name=f'trekking/portal_{self.portal_1.pk}/trek_public_booklet_pdf.html')
+        self.assertTemplateUsed(response, template_name='trekking/trek_public_booklet_pdf.html')
+        self.assertTemplateUsed(response, template_name='trekking/trek_public_pdf_base.html')
+
+    @mock.patch('mapentity.helpers.requests.get')
+    def test_trek_document_wrong_portal(self, mock_request_get):
+        mock_request_get.return_value.status_code = 200
+        mock_request_get.return_value.content = b'xxx'
+
+        with override_settings(TEMPLATES=self.init_temp_directory()):
+            response = self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk,
+                                                                                  'slug': self.trek.slug,
+                                                                                  }), {'portal': self.portal_2.pk})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateNotUsed(response, template_name=f'trekking/portal_{self.portal_1.pk}/trek_public_pdf.css')
+        self.assertTemplateNotUsed(response, template_name=f'trekking/portal_{self.portal_1.pk}/trek_public_pdf.html')
+        self.assertTemplateUsed(response, template_name='trekking/trek_public_pdf.html')
+        self.assertTemplateUsed(response, template_name='trekking/trek_public_pdf_base.html')
 
 
 class ViewsTest(TestCase):

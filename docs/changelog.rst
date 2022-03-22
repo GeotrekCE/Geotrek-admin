@@ -5,9 +5,17 @@ CHANGELOG
 2.77.3+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Ability to customize public PDF by portal  (#2691)
+
 **Minor improvements**
 
 - Add block logo in public PDF templates
+
+**Bug fixes**
+
+- Fix pdf booklet use the right template
 
 
 2.77.3     (2022-03-18)
