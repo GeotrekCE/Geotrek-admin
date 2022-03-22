@@ -36,7 +36,7 @@ from geotrek.celery import app as celery_app
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins import transform_pdf_booklet_callback
 from geotrek.common.utils import sql_extent
-from geotrek.common.utils.portal_template import smart_get_template_by_portal
+from geotrek.common.utils.portals import smart_get_template_by_portal
 from geotrek.common.models import FileType, Attachment, TargetPortal, AccessibilityAttachment
 from geotrek import __version__
 
