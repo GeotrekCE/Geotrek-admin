@@ -14,7 +14,7 @@ from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.widgets import MapWidget
 from tinymce.widgets import TinyMCE
 
-from geotrek.authent.tests.factories import UserFactory, UserProfileFactory
+from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import TimerEvent, WorkflowManager
