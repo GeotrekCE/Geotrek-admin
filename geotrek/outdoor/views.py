@@ -7,8 +7,8 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, Map
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.views import CompletenessMixin, DocumentBookletPublic, DocumentPublic, MarkupPublic
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
+from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.forms import SiteForm, CourseForm

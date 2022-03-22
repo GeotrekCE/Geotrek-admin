@@ -20,12 +20,10 @@ from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.functions import Length
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
-from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
-                                  DocumentBookletPublic, MarkupPublic)
 from geotrek.common.permissions import PublicOrReadPermMixin
-from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic, CompletenessMixin
+from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
