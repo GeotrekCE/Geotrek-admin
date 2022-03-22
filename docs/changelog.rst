@@ -7,7 +7,7 @@ CHANGELOG
 
 **Minor improvements**
 
-- Add block logo public templates
+- Add block logo in public PDF templates
 
 
 2.77.3     (2022-03-18)
