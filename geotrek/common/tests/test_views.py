@@ -38,11 +38,8 @@ class DocumentPublicPortalTest(TestCase):
 
         dirs = list(settings_template[1]['DIRS'])
         self.temp_directory = tempfile.mkdtemp()
-        if sys.version_info[1] >= 8:
-            shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal'), self.temp_directory,
-                            dirs_exist_ok=True)
-        else:
-            shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal'), self.temp_directory)
+        shutil.copytree(os.path.join('geotrek', 'common', 'tests', 'data', 'templates_portal', 'trekking'),
+                        os.path.join(self.temp_directory, 'trekking'))
         shutil.move(os.path.join(self.temp_directory, 'trekking', 'portal'),
                     os.path.join(self.temp_directory, 'trekking', f'portal_{self.portal_1.pk}'))
         dirs[0] = self.temp_directory
