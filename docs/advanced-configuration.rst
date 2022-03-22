@@ -600,16 +600,16 @@ CSS can be overriden like html templates: copy them to ``var/media/templates/tre
 
 You can also create a template for each portal.
 
-Add a folder ``portal_{id_portal}`` (you can find ids of your portal in ``/admin/common/targetportal/{id_portal}``) in
-``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, as the first template add at the top of your file:
+Add a folder ``portal_{id_portal}`` (portal ids are located in the portal url path ``/admin/common/targetportal/{id_portal}``) in
+``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, as the first template, and add at the top of your file:
 
 ::
 
     {% extends "trekking/trek_public_pdf.html" %}
 
 
-Your template for your specific portal will use the modification you made on your overriden template in ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``
-(except if you change specific block)
+The template for a specific portal will use the modification made on the overriden template in  ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``
+( except if you change specific  block)
 
 .. note ::
 
