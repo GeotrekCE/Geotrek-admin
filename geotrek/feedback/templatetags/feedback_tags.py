@@ -50,8 +50,10 @@ def predefined_emails():
 def resolved_intervention_info(report):
     if report:
         username = "'?'"
-        user = report.assigned_user
-        if user:
+        intervention = report.report_interventions().first()
+        authors = intervention.authors
+        if authors:
+            user = authors.last()  # oldest author is the one that created the intervention
             if user.profile and user.profile.extended_username:
                 username = user.profile.extended_username
             else:

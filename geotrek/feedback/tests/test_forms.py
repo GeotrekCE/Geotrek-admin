@@ -9,6 +9,7 @@ from django.core import mail
 from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
 from django.urls.base import reverse
 from django.utils import translation
+
 from mapentity.tests.factories import SuperUserFactory
 from mapentity.widgets import MapWidget
 from tinymce.widgets import TinyMCE
