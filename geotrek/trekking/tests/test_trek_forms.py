@@ -1,17 +1,19 @@
 import json
 from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
+from django.core.management import call_command
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from geotrek.authent.tests.factories import UserFactory, StructureFactory
+from geotrek.authent.tests.factories import UserFactory
 from geotrek.core.tests.factories import PathFactory
 from .factories import TrekFactory, RatingFactory
 from ..models import OrderedTrekChild
 from ..forms import TrekForm
 
 
-class TrekFormTest(TestCase):
+class TrekRatingFormTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory.create()
@@ -73,33 +75,45 @@ class TrekFormTest(TestCase):
             form.clean()
 
 
-class TreckCompletenessTest(TestCase):
+class TrekCompletenessTest(TestCase):
     """Test completeness fields on error if empty"""
     @classmethod
     def setUpTestData(cls):
+        call_command('update_geotrek_permissions', verbosity=0)
         cls.user = UserFactory.create()
-        structure = StructureFactory.create()
-        cls.path = PathFactory.create()
-        cls.trek = TrekFactory.create(structure=structure)
+        cls.user.user_permissions.add(Permission.objects.get(codename='publish_trek'))
+        path = PathFactory.create()
         cls.data = {
             'name_en': 'Trek',
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.data['topology'] = json.dumps({"paths": [cls.path.pk]})
-
+            cls.data['topology'] = json.dumps({"paths": [path.pk]})
         else:
             cls.data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
 
+    @override_settings(PUBLISHED_BY_LANG=False)
     @override_settings(COMPLETENESS_LEVEL='error_on_publication')
     @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
-    def test_completeness_on_publish(self):
+    def test_completeness_error_on_publish(self):
+        """Test completeness fields on error if empty"""
+        data = self.data
+        data['published'] = True
+
+        form = TrekForm(user=self.user, data=data)
+        self.assertFalse(form.is_valid())
+        with self.assertRaisesRegex(ValidationError,
+                                    'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
+            form.clean()
+
+    @override_settings(COMPLETENESS_LEVEL='error_on_publication')
+    @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
+    def test_completeness_error_on_publish(self):
         """Test completeness fields on error if empty"""
         data = self.data
         data['published_en'] = True
 
-        form = TrekForm(user=self.user, instance=self.trek, data=data)
-
+        form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(ValidationError,
                                     'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
@@ -108,11 +122,21 @@ class TreckCompletenessTest(TestCase):
     @override_settings(COMPLETENESS_LEVEL='error_on_review')
     @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
     def test_completeness_error_on_review(self):
-        """Test completeness fields on error if empty"""
+        """Test completeness fields on error if empty and is review, with 'error_on_review'"""
         data = self.data
+        data['published_en'] = False
         data['review'] = True
+        form = TrekForm(user=self.user, data=data)
 
-        form = TrekForm(user=self.user, instance=self.trek, data=data)
+        self.assertFalse(form.is_valid())
+        with self.assertRaisesRegex(ValidationError,
+                                    'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
+            form.clean()
+
+        # Exception should raise also if object is to be published
+        data['published_en'] = True
+        data['review'] = True
+        form = TrekForm(user=self.user, data=data)
 
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(ValidationError,

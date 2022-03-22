@@ -182,18 +182,25 @@ class CommonForm(MapEntityForm):
 
     @property
     def completeness_fields_required(self):
-        """Return if the completeness fields are required"""
+        """Return True if the completeness fields are required"""
         if not issubclass(self._meta.model, PublishableMixin):
             return False
 
-        completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
-        if completeness_fields:
+        # Check if form has published in at least one of the language
+        if not settings.PUBLISHED_BY_LANG:
+            any_published = self.cleaned_data.get('published')
+
+        for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if self.cleaned_data.get(f'published_{language[0]}', False):
+                any_published = True
+
+        if self.instance.is_complete:
             if settings.COMPLETENESS_LEVEL == 'error_on_publication':
-                if self.instance.any_published:
+                if any_published:
                     return True
             elif settings.COMPLETENESS_LEVEL == 'error_on_review':
                 # Error on review implies error on publication
-                if self.instance.review or self.instance.any_published:
+                if self.cleaned_data['review'] or any_published:
                     return True
 
         return False
