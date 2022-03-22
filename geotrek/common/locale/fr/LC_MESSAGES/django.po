@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-29 10:10+0000\n"
+"POT-Creation-Date: 2022-02-04 16:54+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -32,6 +32,13 @@ msgstr "min %s"
 #, python-format
 msgid "max %s"
 msgstr "max %s"
+
+msgid "This field is required to publish object."
+msgstr "Ce champs est obligatoire pour publier l'objet."
+
+#, python-format
+msgid "Fields are missing to publish object: %(fields)s"
+msgstr "Ces champs doivent être renseignés pour publier l'objet : %(fields)s"
 
 #, python-brace-format
 msgid ""
@@ -403,7 +410,9 @@ msgid "Init sync ..."
 msgstr "Début de synchro"
 
 msgid "Photos to illustrate information related to the accessibility of treks."
-msgstr "Photos pour illustrer les informations liées à l'accessibilité des randonnées."
+msgstr ""
+"Photos pour illustrer les informations liées à l'accessibilité des "
+"randonnées."
 
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
@@ -509,6 +518,9 @@ msgstr "L'objet est publié mais"
 
 msgid "looks incomplete;"
 msgstr "semble incomplet ;"
+
+msgid "these fields should be completed:"
+msgstr "ces champs doivent être renseignés :"
 
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide ;"
