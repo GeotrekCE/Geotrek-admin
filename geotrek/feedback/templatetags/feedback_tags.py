@@ -51,17 +51,18 @@ def resolved_intervention_info(report):
     if report:
         username = "'?'"
         intervention = report.report_interventions().first()
-        authors = intervention.authors
-        if authors:
-            user = authors.last()  # oldest author is the one that created the intervention
-            if user.profile and user.profile.extended_username:
-                username = user.profile.extended_username
-            else:
-                username = user.username
+        if intervention:
+            authors = intervention.authors
+            if authors:
+                user = authors.last()  # oldest author is the one that created the intervention
+                if user.profile and user.profile.extended_username:
+                    username = user.profile.extended_username
+                else:
+                    username = user.username
 
-        resolved_intervention_info = {
-            "date": report.interventions.first().date.strftime("%d/%m/%Y") if report.interventions else None,
-            "username": username
-        }
-        return json.dumps(resolved_intervention_info)
+            resolved_intervention_info = {
+                "date": report.interventions.first().date.strftime("%d/%m/%Y") if report.interventions else None,
+                "username": username
+            }
+            return json.dumps(resolved_intervention_info)
     return json.dumps({})
