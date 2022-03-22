@@ -32,6 +32,13 @@ msgstr "min %s"
 msgid "max %s"
 msgstr "max %s"
 
+msgid "This field is required to publish object."
+msgstr ""
+
+#, python-format
+msgid "Fields are missing to publish object: %(fields)s"
+msgstr ""
+
 #, python-brace-format
 msgid ""
 "Please select a choice related to all structures (without brackets) or "
@@ -499,6 +506,9 @@ msgid "Object is published but"
 msgstr ""
 
 msgid "looks incomplete;"
+msgstr ""
+
+msgid "these fields should be completed:"
 msgstr ""
 
 msgid "has invalid geometry;"
