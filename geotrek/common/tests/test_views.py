@@ -30,7 +30,6 @@ class DocumentPublicPortalTest(TestCase):
         cls.portal_2 = TargetPortalFactory.create()
         cls.trek = TrekFactory.create()
         cls.trek.portal.add(cls.portal_1)
-        cls.user = UserFactory.create(username='homer', password='dooh')
 
     def init_temp_directory(self):
         settings_template = deepcopy(settings.TEMPLATES)
