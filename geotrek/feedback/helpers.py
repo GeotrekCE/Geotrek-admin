@@ -242,6 +242,9 @@ class SuricateMessenger:
             (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + str(id_alert)).encode()
         ).hexdigest()
 
+        if not message:
+            message = "No message"
+
         params = {
             "id_origin": self.gestion_manager.ID_ORIGIN,
             "uid_alerte": id_alert,

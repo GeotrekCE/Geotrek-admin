@@ -47,9 +47,14 @@ function display_predefined_email_in_email_field() {
     var predefined_emails = JSON.parse($('#predefined_emails').text());
     var resolved_intervention_info = JSON.parse($('#resolved_intervention_info').text());
     var selected = $('#id_message_sentinel_predefined').val() || null;
-    text = predefined_emails[selected]["text"]
-    text = text.replace(/##supervisor##/g, resolved_intervention_info["username"])
-    text = text.replace(/##intervention_date##/g, resolved_intervention_info["date"])
-    $('#id_message_supervisor').val(text)
-    $('#id_message_sentinel').val(text)
+    if (selected == null) {
+        $('#id_message_supervisor').val("");
+        $('#id_message_sentinel').val("");
+    } else {
+        text = predefined_emails[selected]["text"];
+        text = text.replace(/##supervisor##/g, resolved_intervention_info["username"]);
+        text = text.replace(/##intervention_date##/g, resolved_intervention_info["date"]);
+        $('#id_message_supervisor').val(text);
+        $('#id_message_sentinel').val(text);
+    }
 }

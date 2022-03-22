@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
     'filed': ['classified', 'waiting'],
+    'created': ['classified', 'waiting'],
     'solved_intervention': ['solved']
 }
 
@@ -352,7 +353,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def send_notifications_on_status_change(self, old_status_identifier, message):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
             self.get_suricate_messenger().update_status(self.formatted_uid, self.status.identifier, message)
-            self.get_suricate_messenger().message_sentinel(self.formatted_uid, message)
+            if message:
+                self.get_suricate_messenger().message_sentinel(self.formatted_uid, message)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:

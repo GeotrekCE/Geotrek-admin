@@ -10,10 +10,11 @@ from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
 from django.urls.base import reverse
 from django.utils import translation
 
-from mapentity.tests.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.widgets import MapWidget
 from tinymce.widgets import TinyMCE
 
+from geotrek.authent.tests.factories import UserFactory, UserProfileFactory
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import TimerEvent, WorkflowManager
@@ -32,7 +33,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     @classmethod
     def setUpTestData(cls):
         SuricateWorkflowTests.setUpTestData()
-        cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
+        cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4(), assigned_user=UserFactory())
         cls.filed_report_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
         cls.intervention = ReportInterventionFactory(date=datetime(year=1997, month=4, day=4).date())
@@ -40,6 +41,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uid=uuid.uuid4())
         cls.predefined_email_1 = PredefinedEmailFactory()
         cls.predefined_email_2 = PredefinedEmailFactory()
+        cls.other_user = UserFactory()
+        UserProfileFactory.create(user=cls.other_user, extended_username="Communauté des Communes des Communautés Communataires")
 
     def setUp(self):
         self.client.login(username="Admiin", password="drowssap")
@@ -178,7 +181,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         mails_before = len(mail.outbox)
         # When assigning a user to a report
         data = {
-            'assigned_user': str(self.user.pk),
+            'assigned_user': str(self.other_user.pk),
             'email': 'test@test.fr',
             'geom': self.filed_report.geom,
             'message_sentinel': "Your message",

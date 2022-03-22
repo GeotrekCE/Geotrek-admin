@@ -38,15 +38,5 @@
             "identifier": "solved_intervention",
             "color": "#4285F4"
         }
-    },
-    {
-        "model": "feedback.reportstatus",
-        "fields": {
-            "label": "R\u00e9solu",
-            "label_en": "Resolved",
-            "label_fr": "R\u00e9solu",
-            "identifier": "solved",
-            "color": "#999999"
-        }
     }
 ]

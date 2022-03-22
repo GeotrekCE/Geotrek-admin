@@ -8,13 +8,14 @@ from django.utils.translation import gettext as _
 
 from geotrek.common.forms import CommonForm
 
-from .models import PredefinedEmail, Report, ReportStatus, TimerEvent
+from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowManager
 
 # This dict stores constraints for status changes in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
 # Empty status should not be changed from this form
 SURICATE_WORKFLOW_STEPS = {
     'filed': ['classified', 'filed'],
+    'created': ['classified', 'created'],
     'solved_intervention': ['solved', 'solved_intervention'],
 }
 
@@ -74,7 +75,7 @@ class ReportForm(CommonForm):
                     self.fields["status"].empty_label = None
                     self.fields["status"].queryset = ReportStatus.objects.filter(identifier__in=next_statuses)
                     # assigned_user
-                    if self.old_status_identifier != 'filed':
+                    if self.old_status_identifier not in ['filed', 'created']:
                         self.fields["assigned_user"].widget = HiddenInput()
                     # message for sentinel
                     self.fields["message_sentinel"] = CharField(required=False, widget=Textarea())
@@ -111,7 +112,7 @@ class ReportForm(CommonForm):
     def save(self, *args, **kwargs):
         report = super().save(self, *args, **kwargs)
         if self.instance.pk and settings.SURICATE_WORKFLOW_ENABLED:
-            if self.old_status_identifier == 'filed' and report.assigned_user and self.old_supervisor != report.assigned_user:
+            if self.old_status_identifier in ['filed', 'created'] and report.assigned_user and report.assigned_user != WorkflowManager.objects.first().user:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
                 waiting_status = ReportStatus.objects.get(identifier='waiting')
