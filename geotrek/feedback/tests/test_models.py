@@ -153,7 +153,7 @@ class TestPendingAPIRequests(SuricateTests):
         report = ReportFactory.create(email='john.doe@nowhere.com',
                                       comment="This is a 'comment'",
                                       assigned_user=self.user,
-                                      uid=uid)
+                                      uuid=uid)
         # Report lock fails the first time
         self.build_timeout_request_patch(mocked)
         self.assertRaises(Exception, report.lock_in_suricate())
@@ -162,7 +162,7 @@ class TestPendingAPIRequests(SuricateTests):
         self.assertEquals(pending_lock_report.request_type, "GET")
         self.assertEquals(pending_lock_report.api, "MAN")
         self.assertEquals(pending_lock_report.endpoint, "wsLockAlert")
-        self.assertEquals(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_uid)}))
+        self.assertEquals(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_uuid)}))
         self.assertEquals(pending_lock_report.retries, 0)
         self.assertEquals(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report lock fails a second time
@@ -231,7 +231,7 @@ class TestPendingAPIRequests(SuricateTests):
         # Create a report with an UID - emulates report from Suricate
         uid = uuid.uuid4()
         geom = Point(700000, 6600000, srid=settings.SRID)
-        report = Report.objects.create(uid=uid, status=self.status, geom=geom, email="john.doe@nowhere.com")
+        report = Report.objects.create(uuid=uid, status=self.status, geom=geom, email="john.doe@nowhere.com")
         # Report update fails the first time
         self.build_timeout_request_patch(mocked)
         messenger = SuricateMessenger(PendingSuricateAPIRequest)

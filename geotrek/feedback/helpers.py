@@ -76,8 +76,8 @@ class SuricateRequestManager:
             which_api = "MAN"
         # UUID cannot be JSON serialized, turn them into strings before
         if "uid_alerte" in params:
-            uid = params.pop("uid_alerte")
-            params["uid_alerte"] = str(uid)
+            uuid = params.pop("uid_alerte")
+            params["uid_alerte"] = str(uuid)
         self.pending_requests_model.objects.create(
             request_type=request_type,
             api=which_api,

@@ -33,12 +33,12 @@ class TestSuricateForms(SuricateWorkflowTests):
     @classmethod
     def setUpTestData(cls):
         SuricateWorkflowTests.setUpTestData()
-        cls.filed_report = ReportFactory(status=cls.filed_status, uid=uuid.uuid4(), assigned_user=UserFactory())
-        cls.filed_report_1 = ReportFactory(status=cls.filed_status, uid=uuid.uuid4())
-        cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
+        cls.filed_report = ReportFactory(status=cls.filed_status, uuid=uuid.uuid4(), assigned_user=UserFactory())
+        cls.filed_report_1 = ReportFactory(status=cls.filed_status, uuid=uuid.uuid4())
+        cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uuid=uuid.uuid4())
         cls.intervention = ReportInterventionFactory(date=datetime(year=1997, month=4, day=4).date())
-        cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uid=uuid.uuid4())
-        cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uid=uuid.uuid4())
+        cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, uuid=uuid.uuid4())
+        cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, uuid=uuid.uuid4())
         cls.predefined_email_1 = PredefinedEmailFactory()
         cls.predefined_email_2 = PredefinedEmailFactory()
         cls.other_user = UserFactory()
@@ -195,21 +195,21 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
         # Assert data forwarded to Suricate
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.formatted_uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.formatted_uuid)).encode()
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_uid, 'message': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_uuid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_uid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_uuid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report.formatted_uid}&id_origin=geotrek&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report.formatted_uuid}&id_origin=geotrek&check={check}",
             auth=('', '')
         )
         # Assert user is notified
@@ -319,21 +319,21 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(self.solved_intervention_report.status.identifier, "solved")
         # Assert data forwarded to Suricate
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.formatted_uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.solved_intervention_report.formatted_uuid)).encode()
         ).hexdigest()
         call1 = mock.call(
             'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_uid, 'message': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_uuid, 'message': 'Your message', 'check': check},
             auth=('', '')
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_uid, 'statut': 'solved', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_uuid, 'statut': 'solved', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.solved_intervention_report.formatted_uid}&id_origin=geotrek&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.solved_intervention_report.formatted_uuid}&id_origin=geotrek&check={check}",
             auth=('', '')
         )
 
@@ -354,9 +354,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         long_txt = '{0:.6f}'.format(long)
         lat_txt = '{0:.6f}'.format(lat)
         check = md5(
-            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.formatted_uid)).encode()
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.formatted_uuid)).encode()
         ).hexdigest()
         mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_uid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
+            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
             auth=('', '')
         )
