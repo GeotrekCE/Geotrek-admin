@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Bug fixes**
+
+- Fix map's generation with height bigger than width in pdfs
+
 
 2.78.0     (2022-03-22)
 -----------------------
