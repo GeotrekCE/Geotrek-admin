@@ -116,7 +116,7 @@ Open the top right menu and clic on ``imports``.
 Import from a file
 ------------------
 
-You can also use some of Geotrek commands to import data from a file which format is handled by https://docs.djangoproject.com/en/4.0/ref/contrib/gis/gdal/(Django GDAL API) (e.g.: Shapefile, GeoJSON, etc.)
+You can also use some of Geotrek commands to import data from a vector file handled by  https://gdal.org/drivers/vector/index.html(GDAL) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 
 Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas.
 
