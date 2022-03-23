@@ -116,7 +116,7 @@ Open the top right menu and clic on ``imports``.
 Import from a file
 ------------------
 
-You can also use some of Geotrek commands to import data from a vector file handled by  (https://gdal.org/drivers/vector/index.htm)[GDAL] (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
+You can also use some of Geotrek commands to import data from a vector file handled by  [GDAL](https://gdal.org/drivers/vector/index.htm) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 
 Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas.
 
