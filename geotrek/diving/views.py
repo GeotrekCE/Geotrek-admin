@@ -10,9 +10,9 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, Map
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
+from geotrek.common.views import DocumentPublic, MarkupPublic
 
 from .filters import DiveFilterSet
 from .forms import DiveForm

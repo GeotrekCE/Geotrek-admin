@@ -18,10 +18,10 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
-from geotrek.common.views import (MetaMixin, DocumentPublic,
+from geotrek.common.views import (DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
 from ..common.mixins.api import APIViewSet
 from ..common.mixins.forms import FormsetMixin

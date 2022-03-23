@@ -1,9 +1,20 @@
+import os
 from io import BytesIO
+from urllib.parse import urljoin
 
 from django.conf import settings
+from django.http import HttpResponseNotFound, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.utils import translation
+from django.utils.translation import gettext as _
+from django.views import static
+from mapentity import views as mapentity_views
+from mapentity.helpers import suffix_for
 from pdfimpose import PageList
 
+from geotrek.common.models import TargetPortal, FileType, Attachment
 from geotrek.common.utils import logger
+from geotrek.common.utils.portals import smart_get_template_by_portal
 
 
 class CustomColumnsMixin:
@@ -137,3 +148,83 @@ def transform_pdf_booklet_callback(response):
     result = BytesIO()
     new_pdf.write(result)
     response.content = result.getvalue()
+
+
+class MetaMixin:
+    def get_context_data(self, **kwargs):
+        lang = self.request.GET.get('lang')
+        portal = self.request.GET.get('portal')
+        context = super().get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        translation.activate(lang)
+        context['META_TITLE'] = _('Geotrek Rando')
+        translation.deactivate()
+        if portal:
+            try:
+                target_portal = TargetPortal.objects.get(name=portal)
+                context['FACEBOOK_APP_ID'] = target_portal.facebook_id
+                context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
+                context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
+                context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
+                context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
+            except TargetPortal.DoesNotExist:
+                pass
+        return context
+
+
+class DocumentPortalMixin:
+    def get_context_data(self, **kwargs):
+
+        portal = self.request.GET.get('portal')
+        if portal:
+            suffix = suffix_for(self.template_name_suffix, "_pdf", "html")
+
+            template_portal = smart_get_template_by_portal(self.model, portal, suffix)
+            if template_portal:
+                self.template_name = template_portal
+
+            template_css_portal = smart_get_template_by_portal(self.model, portal,
+                                                               suffix_for(self.template_name_suffix, "_pdf", "css"))
+            if template_css_portal:
+                self.template_css = template_css_portal
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class DocumentPublicMixin:
+    template_name_suffix = "_public"
+
+    # Override view_permission_required
+    def dispatch(self, *args, **kwargs):
+        return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
+
+    def get(self, request, pk, slug, lang=None):
+        obj = get_object_or_404(self.model, pk=pk)
+        try:
+            file_type = FileType.objects.get(type="Topoguide")
+        except FileType.DoesNotExist:
+            file_type = None
+        attachments = Attachment.objects.attachments_for_object_only_type(obj, file_type)
+        if not attachments and not settings.ONLY_EXTERNAL_PUBLIC_PDF:
+            return super().get(request, pk, slug, lang)
+        if not attachments:
+            return HttpResponseNotFound("No attached file with 'Topoguide' type.")
+        path = attachments[0].attachment_file.name
+
+        if settings.DEBUG:
+            response = static.serve(self.request, path, settings.MEDIA_ROOT)
+        else:
+            response = HttpResponse()
+            response[settings.MAPENTITY_CONFIG['SENDFILE_HTTP_HEADER']] = os.path.join(settings.MEDIA_URL_SECURE, path)
+        response["Content-Type"] = 'application/pdf'
+        response['Content-Disposition'] = "attachment; filename={0}.pdf".format(slug)
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        modelname = self.get_model()._meta.object_name.lower()
+        context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
+        return context

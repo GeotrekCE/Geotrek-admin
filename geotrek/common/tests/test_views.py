@@ -1,9 +1,8 @@
-from copy import deepcopy
 import os
-from io import StringIO
 import shutil
 import tempfile
-
+from copy import deepcopy
+from io import StringIO
 from unittest import mock
 
 from django.conf import settings
@@ -12,14 +11,13 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 from mapentity.views.generic import MapEntityList
+
 from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.mixins import CustomColumnsMixin
-from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import launch_sync_rando
+from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.core.models import Path
 from geotrek.trekking.tests.factories import TrekFactory
 
