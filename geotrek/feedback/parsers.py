@@ -142,9 +142,9 @@ class SuricateParser(SuricateGestionRequestManager):
         if verbosity >= 1:
             logger.info("Starting reports parsing from Suricate\n")
 
-    def after_get_alerts(self, reports_created):
+    def after_get_alerts(self, reports_created, should_notify):
         Report.objects.filter(pk__in=self.to_delete).delete()
-        if reports_created:
+        if reports_created and should_notify:
             self.send_workflow_manager_new_reports_email(reports_created)
 
     def get_alert(self, verbosity=1, pk=0):
@@ -167,7 +167,7 @@ class SuricateParser(SuricateGestionRequestManager):
         if verbosity >= 1:
             logger.info(f"Created : {report_created}")
 
-    def get_alerts(self, verbosity=1):
+    def get_alerts(self, verbosity=1, should_notify=True):
         """
         Get reports list from Suricate Rest API
         :return: returns True if and only if reports was imported (it is in bbox)
@@ -187,7 +187,7 @@ class SuricateParser(SuricateGestionRequestManager):
             current_report += 1
         if verbosity >= 1:
             logger.info(f"Parsed {total_reports} reports from Suricate\n")
-        self.after_get_alerts(reports_created)
+        self.after_get_alerts(reports_created, should_notify)
 
     def create_documents(self, documents, parent):
         """Parse documents list from Suricate Rest API"""
