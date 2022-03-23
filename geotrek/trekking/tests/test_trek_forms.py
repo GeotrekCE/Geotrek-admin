@@ -92,13 +92,12 @@ class TrekCompletenessTest(TestCase):
         else:
             cls.data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
 
-    @override_settings(PUBLISHED_BY_LANG=False)
     @override_settings(COMPLETENESS_LEVEL='error_on_publication')
     @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
     def test_completeness_error_on_publish(self):
         """Test completeness fields on error if empty"""
         data = self.data
-        data['published'] = True
+        data['published_en'] = True
 
         form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
@@ -106,12 +105,13 @@ class TrekCompletenessTest(TestCase):
                                     'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
             form.clean()
 
+    @override_settings(PUBLISHED_BY_LANG=False)
     @override_settings(COMPLETENESS_LEVEL='error_on_publication')
     @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
-    def test_completeness_error_on_publish(self):
-        """Test completeness fields on error if empty"""
+    def test_completeness_error_on_publish_nolang(self):
+        """Test completeness fields on error if empty (when PUBLISHED_BY_LANG=False)"""
         data = self.data
-        data['published_en'] = True
+        data['published'] = True
 
         form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
