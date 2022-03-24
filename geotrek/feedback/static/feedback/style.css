@@ -1,0 +1,50 @@
+/* Touristic content */
+
+.legend-circle {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+}
+
+.legend-statuses {
+    background: lightgray;
+    border: thin solid black;
+    padding: 5px;
+}
+
+.arrow {
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 25px;
+    font-size: 12px;
+}
+.arrow span {
+    top: 4px;
+    position: absolute;
+    width: 8px;
+    height: 2px;
+    background-color: #fff;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+.arrow span:first-of-type {
+    left: 0;
+    transform: scale(0.9) rotate(45deg);
+}
+.arrow span:last-of-type {
+    right: 0;
+    transform: scale(0.9) rotate(-45deg);
+}
+.arrow.active span:first-of-type {
+    transform: scale(0.9) rotate(-45deg);
+}
+.arrow.active span:last-of-type {
+    transform: scale(0.9) rotate(45deg);
+}
+.arrow:hover {
+    cursor: pointer;
+}

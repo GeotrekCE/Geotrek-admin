@@ -64,6 +64,38 @@ function ChangeColor(e, data) {
     )
 }
 
+function toggleLegend() {
+    $(".legend-inner").toggle();
+}
+
+function ShowLegend(e, data) {
+    if (data.modelname != 'report')
+        return;
+    var map = data.map;
+
+    var legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'legend-statuses');
+        inner = ['<button onclick="toggleLegend()"><strong>' + tr("Statuses") + '</strong></button><div class="legend-inner">']
+        // For each report status
+        var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
+        for (var status in status_ids_and_colors) {
+            status_label = status_ids_and_colors[status]["label"]
+            status_color = status_ids_and_colors[status]["color"]
+            status_id = status_ids_and_colors[status]["identifier"]
+            div.innerHTML +=
+                inner.push(
+                    '<i class="legend-circle ' + status_id + '" style="background:' + status_color + '"></i> ' + status_label
+                );
+        }
+        inner.push("</div>")
+        div.innerHTML = inner.join('<br>');
+        return div;
+    };
+    legend.addTo(map);
+}
 
 $(window).on('entity:map:detail', ChangeColor);
 $(window).on('entity:map:list', ChangeColors);
+$(window).on('entity:map:list', ShowLegend);
