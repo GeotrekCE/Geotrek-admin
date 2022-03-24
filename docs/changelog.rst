@@ -4,6 +4,9 @@ CHANGELOG
 
 2.78.0+dev (XXXX-XX-XX)
 -----------------------
+**New features**
+
+- Add public booklet pdf for courses, sites, events, contents, dives
 
 **Minor improvements**
 

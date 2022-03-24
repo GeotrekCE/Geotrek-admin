@@ -15,7 +15,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
+from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic, MetaMixin
 
 from .filters import DiveFilterSet
 from .forms import DiveForm
@@ -112,6 +112,10 @@ class DiveDocumentPublicMixin:
 
 
 class DiveDocumentPublic(DiveDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class DiveDocumentBookletPublic(DiveDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 
