@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Bug fixes**
+
+- Fix maps height when height is bigger than width in treks pdf (#2746)
+
 
 2.78.0     (2022-03-22)
 -----------------------
