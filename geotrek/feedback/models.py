@@ -90,12 +90,12 @@ class PendingSuricateAPIRequest(models.Model):
     error_message = models.TextField(null=False, blank=False)
     retries = models.IntegerField(blank=False, default=0)
 
-    def raise_sync_error_flag_on_report(self, uuid):
-        report = Report.objects.filter(uuid=uuid)
+    def raise_sync_error_flag_on_report(self, external_uuid):
+        report = Report.objects.filter(external_uuid=external_uuid)
         report.update(sync_errors=F('sync_errors') + 1)
 
-    def remove_sync_error_flag_on_report(self, uuid):
-        report = Report.objects.filter(uuid=uuid)
+    def remove_sync_error_flag_on_report(self, external_uuid):
+        report = Report.objects.filter(external_uuid=external_uuid)
         report.update(sync_errors=F('sync_errors') - 1)
 
     def save(self, *args, **kwargs):
@@ -165,9 +165,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         blank=True, null=True,
         verbose_name=_("Creation date in Suricate")
     )
-    uuid = models.UUIDField(
-        unique=True, verbose_name=_("Identifier"), blank=True, editable=False
+    external_uuid = models.UUIDField(
+        editable=False, unique=True, null=True, verbose_name=_("Identifier")
     )
+    uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
     locked = models.BooleanField(default=False, verbose_name=_("Locked"))
     origin = models.CharField(
         blank=True, null=True, default="unknown", max_length=100, verbose_name=_("Origin")
@@ -254,14 +255,12 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def save_no_suricate(self, *args, **kwargs):
         """Save method for No Suricate mode"""
         if self.pk is None:  # New report should alert
-            self.uuid = uuid4()
             self.try_send_report_to_managers()
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_report_mode(self, *args, **kwargs):
         """Save method for Suricate Report mode"""
         if self.pk is None:  # New report should alert managers AND be sent to Suricate
-            self.uuid = uuid4()
             self.try_send_report_to_managers()
             self.get_suricate_messenger().post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
@@ -269,7 +268,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def save_suricate_management_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
-            if self.uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
+            if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : save
                 super().save(*args, **kwargs)
@@ -279,7 +278,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def save_suricate_workflow_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
         if self.pk is None:  # This is a new report
-            if self.uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
+            if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : assign workflow manager if needed and save
                 if self.status.identifier in ['filed', 'created']:
@@ -322,15 +321,15 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
                 self.attach_email(message, self.assigned_user.email)
 
     @property
-    def formatted_uuid(self):
+    def formatted_external_uuid(self):
         """
         Formatted UUIDs as they are found in Suricate
         stored:   13D3CBEF-ED65-1184-53DC-47EBCC7BE0FD
         expected: 13D3CBEF-ED65-1184-53DC47EBCC7BE0FD
         """
-        uuid = str(self.uuid).upper()
-        formatted_uuid = "".join(str(uuid).rsplit("-", 1))
-        return formatted_uuid
+        uuid = str(self.external_uuid).upper()
+        formatted_external_uuid = "".join(str(uuid).rsplit("-", 1))
+        return formatted_external_uuid
 
     def notify_assigned_user(self, message):
         subject = _("Geotrek - New report to process")
@@ -343,21 +342,21 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         self.try_send_email(subject, message)
 
     def lock_in_suricate(self):
-        self.get_suricate_messenger().lock_alert(self.formatted_uuid)
+        self.get_suricate_messenger().lock_alert(self.formatted_external_uuid)
 
     def unlock_in_suricate(self):
-        self.get_suricate_messenger().unlock_alert(self.formatted_uuid)
+        self.get_suricate_messenger().unlock_alert(self.formatted_external_uuid)
 
     def change_position_in_suricate(self):
         rep_gps = self.geom.transform(4326, clone=True)
         long, lat = rep_gps
-        self.get_suricate_messenger().update_gps(self.formatted_uuid, lat, long)
+        self.get_suricate_messenger().update_gps(self.formatted_external_uuid, lat, long)
 
     def send_notifications_on_status_change(self, old_status_identifier, message):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
-            self.get_suricate_messenger().update_status(self.formatted_uuid, self.status.identifier, message)
+            self.get_suricate_messenger().update_status(self.formatted_external_uuid, self.status.identifier, message)
             if message:
-                self.get_suricate_messenger().message_sentinel(self.formatted_uuid, message)
+                self.get_suricate_messenger().message_sentinel(self.formatted_external_uuid, message)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:

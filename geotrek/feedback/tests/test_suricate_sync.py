@@ -195,7 +195,7 @@ class SuricateAPITests(SuricateTests):
         r.refresh_from_db()
         self.assertIsNone(r.category)
         # Test new filed report are not assigned to workflow manager when mode is management
-        r = Report.objects.get(uuid="E7C73347-5056-AA2B-DDBFDCD9328CD742")
+        r = Report.objects.get(external_uuid="E7C73347-5056-AA2B-DDBFDCD9328CD742")
         self.assertIsNone(r.assigned_user)
         # Assert no new mail on update
         self.assertEqual(len(mail.outbox), 1)
@@ -208,7 +208,7 @@ class SuricateAPITests(SuricateTests):
         r.refresh_from_db()
         self.assertEquals(r.comment, "Ne pas prendre la route Départementale 155 en direction de Malons")
         # Test sync last report overwrites local info
-        r = Report.objects.get(uuid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
+        r = Report.objects.get(external_uuid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
         self.assertEquals(r.comment, "Lames cassées")
         r.comment = ""
         r.save()
@@ -242,7 +242,7 @@ class SuricateAPITests(SuricateTests):
         r.refresh_from_db()
         self.assertIsNone(r.category)
         # Test new filed report are assigned to workflow manager
-        r = Report.objects.get(uuid="E7C73347-5056-AA2B-DDBFDCD9328CD742")
+        r = Report.objects.get(external_uuid="E7C73347-5056-AA2B-DDBFDCD9328CD742")
         self.assertIn(r.assigned_user.pk, list(WorkflowManager.objects.values_list('user', flat=True)))
         # Assert no new mail on update
         self.assertEqual(len(mail.outbox), 1)
@@ -297,10 +297,10 @@ class SuricateAPITests(SuricateTests):
         """Test post to suricate on save Report in Suricate Management Mode"""
         # Create a report with an UID - emulates report from Suricate
         uid = uuid.uuid4()
-        Report.objects.create(uuid=uid)
+        Report.objects.create(external_uuid=uid)
         post_report.assert_not_called()
         # Create a report with no UID - emulates new report from Geotrek
-        report = Report.objects.create(uuid=None)
+        report = Report.objects.create(external_uuid=None)
         post_report.assert_called_once_with(report)
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
@@ -394,14 +394,14 @@ class SuricateAPITests(SuricateTests):
         self.build_get_request_patch(mocked_get, remove_one_alert=False)
         call_command("sync_suricate", verbosity=2)
         # 8 out of 9 are imported because one of them is out of bbox by design
-        self.assertEqual(Report.objects.filter(uuid="742CBF16-5056-AA2B-DD1FD403F72D6B9B").count(), 1)
+        self.assertEqual(Report.objects.filter(external_uuid="742CBF16-5056-AA2B-DD1FD403F72D6B9B").count(), 1)
         self.assertEqual(Report.objects.count(), 8)
         """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
         self.build_get_request_patch(mocked_get, remove_one_alert=True)
         call_command("sync_suricate", verbosity=2)
         # One out of the 9 was removed from response because this report now lives outside of BBOX according to Suricate
         # 7 out of 8 are imported because one of them is out of bbox by design
-        self.assertEqual(Report.objects.filter(uuid="742CBF16-5056-AA2B-DD1FD403F72D6B9B").count(), 0)
+        self.assertEqual(Report.objects.filter(external_uuid="742CBF16-5056-AA2B-DD1FD403F72D6B9B").count(), 0)
         self.assertEqual(Report.objects.count(), 7)
 
 
@@ -475,7 +475,7 @@ class SuricateWorkflowTests(SuricateTests):
         cls.late_resolution_status = ReportStatusFactory(identifier='late_resolution', label="Resolution en retard")
         cls.solved_intervention_status = ReportStatusFactory(identifier='solved_intervention', label="Intervention terminée")
         cls.resolved_status = ReportStatusFactory(identifier='solved', label="Résolu")
-        cls.report = ReportFactory(status=cls.filed_status, uuid=uuid.uuid4())
+        cls.report = ReportFactory(status=cls.filed_status, external_uuid=uuid.uuid4())
         cls.admin = SuperUserFactory(username="Admiin", password="drowssap")
         cls.interv_report = ReportFactory(status=cls.programmed_status)
 
@@ -584,8 +584,8 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
     @classmethod
     def setUpTestData(cls):
         SuricateWorkflowTests.setUpTestData()
-        cls.report_filed_1 = ReportFactory(status=cls.filed_status, uuid=uuid.uuid4(), assigned_user=cls.admin)
-        cls.report_filed_2 = ReportFactory(status=cls.filed_status, uuid=uuid.uuid4(), assigned_user=cls.admin)
+        cls.report_filed_1 = ReportFactory(status=cls.filed_status, external_uuid=uuid.uuid4(), assigned_user=cls.admin)
+        cls.report_filed_2 = ReportFactory(status=cls.filed_status, external_uuid=uuid.uuid4(), assigned_user=cls.admin)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -604,8 +604,8 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         )
         self.assertTrue(form.is_valid)
         form.save()
-        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.formatted_uuid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.formatted_uuid, self.classified_status.identifier, "Problème déjà réglé")
+        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.formatted_external_uuid, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.formatted_external_uuid, self.classified_status.identifier, "Problème déjà réglé")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")

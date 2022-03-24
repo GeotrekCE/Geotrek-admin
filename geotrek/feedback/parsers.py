@@ -120,7 +120,7 @@ class SuricateParser(SuricateGestionRequestManager):
                 "last_updated_in_suricate": rep_updated,
             }
             report_obj, created = Report.objects.update_or_create(
-                uuid=report["uid"], defaults=fields
+                external_uuid=report["uid"], defaults=fields
             )
             if created:
                 logger.info(
@@ -155,8 +155,8 @@ class SuricateParser(SuricateGestionRequestManager):
         data = self.get_suricate("wsGetAlerts")
         pk = int(pk)
         if pk:
-            formatted_uuid = Report.objects.get(pk=pk).formatted_uuid
-            report = next(report for report in data["alertes"] if report["uid"] == formatted_uuid)
+            formatted_external_uuid = Report.objects.get(pk=pk).formatted_external_uuid
+            report = next(report for report in data["alertes"] if report["uid"] == formatted_external_uuid)
         else:
             report = data["alertes"][0]
         if verbosity >= 2:
@@ -240,7 +240,7 @@ class SuricateParser(SuricateGestionRequestManager):
             )
             if created:
                 logger.info(
-                    f"New Message - id: {message['id']}, parent: {parent.uuid}"
+                    f"New Message - id: {message['id']}, parent: {parent.external_uuid}"
                 )
 
             # Parse documents attached to message
