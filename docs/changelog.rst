@@ -5,9 +5,9 @@ CHANGELOG
 2.78.0+dev (XXXX-XX-XX)
 -----------------------
 
-**Minor improvements**
+**New features**
 
--
+- Change pdf templates (#2838)
 
 
 2.78.0     (2022-03-22)
