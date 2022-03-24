@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-- Change pdf templates (#2838)
+- Improve treks pdf templates and add new accessibility fields (#2838)
 
 
 2.78.0     (2022-03-22)
