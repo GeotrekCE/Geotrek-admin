@@ -20,7 +20,7 @@ from geotrek.feedback.models import (PendingSuricateAPIRequest, Report, Selectab
                                      TimerEvent, WorkflowManager)
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
-    SURICATE_MANAGEMENT_SETTINGS, SuricateTests, SuricateWorkflowTests)
+    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests)
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
@@ -91,6 +91,7 @@ class MockRequest:
 
 
 @override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
+@override_settings(SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS)
 class TestWorkflowUserModels(TestCase):
 
     def test_strings(self):
