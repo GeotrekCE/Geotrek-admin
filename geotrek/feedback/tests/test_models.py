@@ -39,6 +39,8 @@ class TestFeedbackModel(TestCase):
         self.assertEqual(self.report.full_url, s)
 
 
+@override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
+@override_settings(SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS)
 class TestTimerEventClass(SuricateWorkflowTests):
 
     @classmethod
