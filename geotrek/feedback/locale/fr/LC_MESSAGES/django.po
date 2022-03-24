@@ -90,6 +90,9 @@ msgstr "Activités"
 msgid "Categories"
 msgstr "Catégories"
 
+msgid "External id"
+msgstr "ID externe"
+
 msgid "Identifiant"
 msgstr "Identifiant"
 

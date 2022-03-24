@@ -20,7 +20,7 @@ from geotrek.feedback.models import (PendingSuricateAPIRequest, Report, Selectab
                                      TimerEvent, WorkflowManager)
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
-    SURICATE_MANAGEMENT_SETTINGS, SuricateTests, SuricateWorkflowTests)
+    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests)
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
@@ -39,6 +39,8 @@ class TestFeedbackModel(TestCase):
         self.assertEqual(self.report.full_url, s)
 
 
+@override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
+@override_settings(SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS)
 class TestTimerEventClass(SuricateWorkflowTests):
 
     @classmethod
@@ -91,6 +93,7 @@ class MockRequest:
 
 
 @override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
+@override_settings(SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS)
 class TestWorkflowUserModels(TestCase):
 
     def test_strings(self):
@@ -153,7 +156,7 @@ class TestPendingAPIRequests(SuricateTests):
         report = ReportFactory.create(email='john.doe@nowhere.com',
                                       comment="This is a 'comment'",
                                       assigned_user=self.user,
-                                      uid=uid)
+                                      external_uuid=uid)
         # Report lock fails the first time
         self.build_timeout_request_patch(mocked)
         self.assertRaises(Exception, report.lock_in_suricate())
@@ -162,7 +165,7 @@ class TestPendingAPIRequests(SuricateTests):
         self.assertEquals(pending_lock_report.request_type, "GET")
         self.assertEquals(pending_lock_report.api, "MAN")
         self.assertEquals(pending_lock_report.endpoint, "wsLockAlert")
-        self.assertEquals(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_uid)}))
+        self.assertEquals(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_external_uuid)}))
         self.assertEquals(pending_lock_report.retries, 0)
         self.assertEquals(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report lock fails a second time
@@ -231,7 +234,7 @@ class TestPendingAPIRequests(SuricateTests):
         # Create a report with an UID - emulates report from Suricate
         uid = uuid.uuid4()
         geom = Point(700000, 6600000, srid=settings.SRID)
-        report = Report.objects.create(uid=uid, status=self.status, geom=geom, email="john.doe@nowhere.com")
+        report = Report.objects.create(external_uuid=uid, status=self.status, geom=geom, email="john.doe@nowhere.com")
         # Report update fails the first time
         self.build_timeout_request_patch(mocked)
         messenger = SuricateMessenger(PendingSuricateAPIRequest)

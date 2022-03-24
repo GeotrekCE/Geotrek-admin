@@ -41,6 +41,13 @@ class Command(BaseCommand):
             help="Test ability to reach Suricate API",
             default=False,
         )
+        parser.add_argument(
+            "--no-notification",
+            dest="no_notif",
+            action='store_true',
+            help="Test ability to reach Suricate API",
+            default=False,
+        )
 
     def handle(self, *args, **options):
         verbosity = options['verbosity']
@@ -48,6 +55,7 @@ class Command(BaseCommand):
             parser = SuricateParser()
             has_no_params = not (options["statuses"] | options["activities"] | options["test"])
             report = options["report"]
+            no_notification = options["no_notif"]
             if options['test']:
                 test_suricate_connection()
             elif report is not None:
@@ -58,6 +66,6 @@ class Command(BaseCommand):
                 if options["statuses"] or has_no_params:
                     parser.get_statuses()
                 if has_no_params:
-                    parser.get_alerts(verbosity=verbosity)
+                    parser.get_alerts(verbosity=verbosity, should_notify=not(no_notification))
         else:
             logger.error("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED or SURICATE_WORKFLOW_ENABLED.")
