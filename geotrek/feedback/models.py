@@ -514,7 +514,7 @@ class TimerEvent(models.Model):
     def save(self, *args, **kwargs):
         if self.report.uses_timers:
             if self.pk is None:
-                days_nb = settings.SURICATE_MANAGEMENT_SETTINGS.get(f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS", 30)
+                days_nb = settings.SURICATE_WORKFLOW_SETTINGS.get(f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS", 30)
                 self.deadline = self.date_event + timedelta(days=days_nb)
             super().save(*args, **kwargs)
         # Don't save if report doesn't use timers
