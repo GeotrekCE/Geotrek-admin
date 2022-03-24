@@ -21,6 +21,7 @@ class SignageTypeSerializer(PictogramSerializerMixin):
 
 
 class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, serializers.ModelSerializer):
+    name = serializers.CharField(source='name_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
     type = serializers.SlugRelatedField('label', read_only=True)
     condition = serializers.SlugRelatedField('label', read_only=True)
