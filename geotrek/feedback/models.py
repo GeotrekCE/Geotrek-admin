@@ -169,6 +169,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         editable=False, unique=True, null=True, verbose_name=_("Identifier")
     )
     uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
+    eid = models.CharField(blank=True, max_length=1024, default="", verbose_name=_('External id'))
     locked = models.BooleanField(default=False, verbose_name=_("Locked"))
     origin = models.CharField(
         blank=True, null=True, default="unknown", max_length=100, verbose_name=_("Origin")

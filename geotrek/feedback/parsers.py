@@ -118,6 +118,7 @@ class SuricateParser(SuricateGestionRequestManager):
                 "status": rep_status,
                 "created_in_suricate": rep_creation,
                 "last_updated_in_suricate": rep_updated,
+                "eid": str(report["shortkeylink"])
             }
             report_obj, created = Report.objects.update_or_create(
                 external_uuid=report["uid"], defaults=fields

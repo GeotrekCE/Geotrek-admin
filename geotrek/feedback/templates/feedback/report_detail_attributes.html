@@ -91,6 +91,13 @@
         </tr>
         {% endif %}
         {% suricate_workflow_enabled as suricate_workflow_enabled %}
+        {% suricate_management_enabled as suricate_management_enabled %}
+        {% if suricate_management_enabled or suricate_workflow_enabled %}
+            <tr>
+                <th>{{ report|verbose:"eid" }}</th>
+                <td>{{ report.eid }}</td>
+            </tr>
+        {% endif %}
         {% if suricate_workflow_enabled %}
         <tr>
             <th>{{ report|verbose:"uses_timers" }}</th>
