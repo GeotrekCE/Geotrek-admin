@@ -204,7 +204,7 @@ This mode allows to process and manage reports, using the Intervention module an
 
 - Go to the Admin Site and 
     - select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
-    - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators with. You can use `##intervention_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
+    - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
     - make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
 Make sure to run these 3 commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
