@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, MarkupPublic
+from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.trekking.models import Trek
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
@@ -141,6 +141,10 @@ class TouristicContentDocumentPublicMixin:
 
 
 class TouristicContentDocumentPublic(TouristicContentDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class TouristicContentDocumentBookletPublic(TouristicContentDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 
@@ -271,6 +275,10 @@ class TouristicEventDocumentPublicMixin:
 
 
 class TouristicEventDocumentPublic(TouristicEventDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class TouristicEventDocumentBookletPublic(TouristicEventDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 

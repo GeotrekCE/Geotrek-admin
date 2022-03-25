@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 15:03+0000\n"
+"POT-Creation-Date: 2022-03-25 10:07+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -209,6 +209,9 @@ msgstr "Réseaux de randonnée"
 
 msgid "Hiking networks"
 msgstr "Réseaux de randonnée"
+
+msgid "Accessibility type"
+msgstr "Type d'accessibilité"
 
 msgid "Accessibility advice"
 msgstr "Conseils d'accessibilité"
@@ -613,6 +616,18 @@ msgstr "Dénivelé positif"
 msgid "Markings"
 msgstr "Balisage"
 
+msgid "Cities"
+msgstr "Communes"
+
+msgid "Altimetric profile"
+msgstr "Profil altimétrique"
+
+msgid "Min elevation"
+msgstr "Altitude min"
+
+msgid "Max elevation"
+msgstr "Altitude max"
+
 msgid "Stages"
 msgstr "Étapes"
 
@@ -625,18 +640,39 @@ msgstr "Toutes les infos pratiques"
 msgid "Advices"
 msgstr "Recommandations"
 
+msgid "How to come ?"
+msgstr "Comment venir ?"
+
+msgid "Transports"
+msgstr "Transports"
+
+msgid "Slope"
+msgstr "Pente"
+
+msgid "Width"
+msgstr "Largeur"
+
+msgid "Signage"
+msgstr "Signalétique"
+
+msgid "Covering"
+msgstr "Revêtement"
+
+msgid "Exposure"
+msgstr "Exposition"
+
 msgid "Environmental sensitive areas"
 msgstr "Zones de sensibilité environnementale"
 
 msgid ""
 "\n"
-"            Along your trek, you will go through sensitive areas related to "
-"the presence of a specific species or\n"
-"            environment. In these areas, an appropriate behaviour allows to "
-"contribute to their preservation. For\n"
-"            detailed information, specific forms are accessible for each "
+"              Along your trek, you will go through sensitive areas related "
+"to the presence of a specific species or\n"
+"              environment. In these areas, an appropriate behaviour allows "
+"to contribute to their preservation. For\n"
+"              detailed information, specific forms are accessible for each "
 "area.\n"
-"          "
+"            "
 msgstr ""
 "\n"
 "Le long de votre itinéraire, vous allez traverser des zones de sensibilité "
@@ -650,18 +686,6 @@ msgstr "Période de sensibilité :"
 
 msgid "Contact:"
 msgstr "Contact :"
-
-msgid "Altimetric profile"
-msgstr "Profil altimétrique"
-
-msgid "Min elevation"
-msgstr "Altitude min"
-
-msgid "Max elevation"
-msgstr "Altitude max"
-
-msgid "Transports"
-msgstr "Transports"
 
 msgid "Add a new poi"
 msgstr "Ajouter un POI"

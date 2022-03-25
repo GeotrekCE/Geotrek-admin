@@ -7,7 +7,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, Map
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.views import DocumentPublic, MarkupPublic
+from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.forms import SiteForm, CourseForm
@@ -77,6 +77,10 @@ class SiteDocumentPublicMixin:
 
 
 class SiteDocumentPublic(SiteDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class SiteDocumentBookletPublic(SiteDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 
@@ -182,6 +186,10 @@ class CourseDocumentPublicMixin:
 
 
 class CourseDocumentPublic(CourseDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class CourseDocumentBookletPublic(CourseDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 

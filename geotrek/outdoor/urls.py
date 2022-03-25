@@ -18,11 +18,13 @@ router.register(r'^api/(?P<lang>[a-z]{2})/sites', outdoor_views.SiteAPIViewSet, 
 
 class SiteEntityOptions(PublishableEntityOptions):
     document_public_view = outdoor_views.SiteDocumentPublic
+    document_public_booklet_view = outdoor_views.SiteDocumentBookletPublic
     markup_public_view = outdoor_views.SiteMarkupPublic
 
 
 class CourseEntityOptions(PublishableEntityOptions):
     document_public_view = outdoor_views.CourseDocumentPublic
+    document_public_booklet_view = outdoor_views.CourseDocumentBookletPublic
     markup_public_view = outdoor_views.CourseMarkupPublic
 
 

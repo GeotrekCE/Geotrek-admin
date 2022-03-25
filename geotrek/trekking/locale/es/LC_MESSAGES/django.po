@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 15:03+0000\n"
+"POT-Creation-Date: 2022-03-25 10:07+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -200,6 +200,9 @@ msgid "Networks"
 msgstr ""
 
 msgid "Hiking networks"
+msgstr ""
+
+msgid "Accessibility type"
 msgstr ""
 
 msgid "Accessibility advice"
@@ -583,6 +586,18 @@ msgstr "Desnivel positivo"
 msgid "Markings"
 msgstr "Puntos de interés"
 
+msgid "Cities"
+msgstr ""
+
+msgid "Altimetric profile"
+msgstr "Perfil altimétrico"
+
+msgid "Min elevation"
+msgstr "Altitud mín"
+
+msgid "Max elevation"
+msgstr "Altitud máx"
+
 msgid "Stages"
 msgstr "Etapas"
 
@@ -595,18 +610,39 @@ msgstr "Información útil"
 msgid "Advices"
 msgstr "Recomendaciones"
 
+msgid "How to come ?"
+msgstr ""
+
+msgid "Transports"
+msgstr "Transportes"
+
+msgid "Slope"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Signage"
+msgstr ""
+
+msgid "Covering"
+msgstr ""
+
+msgid "Exposure"
+msgstr ""
+
 msgid "Environmental sensitive areas"
 msgstr ""
 
 msgid ""
 "\n"
-"            Along your trek, you will go through sensitive areas related to "
-"the presence of a specific species or\n"
-"            environment. In these areas, an appropriate behaviour allows to "
-"contribute to their preservation. For\n"
-"            detailed information, specific forms are accessible for each "
+"              Along your trek, you will go through sensitive areas related "
+"to the presence of a specific species or\n"
+"              environment. In these areas, an appropriate behaviour allows "
+"to contribute to their preservation. For\n"
+"              detailed information, specific forms are accessible for each "
 "area.\n"
-"          "
+"            "
 msgstr ""
 
 msgid "Sensitivity period:"
@@ -614,18 +650,6 @@ msgstr ""
 
 msgid "Contact:"
 msgstr ""
-
-msgid "Altimetric profile"
-msgstr "Perfil altimétrico"
-
-msgid "Min elevation"
-msgstr "Altitud mín"
-
-msgid "Max elevation"
-msgstr "Altitud máx"
-
-msgid "Transports"
-msgstr "Transportes"
 
 msgid "Add a new poi"
 msgstr ""
