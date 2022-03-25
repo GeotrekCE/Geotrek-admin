@@ -77,7 +77,8 @@ function ShowLegend(e, data) {
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'legend-statuses');
-        inner = ['<strong>' + tr("Statuses") + '</strong>']
+        header = ['<span style="text-align: center;display: block;"><strong>' + tr("Statuses") + '</strong></span>']
+        inner = []
         // For each report status
         var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
         for (var status in status_ids_and_colors) {
@@ -89,7 +90,8 @@ function ShowLegend(e, data) {
                     '<i class="legend-circle ' + status_id + '" style="background:' + status_color + '"></i> ' + status_label
                 );
         }
-        div.innerHTML = inner.join('<br>');
+        div.innerHTML = header
+        div.innerHTML += inner.join('<br>');
         return div;
     };
     legend.addTo(map);
