@@ -8,9 +8,14 @@ CHANGELOG
 
 - Add public booklet pdf for courses, sites, events, contents, dives
 
-**Minor improvements**
+**New features**
 
--
+- Improve treks pdf templates and add new accessibility fields (#2838)
+
+**WARNING!**
+
+Check your custom trekking's templates, blocks order changed. There is a huge new block accessibility.
+Disabled infrastructure's block have been removed
 
 **Bug fixes**
 

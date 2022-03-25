@@ -244,23 +244,42 @@ header .url .geo {
   margin-top: .5cm;
 }
 
-.gear {
+.how_to_come, .accessibility, .gear {
   margin-top: .5cm;
   padding: .5cm .3cm;
   background-color: #eee;
-}
-
-.gear-title {
-  font-weight: bold;
-  color: orange;
 }
 
 .gear-content {
   margin-top: .5cm;
 }
 
+.advice-title, .how_to_come-title, .accessibility-title, .gear-title {
+  font-weight: bold;
+}
+
+.accessibility_infrastructure-content {
+  padding-top: 0.3cm;
+}
+
+.icon-accessibility{
+  max-width:30px;
+}
+
+.accessibility-accessibilities p {
+ padding: 10px;
+}
+
+.accessibility-accessibilities {
+  border-top: 1px solid;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+}
+
 .elevation {
-  margin-top: .8cm;
+  margin-right: 0;
 }
 
 .elevation-title {
@@ -269,20 +288,18 @@ header .url .geo {
 }
 
 .elevation-chart {
-  display: inline-block;
-  width: 50%;
-  margin-top: .3cm;
+  margin-top: .1cm;
 }
 
 .elevation-meta {
-  display: inline-block;
-  width: 48%;
-  padding-top: 3mm;
-  vertical-align: top;
+  display: flex;
+
 }
 
 .elevation-meta-item {
   display: block;
+  margin-right: .3cm;
+  font-size: 0.8em;
 }
 
 .half-block {
@@ -423,15 +440,36 @@ header .url .geo {
   max-height: 1em;
 }
 
+div .departure-arrival {
+  flex-shrink: 1;
+}
+
 .departure-arrival ul {
   margin: 0;
+  margin-top: 0.5cm;
   padding: 0;
 }
 
 .departure-arrival ul li {
-  margin: 0;
-  padding: 0;
+  margin: 0cm;
+  padding: 0.03cm;
   list-style-type: none;
+}
+
+.top-trek {
+    border-top: 0;
+    padding-top: 0.3cm;
+    padding-bottom: 0.3cm;
+    display: flex;
+    align-items: center
+    margin-top: 0cm;
+    margin-bottom: 0.5cm;
+}
+
+.elevation {
+    width: 50%;
+    flex-shrink: 0;
+    margin-top: 0cm;
 }
 
 .source .text-content + .text-content {
