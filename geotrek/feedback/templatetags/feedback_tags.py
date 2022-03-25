@@ -26,6 +26,7 @@ def enable_report_colors_per_status():
 def status_ids_and_colors():
     status_ids_and_colors = {
         status.pk: {
+            "label": str(status.label),
             "id": str(status.identifier),
             "color": str(status.color)
         }
