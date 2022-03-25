@@ -64,7 +64,7 @@ function ChangeColor(e, data) {
     )
 }
 
-function ShowLegend(e, data) {
+function InitReportStatusLegend(e, data) {
     if (data.modelname != 'report')
         return;
     var map = data.map;
@@ -109,4 +109,4 @@ function ShowLegend(e, data) {
 
 $(window).on('entity:map:detail', ChangeColor);
 $(window).on('entity:map:list', ChangeColors);
-$(window).on('entity:map:list', ShowLegend);
+$(window).on('entity:map:list', InitReportStatusLegend);
