@@ -2,8 +2,9 @@
 CHANGELOG
 =========
 
-2.78.0+dev (XXXX-XX-XX)
+2.79.0     (2022-03-25)
 -----------------------
+
 **New features**
 
 - Add public booklet pdf for courses, sites, events, contents, dives
