@@ -235,18 +235,18 @@ header .url .geo {
   color: #333;
 }
 
-.advice {
+.advice, .label, .accessibility {
   margin-top: .5cm;
   padding: .5cm .3cm;
   background-color: #eee;
 }
 
-.advice-title {
+.advice-title, .label-title, .accessibility-title {
   font-weight: bold;
   color: orange;
 }
 
-.advice-content {
+.advice-content, .label-content, .accessibility-content {
   margin-top: .5cm;
 }
 
@@ -393,6 +393,7 @@ header .url .geo {
 }
 
 .advice-icon,
+.label-icon,
 .information-desks-icon,
 .network-icon {
   display: inline-block;
