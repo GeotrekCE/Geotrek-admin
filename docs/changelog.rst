@@ -2,15 +2,20 @@
 CHANGELOG
 =========
 
+2.79.0+dev (XXXX-XX-XX)
+-----------------------
+
+**Minor improvements**
+
+-
+
+
 2.79.0     (2022-03-25)
 -----------------------
 
 **New features**
 
 - Add public booklet pdf for courses, sites, events, contents, dives
-
-**New features**
-
 - Improve treks pdf templates and add new accessibility fields (#2838)
 
 **WARNING!**
