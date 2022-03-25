@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from rest_framework import permissions as rest_permissions
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.views import DocumentPublic, MarkupPublic
+from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.forms import SiteForm, CourseForm
 from geotrek.outdoor.models import Site, Course
@@ -94,6 +94,10 @@ class SiteDocumentPublicMixin:
 
 
 class SiteDocumentPublic(SiteDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class SiteDocumentBookletPublic(SiteDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 
@@ -191,6 +195,10 @@ class CourseDocumentPublicMixin:
 
 
 class CourseDocumentPublic(CourseDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class CourseDocumentBookletPublic(CourseDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 

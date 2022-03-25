@@ -22,7 +22,7 @@ from rest_framework.views import APIView
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
+from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic, MetaMixin
 from django.shortcuts import get_object_or_404
 from geotrek.trekking.models import Trek
 
@@ -150,6 +150,10 @@ class TouristicContentDocumentPublic(TouristicContentDocumentPublicMixin, Docume
     pass
 
 
+class TouristicContentDocumentBookletPublic(TouristicContentDocumentPublicMixin, DocumentBookletPublic):
+    pass
+
+
 class TouristicContentMarkupPublic(TouristicContentDocumentPublicMixin, MarkupPublic):
     pass
 
@@ -250,6 +254,10 @@ class TouristicEventDocumentPublicMixin:
 
 
 class TouristicEventDocumentPublic(TouristicEventDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class TouristicEventDocumentBookletPublic(TouristicEventDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 
