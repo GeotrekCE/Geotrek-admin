@@ -115,10 +115,9 @@ function ShowLegend(e, data) {
         _reset: function () {
         }
     });
-
-    map.layerscontrol.addOverlay(new LegendLayer(), tr("Legend"));
-
-
+    control = new LegendLayer()
+    map.layerscontrol.addOverlay(control, tr("Legend"));
+    map.addLayer(control);
 }
 
 $(window).on('entity:map:detail', ChangeColor);
