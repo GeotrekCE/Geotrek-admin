@@ -1,7 +1,12 @@
-{% load static feedback_tags %}
+{% load static i18n feedback_tags %}
 
 {% suricate_workflow_enabled as suricate_workflow_enabled %}
 {% enable_report_colors_per_status as enable_report_colors_per_status %}
+
+
+<script type="text/javascript">
+
+</script>
 
 {% if enable_report_colors_per_status or suricate_workflow_enabled %}
     <script type="application/json" id="status_ids_and_colors">
@@ -11,6 +16,10 @@
 {% endif %}
 
 {% if enable_report_colors_per_status %}
+    <script type="text/javascript">
+        MapEntity.i18n['Statuses'] = "{% trans "Statuses" %}";
+        MapEntity.i18n['Legend'] = "{% trans "Legend" %}";
+    </script>
     <script type="text/javascript" src="{% static "feedback/status_colors.js" %}"></script>
     <link rel="stylesheet" href="{% static "feedback/style.css" %}" />
 {% endif %}

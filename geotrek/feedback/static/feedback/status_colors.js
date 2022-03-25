@@ -77,7 +77,7 @@ function ShowLegend(e, data) {
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'legend-statuses');
-        inner = ['<button onclick="toggleLegend()"><strong>' + tr("Statuses") + '</strong></button><div class="legend-inner">']
+        inner = ['<strong>' + tr("Statuses") + '</strong>']
         // For each report status
         var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
         for (var status in status_ids_and_colors) {
@@ -89,11 +89,34 @@ function ShowLegend(e, data) {
                     '<i class="legend-circle ' + status_id + '" style="background:' + status_color + '"></i> ' + status_label
                 );
         }
-        inner.push("</div>")
         div.innerHTML = inner.join('<br>');
         return div;
     };
     legend.addTo(map);
+
+    $(".legend-statuses")[0].style.display = 'none'; // init as hidden, use selector in controls overlay to display
+
+    var LegendLayer = L.Class.extend({
+
+        initialize: function () {
+        },
+
+        onAdd: function (map) {
+            console.log("add")
+            $(".legend-statuses").toggle();
+        },
+
+        onRemove: function (map) {
+            $(".legend-statuses").toggle();
+        },
+
+        _reset: function () {
+        }
+    });
+
+    map.layerscontrol.addOverlay(new LegendLayer(), tr("Legend"));
+
+
 }
 
 $(window).on('entity:map:detail', ChangeColor);
