@@ -120,23 +120,6 @@
       <div class="inner-title">
         <h2>{% trans "All useful information" %}</h2>
       </div>
-    {% block label %}
-        {% for label in object.labels.all %}
-          <div class="label">
-            <div class="label-title">
-              <div class="label-icon">
-                {% if label.pictogram %}
-                  <img src="file://{{ label.pictogram.path }}">
-                {% else %}
-                  <img src="file://{{ STATIC_ROOT }}/trekking/information.svg">
-                {% endif %}
-              </div>
-              {{ label.name | safe }}
-            </div>
-            <div class="label-content">{{ label.advice | safe }}</div>
-          </div>
-        {% endfor %}
-      {% endblock label %}
       {% block advice %}
         {% if object.advice %}
           <div class="advice">
@@ -157,7 +140,7 @@
               <div class="gear-icon">
                 <img src="file://{{ STATIC_ROOT }}/trekking/gear.svg">
               </div>
-              {% trans "Gears" %}
+              {% trans "Gear" %}
             </div>
             <div class="gear-content">{{ object.gear | safe }}</div>
           </div>
@@ -167,7 +150,7 @@
         {% if object.equipment %}
           <div class="equipment">
             <div class="equipment-title">
-              {% trans "Equipments" %}
+              {% trans "Equipment" %}
             </div>
             <div class="equipment-content">{{ object.equipment | safe }}</div>
           </div>
@@ -183,38 +166,6 @@
           </div>
         {% endif %}
       {% endblock accessibility %}
-      {% if  object.information_desks.all %}
-        <div class="gray">
-          {% block informationDesks %}
-            <section class="information-desks">
-              <h2>
-                <div class="information-desks-icon">
-                  <img src="file://{{ STATIC_ROOT}}/trekking/information.svg">
-                </div>
-                {% trans "Information desks" %}
-              </h2>
-              <div class="text-content intro">
-                {% if object.information_desks.first.thumbnail %}
-                  <img src="file://{{ object.information_desks.first.thumbnail.path }}">
-                {% endif %}
-              </div>
-              <ul class="desks">
-                {% for desk in object.information_desks.all %}
-                  <li class="desk">
-                    <div class="desk-name">{{ desk.name }}</div>
-                    <div class="content">
-                      {% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
-                      {% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
-                      {% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
-                      {% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
-                    </div>
-                  </li>
-                {% endfor %}
-              </ul>
-            </section>
-          {% endblock informationDesks %}
-        </div>
-      {% endif %}
       {% block source %}
         {% if object.source.all %}
           <section class="half-block source">
