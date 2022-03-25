@@ -64,11 +64,7 @@ function ChangeColor(e, data) {
     )
 }
 
-function toggleLegend() {
-    $(".legend-inner").toggle();
-}
-
-function ShowLegend(e, data) {
+function InitLegend(e, data) {
     if (data.modelname != 'report')
         return;
     var map = data.map;
@@ -96,8 +92,6 @@ function ShowLegend(e, data) {
     };
     legend.addTo(map);
 
-    $(".legend-statuses")[0].style.display = 'none'; // init as hidden, use selector in controls overlay to display
-
     var LegendLayer = L.Class.extend({
 
         initialize: function () {
@@ -117,9 +111,9 @@ function ShowLegend(e, data) {
     });
     control = new LegendLayer()
     map.layerscontrol.addOverlay(control, tr("Legend"));
-    map.addLayer(control);
+    map.addLayer(control); //init as visible
 }
 
 $(window).on('entity:map:detail', ChangeColor);
 $(window).on('entity:map:list', ChangeColors);
-$(window).on('entity:map:list', ShowLegend);
+$(window).on('entity:map:list', InitLegend);
