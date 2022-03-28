@@ -5,7 +5,7 @@ from geotrek.land.models import LandEdge, PhysicalEdge, CompetenceEdge, SignageM
 
 
 class LandEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    land_type = serializers.SlugRelatedField('name', read_only=True)
+    land_type = serializers.CharField(source='land_type_display')
     length = serializers.FloatField(source='length_display')
 
     class Meta:
@@ -17,7 +17,7 @@ class LandEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    physical_type = serializers.SlugRelatedField('name', read_only=True)
+    physical_type = serializers.CharField(source='physical_type_display')
     length = serializers.FloatField(source='length_display')
 
     class Meta:

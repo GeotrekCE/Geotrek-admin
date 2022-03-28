@@ -23,7 +23,7 @@ class SignageTypeSerializer(PictogramSerializerMixin):
 class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='name_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
-    type = serializers.SlugRelatedField('label', read_only=True)
+    type = serializers.CharField(source='type_display')
     condition = serializers.SlugRelatedField('label', read_only=True)
     manager = serializers.SlugRelatedField('organism', read_only=True)
     sealing = serializers.SlugRelatedField('label', read_only=True)
@@ -67,6 +67,7 @@ class BladeSerializer(serializers.ModelSerializer):
     direction = serializers.SlugRelatedField('label', read_only=True)
     color = serializers.SlugRelatedField('label', read_only=True)
     condition = serializers.SlugRelatedField('label', read_only=True)
+    number = serializers.CharField(source='number_display')
 
     class Meta:
         model = signage_models.Blade

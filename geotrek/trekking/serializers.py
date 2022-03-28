@@ -336,7 +336,7 @@ class ClosePOISerializer(TranslatedModelSerializer):
 
 class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='name_display')
-    type = serializers.SlugRelatedField('label', read_only=True)
+    type = serializers.CharField(source='type_display')
     thumbnail = serializers.CharField(source='thumbnail_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
 

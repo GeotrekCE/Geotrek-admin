@@ -1,10 +1,10 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from .models import Intervention, Project
 
 
-class InterventionSerializer(ModelSerializer):
+class InterventionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Intervention
         fields = (
@@ -28,7 +28,9 @@ class InterventionGeojsonSerializer(GeoFeatureModelSerializer, InterventionSeria
         fields = InterventionSerializer.Meta.fields + ('api_geom', )
 
 
-class ProjectSerializer(ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='name_display')
+
     class Meta:
         model = Project
         fields = (
