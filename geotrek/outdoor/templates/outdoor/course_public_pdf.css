@@ -304,39 +304,6 @@ header .url .geo {
   margin-bottom: .5cm;
 }
 
-.information-desks h2 {
-  font-size: 1em;
-  font-weight: bold;
-  margin-top: 0;
-  color: orange;
-}
-
-.information-desks .intro {
-  font-size: .8em;
-  float: right;
-  width: 50%;
-}
-
-.information-desks .desks {
-  margin: 0;
-  padding: 0;
-  padding-right: .5cm;
-  list-style-type: none;
-}
-
-.information-desks .desk + .desk {
-  margin-top: .5cm;
-}
-
-.information-desks .desk-email {
-  margin-top: .15cm;
-}
-
-.information-desks a {
-  text-decoration: none;
-  color: inherit;
-}
-
 .pois-summary {
   margin: .5cm 0;
 }
