@@ -7,7 +7,8 @@ from rest_framework.routers import DefaultRouter
 from geotrek.common.urls import PublishableEntityOptions, LangConverter
 
 from . import models
-from .views import DiveMapImage, DivePOIViewSet, DiveServiceViewSet, DiveAPIViewSet
+from .views import (DiveMapImage, DivePOIViewSet, DiveServiceViewSet, DiveAPIViewSet,
+                    DiveDocumentBookletPublic, DiveDocumentPublic, DiveMarkupPublic)
 
 register_converter(LangConverter, 'lang')
 
@@ -22,11 +23,9 @@ urlpatterns = [
 
 
 class DiveEntityOptions(PublishableEntityOptions):
-    # document_public_view = DiveDocumentPublic
-    # markup_public_view = DiveMarkupPublic
-
-    # def get_serializer(self):
-    #     return diving_serializers.DiveSerializer
+    document_public_booklet_view = DiveDocumentBookletPublic
+    document_public_view = DiveDocumentPublic
+    markup_public_view = DiveMarkupPublic
 
     def get_queryset(self):
         return self.model.objects.existing()

@@ -27,6 +27,7 @@ urlpatterns = [
 
 class TouristicContentEntityOptions(PublishableEntityOptions):
     document_public_view = tourism_views.TouristicContentDocumentPublic
+    document_public_booklet_view = tourism_views.TouristicContentDocumentBookletPublic
     markup_public_view = tourism_views.TouristicContentMarkupPublic
 
 
@@ -37,6 +38,7 @@ if settings.TOURISM_ENABLED:
 
 class TouristicEventEntityOptions(PublishableEntityOptions):
     document_public_view = tourism_views.TouristicEventDocumentPublic
+    document_public_booklet_view = tourism_views.TouristicEventDocumentBookletPublic
     markup_public_view = tourism_views.TouristicEventMarkupPublic
 
 
