@@ -419,6 +419,28 @@
           {% endblock informationDesks %}
         </div>
       {% endif %}
+      {% block source %}
+          {% if object.source.all %}
+            <section class="half-block source">
+              <h2>{% trans "Source" %}</h2>
+              {% for s in object.source.all %}
+                <div class="source-content">
+                  <div class="source-pictogram">
+                    {% if s.pictogram %}<img src="file://{{ s.pictogram.path }}">{% endif %}
+                  </div>
+                  <div class="source-text">
+                    <div class="source-name">
+                      {{ s.name }}
+                    </div>
+                    <div class="source-website">
+                      {% if s.website %}{{ s.website }}{% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </section>
+          {% endif %}
+      {% endblock source %}
       {% block poisDetails %}
         <section class="pois-details">
           {% if pois %}
@@ -448,28 +470,6 @@
         </section>
       {% endblock poisDetails %}
     {% endblock body %}
-    {% block source %}
-        {% if object.source.all %}
-          <section class="half-block source">
-            <h2>{% trans "Source" %}</h2>
-            {% for s in object.source.all %}
-              <div class="source-content">
-                <div class="source-pictogram">
-                  {% if s.pictogram %}<img src="file://{{ s.pictogram.path }}">{% endif %}
-                </div>
-                <div class="source-text">
-                  <div class="source-name">
-                    {{ s.name }}
-                  </div>
-                  <div class="source-website">
-                    {% if s.website %}{{ s.website }}{% endif %}
-                  </div>
-                </div>
-              </div>
-            {% endfor %}
-          </section>
-        {% endif %}
-    {% endblock source %}
     {% block footer %}
       <div id="footer">
         <div class="text">{% now 'SHORT_DATE_FORMAT' %} &#8226; {{ object.name }}</div>
