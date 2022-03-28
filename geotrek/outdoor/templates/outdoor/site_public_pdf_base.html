@@ -75,6 +75,11 @@
               {{ object.description_teaser|safe }}
             </section>
           {% endif %}
+          {% if object.ambiance %}
+            <section class="ambiance text-content">
+              {{ object.ambiance|safe }}
+            </section>
+          {% endif %}
         </div>
         <div class="meta-items">
           <div class="meta-items-title">{% trans "Useful information" %}</div>
