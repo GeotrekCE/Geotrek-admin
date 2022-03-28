@@ -1765,7 +1765,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "problem_magnitude",
             "status",
             "related_trek",
-            "uid",
+            "uuid",
+            "eid",
+            "external_eid",
             "locked",
             "origin"
             "date_update",
@@ -2201,7 +2203,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
             "problem_magnitude",
             "status",
             "related_trek",
-            "uid",
+            "uuid",
+            "eid",
+            "external_eid",
             "locked",
             "origin"
             "date_update",
