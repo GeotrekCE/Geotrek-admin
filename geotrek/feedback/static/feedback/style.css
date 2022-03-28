@@ -1,0 +1,17 @@
+/* Touristic content */
+
+.legend-circle {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+}
+
+.legend-statuses {
+    padding: 5px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    background: #fff;
+    border-radius: 5px;
+}
