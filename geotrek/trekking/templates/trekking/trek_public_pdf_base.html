@@ -397,21 +397,21 @@
                 </div>
                 {% trans "Information desks" %}
               </h2>
-              <div class="text-content intro">
-                {% if object.information_desks.first.thumbnail %}
-                  <img src="file://{{ object.information_desks.first.thumbnail.path }}">
-                {% endif %}
-              </div>
               <ul class="desks">
                 {% for desk in object.information_desks.all %}
                   <li class="desk">
-                    <div class="desk-name">{{ desk.name }}</div>
-                    <div class="content">
-                      {% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
-                      {% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
-                      {% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
-                      {% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
+                    <div class="desk-text">
+                      <div class="desk-name">{{ desk.name }}</div>
+                      <div class="content">
+                        {% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
+                        {% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
+                        {% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
+                        {% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
+                      </div>
                     </div>
+                    {% if desk.thumbnail %}
+                      <div class="desk-thumbnail"><img src="file://{{ desk.thumbnail.path }}"></div>
+                    {% endif %}
                   </li>
                 {% endfor %}
               </ul>

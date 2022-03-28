@@ -347,18 +347,29 @@ header .url .geo {
   color: orange;
 }
 
-.information-desks .intro {
+.desk-thumbnail {
   font-size: .8em;
   float: right;
   width: 50%;
 }
 
+.desks .desk-text {
+  width: 50%;
+}
+
 .information-desks .desks {
-  width: 48%;
   margin: 0;
   padding: 0;
   padding-right: .5cm;
   list-style-type: none;
+}
+.information-desks .desk {
+  display: flex;
+  justify-content: space-between;
+}
+
+.information-desks .desk-name {
+  font-weight: bold;
 }
 
 .information-desks .desk + .desk {
