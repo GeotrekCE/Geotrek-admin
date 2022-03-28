@@ -389,15 +389,31 @@ header .url .geo {
   list-style-type: none;
 }
 
-.source .text-content + .text-content {
-  clear: both;
-  padding-top: .5cm;
+.source {
+  width: 90%;
 }
 
 .source img {
-  float: left;
-  vertical-align: top;
-  margin-right: .5cm;
+  margin-right: 1.5cm;
   max-width: 3cm;
   max-height: 3cm;
+}
+
+.source-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0.5cm;
+}
+
+.source-name {
+  margin-bottom: .3cm;
+}
+
+.source-website {
+  font-size: .7em
+}
+
+.source-text {
+  width: 100%;
 }

@@ -209,10 +209,19 @@
           <section class="half-block source">
             <h2>{% trans "Source" %}</h2>
             {% for s in object.source.all %}
-               <div class="text-content">
-                 {% if s.pictogram %}<img src="file://{{ s.pictogram.path }}">{% endif %}
-                 {{ s.name }}
-               </div>
+              <div class="source-content">
+                <div class="source-pictogram">
+                  {% if s.pictogram %}<img src="file://{{ s.pictogram.path }}">{% endif %}
+                </div>
+                <div class="source-text">
+                  <div class="source-name">
+                    {{ s.name }}
+                  </div>
+                  <div class="source-website">
+                    {% if s.website %}{{ s.website }}{% endif %}
+                  </div>
+                </div>
+              </div>
             {% endfor %}
           </section>
         {% endif %}
