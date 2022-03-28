@@ -29,7 +29,7 @@ class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    organization = serializers.CharField('organization_display')
+    organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
 
     class Meta:
@@ -41,7 +41,7 @@ class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    organization = serializers.CharField('organization_display')
+    organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
 
     class Meta:
@@ -53,7 +53,7 @@ class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSeria
 
 
 class WorkManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    organization = serializers.CharField('organization_display')
+    organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
 
     class Meta:
