@@ -74,12 +74,6 @@
         <div class="meta-items">
           <div class="meta-items-title">{% trans "Useful information" %}</div>
           <section class="meta-items-list">
-            {% if object.parent_sites.first.practice.sector %}
-              <span class="meta-item">
-                <span class="meta-item-label">{% trans "Sector" %}</span>
-                <span class="meta-item-value">{{ object.parent_sites.first.practice.sector }}</span>
-              </span>
-            {% endif %}
             {% if object.parent_sites.first.practice %}
               <span class="meta-item">
                 <span class="meta-item-label">{% trans "Practice" %}</span>
