@@ -96,12 +96,35 @@
                 <span class="meta-item-value">{{ object.type }}</span>
               </span>
             {% endif %}
-            {% for rating in object.ratings.all%}
+            {% if object.period %}
               <span class="meta-item">
-                <span class="meta-item-label">{% trans rating.scale.name %}</span>
-                <span class="meta-item-value">{% trans rating.name %}</span>
+                <span class="meta-item-label">{% trans "Period" %}</span>
+                <span class="meta-item-value">{{ object.period }}</span>
               </span>
-            {% endfor %}
+            {% endif %}
+            {% if object.wind %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Wind" %}</span>
+                <span class="meta-item-value">{% for wind in object.wind %}{{ wind|wind_display }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+              </span>
+            {% endif %}
+            {% if object.orientation %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Orientation" %}</span>
+                <span class="meta-item-value">{% for orientation in object.orientation %}{{ orientation|wind_display }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+              </span>
+            {% endif %}
+            <div class="lists-ratings">
+              {% if object.ratings.all %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{% trans "Rating scale" %}</span>
+                  {% regroup  object.ratings.all by scale as scales_list %}
+                  {% for scale in scales_list %}
+                    <span class="meta-item-value">{{ scale.grouper.name }} : {% for rating in scale.list %}{{ rating.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+                  {% endfor %}
+                </span>
+              {% endif %}
+            </div>
             <div class="lists">
               {% if object.themes.all %}
                 <span class="meta-item">

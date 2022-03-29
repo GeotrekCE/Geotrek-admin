@@ -204,6 +204,7 @@ header .url .geo {
   width: 40%;
   margin-top: .8cm;
   padding-left: .5cm;
+  font-size: 0.9em;
   border-left: 1px solid #888;
 }
 
