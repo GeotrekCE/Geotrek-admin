@@ -1218,7 +1218,7 @@ class TemplateTagsTest(TestCase):
         self.assertEqual("4 h", geotrek_tags.duration(4))
         self.assertEqual("6 h", geotrek_tags.duration(6))
         self.assertEqual("10 h", geotrek_tags.duration(10))
-        self.assertEqual("1 days", geotrek_tags.duration(24))
+        self.assertEqual("1 day", geotrek_tags.duration(24))
         self.assertEqual("2 days", geotrek_tags.duration(32))
         self.assertEqual("2 days", geotrek_tags.duration(48))
         self.assertEqual("3 days", geotrek_tags.duration(49))

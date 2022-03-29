@@ -54,7 +54,7 @@ def duration(value):
 
         else:
             if duration.day - 1 == 1:
-                final_duration = _("%s day") % duration.day
+                final_duration = _("%s day") % (duration.day - 1)
             else:
                 final_duration = _("%s days") % (duration.day - 1)
 
