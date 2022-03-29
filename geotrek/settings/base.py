@@ -126,7 +126,6 @@ LANGUAGES = (
 LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'fr')
 
 MODELTRANSLATION_LANGUAGES = tuple(os.getenv('LANGUAGES', 'fr en').split(' '))
-MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
 LOCALE_PATHS = (
     # override locale
@@ -831,6 +830,8 @@ custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
 if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
         exec(f.read())
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
 # Computed settings takes place at the end after customization
 MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
