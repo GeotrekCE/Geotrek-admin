@@ -48,10 +48,7 @@ def duration(value):
     seconds = timedelta(minutes=float(value) * 60)
     duration = datetime(1, 1, 1) + seconds
 
-    if duration.day == 1:
-        final_duration = _("%s day") % duration.day
-
-    elif duration.day > 1:
+    if duration.day > 1:
         if duration.hour > 0 or duration.minute > 0:
             final_duration = _("%s days" % duration.day)
 
