@@ -11,6 +11,10 @@ CHANGELOG
 - Fix trekking's template elevation was not on the right
 - Show accessibility block only with datas in accessibility
 
+**Minor fixes**
+
+- Fix required language in form is ignored from configuration
+
 
 2.79.0     (2022-03-25)
 -----------------------
