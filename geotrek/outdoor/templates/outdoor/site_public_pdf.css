@@ -206,8 +206,8 @@ header .url .geo {
 
 .meta-item {
   display: block;
-  margin-top: 2mm;
-  padding-top: 2mm;
+  margin-top: 1.8mm;
+  padding-top: 1.8mm;
   border-top: 1px solid #888;
 }
 
@@ -217,6 +217,16 @@ header .url .geo {
 
 .lists .meta-item-value + .meta-item-value:before {
   content: ', ';
+}
+
+.lists-ratings .meta-item-value {
+  padding-top: .1cm;
+  padding-left: .3cm;
+  display: flex;
+  font-size: 0.7em;
+  align-items: left;
+  justify-content: left;
+  flex-direction: column;
 }
 
 .inner-title {
