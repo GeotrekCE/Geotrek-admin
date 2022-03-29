@@ -135,6 +135,11 @@ header .url .geo {
   margin: 0 0 1mm 0;
 }
 
+.main-picture-map{
+    display: flex;
+    align-items: center;
+}
+
 .main-picture,
 .main-map {
   display: inline-block;

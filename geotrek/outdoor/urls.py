@@ -11,11 +11,13 @@ urlpatterns = []
 
 class SiteEntityOptions(PublishableEntityOptions):
     document_public_view = outdoor_views.SiteDocumentPublic
+    document_public_booklet_view = outdoor_views.SiteDocumentBookletPublic
     markup_public_view = outdoor_views.SiteMarkupPublic
 
 
 class CourseEntityOptions(PublishableEntityOptions):
     document_public_view = outdoor_views.CourseDocumentPublic
+    document_public_booklet_view = outdoor_views.CourseDocumentBookletPublic
     markup_public_view = outdoor_views.CourseMarkupPublic
 
 

@@ -2,12 +2,52 @@
 CHANGELOG
 =========
 
-2.77.3+dev (XXXX-XX-XX)
+2.79.0+dev (XXXX-XX-XX)
 -----------------------
+
+**Bug fixes**
+
+- Fix templates map and image
+- Fix trekking's template elevation was not on the right
+- Show accessibility block only with datas in accessibility
+
+**Minor fixes**
+
+- Fix required language in form is ignored from configuration
+
+
+2.79.0     (2022-03-25)
+-----------------------
+
+**New features**
+
+- Add public booklet pdf for courses, sites, events, contents, dives
+- Improve treks pdf templates and add new accessibility fields (#2838)
+
+**WARNING!**
+
+Check your custom trekking's templates, blocks order changed. There is a huge new block accessibility.
+Disabled infrastructure's block have been removed
+
+**Bug fixes**
+
+- Fix maps height when height is bigger than width in treks pdf (#2746)
+
+
+2.78.0     (2022-03-22)
+-----------------------
+
+**New features**
+
+- Ability to customize public PDF by portal  (#2691)
 
 **Minor improvements**
 
--
+- Add block logo in public PDF templates
+
+**Bug fixes**
+
+- Fix pdf booklet use the right template
 
 **Suricate Workflow**  (#2366)
 - Add `assigned_user` field to Report model
