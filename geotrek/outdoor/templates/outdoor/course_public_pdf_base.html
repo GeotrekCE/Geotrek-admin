@@ -96,7 +96,7 @@
             {% if object.duration %}
               <span class="meta-item">
                 <span class="meta-item-label">{% trans "Duration" %}</span>
-                <span class="meta-item-value">{% trans object.duration|duration %}</span>
+                <span class="meta-item-value">{{ object.duration|duration }}</span>
               </span>
             {% endif %}
             {% if object.type %}
