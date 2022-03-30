@@ -111,7 +111,7 @@
             {% if object.orientation %}
               <span class="meta-item">
                 <span class="meta-item-label">{% trans "Orientation" %}</span>
-                <span class="meta-item-value">{% for orientation in object.orientation %}{{ orientation|wind_display }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+                <span class="meta-item-value">{% for orientation in object.orientation %}{{ orientation|orientation_display }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
               </span>
             {% endif %}
             <div class="lists-ratings">
