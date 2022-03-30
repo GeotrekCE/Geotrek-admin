@@ -259,7 +259,7 @@ class PathViewSet(GeotrekMapentityViewSet):
     filterset_class = PathFilterSet
 
     def get_queryset(self):
-        return Path.objects.annotate(length_2d=Length('geom')).defer('geom', 'geom_cadastre', 'geom_3d')\
+        return Path.objects.defer('geom', 'geom_cadastre', 'geom_3d')\
                            .select_related('structure', 'comfort', 'source', 'stake')\
                            .prefetch_related('usages', 'networks')
 
