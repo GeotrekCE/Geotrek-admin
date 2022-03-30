@@ -105,7 +105,7 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
 
     def get_expected_datatables_attrs(self):
         return {
-            'category': self.obj.category,
+            'category': self.obj.category.label,
             'id': self.obj.pk,
             'name': self.obj.name_display
         }

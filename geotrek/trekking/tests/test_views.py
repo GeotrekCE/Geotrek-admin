@@ -99,7 +99,7 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
             'id': self.obj.pk,
             'name': self.obj.name_display,
             'thumbnail': 'None',
-            'type': self.obj.type.type
+            'type': self.obj.type.label
         }
 
     def get_good_data(self):
