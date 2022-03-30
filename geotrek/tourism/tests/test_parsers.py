@@ -555,3 +555,47 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.first().content_object, event)
         self.assertEqual(event.begin_date, date(2100, 6, 1))
         self.assertEqual(event.end_date, date(2100, 6, 2))
+
+    @mock.patch('geotrek.common.parsers.requests.get')
+    def test_create_event_multiple_parsers(self, mocked):
+        self.command_order = 1
+
+        def mocked_json():
+            if self.command_order == 1:
+                filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftEvent.json')
+                self.command_order += 1
+                with open(filename, 'r') as f:
+                    return json.load(f)
+            else:
+                filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
+                with open(filename, 'r') as f:
+                    return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        TouristicEventTypeFactory(type="Agenda rando")
+        RecordSourceFactory(name="CDT 28")
+        TargetPortalFactory(name="Itinérance")
+        TargetPortalFactory(name='Portal 1')
+        TargetPortalFactory(name='Portal 2')
+        RecordSourceFactory(name='Source 1')
+        RecordSourceFactory(name='Source 2')
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28', verbosity=0)
+
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertQuerysetEqual(event.portal.all(), ['<TargetPortal: Itinérance>'])
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.tests.test_parsers.ApidaeConstantFieldEventParser',
+                     verbosity=2,  stdout=output)
+
+        self.assertEqual(TouristicEvent.objects.count(), 2)
+        event = TouristicEvent.objects.last()
+        self.assertQuerysetEqual(event.portal.all(),
+                                 ['<TargetPortal: Itinérance>',
+                                  '<TargetPortal: Portal 1>',
+                                  '<TargetPortal: Portal 2>'],
+                                 ordered=False)
