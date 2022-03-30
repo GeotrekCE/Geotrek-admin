@@ -10,6 +10,7 @@ CHANGELOG
 - Fix templates map and image
 - Fix trekking's template elevation was not on the right
 - Show accessibility block only with datas in accessibility
+- Compile messages of every apps
 
 **Minor fixes**
 
