@@ -103,6 +103,13 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
             'website': None,
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'category': self.obj.category,
+            'id': self.obj.pk,
+            'name': self.obj.name_display
+        }
+
     def get_bad_data(self):
         return {
             'geom': 'doh!'
@@ -228,6 +235,15 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             }],
             'videos': [],
             'website': None,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'begin_date': '20/02/2002',
+            'end_date': '22/02/2202',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'type': self.obj.type.type
         }
 
     def get_bad_data(self):

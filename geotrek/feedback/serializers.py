@@ -1,4 +1,5 @@
 from django.contrib.gis.geos import GEOSGeometry
+from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -6,7 +7,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from geotrek.feedback import models as feedback_models
 
 
-class ReportSerializer(rest_serializers.ModelSerializer):
+class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
     activity = rest_serializers.SlugRelatedField('label', read_only=True)
     category = rest_serializers.SlugRelatedField('label', read_only=True)
     problem_magnitude = rest_serializers.SlugRelatedField('label', read_only=True)

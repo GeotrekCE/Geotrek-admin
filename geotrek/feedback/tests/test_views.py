@@ -83,6 +83,16 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
             'problem_magnitude': self.obj.problem_magnitude.pk
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'activity': self.obj.activity.label,
+            'category': self.obj.category.label,
+            'date_update': '17/03/2020 00:00:00',
+            'email': self.obj.email,
+            'id': self.obj.pk,
+            'status': self.obj.status
+        }
+
     def get_bad_data(self):
         return {'geom': 'FOO'}, _('Invalid geometry value.')
 

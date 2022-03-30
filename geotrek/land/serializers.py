@@ -10,10 +10,7 @@ class LandEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = LandEdge
-        fields = (
-            'id', 'land_type', 'min_elevation', 'max_elevation', 'date_update', 'length_2d', 'date_insert',
-            'owner', 'agreement', 'uuid', 'length'
-        )
+        fields = "__all__"
 
 
 class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -22,10 +19,7 @@ class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = PhysicalEdge
-        fields = (
-            'id', 'physical_type', 'min_elevation', 'max_elevation', 'date_update', 'length_2d', 'date_insert',
-            'eid', 'uuid', 'length'
-        )
+        fields = "__all__"
 
 
 class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -34,10 +28,7 @@ class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = CompetenceEdge
-        fields = (
-            'id', 'organization', 'min_elevation', 'max_elevation', 'date_update', 'length_2d', 'date_insert',
-            'eid', 'uuid', 'length'
-        )
+        fields = "__all__"
 
 
 class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -46,10 +37,7 @@ class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSeria
 
     class Meta:
         model = SignageManagementEdge
-        fields = (
-            'id', 'organization', 'min_elevation', 'max_elevation', 'date_update', 'length_2d', 'date_insert',
-            'eid', 'uuid', 'length'
-        )
+        fields = "__all__"
 
 
 class WorkManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -58,7 +46,4 @@ class WorkManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializ
 
     class Meta:
         model = WorkManagementEdge
-        fields = (
-            'id', 'organization', 'min_elevation', 'max_elevation', 'date_update', 'length_2d', 'date_insert',
-            'eid', 'uuid', 'length'
-        )
+        fields = "__all__"

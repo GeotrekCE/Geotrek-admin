@@ -59,6 +59,15 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
             },
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'cities': '[]',
+            'condition': self.obj.condition.label,
+            'id': self.obj.pk,
+            'name': self.obj.name,
+            'type': self.obj.type.label,
+        }
+
     def get_good_data(self):
         good_data = {
             'name_fr': 'test',

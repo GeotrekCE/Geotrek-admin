@@ -100,9 +100,9 @@ class PathViewsTest(CommonTest):
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
     length = 141.4
-    extra_column_list = ['length', 'eid']
-    expected_column_list_extra = ['id', 'checkbox', 'name', 'length', 'length', 'eid']
-    expected_column_formatlist_extra = ['id', 'length', 'eid']
+    extra_column_list = ['length_2d', 'eid']
+    expected_column_list_extra = ['id', 'checkbox', 'name', 'length', 'length_2d', 'eid']
+    expected_column_formatlist_extra = ['id', 'length_2d', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -118,6 +118,15 @@ class PathViewsTest(CommonTest):
             'slope': 0.0,
             'valid': True,
             'visible': True
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'checkbox': self.obj.checkbox_display,
+            'id': self.obj.pk,
+            'length': 141.4,
+            'length_2d': 141.4,
+            'name': self.obj.name_display
         }
 
     def get_bad_data(self):
@@ -714,6 +723,15 @@ class TrailViewsTest(CommonTest):
             'departure': self.obj.departure,
             'arrival': self.obj.arrival,
             'comments': self.obj.comments,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'arrival': self.obj.arrival,
+            'departure': self.obj.departure,
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'name': self.obj.name
         }
 
     def get_good_data(self):

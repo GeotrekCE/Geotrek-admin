@@ -32,12 +32,13 @@ class SiteTypeSerializer(serializers.ModelSerializer):
 
 
 class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    super_practices = serializers.CharField()
+    name = serializers.CharField(source='name_display')
+    super_practices = serializers.CharField(source='super_practices_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
 
     class Meta:
         model = Site
-        fields = ('id', 'structure', 'name', 'super_practices', 'date_update', 'date_insert')
+        fields = "__all__"
 
 
 class SiteAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
@@ -74,14 +75,11 @@ class SiteAPIGeojsonSerializer(GeoFeatureModelSerializer, SiteAPISerializer):
 class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     structure = serializers.SlugRelatedField('name', read_only=True)
     parent_sites = serializers.CharField(source='parent_sites_display')
+    name = serializers.CharField(source='name_display')
 
     class Meta:
         model = Course
-        fields = (
-            'id', 'structure', 'name', 'parent_sites', 'description', 'duration', 'advice', 'date_insert',
-            'date_update', 'equipment', 'accessibility', 'height', 'eid', 'ratings', 'ratings_description',
-            'gear', 'type'
-        )
+        fields = "__all__"
 
 
 class CourseAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):

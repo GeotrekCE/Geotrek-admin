@@ -79,6 +79,14 @@ class DiveViewsTests(GeotrekAPITestCase, CommonTest):
             'videos': [],
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'levels': self.obj.levels_display,
+            'name': self.obj.name,
+            'thumbnail': 'None'
+        }
+
     def get_bad_data(self):
         return {
             'geom': 'doh!'

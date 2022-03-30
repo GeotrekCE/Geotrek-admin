@@ -30,9 +30,7 @@ class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, seri
 
     class Meta:
         model = signage_models.Signage
-        fields = ('id', 'structure', 'name', 'description', 'type', 'code', 'printed_elevation', 'condition', 'uuid',
-                  'manager', 'sealing', 'date_update', 'date_insert', 'implantation_year', 'coordinates') + \
-            BasePublishableSerializerMixin.Meta.fields
+        fields = "__all__"
 
 
 class SignageAPISerializer(BasePublishableSerializerMixin):
@@ -61,7 +59,7 @@ class BladeTypeSerializer(serializers.ModelSerializer):
         fields = ('label', )
 
 
-class BladeSerializer(serializers.ModelSerializer):
+class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     type = serializers.SlugRelatedField('label', read_only=True)
     structure = serializers.SlugRelatedField('name', read_only=True)
     direction = serializers.SlugRelatedField('label', read_only=True)
@@ -71,7 +69,7 @@ class BladeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = signage_models.Blade
-        fields = ('id', 'structure', 'number', 'order_lines', 'type', 'color', 'condition', 'direction')
+        fields = "__all__"
 
 
 class BladeAPISerializer(serializers.ModelSerializer):

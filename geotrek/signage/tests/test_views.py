@@ -52,6 +52,15 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
             }
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'color': self.obj.color.label,
+            'direction': self.obj.direction.label,
+            'id': self.obj.pk,
+            'number': self.obj.number_display,
+            'type': self.obj.type.label
+        }
+
     def get_bad_data(self):
         return OrderedDict([
             ('number', ''),
@@ -218,6 +227,15 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
                 'label': 'Signage type',
                 'pictogram': '/media/upload/signage_type.png',
             },
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'code': self.obj.code,
+            'condition': self.obj.condition.label,
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'type': self.obj.type.label
         }
 
     def get_good_data(self):

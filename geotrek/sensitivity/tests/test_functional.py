@@ -39,6 +39,13 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
             },
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'category': self.obj.category_display,
+            'id': self.obj.pk,
+            'species': self.obj.species_display
+        }
+
     def setUp(self):
         translation.deactivate()
         super().setUp()
@@ -100,6 +107,13 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
                 ],
                 'url': self.obj.species.url,
             },
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'category': self.obj.category_display,
+            'id': self.obj.pk,
+            'species': self.obj.species_display,
         }
 
     def setUp(self):

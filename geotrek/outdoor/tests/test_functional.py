@@ -80,6 +80,14 @@ class SiteViewsTests(GeotrekAPITestCase, CommonTest):
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates":[0, 0]}]}',
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'date_update': '17/03/2020 00:00:00',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'super_practices': self.obj.super_practices_display
+        }
+
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
@@ -142,6 +150,14 @@ class CourseViewsTests(GeotrekAPITestCase, CommonTest):
             'type': self.obj.type.pk,
             'ratings': [],
             'ratings_description': 'Ths rating is ratable',
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'date_update': '17/03/2020 00:00:00',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'parent_sites': self.obj.parent_sites_display,
         }
 
     def get_bad_data(self):

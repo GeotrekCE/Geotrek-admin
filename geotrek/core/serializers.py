@@ -24,12 +24,7 @@ class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Path
-        fields = (
-            'id', 'checkbox', 'arrival', 'ascent', 'departure', 'descent', 'draft', 'eid', 'length', 'length_2d',
-            'max_elevation', 'min_elevation', 'name', 'slope', 'valid', 'visible', 'structure',
-            'stake', 'networks', 'comments', 'comfort', "source", "usages", 'draft', "trails", "uuid", 'date_update',
-            'date_insert'
-        )
+        fields = "__all__"
 
 
 class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
@@ -38,7 +33,7 @@ class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
     class Meta(PathSerializer.Meta):
         geo_field = 'api_geom'
         id_field = 'id'
-        fields = PathSerializer.Meta.fields + ('api_geom', )
+        fields = "__all__"
 
 
 class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -46,10 +41,7 @@ class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Trail
-        fields = (
-            'id', 'arrival', 'departure', 'comments', 'name', 'length', 'uuid',
-            'length_2d', 'structure', 'min_elevation', 'max_elevation', 'date_update', 'date_insert'
-        )
+        fields = "__all__"
 
 
 class TrailGeojsonSerializer(GeoFeatureModelSerializer, TrailSerializer):
@@ -58,4 +50,4 @@ class TrailGeojsonSerializer(GeoFeatureModelSerializer, TrailSerializer):
     class Meta(TrailSerializer.Meta):
         geo_field = 'api_geom'
         id_field = 'id'
-        fields = TrailSerializer.Meta.fields + ('api_geom', )
+        fields = "__all__"

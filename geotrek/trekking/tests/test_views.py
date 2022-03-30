@@ -94,6 +94,14 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
             'videos': [],
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'thumbnail': 'None',
+            'type': self.obj.type.type
+        }
+
     def get_good_data(self):
         good_data = {
             'name_fr': 'test',
@@ -283,6 +291,16 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
             'reservation_system': self.obj.reservation_system.name,
             'ratings': [],
             'ratings_description': '',
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'departure': 'Departure',
+            'difficulty': 'Difficulty',
+            'duration': 1.5,
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'thumbnail': 'None'
         }
 
     def get_bad_data(self):
@@ -1382,6 +1400,12 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
                 'name': 'Service type',
                 'pictogram': '/media/upload/service-type.png'
             }
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name_display
         }
 
     def get_good_data(self):

@@ -14,27 +14,17 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class InfrastructureSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, serializers.ModelSerializer):
+class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     type = serializers.CharField(source='type_display')
     condition = serializers.SlugRelatedField('label', read_only=True)
-    cities = serializers.SerializerMethodField()
+    cities = serializers.CharField(source='cities_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
     usage_difficulty = serializers.SlugRelatedField('label', read_only=True)
     maintenance_difficulty = serializers.SlugRelatedField('label', read_only=True)
 
-    def get_cities(self, obj):
-        return obj.cities_display
-
     class Meta:
         model = infrastructure_models.Infrastructure
-        fields = ('id', 'name', 'type', 'condition', 'type', 'cities', 'structure', "description",
-                  "date_update",
-                  "date_insert",
-                  "implantation_year",
-                  "usage_difficulty",
-                  "maintenance_difficulty",
-                  "published",
-                  "uuid",)
+        fields = "__all__"
 
 
 class InfrastructureAPISerializer(BasePublishableSerializerMixin):
