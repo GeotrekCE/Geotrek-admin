@@ -528,7 +528,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.filter(author="Mairie de Briouze", legend="SteCath800").count(), 1)
 
     @mock.patch('geotrek.common.parsers.requests.get')
-    def test_create_event_tourinsoft(self, mocked):
+    @mock.patch('geotrek.common.parsers.requests.head')
+    def test_create_event_tourinsoft(self, mocked_head, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftEvent.json')
             with open(filename, 'r') as f:
@@ -536,6 +537,10 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 666}
+
         FileType.objects.create(type="Photographie")
         type = TouristicEventTypeFactory(type="Agenda rando")
         source = RecordSourceFactory(name="CDT 28")
@@ -565,7 +570,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(event.end_date, date(2100, 6, 2))
 
     @mock.patch('geotrek.common.parsers.requests.get')
-    def test_create_event_multiple_parsers(self, mocked):
+    @mock.patch('geotrek.common.parsers.requests.head')
+    def test_create_event_multiple_parsers(self, mocked_head, mocked):
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftEvent.json')
@@ -575,6 +581,11 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
+
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 666}
+
         FileType.objects.create(type="Photographie")
         TouristicEventTypeFactory(type="Agenda rando")
         RecordSourceFactory(name="CDT 28")
