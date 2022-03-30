@@ -215,7 +215,7 @@ class CourseViewSet(GeotrekMapentityViewSet):
                                                                          CourseList.default_extra_columns)
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related('sites')
+        return self.model.objects.all().prefetch_related('parent_sites')
 
 
 class CourseAPIViewSet(APIViewSet):
