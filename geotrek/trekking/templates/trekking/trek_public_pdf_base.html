@@ -65,17 +65,19 @@
         <hr>
         <div class="main-picture-map">
           {% if object.picture_print %}
-            <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
-            {% if object.picture_print.legend or object.picture_print.author %}
-              <legend>
-                {{ object.picture_print.legend }}
-                {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
-              </legend>
-            {% endif %}
+            <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div>
+            <div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+
           {% else %}
             <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
           {% endif %}
         </div>
+        {% if object.picture_print.legend or object.picture_print.author %}
+          <legend>
+            {{ object.picture_print.legend }}
+            {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
+          </legend>
+        {% endif %}
       </div>
       <div class="intro">
         <div class="intro-left">
