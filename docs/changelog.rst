@@ -16,6 +16,8 @@ CHANGELOG
 
 **Maintenance**
 
+- Fix required language in form is ignored from configuration
+- Allow configuring scheme forwarding though proxy
 - Update to paperclip 2.4.2
 
 
