@@ -28,6 +28,7 @@ from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
+from geotrek.zoning.models import District, City, RestrictedArea
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
@@ -268,6 +269,34 @@ class POIFormatList(MapEntityFormat, POIList):
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        denormalized = {}
+
+        # Since Land layers should have less records, start by them.
+        land_layers = [('districts', District),
+                       ('cities', City),
+                       ('areas', RestrictedArea)]
+        for attrname, land_layer in land_layers:
+            denormalized[attrname] = {}
+            for d in land_layer.objects.all():
+                overlapping = POI.objects.existing().filter(geom__within=d.geom)
+                for pid in overlapping.values_list('id', flat=True):
+                    denormalized[attrname].setdefault(pid, []).append(str(d))
+
+        # Same for treks
+        denormalized['treks'] = {}
+        for d in Trek.objects.existing():
+            for pid in d.pois.all():
+                denormalized['treks'].setdefault(pid, []).append(d)
+        for poi in qs:
+            # Put denormalized in specific attribute used in serializers
+            for attrname in denormalized.keys():
+                overlapping = denormalized[attrname].get(poi.id, [])
+                setattr(poi, '%s_csv_display' % attrname, ', '.join(overlapping))
+            yield poi
 
 
 class POIDetail(MapEntityDetail):

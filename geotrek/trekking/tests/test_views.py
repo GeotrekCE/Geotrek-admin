@@ -143,6 +143,17 @@ class POIViewsTest(CommonTest):
         with self.assertNumQueries(5):
             self.client.get(self.model.get_format_list_url())
 
+    def test_list_in_csv(self):
+        self.modelfactory.create()
+        DistrictFactory.create(name="Refouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
+                                                       "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
+        DistrictFactory.create(name="Trifouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
+                                                       "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
+        response = self.client.get(self.model.get_format_list_url())
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        for row in reader:
+            self.assertSetEqual({elem for elem in row['Districts'].split(', ')}, {'Trifouilli', 'Refouilli'})
+
     def test_pois_on_treks_do_not_exist(self):
         self.modelfactory.create()
 
