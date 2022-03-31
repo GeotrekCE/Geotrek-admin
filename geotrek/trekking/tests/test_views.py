@@ -140,7 +140,7 @@ class POIViewsTest(CommonTest):
         with self.assertNumQueries(6):
             self.client.get(self.model.get_jsonlist_url())
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(5):
             self.client.get(self.model.get_format_list_url())
 
     def test_pois_on_treks_do_not_exist(self):
