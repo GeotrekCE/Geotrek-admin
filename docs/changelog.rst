@@ -10,11 +10,15 @@ CHANGELOG
 - Fix templates map and image
 - Fix trekking's template elevation was not on the right
 - Show accessibility block only with datas in accessibility
+- Compile messages of every apps
+- Fix required language in form is ignored from configuration
+- Fix link initial mode is now File (#3001)
 
-**Minor fixes**
+**Maintenance**
 
 - Fix required language in form is ignored from configuration
 - Allow configuring scheme forwarding though proxy
+- Update to paperclip 2.4.2
 
 
 2.79.0     (2022-03-25)
