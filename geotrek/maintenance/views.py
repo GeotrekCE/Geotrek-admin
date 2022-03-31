@@ -243,6 +243,7 @@ class ProjectViewSet(GeotrekMapentityViewSet):
     model = Project
     serializer_class = ProjectSerializer
     geojson_serializer_class = ProjectGeojsonSerializer
+    filterset_class = ProjectFilterSet
 
     def get_queryset(self):
         return self.model.objects.existing()
