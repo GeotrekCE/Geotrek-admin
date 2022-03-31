@@ -13,6 +13,7 @@ CHANGELOG
 - Compile messages of every apps
 - Fix required language in form is ignored from configuration
 - Fix link initial mode is now File (#3001)
+- Fix poi's csv generation of elements from other modules (#2286)
 
 **Maintenance**
 
