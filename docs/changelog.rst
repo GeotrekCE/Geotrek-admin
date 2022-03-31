@@ -14,6 +14,7 @@ CHANGELOG
 **Minor fixes**
 
 - Fix required language in form is ignored from configuration
+- Allow configuring scheme forwarding though proxy
 
 
 2.79.0     (2022-03-25)
