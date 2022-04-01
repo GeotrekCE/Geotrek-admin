@@ -98,7 +98,7 @@ file.
 Multiples import
 ----------------
 
-When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values.
+When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values in many to many relationship case.
 It can be interesting with portals for example.
 
 Param for the aggregation : ``m2m_aggregate_fields``
