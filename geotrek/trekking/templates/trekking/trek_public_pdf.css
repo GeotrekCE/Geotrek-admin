@@ -392,6 +392,10 @@ header .url .geo {
   margin-top: .15cm;
 }
 
+.information-desks .desk-accessibility {
+  margin-top: .2cm;
+}
+
 .information-desks a {
   text-decoration: none;
   color: inherit;
