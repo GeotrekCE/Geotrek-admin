@@ -14,7 +14,7 @@ from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowM
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
 # Empty status should not be changed from this form
 SURICATE_WORKFLOW_STEPS = {
-    'filed': ['classified', 'filed'],
+    'filed': ['classified', 'filed', 'rejected'],
     'created': ['classified', 'created'],
     'solved_intervention': ['solved', 'solved_intervention'],
 }
@@ -123,7 +123,7 @@ class ReportForm(CommonForm):
             if self.old_status_identifier != report.status.identifier or self.old_supervisor != report.assigned_user:
                 msg = self.cleaned_data.get('message_sentinel', "")
                 report.send_notifications_on_status_change(self.old_status_identifier, msg)
-            if self.old_status_identifier != report.status.identifier and report.status.identifier in ['solved', 'classified']:
+            if self.old_status_identifier != report.status.identifier and report.status.identifier in ['solved', 'classified', 'rejected']:
                 report.unlock_in_suricate()
             if 'geom' in self.changed_data:
                 report.change_position_in_suricate()

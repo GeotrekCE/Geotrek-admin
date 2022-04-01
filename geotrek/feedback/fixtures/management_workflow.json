@@ -38,5 +38,15 @@
             "identifier": "solved_intervention",
             "color": "#4285F4"
         }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Rejet\u00e9",
+            "label_en": "Rejected",
+            "label_fr": "Rejet\u00e9",
+            "identifier": "rejected",
+            "color": "#4444444"
+        }
     }
 ]
