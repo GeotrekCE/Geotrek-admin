@@ -91,7 +91,7 @@ class FMA28OtherPortal(TouristicEventTourInSoftParser):
     source = "CDT 28"
     type = "Agenda rando"
     portal = "Other_portal"
-    m2m_update_fields = ["portal"]
+    m2m_aggregate_fields = ["portal"]
 
 
 class ParserTests(TranslationResetMixin, TestCase):
