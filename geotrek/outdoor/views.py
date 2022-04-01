@@ -83,6 +83,7 @@ class SiteViewSet(MapEntityViewSet):
 
 
 class SiteDocumentPublicMixin:
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         content = self.get_object()
@@ -184,6 +185,7 @@ class CourseViewSet(MapEntityViewSet):
 
 
 class CourseDocumentPublicMixin:
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         content = self.get_object()

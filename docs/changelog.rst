@@ -18,6 +18,7 @@ CHANGELOG
 - Fix required language in form is ignored from configuration
 - Fix link initial mode is now File (#3001)
 - Fix poi's csv generation of elements from other modules (#2286)
+- Fix pdfs booklet outdoor
 
 **Maintenance**
 
