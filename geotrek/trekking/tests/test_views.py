@@ -140,13 +140,13 @@ class POIViewsTest(CommonTest):
         with self.assertNumQueries(6):
             self.client.get(self.model.get_jsonlist_url())
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(9):
             self.client.get(self.model.get_format_list_url())
 
     def test_list_in_csv(self):
         self.modelfactory.create()
         DistrictFactory.create(name="Refouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
-                                                       "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
+                                                      "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
         DistrictFactory.create(name="Trifouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
                                                        "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
         response = self.client.get(self.model.get_format_list_url())
