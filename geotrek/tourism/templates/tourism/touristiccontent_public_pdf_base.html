@@ -14,6 +14,7 @@
         .advice-title,
         .elevation-title,
         .half-block h2,
+        .accessibility-title,
         .block h2 {
           color: {{ primary_color }};
         }
@@ -114,12 +115,6 @@
                   <span class="meta-item-value">{{ object.label_accessibility }}</span>
                 </span>
               {% endif %}
-              {% if object.accessibility %}
-                <span class="meta-item">
-                  <span class="meta-item-label">{% trans "Accessibility" %}</span>
-                  <span class="meta-item-value">{{ object.accessibility }}</span>
-                </span>
-              {% endif %}
             </div>
           </section>
         </div>
@@ -159,6 +154,16 @@
           {% if object.website %}<div><a href="{{ object.website }}">{{ object.website }}</a></div>{% endif %}
         </div>
       </section>
+      {% block accessibility %}
+        {% if object.accessibility %}
+          <div class="accessibility">
+            <div class="accessibility-title">
+              {% trans "Accessibility" %}
+            </div>
+            <div class="accessibility-content">{{ object.accessibility | safe }}</div>
+          </div>
+        {% endif %}
+      {% endblock accessibility %}
       {% block source %}
           {% if object.source.all %}
             <section class="half-block source">

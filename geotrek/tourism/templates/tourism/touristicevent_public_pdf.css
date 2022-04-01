@@ -254,12 +254,12 @@ header .url .geo {
   background-color: #eee;
 }
 
-.advice-title {
+.advice-title, .accessibility-title {
   font-weight: bold;
   color: orange;
 }
 
-.advice-content {
+.advice-content, .accessibility-content {
   margin-top: .5cm;
 }
 
