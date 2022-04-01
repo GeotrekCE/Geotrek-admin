@@ -74,7 +74,7 @@ class Parser:
     m2m_fields = {}
     constant_fields = {}
     m2m_constant_fields = {}
-    m2m_update_fields = []
+    m2m_aggregate_fields = []
     non_fields = {}
     natural_keys = {}
     field_options = {}
@@ -205,7 +205,7 @@ class Parser:
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 old = set(getattr(self.obj, dst).all())
                 val = set(val)
-                if dst in self.m2m_update_fields:
+                if dst in self.m2m_aggregate_fields:
                     val = val | old
             else:
                 old = getattr(self.obj, dst)
