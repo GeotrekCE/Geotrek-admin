@@ -5,6 +5,10 @@ CHANGELOG
 2.79.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Add a new parameter in parsers, allowing to add multiple values to fields from multiple parsers (#2091)
+
 **Bug fixes**
 
 - Fix templates map and image
