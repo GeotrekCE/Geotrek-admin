@@ -284,19 +284,18 @@ class POIFormatList(MapEntityFormat, POIList):
             for d in land_layer.objects.all():
                 overlapping = POI.objects.existing().filter(geom__within=d.geom)
                 for pid in overlapping.values_list('id', flat=True):
-                    denormalized[attrname].setdefault(pid, []).append(d)
+                    denormalized[attrname].setdefault(pid, []).append(str(d))
 
         # Same for treks
         denormalized['treks'] = {}
         for d in Trek.objects.existing():
             for pid in d.pois.all():
                 denormalized['treks'].setdefault(pid, []).append(d)
-
         for poi in qs:
             # Put denormalized in specific attribute used in serializers
             for attrname in denormalized.keys():
                 overlapping = denormalized[attrname].get(poi.id, [])
-                setattr(poi, '%s_csv_display' % attrname, overlapping)
+                setattr(poi, '%s_csv_display' % attrname, ', '.join(overlapping))
             yield poi
 
 
