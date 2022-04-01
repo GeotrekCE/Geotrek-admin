@@ -98,12 +98,12 @@ file.
 Multiples import
 ----------------
 
-When you need to import data for the same element found in 2 different parsers, you can to force the aggregation of both values.
+When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values.
 It can be interesting with portals for example.
 
-Param for the aggregation : m2m_aggregate_fields
+Param for the aggregation : ``m2m_aggregate_fields``
 
-Here an example with 2 parsers :
+Here is an example with 2 parsers :
 
 ::
 
@@ -115,12 +115,12 @@ Here an example with 2 parsers :
         m2m_aggregate_fields = ["portal"]
 
 Then, when you import the first parser ``Portal_1Parser``, you get multiple objects with ``portal_1`` as portal.
-If any element of the ``Portal_1Parser`` is also in ``AggregateParser`` fields in m2m_aggregate_fields will not be replaced but aggregated.
-The your object in both portal will have as portal : ``portal_1, portal_2``
+If any object of the ``Portal_1Parser`` is also in ``AggregateParser``, fields in ``m2m_aggregate_fields`` will have their values not be replaced but aggregated.
+Then your object in both portals will have as portal: ``portal_1, portal_2``
 
-* Here in this example whenever you import the first parser ``Portal_1Parser`` portals are replace because m2m_aggregate_fields is not filled. Then, be careful to import parsers in the right order or add the param m2m_aggregate_fields on all parsers.
+* Here in this example whenever you import the first parser ``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields`` is not filled. Then, be careful to import parsers in the right order or add the param ``m2m_aggregate_fields`` on all parsers.
 
-If you need to cancel the aggregation of portals, remove param m2m_aggregate_fields.
+If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
 
 
 Start import from command line
