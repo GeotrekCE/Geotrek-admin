@@ -28,6 +28,9 @@ CHANGELOG
 - Allow configuring scheme forwarding though proxy
 - Update to paperclip 2.4.2
 
+**WARNING!**
+
+If an error occurred while checking the signature for debian packaging check troubleshooting section for additional informations
 
 2.79.0     (2022-03-25)
 -----------------------
