@@ -827,12 +827,6 @@ ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 ACCESSIBILITY_ATTACHMENTS_ENABLED = True
 
 USE_X_FORWARDED_HOST = False
-HIDDEN_FORM_FIELDS['report'] = {
-    "status",
-    "locked",
-    "uid",
-    "origin"
-}
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
