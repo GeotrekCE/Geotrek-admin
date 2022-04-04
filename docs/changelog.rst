@@ -21,6 +21,8 @@ CHANGELOG
 - Fix line topologies drawing sometimes fails on some paths
 - Fix poi's csv generation of elements from other modules (#2286)
 - Fix pdfs booklet outdoor
+- Fix api v2 schema targets (GTRV3#607)
+- Fix api v2 translation schema targets (values should not be in french)
 
 **Maintenance**
 
