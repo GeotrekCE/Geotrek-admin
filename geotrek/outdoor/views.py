@@ -11,7 +11,7 @@ from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.serializers import SiteSerializer, SiteGeojsonSerializer, CourseSerializer, CourseGeojsonSerializer
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityDetail, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityViewSet, MapEntityFormat)
 
 
@@ -84,6 +84,7 @@ class SiteViewSet(MapEntityViewSet):
 
 
 class SiteDocumentPublicMixin:
+    queryset = Site.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,6 +100,10 @@ class SiteDocumentPublicMixin:
             poi.letter = letters[i]
         context['pois'] = pois
         return context
+
+
+class SiteDocument(MapEntityDocument):
+    queryset = Site.objects.all()
 
 
 class SiteDocumentPublic(SiteDocumentPublicMixin, DocumentPublic):
