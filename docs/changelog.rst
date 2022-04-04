@@ -13,6 +13,7 @@ CHANGELOG
 
 - Add a new parameter in parsers, allowing to add multiple values to fields from multiple parsers (#2091)
 - Add locale altimetry filters
+- Change order list actions and add new signage in signage module (#2852)
 
 **Bug fixes**
 
