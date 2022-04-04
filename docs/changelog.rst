@@ -8,6 +8,7 @@ CHANGELOG
 **Minor improvements**
 
 - Add a new parameter in parsers, allowing to add multiple values to fields from multiple parsers (#2091)
+- Add locale altimetry filters
 
 **Bug fixes**
 
