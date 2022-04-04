@@ -78,7 +78,12 @@ class SuricateParser(SuricateGestionRequestManager):
         rep_gps = Point(report["gpslongitude"], report["gpslatitude"], srid=4326)
         rep_srid = rep_gps.transform(settings.SRID, clone=True)
         rep_point = Point(rep_srid.coords)
-        should_import = rep_point.within(self.bbox)
+
+        # Parse status
+        rep_status = ReportStatus.objects.get(identifier=report["statut"])
+
+        # Keep or discard
+        should_import = rep_point.within(self.bbox) and rep_status.identifier != 'created'
 
         if should_import:
             # Parse dates
@@ -100,8 +105,7 @@ class SuricateParser(SuricateGestionRequestManager):
             )
             if created:
                 logger.info(f"Created new feedback category - label: {report['type']}")
-            # Parse status
-            rep_status = ReportStatus.objects.get(identifier=report["statut"])
+
             # Parse activity
             rep_activity = ReportActivity.objects.get(identifier=report["idactivite"])
 

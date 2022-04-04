@@ -5,6 +5,10 @@ CHANGELOG
 2.79.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Add a new parameter in parsers, allowing to add multiple values to fields from multiple parsers (#2091)
+
 **Bug fixes**
 
 - Fix templates map and image
@@ -13,6 +17,8 @@ CHANGELOG
 - Compile messages of every apps
 - Fix required language in form is ignored from configuration
 - Fix link initial mode is now File (#3001)
+- Fix poi's csv generation of elements from other modules (#2286)
+- Fix pdfs booklet outdoor
 
 **Maintenance**
 
