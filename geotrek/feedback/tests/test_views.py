@@ -88,7 +88,7 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
             'activity': self.obj.activity.label,
             'category': self.obj.category.label,
             'date_update': '17/03/2020 00:00:00',
-            'email': self.obj.email,
+            'email': self.obj.email_display,
             'id': self.obj.pk,
             'status': self.obj.status
         }
