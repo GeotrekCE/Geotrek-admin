@@ -3,7 +3,7 @@ CHANGELOG
 =========
 
 2.79.0+dev (XXXX-XX-XX)
----------------------
+-----------------------
 
 **Minor improvements**
 
