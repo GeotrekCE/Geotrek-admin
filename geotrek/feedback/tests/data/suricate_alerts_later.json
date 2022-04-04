@@ -501,6 +501,24 @@
             ],
             "type": "Balisage / Signalétique",
             "ampleur": "possible"
+        },
+        {
+            "commentaire": "Panneau d'information de l' Arbotérum de Marguerittes (Gard) détérioré par le tir d' un chasseur en mal de gibier (ref. Cartoguide De Garrigues en Costières du CG du Gard)",
+            "shortkeylink": 27422,
+            "locked": 0,
+            "emaildeposant": "le-roux.jeanpierre@orange.fr",
+            "datedepot": "January, 17 2014 14:28:07",
+            "idactivite": 31,
+            "updated": "March, 17 2014 10:23:04",
+            "documents": [],
+            "uid": "A0631F98-1D09-6D47-5E6BE7C4A411BB96",
+            "gpslongitude": 4.432690411444391,
+            "origin": "website",
+            "statut": "created",
+            "gpslatitude": 43.87344780976833,
+            "messages": [],
+            "type": "Balisage / Signalétique",
+            "ampleur": "possible"
         }
     ],
     "check": "A8E4EBFC930DB9651ABD9CEA26901560"
