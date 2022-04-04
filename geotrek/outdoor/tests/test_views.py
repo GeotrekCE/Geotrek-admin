@@ -2,12 +2,14 @@ from unittest import mock
 
 from django.contrib.gis.geos.collections import MultiPoint
 from django.contrib.gis.geos.point import Point
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
+from geotrek.outdoor import views as course_views
 from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
+from geotrek.trekking.tests.factories import POIFactory
 
 
 class SiteCustomViewTests(TestCase):
@@ -43,6 +45,21 @@ class SiteCustomViewTests(TestCase):
         response4 = self.client.get('/api/en/sites.json?portal=portalX')
         self.assertEqual(len(response4.json()), 1)
         self.assertEqual(response4.json()[0]['name'], 'site2')
+
+    @override_settings(TREK_EXPORT_POI_LIST_LIMIT=1)
+    @mock.patch('mapentity.models.MapEntityMixin.prepare_map_image')
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_site_export_poi_list_limit(self, mocked_prepare, mocked_attributes):
+        site = SiteFactory.create(geom="SRID=2154;GEOMETRYCOLLECTION (POINT (700000 6600000))")
+        POIFactory.create(published=True)
+        self.assertEqual(len(site.pois), 1)
+        view = course_views.SiteDocumentPublic()
+        view.object = site
+        view.request = RequestFactory().get('/')
+        view.kwargs = {}
+        view.kwargs[view.pk_url_kwarg] = site.pk
+        context = view.get_context_data()
+        self.assertEqual(len(context['pois']), 1)
 
 
 class CourseCustomViewTests(TestCase):

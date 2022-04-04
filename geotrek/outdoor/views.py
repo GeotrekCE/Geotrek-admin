@@ -9,8 +9,9 @@ from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.forms import SiteForm, CourseForm
 from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.serializers import SiteSerializer, SiteGeojsonSerializer, CourseSerializer, CourseGeojsonSerializer
+from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityDetail, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityViewSet, MapEntityFormat)
 
 
@@ -83,15 +84,26 @@ class SiteViewSet(MapEntityViewSet):
 
 
 class SiteDocumentPublicMixin:
+    queryset = Site.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        content = self.get_object()
+        site = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['site']
-        context['object'] = context['content'] = content
-
+        context['object'] = context['content'] = site
+        pois = list(site.all_pois.filter(published=True))
+        if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
+            pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+        letters = alphabet_enumeration(len(pois))
+        for i, poi in enumerate(pois):
+            poi.letter = letters[i]
+        context['pois'] = pois
         return context
+
+
+class SiteDocument(MapEntityDocument):
+    queryset = Site.objects.all()
 
 
 class SiteDocumentPublic(SiteDocumentPublicMixin, DocumentPublic):

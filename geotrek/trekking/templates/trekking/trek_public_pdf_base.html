@@ -65,17 +65,19 @@
         <hr>
         <div class="main-picture-map">
           {% if object.picture_print %}
-            <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
-            {% if object.picture_print.legend or object.picture_print.author %}
-              <legend>
-                {{ object.picture_print.legend }}
-                {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
-              </legend>
-            {% endif %}
+            <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div>
+            <div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+
           {% else %}
             <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
           {% endif %}
         </div>
+        {% if object.picture_print.legend or object.picture_print.author %}
+          <legend>
+            {{ object.picture_print.legend }}
+            {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
+          </legend>
+        {% endif %}
       </div>
       <div class="intro">
         <div class="intro-left">
@@ -123,12 +125,14 @@
                 <span class="meta-item-value">{{ object.difficulty }}</span>
               </span>
             {% endif %}
-            {% for rating in object.ratings.all%}
-              <span class="meta-item">
-                <span class="meta-item-label">{% trans rating.scale.name %}</span>
-                <span class="meta-item-value">{% trans rating.name %}</span>
-              </span>
-            {% endfor %}
+            <div class="lists-ratings">
+              {% if object.ratings.all %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{% trans "Rating scale" %}</span>
+                  {% for rating in object.ratings.all %}<span class="meta-item-value">{{ rating.scale.name }} : {{ rating.name }}</span>{% endfor %}
+                </span>
+              {% endif %}
+            </div>
             {% if object.route %}
               <span class="meta-item">
                 <span class="meta-item-label">{% trans "Type" %}</span>
@@ -387,38 +391,61 @@
           <div style="clear: both"></div>
         {% endif %}
       {% endblock sensitive_areas %}
-      {% if  object.information_desks.all %}
-        <div class="gray">
-          {% block informationDesks %}
-            <section class="information-desks">
-              <h2>
-                <div class="information-desks-icon">
-                  <img src="file://{{ STATIC_ROOT}}/trekking/information.svg">
-                </div>
-                {% trans "Information desks" %}
-              </h2>
-              <div class="text-content intro">
-                {% if object.information_desks.first.thumbnail %}
-                  <img src="file://{{ object.information_desks.first.thumbnail.path }}">
-                {% endif %}
-              </div>
-              <ul class="desks">
-                {% for desk in object.information_desks.all %}
-                  <li class="desk">
-                    <div class="desk-name">{{ desk.name }}</div>
-                    <div class="content">
-                      {% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
-                      {% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
-                      {% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
-                      {% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
+      {% block informationDesks %}
+        {% if  object.information_desks.all %}
+          <div class="gray">
+              <section class="information-desks">
+                <h2>
+                  <div class="information-desks-icon">
+                    <img src="file://{{ STATIC_ROOT}}/trekking/information.svg">
+                  </div>
+                  {% trans "Information desks" %}
+                </h2>
+                <ul class="desks">
+                  {% for desk in object.information_desks.all %}
+                    <li class="desk">
+                      <div class="desk-text">
+                        <div class="desk-name">{{ desk.name }}</div>
+                        <div class="content">
+                          {% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
+                          {% if desk.email %}<div class="desk-email"information-desks><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
+                          {% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
+                          {% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
+                          {% if desk.accessibility %}<div class="desk-accessibility">{% trans "Accessibility" %} : {{ desk.accessibility|safe }}</div>{% endif %}
+                        </div>
+                      </div>
+                      {% if desk.thumbnail %}
+                        <div class="desk-thumbnail"><img src="file://{{ desk.thumbnail.path }}"></div>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </section>
+          </div>
+        {% endif %}
+      {% endblock informationDesks %}
+      {% block source %}
+          {% if object.source.all %}
+            <section class="half-block source">
+              <h2>{% trans "Source" %}</h2>
+              {% for s in object.source.all %}
+                <div class="source-content">
+                  <div class="source-pictogram">
+                    {% if s.pictogram %}<img src="file://{{ s.pictogram.path }}">{% endif %}
+                  </div>
+                  <div class="source-text">
+                    <div class="source-name">
+                      {{ s.name }}
                     </div>
-                  </li>
-                {% endfor %}
-              </ul>
+                    <div class="source-website">
+                      {% if s.website %}{{ s.website }}{% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
             </section>
-          {% endblock informationDesks %}
-        </div>
-      {% endif %}
+          {% endif %}
+      {% endblock source %}
       {% block poisDetails %}
         <section class="pois-details">
           {% if pois %}
@@ -448,16 +475,6 @@
         </section>
       {% endblock poisDetails %}
     {% endblock body %}
-    {% block source %}
-        {% if object.source.all %}
-          <section class="half-block source">
-            <h2>{% trans "Source" %}</h2>
-            {% for s in object.source.all %}
-               <div class="text-content">{% if s.pictogram %}<span class="source-icon"><img src="file://{{ s.pictogram.path }}"></span> {% endif %}{{ s.name }}</div>
-            {% endfor %}
-          </section>
-        {% endif %}
-      {% endblock source %}
     {% block footer %}
       <div id="footer">
         <div class="text">{% now 'SHORT_DATE_FORMAT' %} &#8226; {{ object.name }}</div>
