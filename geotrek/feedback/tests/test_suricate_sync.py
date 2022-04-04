@@ -474,6 +474,7 @@ class SuricateWorkflowTests(SuricateTests):
         cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
         cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
         cls.waiting_status = ReportStatusFactory(identifier='waiting', label="En cours")
+        cls.rejected_status = ReportStatusFactory(identifier='rejected', label="Rejeté")
         cls.late_intervention_status = ReportStatusFactory(identifier='late_intervention', label="Intervention en retard")
         cls.late_resolution_status = ReportStatusFactory(identifier='late_resolution', label="Resolution en retard")
         cls.solved_intervention_status = ReportStatusFactory(identifier='solved_intervention', label="Intervention terminée")

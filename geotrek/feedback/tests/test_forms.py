@@ -35,6 +35,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         SuricateWorkflowTests.setUpTestData()
         cls.filed_report = ReportFactory(status=cls.filed_status, external_uuid=uuid.uuid4(), assigned_user=UserFactory())
         cls.filed_report_1 = ReportFactory(status=cls.filed_status, external_uuid=uuid.uuid4())
+        cls.filed_report_2 = ReportFactory(status=cls.filed_status, external_uuid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, external_uuid=uuid.uuid4())
         cls.intervention = ReportInterventionFactory(date=datetime(year=1997, month=4, day=4).date())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, external_uuid=uuid.uuid4())
@@ -360,3 +361,26 @@ class TestSuricateForms(SuricateWorkflowTests):
             f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
             auth=('', '')
         )
+
+    @test_for_workflow_mode
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_reject_alert_unlocks_in_suricate_when_workflow_enabled(self, mocked_get):
+        form = ReportForm(
+            instance=self.filed_report_2,
+            data={
+                'geom': self.filed_report_2.geom,
+                'email': self.filed_report_2.email,
+                'status': self.rejected_status.pk
+            }
+        )
+        self.assertTrue(form.is_valid)
+        form.save()
+        check = md5(
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_2.formatted_external_uuid)).encode()
+        ).hexdigest()
+        mocked_get.assert_called_once_with(
+            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.filed_report_2.formatted_external_uuid}&id_origin=geotrek&check={check}",
+            auth=('', '')
+        )
+        self.filed_report_2.refresh_from_db()
+        self.assertEqual(self.filed_report_2.status, self.rejected_status)
