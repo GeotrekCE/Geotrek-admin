@@ -1,6 +1,6 @@
 from django.conf import settings
-from django.db.models import Q
 from django.contrib.gis.db.models.functions import Transform
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
@@ -10,20 +10,18 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, Map
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
-
+from geotrek.common.viewsets import GeotrekMapentityViewSet
+from geotrek.trekking.models import POI, Service
+from geotrek.trekking.serializers import POIAPIGeojsonSerializer, ServiceAPIGeojsonSerializer
+from geotrek.trekking.views import FlattenPicturesMixin
 from .filters import DiveFilterSet
 from .forms import DiveForm
 from .models import Dive
 from .serializers import DiveSerializer, DiveAPIGeojsonSerializer, DiveAPISerializer
-
-from geotrek.trekking.models import POI, Service
-from geotrek.trekking.serializers import POIAPIGeojsonSerializer, ServiceAPIGeojsonSerializer
-from geotrek.trekking.views import FlattenPicturesMixin
-from ..common.mixins.api import APIViewSet
-from ..common.viewsets import GeotrekMapentityViewSet
 
 
 class DiveLayer(MapEntityLayer):
@@ -37,6 +35,7 @@ class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['levels', 'thumbnail']
     unorderable_columns = ['thumbnail']
+    searchable_columns = ['id', 'name']
 
 
 class DiveFormatList(MapEntityFormat, DiveList):

@@ -24,10 +24,11 @@ class SiteLayer(MapEntityLayer):
 
 
 class SiteList(CustomColumnsMixin, MapEntityList):
+    queryset = Site.objects.all()
+    filterform = SiteFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['super_practices', 'date_update']
-    filterform = SiteFilterSet
-    queryset = Site.objects.all()
+    searchable_columns = ['id', 'name']
 
 
 class SiteDetail(MapEntityDetail):
@@ -145,10 +146,11 @@ class CourseLayer(MapEntityLayer):
 
 
 class CourseList(CustomColumnsMixin, MapEntityList):
+    queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
+    filterform = CourseFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['parent_sites', 'date_update']
-    filterform = CourseFilterSet
-    queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
+    searchable_columns = ['id', 'name']
 
 
 class CourseDetail(MapEntityDetail):

@@ -40,6 +40,7 @@ class SignageList(CustomColumnsMixin, MapEntityList):
     filterform = SignageFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['code', 'type', 'condition']
+    searchable_columns = ['id', 'name', 'code']
 
 
 class SignageFormatList(MapEntityFormat, SignageList):
@@ -178,6 +179,7 @@ class BladeList(CustomColumnsMixin, MapEntityList):
     filterform = BladeFilterSet
     mandatory_columns = ['id', 'number']
     default_extra_columns = ['direction', 'type', 'color']
+    searchable_columns = ['id', 'number']
 
 
 class BladeLayer(MapEntityLayer):

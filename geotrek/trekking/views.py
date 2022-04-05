@@ -11,20 +11,20 @@ from django.utils.html import escape
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail,
-                             MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, LastModifiedMixin)
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+                             MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
+from geotrek.common.functions import Length
+from geotrek.common.mixins.api import APIViewSet
+from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
-from geotrek.common.views import (DocumentPublic,
-                                  DocumentBookletPublic, MarkupPublic)
-from ..common.mixins.api import APIViewSet
-from ..common.mixins.forms import FormsetMixin
+from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.infrastructure.models import Infrastructure
@@ -33,14 +33,11 @@ from geotrek.signage.models import Signage
 from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import District, City, RestrictedArea
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
-from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
-                    WebLinkCreateFormPopup, ServiceForm)
+from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup, ServiceForm
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
-from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer,
-                          POIAPIGeojsonSerializer, ServiceAPIGeojsonSerializer,
-                          TrekAPISerializer, TrekAPIGeojsonSerializer, POIAPISerializer, ServiceAPISerializer)
-from ..common.functions import Length
-from ..common.viewsets import GeotrekMapentityViewSet
+from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer, POIAPIGeojsonSerializer,
+                          ServiceAPIGeojsonSerializer, TrekAPISerializer, TrekAPIGeojsonSerializer, POIAPISerializer,
+                          ServiceAPISerializer)
 
 
 class FlattenPicturesMixin:
@@ -68,6 +65,7 @@ class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
     unorderable_columns = ['thumbnail']
+    searchable_columns = ['id', 'name', 'departure', 'arrival']
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
@@ -291,12 +289,12 @@ class POILayer(MapEntityLayer):
 
 
 class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
-    model = POI
-    queryset = model.objects.existing()
+    queryset = POI.objects.existing()
     filterform = POIFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'thumbnail']
     unorderable_columns = ['thumbnail']
+    searchable_columns = ['id', 'name', ]
 
 
 class POIFormatList(MapEntityFormat, POIList):
@@ -454,10 +452,11 @@ class ServiceLayer(MapEntityLayer):
 
 
 class ServiceList(CustomColumnsMixin, MapEntityList):
+    queryset = Service.objects.existing()
     filterform = ServiceFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = []
-    queryset = Service.objects.existing()
+    searchable_columns = ['id', 'name']
 
 
 class ServiceFormatList(MapEntityFormat, ServiceList):

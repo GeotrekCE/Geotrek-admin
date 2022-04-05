@@ -90,6 +90,7 @@ class PathList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'checkbox', 'name', 'length']
     default_extra_columns = ['length_2d']
     unorderable_columns = ['checkbox']
+    searchable_columns = ['id', 'name']
 
 
 class PathFormatList(MapEntityFormat, PathList):
@@ -307,6 +308,7 @@ class TrailList(CustomColumnsMixin, MapEntityList):
     filterform = TrailFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['departure', 'arrival', 'length']
+    searchable_columns = ['id', 'name', 'departure', 'arrival', ]
 
 
 class TrailFormatList(MapEntityFormat, TrailList):

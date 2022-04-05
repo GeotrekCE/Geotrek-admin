@@ -1,25 +1,23 @@
-
 import logging
 
 from django.conf import settings
 from django.db.models import Subquery, OuterRef, Sum
 from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityDetail,
-                             MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+                             MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.altimetry.models import AltimetryMixin
-from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.authent.decorators import same_structure_required
-from .models import Intervention, Project, ManDay
+from geotrek.common.mixins.forms import FormsetMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
+from .models import Intervention, Project, ManDay
 from .serializers import (InterventionSerializer, ProjectSerializer,
                           InterventionGeojsonSerializer, ProjectGeojsonSerializer)
-
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +33,7 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
     filterform = InterventionFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
-
-
-class InterventionJsonList(MapEntityJsonList, InterventionList):
-    pass
+    searchable_columns = ['id', 'name']
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
@@ -181,10 +176,7 @@ class ProjectList(CustomColumnsMixin, MapEntityList):
     filterform = ProjectFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['period', 'type', 'domain']
-
-
-class ProjectJsonList(MapEntityJsonList, ProjectList):
-    pass
+    searchable_columns = ['id', 'name']
 
 
 class ProjectFormatList(MapEntityFormat, ProjectList):

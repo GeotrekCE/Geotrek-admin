@@ -25,6 +25,7 @@ class InfrastructureList(CustomColumnsMixin, MapEntityList):
     filterform = InfrastructureFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'condition', 'cities']
+    searchable_columns = ['id', 'name']
 
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):

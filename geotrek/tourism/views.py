@@ -9,9 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 from django_filters.rest_framework import DjangoFilterBackend
-from mapentity.views import (MapEntityCreate,
-                             MapEntityUpdate, MapEntityLayer, MapEntityList,
-                             MapEntityDetail, MapEntityDelete, MapEntityFormat, MapEntityDocument)
+from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
+                             MapEntityDelete, MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.renderers import JSONRenderer
@@ -19,9 +18,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.trekking.models import Trek
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
@@ -29,8 +30,6 @@ from .models import (TouristicContent, TouristicEvent, TouristicContentCategory,
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           TouristicContentAPIGeojsonSerializer, TouristicEventAPIGeojsonSerializer,
                           InformationDeskGeojsonSerializer, TouristicContentAPISerializer, TouristicEventAPISerializer)
-from ..common.mixins.api import APIViewSet
-from ..common.viewsets import GeotrekMapentityViewSet
 
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
@@ -49,6 +48,7 @@ class TouristicContentList(CustomColumnsMixin, MapEntityList):
     filterform = TouristicContentFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['category']
+    searchable_columns = ['id', 'name']
 
     @property
     def categories_list(self):
@@ -198,6 +198,7 @@ class TouristicEventList(CustomColumnsMixin, MapEntityList):
     filterform = TouristicEventFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'begin_date', 'end_date']
+    searchable_columns = ['id', 'name']
 
 
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
@@ -443,9 +444,7 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 
 
 class TouristicCategoryView(APIView):
-    """
-    touristiccategories.json generation for API
-    """
+    """ touristiccategories.json generation for API """
     renderer_classes = (JSONRenderer,)
     permission_classes = (IsAuthenticatedOrReadOnly,)
 

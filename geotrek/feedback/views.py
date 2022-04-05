@@ -31,17 +31,12 @@ class ReportLayer(mapentity_views.MapEntityLayer):
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
-    queryset = (
-        feedback_models.Report.objects.existing()
-        .select_related(
-            "activity", "category", "problem_magnitude", "status", "related_trek"
-        )
-        .prefetch_related("attachments")
-    )
-    model = feedback_models.Report
+    queryset = feedback_models.Report.objects.existing()\
+                              .select_related("activity", "category", "problem_magnitude", "status", "related_trek")
     filterform = ReportFilterSet
     mandatory_columns = ['id', 'email', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
+    searchable_columns = ['id', 'email']
 
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
