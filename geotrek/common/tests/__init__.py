@@ -9,6 +9,8 @@ from django.utils import translation
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.conf import settings
+from django.urls import reverse
+from django.urls.exceptions import NoReverseMatch
 
 # Workaround https://code.djangoproject.com/ticket/22865
 from freezegun import freeze_time
@@ -36,6 +38,40 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
             return {'topology': 'doh!'}, _('Topology is not valid.')
         else:
             return {'geom': 'doh!'}, _('Invalid geometry value.')
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_public_booklet_export(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        try:
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable')
+        except NoReverseMatch:
+            return  # No public booklet export
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+
+        obj = self.modelfactory.create()
+        response = self.client.get(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable',
+                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_public_export(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        try:
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable')
+        except NoReverseMatch:
+            return  # No public booklet export
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+
+        obj = self.modelfactory.create()
+        response = self.client.get(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable',
+                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+        self.assertEqual(response.status_code, 200)
 
     def test_structure_is_set(self):
         if not hasattr(self.model, 'structure'):

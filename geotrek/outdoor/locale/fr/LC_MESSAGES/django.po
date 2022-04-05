@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-01 11:43+0000\n"
+"POT-Creation-Date: 2022-03-25 17:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,9 +51,11 @@ msgid "Cannot add children because this course is itself a child."
 msgstr ""
 "Impossible d'ajouter des enfants car ce parcours est lui-même un enfant."
 
+#, python-brace-format
 msgid "Cannot use parent course {child.name} as a child course."
 msgstr ""
-"Impossible d'utiliser le parcours parent {child.name} comme itinéraire enfant."
+"Impossible d'utiliser le parcours parent {child.name} comme itinéraire "
+"enfant."
 
 msgid "Name"
 msgstr "Nom"
@@ -167,7 +169,7 @@ msgid "Main attraction and interest"
 msgstr "Attraction principal et intérêts"
 
 msgid "Advice"
-msgstr "Recommandations"
+msgstr "Recommandation"
 
 msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
@@ -204,6 +206,9 @@ msgstr "Liens web"
 
 msgid "External resources"
 msgstr "Ressources externes"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
 
 msgid "Type"
 msgstr "Type"
@@ -265,9 +270,6 @@ msgstr "Durée"
 msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
 
-msgid "Accessibility"
-msgstr "Accessibilité"
-
 msgid "Equipment"
 msgstr "Équipement"
 
@@ -294,6 +296,12 @@ msgstr ""
 
 msgid "Print"
 msgstr ""
+
+msgid "Public print booklet"
+msgstr "Impression livret grand public"
+
+msgid "Print booklet"
+msgstr "Impr. livret"
 
 msgid "Tree view"
 msgstr "Vue arborescente"
@@ -345,9 +353,6 @@ msgstr "Ajouter un site frère"
 
 msgid "Parents"
 msgstr "Parents"
-
-msgid "Practical info"
-msgstr "Informations pratiques"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"

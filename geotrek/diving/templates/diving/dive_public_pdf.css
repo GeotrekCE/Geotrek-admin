@@ -131,6 +131,11 @@ header .url .geo {
   margin: 0 0 1mm 0;
 }
 
+.main-picture-map{
+    display: flex;
+    align-items: center;
+}
+
 .main-picture,
 .main-map {
   display: inline-block;
@@ -179,6 +184,7 @@ header .url .geo {
   width: 40%;
   margin-top: .8cm;
   padding-left: .5cm;
+  font-size: 0.9em;
   border-left: 1px solid #888;
 }
 

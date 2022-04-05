@@ -96,7 +96,7 @@ class DocumentPublic(DocumentPortalMixin, PublicOrReadPermMixin, DocumentPublicM
 class DocumentBookletPublic(DocumentPortalMixin, PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
                             mapentity_views.MapEntityDocumentWeasyprint):
     def __init__(self, *args, **kwargs):
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.template_name_suffix = '_public_booklet'
 
 

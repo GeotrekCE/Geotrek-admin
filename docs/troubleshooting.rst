@@ -40,3 +40,20 @@ You have to run them manually, classical migrations included:
     geotrek update_geotrek_permissions
     geotrek update_post_migration_languages
 
+
+Signature check for debian packages
+-----------------------------------
+
+When you try to upgrade your Geotrek-admin, you can have problems with signature check :
+
+::
+
+   An error occurred while checking the signature.
+   The repository is not updated and previous index files will be used.
+   GPG error: https://packages.geotrek.fr/ubuntu bionic InRelease: The following signatures are invalid
+
+You have to update the signature key to get the last update :
+
+::
+
+   wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -

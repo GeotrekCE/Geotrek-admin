@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Q
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityFormat)
+from mapentity.helpers import alphabet_enumeration
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
+                             MapEntityUpdate, MapEntityDelete, MapEntityFormat)
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
@@ -66,14 +67,26 @@ class SiteDelete(MapEntityDelete):
 
 
 class SiteDocumentPublicMixin:
+    queryset = Site.objects.all()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        content = self.get_object()
+        site = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['site']
-        context['object'] = context['content'] = content
-
+        context['object'] = context['content'] = site
+        pois = list(site.all_pois.filter(published=True))
+        if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
+            pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+        letters = alphabet_enumeration(len(pois))
+        for i, poi in enumerate(pois):
+            poi.letter = letters[i]
+        context['pois'] = pois
         return context
+
+
+class SiteDocument(MapEntityDocument):
+    queryset = Site.objects.all()
 
 
 class SiteDocumentPublic(SiteDocumentPublicMixin, DocumentPublic):
@@ -175,6 +188,7 @@ class CourseDelete(MapEntityDelete):
 
 
 class CourseDocumentPublicMixin:
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         content = self.get_object()

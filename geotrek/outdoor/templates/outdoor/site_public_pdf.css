@@ -135,6 +135,11 @@ header .url .geo {
   margin: 0 0 1mm 0;
 }
 
+.main-picture-map{
+    display: flex;
+    align-items: center;
+}
+
 .main-picture,
 .main-map {
   display: inline-block;
@@ -187,6 +192,7 @@ header .url .geo {
   width: 40%;
   margin-top: .8cm;
   padding-left: .5cm;
+  font-size: 0.9em;
   border-left: 1px solid #888;
 }
 
@@ -201,8 +207,8 @@ header .url .geo {
 
 .meta-item {
   display: block;
-  margin-top: 2mm;
-  padding-top: 2mm;
+  margin-top: 1.8mm;
+  padding-top: 1.8mm;
   border-top: 1px solid #888;
 }
 
@@ -212,6 +218,16 @@ header .url .geo {
 
 .lists .meta-item-value + .meta-item-value:before {
   content: ', ';
+}
+
+.lists-ratings .meta-item-value {
+  padding-top: .1cm;
+  padding-left: .3cm;
+  display: flex;
+  font-size: 0.7em;
+  align-items: left;
+  justify-content: left;
+  flex-direction: column;
 }
 
 .inner-title {
@@ -230,18 +246,18 @@ header .url .geo {
   color: #333;
 }
 
-.advice {
+.advice, .label, .accessibility {
   margin-top: .5cm;
   padding: .5cm .3cm;
   background-color: #eee;
 }
 
-.advice-title {
+.advice-title, .label-title, .accessibility-title {
   font-weight: bold;
   color: orange;
 }
 
-.advice-content {
+.advice-content, .label-content, .accessibility-content {
   margin-top: .5cm;
 }
 
@@ -310,18 +326,29 @@ header .url .geo {
   color: orange;
 }
 
-.information-desks .intro {
+.desk-thumbnail {
   font-size: .8em;
   float: right;
   width: 50%;
 }
 
+.desks .desk-text {
+  width: 50%;
+}
+
 .information-desks .desks {
-  width: 48%;
   margin: 0;
   padding: 0;
   padding-right: .5cm;
   list-style-type: none;
+}
+.information-desks .desk {
+  display: flex;
+  justify-content: space-between;
+}
+
+.information-desks .desk-name {
+  font-weight: bold;
 }
 
 .information-desks .desk + .desk {
@@ -388,6 +415,7 @@ header .url .geo {
 }
 
 .advice-icon,
+.label-icon,
 .information-desks-icon,
 .network-icon {
   display: inline-block;
@@ -396,6 +424,7 @@ header .url .geo {
 
 .advice-icon img,
 .information-desks-icon img,
+.label-icon img,
 .network-icon img {
   display: block;
   max-width: .75cm;
@@ -418,15 +447,31 @@ header .url .geo {
   list-style-type: none;
 }
 
-.source .text-content + .text-content {
-  clear: both;
-  padding-top: .5cm;
+.source {
+  width: 90%;
 }
 
 .source img {
-  float: left;
-  vertical-align: top;
-  margin-right: .5cm;
+  margin-right: 1.5cm;
   max-width: 3cm;
   max-height: 3cm;
+}
+
+.source-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0.5cm;
+}
+
+.source-name {
+  margin-bottom: .3cm;
+}
+
+.source-website {
+  font-size: .7em
+}
+
+.source-text {
+  width: 100%;
 }

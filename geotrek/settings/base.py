@@ -126,7 +126,6 @@ LANGUAGES = (
 LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'fr')
 
 MODELTRANSLATION_LANGUAGES = tuple(os.getenv('LANGUAGES', 'fr en').split(' '))
-MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
 LOCALE_PATHS = (
     # override locale
@@ -819,6 +818,14 @@ ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
 ACCESSIBILITY_ATTACHMENTS_ENABLED = True
 
+USE_X_FORWARDED_HOST = False
+HIDDEN_FORM_FIELDS['report'] = {
+    "status",
+    "locked",
+    "uid",
+    "origin"
+}
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
@@ -832,17 +839,11 @@ if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
         exec(f.read())
 
+MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
+
 # Computed settings takes place at the end after customization
 MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
     language for language in LANGUAGES_LIST if language[0] in MODELTRANSLATION_LANGUAGES
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
-
-USE_X_FORWARDED_HOST = False
-HIDDEN_FORM_FIELDS['report'] = {
-    "status",
-    "locked",
-    "uid",
-    "origin"
-}

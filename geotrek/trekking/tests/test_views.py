@@ -151,6 +151,17 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         with self.assertNumQueries(9):
             self.client.get(self.model.get_format_list_url())
 
+    def test_list_in_csv(self):
+        self.modelfactory.create()
+        DistrictFactory.create(name="Refouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
+                                                      "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
+        DistrictFactory.create(name="Trifouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
+                                                       "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
+        response = self.client.get(self.model.get_format_list_url())
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        for row in reader:
+            self.assertSetEqual({elem for elem in row['Districts'].split(', ')}, {'Trifouilli', 'Refouilli'})
+
     def test_pois_on_treks_do_not_exist(self):
         self.modelfactory.create()
 
@@ -1225,7 +1236,7 @@ class TemplateTagsTest(TestCase):
         self.assertEqual("4 h", geotrek_tags.duration(4))
         self.assertEqual("6 h", geotrek_tags.duration(6))
         self.assertEqual("10 h", geotrek_tags.duration(10))
-        self.assertEqual("1 days", geotrek_tags.duration(24))
+        self.assertEqual("1 day", geotrek_tags.duration(24))
         self.assertEqual("2 days", geotrek_tags.duration(32))
         self.assertEqual("2 days", geotrek_tags.duration(48))
         self.assertEqual("3 days", geotrek_tags.duration(49))
