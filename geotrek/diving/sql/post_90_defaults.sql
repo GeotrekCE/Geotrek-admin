@@ -2,7 +2,7 @@
 -----------
 -- name
 -- order
-ALTER TABLE diving_pactrice ALTER COLUMN color SET DEFAULT '#444444';
+ALTER TABLE diving_practice ALTER COLUMN color SET DEFAULT '#444444';
 -- pictogram
 
 
@@ -44,5 +44,3 @@ ALTER TABLE diving_dive ALTER COLUMN review SET DEFAULT FALSE;
 -- structure
 ALTER TABLE core_topology ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE core_topology ALTER COLUMN date_update SET DEFAULT now();
-
-
