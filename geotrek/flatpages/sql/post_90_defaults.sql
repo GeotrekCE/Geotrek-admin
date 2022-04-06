@@ -1,6 +1,6 @@
 -- FlatPage
 -----------
-ALTER TABLE flatpages_flatpage ALTER COLUMN title SET DEFAULT '';
+-- title
 ALTER TABLE flatpages_flatpage ALTER COLUMN external_url SET DEFAULT '';
 -- content
 ALTER TABLE flatpages_flatpage ALTER COLUMN target SET DEFAULT 'all';
