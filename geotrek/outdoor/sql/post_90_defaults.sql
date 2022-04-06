@@ -60,8 +60,8 @@ ALTER TABLE outdoor_site ALTER COLUMN ambiance SET DEFAULT '';
 ALTER TABLE outdoor_site ALTER COLUMN advice SET DEFAULT '';
 -- ratings
 ALTER TABLE outdoor_site ALTER COLUMN period SET DEFAULT '';
-ALTER TABLE outdoor_site ALTER COLUMN orientation SET DEFAULT '{}'::text[];
-ALTER TABLE outdoor_site ALTER COLUMN wind SET DEFAULT '{}'::text[];
+ALTER TABLE outdoor_site ALTER COLUMN orientation SET DEFAULT '[]'::JSON;
+ALTER TABLE outdoor_site ALTER COLUMN wind SET DEFAULT '[]'::JSON;
 -- labels
 -- themes
 -- information_desks
