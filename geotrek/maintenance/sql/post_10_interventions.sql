@@ -41,13 +41,6 @@ FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention();
 -- Denormalized altimetry information
 -------------------------------------------------------------------------------
 
-ALTER TABLE maintenance_intervention ALTER COLUMN "length" SET DEFAULT 0.0;
-ALTER TABLE maintenance_intervention ALTER COLUMN slope SET DEFAULT 0.0;
-ALTER TABLE maintenance_intervention ALTER COLUMN min_elevation SET DEFAULT 0;
-ALTER TABLE maintenance_intervention ALTER COLUMN max_elevation SET DEFAULT 0;
-ALTER TABLE maintenance_intervention ALTER COLUMN ascent SET DEFAULT 0;
-ALTER TABLE maintenance_intervention ALTER COLUMN descent SET DEFAULT 0;
-
 CREATE FUNCTION {# geotrek.maintenance #}.update_altimetry_topology_intervention() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     UPDATE maintenance_intervention SET
