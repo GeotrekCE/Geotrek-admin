@@ -36,6 +36,7 @@ def attachment_accessibility_upload(instance, filename):
 
 
 class AccessibilityAttachment(models.Model):
+    # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
     class InfoAccessibilityChoices(models.TextChoices):
         SLOPE = 'slope', _('Slope')
         WIDTH = 'width', _('Width')
