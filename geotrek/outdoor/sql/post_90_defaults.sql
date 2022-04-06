@@ -32,7 +32,7 @@
 ---------
 -- scale
 -- name
-ALTER TABLE outdoor_rating ALTER COLUMN description SET DEFAULT TRUE;
+ALTER TABLE outdoor_rating ALTER COLUMN description SET DEFAULT '';
 -- order
 ALTER TABLE outdoor_rating ALTER COLUMN color SET DEFAULT '#ffffff';
 
