@@ -5,6 +5,10 @@ CHANGELOG
 2.80.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add default values directly on tables (sql)
+
 **Minor improvements**
 
 -
