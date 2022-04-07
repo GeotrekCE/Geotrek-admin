@@ -58,7 +58,7 @@ class SQLDefaultValuesTest(TestCase):
 
     def test_target_portal(self):
         with connection.cursor() as cur:
-            cur.execute(f"""INSERT INTO common_targetportal
+            cur.execute("""INSERT INTO common_targetportal
                                    (
                                    name,
                                    website
@@ -72,7 +72,7 @@ class SQLDefaultValuesTest(TestCase):
 
     def test_label(self):
         with connection.cursor() as cur:
-            cur.execute(f"""INSERT INTO common_label
+            cur.execute("""INSERT INTO common_label
                                    (
                                    name
                                    ) VALUES
