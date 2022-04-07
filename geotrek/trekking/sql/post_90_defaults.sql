@@ -26,9 +26,9 @@ ALTER TABLE trekking_practice ALTER COLUMN color SET DEFAULT '#444444';
 ---------
 -- scale
 -- name
-ALTER TABLE outdoor_rating ALTER COLUMN description SET DEFAULT '';
+ALTER TABLE trekking_rating ALTER COLUMN description SET DEFAULT '';
 -- order
-ALTER TABLE outdoor_rating ALTER COLUMN color SET DEFAULT '#ffffff';
+ALTER TABLE trekking_rating ALTER COLUMN color SET DEFAULT '#ffffff';
 
 
 -- Trek
