@@ -65,10 +65,10 @@ class AccessibilityAttachment(models.Model):
                               verbose_name=_('Author'),
                               help_text=_("Original creator"))
     title = models.CharField(blank=True, default='', max_length=128,
-                             verbose_name=_(u"Filename"),
+                             verbose_name=_("Filename"),
                              help_text=_("Renames the file"))
     legend = models.CharField(blank=True, default='', max_length=128,
-                              verbose_name=_(u"Legend"),
+                              verbose_name=_("Legend"),
                               help_text=_("Details displayed"))
     date_insert = models.DateTimeField(editable=False, auto_now_add=True,
                                        verbose_name=_("Insertion date"))
