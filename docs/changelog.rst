@@ -7,11 +7,11 @@ CHANGELOG
 
 **New features**
 
-- Add default values directly on tables (sql)
+- Add SQL default values directly on most tables of the database (#3008)
 
 **Minor improvements**
 
-- Remove french name of column on attachment and accessibility attachment
+- Rename French field names of attachment and accessibility attachment tables (author, legend, title)
 
 **Maintenance**
 
