@@ -5,9 +5,17 @@ CHANGELOG
 2.80.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add SQL default values directly on most tables of the database (#3008)
+
 **Minor improvements**
 
--
+- Rename French field names of attachment and accessibility attachment tables (author, legend, title)
+
+**Maintenance**
+
+- Update to paperclip 2.4.3
 
 2.80.0     (2022-04-05)
 -----------------------
