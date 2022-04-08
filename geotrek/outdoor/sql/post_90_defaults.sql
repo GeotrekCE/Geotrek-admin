@@ -106,7 +106,7 @@ ALTER TABLE outdoor_course ALTER COLUMN published SET DEFAULT FALSE;
 -- name
 ALTER TABLE outdoor_course ALTER COLUMN review SET DEFAULT FALSE;
 -- structure
-ALTER TABLE outdoor_course ALTER COLUMN geom_3d SET DEFAULT NULL;
+-- geom_3d
 ALTER TABLE outdoor_course ALTER COLUMN "length" SET DEFAULT 0.0;
 ALTER TABLE outdoor_course ALTER COLUMN ascent SET DEFAULT 0.0;
 ALTER TABLE outdoor_course ALTER COLUMN descent SET DEFAULT 0;

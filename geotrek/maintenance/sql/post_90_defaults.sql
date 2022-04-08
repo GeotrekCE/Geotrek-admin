@@ -31,7 +31,7 @@ ALTER TABLE maintenance_intervention ALTER COLUMN date_update SET DEFAULT now();
 -- InterventionStatus
 ---------------------
 -- status
-ALTER TABLE maintenance_interventionstatus ALTER COLUMN "order" SET DEFAULT NULL;
+-- order
 -- structure
 
 
