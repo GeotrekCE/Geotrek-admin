@@ -157,7 +157,7 @@ header .url .geo {
 
 .main-map {
   width: 7cm;
-  background-size: contain;
+  background-size: cover;
 }
 
 .intro-left,

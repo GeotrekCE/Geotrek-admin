@@ -42,7 +42,8 @@ h5 {
 }
 
 legend {
-  font-size: .5em
+    margin-top: 0.1cm;
+    font-size: .5em
 }
 
 #footer {
@@ -145,7 +146,6 @@ header .url .geo {
   display: inline-block;
   height: 7cm;
   margin-top: .7cm;
-  background-color: #ccc;
   background-repeat: no-repeat;
   background-position: center center;
 }
@@ -157,7 +157,7 @@ header .url .geo {
 
 .main-map {
   width: 7cm;
-  background-size: contain;
+  background-size: cover;
 }
 
 .intro-left,
