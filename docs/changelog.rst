@@ -13,6 +13,10 @@ CHANGELOG
 
 -
 
+**Maintenance**
+
+- Update to paperclip 2.4.3
+
 2.80.0     (2022-04-05)
 -----------------------
 
