@@ -49,5 +49,5 @@ ALTER TABLE feedback_attachedmessage ALTER COLUMN "date" SET DEFAULT now();
 ALTER TABLE feedback_attachedmessage ALTER COLUMN author SET DEFAULT '';
 ALTER TABLE feedback_attachedmessage ALTER COLUMN content SET DEFAULT '';
 -- suricate_id
-ALTER TABLE feedback_attachedmessage ALTER COLUMN type SET DEFAULT '';
+-- type
 -- report
