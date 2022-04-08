@@ -11,7 +11,7 @@ CHANGELOG
 
 **Minor improvements**
 
--
+- Remove french name of column on attachment and accessibility attachment
 
 **Maintenance**
 
