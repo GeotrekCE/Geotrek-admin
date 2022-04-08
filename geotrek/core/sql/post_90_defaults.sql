@@ -38,7 +38,6 @@ ALTER TABLE core_topology ALTER COLUMN geom_need_update SET DEFAULT FALSE;
 -- geom
 ALTER TABLE core_topology ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 -- geom_3d
-ALTER TABLE core_topology ALTER COLUMN "length" SET DEFAULT 0.0;
 ALTER TABLE core_topology ALTER COLUMN ascent SET DEFAULT 0.0;
 ALTER TABLE core_topology ALTER COLUMN descent SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN min_elevation SET DEFAULT 0;

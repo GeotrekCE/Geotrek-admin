@@ -28,6 +28,7 @@ ALTER TABLE common_accessibilityattachment ALTER COLUMN date_update SET DEFAULT 
 -------------
 -- creation_date
 ALTER TABLE common_attachment ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
+ALTER TABLE common_attachment ALTER COLUMN attachment_file SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN attachment_video SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN attachment_link SET DEFAULT '';
 -- filetype
