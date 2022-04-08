@@ -72,6 +72,21 @@ class CourseCustomViewTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+    @override_settings(TREK_EXPORT_POI_LIST_LIMIT=1)
+    @mock.patch('mapentity.models.MapEntityMixin.prepare_map_image')
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_course_export_poi_list_limit(self, mocked_prepare, mocked_attributes):
+        course = CourseFactory.create(geom="SRID=2154;GEOMETRYCOLLECTION (POINT (700000 6600000))")
+        POIFactory.create(published=True)
+        self.assertEqual(len(course.pois), 1)
+        view = course_views.CourseDocumentPublic()
+        view.object = course
+        view.request = RequestFactory().get('/')
+        view.kwargs = {}
+        view.kwargs[view.pk_url_kwarg] = course.pk
+        context = view.get_context_data()
+        self.assertEqual(len(context['pois']), 1)
+
     def test_api_filters(self):
         CourseFactory.create(name='course1', published=False)
         CourseFactory.create(name='course2', published=True)

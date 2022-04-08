@@ -125,6 +125,18 @@
       <div class="full-map">
         <img src="file://{{ map_path }}" alt="">
       </div>
+      {% block poisSummary %}
+        <section class="pois-summary">
+          {% if pois %}
+            {% for poi in pois %}
+              <div class="poi">
+                  {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
+                  {{ poi.name }} ({{ poi.letter }})
+              </div>
+            {% endfor %}
+          {% endif %}
+        </section>
+      {% endblock poisSummary %}
       <div class="inner-title">
         <h2>{% trans "All useful information" %}</h2>
       </div>
@@ -196,6 +208,34 @@
           </section>
         {% endif %}
       {% endblock source %}
+      {% block poisDetails %}
+        <section class="pois-details">
+          {% if pois %}
+            <div class="inner-title">
+              <h2>{% trans "On your path..." %}</h2>
+            </div>
+            {% for poi in pois %}
+              <div class="poi">
+                <div class="thumbnail">
+                  {% if poi.thumbnail %}
+                    <img src="file://{{ poi.thumbnail.path }}">
+                  {% endif %}
+                </div>
+                <div class="content with-pic">
+                  <h3>
+                    {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
+                    {{ poi.name }} ({{ poi.letter }})
+                  </h3>
+                  <div class="description">{{ poi.description|safe }}</div>
+                  {% if poi.thumbnail and poi.thumbnail.author %}
+                    <legend>{% trans "Attribution" %} : {{ poi.thumbnail.author }}</legend>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </section>
+      {% endblock poisDetails %}
     {% endblock body %}
     {% block footer %}
       <div id="footer">
