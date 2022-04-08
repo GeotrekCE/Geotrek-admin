@@ -32,10 +32,10 @@ ALTER TABLE common_attachment ALTER COLUMN attachment_video SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN attachment_link SET DEFAULT '';
 -- filetype
 -- creator
-ALTER TABLE common_attachment ALTER COLUMN auteur SET DEFAULT '';
-ALTER TABLE common_attachment ALTER COLUMN titre SET DEFAULT '';
-ALTER TABLE common_attachment ALTER COLUMN legende SET DEFAULT '';
-ALTER TABLE common_attachment ALTER COLUMN marque SET DEFAULT False;
+ALTER TABLE common_attachment ALTER COLUMN author SET DEFAULT '';
+ALTER TABLE common_attachment ALTER COLUMN title SET DEFAULT '';
+ALTER TABLE common_attachment ALTER COLUMN legend SET DEFAULT '';
+ALTER TABLE common_attachment ALTER COLUMN starred SET DEFAULT False;
 ALTER TABLE common_attachment ALTER COLUMN is_image SET DEFAULT False;
 ALTER TABLE common_attachment ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE common_attachment ALTER COLUMN date_update SET DEFAULT now();
