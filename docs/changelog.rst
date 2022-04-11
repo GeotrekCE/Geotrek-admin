@@ -5,6 +5,14 @@ CHANGELOG
 2.81.0     (2022-04-11)
 -----------------------
 
+**Minor improvements**
+
+-
+
+
+2.81.0     (2022-04-11)
+-----------------------
+
 **New features**
 
 - Add SQL default values directly on most tables of the database (#3008)
