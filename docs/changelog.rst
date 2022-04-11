@@ -12,10 +12,12 @@ CHANGELOG
 **Minor improvements**
 
 - Rename French field names of attachment and accessibility attachment tables (author, legend, title)
+- Improve pdf for sites, courses
 
 **Maintenance**
 
 - Update to paperclip 2.4.3
+
 
 2.80.0     (2022-04-05)
 -----------------------
