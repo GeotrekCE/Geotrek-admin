@@ -1,7 +1,3 @@
-ALTER TABLE outdoor_site ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
-ALTER TABLE outdoor_course ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
-
-
 -------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------

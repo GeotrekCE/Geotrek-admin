@@ -2,12 +2,14 @@ from unittest import mock
 
 from django.contrib.gis.geos.collections import MultiPoint
 from django.contrib.gis.geos.point import Point
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
+from geotrek.outdoor import views as course_views
 from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
+from geotrek.trekking.tests.factories import POIFactory
 
 
 class SiteCustomViewTests(TestCase):
@@ -44,6 +46,21 @@ class SiteCustomViewTests(TestCase):
         self.assertEqual(len(response4.json()), 1)
         self.assertEqual(response4.json()[0]['name'], 'site2')
 
+    @override_settings(TREK_EXPORT_POI_LIST_LIMIT=1)
+    @mock.patch('mapentity.models.MapEntityMixin.prepare_map_image')
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_site_export_poi_list_limit(self, mocked_prepare, mocked_attributes):
+        site = SiteFactory.create(geom="SRID=2154;GEOMETRYCOLLECTION (POINT (700000 6600000))")
+        POIFactory.create(published=True)
+        self.assertEqual(len(site.pois), 1)
+        view = course_views.SiteDocumentPublic()
+        view.object = site
+        view.request = RequestFactory().get('/')
+        view.kwargs = {}
+        view.kwargs[view.pk_url_kwarg] = site.pk
+        context = view.get_context_data()
+        self.assertEqual(len(context['pois']), 1)
+
 
 class CourseCustomViewTests(TestCase):
     @mock.patch('mapentity.helpers.requests.get')
@@ -54,6 +71,21 @@ class CourseCustomViewTests(TestCase):
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(TREK_EXPORT_POI_LIST_LIMIT=1)
+    @mock.patch('mapentity.models.MapEntityMixin.prepare_map_image')
+    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
+    def test_course_export_poi_list_limit(self, mocked_prepare, mocked_attributes):
+        course = CourseFactory.create(geom="SRID=2154;GEOMETRYCOLLECTION (POINT (700000 6600000))")
+        POIFactory.create(published=True)
+        self.assertEqual(len(course.pois), 1)
+        view = course_views.CourseDocumentPublic()
+        view.object = course
+        view.request = RequestFactory().get('/')
+        view.kwargs = {}
+        view.kwargs[view.pk_url_kwarg] = course.pk
+        context = view.get_context_data()
+        self.assertEqual(len(context['pois']), 1)
 
     def test_api_filters(self):
         CourseFactory.create(name='course1', published=False)

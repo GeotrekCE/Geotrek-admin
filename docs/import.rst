@@ -95,6 +95,34 @@ When sensitive areas module is enabled, Geotrek provides 3 parsers to import dat
 You can start imports from "Import" menu or from command line. You can override them in your ``var/conf/parsers.py``
 file.
 
+Multiples import
+----------------
+
+When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values in many to many relationship case.
+It can be interesting with portals for example.
+
+Param for the aggregation : ``m2m_aggregate_fields``
+
+Here is an example with 2 parsers :
+
+::
+
+    class Portal_1Parser(XXXParser):
+        portal = "portal_1"
+
+    class AggregateParser(XXXParser):
+        portal = "portal_2"
+        m2m_aggregate_fields = ["portal"]
+
+Then, when you import the first parser ``Portal_1Parser``, you get multiple objects with ``portal_1`` as portal.
+If any object of the ``Portal_1Parser`` is also in ``AggregateParser``, fields in ``m2m_aggregate_fields`` will have their values not be replaced but aggregated.
+Then your object in both portals will have as portal: ``portal_1, portal_2``
+
+* Here in this example whenever you import the first parser ``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields`` is not filled. Then, be careful to import parsers in the right order or add the param ``m2m_aggregate_fields`` on all parsers.
+
+If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
+
+
 Start import from command line
 ------------------------------
 

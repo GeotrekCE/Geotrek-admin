@@ -582,7 +582,7 @@ msgstr ""
 msgid ""
 "Filter by one or more target (all, mobile, hidden or web), comma-separated."
 msgstr ""
-"Filtrez par une ou plusieurs cibles (toutes, mobiles, masquées ou Web), "
+"Filtrez par une ou plusieurs cibles (all, mobile, hidden or web), "
 "séparées par des virgules."
 
 msgid "Sources"

@@ -1129,7 +1129,7 @@ class FlatPageFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         return (
             Field(
-                name='targets', required=False, location='query', schema=coreschema.Integer(
+                name='targets', required=False, location='query', schema=coreschema.String(
                     title=_("Targets"),
                     description=_('Filter by one or more target (all, mobile, hidden or web), comma-separated.')
                 )
