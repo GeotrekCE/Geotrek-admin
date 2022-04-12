@@ -23,6 +23,20 @@ class WorkflowManagerAdmin(admin.ModelAdmin):
         return perms
 
 
+class WorkflowDistrictAdmin(admin.ModelAdmin):
+    """
+    Workflow District is a District that defines the zone in which reports should be handled through Suricate workflow
+    There should be only one Workflow District
+    """
+
+    def has_add_permission(self, request):
+        # There can be only one district
+        perms = super().has_add_permission(request)
+        if perms and feedback_models.WorkflowDistrict.objects.exists():
+            perms = False   # Disallow creating a new workflow district if there is one already
+        return perms
+
+
 admin.site.register(feedback_models.ReportCategory, TabbedTranslationAdmin)
 admin.site.register(feedback_models.ReportStatus)
 admin.site.register(feedback_models.ReportActivity, TabbedTranslationAdmin)
@@ -30,3 +44,4 @@ admin.site.register(feedback_models.ReportProblemMagnitude, TabbedTranslationAdm
 if settings.SURICATE_WORKFLOW_ENABLED:
     admin.site.register(feedback_models.PredefinedEmail)
     admin.site.register(feedback_models.WorkflowManager, WorkflowManagerAdmin)
+    admin.site.register(feedback_models.WorkflowDistrict, WorkflowDistrictAdmin)

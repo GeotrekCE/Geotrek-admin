@@ -24,6 +24,7 @@ from geotrek.common.utils import intersecting
 from geotrek.core.models import Path
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import District
 
 from .helpers import SuricateMessenger
 
@@ -648,3 +649,18 @@ class PredefinedEmail(models.Model):
 
     def __str__(self):
         return self.label
+
+
+class WorkflowDistrict(models.Model):
+    """
+    Workflow Manager is a User that is responsible for assigning reports to other Users and confirming that reports can be marked as resolved
+    There should be only one Workflow Manager, who will receive notification emails when an action is needed
+    """
+    district = models.ForeignKey(District, on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = _("Workflow District")
+        verbose_name_plural = _("Workflow Districts")
+
+    def __str__(self):
+        return str(self.district)
