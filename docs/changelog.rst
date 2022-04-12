@@ -2,29 +2,12 @@
 CHANGELOG
 =========
 
-2.79.0+dev (XXXX-XX-XX)
+2.81.0+dev     (XXXX-XX-XX)
 -----------------------
 
 **Minor improvements**
 
-- Add a new parameter in parsers, allowing to add multiple values to fields from multiple parsers (#2091)
-
-**Bug fixes**
-
-- Fix templates map and image
-- Fix trekking's template elevation was not on the right
-- Show accessibility block only with datas in accessibility
-- Compile messages of every apps
-- Fix required language in form is ignored from configuration
-- Fix link initial mode is now File (#3001)
-- Fix poi's csv generation of elements from other modules (#2286)
-- Fix pdfs booklet outdoor
-
-**Maintenance**
-
-- Fix required language in form is ignored from configuration
-- Allow configuring scheme forwarding though proxy
-- Update to paperclip 2.4.2
+-
 
 **Suricate Workflow**  (#2366)
 
@@ -37,6 +20,58 @@ CHANGELOG
 - Display only some reports depending on which user is logged in
 - Add City and District information to Report detail page
 - Alert user about synchronization problems in Suricate Workflow mode
+
+
+2.81.0     (2022-04-11)
+-----------------------
+
+**New features**
+
+- Add SQL default values directly on most tables of the database (#3008)
+
+**Minor improvements**
+
+- Rename French field names of attachment and accessibility attachment tables (author, legend, title)
+- Improve pdf for sites, courses
+
+**Maintenance**
+
+- Update to paperclip 2.4.3
+
+
+2.80.0     (2022-04-05)
+-----------------------
+
+**Minor improvements**
+
+- Improve pdf for sites, courses
+- Add a new parameter in parsers, allowing to add multiple values to fields from multiple parsers (#2091)
+- Add locale altimetry filters
+- Change order list actions and add new signage in signage module (#2852)
+
+**Bug fixes**
+
+- Fix templates map and image
+- Fix trekking's template elevation was not on the right
+- Show accessibility block only with datas in accessibility
+- Compile messages of every apps
+- Fix required language in form is ignored from configuration
+- Fix link initial mode is now File (#3001)
+- Fix line topologies drawing sometimes fails on some paths
+- Fix poi's csv generation of elements from other modules (#2286)
+- Fix pdfs booklet outdoor
+- Fix api v2 schema targets (GTRV3#607)
+- Fix api v2 translation schema targets (values should not be in french)
+
+**Maintenance**
+
+- Fix required language in form is ignored from configuration
+- Allow configuring scheme forwarding though proxy
+- Update to paperclip 2.4.2
+
+**WARNING!**
+
+If an error occurred while checking the signature for debian packaging check troubleshooting section for additional informations
 
 
 2.79.0     (2022-03-25)

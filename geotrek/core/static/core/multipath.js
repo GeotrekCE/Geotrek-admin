@@ -828,7 +828,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
 
 Geotrek.getNextId = (function() {
-    var next_id = 100000;
+    var next_id = 90000000;
     return function() {
         return next_id++;
     };

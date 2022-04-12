@@ -118,6 +118,12 @@ When updating or adding a new field ``my_field`` to a model ``MyModel``, please 
 
     - If it exists, and if you wish to display a column for ``my_field`` in CSV/SHP exports for this model by default, simply add ``my_field`` to ``default_extra_colums`` on this class.
 
+- Look for sql file defaults ``geotrek/{app_name}/sql/post_90_defaults.sql`` :
+
+    - If it exists find your modelname in the list and depending on the default value alter column ``my_field`` or add ``-- my_field``
+
+    - If the modelname doesn't exist, create a new section (even if you don't need to alter column)
+
 Follow the documentation you just edited to test that custom columns and hideable fields do work properly with your new field.
 
 **In API v2** :
