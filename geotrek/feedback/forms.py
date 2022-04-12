@@ -15,7 +15,6 @@ from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowM
 # Empty status should not be changed from this form
 SURICATE_WORKFLOW_STEPS = {
     'filed': ['classified', 'filed', 'rejected'],
-    'created': ['classified', 'created'],
     'solved_intervention': ['solved', 'solved_intervention'],
 }
 
@@ -75,7 +74,7 @@ class ReportForm(CommonForm):
                     self.fields["status"].empty_label = None
                     self.fields["status"].queryset = ReportStatus.objects.filter(identifier__in=next_statuses)
                     # assigned_user
-                    if self.old_status_identifier not in ['filed', 'created']:
+                    if self.old_status_identifier not in ['filed']:
                         self.fields["assigned_user"].widget = HiddenInput()
                     # message for sentinel
                     self.fields["message_sentinel"] = CharField(required=False, widget=Textarea())
@@ -112,7 +111,7 @@ class ReportForm(CommonForm):
     def save(self, *args, **kwargs):
         report = super().save(self, *args, **kwargs)
         if self.instance.pk and settings.SURICATE_WORKFLOW_ENABLED:
-            if self.old_status_identifier in ['filed', 'created'] and report.assigned_user and report.assigned_user != WorkflowManager.objects.first().user:
+            if self.old_status_identifier in ['filed'] and report.assigned_user and report.assigned_user != WorkflowManager.objects.first().user:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
                 waiting_status = ReportStatus.objects.get(identifier='waiting')
