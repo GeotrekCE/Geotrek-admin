@@ -7,7 +7,7 @@ CHANGELOG
 
 **Minor improvements**
 
--
+- Increase default cache expiration from 8hours to 30days
 
 
 2.81.0     (2022-04-11)
