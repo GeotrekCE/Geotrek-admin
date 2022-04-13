@@ -14,13 +14,14 @@ from django.utils import timezone
 from freezegun.api import freeze_time
 from geotrek import __version__
 from geotrek.authent.tests.factories import UserProfileFactory
-from geotrek.feedback.admin import WorkflowManagerAdmin
+from geotrek.feedback.admin import WorkflowDistrictAdmin, WorkflowManagerAdmin
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import (PendingSuricateAPIRequest, Report, SelectableUser,
-                                     TimerEvent, WorkflowManager)
+                                     TimerEvent, WorkflowDistrict, WorkflowManager)
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests)
+from geotrek.zoning.tests.factories import DistrictFactory
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
@@ -114,6 +115,17 @@ class TestWorkflowUserModels(TestCase):
         WorkflowManager.objects.create(user=user)
         # We cannot create a manager if there is one
         self.assertIs(ma.has_add_permission(request), False)
+
+    def test_cannot_create_several_workflow_districts(self):
+        admin = WorkflowDistrictAdmin(WorkflowDistrict, AdminSite())
+        request = MockRequest()
+        request.user = SuperUserFactory()
+        # We can create a district when there is none
+        self.assertIs(admin.has_add_permission(request), True)
+        district = DistrictFactory()
+        WorkflowDistrict.objects.create(district=district)
+        # We cannot create a district if there is one
+        self.assertIs(admin.has_add_permission(request), False)
 
 
 class TestReportColor(TestCase):
