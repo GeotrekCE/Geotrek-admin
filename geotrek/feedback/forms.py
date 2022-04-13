@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 
 from geotrek.common.forms import CommonForm
 
-from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowManager
+from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowDistrict, WorkflowManager
 
 # This dict stores constraints for status changes in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
@@ -125,5 +125,15 @@ class ReportForm(CommonForm):
             if self.old_status_identifier != report.status.identifier and report.status.identifier in ['solved', 'classified', 'rejected']:
                 report.unlock_in_suricate()
             if 'geom' in self.changed_data:
-                report.change_position_in_suricate()
+                # Status needs to be 'waiting' for position to change in Suricate
+                if report.status.identifier != "waiting":
+                    report.update_status_in_suricate("waiting", settings.SURICATE_WORKFLOW_SETTINGS.get("SURICATE_RELOCATED_REPORT_MESSAGE"))
+                # If new geom is outside of Workflow District, reject it
+                if not WorkflowDistrict.objects.filter(district__geom__covers=report.geom):
+                    report.change_position_in_suricate(force=True)
+                    rejected_status = ReportStatus.objects.get(identifier='rejected')
+                    report.status = rejected_status
+                    report.save()
+                else:
+                    report.change_position_in_suricate()
         return report
