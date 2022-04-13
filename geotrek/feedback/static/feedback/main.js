@@ -1,9 +1,9 @@
 //
-// Infrastructure
+// Feedback / reports
 //
 
 $(window).on('entity:map', function (e, data) {
-    var modelname = 'signage';
+    var modelname = 'report';
     var layername = `${modelname}_layer`;
 	var url = window.SETTINGS.urls[layername];
     var loaded_infrastructure = false;
@@ -16,7 +16,7 @@ $(window).on('entity:map', function (e, data) {
 	});
 
     if (data.modelname != modelname){
-	    map.layerscontrol.addOverlay(layer, tr('Signage'), tr('Infrastructure'));
+	    map.layerscontrol.addOverlay(layer, tr('Report'), tr('Feedback'));
     };
 
     map.on('layeradd', function (e) {
