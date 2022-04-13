@@ -18,7 +18,13 @@
         .block h2 {
           color: {{ primary_color }};
         }
-
+        /* TODO: Remove when the map generation is fixed */
+        .full-map img {
+            max-height: 20cm;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
       </style>
     {% endblock style %}
   </head>
@@ -61,17 +67,17 @@
         <div class="main-picture-map">
           {% if object.picture_print %}
             <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
-            {% if object.picture_print.legend or object.picture_print.author %}
-              <legend>
-                {% trans "Attribution" %} :
-                {{ object.picture_print.legend }}
-                {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
-              </legend>
-            {% endif %}
           {% else %}
             <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
           {% endif %}
         </div>
+        {% if object.picture_print.legend or object.picture_print.author %}
+          <legend>
+            {% trans "Attribution" %} :
+            {{ object.picture_print.legend }}
+            {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
+          </legend>
+        {% endif %}
       </div>
       <div class="intro">
         <div class="intro-left">

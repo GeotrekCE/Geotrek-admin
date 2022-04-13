@@ -36,6 +36,7 @@ def attachment_accessibility_upload(instance, filename):
 
 
 class AccessibilityAttachment(models.Model):
+    # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
     class InfoAccessibilityChoices(models.TextChoices):
         SLOPE = 'slope', _('Slope')
         WIDTH = 'width', _('Width')
@@ -61,13 +62,13 @@ class AccessibilityAttachment(models.Model):
                                 verbose_name=_('Creator'),
                                 help_text=_("User that uploaded"), on_delete=models.CASCADE)
     author = models.CharField(blank=True, default='', max_length=128,
-                              db_column='auteur', verbose_name=_('Author'),
+                              verbose_name=_('Author'),
                               help_text=_("Original creator"))
     title = models.CharField(blank=True, default='', max_length=128,
-                             db_column='titre', verbose_name=_(u"Filename"),
+                             verbose_name=_("Filename"),
                              help_text=_("Renames the file"))
     legend = models.CharField(blank=True, default='', max_length=128,
-                              db_column='legende', verbose_name=_(u"Legend"),
+                              verbose_name=_("Legend"),
                               help_text=_("Details displayed"))
     date_insert = models.DateTimeField(editable=False, auto_now_add=True,
                                        verbose_name=_("Insertion date"))

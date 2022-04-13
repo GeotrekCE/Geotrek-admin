@@ -190,15 +190,26 @@ class CourseDelete(MapEntityDelete):
 
 
 class CourseDocumentPublicMixin:
+    queryset = Course.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        content = self.get_object()
+        course = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['course']
-        context['object'] = context['content'] = content
-
+        context['object'] = context['content'] = course
+        pois = list(course.all_pois.filter(published=True))
+        if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
+            pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+        letters = alphabet_enumeration(len(pois))
+        for i, poi in enumerate(pois):
+            poi.letter = letters[i]
+        context['pois'] = pois
         return context
+
+
+class CourseDocument(MapEntityDocument):
+    queryset = Course.objects.all()
 
 
 class CourseDocumentPublic(CourseDocumentPublicMixin, DocumentPublic):

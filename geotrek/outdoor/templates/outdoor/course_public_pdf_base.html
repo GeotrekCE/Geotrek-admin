@@ -9,7 +9,6 @@
       <style type="text/css">
         {% include template_css %}
 
-        .intro-left .teaser,
         .meta-items-title,
         .advice-title,
         .accessibility-title,
@@ -21,7 +20,13 @@
         .block h2 {
           color: {{ primary_color }};
         }
-
+        /* TODO: Remove when the map generation is fixed */
+        .full-map img {
+            max-height: 20cm;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
       </style>
     {% endblock style %}
   </head>
@@ -56,18 +61,19 @@
         <hr>
         <div class="main-picture-map">
           {% if object.picture_print %}
-            <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
-            {% if object.picture_print.legend or object.picture_print.author %}
-              <legend>
-                {% trans "Attribution" %} :
-                {{ object.picture_print.legend }}
-                {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
-              </legend>
-            {% endif %}
+            <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div>
+            <div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+
           {% else %}
             <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
           {% endif %}
         </div>
+        {% if object.picture_print.legend or object.picture_print.author %}
+          <legend>
+            {{ object.picture_print.legend }}
+            {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
+          </legend>
+        {% endif %}
       </div>
       <div class="intro">
         <div class="intro-left">
@@ -119,6 +125,18 @@
       <div class="full-map">
         <img src="file://{{ map_path }}" alt="">
       </div>
+      {% block poisSummary %}
+        <section class="pois-summary">
+          {% if pois %}
+            {% for poi in pois %}
+              <div class="poi">
+                  {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
+                  {{ poi.name }} ({{ poi.letter }})
+              </div>
+            {% endfor %}
+          {% endif %}
+        </section>
+      {% endblock poisSummary %}
       <div class="inner-title">
         <h2>{% trans "All useful information" %}</h2>
       </div>
@@ -190,6 +208,34 @@
           </section>
         {% endif %}
       {% endblock source %}
+      {% block poisDetails %}
+        <section class="pois-details">
+          {% if pois %}
+            <div class="inner-title">
+              <h2>{% trans "On your path..." %}</h2>
+            </div>
+            {% for poi in pois %}
+              <div class="poi">
+                <div class="thumbnail">
+                  {% if poi.thumbnail %}
+                    <img src="file://{{ poi.thumbnail.path }}">
+                  {% endif %}
+                </div>
+                <div class="content with-pic">
+                  <h3>
+                    {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
+                    {{ poi.name }} ({{ poi.letter }})
+                  </h3>
+                  <div class="description">{{ poi.description|safe }}</div>
+                  {% if poi.thumbnail and poi.thumbnail.author %}
+                    <legend>{% trans "Attribution" %} : {{ poi.thumbnail.author }}</legend>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </section>
+      {% endblock poisDetails %}
     {% endblock body %}
     {% block footer %}
       <div id="footer">

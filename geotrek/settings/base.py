@@ -323,13 +323,13 @@ SERIALIZATION_MODULES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        'TIMEOUT': 28800,  # 8 hours
+        'TIMEOUT': 2592000,  # 30 days
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': CACHE_ROOT,
-        'TIMEOUT': 28800,  # 8 hours
+        'TIMEOUT': 2592000,  # 30 days
     }
 }
 

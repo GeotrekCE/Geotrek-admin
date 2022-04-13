@@ -2,15 +2,41 @@
 CHANGELOG
 =========
 
-2.79.0+dev (XXXX-XX-XX)
+2.81.0+dev     (XXXX-XX-XX)
+-----------------------
+
+**New features**
+
+- Add overlays for objects from Tekking, Maintenance, Infrastructure and Feedback modules
+
+**Minor improvements**
+
+- Increase default cache expiration from 8hours to 30days
+
+
+2.81.0     (2022-04-11)
+-----------------------
+
+**New features**
+
+- Add SQL default values directly on most tables of the database (#3008)
+
+**Minor improvements**
+
+- Rename French field names of attachment and accessibility attachment tables (author, legend, title)
+- Improve pdf for sites, courses
+
+**Maintenance**
+
+- Update to paperclip 2.4.3
+
+
+2.80.0     (2022-04-05)
 -----------------------
 
 **Minor improvements**
 
 - Improve pdf for sites, courses
-
-**Minor improvements**
-
 - Add a new parameter in parsers, allowing to add multiple values to fields from multiple parsers (#2091)
 - Add locale altimetry filters
 - Change order list actions and add new signage in signage module (#2852)
