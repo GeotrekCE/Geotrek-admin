@@ -826,6 +826,10 @@ HIDDEN_FORM_FIELDS['report'] = {
     "origin"
 }
 
+REST_FRAMEWORK = {
+    "STRICT_JSON": False,  # allow serialize float NaN values
+}
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')

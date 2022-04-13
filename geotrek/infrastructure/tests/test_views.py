@@ -167,10 +167,10 @@ class InfraFilterTestMixin:
         data = {
             'intervention_year': year
         }
-        response = self.client.get(model.get_jsonlist_url(), data)
+        response = self.client.get(model.get_datatablelist_url(), data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()['object_list']), 1)
+        self.assertEqual(len(response.json()['data']), 1)
 
     def test_duplicate_implantation_year_filter(self):
         self.login()

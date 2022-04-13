@@ -132,13 +132,13 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
                            geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
                                                      srid=settings.SRID)))
         params = '?city=09000'
-        response = self.client.get(self.model.get_jsonlist_url() + params)
+        response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["object_list"]), 1)
+        self.assertEqual(response.json()["recordsFiltered"], 1)
         params = '?city=09001'
-        response = self.client.get(self.model.get_jsonlist_url() + params)
+        response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["object_list"]), 0)
+        self.assertEqual(len(response.json()["data"]), 0)
 
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns

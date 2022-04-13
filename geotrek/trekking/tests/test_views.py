@@ -146,7 +146,7 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         DistrictFactory.build_batch(10)
 
         with self.assertNumQueries(6):
-            self.client.get(self.model.get_jsonlist_url())
+            self.client.get(self.model.get_datatablelist_url())
 
         with self.assertNumQueries(9):
             self.client.get(self.model.get_format_list_url())
@@ -1457,7 +1457,7 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
         with self.assertNumQueries(6):
-            self.client.get(self.model.get_jsonlist_url())
+            self.client.get(self.model.get_datatablelist_url())
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) list
         with self.assertNumQueries(5):

@@ -160,6 +160,7 @@ class TouristicContentMeta(MetaMixin, DetailView):
 class TouristicContentViewSet(GeotrekMapentityViewSet):
     model = TouristicContent
     serializer_class = TouristicContentSerializer
+    filterset_class = TouristicContentFilterSet
 
     def get_queryset(self):
         return self.model.objects.existing()

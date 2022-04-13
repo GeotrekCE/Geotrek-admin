@@ -527,11 +527,11 @@ class ProjectViewsTest(CommonTest):
         InterventionFactory.create(project=p1, target=t)
 
         def jsonlist(bbox):
-            url = self.model.get_jsonlist_url() + bbox
+            url = self.model.get_datatablelist_url() + bbox
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             jsondict = response.json()
-            return jsondict['object_list']
+            return jsondict['data']
 
         # Check that projects without interventions are always present
         self.assertEqual(len(Project.objects.all()), 3)
