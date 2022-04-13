@@ -186,7 +186,7 @@ landez==2.5.0
     # via geotrek (setup.py)
 lxml==4.7.1
     # via mapentity
-mapentity @ git+https://github.com/makinacorpus/django-mapentity.git@paginate_list_geotrek_integration
+mapentity==8.0.0
     # via geotrek (setup.py)
 markupsafe==1.1.1
     # via jinja2
