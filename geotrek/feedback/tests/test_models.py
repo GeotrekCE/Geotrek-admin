@@ -122,10 +122,11 @@ class TestWorkflowUserModels(TestCase):
         request.user = SuperUserFactory()
         # We can create a district when there is none
         self.assertIs(admin.has_add_permission(request), True)
-        district = DistrictFactory()
+        district = DistrictFactory(name="The place to be")
         WorkflowDistrict.objects.create(district=district)
         # We cannot create a district if there is one
         self.assertIs(admin.has_add_permission(request), False)
+        self.assertEqual(str(WorkflowDistrict.objects.first()), 'The place to be')
 
 
 class TestReportColor(TestCase):
