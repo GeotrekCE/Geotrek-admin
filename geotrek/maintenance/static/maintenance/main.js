@@ -1,9 +1,9 @@
 //
-// Infrastructure
+// Maintenance / interventions
 //
 
 $(window).on('entity:map', function (e, data) {
-    var modelname = 'signage';
+    var modelname = 'intervention';
     var layername = `${modelname}_layer`;
 	var url = window.SETTINGS.urls[layername];
     var loaded_infrastructure = false;
@@ -16,7 +16,7 @@ $(window).on('entity:map', function (e, data) {
 	});
 
     if (data.modelname != modelname){
-	    map.layerscontrol.addOverlay(layer, tr('Signage'), tr('Infrastructure'));
+	    map.layerscontrol.addOverlay(layer, tr('Intervention'), tr('Maintenance'));
     };
 
     map.on('layeradd', function (e) {

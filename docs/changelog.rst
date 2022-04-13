@@ -5,6 +5,10 @@ CHANGELOG
 2.81.0+dev     (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add overlays for objects from Tekking, Maintenance, Infrastructure and Feedback modules
+
 **Minor improvements**
 
 -

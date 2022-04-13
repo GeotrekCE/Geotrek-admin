@@ -18,3 +18,10 @@
     <script type="text/javascript" src="{% static "feedback/status_colors.js" %}"></script>
     <link rel="stylesheet" href="{% static "feedback/style.css" %}" />
 {% endif %}
+
+<script type="text/javascript">
+    MapEntity.i18n['Feedback'] = "{% trans "Feedback" %}";
+    MapEntity.i18n['Report'] = "{% trans "Report" %}";
+
+    window.SETTINGS.urls['report_layer'] = "{% url "feedback:report_layer" %}";
+</script>
