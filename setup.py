@@ -20,7 +20,6 @@ class BuildCommand(distutils.command.build.build):
                 copy(path, os.path.join(curdir, self.build_lib, subdir, path))
             os.chdir(curdir)
 
-
 setup(
     name='geotrek',
     version=open(os.path.join(here, 'VERSION')).read().strip(),
@@ -32,11 +31,12 @@ setup(
                       + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     scripts=['manage.py'],
     install_requires=[
-        'Django==3.1.*',
+        'Django==3.2.*',
         'mapentity==8.0.0',
+        'cairosvg',
         'env_file',
         # pinned by requirements.txt
-        'python-memcached',
+        'pymemcache',
         'psycopg2',
         'pdfimpose',
         'docutils',
@@ -51,14 +51,13 @@ setup(
         'drf-yasg',
         'xlrd',
         'landez',
-        'celery[redis]',
-        'django-celery-results',
+        'celery[redis]==4.*',  # need to update configuration
+        'django-celery-results==2.0.*',  # need to update celery
         'drf-extensions',
         'django-colorfield',
         'Fiona',
         # prod,
         'gunicorn',
-        'raven',
         'sentry-sdk',
         # tests
         'freezegun',
