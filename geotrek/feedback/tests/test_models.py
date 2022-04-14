@@ -20,7 +20,7 @@ from geotrek.feedback.models import (PendingSuricateAPIRequest, PredefinedEmail,
                                      TimerEvent, WorkflowDistrict, WorkflowManager)
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
-    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests, test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode)
+    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests, test_for_management_mode, test_for_workflow_mode)
 from geotrek.zoning.tests.factories import DistrictFactory
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
