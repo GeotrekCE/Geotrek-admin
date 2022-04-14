@@ -1,0 +1,175 @@
+[
+    {
+        "model": "feedback.reportcategory",
+        "pk": 1,
+        "fields": {
+            "label": "Environnement",
+            "label_en": "Environment",
+            "label_fr": "Environnement",
+            "identifier": 3
+        }
+    },
+    {
+        "model": "feedback.reportcategory",
+        "pk": 2,
+        "fields": {
+            "label": "Balisage / Signal\u00e9tique",
+            "label_en": "Signage",
+            "label_fr": "Balisage / Signal\u00e9tique",
+            "identifier": 0
+        }
+    },
+    {
+        "model": "feedback.reportcategory",
+        "pk": 3,
+        "fields": {
+            "label": "Incident / S\u00e9curit\u00e9",
+            "label_en": "Incident / Security",
+            "label_fr": "Incident / S\u00e9curit\u00e9",
+            "identifier": 2
+        }
+    },
+    {
+        "model": "feedback.reportcategory",
+        "pk": 4,
+        "fields": {
+            "label": "Conflits d'usage",
+            "label_en": "conflicts",
+            "label_fr": "Conflits d'usage",
+            "identifier": 1
+        }
+    },
+    {
+        "model": "feedback.reportproblemmagnitude",
+        "pk": 1,
+        "fields": {
+            "label": "Utilisation possible",
+            "label_fr": "Utilisation possible",
+            "identifier": 0,
+            "suricate_label": "possible"
+        }
+    },
+    {
+        "model": "feedback.reportproblemmagnitude",
+        "pk": 2,
+        "fields": {
+            "label": "Utilisation difficile",
+            "label_fr": "Utilisation difficile",
+            "label_en": "Difficult to use",
+            "identifier": 1,
+            "suricate_label": "difficile"
+        }
+    },
+    {
+        "model": "feedback.reportproblemmagnitude",
+        "pk": 3,
+        "fields": {
+            "label": "Utilisation impossible",
+            "label_fr": "Utilisation impossible",
+            "label_en": "Impossible to use",
+            "identifier": 2,
+            "suricate_label": "impossible"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Programm\u00e9",
+            "label_en": "Programmed",
+            "label_fr": "Programm\u00e9",
+            "identifier": "programmed",
+            "color": "#6AA84F"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Intervention en retard",
+            "label_en": "Late intervention",
+            "label_fr": "Intervention en retard",
+            "identifier": "late_intervention",
+            "color": "#CC0000"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "R\u00e9solution en retard",
+            "label_en": "Late resolution",
+            "label_fr": "R\u00e9solution en retard",
+            "identifier": "late_resolution",
+            "color": "#CC0000"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "pk": 1,
+        "fields": {
+            "label": "Intervention termin\u00e9e",
+            "label_en": "Resolved intervention",
+            "label_fr": "Intervention termin\u00e9e",
+            "identifier": "solved_intervention",
+            "color": "#4285F4"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Rejet\u00e9",
+            "label_en": "Rejected",
+            "label_fr": "Rejet\u00e9",
+            "identifier": "rejected",
+            "color": "#4444444"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "pk": 3,
+        "fields": {
+            "label": "R\u00e9solu",
+            "label_en": "Resolved",
+            "label_fr": "R\u00e9solu",
+            "identifier": "solved",
+            "color": "#4444444"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "pk": 2,
+        "fields": {
+            "label": "D\u00e9pos\u00e9",
+            "label_en": "D\u00e9pos\u00e9",
+            "label_fr": "D\u00e9pos\u00e9",
+            "identifier": "filed",
+            "color": "#4488444"
+        }
+    },
+    {
+        "model": "feedback.report",
+        "fields": {
+            "email": "test@resolved.fr",
+            "comment": "My intervention is resolved",
+            "activity": 2,
+            "category": 2,
+            "problem_magnitude": 2,
+            "status": 1,
+            "geom": "POINT(700000 6600000)",
+            "date_insert": "2012-05-17T14:33:34.307Z",
+            "date_update": "2012-05-17T14:33:34.307Z"
+        }
+    },
+    {
+        "model": "feedback.report",
+        "fields": {
+            "email": "test@filed.fr",
+            "comment": "I am filed",
+            "activity": 2,
+            "category": 2,
+            "problem_magnitude": 2,
+            "status": 1,
+            "geom": "POINT(700020 6600020)",
+            "date_insert": "2012-05-17T14:33:34.307Z",
+            "date_update": "2012-05-17T14:33:34.307Z"
+        }
+    }
+]
