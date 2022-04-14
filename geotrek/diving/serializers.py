@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from drf_dynamic_fields import DynamicFieldsMixin
 
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
@@ -45,8 +46,18 @@ class CloseDiveSerializer(TranslatedModelSerializer):
         fields = ('id', 'category_id')
 
 
-class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                     TranslatedModelSerializer):
+class DiveSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
+    thumbnail = rest_serializers.CharField(source='thumbnail_display')
+    levels = rest_serializers.CharField(source='levels_display')
+    structure = rest_serializers.SlugRelatedField('name', read_only=True)
+    practice = rest_serializers.SlugRelatedField('name', read_only=True)
+
+    class Meta:
+        model = diving_models.Dive
+        fields = "__all__"
+
+
+class DiveAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     practice = PracticeSerializer()
     difficulty = DifficultySerializer()
@@ -101,10 +112,10 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
         return data
 
 
-class DiveGeojsonSerializer(GeoFeatureModelSerializer, DiveSerializer):
+class DiveAPIGeojsonSerializer(GeoFeatureModelSerializer, DiveAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(DiveSerializer.Meta):
+    class Meta(DiveAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = DiveSerializer.Meta.fields + ('api_geom', )
+        fields = DiveAPISerializer.Meta.fields + ('api_geom', )

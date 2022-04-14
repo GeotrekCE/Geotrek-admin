@@ -18,8 +18,7 @@ from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from mapentity.models import MapEntityMixin
 
-from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
-                                   PicturesMixin, TimeStampedModelMixin)
+from geotrek.common.mixins.models import AddPropertyMixin, NoDeleteMixin, PicturesMixin, TimeStampedModelMixin
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path
 from geotrek.trekking.models import POI, Service, Trek

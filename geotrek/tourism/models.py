@@ -14,10 +14,8 @@ from easy_thumbnails.files import get_thumbnailer
 from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import (AddPropertyMixin, NoDeleteMixin,
-                                   OptionalPictogramMixin, PictogramMixin,
-                                   PicturesMixin, PublishableMixin,
-                                   TimeStampedModelMixin)
+from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
+                                          PicturesMixin, PublishableMixin, TimeStampedModelMixin)
 from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology

@@ -7,11 +7,16 @@ CHANGELOG
 
 **New features**
 
-- Add overlays for objects from Tekking, Maintenance, Infrastructure and Feedback modules
+- Server-side list pagination. Better performance for large lists.
+- Add overlays for objects from Trekking, Maintenance, Infrastructure and Feedback modules
 
 **Minor improvements**
 
--
+- Increase default cache expiration from 8hours to 30days
+
+**Maintenance**
+
+- Update to mapentity 8.0.0
 
 **Suricate Workflow**  (#2366)
 

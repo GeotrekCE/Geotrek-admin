@@ -3,7 +3,7 @@ import datetime
 from django.conf import settings
 from django.test import TestCase
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
@@ -27,7 +27,7 @@ class InfrastructureTest(TestCase):
         self.assertCountEqual(p.infrastructures, [infra])
 
 
-class InfrastructureViewsTest(CommonTest):
+class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
@@ -57,6 +57,15 @@ class InfrastructureViewsTest(CommonTest):
                 'label': self.obj.type.label,
                 'pictogram': self.obj.type.pictogram.url if self.obj.type.pictogram else '/static/infrastructure/picto-infrastructure.png',
             },
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'cities': '[]',
+            'condition': self.obj.condition.label,
+            'id': self.obj.pk,
+            'name': self.obj.name,
+            'type': self.obj.type.label,
         }
 
     def get_good_data(self):
@@ -158,12 +167,10 @@ class InfraFilterTestMixin:
         data = {
             'intervention_year': year
         }
-        response = self.client.get(model.get_jsonlist_url(), data)
+        response = self.client.get(model.get_datatablelist_url(), data)
 
         self.assertEqual(response.status_code, 200)
-        topo_pk = response.json()['map_obj_pk']
-
-        self.assertCountEqual(topo_pk, [good_topo.pk])
+        self.assertEqual(len(response.json()['data']), 1)
 
     def test_duplicate_implantation_year_filter(self):
         self.login()
@@ -190,7 +197,6 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     filterset = InfrastructureFilterSet
 
     def test_none_implantation_year_filter(self):
-
         self.login()
         model = self.factory._meta.model
         InfrastructureFactory.create()

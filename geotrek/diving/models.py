@@ -8,9 +8,9 @@ from colorfield.fields import ColorField
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
-                                   PublishableMixin, PicturesMixin, AddPropertyMixin,
-                                   PictogramMixin, OptionalPictogramMixin)
+from geotrek.common.mixins.models import (NoDeleteMixin, TimeStampedModelMixin,
+                                          PublishableMixin, PicturesMixin, AddPropertyMixin,
+                                          PictogramMixin, OptionalPictogramMixin)
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting, format_coordinates, spatial_reference
 from geotrek.core.models import Topology

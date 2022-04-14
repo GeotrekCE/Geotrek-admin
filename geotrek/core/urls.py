@@ -1,9 +1,10 @@
 from django.conf import settings
+from django.db.models.functions import Round
 from django.urls import path, re_path, register_converter
-
 from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
+from geotrek.common.functions import Length
 from geotrek.common.urls import LangConverter
 from geotrek.common.views import ParametersView
 from geotrek.core.models import Path, Trail
@@ -33,7 +34,8 @@ urlpatterns = [
 
 class PathEntityOptions(AltimetryEntityOptions):
     def get_queryset(self):
-        return super().get_queryset().prefetch_related('networks', 'usages')
+        return super().get_queryset().annotate(length_2d=Round(Length('geom'),
+                                                               precision=1)).prefetch_related('networks', 'usages')
 
 
 urlpatterns += registry.register(Path, PathEntityOptions, menu=(settings.PATH_MODEL_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED))

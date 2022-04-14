@@ -5,7 +5,7 @@ import django.contrib.gis.db.models.fields
 from django.db import migrations, models
 import django.db.models.deletion
 import geotrek.authent.models
-import geotrek.common.mixins
+import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
@@ -34,6 +34,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Sites',
                 'ordering': ('name',),
             },
-            bases=(geotrek.common.mixins.AddPropertyMixin, models.Model),
+            bases=(geotrek.common.mixins.models.AddPropertyMixin, models.Model),
         ),
     ]

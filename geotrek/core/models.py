@@ -16,8 +16,8 @@ from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
-                                   AddPropertyMixin)
+from geotrek.common.functions import Length
+from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.zoning.mixins import ZoningPropertiesMixin
@@ -42,7 +42,7 @@ class PathManager(models.Manager):
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible.
         """
-        return super().get_queryset().filter(visible=True)
+        return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
 
 
 class PathInvisibleManager(models.Manager):
@@ -99,13 +99,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     @property
     def topology_set(self):
         return Topology.objects.filter(aggregations__path=self)
-
-    @property
-    def length_2d(self):
-        if self.geom:
-            return self.geom.length
-        else:
-            return None
 
     @classproperty
     def length_2d_verbose_name(cls):
@@ -875,7 +868,6 @@ class PathSource(StructureOrNoneRelated):
 
 @functools.total_ordering
 class Stake(StructureOrNoneRelated):
-
     stake = models.CharField(verbose_name=_("Stake"), max_length=50)
 
     class Meta:

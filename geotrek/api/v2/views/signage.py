@@ -1,9 +1,9 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets, filters as api_filters
 from geotrek.signage import models as signage_models
-from geotrek.api.v2.functions import Transform
 
 
 class SignageViewSet(api_viewsets.GeotrekGeometricViewset):

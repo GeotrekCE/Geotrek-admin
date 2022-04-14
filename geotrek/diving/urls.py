@@ -2,12 +2,13 @@ from django.conf import settings
 from django.urls import path, register_converter
 
 from mapentity.registry import registry
+from rest_framework.routers import DefaultRouter
 
 from geotrek.common.urls import PublishableEntityOptions, LangConverter
 
 from . import models
-from .views import (DiveMapImage, DivePOIViewSet, DiveServiceViewSet, DiveDocumentBookletPublic,
-                    DiveDocumentPublic, DiveMarkupPublic)
+from .views import (DiveMapImage, DivePOIViewSet, DiveServiceViewSet, DiveAPIViewSet,
+                    DiveDocumentBookletPublic, DiveDocumentPublic, DiveMarkupPublic)
 
 register_converter(LangConverter, 'lang')
 
@@ -29,5 +30,11 @@ class DiveEntityOptions(PublishableEntityOptions):
     def get_queryset(self):
         return self.model.objects.existing()
 
+
+router = DefaultRouter(trailing_slash=False)
+
+
+router.register(r'^api/(?P<lang>[a-z]{2})/dives', DiveAPIViewSet, basename='dive')
+urlpatterns += router.urls
 
 urlpatterns += registry.register(models.Dive, DiveEntityOptions, menu=settings.DIVE_MODEL_ENABLED)

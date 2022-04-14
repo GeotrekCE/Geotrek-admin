@@ -96,6 +96,17 @@ class InterventionViewsTest(CommonTest):
             good_data['topology'] = 'SRID=4326;POINT (5.1 6.6)'
         return good_data
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'date': '30/03/2022',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'stake': self.obj.stake.stake,
+            'status': self.obj.status.status,
+            'type': self.obj.type.type,
+            'target': self.obj.target_display
+        }
+
     def test_creation_form_on_signage(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             signa = SignageFactory.create()
@@ -476,6 +487,14 @@ class ProjectViewsTest(CommonTest):
             'funding_set-1-DELETE': ''
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'domain': None,
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'type': None
+        }
+
     def _check_update_geom_permission(self, response):
         pass
 
@@ -508,11 +527,11 @@ class ProjectViewsTest(CommonTest):
         InterventionFactory.create(project=p1, target=t)
 
         def jsonlist(bbox):
-            url = self.model.get_jsonlist_url() + bbox
+            url = self.model.get_datatablelist_url() + bbox
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             jsondict = response.json()
-            return jsondict['aaData']
+            return jsondict['data']
 
         # Check that projects without interventions are always present
         self.assertEqual(len(Project.objects.all()), 3)

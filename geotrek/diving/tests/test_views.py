@@ -3,14 +3,14 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.tests import CommonLiveTest, CommonTest
+from geotrek.common.tests import CommonLiveTest, CommonTest, GeotrekAPITestCase
 from geotrek.diving.models import Dive, Level
 from geotrek.diving.tests.factories import DiveWithLevelsFactory, DiveFactory, DivingManagerFactory, PracticeFactory
 
 from mapentity.tests.factories import SuperUserFactory
 
 
-class DiveViewsTests(CommonTest):
+class DiveViewsTests(GeotrekAPITestCase, CommonTest):
     model = Dive
     modelfactory = DiveWithLevelsFactory
     userfactory = DivingManagerFactory
@@ -77,6 +77,14 @@ class DiveViewsTests(CommonTest):
             'touristic_events': [],
             'treks': [],
             'videos': [],
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'levels': self.obj.levels_display,
+            'name': self.obj.name,
+            'thumbnail': 'None'
         }
 
     def get_bad_data(self):

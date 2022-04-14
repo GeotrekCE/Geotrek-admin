@@ -2,6 +2,7 @@ describe('Create path', () => {
   beforeEach(() => {
       const username = 'admin'
       const password = 'admin'
+      cy.setCookie('django_language', 'en');
       cy.request('/login/?next=/')
         .its('body')
         .then((body) => {
@@ -14,11 +15,11 @@ describe('Create path', () => {
           .then((resp) => {
             expect(resp.status).to.eq(200)
           })
-        })
+        });
   })
 
   it('Create path', () => {
-    cy.visit('http://localhost:8000/path/list')
+    cy.visit('/path/list')
     cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click()
     cy.get("a.leaflet-draw-draw-polyline").click()
     cy.get('.leaflet-map-pane')
@@ -34,7 +35,7 @@ describe('Create path', () => {
   })
 
   it('Create path split', () => {
-    cy.visit('http://localhost:8000/path/list')
+    cy.visit('/path/list')
     cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click()
     cy.get("a.leaflet-draw-draw-polyline").click()
     cy.get('.leaflet-map-pane')
@@ -47,12 +48,12 @@ describe('Create path', () => {
     cy.get('.content').should('contain', 'Path number 2')
   })
   it('Path list', () => {
-    cy.visit('http://localhost:8000/path/list')
+    cy.visit('/path/list')
     cy.get("a[title='Path number 1']").should('have.length', 2)
     cy.get("a[title='Path number 2']").should('have.length', 2)
   })
   it('Path action delete multiple without path', () => {
-    cy.visit('http://localhost:8000/path/list')
+    cy.visit('/path/list')
     cy.get("a.btn-primary[data-toggle='dropdown']").click()
     cy.get("a[href='#delete']").click()
     cy.url().should('include', '/path/list/')
@@ -60,19 +61,19 @@ describe('Create path', () => {
     cy.get("a[title='Path number 2']").should('have.length', 2)
   })
   it('Path action delete multiple path', () => {
-    cy.visit('http://localhost:8000/path/list')
+    cy.visit('/path/list')
     cy.get("input[name='path[]'][value='1']").click()
     cy.get("input[name='path[]'][value='2']").click()
     cy.get("a.btn-primary[data-toggle='dropdown']").click()
     cy.get("a[href='#delete']").click()
-    cy.get("input[value='Yes, delete']").click()
+    cy.get("input[type='submit']").click()
     cy.url().should('include', '/path/list/')
     cy.get("a[title='Path number 1']").should('have.length', 1)
     cy.get("a[title='Path number 2']").should('have.length', 1)
   })
   // Two path
   it('Path action merge multiple path', () => {
-    cy.visit('http://localhost:8000/path/list')
+    cy.visit('/path/list')
     cy.get("input[name='path[]'][value='3']").click()
     cy.get("input[name='path[]'][value='4']").click()
     cy.get("a.btn-primary[data-toggle='dropdown']").click()

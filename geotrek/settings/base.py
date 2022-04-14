@@ -208,6 +208,7 @@ TEMPLATES = [
             os.path.join(VAR_DIR, 'conf', 'extra_templates'),
             os.path.join(PROJECT_DIR, 'templates'),
         ),
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
@@ -221,11 +222,11 @@ TEMPLATES = [
                 'geotrek.context_processors.forced_layers',
                 'mapentity.context_processors.settings',
             ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                # 'django.template.loaders.eggs.Loader',
-            ],
+            # 'loaders': [
+            #     'django.template.loaders.filesystem.Loader',
+            #     'django.template.loaders.app_directories.Loader',
+            #     # 'django.template.loaders.eggs.Loader',
+            # ],
             'debug': True,
         },
     },
@@ -321,13 +322,13 @@ SERIALIZATION_MODULES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        'TIMEOUT': 28800,  # 8 hours
+        'TIMEOUT': 2592000,  # 30 days
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': CACHE_ROOT,
-        'TIMEOUT': 28800,  # 8 hours
+        'TIMEOUT': 2592000,  # 30 days
     }
 }
 
@@ -383,7 +384,6 @@ MAPENTITY_CONFIG = {
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
-    'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
     'MAP_FIT_MAX_ZOOM': 16,
@@ -827,6 +827,10 @@ ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 ACCESSIBILITY_ATTACHMENTS_ENABLED = True
 
 USE_X_FORWARDED_HOST = False
+
+REST_FRAMEWORK = {
+    "STRICT_JSON": False,  # allow serialize float NaN values
+}
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
