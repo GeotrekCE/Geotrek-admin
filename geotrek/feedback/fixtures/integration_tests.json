@@ -169,6 +169,7 @@
     },
     {
         "model": "feedback.report",
+        "pk": 13,
         "fields": {
             "email": "test@filed.fr",
             "comment": "I am filed",
@@ -190,6 +191,22 @@
         }
     },
     {
+        "model": "feedback.predefinedemail",
+        "pk": 2,
+        "fields": {
+            "label": "Avertissement",
+            "text": "Faire attention a la marche"
+        }
+    },
+    {
+        "model": "feedback.predefinedemail",
+        "pk": 3,
+        "fields": {
+            "label": "Felicitations",
+            "text": "Ce probleme n'en sera bientot plus un"
+        }
+    },
+    {
         "pk": 3,
         "model": "maintenance.interventionstatus",
         "fields": {
@@ -201,7 +218,8 @@
         "model": "auth.user",
         "pk": 5,
         "fields": {
-            "username": "CCAB"
+            "username": "CCAB",
+            "email": "ccab@cc.ab"
         }
     },
     {
@@ -223,7 +241,9 @@
             "target_id": 12,
             "name": "Intervention on report",
             "date": "2022-05-17",
-            "status": 3
+            "status": 3,
+            "date_insert": "2012-05-17T14:33:34.307Z",
+            "date_update": "2012-05-17T14:33:34.307Z"
         }
     },
     {
