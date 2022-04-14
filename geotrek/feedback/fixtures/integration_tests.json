@@ -145,7 +145,16 @@
         }
     },
     {
+        "model": "feedback.reportactivity",
+        "pk": 2,
+        "fields": {
+            "label": "Natation",
+            "identifier": 2
+        }
+    },
+    {
         "model": "feedback.report",
+        "pk": 12,
         "fields": {
             "email": "test@resolved.fr",
             "comment": "My intervention is resolved",
@@ -166,10 +175,68 @@
             "activity": 2,
             "category": 2,
             "problem_magnitude": 2,
-            "status": 1,
+            "status": 2,
             "geom": "POINT(700020 6600020)",
             "date_insert": "2012-05-17T14:33:34.307Z",
             "date_update": "2012-05-17T14:33:34.307Z"
+        }
+    },
+    {
+        "model": "feedback.predefinedemail",
+        "pk": 1,
+        "fields": {
+            "label": "Intervention résolue",
+            "text": "Pris en charge par ##supervisor## le ##intervention_date##"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "maintenance.interventionstatus",
+        "fields": {
+            "status": "termin\u00e9e",
+            "order": 30
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 5,
+        "fields": {
+            "username": "CCAB"
+        }
+    },
+    {
+        "model": "authent.userprofile",
+        "pk": 5,
+        "fields": {
+            "user": 5,
+            "extended_username": "Comm des Comm des Arbres Binaires"
+        }
+    },
+    {
+        "model": "maintenance.intervention",
+        "pk": 12,
+        "fields": {
+            "target_type": [
+                "feedback",
+                "report"
+            ],
+            "target_id": 12,
+            "name": "Intervention on report",
+            "date": "2022-05-17",
+            "status": 3
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 1,
+        "fields": {
+            "content_type": [
+                "maintenance",
+                "intervention"
+            ],
+            "object_id": 12,
+            "user": 5,
+            "action_flag": 2
         }
     }
 ]
