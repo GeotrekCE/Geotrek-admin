@@ -62,6 +62,11 @@ class PathLayer(MapEntityLayer):
         qs = super().get_queryset()
         if self.request.GET.get('_no_draft'):
             qs = qs.exclude(draft=True)
+        # get display name if name is undefined to display tooltip on map feature hover
+        # Can't use annotate because it doesn't allow to use a model field name
+        # Can't use Case(When) in qs.extra
+        qs = qs.extra(select={'name': "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"},
+                      select_params=(_("path"), ))
         return qs
 
     def view_cache_key(self):
