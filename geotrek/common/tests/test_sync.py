@@ -230,7 +230,7 @@ class SyncRandoFailTest(VarTmpTestCase):
     def test_bad_settings(self):
         output = StringIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaisesRegex(AttributeError, "'int' object has no attribute 'strip'"):
+        with self.assertRaisesRegex(AttributeError, "'int' object has no attribute 'startswith'"):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (Cannot mix str and non-str arguments)", output.getvalue())
