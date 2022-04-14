@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from geotrek.common.mixins import MergeActionMixin
+from geotrek.common.mixins.actions import MergeActionMixin
 from . import models as common_models
 
 if 'modeltranslation' in settings.INSTALLED_APPS:

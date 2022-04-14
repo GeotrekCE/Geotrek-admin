@@ -18,7 +18,7 @@ class SyncRando:
     def sync(self, lang):
         models_picto = [models.Practice, models.Difficulty, models.Level]
         self.global_sync.sync_pictograms(lang, models_picto, zipfile=self.global_sync.zipfile)
-        self.global_sync.sync_geojson(lang, diving_views.DiveViewSet, 'dives.geojson')
+        self.global_sync.sync_geojson(lang, diving_views.DiveAPIViewSet, 'dives.geojson')
 
         dives = models.Dive.objects.existing().order_by('pk')
         dives = dives.filter(**{'published_{lang}'.format(lang=lang): True})

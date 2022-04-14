@@ -1,21 +1,18 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+                             MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.core.models import AltimetryMixin
-from geotrek.common.mixins import CustomColumnsMixin
 from geotrek.core.views import CreateFromTopologyMixin
-
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
 from .models import Infrastructure
-from .serializers import InfrastructureSerializer, InfrastructureGeojsonSerializer
-
-from rest_framework import permissions as rest_permissions
-from mapentity.views import MapEntityViewSet
+from .serializers import InfrastructureSerializer, InfrastructureAPIGeojsonSerializer, InfrastructureAPISerializer
+from ..common.mixins.api import APIViewSet
+from ..common.viewsets import GeotrekMapentityViewSet
 
 
 class InfrastructureLayer(MapEntityLayer):
@@ -28,10 +25,7 @@ class InfrastructureList(CustomColumnsMixin, MapEntityList):
     filterform = InfrastructureFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'condition', 'cities']
-
-
-class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
-    pass
+    searchable_columns = ['id', 'name']
 
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
@@ -78,11 +72,24 @@ class InfrastructureDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class InfrastructureViewSet(MapEntityViewSet):
+class InfrastructureViewSet(GeotrekMapentityViewSet):
     model = Infrastructure
     serializer_class = InfrastructureSerializer
-    geojson_serializer_class = InfrastructureGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    filterset_class = InfrastructureFilterSet
+
+    def get_columns(self):
+        return InfrastructureList.mandatory_columns + settings.COLUMNS_LISTS.get('infrastructure_view',
+                                                                                 InfrastructureList.default_extra_columns)
+
+    def get_queryset(self):
+        qs = Infrastructure.objects.existing().select_related('type', 'maintenance_difficulty', 'usage_difficulty')
+        return qs
+
+
+class InfrastructureAPIViewSet(APIViewSet):
+    model = Infrastructure
+    serializer_class = InfrastructureAPISerializer
+    geojson_serializer_class = InfrastructureAPIGeojsonSerializer
 
     def get_queryset(self):
         return Infrastructure.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))

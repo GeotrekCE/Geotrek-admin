@@ -208,6 +208,7 @@ TEMPLATES = [
             os.path.join(VAR_DIR, 'conf', 'extra_templates'),
             os.path.join(PROJECT_DIR, 'templates'),
         ),
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
@@ -222,11 +223,11 @@ TEMPLATES = [
                 'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                # 'django.template.loaders.eggs.Loader',
-            ],
+            # 'loaders': [
+            #     'django.template.loaders.filesystem.Loader',
+            #     'django.template.loaders.app_directories.Loader',
+            #     # 'django.template.loaders.eggs.Loader',
+            # ],
             'debug': True,
         },
     },
@@ -384,7 +385,6 @@ MAPENTITY_CONFIG = {
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
-    'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
     'MAP_FIT_MAX_ZOOM': 16,
@@ -824,6 +824,10 @@ HIDDEN_FORM_FIELDS['report'] = {
     "locked",
     "uid",
     "origin"
+}
+
+REST_FRAMEWORK = {
+    "STRICT_JSON": False,  # allow serialize float NaN values
 }
 
 # Override with prod/dev/tests/tests_nds settings

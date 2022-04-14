@@ -3,13 +3,13 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.sensitivity.models import SensitiveArea
 from geotrek.sensitivity.tests.factories import (SensitiveAreaFactory, SpeciesFactory, SportPracticeFactory,
                                                  RegulatorySensitiveAreaFactory, BiodivManagerFactory)
 
 
-class SensitiveAreaViewsTests(CommonTest):
+class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
     model = SensitiveArea
     modelfactory = SensitiveAreaFactory
     userfactory = BiodivManagerFactory
@@ -37,6 +37,13 @@ class SensitiveAreaViewsTests(CommonTest):
                 ],
                 'url': self.obj.species.url,
             },
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'category': self.obj.category_display,
+            'id': self.obj.pk,
+            'species': self.obj.species_display
         }
 
     def setUp(self):
@@ -72,7 +79,7 @@ class SensitiveAreaViewsTests(CommonTest):
                              ['id', 'description', 'contact'])
 
 
-class RegulatorySensitiveAreaViewsTests(CommonTest):
+class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
     model = SensitiveArea
     modelfactory = RegulatorySensitiveAreaFactory
     userfactory = BiodivManagerFactory
@@ -100,6 +107,13 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
                 ],
                 'url': self.obj.species.url,
             },
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'category': self.obj.category_display,
+            'id': self.obj.pk,
+            'species': self.obj.species_display,
         }
 
     def setUp(self):

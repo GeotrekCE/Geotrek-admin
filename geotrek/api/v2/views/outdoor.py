@@ -1,10 +1,10 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
 from django.utils.translation import activate
 
 from geotrek.api.v2 import serializers as api_serializers, \
     filters as api_filters, viewsets as api_viewsets
-from geotrek.api.v2.functions import Transform
 from geotrek.outdoor import models as outdoor_models
 
 

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.signage.models import Signage, Blade
@@ -29,7 +29,7 @@ class SignageTest(TestCase):
         self.assertCountEqual(p.signages, [sign])
 
 
-class BladeViewsTest(CommonTest):
+class BladeViewsTest(GeotrekAPITestCase, CommonTest):
     model = Blade
     modelfactory = BladeFactory
     userfactory = PathManagerFactory
@@ -50,6 +50,15 @@ class BladeViewsTest(CommonTest):
             'type': {
                 'label': 'Blade type'
             }
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'color': self.obj.color.label,
+            'direction': self.obj.direction.label,
+            'id': self.obj.pk,
+            'number': self.obj.number_display,
+            'type': self.obj.type.label
         }
 
     def get_bad_data(self):
@@ -187,7 +196,7 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(self.model.objects.first().structure, structure)
 
 
-class SignageViewsTest(CommonTest):
+class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     model = Signage
     modelfactory = SignageFactory
     userfactory = PathManagerFactory
@@ -218,6 +227,15 @@ class SignageViewsTest(CommonTest):
                 'label': 'Signage type',
                 'pictogram': '/media/upload/signage_type.png',
             },
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'code': self.obj.code,
+            'condition': self.obj.condition.label,
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'type': self.obj.type.label
         }
 
     def get_good_data(self):

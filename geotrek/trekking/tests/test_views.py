@@ -26,7 +26,7 @@ from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
                                             RecordSourceFactory, TargetPortalFactory)
-from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
+from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -52,7 +52,7 @@ from geotrek.trekking import urls  # NOQA
 from .base import TrekkingManagerTest
 
 
-class POIViewsTest(CommonTest):
+class POIViewsTest(GeotrekAPITestCase, CommonTest):
     model = POI
     modelfactory = POIFactory
     userfactory = TrekkingManagerFactory
@@ -94,6 +94,14 @@ class POIViewsTest(CommonTest):
             'videos': [],
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'thumbnail': 'None',
+            'type': self.obj.type.label
+        }
+
     def get_good_data(self):
         good_data = {
             'name_fr': 'test',
@@ -114,7 +122,7 @@ class POIViewsTest(CommonTest):
         element_not_published.published = False
         element_not_published.review = True
         element_not_published.save()
-        response = self.client.get(self.model.get_jsonlist_url())
+        response = self.client.get(self.model.get_datatablelist_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Waiting for publication')
 
@@ -138,7 +146,7 @@ class POIViewsTest(CommonTest):
         DistrictFactory.build_batch(10)
 
         with self.assertNumQueries(6):
-            self.client.get(self.model.get_jsonlist_url())
+            self.client.get(self.model.get_datatablelist_url())
 
         with self.assertNumQueries(9):
             self.client.get(self.model.get_format_list_url())
@@ -176,7 +184,7 @@ class POIViewsTest(CommonTest):
         self.assertEqual(response.status_code, 404)
 
 
-class TrekViewsTest(CommonTest):
+class TrekViewsTest(GeotrekAPITestCase, CommonTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
@@ -294,6 +302,16 @@ class TrekViewsTest(CommonTest):
             'reservation_system': self.obj.reservation_system.name,
             'ratings': [],
             'ratings_description': '',
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'departure': 'Departure',
+            'difficulty': 'Difficulty',
+            'duration': 1.5,
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'thumbnail': 'None'
         }
 
     def get_bad_data(self):
@@ -1373,7 +1391,7 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         self.assertContains(response, 'Published')
 
 
-class ServiceViewsTest(CommonTest):
+class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
     model = Service
     modelfactory = ServiceFactory
     userfactory = TrekkingManagerFactory
@@ -1393,6 +1411,12 @@ class ServiceViewsTest(CommonTest):
                 'name': 'Service type',
                 'pictogram': '/media/upload/service-type.png'
             }
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name_display
         }
 
     def get_good_data(self):
@@ -1433,7 +1457,7 @@ class ServiceViewsTest(CommonTest):
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
         with self.assertNumQueries(6):
-            self.client.get(self.model.get_jsonlist_url())
+            self.client.get(self.model.get_datatablelist_url())
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) list
         with self.assertNumQueries(5):

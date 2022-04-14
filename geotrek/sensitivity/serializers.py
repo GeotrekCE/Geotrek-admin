@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.utils.translation import get_language
+from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -25,7 +26,17 @@ class SpeciesSerializer(TranslatedModelSerializer, PictogramSerializerMixin):
         fields = ['id', 'name', 'practices', 'url', 'pictogram', 'period']
 
 
-class SensitiveAreaSerializer(TranslatedModelSerializer):
+class SensitiveAreaSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
+    category = rest_serializers.CharField(source='category_display')
+    structure = rest_serializers.SlugRelatedField('name', read_only=True)
+    species = rest_serializers.CharField(source='species_display')
+
+    class Meta:
+        model = sensitivity_models.SensitiveArea
+        fields = "__all__"
+
+
+class SensitiveAreaAPISerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
     kml_url = rest_serializers.SerializerMethodField()
 
@@ -37,10 +48,10 @@ class SensitiveAreaSerializer(TranslatedModelSerializer):
         fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url')
 
 
-class SensitiveAreaGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaSerializer):
+class SensitiveAreaAPIGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaAPISerializer):
     # Annotated geom field with API_SRID
     geom2d_transformed = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(SensitiveAreaSerializer.Meta):
+    class Meta(SensitiveAreaAPISerializer.Meta):
         geo_field = 'geom2d_transformed'
-        fields = SensitiveAreaSerializer.Meta.fields + ('geom2d_transformed', )
+        fields = SensitiveAreaAPISerializer.Meta.fields + ('geom2d_transformed', )

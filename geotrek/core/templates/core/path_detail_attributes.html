@@ -4,12 +4,19 @@
 
 {% block attributes %}
     <h3>{% trans "Attributes" %}</h3>
-    <div class="groupfields">
-        <h4>{{ path|verbose:"comments" }}</h4>
-        {{ path.comments|default:_("None")|safe|linebreaks }}
-    </div>
-
     <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name|default:object }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"comments" }}</th>
+            <td>{% if object.comments %}
+                {{ object.comments|safe|linebreaks }}
+                {% else %}<span class="none">{% trans "None" %}</span>
+                {% endif %}
+            </td>
+        </tr>
         <tr>
             <th>{{ object|verbose:"draft" }}</th>
             <td>{{ object.draft|yesno|title }}</td>
@@ -20,11 +27,11 @@
         </tr>
         <tr>
             <th>{{ path|verbose:"departure" }}</th>
-            <td>{{ path.departure }}</td>
+            <td>{% if path.departure %}{{ path.departure }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ path|verbose:"arrival" }}</th>
-            <td>{{ path.arrival }}</td>
+            <td>{% if path.arrival %}{{ path.arrival }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ path|verbose:"comfort" }}</th>

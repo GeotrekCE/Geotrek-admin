@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import migrations, models
-import geotrek.common.mixins
 import geotrek.authent.models
 import django.contrib.gis.db.models.fields
+import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Sensitive area',
                 'verbose_name_plural': 'Sensitive areas',
             },
-            bases=(models.Model, geotrek.common.mixins.AddPropertyMixin),
+            bases=(models.Model, geotrek.common.mixins.models.AddPropertyMixin),
         ),
         migrations.CreateModel(
             name='Species',

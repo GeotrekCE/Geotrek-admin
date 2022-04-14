@@ -12,7 +12,7 @@ from django.utils.module_loading import import_string
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
-from geotrek.common.tests import CommonTest, TranslationResetMixin
+from geotrek.common.tests import CommonTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factories
@@ -62,7 +62,7 @@ class ReportViewsetMailSend(TestCase):
         self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
 
 
-class ReportViewsTest(CommonTest):
+class ReportViewsTest(GeotrekAPITestCase, CommonTest):
     model = feedback_models.Report
     modelfactory = feedback_factories.ReportFactory
     userfactory = SuperUserFactory
@@ -81,6 +81,16 @@ class ReportViewsTest(CommonTest):
             'email': self.obj.email,
             'status': None,
             'problem_magnitude': self.obj.problem_magnitude.pk
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'activity': self.obj.activity.label,
+            'category': self.obj.category.label,
+            'date_update': '17/03/2020 00:00:00',
+            'email': self.obj.email_display,
+            'id': self.obj.pk,
+            'status': self.obj.status
         }
 
     def get_bad_data(self):
@@ -187,7 +197,7 @@ class CreateReportsAPITest(BaseAPITest):
         client = APIClient()
         response = client.post(self.add_url, data=data,
                                allow_redirects=False)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, self.add_url)
 
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)

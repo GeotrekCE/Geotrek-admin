@@ -1,4 +1,4 @@
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
 from geotrek.authent.tests.factories import StructureFactory
@@ -7,7 +7,7 @@ from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
 
-class SiteViewsTests(CommonTest):
+class SiteViewsTests(GeotrekAPITestCase, CommonTest):
     model = Site
     modelfactory = SiteFactory
     userfactory = OutdoorManagerFactory
@@ -80,6 +80,14 @@ class SiteViewsTests(CommonTest):
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates":[0, 0]}]}',
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'date_update': '17/03/2020 00:00:00',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'super_practices': self.obj.super_practices_display
+        }
+
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
@@ -97,7 +105,7 @@ class SiteViewsTests(CommonTest):
                              ['id', 'orientation', 'ratings', 'period'])
 
 
-class CourseViewsTests(CommonTest):
+class CourseViewsTests(GeotrekAPITestCase, CommonTest):
     model = Course
     modelfactory = CourseFactory
     userfactory = OutdoorManagerFactory
@@ -142,6 +150,14 @@ class CourseViewsTests(CommonTest):
             'type': self.obj.type.pk,
             'ratings': [],
             'ratings_description': 'Ths rating is ratable',
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'date_update': '17/03/2020 00:00:00',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'parent_sites': self.obj.parent_sites_display,
         }
 
     def get_bad_data(self):

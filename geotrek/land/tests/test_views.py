@@ -83,6 +83,13 @@ class PhysicalEdgeViewsTest(CommonTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'physical_type': self.obj.physical_type_display
+        }
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LandEdgeViewsTest(CommonTest):
@@ -99,6 +106,13 @@ class LandEdgeViewsTest(CommonTest):
         return {
             'land_type': LandTypeFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'land_type': self.obj.land_type_display,
+            'length': round(self.obj.length, 1),
         }
 
 
@@ -119,6 +133,13 @@ class CompetenceEdgeViewsTest(CommonTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'organization': self.obj.organization_display
+        }
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class WorkManagementEdgeViewsTest(CommonTest):
@@ -137,6 +158,13 @@ class WorkManagementEdgeViewsTest(CommonTest):
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'organization': self.obj.organization_display
+        }
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SignageManagementEdgeViewsTest(CommonTest):
@@ -153,4 +181,11 @@ class SignageManagementEdgeViewsTest(CommonTest):
         return {
             'organization': OrganismFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'organization': self.obj.organization_display,
         }

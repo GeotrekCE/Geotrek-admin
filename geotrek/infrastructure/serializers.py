@@ -1,3 +1,5 @@
+from drf_dynamic_fields import DynamicFieldsMixin
+from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -12,22 +14,33 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class InfrastructureSerializer(BasePublishableSerializerMixin):
+class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    type = serializers.CharField(source='type_display')
+    condition = serializers.SlugRelatedField('label', read_only=True)
+    cities = serializers.CharField(source='cities_display')
+    structure = serializers.SlugRelatedField('name', read_only=True)
+    usage_difficulty = serializers.SlugRelatedField('label', read_only=True)
+    maintenance_difficulty = serializers.SlugRelatedField('label', read_only=True)
+
+    class Meta:
+        model = infrastructure_models.Infrastructure
+        fields = "__all__"
+
+
+class InfrastructureAPISerializer(BasePublishableSerializerMixin):
     type = InfrastructureTypeSerializer()
     structure = StructureSerializer()
 
     class Meta:
         model = infrastructure_models.Infrastructure
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', ) + \
-            ('id', 'structure', 'name', 'type', 'accessibility') + \
-            BasePublishableSerializerMixin.Meta.fields
+        fields = ('id', 'structure', 'name', 'type', 'accessibility') + BasePublishableSerializerMixin.Meta.fields
 
 
-class InfrastructureGeojsonSerializer(GeoFeatureModelSerializer, InfrastructureSerializer):
+class InfrastructureAPIGeojsonSerializer(GeoFeatureModelSerializer, InfrastructureAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(InfrastructureSerializer.Meta):
+    class Meta(InfrastructureAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = InfrastructureSerializer.Meta.fields + ('api_geom', )
+        fields = InfrastructureAPISerializer.Meta.fields + ('api_geom', )

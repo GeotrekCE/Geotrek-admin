@@ -2,9 +2,9 @@ from django.conf import settings
 from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
-import geotrek.common.mixins
 import django.core.validators
 import geotrek.authent.models
+import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
@@ -77,7 +77,8 @@ class Migration(migrations.Migration):
                 'verbose_name': 'POI',
                 'verbose_name_plural': 'POI',
             },
-            bases=(geotrek.common.mixins.PicturesMixin, mapentity.models.MapEntityMixin, 'core.topology', models.Model),
+            bases=(
+                geotrek.common.mixins.models.PicturesMixin, mapentity.models.MapEntityMixin, 'core.topology', models.Model),
         ),
         migrations.CreateModel(
             name='POIType',
@@ -190,7 +191,8 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Trek',
                 'verbose_name_plural': 'Treks',
             },
-            bases=(geotrek.common.mixins.PicturesMixin, mapentity.models.MapEntityMixin, 'core.topology', models.Model),
+            bases=(
+                geotrek.common.mixins.models.PicturesMixin, mapentity.models.MapEntityMixin, 'core.topology', models.Model),
         ),
         migrations.CreateModel(
             name='TrekNetwork',

@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django.utils.html import format_html
 
-from geotrek.common.mixins import MergeActionMixin
+from geotrek.common.mixins.actions import MergeActionMixin
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, AccessibilityLevel, Route, DifficultyLevel,
     WebLink, WebLinkCategory, Trek, ServiceType, Rating, RatingScale

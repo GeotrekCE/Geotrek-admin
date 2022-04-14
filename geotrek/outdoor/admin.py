@@ -4,7 +4,7 @@ from django.contrib.admin import widgets
 from django.db import models
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
-from geotrek.common.mixins import MergeActionMixin
+from geotrek.common.mixins.actions import MergeActionMixin
 from geotrek.outdoor.models import Sector, Practice, SiteType, RatingScale, Rating, CourseType
 
 if 'modeltranslation' in settings.INSTALLED_APPS:

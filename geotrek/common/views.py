@@ -1,90 +1,51 @@
+import ast
+import json
 import mimetypes
+import os
 import re
-from django.apps import apps
+from datetime import timedelta
+from zipfile import ZipFile
 
-from geotrek.feedback.parsers import SuricateParser
-from django.core.exceptions import ValidationError
-from django.urls import reverse
-from django.utils.decorators import method_decorator
+import redis
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.models import LogEntry, CHANGE
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.utils import translation
-from django.http import JsonResponse, Http404, HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django_celery_results.models import TaskResult
-from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from django.utils.encoding import force_text
-from django.views import static
+from django.http import JsonResponse, Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
+from django.utils import timezone, translation
+from django.utils.decorators import method_decorator
+from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
-from django.views.generic import TemplateView
-from django.views.generic import RedirectView, View
+from django.views import static
 from django.views.decorators.http import require_POST, require_http_methods
-from mapentity.helpers import api_bbox, suffix_for
-from mapentity.registry import registry, app_settings
+from django.views.generic import RedirectView, View
+from django.views.generic import TemplateView
+from django_celery_results.models import TaskResult
 from mapentity import views as mapentity_views
-
-from paperclip.views import _handle_attachment_form
+from mapentity.helpers import api_bbox
+from mapentity.registry import registry, app_settings
 from paperclip import settings as settings_paperclip
-
-from geotrek.celery import app as celery_app
-from geotrek.common.forms import AttachmentAccessibilityForm
-from geotrek.common.mixins import transform_pdf_booklet_callback
-from geotrek.common.utils import sql_extent
-from geotrek.common.utils.portals import smart_get_template_by_portal
-from geotrek.common.models import FileType, Attachment, TargetPortal, AccessibilityAttachment
-from geotrek import __version__
-
+from paperclip.views import _handle_attachment_form
 from rest_framework import permissions as rest_permissions, viewsets
 
-# async data imports
-import ast
-import os
-import json
-import redis
-from urllib.parse import urljoin
-from zipfile import ZipFile
-
-from datetime import timedelta
-
+from geotrek import __version__
+from geotrek.celery import app as celery_app
+from geotrek.feedback.parsers import SuricateParser
+from .forms import AttachmentAccessibilityForm, ImportDatasetForm, ImportSuricateForm, ImportDatasetFormWithFile, \
+    SyncRandoForm
+from .mixins.views import MetaMixin, DocumentPortalMixin, DocumentPublicMixin, BookletMixin
+from .models import TargetPortal, AccessibilityAttachment, Theme
 from .permissions import PublicOrReadPermMixin
-from .utils.import_celery import create_tmp_destination, discover_available_parsers
-
-from .tasks import import_datas, import_datas_from_web
-from .forms import ImportDatasetForm, ImportSuricateForm, ImportDatasetFormWithFile, SyncRandoForm
-from .models import Theme
 from .serializers import ThemeSerializer
-from .tasks import launch_sync_rando
-
-
-class MetaMixin:
-    def get_context_data(self, **kwargs):
-        lang = self.request.GET.get('lang')
-        portal = self.request.GET.get('portal')
-        context = super().get_context_data(**kwargs)
-        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-        context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
-        translation.activate(lang)
-        context['META_TITLE'] = _('Geotrek Rando')
-        translation.deactivate()
-        if portal:
-            try:
-                target_portal = TargetPortal.objects.get(name=portal)
-                context['FACEBOOK_APP_ID'] = target_portal.facebook_id
-                context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
-                context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
-                context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
-                context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
-            except TargetPortal.DoesNotExist:
-                pass
-        return context
+from .tasks import import_datas, import_datas_from_web, launch_sync_rando
+from .utils import sql_extent
+from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
 
 class Meta(MetaMixin, TemplateView):
@@ -124,99 +85,6 @@ class Meta(MetaMixin, TemplateView):
             context['dives'] = Dive.objects.existing().order_by('pk').filter(
                 **{'published_{lang}'.format(lang=lang): True}
             )
-        return context
-
-
-class FormsetMixin:
-    context_name = None
-    formset_class = None
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        formset_form = context[self.context_name]
-
-        if formset_form.is_valid():
-            response = super().form_valid(form)
-            formset_form.instance = self.object
-            formset_form.save()
-        else:
-            response = self.form_invalid(form)
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            try:
-                context[self.context_name] = self.formset_class(
-                    self.request.POST, instance=self.object)
-            except ValidationError:
-                pass
-        else:
-            context[self.context_name] = self.formset_class(
-                instance=self.object)
-        return context
-
-
-class DocumentPublicMixin:
-    template_name_suffix = "_public"
-
-    # Override view_permission_required
-    def dispatch(self, *args, **kwargs):
-        return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
-
-    def get(self, request, pk, slug, lang=None):
-        obj = get_object_or_404(self.model, pk=pk)
-        try:
-            file_type = FileType.objects.get(type="Topoguide")
-        except FileType.DoesNotExist:
-            file_type = None
-        attachments = Attachment.objects.attachments_for_object_only_type(obj, file_type)
-        if not attachments and not settings.ONLY_EXTERNAL_PUBLIC_PDF:
-            return super().get(request, pk, slug, lang)
-        if not attachments:
-            return HttpResponseNotFound("No attached file with 'Topoguide' type.")
-        path = attachments[0].attachment_file.name
-
-        if settings.DEBUG:
-            response = static.serve(self.request, path, settings.MEDIA_ROOT)
-        else:
-            response = HttpResponse()
-            response[settings.MAPENTITY_CONFIG['SENDFILE_HTTP_HEADER']] = os.path.join(settings.MEDIA_URL_SECURE, path)
-        response["Content-Type"] = 'application/pdf'
-        response['Content-Disposition'] = "attachment; filename={0}.pdf".format(slug)
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        modelname = self.get_model()._meta.object_name.lower()
-        context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
-        return context
-
-
-class BookletMixin:
-
-    def get(self, request, pk, slug, lang=None):
-        response = super().get(request, pk, slug)
-        response.add_post_render_callback(transform_pdf_booklet_callback)
-        return response
-
-
-class DocumentPortalMixin(object):
-    def get_context_data(self, **kwargs):
-
-        portal = self.request.GET.get('portal')
-        if portal:
-            suffix = suffix_for(self.template_name_suffix, "_pdf", "html")
-
-            template_portal = smart_get_template_by_portal(self.model, portal, suffix)
-            if template_portal:
-                self.template_name = template_portal
-
-            template_css_portal = smart_get_template_by_portal(self.model, portal,
-                                                               suffix_for(self.template_name_suffix, "_pdf", "css"))
-            if template_css_portal:
-                self.template_css = template_css_portal
-        context = super().get_context_data(**kwargs)
         return context
 
 
@@ -618,7 +486,7 @@ def delete_attachment_accessibility(request, attachment_pk):
                 user_id=request.user.pk,
                 content_type_id=g.content_type.id,
                 object_id=g.object_id,
-                object_repr=force_text(obj),
+                object_repr=force_str(obj),
                 action_flag=CHANGE,
                 change_message=_('Remove attachment %s') % g.title,
             )

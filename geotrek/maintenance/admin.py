@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from geotrek.common.mixins import MergeActionMixin
+from geotrek.common.mixins.actions import MergeActionMixin
 from geotrek.maintenance.models import (
     Contractor, InterventionStatus, InterventionType, InterventionDisorder,
     ProjectType, ProjectDomain, InterventionJob,

@@ -18,7 +18,7 @@ describe('Create path', () => {
   })
 
   it('Change language', () => {
-    cy.visit('http://localhost:8000/path/list')
+    cy.visit('/path/list')
     cy.get("a.dropdown-toggle").contains('admin').click()
     cy.get("button.language-menu-item[value='fr']").click()
     cy.get("a.btn-success[href='/path/add/']").contains('Ajouter un tronçon')

@@ -4,9 +4,10 @@ import logging
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Transform, LineLocatePoint
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db.models import F, Value
+from django.db.models import F
 from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
@@ -15,12 +16,11 @@ import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
-from geotrek.api.v2.functions import LineLocatePoint, Transform
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
-from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
-                                   PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
+from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 
@@ -769,8 +769,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
             object_geom = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.existing().filter(geom__intersects=object_geom)
             if topology.geom.geom_type == 'LineString':
-                qs = qs.annotate(locate=LineLocatePoint(Transform(Value(topology.geom.ewkt,
-                                                                        output_field=models.GeometryField()),
+                qs = qs.annotate(locate=LineLocatePoint(Transform(topology.geom,
                                                                   settings.SRID),
                                                         Transform(F('geom'), settings.SRID)))
                 qs = qs.order_by('locate')

@@ -1,6 +1,7 @@
 import json
 
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
 from django.urls import reverse
@@ -15,7 +16,8 @@ from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
-from geotrek.api.v2.functions import Length, Length3D, Transform
+from geotrek.api.v2.functions import Length3D
+from geotrek.common.functions import Length
 from geotrek.api.v2.mixins import PDFSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
@@ -806,6 +808,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         structure = serializers.CharField(source='structure.name')
         create_datetime = serializers.DateTimeField(source='date_insert')
         update_datetime = serializers.DateTimeField(source='date_update')
+        published = serializers.BooleanField()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         species_id = serializers.SerializerMethodField()
         kml_url = serializers.SerializerMethodField()

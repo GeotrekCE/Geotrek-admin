@@ -1,7 +1,8 @@
 describe('Nav tabs properties/attachments', () => {
   beforeEach(() => {
-      const username = 'admin'
-      const password = 'admin'
+      const username = 'admin';
+      const password = 'admin';
+      cy.setCookie('django_language', 'en');
       cy.request('/login/?next=/')
         .its('body')
         .then((body) => {
@@ -18,7 +19,7 @@ describe('Nav tabs properties/attachments', () => {
   })
 
   it('Use tabs', () => {
-    cy.visit('http://localhost:8000/trek/list')
+    cy.visit('/trek/list')
     cy.get("a[title='Trek number 1']").should('have.attr', 'href')
       .then((href) => {
         cy.visit(href)
