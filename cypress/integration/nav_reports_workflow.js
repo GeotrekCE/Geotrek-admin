@@ -18,7 +18,7 @@ describe('Nav reports workflow', () => {
   })
 
   it('Handles resolved intervention reports', () => {
-    cy.visit('http://localhost:8000/report/12/')
+    cy.visit('/report/12/')
     cy.get(".btn.btn-primary.ml-auto").click()
     // Cannot use selectors for sentinel and supervisor messages yet
     cy.get("#id_message_sentinel_predefined").should("not.be.visible")
@@ -47,7 +47,7 @@ describe('Nav reports workflow', () => {
 
 
   it('Handles filed reports', () => {
-    cy.visit('http://localhost:8000/report/13/')
+    cy.visit('/report/13/')
     cy.get(".btn.btn-primary.ml-auto").click()
     // Cannot use selectors for sentinel and supervisor messages yet
     cy.get("#id_message_sentinel_predefined").should("not.be.visible")

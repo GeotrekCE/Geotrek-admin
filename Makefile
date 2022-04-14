@@ -39,9 +39,6 @@ load_demo:
 load_test_integration:
 	docker-compose run web ./manage.py loaddata test-integration
 
-load_test_integration_workflow:
-	docker-compose run web ./manage.py loaddata integration_tests
-
 css:
 	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
 
