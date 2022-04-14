@@ -14,13 +14,13 @@ from django.utils import timezone
 from freezegun.api import freeze_time
 from geotrek import __version__
 from geotrek.authent.tests.factories import UserProfileFactory
-from geotrek.feedback.admin import WorkflowDistrictAdmin, WorkflowManagerAdmin
+from geotrek.feedback.admin import PredefinedEmailAdmin, WorkflowDistrictAdmin, WorkflowManagerAdmin
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import (PendingSuricateAPIRequest, Report, SelectableUser,
+from geotrek.feedback.models import (PendingSuricateAPIRequest, PredefinedEmail, Report, SelectableUser,
                                      TimerEvent, WorkflowDistrict, WorkflowManager)
 from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
-    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests)
+    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests, test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode)
 from geotrek.zoning.tests.factories import DistrictFactory
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
@@ -105,7 +105,8 @@ class TestWorkflowUserModels(TestCase):
         manager = WorkflowManager.objects.create(user=user)
         self.assertEqual(str(manager), "Chloe (chloe.price@notmail.com)")
 
-    def test_cannot_create_several_managers(self):
+    @test_for_workflow_mode
+    def test_can_create_several_managers(self):
         ma = WorkflowManagerAdmin(WorkflowManager, AdminSite())
         request = MockRequest()
         request.user = SuperUserFactory()
@@ -116,7 +117,8 @@ class TestWorkflowUserModels(TestCase):
         # We cannot create a manager if there is one
         self.assertIs(ma.has_add_permission(request), False)
 
-    def test_cannot_create_several_workflow_districts(self):
+    @test_for_workflow_mode
+    def test_can_create_several_workflow_districts(self):
         admin = WorkflowDistrictAdmin(WorkflowDistrict, AdminSite())
         request = MockRequest()
         request.user = SuperUserFactory()
@@ -127,6 +129,38 @@ class TestWorkflowUserModels(TestCase):
         # We cannot create a district if there is one
         self.assertIs(admin.has_add_permission(request), False)
         self.assertEqual(str(WorkflowDistrict.objects.first()), 'The place to be')
+
+    @test_for_workflow_mode
+    def test_can_create_predefined_emails(self):
+        admin = PredefinedEmailAdmin(PredefinedEmail, AdminSite())
+        request = MockRequest()
+        request.user = SuperUserFactory()
+        # We can create emails
+        self.assertIs(admin.has_add_permission(request), True)
+
+    @test_for_management_mode
+    def test_cannot_create_several_managers(self):
+        ma = WorkflowManagerAdmin(WorkflowManager, AdminSite())
+        request = MockRequest()
+        request.user = SuperUserFactory()
+        # We can create a manager when there is none
+        self.assertIs(ma.has_add_permission(request), False)
+
+    @test_for_management_mode
+    def test_cannot_create_several_workflow_districts(self):
+        admin = WorkflowDistrictAdmin(WorkflowDistrict, AdminSite())
+        request = MockRequest()
+        request.user = SuperUserFactory()
+        # We cannot create a district
+        self.assertIs(admin.has_add_permission(request), False)
+
+    @test_for_management_mode
+    def test_cannot_create_predefined_emails(self):
+        admin = PredefinedEmailAdmin(PredefinedEmail, AdminSite())
+        request = MockRequest()
+        request.user = SuperUserFactory()
+        # We cannot create emails
+        self.assertIs(admin.has_add_permission(request), False)
 
 
 class TestReportColor(TestCase):
