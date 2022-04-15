@@ -143,7 +143,6 @@ jobs:
       - run: mkdir -p var/conf/extra_static
       - run: make load_data
       - run: make load_test_integration
-      - run: make load_test_integration_workflow
       - run: docker-compose up -d
       - run: sudo mkdir /var/www/geotrek -p
       - run: sudo ln -s /home/circleci/project/var/media /var/www/geotrek
