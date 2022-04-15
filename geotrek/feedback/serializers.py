@@ -8,20 +8,16 @@ from geotrek.feedback import models as feedback_models
 
 
 class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
-    email = rest_serializers.CharField(source='email_display')
+    email = rest_serializers.CharField(read_only=True)
     activity = rest_serializers.SlugRelatedField('label', read_only=True)
     category = rest_serializers.SlugRelatedField('label', read_only=True)
     problem_magnitude = rest_serializers.SlugRelatedField('label', read_only=True)
     status = rest_serializers.SlugRelatedField('label', read_only=True)
+    name = rest_serializers.CharField(read_only=True)
 
     class Meta:
         model = feedback_models.Report
-        fields = ['activity', 'assigned_user', 'attachedmessage', 'attachments', 'category',
-                  'comment', 'created_in_suricate', 'date_insert', 'date_update', 'deleted', 'eid', 'email',
-                  'external_uuid', 'geom', 'id', 'label', 'last_updated_in_suricate', 'locked', 'mail_errors', 'origin',
-                  'pendingemail', 'problem_magnitude', 'related_trek', 'status', 'sync_errors', 'timers',
-                  'uses_timers', 'uuid'
-                  ]
+        fields = "__all__"
 
 
 class ReportAPISerializer(rest_serializers.ModelSerializer):

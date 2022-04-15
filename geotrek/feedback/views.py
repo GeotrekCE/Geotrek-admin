@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
+from django.db.models.functions import Concat
+from django.db.models import F, Value
 from django.urls.base import reverse
 from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
@@ -29,7 +31,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    properties = ["email"]
+    properties = ["name"]
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
@@ -38,6 +40,16 @@ class ReportLayer(mapentity_views.MapEntityLayer):
             qs = qs.filter(status__identifier=status_id)
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
+        # # get display name if name is undefined to display tooltip on map feature hover
+        # # Can't use annotate because it doesn't allow to use a model field name
+        # # Can't use Case(When) in qs.extra
+        # if settings.SURICATE_WORKFLOW_ENABLED:
+        #     qs = qs.extra(select={'label': "CASE WHEN eid IS NULL THEN CONCAT(%s || ' ' || id) ELSE CONCAT(%s || ' ' || eid) END"},
+        #                   select_params=(_("Report"), ))
+        # else:
+        #     qs = qs.extra(select={'label': "CONCAT(%s || ' ' || id)"},
+        #                   select_params=(_("Report"), ))
+        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('id')))
         return qs
 
     def view_cache_key(self):
@@ -70,14 +82,15 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    mandatory_columns = ['id', 'label', 'email', 'activity']
+    mandatory_columns = ['id', 'name', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
-    searchable_columns = ['id', 'email']
+    searchable_columns = ['id', 'name']
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
+        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('id')))
         return qs
 
 
