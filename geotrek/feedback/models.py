@@ -23,6 +23,7 @@ from geotrek.common.utils import intersecting
 from geotrek.core.models import Path
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import District
 
 from .helpers import SuricateMessenger
 
@@ -35,7 +36,6 @@ logger = logging.getLogger(__name__)
 # This dict stores status changes that send an email and an API request
 NOTIFY_SURICATE_AND_SENTINEL = {
     'filed': ['classified', 'waiting'],
-    'created': ['classified', 'waiting'],
     'solved_intervention': ['solved']
 }
 
@@ -281,7 +281,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : assign workflow manager if needed and save
-                if self.status.identifier in ['filed', 'created']:
+                if self.status.identifier in ['filed']:
                     self.assigned_user = WorkflowManager.objects.first().user
                 super().save(*args, **kwargs)
         else:  # Report updates should do nothing more
@@ -347,14 +347,17 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def unlock_in_suricate(self):
         self.get_suricate_messenger().unlock_alert(self.formatted_external_uuid)
 
-    def change_position_in_suricate(self):
+    def change_position_in_suricate(self, force=False):
         rep_gps = self.geom.transform(4326, clone=True)
         long, lat = rep_gps
-        self.get_suricate_messenger().update_gps(self.formatted_external_uuid, lat, long)
+        self.get_suricate_messenger().update_gps(self.formatted_external_uuid, lat, long, force)
+
+    def update_status_in_suricate(self, status_identifier, message):
+        self.get_suricate_messenger().update_status(self.formatted_external_uuid, status_identifier, message)
 
     def send_notifications_on_status_change(self, old_status_identifier, message):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
-            self.get_suricate_messenger().update_status(self.formatted_external_uuid, self.status.identifier, message)
+            self.update_status_in_suricate(self.status.identifier, message)
             if message:
                 self.get_suricate_messenger().message_sentinel(self.formatted_external_uuid, message)
 
@@ -648,3 +651,18 @@ class PredefinedEmail(models.Model):
 
     def __str__(self):
         return self.label
+
+
+class WorkflowDistrict(models.Model):
+    """
+    Workflow Manager is a User that is responsible for assigning reports to other Users and confirming that reports can be marked as resolved
+    There should be only one Workflow Manager, who will receive notification emails when an action is needed
+    """
+    district = models.ForeignKey(District, on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = _("Workflow District")
+        verbose_name_plural = _("Workflow Districts")
+
+    def __str__(self):
+        return str(self.district)

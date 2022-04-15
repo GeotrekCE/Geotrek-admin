@@ -255,15 +255,18 @@ class SuricateMessenger:
         }
         self.gestion_manager.post_or_retry_to_suricate("wsUpdateStatus", params)
 
-    def update_gps(self, id_alert, gps_lat, gps_long):
+    def update_gps(self, id_alert, gps_lat, gps_long, force=False):
         """Update report GPS coordinates on Suricate Rest API"""
+        url_params = {
+            "uid_alerte": id_alert,
+            "gpslatitude": '{0:.6f}'.format(gps_lat),
+            "gpslongitude": '{0:.6f}'.format(gps_long),
+        }
+        if force:
+            url_params["force_update"] = 1
         self.gestion_manager.get_or_retry_from_suricate(
             "wsUpdateGPS",
-            url_params={
-                "uid_alerte": id_alert,
-                "gpslatitude": '{0:.6f}'.format(gps_lat),
-                "gpslongitude": '{0:.6f}'.format(gps_long),
-            },
+            url_params=url_params
         )
 
     def message_sentinel(self, id_alert, message):
