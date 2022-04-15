@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.db.models.functions import Concat
-from django.db.models import F, Value
+from django.db.models import F, Value, CharField
 from django.urls.base import reverse
 from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
@@ -40,7 +40,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
             qs = qs.filter(status__identifier=status_id)
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
-        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('id')))
+        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('id'), output_field=CharField()))
         return qs
 
     def view_cache_key(self):
@@ -81,7 +81,6 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
         qs = super().get_queryset()  # Filtered by FilterSet
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
-        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('id')))
         return qs
 
 
@@ -159,7 +158,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
     def get_queryset(self):
         return self.model.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
-        ).prefetch_related("attachments")
+        ).prefetch_related("attachments").annotate(name=Concat(Value(_("Report")), Value(" "), F('id'), output_field=CharField()))
 
 
 class ReportAPIViewSet(APIViewSet):
