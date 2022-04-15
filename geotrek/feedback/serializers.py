@@ -8,7 +8,7 @@ from geotrek.feedback import models as feedback_models
 
 
 class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
-    email = rest_serializers.CharField(read_only=True)
+    email = rest_serializers.CharField()
     activity = rest_serializers.SlugRelatedField('label', read_only=True)
     category = rest_serializers.SlugRelatedField('label', read_only=True)
     problem_magnitude = rest_serializers.SlugRelatedField('label', read_only=True)
