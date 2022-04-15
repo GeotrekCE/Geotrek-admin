@@ -40,15 +40,6 @@ class ReportLayer(mapentity_views.MapEntityLayer):
             qs = qs.filter(status__identifier=status_id)
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
-        # # get display name if name is undefined to display tooltip on map feature hover
-        # # Can't use annotate because it doesn't allow to use a model field name
-        # # Can't use Case(When) in qs.extra
-        # if settings.SURICATE_WORKFLOW_ENABLED:
-        #     qs = qs.extra(select={'label': "CASE WHEN eid IS NULL THEN CONCAT(%s || ' ' || id) ELSE CONCAT(%s || ' ' || eid) END"},
-        #                   select_params=(_("Report"), ))
-        # else:
-        #     qs = qs.extra(select={'label': "CONCAT(%s || ' ' || id)"},
-        #                   select_params=(_("Report"), ))
         qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('id')))
         return qs
 

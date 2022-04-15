@@ -194,22 +194,6 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         verbose_name_plural = _("Reports")
         ordering = ["-date_insert"]
 
-    # @property
-    # def name(self):
-    #     if settings.SURICATE_WORKFLOW_ENABLED and self.eid:
-    #         return f"{_('Report')} {self.eid}"
-    #     else:
-    #         return f"{_('Report')} {self.pk}"
-
-    # @property
-    # def name_display(self):
-    #     return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-    #         self.pk,
-    #         self.get_detail_url(),
-    #         self.name,
-    #         self.name,
-    #     )
-
     @property
     def name_verbose_name(self):
         return _("Name")
