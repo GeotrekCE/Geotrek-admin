@@ -15,7 +15,6 @@ from geotrek.authent.tests.base import AuthentFixturesMixin
 from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory, ReportInterventionFactory
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from rest_framework.test import APIClient
-
 from geotrek.common.tests import CommonTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image,
@@ -122,7 +121,6 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         }
 
     def get_expected_datatables_attrs(self):
-        print(f"{self.obj.status=}")
         return {
             'activity': self.obj.activity.label,
             'category': self.obj.category.label,
