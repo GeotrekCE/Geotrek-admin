@@ -8,14 +8,13 @@ from django.utils.translation import gettext as _
 
 from geotrek.common.forms import CommonForm
 
-from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowManager
+from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowDistrict, WorkflowManager
 
 # This dict stores constraints for status changes in management workflow
 # {'current_status': ['allowed_next_status', 'other_allowed_status']}
 # Empty status should not be changed from this form
 SURICATE_WORKFLOW_STEPS = {
     'filed': ['classified', 'filed', 'rejected'],
-    'created': ['classified', 'created'],
     'solved_intervention': ['solved', 'solved_intervention'],
 }
 
@@ -75,7 +74,7 @@ class ReportForm(CommonForm):
                     self.fields["status"].empty_label = None
                     self.fields["status"].queryset = ReportStatus.objects.filter(identifier__in=next_statuses)
                     # assigned_user
-                    if self.old_status_identifier not in ['filed', 'created']:
+                    if self.old_status_identifier not in ['filed']:
                         self.fields["assigned_user"].widget = HiddenInput()
                     # message for sentinel
                     self.fields["message_sentinel"] = CharField(required=False, widget=Textarea())
@@ -112,7 +111,7 @@ class ReportForm(CommonForm):
     def save(self, *args, **kwargs):
         report = super().save(self, *args, **kwargs)
         if self.instance.pk and settings.SURICATE_WORKFLOW_ENABLED:
-            if self.old_status_identifier in ['filed', 'created'] and report.assigned_user and report.assigned_user != WorkflowManager.objects.first().user:
+            if self.old_status_identifier in ['filed'] and report.assigned_user and report.assigned_user != WorkflowManager.objects.first().user:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
                 waiting_status = ReportStatus.objects.get(identifier='waiting')
@@ -126,5 +125,15 @@ class ReportForm(CommonForm):
             if self.old_status_identifier != report.status.identifier and report.status.identifier in ['solved', 'classified', 'rejected']:
                 report.unlock_in_suricate()
             if 'geom' in self.changed_data:
-                report.change_position_in_suricate()
+                # Status needs to be 'waiting' for position to change in Suricate
+                if report.status.identifier != "waiting":
+                    report.update_status_in_suricate("waiting", settings.SURICATE_WORKFLOW_SETTINGS.get("SURICATE_RELOCATED_REPORT_MESSAGE"))
+                # If new geom is outside of Workflow District, reject it
+                if not WorkflowDistrict.objects.filter(district__geom__covers=report.geom):
+                    report.change_position_in_suricate(force=True)
+                    rejected_status = ReportStatus.objects.get(identifier='rejected')
+                    report.status = rejected_status
+                    report.save()
+                else:
+                    report.change_position_in_suricate()
         return report

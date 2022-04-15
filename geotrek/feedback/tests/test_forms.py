@@ -9,6 +9,7 @@ from django.core import mail
 from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
 from django.urls.base import reverse
 from django.utils import translation
+from geotrek.zoning.tests.factories import DistrictFactory
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.widgets import MapWidget
@@ -17,7 +18,7 @@ from tinymce.widgets import TinyMCE
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import TimerEvent, WorkflowManager
+from geotrek.feedback.models import TimerEvent, WorkflowDistrict, WorkflowManager
 from geotrek.feedback.tests.factories import PredefinedEmailFactory, ReportFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SuricateWorkflowTests, test_for_management_and_workflow_modes,
@@ -44,6 +45,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.predefined_email_2 = PredefinedEmailFactory()
         cls.other_user = UserFactory()
         UserProfileFactory.create(user=cls.other_user, extended_username="Communauté des Communes des Communautés Communataires")
+        cls.district = DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
+        WorkflowDistrict.objects.create(district=cls.district)
 
     def setUp(self):
         self.client.login(username="Admiin", password="drowssap")
@@ -340,10 +343,10 @@ class TestSuricateForms(SuricateWorkflowTests):
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_relocate_report(self, mocked_get):
+    def test_relocate_report_in_district(self, mocked_get):
         self.build_get_request_patch(mocked_get)
-        # Relocate report
-        new_geom = Point(700000, 6900000, srid=settings.SRID)
+        # Relocate report inside of main district
+        new_geom = Point(0, 0, srid=2154)
         data = {
             'email': 'test@test.fr',
             'geom': new_geom
@@ -361,6 +364,37 @@ class TestSuricateForms(SuricateWorkflowTests):
             f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
             auth=('', '')
         )
+
+    @test_for_workflow_mode
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_relocate_report_outside_district(self, mocked_post, mocked_get):
+        self.build_get_request_patch(mocked_get)
+        # Relocate report outside of main district
+        new_geom = Point(2, 2, srid=2154)
+        data = {
+            'email': 'test@test.fr',
+            'geom': new_geom
+        }
+        form = ReportForm(instance=self.filed_report_1, data=data)
+        form.save()
+        # Assert relocation is forwarded to Suricate
+        long, lat = new_geom.transform(4326, clone=True).coords
+        long_txt = '{0:.6f}'.format(long)
+        lat_txt = '{0:.6f}'.format(lat)
+        check = md5(
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report_1.formatted_external_uuid)).encode()
+        ).hexdigest()
+        mocked_post.assert_called_once_with(
+            'http://suricate.wsmanagement.example.com/wsUpdateStatus',
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report_1.formatted_external_uuid, 'statut': 'waiting', 'txt_changestatut': 'Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département', 'txt_changestatut_sentinelle': 'Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département', 'check': check},
+            auth=('', '')
+        )
+        mocked_get.assert_called_once_with(
+            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&force_update=1&id_origin=geotrek&check={check}",
+            auth=('', '')
+        )
+        self.assertEqual(self.filed_report_1.status, self.rejected_status)
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")

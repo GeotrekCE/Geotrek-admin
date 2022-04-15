@@ -192,6 +192,18 @@ msgstr "Manager de gestion"
 msgid "Workflow Managers"
 msgstr "Managers de gestion"
 
+msgid "Workflow districts"
+msgstr "Secteurs de gestion"
+
+msgid "Workflow district"
+msgstr "Secteur de gestion"
+
+msgid "Workflow District"
+msgstr "Secteur de gestion"
+
+msgid "Workflow Districts"
+msgstr "Secteurs de gestion"
+
 msgid "Intervention terminée"
 msgstr "Intervention terminée"
 
