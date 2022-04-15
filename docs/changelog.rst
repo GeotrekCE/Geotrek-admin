@@ -16,7 +16,7 @@ CHANGELOG
 
 **Maintenance**
 
-- Update to mapentity 8.0.0
+- Update to mapentity 8.0.1
 
 **Suricate Workflow**  (#2366)
 
