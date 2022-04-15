@@ -81,10 +81,6 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
         return qs
 
 
-class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
-    pass
-
-
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     mandatory_columns = ['id']
     default_extra_columns = [

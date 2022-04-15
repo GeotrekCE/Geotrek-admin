@@ -122,13 +122,14 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         }
 
     def get_expected_datatables_attrs(self):
+        print(f"{self.obj.status=}")
         return {
             'activity': self.obj.activity.label,
             'category': self.obj.category.label,
             'date_update': '17/03/2020 00:00:00',
             'email': self.obj.email_display,
             'id': self.obj.pk,
-            'status': self.obj.status
+            'status': str(self.obj.status)
         }
 
     def get_bad_data(self):
