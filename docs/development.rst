@@ -172,6 +172,7 @@ Install elements for the cypress tests
 
     make load_data
     make load_test_integration
+    make load_test_integration_workflow
 
 
 Move in cypress folder and install

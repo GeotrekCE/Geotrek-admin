@@ -133,6 +133,8 @@ jobs:
       - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
       - run: echo 'LANGUAGES=en fr' >> .env
       - run: echo 'LANGUAGE_CODE=en' >> .env
+      - run: mkdir -p var/conf/
+      - run: cp cypress/custom.py var/conf/custom.py
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5@sha256:61554f848deced4c0c25a1c1d8dff9d25de2715273ae8a49e71626c8221093bf
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
