@@ -16,7 +16,12 @@ class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
 
     class Meta:
         model = feedback_models.Report
-        fields = "__all__"
+        fields = ['activity', 'assigned_user', 'attachedmessage', 'attachments', 'category',
+                  'comment', 'created_in_suricate', 'date_insert', 'date_update', 'deleted', 'eid', 'email',
+                  'external_uuid', 'geom', 'id', 'label', 'last_updated_in_suricate', 'locked', 'mail_errors', 'origin',
+                  'pendingemail', 'problem_magnitude', 'related_trek', 'status', 'sync_errors', 'timers',
+                  'uses_timers', 'uuid'
+                  ]
 
 
 class ReportAPISerializer(rest_serializers.ModelSerializer):

@@ -194,13 +194,20 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         verbose_name_plural = _("Reports")
         ordering = ["-date_insert"]
 
+    @property
+    def label(self):
+        if settings.SURICATE_WORKFLOW_ENABLED:
+            return f"{_('Report')} n°{self.eid}"
+        else:
+            return f"{_('Report')} n°{self.pk}"
+
     def __str__(self):
         if self.email:
-            return self.email
+            return self.email  ## TODO chnage ?
         return "Anonymous report"
 
     @property
-    def email_display(self):
+    def email_display(self):   # TODO change ?
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
             self.pk,
             self.get_detail_url(),
