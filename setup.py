@@ -33,7 +33,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.1.*',
-        'mapentity==8.0.0',
+        'mapentity==8.0.1',
         'env_file',
         # pinned by requirements.txt
         'python-memcached',
