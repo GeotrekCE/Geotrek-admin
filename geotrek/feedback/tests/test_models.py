@@ -31,7 +31,7 @@ class TestFeedbackModel(TestCase):
         cls.report = ReportFactory(email="mail@mail.fr")
 
     def test_get_display_name(self):
-        s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title="mail@mail.fr">mail@mail.fr</a>'
+        s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.pk}\">Report {self.report.pk}</a>'
         self.assertEqual(self.report.name_display, s)
 
     @override_settings(ALLOWED_HOSTS=["geotrek.local"])

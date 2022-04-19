@@ -125,9 +125,9 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
             'activity': self.obj.activity.label,
             'category': self.obj.category.label,
             'date_update': '17/03/2020 00:00:00',
-            'email': self.obj.email_display,
             'id': self.obj.pk,
-            'status': str(self.obj.status)
+            'status': str(self.obj.status),
+            'tag': f'<a title="Report {self.obj.pk}" data-pk="{self.obj.pk}" href="/report/{self.obj.pk}">Report {self.obj.pk}</a>'
         }
 
     def get_bad_data(self):
@@ -198,7 +198,7 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
             return
         with override_settings(COLUMNS_LISTS={'feedback_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'email', 'activity', 'email', 'comment', 'advice'])
+                             ['id', 'tag', 'activity', 'email', 'comment', 'advice'])
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns

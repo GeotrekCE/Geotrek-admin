@@ -27,7 +27,7 @@ class TestRemoveEmailsOlders(TestCase):
         call_command('erase_emails', stdout=output)
         old_report = Report.objects.get(id=self.old_report.id)
         self.assertEqual(old_report.email, "")
-        self.assertEqual(old_report.__str__(), "Anonymous report")
+        self.assertEqual(old_report.__str__(), f"Report {old_report.pk}")
 
     def test_dry_run_command(self):
         """Test if dry_run mode keeps emails"""

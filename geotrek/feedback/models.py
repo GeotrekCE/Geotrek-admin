@@ -195,18 +195,17 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         ordering = ["-date_insert"]
 
     def __str__(self):
-        if self.email:
-            return self.email
-        return "Anonymous report"
+        """
+        Also called 'tag' in views/serializers
+        """
+        if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) and self.eid:
+            return f"{_('Report')} {self.eid}"
+        else:
+            return f"{_('Report')} {self.pk}"
 
     @property
-    def email_display(self):
-        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+    def tag_verbose_name(self):
+        return _("Tag")
 
     @classmethod
     def get_suricate_messenger(cls):
@@ -381,10 +380,13 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     @property
     def name_display(self):
+        """
+        Displayed on linked interventions' pages
+        """
         s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
                                                              self.get_detail_url(),
-                                                             self.email,
-                                                             self.email)
+                                                             str(self),
+                                                             str(self))
         return s
 
     def distance(self, to_cls):
