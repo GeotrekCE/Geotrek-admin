@@ -198,6 +198,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     def name_verbose_name(self):
         return _("Name")
 
+    @property
+    def name_display(self):
+        return self.label
+
     def __str__(self):
         if settings.SURICATE_WORKFLOW_ENABLED and self.eid:
             return f"{_('Report')} {self.eid}"
@@ -376,11 +380,19 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return date_format(self.last_updated_in_suricate, "SHORT_DATETIME_FORMAT")
 
     @property
-    def name_display(self):
+    def label_verbose_name(self):
+        return _("Label")
+
+    @property
+    def tag_verbose_name(self):
+        return _("Label")
+
+    @property
+    def label(self):
         s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
                                                              self.get_detail_url(),
-                                                             self.email,
-                                                             self.email)
+                                                             str(self),
+                                                             str(self))
         return s
 
     def distance(self, to_cls):

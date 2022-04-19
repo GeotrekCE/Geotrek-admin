@@ -31,7 +31,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    properties = ["name"]
+    properties = ["tag"]
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
@@ -40,7 +40,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
             qs = qs.filter(status__identifier=status_id)
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
-        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('id'), output_field=CharField()))
+        qs = qs.annotate(tag=Concat(Value(_("Report")), Value(" "), F('id'), output_field=CharField()))
         return qs
 
     def view_cache_key(self):
@@ -73,9 +73,10 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    mandatory_columns = ['id', 'name', 'activity']
+    mandatory_columns = ['id', 'label', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
-    searchable_columns = ['id', 'name']
+    searchable_columns = ['id', 'tag']
+    unorderable_columns = ['label']
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
@@ -158,7 +159,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
     def get_queryset(self):
         return self.model.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
-        ).prefetch_related("attachments").annotate(name=Concat(Value(_("Report")), Value(" "), F('id'), output_field=CharField()))
+        ).prefetch_related("attachments").annotate(tag=Concat(Value(_("Report")), Value(" "), F('id'), output_field=CharField()))
 
 
 class ReportAPIViewSet(APIViewSet):

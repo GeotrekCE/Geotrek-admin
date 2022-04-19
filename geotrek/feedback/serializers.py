@@ -13,7 +13,8 @@ class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
     category = rest_serializers.SlugRelatedField('label', read_only=True)
     problem_magnitude = rest_serializers.SlugRelatedField('label', read_only=True)
     status = rest_serializers.SlugRelatedField('label', read_only=True)
-    name = rest_serializers.CharField(read_only=True)
+    tag = rest_serializers.CharField(read_only=True)
+    label = rest_serializers.CharField(read_only=True)
 
     class Meta:
         model = feedback_models.Report
