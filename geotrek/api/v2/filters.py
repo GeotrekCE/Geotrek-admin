@@ -167,10 +167,11 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             for m in [int(m) for m in period.split(',')]:
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
-        trek = request.GET.get('trek')
+        trek_id = request.GET.get('trek')
+        trek = Trek.objects.filter(pk=trek_id)
         if trek:
             contents_intersecting = intersecting(qs,
-                                                 Trek.objects.get(pk=trek),
+                                                 trek.get(),
                                                  distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
             qs = contents_intersecting.order_by('id')
         return qs.distinct()

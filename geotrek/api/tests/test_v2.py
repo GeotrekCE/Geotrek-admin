@@ -2111,12 +2111,15 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_sensitivearea_distance_list(self):
-        p1 = core_factory.PathFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
-        trek = trek_factory.TrekFactory.create(
-            published=True,
-            name='Parent',
-            paths=[p1]
-        )
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p1 = core_factory.PathFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
+            trek = trek_factory.TrekFactory.create(
+                published=True,
+                name='Parent',
+                paths=[p1]
+            )
+        else:
+            trek = trek_factory.TrekFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
         specy = sensitivity_factory.SpeciesFactory.create(period01=True)
         sensitivity_factory.SensitiveAreaFactory.create(
             geom='SRID=2154;POLYGON((605600 6650000, 605600 6650004, 605604 6650004, 605604 6650000, 605600 6650000))',
