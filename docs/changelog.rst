@@ -13,6 +13,7 @@ CHANGELOG
 **Minor improvements**
 
 - Increase default cache expiration from 8hours to 30days
+- Refer to Reports by a label instead of email addresses
 
 **Maintenance**
 

@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
+from django.db.models.functions import Concat
+from django.db.models import F, Value, CharField
 from django.urls.base import reverse
 from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
@@ -29,7 +31,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    properties = ["email"]
+    properties = ["name"]
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
@@ -38,6 +40,8 @@ class ReportLayer(mapentity_views.MapEntityLayer):
             qs = qs.filter(status__identifier=status_id)
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
+        number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
+        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F(number), output_field=CharField()))
         return qs
 
     def view_cache_key(self):
@@ -70,9 +74,9 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    mandatory_columns = ['id', 'email', 'activity']
+    mandatory_columns = ['id', 'tag', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
-    searchable_columns = ['id', 'email']
+    searchable_columns = ['id', 'tag']
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
@@ -153,9 +157,29 @@ class ReportViewSet(GeotrekMapentityViewSet):
                                                                          ReportList.default_extra_columns)
 
     def get_queryset(self):
-        return self.model.objects.existing().select_related(
+        qs = self.model.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
         ).prefetch_related("attachments")
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            qs = qs.filter(assigned_user=self.request.user.pk)
+        number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
+        qs = qs.annotate(tag=Concat(
+            Value("<a title=\""),
+            Value(_("Report")),
+            Value(" "),
+            F(number),
+            Value("\" data-pk=\""),
+            F('id'),
+            Value("\" href=\"/report/"),
+            F('id'),
+            Value("\">"),
+            Value(_("Report")),
+            Value(" "),
+            F(number),
+            Value("</a>"),
+            output_field=CharField())
+        )
+        return qs
 
 
 class ReportAPIViewSet(APIViewSet):

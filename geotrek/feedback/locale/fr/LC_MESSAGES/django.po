@@ -60,6 +60,9 @@ msgstr "Date de création dans Suricate"
 msgid "Identifier"
 msgstr "Identifiant"
 
+msgid "Tag"
+msgstr "Étiquette"
+
 msgid "Last updated in Suricate"
 msgstr "Date de modification dans Suricate"
 

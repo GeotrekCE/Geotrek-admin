@@ -58,3 +58,4 @@ class ReportFactory(factory.django.DjangoModelFactory):
     problem_magnitude = factory.SubFactory(ReportProblemMagnitudeFactory)
     category = factory.SubFactory(ReportCategoryFactory)
     status = factory.SubFactory(ReportStatusFactory)
+    eid = factory.Sequence(lambda n: n)

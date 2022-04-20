@@ -11,6 +11,8 @@ from django.test.utils import override_settings
 from django.urls.base import reverse
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
+from freezegun import freeze_time
+
 from geotrek.authent.tests.base import AuthentFixturesMixin
 from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory, ReportInterventionFactory
 from mapentity.tests.factories import SuperUserFactory, UserFactory
@@ -125,9 +127,9 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
             'activity': self.obj.activity.label,
             'category': self.obj.category.label,
             'date_update': '17/03/2020 00:00:00',
-            'email': self.obj.email_display,
             'id': self.obj.pk,
-            'status': str(self.obj.status)
+            'status': str(self.obj.status),
+            'tag': f'<a title="Report {self.obj.pk}" data-pk="{self.obj.pk}" href="/report/{self.obj.pk}">Report {self.obj.pk}</a>'
         }
 
     def get_bad_data(self):
@@ -198,7 +200,7 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
             return
         with override_settings(COLUMNS_LISTS={'feedback_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'email', 'activity', 'email', 'comment', 'advice'])
+                             ['id', 'tag', 'activity', 'email', 'comment', 'advice'])
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns
@@ -207,6 +209,27 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         with override_settings(COLUMNS_LISTS={'feedback_export': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
                              ['id', 'email', 'comment', 'advice'])
+
+    @freeze_time("2020-03-17")
+    def test_api_datatables_list_for_model_in_suricate_mode(self):
+        self.report = feedback_factories.ReportFactory()
+        with override_settings(SURICATE_WORKFLOW_ENABLED=True):
+            list_url = '/api/{modelname}/drf/{modelname}s.datatables'.format(modelname=self.model._meta.model_name)
+            response = self.client.get(list_url)
+            self.assertEqual(response.status_code, 200, f"{list_url} not found")
+            content_json = response.json()
+            datatable_attrs = {
+                'activity': self.report.activity.label,
+                'category': self.report.category.label,
+                'date_update': '17/03/2020 00:00:00',
+                'id': self.report.pk,
+                'status': str(self.report.status),
+                'tag': f'<a title="Report {self.report.eid}" data-pk="{self.report.pk}" href="/report/{self.report.pk}">Report {self.report.eid}</a>'
+            }
+            self.assertEqual(content_json, {'data': [datatable_attrs],
+                                            'draw': 1,
+                                            'recordsFiltered': 1,
+                                            'recordsTotal': 1})
 
 
 class BaseAPITest(TestCase):
