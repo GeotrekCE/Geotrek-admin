@@ -8,7 +8,11 @@ function ChangeColors(e, data) {
         return;
     var map = data.map;
     var dt = MapEntity.mainDatatable;
-
+    map.eachLayer(function (layer) {
+        if (layer.options != 'undefined' && layer.options.modelname === 'report') {
+            map.removeLayer(layer);
+        }
+    });
     // For each report status
     var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
     for (var status in status_ids_and_colors) {
