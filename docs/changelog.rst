@@ -13,6 +13,7 @@ CHANGELOG
 **Minor improvements**
 
 - Increase default cache expiration from 8hours to 30days
+- Add distance SENSITIVE_AREA_INTERSECTION_MARGIN in sensitive area filter
 
 **Maintenance**
 

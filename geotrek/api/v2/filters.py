@@ -169,7 +169,9 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             qs = qs.filter(q)
         trek = request.GET.get('trek')
         if trek:
-            contents_intersecting = intersecting(qs, Trek.objects.get(pk=trek))
+            contents_intersecting = intersecting(qs,
+                                                 Trek.objects.get(pk=trek),
+                                                 distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
             qs = contents_intersecting.order_by('id')
         return qs.distinct()
 
@@ -411,6 +413,10 @@ class GeotrekInformationDeskFilter(BaseFilterBackend):
         types = request.GET.get('types')
         if types:
             qs = qs.filter(type__in=types.split(','))
+        trek = request.GET.get('trek', None)
+        if trek is not None:
+            t = Trek.objects.get(pk=trek)
+            qs = Topology.overlapping(t, qs)
         labels_accessibility = request.GET.get('labels_accessibility')
         if labels_accessibility:
             qs = qs.filter(label_accessibility__in=labels_accessibility.split(','))
