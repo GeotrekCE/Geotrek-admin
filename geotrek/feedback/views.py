@@ -40,10 +40,8 @@ class ReportLayer(mapentity_views.MapEntityLayer):
             qs = qs.filter(status__identifier=status_id)
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
-        if settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED:
-            qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('eid'), output_field=CharField()))
-        else:
-            qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F('id'), output_field=CharField()))
+        number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
+        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F(number), output_field=CharField()))
         return qs
 
     def view_cache_key(self):
@@ -164,40 +162,23 @@ class ReportViewSet(GeotrekMapentityViewSet):
         ).prefetch_related("attachments")
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user.pk)
-        if settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED:
-            qs = qs.annotate(tag=Concat(
-                Value("<a title=\""),
-                Value(_("Report")),
-                Value(" "),
-                F('eid'),
-                Value("\" data-pk=\""),
-                F('id'),
-                Value("\" href=\"/report/"),
-                F('id'),
-                Value("\">"),
-                Value(_("Report")),
-                Value(" "),
-                F('eid'),
-                Value("</a>"),
-                output_field=CharField())
-            )
-        else:
-            qs = qs.annotate(tag=Concat(
-                Value("<a title=\""),
-                Value(_("Report")),
-                Value(" "),
-                F('id'),
-                Value("\" data-pk=\""),
-                F('id'),
-                Value("\" href=\"/report/"),
-                F('id'),
-                Value("\">"),
-                Value(_("Report")),
-                Value(" "),
-                F('id'),
-                Value("</a>"),
-                output_field=CharField())
-            )
+        number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
+        qs = qs.annotate(tag=Concat(
+            Value("<a title=\""),
+            Value(_("Report")),
+            Value(" "),
+            F(number),
+            Value("\" data-pk=\""),
+            F('id'),
+            Value("\" href=\"/report/"),
+            F('id'),
+            Value("\">"),
+            Value(_("Report")),
+            Value(" "),
+            F(number),
+            Value("</a>"),
+            output_field=CharField())
+        )
         return qs
 
 
