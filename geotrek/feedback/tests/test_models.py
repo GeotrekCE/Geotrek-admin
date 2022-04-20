@@ -28,10 +28,15 @@ from mapentity.tests.factories import SuperUserFactory, UserFactory
 class TestFeedbackModel(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.report = ReportFactory(email="mail@mail.fr")
+        cls.report = ReportFactory(email="mail@mail.fr", eid=666)
 
     def test_get_display_name(self):
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.pk}\">Report {self.report.pk}</a>'
+        self.assertEqual(self.report.name_display, s)
+
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    def test_get_display_name_suricate(self):
+        s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.eid}\">Report {self.report.eid}</a>'
         self.assertEqual(self.report.name_display, s)
 
     @override_settings(ALLOWED_HOSTS=["geotrek.local"])

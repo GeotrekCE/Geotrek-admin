@@ -162,6 +162,8 @@ class ReportViewSet(GeotrekMapentityViewSet):
         qs = self.model.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
         ).prefetch_related("attachments")
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            qs = qs.filter(assigned_user=self.request.user.pk)
         if settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED:
             qs = qs.annotate(tag=Concat(
                 Value("<a title=\""),
