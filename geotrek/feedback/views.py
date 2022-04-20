@@ -151,6 +151,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
     serializer_class = feedback_serializers.ReportSerializer
     authentication_classes = []
     permission_classes = [AllowAny]
+    filterset_class = ReportFilterSet
 
     def get_columns(self):
         return ReportList.mandatory_columns + settings.COLUMNS_LISTS.get('feedback_view',
