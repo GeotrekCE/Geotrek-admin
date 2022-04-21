@@ -15,6 +15,10 @@ CHANGELOG
 - Increase default cache expiration from 8hours to 30days
 - Use distance from setting SENSITIVE_AREA_INTERSECTION_MARGIN in sensitive area filter `trek` in api v2
 
+**Bug fixes**
+
+- Fix filter `trek` in api v2 for information desks
+
 **Maintenance**
 
 - Update to mapentity 8.0.1
