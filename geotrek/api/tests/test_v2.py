@@ -1919,6 +1919,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE
         )
 
+    def test_informationdesk_filter_trek(self):
+        response = self.get_informationdesk_list({'trek': self.treks[0].pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
+        response = self.get_informationdesk_list({'trek': self.parent.pk})
+        self.assertEqual(response.json()["count"], 0)
+
     def test_infodesk_filter_type(self):
         response = self.get_informationdesk_list({'types': self.information_desk_type.pk})
         self.assertEqual(response.json()["count"], 1)

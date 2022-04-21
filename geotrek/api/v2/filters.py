@@ -416,8 +416,7 @@ class GeotrekInformationDeskFilter(BaseFilterBackend):
             qs = qs.filter(type__in=types.split(','))
         trek = request.GET.get('trek', None)
         if trek is not None:
-            t = Trek.objects.get(pk=trek)
-            qs = Topology.overlapping(t, qs)
+            qs = qs.filter(treks__id=trek)
         labels_accessibility = request.GET.get('labels_accessibility')
         if labels_accessibility:
             qs = qs.filter(label_accessibility__in=labels_accessibility.split(','))
