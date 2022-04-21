@@ -303,6 +303,8 @@ class BaseApiTest(TestCase):
         cls.network = trek_factory.TrekNetworkFactory()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.all()[0], 0.5, 0.5)])
+        else:
+            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(700050 6600050)')
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
@@ -1560,15 +1562,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             trek_models.POI.objects.all().count() - 1
         )
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_trek(self):
         self.launch_tests_excluded_pois(self.treks[0], 'trek')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_courses(self):
         self.launch_tests_excluded_pois(self.course, 'courses')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_sites(self):
         self.launch_tests_excluded_pois(self.site, 'sites')
 

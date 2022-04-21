@@ -213,7 +213,10 @@ class GeotrekPOIFilter(BaseFilterBackend):
         trek = request.GET.get('trek', None)
         if trek is not None:
             t = Trek.objects.get(pk=trek)
-            qs = Topology.overlapping(t, qs)
+            if settings.TREKKING_TOPOLOGY_ENABLED:
+                qs = Topology.overlapping(t, qs)
+            else:
+                qs = intersecting(qs, t)
             qs = qs.exclude(pk__in=t.pois_excluded.all())
         sites = request.GET.get('sites', None)
         if sites is not None:
