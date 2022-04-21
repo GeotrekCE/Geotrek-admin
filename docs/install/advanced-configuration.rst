@@ -365,16 +365,19 @@ This will apply to all text fields.
 For more information on configuration entries available, please refer to the
 official documentation of *TinyMCE version 3*.
 
-Max characters count
-''''''''''''''''''''
 
-It is possible to set a ``MAX_CHARACTERS`` to advise user a max characters number
-to be used in TinyMCE fields.
+Max characters count
+~~~~~~~~~~~~~~~~~~~~
+
+Add ``MAX_CHARACTERS`` setting to be able to define a maximum number of characters
+for text fields (to be used with django-mapentity >= 8.1).
 
 .. code-block :: python
 
     MAPENTITY_CONFIG['MAX_CHARACTERS'] = 1500
 
+This will apply to all text fields.
+See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
 
 View attachments in the browser
 -------------------------------
