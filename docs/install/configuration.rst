@@ -1,5 +1,5 @@
 =============
-CONFIGURATION
+Configuration
 =============
 
 

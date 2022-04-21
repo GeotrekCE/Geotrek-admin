@@ -1,7 +1,7 @@
 .. _advanced-configuration-section:
 
 ======================
-ADVANCED CONFIGURATION
+Advanced configuration
 ======================
 
 Custom setting file
@@ -489,7 +489,7 @@ it needs static html files built by synchronization (thanks to option ``--rando-
 
 In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-rando and activate it.
 
-.. image :: images/facebookappid.png
+.. image :: /images/facebookappid.png
 
 In ``custom.py`` set Facebook App ID:
 
@@ -801,7 +801,7 @@ Please refer to the "settings detail" section for a complete list of modules and
 
 
 ================
-SETTINGS DETAILS
+Settings details
 ================
 
 Basic settings
@@ -971,7 +971,7 @@ Show land on menu or not.
 
 Show filter bbox by zoning.
 
-.. image:: images/options/zoning_bboxs.png
+.. image:: /images/options/zoning_bboxs.png
 
 
 |

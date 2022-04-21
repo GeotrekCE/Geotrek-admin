@@ -1,5 +1,5 @@
 ==========================
-FREQUENTLY ASKED QUESTIONS
+Frequently asked questions
 ==========================
 
 How are 3D informations obtained ?
