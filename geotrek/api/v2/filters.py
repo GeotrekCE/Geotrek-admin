@@ -167,9 +167,12 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             for m in [int(m) for m in period.split(',')]:
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
-        trek = request.GET.get('trek')
+        trek_id = request.GET.get('trek')
+        trek = Trek.objects.filter(pk=trek_id)
         if trek:
-            contents_intersecting = intersecting(qs, Trek.objects.get(pk=trek))
+            contents_intersecting = intersecting(qs,
+                                                 trek.get(),
+                                                 distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
             qs = contents_intersecting.order_by('id')
         return qs.distinct()
 
@@ -411,6 +414,9 @@ class GeotrekInformationDeskFilter(BaseFilterBackend):
         types = request.GET.get('types')
         if types:
             qs = qs.filter(type__in=types.split(','))
+        trek = request.GET.get('trek', None)
+        if trek is not None:
+            qs = qs.filter(treks__id=trek)
         labels_accessibility = request.GET.get('labels_accessibility')
         if labels_accessibility:
             qs = qs.filter(label_accessibility__in=labels_accessibility.split(','))
