@@ -1919,6 +1919,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE
         )
 
+    def test_informationdesk_filter_trek(self):
+        response = self.get_informationdesk_list({'trek': self.treks[0].pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
+        response = self.get_informationdesk_list({'trek': self.parent.pk})
+        self.assertEqual(response.json()["count"], 0)
+
     def test_infodesk_filter_type(self):
         response = self.get_informationdesk_list({'types': self.information_desk_type.pk})
         self.assertEqual(response.json()["count"], 1)
@@ -2109,6 +2116,40 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             self.get_organism_detail(self.organism.pk),
             ORGANISM_PROPERTIES_JSON_STRUCTURE
         )
+
+    def test_sensitivearea_distance_list(self):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p1 = core_factory.PathFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
+            trek = trek_factory.TrekFactory.create(
+                published=True,
+                name='Parent',
+                paths=[p1]
+            )
+        else:
+            trek = trek_factory.TrekFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
+        specy = sensitivity_factory.SpeciesFactory.create(period01=True)
+        sensitivity_factory.SensitiveAreaFactory.create(
+            geom='SRID=2154;POLYGON((605600 6650000, 605600 6650004, 605604 6650004, 605604 6650000, 605600 6650000))',
+            species=specy,
+            description="Test"
+        )
+        sensitivity_factory.SensitiveAreaFactory.create(
+            geom='SRID=2154;POLYGON((606001 6650501, 606001 6650505, 606005 6650505, 606005 6650501, 606001 6650501))',
+            species=specy,
+            description="Test 2"
+        )
+        response = self.get_sensitivearea_list({
+            'trek': trek.id,
+            'period': '1'
+        })
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.status_code, 200)
+        with override_settings(SENSITIVE_AREA_INTERSECTION_MARGIN=700):
+            response = self.get_sensitivearea_list({
+                'trek': trek.id,
+                'period': '1'
+            })
+            self.assertEqual(response.json()['count'], 2)
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):
