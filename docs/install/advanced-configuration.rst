@@ -365,6 +365,16 @@ This will apply to all text fields.
 For more information on configuration entries available, please refer to the
 official documentation of *TinyMCE version 3*.
 
+Max characters count
+''''''''''''''''''''
+
+It is possible to set a ``MAX_CHARACTERS`` to advise user a max characters number
+to be used in TinyMCE fields.
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAX_CHARACTERS'] = 1500
+
 
 View attachments in the browser
 -------------------------------

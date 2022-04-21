@@ -200,6 +200,7 @@ Do not use, or set ``ENABLE_REPORT_COLORS_PER_STATUS`` to False, else objects wi
 
 - Server-side list pagination. Better performance for large lists (#2967)
 - Add overlays for objects from Trekking, Maintenance, Infrastructure and Feedback modules (#1300)
+- Add ``MAX_CHARACTERS`` to be used with django-mapentity >= 8.1
 
 **Minor improvements**
 
