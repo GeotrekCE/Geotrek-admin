@@ -307,7 +307,7 @@ class BaseApiTest(TestCase):
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.all()[0], 0.5, 0.5)])
+            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
         else:
             cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
         cls.source = common_factory.RecordSourceFactory()
