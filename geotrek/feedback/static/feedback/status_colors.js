@@ -25,8 +25,7 @@ L.MapListSynchro = L.Class.extend({
         $(this.dt.settings().oInstance).on('filter', this._onListFilter.bind(this));
     },
 
-    _updateSeveralLayerFomPks: function (pks) {
-        console.log("updating")
+    _updateSeveralLayersFomPks: function (pks) {
         for (var i = 0; i < window.objectsLayers.length; i++) {
             var self = window.objectsLayers[i],
                 new_objects = {},
@@ -36,7 +35,7 @@ L.MapListSynchro = L.Class.extend({
             // Gather all layer to see in new objects
             // Remove them from _current_objects if they are already shown
             // This way _current_objects will only contain layer to be removed
-            $.each(data.pk_list, function (idx, to_add_pk) {
+            $.each(pks, function (idx, to_add_pk) {
                 already_added_layer = self._current_objects[to_add_pk];
                 if (already_added_layer) {
                     new_objects[to_add_pk] = already_added_layer;
@@ -60,14 +59,10 @@ L.MapListSynchro = L.Class.extend({
     _onListFilter: function () {
         var filterTxt = $(".dataTables_filter input[type='text']").val();
         var results = this.dt.fnGetColumnData(0);
-        // this.fire('reloaded', {
-        //     nbrecords: results.length,
-        // });
-        this._updateSeveralLayerFomPks(results)
-        // layerGroup.eachLayer(function (layer) {
-        //     console.log("11")
-        //     //layer.updateFromPks(results);
-        // });
+        this.fire('reloaded', {
+            nbrecords: results.length,
+        });
+        this._updateSeveralLayersFomPks(results)
     },
 
     _onMapViewChanged: function (e) {
@@ -78,13 +73,11 @@ L.MapListSynchro = L.Class.extend({
             return;
         }
         this._formSetBounds();
-        //console.log("fom map view changed")
         this._reloadList();
     },
 
     _onFormSubmit: function (e) {
         this._formSetBounds();
-        //console.log("fom submit")
         this._reloadList(true);
     },
 
@@ -141,7 +134,6 @@ L.MapListSynchro = L.Class.extend({
             $('#filters-btn').addClass('btn-info');
         }
 
-        console.log("ahax")
         this.dt.ajax.url($('#mainfilter').attr('action') + '?' + $('#mainfilter').serialize()).load();
 
 
@@ -170,13 +162,12 @@ L.MapListSynchro = L.Class.extend({
             if (refreshLayer || (nbrecords > nbonmap)) {
                 var updateLayerObjects = function (layer) {
                     console.log("reresh")
-                    this._updateSeveralLayerFomPks(callback_args.map_obj_pk)
+                    this._updateSeveralLayersFomPks(callback_args.map_obj_pk)
                     //layer.updateFromPks(callback_args.map_obj_pk);
                     self._onListFilter();
                 };
                 layerGroup.eachLayer(function (layer) {
                     if (layer.loading) {
-                        //console.log("1")
                         // Layer is not loaded yet, delay object filtering
                         layer.on('loaded', updateLayerObjects(layer));
                     }
@@ -198,41 +189,8 @@ L.MapListSynchro = L.Class.extend({
         $.get($('#mainfilter').attr('action').replace('.datatables', '/filter_infos.json'),
             $('#mainfilter').serialize(),
             function (data) {
-                //console.log("mouoais?")
                 $('#nbresults').text(data.count);
-                // layerGroup.eachLayer(function (layer) {
-                //     console.log("2")
-                //     layer.updateFromPks(data.pk_list);
-                // });
-                //START OF COPIED
-                for (var i = 0; i < window.objectsLayers.length; i++) {
-                    var self = window.objectsLayers[i],
-                        new_objects = {},
-                        already_added_layer,
-                        to_add_layer;
-
-                    // Gather all layer to see in new objects
-                    // Remove them from _current_objects if they are already shown
-                    // This way _current_objects will only contain layer to be removed
-                    $.each(data.pk_list, function (idx, to_add_pk) {
-                        already_added_layer = self._current_objects[to_add_pk];
-                        if (already_added_layer) {
-                            new_objects[to_add_pk] = already_added_layer;
-                            delete self._current_objects[to_add_pk];
-                        } else {
-                            to_add_layer = new_objects[to_add_pk] = self._objects[to_add_pk];
-                            // list can be ready before map, on first load
-                            if (to_add_layer) self.addLayer(to_add_layer);
-                        }
-                    });
-
-                    // Remove all remaining layers
-                    $.each(self._current_objects, function (pk, layer) {
-                        self.removeLayer(layer);
-                    });
-
-                    self._current_objects = new_objects;
-                }
+                this._updateSeveralLayersFomPks(data.pk_list);
                 spinner.stop();
                 self._loading = false;  // loading done.
             }.bind(this));
