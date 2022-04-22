@@ -153,7 +153,7 @@ class TrekWithPOIsFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_poi(obj, create, extracted, **kwargs):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = obj.paths.all()[0]
+            path = obj.paths.first()
             POIFactory.create(paths=[(path, 0.5, 0.5)])
             POIFactory.create(paths=[(path, 0.4, 0.4)])
             if create:

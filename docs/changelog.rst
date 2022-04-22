@@ -7,17 +7,18 @@ CHANGELOG
 
 **New features**
 
-- Server-side list pagination. Better performance for large lists.
-- Add overlays for objects from Trekking, Maintenance, Infrastructure and Feedback modules
+- Server-side list pagination. Better performance for large lists (#2967)
+- Add overlays for objects from Trekking, Maintenance, Infrastructure and Feedback modules (#1300)
 
 **Minor improvements**
 
-- Increase default cache expiration from 8hours to 30days
-- Use distance from setting SENSITIVE_AREA_INTERSECTION_MARGIN in sensitive area filter `trek` in api v2
+- Increase default cache expiration from 8hours to 30days (#2967)
+- Use distance from setting `SENSITIVE_AREA_INTERSECTION_MARGIN` in sensitive area filter `trek` in api v2
 
 **Bug fixes**
 
 - Fix filter `trek` in api v2 for information desks
+- Fix filter `trek` in api v2 for pois with setting `TREKKING_TOPOLOGY_ENABLED` (#3054)
 
 **Maintenance**
 
