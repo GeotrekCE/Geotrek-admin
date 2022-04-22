@@ -3,14 +3,36 @@ function getUrl(properties, layer) {
         .replace('0', properties.pk);
 }
 
+function bindHover() {
+    // Maintain hovering over table hilights objects in map
+    MapEntity.mainDatatable.rows().eq(0).each(function (index) {
+        var row = MapEntity.mainDatatable.row(index);
+        // Unbind MapEntity hover
+        $(row.node()).unbind('mouseenter mouseleave');
+        // Re-bind to highlight no matter which layer the object is in
+        $(row.node()).hover(
+            function () {
+                window.objectsLayers.forEach(layer => {
+                    layer.highlight(row.data().id);
+                });
+            },
+            function () {
+                window.objectsLayers.forEach(layer => {
+                    layer.highlight(row.data().id, false);
+                });
+            }
+        );
+    });
+}
+
+
 function ChangeColors(e, data) {
     if (data.modelname != 'report')
         return;
     var map = data.map;
     var dt = MapEntity.mainDatatable;
 
-    // Remove usual reports layer
-    map.removeLayer(window.objectsLayer);
+    var objectsLayers = [];
 
     // For each report status
     var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
@@ -51,8 +73,18 @@ function ChangeColors(e, data) {
             });
             layer.fire('info', { info: (data.nbrecords + ' ' + tr("results")) });
         });
-
+        objectsLayers.push(layer);
     }
+    window.objectsLayers = objectsLayers;
+
+    // Listen to some events to maintain map functionalities (dirty...)
+    // When page is first loaded, bind hovering and remove original data layer 
+    objectsLayers[objectsLayers.length - 1].addEventListener("loaded", function () {
+        map.removeLayer(window.objectsLayer);
+        bindHover()
+    });
+    // Re-bind hovering everytime datatable content is changed
+    $('#objects-list').on('draw.dt', bindHover);
 }
 
 function ChangeColor(e, data) {
