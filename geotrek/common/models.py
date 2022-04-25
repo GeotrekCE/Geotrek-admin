@@ -10,8 +10,7 @@ from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
-from paperclip.models import Attachment as BaseAttachment
-from paperclip.models import FileType as BaseFileType
+from paperclip.models import Attachment as BaseAttachment, FileType as BaseFileType, License as BaseLicense
 
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin
@@ -129,6 +128,13 @@ class FileType(StructureOrNoneRelated, BaseFileType):
 class Attachment(BaseAttachment):
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+
+class License(OptionalPictogramMixin, BaseLicense):
+    class Meta:
+        verbose_name = _("License")
+        verbose_name_plural = _("Licenses")
+        ordering = ['label']
 
 
 class Theme(PictogramMixin):
