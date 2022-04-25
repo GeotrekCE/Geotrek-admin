@@ -54,6 +54,10 @@ class AccessibilityAttachment(models.Model):
                                           max_length=7,
                                           choices=InfoAccessibilityChoices.choices,
                                           default=InfoAccessibilityChoices.SLOPE)
+    license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
+                                verbose_name=_("License"),
+                                null=True, blank=True,
+                                on_delete=models.SET_NULL)
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -132,8 +136,8 @@ class Attachment(BaseAttachment):
 
 class License(OptionalPictogramMixin, BaseLicense):
     class Meta:
-        verbose_name = _("License")
-        verbose_name_plural = _("Licenses")
+        verbose_name = _("Attachment license")
+        verbose_name_plural = _("Attachment licenses")
         ordering = ['label']
 
 
