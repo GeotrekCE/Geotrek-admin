@@ -34,6 +34,13 @@ def attachment_accessibility_upload(instance, filename):
         renamed)
 
 
+class License(StructureOrNoneRelated, BaseLicense):
+    class Meta(BaseLicense.Meta):
+        verbose_name = _("Attachment license")
+        verbose_name_plural = _("Attachment licenses")
+        ordering = ['label']
+
+
 class AccessibilityAttachment(models.Model):
     # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
     class InfoAccessibilityChoices(models.TextChoices):
@@ -132,13 +139,6 @@ class FileType(StructureOrNoneRelated, BaseFileType):
 class Attachment(BaseAttachment):
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-
-
-class License(OptionalPictogramMixin, BaseLicense):
-    class Meta:
-        verbose_name = _("Attachment license")
-        verbose_name_plural = _("Attachment licenses")
-        ordering = ['label']
 
 
 class Theme(PictogramMixin):
