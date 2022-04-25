@@ -1,4 +1,4 @@
-L.MapListSynchro = L.Class.extend({
+L.SeveralLayersMapListSync = L.MapListSync.extend({
     includes: L.Mixin.Events,
     options: {
         filter: null,
@@ -63,55 +63,6 @@ L.MapListSynchro = L.Class.extend({
             nbrecords: results.length,
         });
         this._updateSeveralLayersFomPks(results)
-    },
-
-    _onMapViewChanged: function (e) {
-        if (!this.map._loaded) {
-            // leaflet bug, fire again !
-            // fixed in unstable version : https://github.com/CloudMade/Leaflet/commit/fbf91fef546125bd4950937fa04ad1bf0f5dc955
-            setTimeout(L.Util.bind(function () { this.map.fire(r); }, this), 20);
-            return;
-        }
-        this._formSetBounds();
-        this._reloadList();
-    },
-
-    _onFormSubmit: function (e) {
-        this._formSetBounds();
-        this._reloadList(true);
-    },
-
-    _onFormReset: function (e) {
-        this._formClear($(this.options.filter.form)); // clear all fields
-        //console.log("fom reset")
-        this._reloadList();
-        this._formSetBounds(); // re-fill current bbox
-    },
-
-    _onObjectOver: function (e) {
-        var self = this;
-        var search_pk = e.layer.properties.pk;
-    },
-
-    _onRowCreated: function (nRow, aData, iDataIndex) {
-        var self = this;
-        var pk = aData[0];
-        $(nRow).hover(
-            function () {
-                self.layer.highlight(pk);
-            },
-            function () {
-                self.layer.highlight(pk, false);
-            }
-        );
-
-        // select from row
-        $(nRow).click(function () {
-            self.selectorOnce.select(pk, $(nRow));
-        });
-        $(nRow).dblclick(function () {
-            self.layer.jumpTo(pk);
-        });
     },
 
     _reloadList: function (refreshLayer) {
@@ -202,90 +153,6 @@ L.MapListSynchro = L.Class.extend({
         //this.dt.fnReloadAjax(url, extract_data_and_pks, on_data_loaded);
         return false;
     },
-
-    _formSetBounds: function () {
-        if (!this.options.filter)
-            return;
-
-        if (!this.map._loaded) {
-            console.warn("Map view not set, cannot get bounds.");
-            return;
-        }
-        var bounds = this.map.getBounds();
-        // get map bound coordinates, keep them in max real values
-        var min_lat = Math.max(bounds._southWest.lat, -90);
-        var max_lat = Math.min(bounds._northEast.lat, 90);
-        var min_lon = Math.max(bounds._southWest.lng, -180);
-        var max_lon = Math.min(bounds._northEast.lng, 180);
-
-        var bounds = this.map.getBounds(),
-            rect = new L.Rectangle([bounds._northEast, bounds._southWest]);
-        this.options.filter.bboxfield.val(L.Util.getWKT(rect));
-        //this.options.filter.bboxfield.val(`${min_lon},${min_lat},${max_lon},${max_lat}`);
-    },
-
-    _formClear: function ($form) {
-        $form.find('input:text, input:password, input:file, select, textarea').val('').trigger('change');
-        $form.find('input:radio, input:checkbox, select option')
-            .removeAttr('checked').removeAttr('selected');
-        $form.find('select').val('').trigger("chosen:updated");
-    },
-
-    __initSelectorOnce: function () {
-        /**
-         * This code was moved from entity list main page. A massive simplification
-         * is required.
-         */
-        var self = this;
-        var selectorOnce = (function () {
-            var current = { 'pk': null, 'row': null };
-
-            function toggleSelectRow($prevRow, $nextRow) {
-                function nextRowAnim() {
-                    if ($nextRow) {
-                        $nextRow.hide('fast')
-                            .show('fast', function () { $nextRow.addClass('success'); });
-                    }
-                }
-
-                if ($prevRow) {
-                    $prevRow.hide('fast', function () { $prevRow.removeClass('success'); })
-                        .show('fast', nextRowAnim);
-                } else {
-                    nextRowAnim();
-                }
-            }
-
-            function toggleSelectObject(pk, on) {
-                on = on === undefined ? true : on;
-                layerGroup.eachLayer(function (layer) {
-                    layer.select(pk, on);
-                });
-            }
-
-            return {
-                'select': function (pk, row) {
-                    // Click on already selected => unselect
-                    if (pk == current.pk) {
-                        pk = null, row = null;
-                    }
-
-                    var prev = current;
-                    current = { 'pk': pk, 'row': row };
-
-                    toggleSelectRow(prev.row, row);
-
-                    if (prev.pk && prev.row) {
-                        toggleSelectObject(prev.pk, false);
-                    }
-                    if (row && pk) {
-                        toggleSelectObject(pk, true);
-                    }
-                }
-            };
-        })();
-        return selectorOnce;
-    }
 });
 
 
@@ -352,7 +219,7 @@ function ChangeColors(e, data) {
     map.addLayer(layerGroup)
     // Sync layer to map to preserve classic layer functionnalities
     var dt = MapEntity.mainDatatable;
-    var mapsync = new L.MapListSynchro(dt,
+    var mapsync = new L.SeveralLayersMapListSync(dt,
         map,
         layerGroup, {
         filter: {
