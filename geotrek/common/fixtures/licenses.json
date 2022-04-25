@@ -1,0 +1,65 @@
+[
+  {
+    "pk": 1,
+    "model": "common.license",
+    "fields": {
+        "label": "CC-by 4.0"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "common.license",
+    "fields": {
+        "label": "CC-by-sa 4.0"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "common.license",
+    "fields": {
+        "label": "CC-by-nd 4.0"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "common.license",
+    "fields": {
+        "label": "CC-by-nc 4.0"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "common.license",
+    "fields": {
+        "label": "CC-by-nc-sa 4.0"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "common.license",
+    "fields": {
+        "label": "CC-by-nc-nd 4.0"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "common.license",
+    "fields": {
+        "label": "Domaine public"
+    }
+  },
+  {
+    "pk": 8,
+    "model": "common.license",
+    "fields": {
+        "label": "Autorisation avec conditions"
+    }
+  },
+  {
+    "pk": 9,
+    "model": "common.license",
+    "fields": {
+        "label": "Droits d'auteur"
+    }
+  }
+]

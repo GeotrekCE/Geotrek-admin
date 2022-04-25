@@ -298,6 +298,13 @@ You can also insert diving minimal data (default practices, difficulties, levels
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
     cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
+You can insert licenses of attachments with this command :
+
+::
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
+
+
 Outdoor
 -------
 
