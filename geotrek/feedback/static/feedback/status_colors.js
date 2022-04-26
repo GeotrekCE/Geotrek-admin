@@ -3,7 +3,7 @@ function ChangeColors(e, data) {
         return { 'color': feature.properties.color }
     }
     window.objectsLayer.options.style = IndependentColors
-}
+} ""
 
 function ChangeColor(e, data) {
     if (data.modelname != 'report')
