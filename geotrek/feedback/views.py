@@ -31,7 +31,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    properties = ["name"]
+    properties = ["name", "color"]
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
