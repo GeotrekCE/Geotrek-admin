@@ -59,6 +59,7 @@ Do not use, or set `ENABLE_REPORT_COLORS_PER_STATUS` to False, else objects will
 **Maintenance**
 
 - Update to mapentity 8.0.1
+- Update to paperclip 2.5.0
 
 **Suricate Workflow**  (#2366)
 

@@ -198,7 +198,7 @@ netifaces==0.10.9
     # via mapentity
 packaging==21.3
     # via drf-yasg
-paperclip @ git+https://git@github.com/makinacorpus/django-paperclip@add_license_paperclip
+paperclip==2.5.0
     # via
     #   geotrek (setup.py)
     #   mapentity

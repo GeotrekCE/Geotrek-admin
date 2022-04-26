@@ -36,7 +36,7 @@ setup(
         'mapentity==8.0.1',
         'env_file',
         # pinned by requirements.txt
-        'paperclip@git+https://git@github.com/makinacorpus/django-paperclip@add_license_paperclip#egg=paperclip',
+        'paperclip',
         'python-memcached',
         'psycopg2',
         'pdfimpose',
