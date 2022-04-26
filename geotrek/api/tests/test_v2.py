@@ -262,8 +262,13 @@ class BaseApiTest(TestCase):
         cls.rating2 = trek_factory.RatingFactory()
         cls.label = common_factory.LabelFactory(id=23)
         cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)],
-                                                                  geom=cls.path.geom)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)],
+                                                                      geom=cls.path.geom)
+        else:
+            cls.treks = trek_factory.TrekFactory.create_batch(cls.nb_treks, geom=cls.path.geom)
+            trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 4))
+            trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 5))
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
         cls.treks[0].labels.add(cls.label)
@@ -302,7 +307,9 @@ class BaseApiTest(TestCase):
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.all()[0], 0.5, 0.5)])
+            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
+        else:
+            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
@@ -1560,15 +1567,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             trek_models.POI.objects.all().count() - 1
         )
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_trek(self):
         self.launch_tests_excluded_pois(self.treks[0], 'trek')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_courses(self):
         self.launch_tests_excluded_pois(self.course, 'courses')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_sites(self):
         self.launch_tests_excluded_pois(self.site, 'sites')
 
