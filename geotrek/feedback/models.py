@@ -389,6 +389,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
                                                              str(self))
         return s
 
+    @property
+    def eid_verbose_name(self):
+        return _("Label")
+
     def distance(self, to_cls):
         """Distance to associate this report to another class"""
         return settings.REPORT_INTERSECTION_MARGIN
