@@ -36,7 +36,6 @@ setup(
         'mapentity==8.0.1',
         'env_file',
         # pinned by requirements.txt
-        'paperclip',
         'python-memcached',
         'psycopg2',
         'pdfimpose',
