@@ -70,13 +70,13 @@ class ReportSerializationOptimizeTests(TestCase):
     @test_for_workflow_mode
     def test_report_layer_cache(self):
         """
-        This test checks report's cache 
+        This test checks report's cache
         """
         cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
 
         # There are 5 queries to get layer
         with self.assertNumQueries(5):
-            response = self.client.get(f"/api/report/report.geojson")
+            response = self.client.get("/api/report/report.geojson")
         self.assertEqual(len(response.json()['features']), 4)
 
         # We check the content was created and cached
@@ -87,7 +87,7 @@ class ReportSerializationOptimizeTests(TestCase):
 
         # We have 1 less query because the generation of report was cached
         with self.assertNumQueries(4):
-            self.client.get(f"/api/report/report.geojson")
+            self.client.get("/api/report/report.geojson")
 
         self.classified_report_4 = feedback_factories.ReportFactory(status=self.classified_status)
         # Bypass workflow's save method does not actually save
@@ -95,7 +95,7 @@ class ReportSerializationOptimizeTests(TestCase):
 
         # Cache is updated when we add a report
         with self.assertNumQueries(5):
-            self.client.get(f"/api/report/report.geojson")
+            self.client.get("/api/report/report.geojson")
 
         self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
 
