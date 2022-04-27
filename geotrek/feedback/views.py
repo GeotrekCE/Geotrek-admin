@@ -67,9 +67,9 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    mandatory_columns = ['id', 'tag', 'activity']
+    mandatory_columns = ['id', 'eid', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
-    searchable_columns = ['id', 'tag']
+    searchable_columns = ['id', 'eid']
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
@@ -156,23 +156,6 @@ class ReportViewSet(GeotrekMapentityViewSet):
         ).prefetch_related("attachments")
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user.pk)
-        number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
-        qs = qs.annotate(tag=Concat(
-            Value("<a title=\""),
-            Value(_("Report")),
-            Value(" "),
-            F(number),
-            Value("\" data-pk=\""),
-            F('id'),
-            Value("\" href=\"/report/"),
-            F('id'),
-            Value("\">"),
-            Value(_("Report")),
-            Value(" "),
-            F(number),
-            Value("</a>"),
-            output_field=CharField())
-        )
         return qs
 
 

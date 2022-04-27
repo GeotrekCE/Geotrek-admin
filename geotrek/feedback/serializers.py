@@ -13,7 +13,7 @@ class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
     category = rest_serializers.SlugRelatedField('label', read_only=True)
     problem_magnitude = rest_serializers.SlugRelatedField('label', read_only=True)
     status = rest_serializers.SlugRelatedField('label', read_only=True)
-    tag = rest_serializers.CharField()
+    eid = rest_serializers.CharField(source='name_display')
     color = rest_serializers.CharField(source="status.color")
 
     class Meta:
