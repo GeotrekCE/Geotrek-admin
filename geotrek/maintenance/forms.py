@@ -146,13 +146,13 @@ class InterventionForm(CommonForm):
         target = self.instance.target
         if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED and isinstance(target, Report):
             # If this is an intervention programmed for a report, change report status
-            if 'status' in self.changed_data and self.instance.status_id == 2:
+            if 'status' in self.changed_data and self.instance.status.order == 20:
                 programmed_status = ReportStatus.objects.get(identifier='programmed')
                 target.status = programmed_status
                 target.save()
                 TimerEvent.objects.create(step=programmed_status, report=target)
             # If this is an intervention being resolved for a report, change report status and notify
-            elif 'status' in self.changed_data and self.instance.status_id == 3:
+            elif 'status' in self.changed_data and self.instance.status.order == 30:
                 resolved_status = ReportStatus.objects.get(identifier='solved_intervention')
                 target.status = resolved_status
                 target.assigned_user = WorkflowManager.objects.first().user

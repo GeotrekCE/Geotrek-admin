@@ -83,7 +83,7 @@ class SuricateParser(SuricateGestionRequestManager):
         rep_status = ReportStatus.objects.get(identifier=report["statut"])
 
         # Keep or discard
-        should_import = rep_point.within(self.bbox) and rep_status.identifier != 'created'
+        should_import = rep_point.within(self.bbox) and rep_status.identifier != 'created' and bool(report["locked"])
 
         if should_import:
             # Parse dates
