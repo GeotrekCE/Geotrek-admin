@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.db.models.functions import Concat
 from django.db.models import F, Value, CharField
 from django.urls.base import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import get_language, gettext as _
 from django.views.generic.list import ListView
 from mapentity import views as mapentity_views
 from rest_framework.decorators import action
@@ -47,7 +47,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator.
         """
-        language = self.request.LANGUAGE_CODE
+        language = get_language()
         status_id = self.request.GET.get('_status_id')
         geojson_lookup = None
         if status_id:

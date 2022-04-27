@@ -99,7 +99,7 @@ class PendingSuricateAPIRequest(models.Model):
 
     def save(self, *args, **kwargs):
         # Set sync_errors flag on report
-        if 'uid_alerte' in self.params and self.pk is None:
+        if 'uid_alerte' in self.params and not self.pk:
             uuid = json.loads(self.params)["uid_alerte"]
             self.raise_sync_error_flag_on_report(uuid)
         super().save(*args, **kwargs)
@@ -253,20 +253,20 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def save_no_suricate(self, *args, **kwargs):
         """Save method for No Suricate mode"""
-        if self.pk is None:  # New report should alert
+        if not self.pk:  # New report should alert
             self.try_send_report_to_managers()
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_report_mode(self, *args, **kwargs):
         """Save method for Suricate Report mode"""
-        if self.pk is None:  # New report should alert managers AND be sent to Suricate
+        if not self.pk:  # New report should alert managers AND be sent to Suricate
             self.try_send_report_to_managers()
             self.get_suricate_messenger().post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_management_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
-        if self.pk is None:  # This is a new report
+        if not self.pk:  # This is a new report
             if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : save
@@ -276,7 +276,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def save_suricate_workflow_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
-        if self.pk is None:  # This is a new report
+        if not self.pk:  # This is a new report
             if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : assign workflow manager if needed and save
@@ -517,7 +517,7 @@ class TimerEvent(models.Model):
 
     def save(self, *args, **kwargs):
         if self.report.uses_timers:
-            if self.pk is None:
+            if not self.pk:
                 days_nb = settings.SURICATE_WORKFLOW_SETTINGS.get(f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS", 30)
                 self.deadline = self.date_event + timedelta(days=days_nb)
             super().save(*args, **kwargs)
@@ -566,7 +566,7 @@ class PendingEmail(models.Model):
     def save(self, *args, **kwargs):
         # Set mail_error flag on report
         report = self.report
-        if report and self.pk is None:
+        if report and not self.pk:
             report.mail_errors = F('mail_errors') + 1
             report.save()
         super().save(*args, **kwargs)
