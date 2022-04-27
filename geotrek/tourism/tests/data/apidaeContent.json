@@ -173,9 +173,6 @@
       "nom" : {
         "libelleFr" : "Quey'Raft"
       },
-      "legende" : {
-        "libelleFr" : "rafting sur le Guil"
-      },
       "traductionFichiers" : [ {
         "locale" : "fr",
         "url" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/207/130/1540815.jpg",
@@ -198,7 +195,7 @@
         "libelleFr" : "Quey'Raft"
       },
       "legende" : {
-        "libelleFr" : "rafting sur le Guil"
+        "libelleFr" : "img.bmp"
       },
       "traductionFichiers" : [ {
         "locale" : "fr",
