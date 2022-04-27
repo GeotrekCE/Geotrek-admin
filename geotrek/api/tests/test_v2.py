@@ -2585,10 +2585,14 @@ class ReportStatusTestCase(TestCase):
             "previous": None,
             "results": [
                 {
+                    'identifier': self.status1.identifier,
+                    'color': self.status1.color,
                     "id": self.status1.pk,
                     "label": {'en': "A transmettre", 'es': None, 'fr': None, 'it': None},
                 },
                 {
+                    'identifier': self.status2.identifier,
+                    'color': self.status2.color,
                     "id": self.status2.pk,
                     "label": {'en': "En cours de traitement", 'es': None, 'fr': None, 'it': None},
                 }]

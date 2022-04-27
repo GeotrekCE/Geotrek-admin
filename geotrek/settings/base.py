@@ -220,7 +220,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
-                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
             # 'loaders': [
@@ -786,9 +785,13 @@ ONLY_EXTERNAL_PUBLIC_PDF = False
 
 SEND_REPORT_ACK = True
 
+ENABLE_REPORT_COLORS_PER_STATUS = True
+
 SURICATE_REPORT_ENABLED = False
 
 SURICATE_MANAGEMENT_ENABLED = False
+
+SURICATE_WORKFLOW_ENABLED = False
 
 SURICATE_REPORT_SETTINGS = {
     'URL': '',
@@ -802,6 +805,12 @@ SURICATE_MANAGEMENT_SETTINGS = {
     'ID_ORIGIN': '',
     'PRIVATE_KEY_CLIENT_SERVER': '',
     'PRIVATE_KEY_SERVER_CLIENT': '',
+}
+
+SURICATE_WORKFLOW_SETTINGS = {
+    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
+    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département"
 }
 
 REPORT_FILETYPE = "Report"
@@ -819,12 +828,6 @@ ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 ACCESSIBILITY_ATTACHMENTS_ENABLED = True
 
 USE_X_FORWARDED_HOST = False
-HIDDEN_FORM_FIELDS['report'] = {
-    "status",
-    "locked",
-    "uid",
-    "origin"
-}
 
 REST_FRAMEWORK = {
     "STRICT_JSON": False,  # allow serialize float NaN values

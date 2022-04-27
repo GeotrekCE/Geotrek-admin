@@ -109,7 +109,7 @@ If false, no email will be sent to the sender of any feedback on Geotrek-rando w
 Suricate support
 ~~~~~~~~~~~~~~~~
 
-Geotrek reports can work together with Suricate API, using one of 3 modes:
+Geotrek reports can work together with Suricate API, using one of 4 modes. Proceed through a mode full configuration before proceeding to the next mode.
 
 **1** - No Suricate (default)
 
@@ -143,7 +143,7 @@ To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :r
 
 **3**. Suricate Management
 
-This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It requires enabling the Suricate Report mode as well.
+This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It implies enabling Suricate Report mode as well.
 
 Set your account settings in ``custom.py``:
 
@@ -164,7 +164,7 @@ You can use the following command to test your connection settings:
 
     geotrek sync_suricate -v 2 --connection-test
 
-Load lists for activities and/or report statuses:
+Load lists for activities and/or report statuses from Suricate:
 
 .. code-block :: python
 
@@ -174,11 +174,57 @@ Load alerts from Suricate (located in your bounding box) :
 
 .. code-block :: python
 
-    geotrek sync_suricate -v 2
+    geotrek sync_suricate -v 2 --no-notification
 
 To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
 
 Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**. Reports are only saved when synchronized back from Suricate. Therefore, in this mode, you should run the synchronization command **directly after** creating a report and **before and after** updating a report.
+
+**4**. Suricate Workflow
+
+This mode allows to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Management mode as well.
+
+- Set your settings in ``custom.py`` (timers are used to define after how long a report's processing is considered late):
+
+.. code-block :: python
+
+    SURICATE_WORKFLOW_ENABLED = True
+
+    SURICATE_WORKFLOW_SETTINGS = {
+        "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
+        "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5
+    }
+
+- Then load extra required statuses for Reports and Interventions:
+
+.. code-block :: python
+
+    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
+    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/management_workflow.json
+
+- Go to the Admin Site and 
+    - select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
+    - select a district as Workflow District (`/admin/feedback/workflowdistrict/`). This zone defines the area of reponsibility for reports. Reports relocated outside of the district will be excluded from workflow.
+    - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
+    - make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
+
+Make sure to run these 3 commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
+
+.. code-block :: python
+
+    geotrek retry_failed_requests_and_mails
+    geotrek check_timers
+    geotrek sync_suricate
+
+
+Display reports with status defined colors
+~~~~~~~~~~~~~~~~
+
+.. code-block :: python
+
+    ENABLE_REPORT_COLORS_PER_STATUS = True
+ 
+Go to the Admin Site and select colors to display for each status (`/admin/feedback/reportstatus/`).
 
 
 Anonymize feedback reports
@@ -1741,8 +1787,17 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "problem_magnitude",
         "status",
         "related_trek",
+        "uuid",
+        "eid",
+        "external_eid",
+        "locked",
+        "origin"
         "date_update",
         "date_insert",
+        "created_in_suricate",
+        "last_updated_in_suricate",
+        "assigned_user",
+        "uses_timers"
     ]
     COLUMNS_LISTS["sensitivity_view"] = [
         "structure",
@@ -2164,14 +2219,23 @@ A (nearly?) exhaustive list of attributes available for display and export as co
     ]
     COLUMNS_LISTS["feedback_export"] = [
         "email",
-        "activity",
         "comment",
+        "activity",
         "category",
         "problem_magnitude",
         "status",
         "related_trek",
-        "date_insert",
+        "uuid",
+        "eid",
+        "external_eid",
+        "locked",
+        "origin"
         "date_update",
+        "date_insert",
+        "created_in_suricate",
+        "last_updated_in_suricate",
+        "assigned_user",
+        "uses_timers"
     ]
     COLUMNS_LISTS["sensitivity_export"] = [
         "species",
@@ -2471,31 +2535,18 @@ An exhaustive list of form fields hideable in each module.
             'eid',
         ],
     HIDDEN_FORM_FIELDS["report"] = [
-            'review',
-            'published',
-            'description_teaser',
-            'description',
-            'themes',
-            'begin_date',
-            'end_date',
-            'duration',
-            'meeting_point',
-            'meeting_time',
-            'contact',
-            'email',
-            'website',
-            'organizer',
-            'speaker',
-            'type',
-            'accessibility',
-            'participant_number',
-            'booking',
-            'target_audience',
-            'practical_info',
-            'approved',
-            'source',
-            'portal',
-            'eid',
+            "email",
+            "comment",
+            "activity",
+            "category",
+            "problem_magnitude",
+            "related_trek",
+            "status",
+            "locked",
+            "uid",
+            "origin",
+            "assigned_user",
+            "uses_timers"
         ],
     HIDDEN_FORM_FIELDS["sensitivity_species"] = [
             "contact",

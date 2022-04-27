@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -15,9 +14,9 @@ from django.utils.timezone import make_aware
 from geotrek.common.models import Attachment, FileType
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportCategory, ReportProblemMagnitude,
-                                     ReportStatus)
+                                     ReportStatus, WorkflowManager)
 
-from .helpers import SuricateGestionRequestManager, send_reports_to_managers
+from .helpers import SuricateGestionRequestManager
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +38,12 @@ class SuricateParser(SuricateGestionRequestManager):
     def get_activities(self):
         """Get activities list from Suricate Rest API"""
 
-        data = self.get_from_suricate("wsGetActivities")
+        data = self.get_suricate("wsGetActivities")
 
         # Parse activities and create
         for activity in data["activites"]:
             obj, created = ReportActivity.objects.update_or_create(
-                suricate_id=activity["id"], defaults={"label": activity["libelle"]}
+                identifier=activity["id"], defaults={"label": activity["libelle"]}
             )
             if created:
                 logger.info(
@@ -54,24 +53,21 @@ class SuricateParser(SuricateGestionRequestManager):
     def get_statuses(self):
         """Get statuses list from Suricate Rest API"""
 
-        data = self.get_from_suricate("wsGetStatusList")
+        data = self.get_suricate("wsGetStatusList")
 
         # Parse statuses and create
         for status in data["statuts"]:
             obj, created = ReportStatus.objects.get_or_create(
-                suricate_id=status["id"], defaults={"label": status["libelle"]}
+                identifier=status["id"], defaults={"label": status["libelle"]}
             )
             if created:
                 logger.info(
                     f"New status - id: {status['id']}, label: {status['libelle']}"
                 )
 
-    def send_managers_new_reports(self):
-        try:
-            send_reports_to_managers()
-        except Exception as e:
-            logger.error("Email could not be sent to managers.")
-            logger.exception(e)  # This sends an email to admins :)
+    def send_workflow_manager_new_reports_email(self, reports):
+        for manager in WorkflowManager.objects.all():
+            manager.notify_new_reports(reports)
 
     def parse_report(self, report):
         """
@@ -82,7 +78,12 @@ class SuricateParser(SuricateGestionRequestManager):
         rep_gps = Point(report["gpslongitude"], report["gpslatitude"], srid=4326)
         rep_srid = rep_gps.transform(settings.SRID, clone=True)
         rep_point = Point(rep_srid.coords)
-        should_import = rep_point.within(self.bbox)
+
+        # Parse status
+        rep_status = ReportStatus.objects.get(identifier=report["statut"])
+
+        # Keep or discard
+        should_import = rep_point.within(self.bbox) and rep_status.identifier != 'created' and bool(report["locked"])
 
         if should_import:
             # Parse dates
@@ -104,10 +105,9 @@ class SuricateParser(SuricateGestionRequestManager):
             )
             if created:
                 logger.info(f"Created new feedback category - label: {report['type']}")
-            # Parse status
-            rep_status = ReportStatus.objects.get(suricate_id=report["statut"])
+
             # Parse activity
-            rep_activity = ReportActivity.objects.get(suricate_id=report["idactivite"])
+            rep_activity = ReportActivity.objects.get(identifier=report["idactivite"])
 
             # Create report object
             fields = {
@@ -122,17 +122,17 @@ class SuricateParser(SuricateGestionRequestManager):
                 "status": rep_status,
                 "created_in_suricate": rep_creation,
                 "last_updated_in_suricate": rep_updated,
+                "eid": str(report["shortkeylink"])
             }
-            # TODO When implementing workflow :
-            # if report.locked then suricate_status != geotrek_status
-            # suricate_status must not override geotrek_status until we solve and unlock (see slides)
             report_obj, created = Report.objects.update_or_create(
-                uid=report["uid"], defaults=fields
+                external_uuid=report["uid"], defaults=fields
             )
             if created:
                 logger.info(
                     f"New report - id: {report['uid']}, location: {report_obj.geom}"
                 )
+            else:
+                self.to_delete.discard(report_obj.pk)
 
             # Parse documents attached to report
             self.create_documents(report["documents"], report_obj)
@@ -140,30 +140,58 @@ class SuricateParser(SuricateGestionRequestManager):
             # Parse messages attached to report
             self.create_messages(report["messages"], report_obj)
 
-            return created
+            return report_obj.pk if created else 0
 
-    def get_alerts(self, verbosity=1):
+    def before_get_alerts(self, verbosity=1):
+        self.to_delete = set(Report.objects.values_list('pk', flat=True))
+        if verbosity >= 1:
+            logger.info("Starting reports parsing from Suricate\n")
+
+    def after_get_alerts(self, reports_created, should_notify):
+        Report.objects.filter(pk__in=self.to_delete).delete()
+        if reports_created and should_notify:
+            self.send_workflow_manager_new_reports_email(reports_created)
+
+    def get_alert(self, verbosity=1, pk=0):
         """
         Get reports list from Suricate Rest API
         :return: returns True if and only if reports was imported (it is in bbox)
         """
+        data = self.get_suricate("wsGetAlerts")
+        pk = int(pk)
+        if pk:
+            formatted_external_uuid = Report.objects.get(pk=pk).formatted_external_uuid
+            report = next(report for report in data["alertes"] if report["uid"] == formatted_external_uuid)
+        else:
+            report = data["alertes"][0]
+        if verbosity >= 2:
+            logger.info(f"Processing report {report['uid']}\n")
+        self.to_delete = set()
+        report_created = self.parse_report(report)
         if verbosity >= 1:
-            sys.stdout.write("Starting reports parsing from Suricate\n")
-        data = self.get_from_suricate("wsGetAlerts")
+            logger.info(f"Created : {report_created}")
+
+    def get_alerts(self, verbosity=1, should_notify=True):
+        """
+        Get reports list from Suricate Rest API
+        :return: returns True if and only if reports was imported (it is in bbox)
+        """
+        self.before_get_alerts(verbosity)
+        data = self.get_suricate("wsGetAlerts")
         total_reports = len(data["alertes"])
         current_report = 1
-        reports_created = False
+        reports_created = set()
         # Parse alerts
         for report in data["alertes"]:
             if verbosity == 2:
-                sys.stdout.write(f"Processing report {report['uid']} - {current_report}/{total_reports} \n")
+                logger.info(f"Processing report {report['uid']} - {current_report}/{total_reports} \n")
             report_created = self.parse_report(report)
-            reports_created = reports_created or report_created
+            if report_created:
+                reports_created.add(report_created)
             current_report += 1
         if verbosity >= 1:
-            sys.stdout.write(f"Parsed {total_reports} reports from Suricate\n")
-        if reports_created:
-            self.send_managers_new_reports()
+            logger.info(f"Parsed {total_reports} reports from Suricate\n")
+        self.after_get_alerts(reports_created, should_notify)
 
     def create_documents(self, documents, parent):
         """Parse documents list from Suricate Rest API"""
@@ -213,12 +241,12 @@ class SuricateParser(SuricateGestionRequestManager):
 
             # Create message object
             message_obj, created = AttachedMessage.objects.update_or_create(
-                suricate_id=message["id"], date=msg_creation, report=parent, defaults=fields
+                identifier=message["id"], date=msg_creation, report=parent, defaults=fields
             )
             if created:
                 logger.info(
-                    f"New Message - id: {message['id']}, parent: {parent.uid}"
+                    f"New Message - id: {message['id']}, parent: {parent.external_uuid}"
                 )
 
             # Parse documents attached to message
-            # self.create_documents(message["documents"], message_obj, "AttachedMessage")
+            self.create_documents(message["documents"], parent)

@@ -3,8 +3,8 @@ from django.urls import path, register_converter
 from mapentity.registry import registry
 from rest_framework.routers import DefaultRouter
 
-from geotrek.feedback import models as feedback_models
 from geotrek.common.urls import LangConverter
+from geotrek.feedback import models as feedback_models
 
 from .views import CategoryList, FeedbackOptionsView, ReportAPIViewSet
 

@@ -2,14 +2,16 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
+from django.db.models.functions import Concat
+from django.db.models import F, Value, CharField
 from django.urls.base import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import get_language, gettext as _
 from django.views.generic.list import ListView
 from mapentity import views as mapentity_views
-from mapentity.views.generic import MapEntityCreate
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -24,19 +26,56 @@ from geotrek.feedback.forms import ReportForm
 
 
 class ReportLayer(mapentity_views.MapEntityLayer):
-    queryset = feedback_models.Report.objects.existing()
+    queryset = feedback_models.Report.objects.existing() \
+        .select_related(
+            "activity", "category", "problem_magnitude", "status", "related_trek", "assigned_user"
+    )
     model = feedback_models.Report
     filterform = ReportFilterSet
-    properties = ["email"]
+    properties = ["name", "color"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()  # Filtered by FilterSet
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            qs = qs.filter(assigned_user=self.request.user)
+        number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
+        qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F(number), output_field=CharField()))
+        return qs
+
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator.
+        """
+        language = get_language()
+        geojson_lookup = None
+        latest_saved = feedback_models.Report.latest_updated()
+        if latest_saved:
+            geojson_lookup = '%s_report_%s_%s_geojson_layer' % (
+                language,
+                latest_saved.isoformat(),
+                self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else ''
+            )
+        return geojson_lookup
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
-    queryset = feedback_models.Report.objects.existing()\
-                              .select_related("activity", "category", "problem_magnitude", "status", "related_trek")
+    queryset = (
+        feedback_models.Report.objects.existing()
+        .select_related(
+            "activity", "category", "problem_magnitude", "status", "related_trek", "assigned_user"
+        )
+        .prefetch_related("attachments")
+    )
+    model = feedback_models.Report
     filterform = ReportFilterSet
-    mandatory_columns = ['id', 'email', 'activity']
+    mandatory_columns = ['id', 'eid', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
-    searchable_columns = ['id', 'email']
+    searchable_columns = ['id', 'eid']
+
+    def get_queryset(self):
+        qs = super().get_queryset()  # Filtered by FilterSet
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            qs = qs.filter(assigned_user=self.request.user)
+        return qs
 
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
@@ -44,7 +83,7 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     default_extra_columns = [
         'email', 'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'date_update',
+        'date_insert', 'date_update', 'assigned_user'
     ]
 
 
@@ -83,7 +122,7 @@ class FeedbackOptionsView(APIView):
         return Response(options)
 
 
-class ReportCreate(MapEntityCreate):
+class ReportCreate(mapentity_views.MapEntityCreate):
     model = feedback_models.Report
     form_class = ReportForm
 
@@ -91,20 +130,33 @@ class ReportCreate(MapEntityCreate):
         return reverse('feedback:report_list')
 
 
+class ReportUpdate(mapentity_views.MapEntityUpdate):
+    queryset = feedback_models.Report.objects.existing().select_related(
+        "activity", "category", "problem_magnitude", "status", "related_trek"
+    ).prefetch_related("attachments")
+    form_class = ReportForm
+
+
 class ReportViewSet(GeotrekMapentityViewSet):
+    """Disable permissions requirement"""
+
     model = feedback_models.Report
     serializer_class = feedback_serializers.ReportSerializer
-    authentication_classes = []
-    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    filterset_class = ReportFilterSet
 
     def get_columns(self):
         return ReportList.mandatory_columns + settings.COLUMNS_LISTS.get('feedback_view',
                                                                          ReportList.default_extra_columns)
 
     def get_queryset(self):
-        return self.model.objects.existing().select_related(
+        qs = self.model.objects.existing().select_related(
             "activity", "category", "problem_magnitude", "status", "related_trek"
         ).prefetch_related("attachments")
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            qs = qs.filter(assigned_user=self.request.user.pk)
+        return qs
 
 
 class ReportAPIViewSet(APIViewSet):
