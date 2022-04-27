@@ -70,33 +70,32 @@ class ReportSerializationOptimizeTests(TestCase):
     @test_for_workflow_mode
     def test_report_layer_cache(self):
         """
-        This test check report's per status cache work independently
+        This test checks report's cache 
         """
         cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
 
         # There are 5 queries to get layer
-        with self.assertNumQueries(6):
-            response = self.client.get("/api/report/report.geojson?_status_id=classified")
-        self.assertEqual(len(response.json()['features']), 3)
+        with self.assertNumQueries(5):
+            response = self.client.get(f"/api/report/report.geojson")
+        self.assertEqual(len(response.json()['features']), 4)
 
         # We check the content was created and cached
-        last_update_status = feedback_models.Report.latest_updated_by_status("classified")
-        geojson_lookup_status = f"fr_report_{last_update_status.isoformat()}_classified_{self.user.pk}_geojson_layer"
-        content_per_status = cache.get(geojson_lookup_status)
-
-        self.assertEqual(response.content, content_per_status)
+        last_update_status = feedback_models.Report.latest_updated()
+        geojson_lookup = f"fr_report_{last_update_status.isoformat()}_{self.user.pk}_geojson_layer"
+        cache_content = cache.get(geojson_lookup)
+        self.assertEqual(response.content, cache_content)
 
         # We have 1 less query because the generation of report was cached
-        with self.assertNumQueries(5):
-            self.client.get("/api/report/report.geojson?_status_id=classified")
+        with self.assertNumQueries(4):
+            self.client.get(f"/api/report/report.geojson")
 
         self.classified_report_4 = feedback_factories.ReportFactory(status=self.classified_status)
         # Bypass workflow's save method does not actually save
         self.classified_report_4.save_no_suricate()
 
         # Cache is updated when we add a report
-        with self.assertNumQueries(6):
-            self.client.get("/api/report/report.geojson?_status_id=classified")
+        with self.assertNumQueries(5):
+            self.client.get(f"/api/report/report.geojson")
 
         self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
 
@@ -359,7 +358,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
         self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_workflow_mode
@@ -368,7 +367,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 1)
-        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
         self.assertEqual(len(response.json()['features']), 1)
 
     @test_for_workflow_mode
@@ -377,7 +376,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
         self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_report_and_basic_modes
@@ -386,7 +385,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
         self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_workflow_mode
@@ -430,5 +429,5 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get("/api/report/report.geojson?_status_id=classified")
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
         self.assertEqual(len(response.json()['features']), 3)
