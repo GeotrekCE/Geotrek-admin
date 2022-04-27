@@ -8,9 +8,10 @@ from django.urls.base import reverse
 from django.utils.translation import get_language, gettext as _
 from django.views.generic.list import ListView
 from mapentity import views as mapentity_views
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -141,8 +142,8 @@ class ReportViewSet(GeotrekMapentityViewSet):
 
     model = feedback_models.Report
     serializer_class = feedback_serializers.ReportSerializer
-    authentication_classes = []
-    permission_classes = [AllowAny]
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     filterset_class = ReportFilterSet
 
     def get_columns(self):
