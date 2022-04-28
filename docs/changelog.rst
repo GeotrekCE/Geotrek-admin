@@ -8,6 +8,8 @@ CHANGELOG
 **Bug fixes**
 
 - Prevent exceptions on malformed images when launching `sync_suricate` command
+- Fix alert on Project list view
+
 
 2.82.1  (2022-04-28)
 -----------------------

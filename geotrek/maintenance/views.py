@@ -191,6 +191,7 @@ class ProjectList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['period', 'type', 'domain']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['period', ]
 
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
