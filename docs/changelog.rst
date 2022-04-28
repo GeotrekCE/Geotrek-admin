@@ -5,9 +5,10 @@ CHANGELOG
 2.82.1+dev  (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**Bug fixes**
 
--
+- Fix alert on Project list view
+
 
 2.82.1  (2022-04-28)
 -----------------------
