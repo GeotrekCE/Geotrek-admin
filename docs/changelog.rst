@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+2.82.2+dev  (XXXX-XX-XX)
+-----------------------
+
+**New features**
+
 2.82.2  (2022-04-28)
 -----------------------
 
@@ -13,6 +18,9 @@ CHANGELOG
 
 2.82.1  (2022-04-28)
 -----------------------
+
+**WARNING!**
+Do not use, list view for Projects raises Datatable alert
 
 **Bug fixes**
 
