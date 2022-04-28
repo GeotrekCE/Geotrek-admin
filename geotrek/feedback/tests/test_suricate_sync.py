@@ -222,10 +222,20 @@ class SuricateAPITests(SuricateTests):
         r.refresh_from_db()
         self.assertEquals(r.comment, "Lames cassées")
 
-    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
+    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.ContentFile.__init__")
     @mock.patch("geotrek.feedback.parsers.logger")
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_get_alerts_creates_alerts_and_send_mail_and_assign(self, mocked_get, mocked_logger):
+    def test_sync_handles_malformed_images(self, mocked_get, mocked_logger, mocked_save):
+        self.build_get_request_patch(mocked_get)
+        """Test Suricate sync is not interupted by corruped images"""
+        mocked_save.side_effect = Exception("This image is bad")
+        call_command("sync_suricate", verbosity=2)
+        mocked_logger.error.assert_called()
+
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_alerts_creates_alerts_and_send_mail_and_assign(self, mocked_get):
         """Test GET requests on Alerts endpoint creates alerts and related objects, and sends an email"""
         self.build_get_request_patch(mocked_get, cause_JPG_error=True)
         self.assertEqual(len(mail.outbox), 0)

@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Prevent exceptions on malformed images when launching `sync_suricate` command
 - Fix alert on Project list view
 
 

@@ -1,5 +1,7 @@
 import logging
 import os
+import traceback
+
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -220,11 +222,13 @@ class SuricateParser(SuricateGestionRequestManager):
 
             if parsed_url.scheme in ('http', 'https'):
                 response = self.get_attachment_from_suricate(file_url)
-                if response.status_code in [200, 201]:
-                    f = ContentFile(response.content)
-                    attachment.attachment_file.save(file_url, f, save=False)
-                attachment.attachment_link = file_url
-                attachment.save()
+                try:
+                    if response.status_code in [200, 201]:
+                        f = ContentFile(response.content)
+                        attachment.attachment_file.save(file_url, f, save=False)
+                    attachment.save()
+                except Exception as e:
+                    logger.error(f"Could not download image : {file_url} \n{e}\n{traceback.format_exc()}")
 
     def create_messages(self, messages, parent):
         """Parse messages list from Suricate Rest API"""
