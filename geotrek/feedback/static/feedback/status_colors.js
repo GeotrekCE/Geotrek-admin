@@ -1,4 +1,7 @@
 function ChangeColors(e, data) {
+    if (data.modelname != 'report') {
+        return;
+    }
     function IndependentColors(feature) {
         return { 'color': feature.properties.color }
     }

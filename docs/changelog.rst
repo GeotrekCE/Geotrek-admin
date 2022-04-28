@@ -5,6 +5,10 @@ CHANGELOG
 2.82.0+dev  (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix display objects with wrong colors when `ENABLE_REPORT_COLORS_PER_STATUS` is True
+
 **New features**
 
 2.82.0     (2022-04-27)
@@ -35,8 +39,8 @@ CHANGELOG
 - Add `assigned_user` field to Report model
 - Add `color` field to Report Status model
 - Add TimerEvent class, used to alert Report supervisors when timer expires, with `check_timers` command
-- Force workflow when SURICATE_WORKFLOW_ENABLED setting is enabled
-- Add setting ENABLE_REPORT_COLORS_PER_STATUS to display different colors in status list view
+- Force workflow when `SURICATE_WORKFLOW_ENABLED`` setting is enabled
+- Add setting `ENABLE_REPORT_COLORS_PER_STATUS`` to display different colors in status list view
 - Add editable predefined emails
 - Display only some reports depending on which user is logged in
 - Add City and District information to Report detail page
