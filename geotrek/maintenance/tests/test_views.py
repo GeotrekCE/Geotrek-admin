@@ -492,6 +492,7 @@ class ProjectViewsTest(CommonTest):
             'domain': None,
             'id': self.obj.pk,
             'name': self.obj.name_display,
+            'period': self.obj.period_display,
             'type': None
         }
 
