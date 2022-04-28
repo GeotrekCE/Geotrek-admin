@@ -5,9 +5,9 @@ CHANGELOG
 2.82.1+dev  (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**Bug fixes**
 
--
+- Prevent exceptions on malformed images when launching `sync_suricate` command
 
 2.82.1  (2022-04-28)
 -----------------------
