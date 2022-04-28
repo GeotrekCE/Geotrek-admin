@@ -28,6 +28,8 @@ class InterventionGeojsonSerializer(GeoFeatureModelSerializer, InterventionSeria
 class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='name_display')
     period = serializers.CharField(source='period_display')
+    type = serializers.SlugRelatedField(slug_field='type', read_only=True)
+    domain = serializers.SlugRelatedField(slug_field='domain', read_only=True)
 
     class Meta:
         model = Project
