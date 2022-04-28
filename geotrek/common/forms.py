@@ -17,7 +17,7 @@ from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
 from geotrek.common.models import AccessibilityAttachment
-from geotrek.common.mixins import PublishableMixin
+from geotrek.common.mixins.models import PublishableMixin
 from geotrek.common.utils.translation import get_translated_fields
 
 from .mixins.models import NoDeleteMixin
