@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+2.82.1+dev  (XXXX-XX-XX)
+-----------------------
+
+**New features**
+
+-
+
 2.82.1  (2022-04-28)
 -----------------------
 
@@ -9,7 +16,6 @@ CHANGELOG
 
 - Fix display objects with wrong colors when `ENABLE_REPORT_COLORS_PER_STATUS` is True
 
-**New features**
 
 2.82.0     (2022-04-27)
 -----------------------
