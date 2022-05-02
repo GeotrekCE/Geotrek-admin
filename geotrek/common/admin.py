@@ -46,10 +46,11 @@ class MapEntityContentTypeFilter(admin.SimpleListFilter):
 
 class AttachmentAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_update'
-    search_fields = ('title', 'legend', 'author')
+    search_fields = ('title', 'legend', 'author', 'object_id')
     list_display = ('filename', 'legend', 'author', 'content_link', 'content_type')
     list_filter = ('filetype', MapEntityContentTypeFilter)
-    readonly_fields = ('content_type', 'object_id', 'creator', 'title')
+    exclude = ('object_id',)
+    readonly_fields = ('content_type', 'content_link', 'creator', 'title')
 
     def has_add_permission(self, request):
         """ Do not add from Adminsite.
