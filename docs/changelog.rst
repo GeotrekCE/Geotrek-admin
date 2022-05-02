@@ -14,6 +14,10 @@ CHANGELOG
 
 - Improve import from file section
 
+**Minor improvements**
+
+- Improve attachments information from apidae parsers
+
 **Maintenance**
 
 - Update to paperclip 2.5.0
@@ -56,7 +60,6 @@ Do not use, or set `ENABLE_REPORT_COLORS_PER_STATUS` to False, else objects will
 - Refer to Reports by a label instead of email addresses
 - Increase default cache expiration from 8hours to 30days (#2967)
 - Use distance from setting `SENSITIVE_AREA_INTERSECTION_MARGIN` in sensitive area filter `trek` in api v2
-- Improve attachments information from apidae parsers
 
 **Bug fixes**
 
