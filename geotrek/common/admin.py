@@ -1,5 +1,8 @@
 from django.conf import settings
 from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
+from django.urls import NoReverseMatch
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.mixins.actions import MergeActionMixin
 from . import models as common_models
@@ -44,7 +47,7 @@ class MapEntityContentTypeFilter(admin.SimpleListFilter):
 class AttachmentAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_update'
     search_fields = ('title', 'legend', 'author')
-    list_display = ('filename', 'legend', 'author', 'content_type')
+    list_display = ('filename', 'legend', 'author', 'content_link', 'content_type')
     list_filter = ('filetype', MapEntityContentTypeFilter)
     readonly_fields = ('content_type', 'object_id', 'creator', 'title')
 
@@ -52,6 +55,18 @@ class AttachmentAdmin(admin.ModelAdmin):
         """ Do not add from Adminsite.
         """
         return False
+
+    def content_link(self, obj):
+        try:
+            assert obj.content_object._entity, f'Unregistered model {obj.content_type}'
+            content_url = obj.content_object.get_detail_url()
+        except (ObjectDoesNotExist, NoReverseMatch, AssertionError):
+            return f'{obj.object_id}'
+        else:
+            return format_html('<a data-pk="{}" href="{}" >{}</a>',
+                               obj.object_id, content_url, obj.object_id)
+
+    content_link.short_description = _('Linked content')
 
 
 class ThemeAdmin(MergeActionMixin, TabbedTranslationAdmin):
