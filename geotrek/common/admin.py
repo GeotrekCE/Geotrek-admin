@@ -58,6 +58,7 @@ class AttachmentAdmin(admin.ModelAdmin):
         return False
 
     def content_link(self, obj):
+        """Returns content object link"""
         try:
             assert obj.content_object._entity, f'Unregistered model {obj.content_type}'
             content_url = obj.content_object.get_detail_url()
