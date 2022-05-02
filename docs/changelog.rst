@@ -7,6 +7,9 @@ CHANGELOG
 
 **New features**
 
+- Display link to attachment in admin site for attachments
+
+
 2.82.2  (2022-04-28)
 -----------------------
 
