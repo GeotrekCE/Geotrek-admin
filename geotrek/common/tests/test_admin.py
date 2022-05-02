@@ -25,7 +25,7 @@ class AttachmentAdminTest(TestCase):
                                           attachment_file=get_dummy_uploaded_image())
         cls.theme = ThemeFactory.create(label="Theme 1")
         cls.picture_3 = AttachmentFactory(content_object=cls.theme, title='img3',
-                                        attachment_file=get_dummy_uploaded_image())
+                                          attachment_file=get_dummy_uploaded_image())
 
     def setUp(self):
         self.client.force_login(self.user)
