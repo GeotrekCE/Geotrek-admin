@@ -23,6 +23,9 @@ class AttachmentAdminTest(TestCase):
         cls.trek = TrekFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0, 2 0)' % settings.SRID)
         cls.picture_2 = AttachmentFactory(content_object=cls.trek, title='img2',
                                           attachment_file=get_dummy_uploaded_image())
+        cls.theme = ThemeFactory.create(label="Theme 1")
+        cls.picture_3 = AttachmentFactory(content_object=cls.theme, title='img3',
+                                        attachment_file=get_dummy_uploaded_image())
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -35,6 +38,7 @@ class AttachmentAdminTest(TestCase):
         self.assertContains(response, 'img2.png')
         self.assertContains(response, self.poi.get_detail_url())
         self.assertContains(response, self.trek.get_detail_url())
+        self.assertContains(response, self.theme.pk)
 
     def test_changelist_attachment_filter_content_id(self):
         list_url = reverse('admin:common_attachment_changelist')

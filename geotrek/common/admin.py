@@ -60,7 +60,7 @@ class AttachmentAdmin(admin.ModelAdmin):
     def content_link(self, obj):
         """Returns content object link"""
         try:
-            assert obj.content_object._entity, f'Unregistered model {obj.content_type}'
+            assert hasattr(obj.content_object, '_entity'), f'Unregistered model {obj.content_type}'
             content_url = obj.content_object.get_detail_url()
         except (ObjectDoesNotExist, NoReverseMatch, AssertionError):
             return f'{obj.object_id}'
