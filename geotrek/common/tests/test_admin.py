@@ -17,8 +17,8 @@ class AttachmentAdminTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = SuperUserFactory()
-        cls.content = POIFactory.create(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        cls.picture = AttachmentFactory(content_object=cls.content, title='img1',
+        cls.poi = POIFactory.create(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        cls.picture = AttachmentFactory(content_object=cls.poi, title='img1',
                                         attachment_file=get_dummy_uploaded_image())
         cls.trek = TrekFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0, 2 0)' % settings.SRID)
         cls.picture_2 = AttachmentFactory(content_object=cls.trek, title='img2',
@@ -33,6 +33,8 @@ class AttachmentAdminTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'img1.png')
         self.assertContains(response, 'img2.png')
+        self.assertContains(response, self.poi.get_detail_url())
+        self.assertContains(response, self.trek.get_detail_url())
 
     def test_changelist_attachment_filter_content_id(self):
         list_url = reverse('admin:common_attachment_changelist')
