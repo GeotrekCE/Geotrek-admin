@@ -8,10 +8,16 @@ CHANGELOG
 **New features**
 
 - Display link to attachment in admin site for attachments
+- Add licenses on attachments (#2745) [thanks to Paul Florence]
 
 **Documentation**
 
 - Improve import from file section
+
+**Maintenance**
+
+- Update to paperclip 2.5.0
+
 
 2.82.2  (2022-04-28)
 -----------------------
@@ -59,7 +65,6 @@ Do not use, or set `ENABLE_REPORT_COLORS_PER_STATUS` to False, else objects will
 **Maintenance**
 
 - Update to mapentity 8.0.1
-- Update to paperclip 2.5.0
 
 **Suricate Workflow**  (#2366)
 
