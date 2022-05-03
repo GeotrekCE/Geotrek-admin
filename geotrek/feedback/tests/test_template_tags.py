@@ -1,7 +1,9 @@
+import json
 from datetime import datetime
 
 from django.test import TestCase
 from django.utils.encoding import force_str
+from mapentity.models import ADDITION, LogEntry
 
 from geotrek.authent.tests.factories import UserFactory, UserProfileFactory
 from geotrek.feedback.templatetags.feedback_tags import (
@@ -9,8 +11,6 @@ from geotrek.feedback.templatetags.feedback_tags import (
 from geotrek.feedback.tests.factories import (PredefinedEmailFactory,
                                               ReportStatusFactory)
 from geotrek.maintenance.tests.factories import ReportInterventionFactory
-
-from mapentity.models import LogEntry, ADDITION
 
 
 class TestFeedbackTemplateTags(TestCase):
@@ -64,13 +64,17 @@ class TestFeedbackTemplateTags(TestCase):
         )
 
     def test_status_ids_and_colors(self):
+        expected = json.loads(f"{{\"{self.solved_status.pk}\": {{\"label\": \"{self.solved_status.label}\", \"id\": \"solved_intervention\", \"color\": \"#448654\"}}, \"{self.status_1.pk}\": {{\"label\": \"{self.status_1.label}\", \"id\": \"{self.status_1.identifier}\", \"color\": \"#444444\"}}, \"{self.status_2.pk}\": {{\"label\": \"{self.status_2.label}\", \"id\": \"{self.status_2.identifier}\", \"color\": \"#444444\"}}}}")
+        actual = json.loads(status_ids_and_colors())
         self.assertEqual(
-            f"{{\"{self.solved_status.pk}\": {{\"label\": \"{self.solved_status.label}\", \"id\": \"solved_intervention\", \"color\": \"#448654\"}}, \"{self.status_1.pk}\": {{\"label\": \"{self.status_1.label}\", \"id\": \"{self.status_1.identifier}\", \"color\": \"#444444\"}}, \"{self.status_2.pk}\": {{\"label\": \"{self.status_2.label}\", \"id\": \"{self.status_2.identifier}\", \"color\": \"#444444\"}}}}",
-            status_ids_and_colors()
+            sorted(expected.items()),
+            sorted(actual.items())
         )
 
     def test_predefined_emails(self):
+        expected = json.loads(f"{{\"{self.email1.pk}\": {{\"label\": \"{self.email1.label}\", \"text\": \"{self.email1.text}\"}}, \"{self.email2.pk}\": {{\"label\": \"{self.email2.label}\", \"text\": \"{self.email2.text}\"}}}}")
+        actual = json.loads(predefined_emails())
         self.assertEqual(
-            f"{{\"{self.email1.pk}\": {{\"label\": \"{self.email1.label}\", \"text\": \"{self.email1.text}\"}}, \"{self.email2.pk}\": {{\"label\": \"{self.email2.label}\", \"text\": \"{self.email2.text}\"}}}}",
-            predefined_emails()
+            sorted(expected.items()),
+            sorted(actual.items())
         )
