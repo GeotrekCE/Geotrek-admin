@@ -37,6 +37,7 @@ Don't forget the u character before strings if they contain non-ascii characters
 
 To apply changes, you may have to run ``sudo service geotrek restart``.
 
+
 Configure Marque Esprit Parc import
 -----------------------------------
 
@@ -80,6 +81,7 @@ If you use an url that filters a unique category, you can change its name. Examp
 
 URL to get Esprit parc types: `https://gestion.espritparcnational.com/ws/?f=getTypologieProduits`.
 
+
 Sensitive areas import
 ----------------------
 
@@ -96,6 +98,7 @@ When sensitive areas module is enabled, Geotrek provides 3 parsers to import dat
 
 You can start imports from "Import" menu or from command line. You can override them in your ``var/conf/parsers.py``
 file.
+
 
 Multiples import
 ----------------
@@ -138,10 +141,12 @@ Change ``HebergementParser`` to match one of the class names in ``var/conf/parse
 You can add ``-v2`` parameter to make the command more verbose (show progress).
 Thank to ``cron`` utility you can configure automatic imports.
 
+
 Start import from Geotrek-admin UI
 ----------------------------------
 
 Open the top right menu and clic on ``imports``.
+
 
 Import data from a file
 =======================
