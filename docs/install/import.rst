@@ -5,12 +5,12 @@ Import data
 Import paths
 ============
 
-.. warning::
+.. danger::
     With dynamic segmentation, importing paths is only possible if no paths are created yet.
 
-    If you import paths when there are existing paths or treks, their linked topology will be modified automatically.
+    If you import paths where there are existing paths or treks, their linked topology will be modified automatically.
 
-Before import paths layer, it is important to prepare it. Paths must be:
+Before import paths layer, it is important to prepare them. Paths must be:
 
 - valid geometry
 - simple geometry (no intersection)
@@ -44,7 +44,9 @@ Then, export in shapefile in order to import with command ``loadpaths``
 
 ::
 
-    sudo geotrek loadpaths {Troncons.shp} --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST --encoding latin9 -i
+    sudo geotrek loadpaths {Troncons.shp} \
+        --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST \
+        --encoding latin9 -i
 
 
 Import data from touristic data systems (SIT)
