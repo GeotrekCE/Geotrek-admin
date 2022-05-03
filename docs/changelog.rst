@@ -9,6 +9,9 @@ CHANGELOG
 
 - Display link to attachment in admin site for attachments
 
+**Documentation**
+
+- Improve import from file section
 
 2.82.2  (2022-04-28)
 -----------------------
