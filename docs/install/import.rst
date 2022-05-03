@@ -2,6 +2,8 @@
 Import data
 ===========
 
+Import data from touristic data systems (SIT)
+=============================================
 
 Configure APIDAE (ex-SITRA) import
 ----------------------------------
@@ -34,6 +36,7 @@ You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
 
 To apply changes, you may have to run ``sudo service geotrek restart``.
+
 
 Configure Marque Esprit Parc import
 -----------------------------------
@@ -78,6 +81,7 @@ If you use an url that filters a unique category, you can change its name. Examp
 
 URL to get Esprit parc types: `https://gestion.espritparcnational.com/ws/?f=getTypologieProduits`.
 
+
 Sensitive areas import
 ----------------------
 
@@ -94,6 +98,7 @@ When sensitive areas module is enabled, Geotrek provides 3 parsers to import dat
 
 You can start imports from "Import" menu or from command line. You can override them in your ``var/conf/parsers.py``
 file.
+
 
 Multiples import
 ----------------
@@ -136,13 +141,15 @@ Change ``HebergementParser`` to match one of the class names in ``var/conf/parse
 You can add ``-v2`` parameter to make the command more verbose (show progress).
 Thank to ``cron`` utility you can configure automatic imports.
 
+
 Start import from Geotrek-admin UI
 ----------------------------------
 
 Open the top right menu and clic on ``imports``.
 
-Import from a file
-------------------
+
+Import data from a file
+=======================
 
 You can also use some of Geotrek commands to import data from a vector file handled by GDAL (https://gdal.org/drivers/vector/index.htm) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 
@@ -150,11 +157,16 @@ Possible data are e.g.: POI, infrastructures, signages, cities, districts, restr
 
 You must use these commands to import spatial data because of the dynamic segmentation, which will not be computed if you enter the data manually. 
 
-To list all Geotrek commands available:
+Here are the Geotrek commands available to import data from file:
 
-::
+- ``loadinfrastructure``
+- ``loadsignage``
+- ``loadpoi``
+- ``loadcities``
+- ``loaddistricts``
+- ``loadrestrictedareas``
 
-    sudo geotrek
+Usually, these commands come with ability to match file attributes to model fields.
     
 To get help about a command:
 
@@ -164,9 +176,48 @@ To get help about a command:
     
 Example: ``sudo geotrek help loadpoi``
 
+::
+
+    usage: manage.py loadpoi [-h] [--encoding ENCODING] [--name-field NAME_FIELD] [--type-field TYPE_FIELD] [--description-field DESCRIPTION_FIELD]
+                             [--name-default NAME_DEFAULT] [--type-default TYPE_DEFAULT] [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH]
+                             [--traceback] [--no-color] [--force-color] [--skip-checks]
+                             point_layer
+
+    Load a layer with point geometries in a model
+
+    positional arguments:
+      point_layer
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --encoding ENCODING, -e ENCODING
+                            File encoding, default utf-8
+      --name-field NAME_FIELD, -n NAME_FIELD
+                            Name of the field that contains the name attribute. Required or use --name-default instead.
+      --type-field TYPE_FIELD, -t TYPE_FIELD
+                            Name of the field that contains the POI Type attribute. Required or use --type-default instead.
+      --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
+                            Name of the field that contains the description of the POI (optional)
+      --name-default NAME_DEFAULT
+                            Default value for POI name. Use only if --name-field is not set
+      --type-default TYPE_DEFAULT
+                            Default value for POI Type. Use only if --type-field is not set
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will
+                            be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+
 Delete attachment from disk
----------------------------
+===========================
 
 When an attachment (eg. pictures) is removed, its file is not automatically removed from disk.
-You have to run `sudo geotrek clean_attachments` manually or in a cron to remove old files.
-After that, you should run `sudo geotrek thumbnail_cleanup` to remove old thumbnails.
+You have to run ``sudo geotrek clean_attachments`` manually or in a cron to remove old files.
+After that, you should run ``sudo geotrek thumbnail_cleanup`` to remove old thumbnails.
