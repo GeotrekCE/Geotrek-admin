@@ -138,10 +138,10 @@ Then load lists for categories, activities, statuses and problem magnitude:
 
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
-To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
+To make these lists available for your Geotrek-rando-v2, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
 
 
-**3**. Suricate Management
+**3** - Suricate Management
 
 This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It implies enabling Suricate Report mode as well.
 
@@ -180,9 +180,10 @@ To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :r
 
 Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**. Reports are only saved when synchronized back from Suricate. Therefore, in this mode, you should run the synchronization command **directly after** creating a report and **before and after** updating a report.
 
-**4**. Suricate Workflow
+**4** - Suricate Workflow
 
 This mode allows to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Management mode as well.
+You can find a detailled explanation on the workflow here : https://github.com/GeotrekCE/Geotrek-admin/issues/2366#issuecomment-1113435035
 
 - Set your settings in ``custom.py`` (timers are used to define after how long a report's processing is considered late):
 
@@ -192,7 +193,8 @@ This mode allows to process and manage reports, using the Intervention module an
 
     SURICATE_WORKFLOW_SETTINGS = {
         "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
-        "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5
+        "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
+        "SURICATE_RELOCATED_REPORT_MESSAGE": "This report is not located in Workflow responsiblity area."
     }
 
 - Then load extra required statuses for Reports and Interventions:
@@ -200,7 +202,7 @@ This mode allows to process and manage reports, using the Intervention module an
 .. code-block :: python
 
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
-    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/management_workflow.json
+    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
 
 - Go to the Admin Site and 
     - select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
