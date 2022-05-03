@@ -157,7 +157,7 @@ Possible data are e.g.: POI, infrastructures, signages, cities, districts, restr
 
 You must use these commands to import spatial data because of the dynamic segmentation, which will not be computed if you enter the data manually. 
 
-Here are the Geotrek commands available:
+Here are the Geotrek commands available to import data from file:
 
 - ``loadinfrastructure``
 - ``loadsignage``
