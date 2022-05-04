@@ -6,7 +6,7 @@ Import paths
 ============
 
 .. danger::
-    With dynamic segmentation, importing paths is only possible if no paths are created yet.
+    With dynamic segmentation, importing paths is very risky if paths are already present in Geotrek.
 
     If you import paths where there are existing paths or treks, their linked topology will be modified automatically.
 
@@ -24,9 +24,9 @@ Here are the operations:
 
 - check the SRID (must be the same as in Geotrek)
 
-- vectors → outils géométriques → "collect geometries"
+- vectors → geometric tools → "collect geometries"
 
-- vectors → outils géotraitement → "group"
+- vectors → geometric tools → "group"
 
 - clean geometries
     - search "v_clean" in "Processing toolbox"
