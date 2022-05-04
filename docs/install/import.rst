@@ -7,7 +7,7 @@ Import paths
 
 .. danger::
     With dynamic segmentation, importing paths is very risky if paths are already present in Geotrek,
-    import is only safe with no paths created.
+    it is only safe with no path created.
 
     Indeed, if you import paths where there are existing paths, treks, POIs or trails linked topology might be impacted.
 
