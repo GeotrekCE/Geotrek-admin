@@ -8,10 +8,16 @@ CHANGELOG
 **New features**
 
 - Display link to attachment in admin site for attachments
+- Add licenses on attachments (#2745) [thanks to Paul Florence]
 
 **Documentation**
 
 - Improve import from file section
+
+**Maintenance**
+
+- Update to paperclip 2.5.0
+
 
 2.82.2  (2022-04-28)
 -----------------------

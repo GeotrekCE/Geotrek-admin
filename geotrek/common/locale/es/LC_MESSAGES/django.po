@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-29 10:10+0000\n"
+"POT-Creation-Date: 2022-04-25 09:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivia Duval <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -160,6 +160,9 @@ msgstr ""
 msgid "Information accessibility"
 msgstr ""
 
+msgid "License"
+msgstr ""
+
 msgid "Creation Date"
 msgstr ""
 
@@ -198,6 +201,12 @@ msgstr "Organismo"
 
 msgid "Organisms"
 msgstr "Organismos"
+
+msgid "Attachment license"
+msgstr ""
+
+msgid "Attachment licenses"
+msgstr ""
 
 msgid "Cirkwi tag"
 msgstr ""

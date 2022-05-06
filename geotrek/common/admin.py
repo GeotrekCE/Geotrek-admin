@@ -27,6 +27,11 @@ class FileTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = 'type'
 
 
+class LicenseAdmin(admin.ModelAdmin):
+    list_display = ["label"]
+    search_fields = ["label"]
+
+
 class MapEntityContentTypeFilter(admin.SimpleListFilter):
     title = _('content type')
     parameter_name = 'content_type'
@@ -107,3 +112,4 @@ admin.site.register(common_models.RecordSource, RecordSourceAdmin)
 admin.site.register(common_models.TargetPortal, TargetPortalAdmin)
 admin.site.register(common_models.ReservationSystem, ReservationSystemAdmin)
 admin.site.register(common_models.Label, LabelAdmin)
+admin.site.register(common_models.License, LicenseAdmin)

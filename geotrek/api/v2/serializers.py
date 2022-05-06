@@ -241,6 +241,11 @@ class RecordSourceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class AttachmentsSerializerMixin(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
+    license = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field='label'
+    )
 
     def get_attachment_file(self, obj):
         return obj.attachment_file
@@ -267,7 +272,7 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
     class Meta:
         model = common_models.Attachment
         fields = (
-            'author', 'thumbnail', 'legend', 'title', 'url', 'uuid'
+            'author', 'license', 'thumbnail', 'legend', 'title', 'url', 'uuid'
         )
 
 
