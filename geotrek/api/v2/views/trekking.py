@@ -13,6 +13,7 @@ from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.functions import Length3D
 from geotrek.common.functions import Length
+from geotrek.common.models import Attachment, AccessibilityAttachment
 from geotrek.api.v2.renderers import SVGProfileRenderer
 from geotrek.api.v2.utils import build_response_from_cache
 from geotrek.trekking import models as trekking_models
@@ -36,7 +37,11 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return trekking_models.Trek.objects.existing() \
             .select_related('topo_object') \
-            .prefetch_related('topo_object__aggregations', 'accessibilities', 'attachments', 'attachments_accessibility',
+            .prefetch_related('topo_object__aggregations', 'accessibilities',
+                              Prefetch('attachments',
+                                       queryset=Attachment.objects.select_related('license')),
+                              Prefetch('attachments_accessibility',
+                                       queryset=AccessibilityAttachment.objects.select_related('license')),
                               Prefetch('web_links',
                                        queryset=trekking_models.WebLink.objects.select_related('category'))) \
             .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
@@ -167,7 +172,9 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.POISerializer
     queryset = trekking_models.POI.objects.existing() \
         .select_related('topo_object', 'type', ) \
-        .prefetch_related('topo_object__aggregations', 'attachments') \
+        .prefetch_related('topo_object__aggregations',
+                          Prefetch('attachments',
+                                   queryset=Attachment.objects.select_related('license'))) \
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
 
@@ -229,6 +236,8 @@ class ServiceViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.ServiceSerializer
     queryset = trekking_models.Service.objects.all() \
         .select_related('topo_object', 'type', ) \
-        .prefetch_related('topo_object__aggregations', 'attachments') \
+        .prefetch_related('topo_object__aggregations',
+                          Prefetch('attachments',
+                                   queryset=Attachment.objects.select_related('license')),) \
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')
