@@ -14,6 +14,11 @@ CHANGELOG
 
 - Improve import from file section
 
+**Minor improvements**
+
+- Delete filenames in captions of attachments when importing from Apidae
+- Add copyright when importing from Apidae on attachments
+
 **Maintenance**
 
 - Update to paperclip 2.5.0

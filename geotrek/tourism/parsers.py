@@ -2,6 +2,8 @@ import json
 
 import datetime
 
+from mimetypes import guess_type
+
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db import models
@@ -127,7 +129,24 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         return geom
 
 
-class TouristicEventApidaeParser(ApidaeParser):
+class AttachmentApidaeParserMixin(object):
+    def filter_attachments(self, src, val):
+        result = []
+        for subval in val or []:
+            copyright_attachment = subval.get('copyright', {}).get('libelleFr')
+            legend_attachment = subval.get('legende', {}).get('libelleFr')
+            name_attachment = subval.get('nom', {}).get('libelleFr')
+            if legend_attachment:
+                legend = legend_attachment
+                if guess_type(legend)[0] in ['image/jpeg', 'image/png', 'image/x-ms-bmp']:
+                    legend = name_attachment
+            else:
+                legend = name_attachment
+            result.append((subval['traductionFichiers'][0]['url'], legend, copyright_attachment))
+        return result
+
+
+class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
     """Parser to import touristic events from APIDAE"""
     type = None
     themes = None
@@ -281,16 +300,6 @@ class TouristicEventApidaeParser(ApidaeParser):
         ] if line]
         return '<br>'.join(lines)
 
-    def filter_attachments(self, src, val):
-        result = []
-        for subval in val or []:
-            if 'nom' in subval:
-                name = subval['nom'].get('libelleFr')
-            else:
-                name = None
-            result.append((subval['traductionFichiers'][0]['url'], name, None))
-        return result
-
     def filter_comm(self, val, code, multiple=True):
         if not val:
             return None
@@ -302,7 +311,7 @@ class TouristicEventApidaeParser(ApidaeParser):
         return None
 
 
-class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
+class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContentMixin, ApidaeParser):
     """Parser to import touristic contents from APIDAE"""
     separator = None
     api_key = None
@@ -369,16 +378,6 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
             self.m2m_constant_fields['source'] = self.source
         if self.portal is not None:
             self.m2m_constant_fields['portal'] = self.portal
-
-    def filter_attachments(self, src, val):
-        result = []
-        for subval in val or []:
-            if 'nom' in subval:
-                name = subval['nom'].get('libelleFr')
-            else:
-                name = None
-            result.append((subval['traductionFichiers'][0]['url'], name, None))
-        return result
 
     def filter_comm(self, val, code, multiple=True):
         if not val:
