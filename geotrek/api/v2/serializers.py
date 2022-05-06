@@ -242,7 +242,6 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
     license = serializers.SlugRelatedField(
-        many=False,
         read_only=True,
         slug_field='label'
     )
