@@ -197,6 +197,9 @@
       "legende" : {
         "libelleFr" : "img.bmp"
       },
+      "copyright": {
+        "libelleFr" : "Copyright"
+      },
       "traductionFichiers" : [ {
         "locale" : "fr",
         "url" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/209/130/1540817.jpg",
@@ -220,6 +223,33 @@
       },
       "legende" : {
         "libelleFr" : "rafting sur le Guil"
+      },
+      "traductionFichiers" : [ {
+        "locale" : "fr",
+        "url" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819.jpg",
+        "urlListe" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-liste.jpg",
+        "urlFiche" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-fiche.jpg",
+        "urlDiaporama" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-diaporama.jpg",
+        "extension" : "jpg",
+        "fileName" : "raft2-600-web-495",
+        "taille" : 272514,
+        "hauteur" : 400,
+        "largeur" : 600,
+        "lastModifiedDate" : "2016-03-23T13:56:49.000+0000"
+      } ],
+      "locked" : false
+    }, {
+      "identifiant" : 1609641,
+      "link" : false,
+      "type" : "IMAGE",
+      "nom" : {
+        "libelleFr" : "Foo bar"
+      },
+      "legende" : {
+        "libelleFr" : "rafting sur le Guil"
+      },
+      "copyright" : {
+        "libelleFr" : "Bar"
       },
       "traductionFichiers" : [ {
         "locale" : "fr",

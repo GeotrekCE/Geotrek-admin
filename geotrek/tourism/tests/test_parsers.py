@@ -270,7 +270,7 @@ class ParserTests(TranslationResetMixin, TestCase):
             ['<TouristicContentType1: Type A>', '<TouristicContentType1: Type B>']
         )
         self.assertQuerysetEqual(content.type2.all(), [])
-        self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(Attachment.objects.count(), 4)
         self.assertEqual(Attachment.objects.first().content_object, content)
 
     @mock.patch('geotrek.common.parsers.requests.get')

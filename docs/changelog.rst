@@ -16,7 +16,8 @@ CHANGELOG
 
 **Minor improvements**
 
-- Improve attachments information from apidae parsers
+- Delete filenames in captions of attachments when importing from Apidae
+- Add copyright when importing from Apidae on attachments
 
 **Maintenance**
 
