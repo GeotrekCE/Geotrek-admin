@@ -16,8 +16,8 @@ CHANGELOG
 
 **Minor improvements**
 
-- Delete filenames in captions of attachments when importing from Apidae
-- Add copyright when importing from Apidae on attachments
+- Delete filenames in captions of attachments when importing from Apidae (#2698)
+- Add copyright when importing from Apidae on attachments (#2698)
 
 **Maintenance**
 
