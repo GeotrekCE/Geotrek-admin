@@ -731,7 +731,7 @@ class TrailViewsTest(CommonTest):
             'departure': self.obj.departure,
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
-            'name': self.obj.name
+            'name': self.obj.name_display
         }
 
     def get_good_data(self):

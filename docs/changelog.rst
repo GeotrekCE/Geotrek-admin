@@ -10,6 +10,10 @@ CHANGELOG
 - Display link to attachment in admin site for attachments
 - Add license field on attachments (#3089) [thanks to Paul Florence]
 
+**Bug fixes**
+
+- Fix trail detail link in list view
+
 **Documentation**
 
 - Improve import from file section
