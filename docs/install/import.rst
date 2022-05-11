@@ -6,8 +6,8 @@ Import paths
 ============
 
 .. danger::
-    With dynamic segmentation, importing paths is very risky if paths are already present in Geotrek,
-    it is only safe with no path created.
+    With dynamic segmentation, importing paths is very risky if paths are already present in the same area in Geotrek,
+    it is only safe for an area where no path is already created.
 
     Indeed, if you import paths where there are existing paths, treks, POIs or trails linked topology might be impacted.
 
@@ -19,8 +19,6 @@ Before import paths layer, it is important to prepare them. Paths must be:
 - not double or covering others
 
 We use QGis to clean a path layer, with plugin Grass.
-
-
 Here are the operations:
 
 - check the SRID (must be the same as in Geotrek)
@@ -41,9 +39,10 @@ Here are the operations:
     - search "v.build.polyline" in "Processing toolbox")
     - select "first" in "Category number mode"
 
-Then, export in shapefile in order to import with command ``loadpaths``
+There are two ways to import path : importing your shapefile with command line,
+or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_.
 
-::
+To import a shapefile containing your paths, use the command ``loadpaths``::
 
     sudo geotrek loadpaths {Troncons.shp} \
         --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST \
