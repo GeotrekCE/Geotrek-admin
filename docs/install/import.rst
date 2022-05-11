@@ -2,6 +2,53 @@
 Import data
 ===========
 
+Import paths
+============
+
+.. danger::
+    With dynamic segmentation, importing paths is very risky if paths are already present in the same area in Geotrek,
+    it is only safe for an area where no path is already created.
+
+    Indeed, if you import paths where there are existing paths, treks, POIs or trails linked topology might be impacted.
+
+Before import paths layer, it is important to prepare them. Paths must be:
+
+- valid geometry
+- simple geometry (no intersection)
+- all intersections must cut the paths
+- not double or covering others
+
+We use QGis to clean a path layer, with plugin Grass.
+Here are the operations:
+
+- check the SRID (must be the same as in Geotrek)
+
+- vectors → geometric tools → "collect geometries"
+
+- vectors → geometric tools → "group"
+
+- clean geometries
+    - search "v_clean" in "Processing toolbox"
+    - select following options in cleaning tool: break, snap, duplicate (ou rmdup), rmline, rmdangle, chdangle, bpol, prune
+    - in threshold enter 2,2,2,2,2,2,2,2 (2 meters for each option)
+
+- delete duplicate geometries
+    - search "duplicate" in "Processing toolbox"
+
+- regroup lines
+    - search "v.build.polyline" in "Processing toolbox")
+    - select "first" in "Category number mode"
+
+There are two ways to import path : importing your shapefile with command line,
+or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_.
+
+To import a shapefile containing your paths, use the command ``loadpaths``::
+
+    sudo geotrek loadpaths {Troncons.shp} \
+        --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST \
+        --encoding latin9 -i
+
+
 Import data from touristic data systems (SIT)
 =============================================
 
