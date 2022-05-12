@@ -162,7 +162,7 @@ class CommonForm(MapEntityForm):
                 msg = _('This field is required to publish object.')
             elif settings.COMPLETENESS_LEVEL == 'error_on_review':
                 msg = _('This field is required to review object.')
-            missing_fields = self.get_missing_completeness_fields(completeness_fields, msg)
+            missing_fields = self._get_missing_completeness_fields(completeness_fields, msg)
 
             if missing_fields:
                 raise ValidationError(
@@ -189,10 +189,9 @@ class CommonForm(MapEntityForm):
         # Check if form has published in at least one of the language
         if not settings.PUBLISHED_BY_LANG:
             any_published = self.cleaned_data.get('published')
-
-        for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            if self.cleaned_data.get(f'published_{language[0]}', False):
-                any_published = True
+        else:
+            any_published = any([self.cleaned_data.get(f'published_{language[0]}', False)
+                                for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']])
 
         if self.instance.is_complete:
             if settings.COMPLETENESS_LEVEL == 'error_on_publication':
@@ -205,17 +204,20 @@ class CommonForm(MapEntityForm):
 
         return False
 
-    def get_missing_completeness_fields(self, completeness_fields, msg):
+    def _get_missing_completeness_fields(self, completeness_fields, msg):
         """Check fields completeness and add error message if field is empty"""
 
         missing_fields = []
-        lang = get_language()
         translated_fields = get_translated_fields(self._meta.model)
 
         # Add error on each field if it is empty
         for field_required in completeness_fields:
             if field_required in translated_fields:
-                field_required = f'{field_required}_{lang}'
+                for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+                    field_required = f'{field_required}_{language}'
+                    if not self.cleaned_data.get(field_required):
+                        self.add_error(field_required, msg)
+                        missing_fields.append(field_required)
             if not self.cleaned_data.get(field_required):
                 self.add_error(field_required, msg)
                 missing_fields.append(field_required)
