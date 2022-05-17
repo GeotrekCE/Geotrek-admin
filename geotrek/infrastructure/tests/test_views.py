@@ -64,7 +64,7 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
             'cities': '[]',
             'condition': self.obj.condition.label,
             'id': self.obj.pk,
-            'name': self.obj.name,
+            'name': self.obj.name_display,
             'type': self.obj.type.label,
         }
 
