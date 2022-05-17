@@ -15,6 +15,7 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
 
 
 class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.CharField(source='name_display')
     type = serializers.CharField(source='type_display')
     condition = serializers.SlugRelatedField('label', read_only=True)
     cities = serializers.CharField(source='cities_display')

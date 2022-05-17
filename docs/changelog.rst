@@ -13,6 +13,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix trail detail link in list view
+- Fix infrastructure detail link in list view
 
 **Documentation**
 
