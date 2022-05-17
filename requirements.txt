@@ -108,13 +108,13 @@ django-extensions==2.2.9
 django-filter==2.4.0
     # via mapentity
 django-geojson==3.1.0
-    # via mapentity
+    # via geotrek (setup.py)
 django-js-asset==1.2.2
     # via django-mptt
 django-leaflet==0.19.post9
     # via mapentity
 django-modelcluster==5.1
-    # via mapentity
+    # via geotrek (setup.py)
 django-modeltranslation==0.15.2
     # via mapentity
 django-mptt==0.11.0
@@ -186,7 +186,7 @@ landez==2.5.0
     # via geotrek (setup.py)
 lxml==4.7.1
     # via mapentity
-mapentity==8.0.1
+mapentity @ git+https://github.com/makinacorpus/django-mapentity.git@add_geojson_serializer_drf
     # via geotrek (setup.py)
 markupsafe==1.1.1
     # via jinja2

@@ -33,7 +33,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.1.*',
-        'mapentity==8.0.1',
+        'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@add_geojson_serializer_drf#egg=mapentity',
         'env_file',
         # pinned by requirements.txt
         'python-memcached',
@@ -44,6 +44,8 @@ setup(
         'simplekml',
         'pygal',
         'django-extended-choices',
+        'django-geojson',
+        'django-modelcluster',
         'django-mptt',
         'geojson',
         'tif2geojson',
