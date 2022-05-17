@@ -18,8 +18,8 @@ from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from mapentity.serializers import GPXSerializer
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
-                             MapEntityUpdate, MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin)
+from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin)
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length

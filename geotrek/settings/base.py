@@ -315,10 +315,6 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.api',
 )
 
-SERIALIZATION_MODULES = {
-    'geojson': 'djgeojson.serializers'
-}
-
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
