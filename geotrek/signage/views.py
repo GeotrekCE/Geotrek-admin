@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from rest_framework import permissions as rest_permissions
 from rest_framework_datatables.filters import DatatablesFilterBackend
@@ -30,9 +30,9 @@ class LineMixin(FormsetMixin):
     formset_class = LineFormset
 
 
-class SignageLayer(MapEntityLayer):
-    queryset = Signage.objects.existing()
-    properties = ['name', 'published']
+# class SignageLayer(MapEntityLayer):
+#     queryset = Signage.objects.existing()
+#     properties = ['name', 'published']
 
 
 class SignageList(CustomColumnsMixin, MapEntityList):
@@ -182,9 +182,9 @@ class BladeList(CustomColumnsMixin, MapEntityList):
     searchable_columns = ['id', 'number']
 
 
-class BladeLayer(MapEntityLayer):
-    queryset = Blade.objects.all()
-    properties = ['number']
+# class BladeLayer(MapEntityLayer):
+#     queryset = Blade.objects.all()
+#     properties = ['number']
 
 
 class BladeFormatList(MapEntityFormat, BladeList):

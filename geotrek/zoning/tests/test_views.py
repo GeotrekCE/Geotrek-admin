@@ -11,7 +11,7 @@ class LandLayersViewsTest(TestCase):
 
     def test_views_status(self):
         for layer in ['city', 'restrictedarea', 'district']:
-            url = reverse('zoning:%s_layer' % layer)
+            url = reverse('zoning:%s-drf-list' % layer, kwargs={'format': 'geojson'})
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 

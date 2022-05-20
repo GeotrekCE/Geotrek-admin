@@ -5,7 +5,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.views.generic import DetailView
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from rest_framework import permissions as rest_permissions, viewsets
 
@@ -24,9 +24,9 @@ from .models import Dive
 from .serializers import DiveSerializer, DiveAPIGeojsonSerializer, DiveAPISerializer
 
 
-class DiveLayer(MapEntityLayer):
-    properties = ['name', 'published']
-    queryset = Dive.objects.existing()
+# class DiveLayer(MapEntityLayer):
+#     properties = ['name', 'published']
+#     queryset = Dive.objects.existing()
 
 
 class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):

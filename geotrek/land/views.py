@@ -1,5 +1,5 @@
 from django.conf import settings
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.core.models import AltimetryMixin
@@ -13,9 +13,9 @@ from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceE
 from ..common.viewsets import GeotrekMapentityViewSet
 
 
-class PhysicalEdgeLayer(MapEntityLayer):
-    queryset = PhysicalEdge.objects.existing()
-    properties = ['color_index', 'name']
+# class PhysicalEdgeLayer(MapEntityLayer):
+#     queryset = PhysicalEdge.objects.existing()
+#     properties = ['color_index', 'name']
 
 
 class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
@@ -67,9 +67,9 @@ class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
         return PhysicalEdge.objects.existing().select_related('physical_type').defer('geom', 'geom_3d')
 
 
-class LandEdgeLayer(MapEntityLayer):
-    queryset = LandEdge.objects.existing()
-    properties = ['color_index', 'name']
+# class LandEdgeLayer(MapEntityLayer):
+#     queryset = LandEdge.objects.existing()
+#     properties = ['color_index', 'name']
 
 
 class LandEdgeList(CustomColumnsMixin, MapEntityList):
@@ -123,9 +123,9 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
         return LandEdge.objects.existing().select_related('land_type').defer('geom', 'geom_3d')
 
 
-class CompetenceEdgeLayer(MapEntityLayer):
-    queryset = CompetenceEdge.objects.existing()
-    properties = ['color_index', 'name']
+# class CompetenceEdgeLayer(MapEntityLayer):
+#     queryset = CompetenceEdge.objects.existing()
+#     properties = ['color_index', 'name']
 
 
 class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
@@ -177,9 +177,9 @@ class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
         return CompetenceEdge.objects.existing().select_related('organization').defer('geom', 'geom_3d')
 
 
-class WorkManagementEdgeLayer(MapEntityLayer):
-    queryset = WorkManagementEdge.objects.existing()
-    properties = ['color_index', 'name']
+# class WorkManagementEdgeLayer(MapEntityLayer):
+#     queryset = WorkManagementEdge.objects.existing()
+#     properties = ['color_index', 'name']
 
 
 class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
@@ -231,9 +231,9 @@ class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
         return WorkManagementEdge.objects.existing().select_related('organization').defer('geom', 'geom_3d')
 
 
-class SignageManagementEdgeLayer(MapEntityLayer):
-    queryset = SignageManagementEdge.objects.existing()
-    properties = ['color_index', 'name']
+# class SignageManagementEdgeLayer(MapEntityLayer):
+#     queryset = SignageManagementEdge.objects.existing()
+#     properties = ['color_index', 'name']
 
 
 class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):

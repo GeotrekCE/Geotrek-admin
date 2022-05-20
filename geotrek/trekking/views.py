@@ -11,7 +11,7 @@ from django.utils.html import escape
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
@@ -54,9 +54,9 @@ class FlattenPicturesMixin:
         return qs
 
 
-class TrekLayer(MapEntityLayer):
-    properties = ['name', 'published']
-    queryset = Trek.objects.existing()
+# class TrekLayer(MapEntityLayer):
+#     properties = ['name', 'published']
+#     queryset = Trek.objects.existing()
 
 
 class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
@@ -282,10 +282,10 @@ class TrekAPIViewSet(APIViewSet):
 
         return qs
 
-
-class POILayer(MapEntityLayer):
-    queryset = POI.objects.existing()
-    properties = ['name', 'published']
+#
+# class POILayer(MapEntityLayer):
+#     queryset = POI.objects.existing()
+#     properties = ['name', 'published']
 
 
 class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
@@ -446,9 +446,9 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
         return trek.infrastructures.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class ServiceLayer(MapEntityLayer):
-    properties = ['label', 'published']
-    queryset = Service.objects.existing()
+# class ServiceLayer(MapEntityLayer):
+#     properties = ['label', 'published']
+#     queryset = Service.objects.existing()
 
 
 class ServiceList(CustomColumnsMixin, MapEntityList):

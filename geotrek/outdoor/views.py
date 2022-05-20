@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Q
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
+from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
                              MapEntityUpdate, MapEntityDelete, MapEntityFormat)
 
 from geotrek.authent.decorators import same_structure_required
@@ -17,10 +17,10 @@ from geotrek.outdoor.serializers import SiteSerializer, CourseSerializer, Course
     CourseAPIGeojsonSerializer, SiteAPISerializer, SiteAPIGeojsonSerializer
 
 
-class SiteLayer(MapEntityLayer):
-    properties = ['name']
-    filterform = SiteFilterSet
-    queryset = Site.objects.all()
+# class SiteLayer(MapEntityLayer):
+#     properties = ['name']
+#     filterform = SiteFilterSet
+#     queryset = Site.objects.all()
 
 
 class SiteList(CustomColumnsMixin, MapEntityList):
@@ -138,11 +138,11 @@ class SiteAPIViewSet(APIViewSet):
             qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
-
-class CourseLayer(MapEntityLayer):
-    properties = ['name']
-    filterform = CourseFilterSet
-    queryset = Course.objects.prefetch_related('type').all()
+#
+# class CourseLayer(MapEntityLayer):
+#     properties = ['name']
+#     filterform = CourseFilterSet
+#     queryset = Course.objects.prefetch_related('type').all()
 
 
 class CourseList(CustomColumnsMixin, MapEntityList):

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
@@ -15,9 +15,9 @@ from ..common.mixins.api import APIViewSet
 from ..common.viewsets import GeotrekMapentityViewSet
 
 
-class InfrastructureLayer(MapEntityLayer):
-    queryset = Infrastructure.objects.existing()
-    properties = ['name', 'published']
+# class InfrastructureLayer(MapEntityLayer):
+#     queryset = Infrastructure.objects.existing()
+#     properties = ['name', 'published']
 
 
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
