@@ -1,21 +1,19 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+
 from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
+from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, \
+    SignageManagementEdgeFilterSet
+from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
                      WorkManagementEdge, SignageManagementEdge)
-from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, SignageManagementEdgeFilterSet
-from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
 from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceEdgeSerializer, \
-    SignageManagementEdgeSerializer, WorkManagementEdgeSerializer
-from ..common.viewsets import GeotrekMapentityViewSet
-
-
-# class PhysicalEdgeLayer(MapEntityLayer):
-#     queryset = PhysicalEdge.objects.existing()
-#     properties = ['color_index', 'name']
+    SignageManagementEdgeSerializer, WorkManagementEdgeSerializer, PhysicalEdgeGeojsonSerializer
 
 
 class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
@@ -57,6 +55,7 @@ class PhysicalEdgeDelete(MapEntityDelete):
 class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
     model = PhysicalEdge
     serializer_class = PhysicalEdgeSerializer
+    geojson_serializer_class = PhysicalEdgeGeojsonSerializer
     filterset_class = PhysicalEdgeFilterSet
 
     def get_columns(self):
@@ -64,7 +63,14 @@ class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
                                                                                PhysicalEdgeList.default_extra_columns)
 
     def get_queryset(self):
-        return PhysicalEdge.objects.existing().select_related('physical_type').defer('geom', 'geom_3d')
+        qs = self.model.objects.existing().select_related('physical_type')
+
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'physical_type')
+            return qs
+
+        return qs.defer('geom', 'geom_3d')
 
 
 # class LandEdgeLayer(MapEntityLayer):
