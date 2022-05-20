@@ -277,8 +277,10 @@ class PathViewSet(GeotrekMapentityViewSet):
                 select={'name': "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"},
                 select_params=(_("path"),)
             )
+
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
-            qs = qs.only(*self.geojson_serializer_class.Meta.fields)
+            qs = qs.only("id", "name", "draft")
+
             return qs
         return Path.objects.defer('geom', 'geom_cadastre', 'geom_3d')\
                            .select_related('structure', 'comfort', 'source', 'stake')\

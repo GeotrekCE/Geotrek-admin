@@ -8,8 +8,8 @@
     MapEntity.i18n['site'] = "{% trans "Outdoor site" %}";
     MapEntity.i18n['course'] = "{% trans "Outdoor course" %}";
 
-    window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site_layer" %}";
-    window.SETTINGS.urls['course_layer'] = "{% url "outdoor:course_layer" %}";
+    window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['course_layer'] = "{% url "outdoor:course-drf-list" format="geojson" %}";
 </script>
 
 {% if modelname == "site" %}
