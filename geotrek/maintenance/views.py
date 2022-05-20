@@ -247,7 +247,6 @@ class ProjectViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             non_empty_qs = Intervention.objects.existing().filter(project__isnull=False).values('project')
             qs = qs.filter(pk__in=non_empty_qs)
-            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
         return qs
 
