@@ -167,7 +167,6 @@ class InterventionViewSet(GeotrekMapentityViewSet):
     def get_queryset(self):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
-            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
         return qs
 
