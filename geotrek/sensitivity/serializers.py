@@ -39,6 +39,8 @@ class SensitiveAreaSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializ
 
 
 class SensitiveAreaGeojsonSerializer(MapentityGeojsonModelSerializer):
+    radius = rest_serializers.IntegerField()
+
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = sensitivity_models.SensitiveArea
         fields = ['id', 'species', 'radius', 'published']

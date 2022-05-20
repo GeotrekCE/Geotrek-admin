@@ -33,11 +33,6 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 logger = logging.getLogger(__name__)
 
 
-# class SensitiveAreaLayer(MapEntityLayer):
-#     queryset = SensitiveArea.objects.existing()
-#     properties = ['species', 'radius', 'published']
-
-
 class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
     queryset = SensitiveArea.objects.existing()
     filterform = SensitiveAreaFilterSet
