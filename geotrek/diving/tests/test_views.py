@@ -83,7 +83,7 @@ class DiveViewsTests(GeotrekAPITestCase, CommonTest):
         return {
             'id': self.obj.pk,
             'levels': self.obj.levels_display,
-            'name': self.obj.name,
+            'name': self.obj.name_display,
             'thumbnail': 'None'
         }
 
