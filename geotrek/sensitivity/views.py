@@ -13,14 +13,15 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.api.v2.functions import Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
 from .models import SensitiveArea, Species
-from .serializers import SensitiveAreaSerializer, SensitiveAreaAPIGeojsonSerializer, SensitiveAreaAPISerializer
-from ..common.mixins.api import APIViewSet
-from ..common.viewsets import GeotrekMapentityViewSet
+from .serializers import SensitiveAreaSerializer, SensitiveAreaAPIGeojsonSerializer, SensitiveAreaAPISerializer, \
+    SensitiveAreaGeojsonSerializer
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking.models import Trek
@@ -102,10 +103,15 @@ class SensitiveAreaDelete(MapEntityDelete):
 class SensitiveAreaViewSet(GeotrekMapentityViewSet):
     model = SensitiveArea
     serializer_class = SensitiveAreaSerializer
+    geojson_serializer_class = SensitiveAreaGeojsonSerializer
     filterset_class = SensitiveAreaFilterSet
 
     def get_queryset(self):
-        return self.model.objects.existing()
+        qs = self.model.objects.existing().select_related('species')
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'species')
+        return qs
 
     def get_columns(self):
         return SensitiveAreaList.mandatory_columns + settings.COLUMNS_LISTS.get('sensitivity_view',
