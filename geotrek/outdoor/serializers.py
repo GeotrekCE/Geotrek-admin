@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -13,10 +14,10 @@ from geotrek.common.serializers import (LabelSerializer,
                                         TargetPortalSerializer,
                                         ThemeSerializer,
                                         TranslatedModelSerializer)
-from geotrek.outdoor.models import Course, Site, Practice
 from geotrek.tourism.serializers import InformationDeskSerializer
 from geotrek.trekking.serializers import WebLinkSerializer
 from geotrek.zoning.serializers import ZoningSerializerMixin
+from .models import Course, Site, Practice
 
 
 class PracticeSerializer(serializers.ModelSerializer):
@@ -39,6 +40,12 @@ class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Site
         fields = "__all__"
+
+
+class SiteGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = Site
+        fields = ["id", "name"]
 
 
 class SiteAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
@@ -80,6 +87,12 @@ class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = "__all__"
+
+
+class CourseGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = Course
+        fields = ["id", "name"]
 
 
 class CourseAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
