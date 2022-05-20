@@ -7,9 +7,9 @@
     MapEntity.i18n['POIs'] = "{% trans "POIs" %}";
     MapEntity.i18n['Treks'] = "{% trans "Treks" %}";
 
-    window.SETTINGS.urls['trek_layer'] = "{% url "trekking:trek_layer" %}";
-    window.SETTINGS.urls['poi_layer'] = "{% url "trekking:poi_layer" %}";
-    window.SETTINGS.urls['service_layer'] = "{% url "trekking:service_layer" %}";
+    window.SETTINGS.urls['trek_layer'] = "{% url "trekking:trek-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['poi_layer'] = "{% url "trekking:poi-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['service_layer'] = "{% url "trekking:service-drf-list" format="geojson" %}";
 </script>
 {% if modelname == "trek" %}
     <script type="text/javascript" src="{% static 'trekking/main.js' %}"></script>

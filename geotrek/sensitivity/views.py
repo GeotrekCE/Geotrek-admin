@@ -7,7 +7,7 @@ from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic.detail import BaseDetailView
-from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
+from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityFormat, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
@@ -32,9 +32,9 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 logger = logging.getLogger(__name__)
 
 
-class SensitiveAreaLayer(MapEntityLayer):
-    queryset = SensitiveArea.objects.existing()
-    properties = ['species', 'radius', 'published']
+# class SensitiveAreaLayer(MapEntityLayer):
+#     queryset = SensitiveArea.objects.existing()
+#     properties = ['species', 'radius', 'published']
 
 
 class SensitiveAreaList(CustomColumnsMixin, MapEntityList):

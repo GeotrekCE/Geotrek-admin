@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 from django_filters.rest_framework import DjangoFilterBackend
-from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
+from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -38,9 +38,9 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 logger = logging.getLogger(__name__)
 
 
-class TouristicContentLayer(MapEntityLayer):
-    queryset = TouristicContent.objects.existing()
-    properties = ['name']
+# class TouristicContentLayer(MapEntityLayer):
+#     queryset = TouristicContent.objects.existing()
+#     properties = ['name']
 
 
 class TouristicContentList(CustomColumnsMixin, MapEntityList):
@@ -188,10 +188,10 @@ class TouristicContentAPIViewSet(APIViewSet):
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
 
-
-class TouristicEventLayer(MapEntityLayer):
-    queryset = TouristicEvent.objects.existing()
-    properties = ['name']
+#
+# class TouristicEventLayer(MapEntityLayer):
+#     queryset = TouristicEvent.objects.existing()
+#     properties = ['name']
 
 
 class TouristicEventList(CustomColumnsMixin, MapEntityList):

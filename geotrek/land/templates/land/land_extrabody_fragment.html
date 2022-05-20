@@ -11,10 +11,10 @@
     MapEntity.i18n['Work management edges'] = "{% trans "Work management edges" %}";
     MapEntity.i18n['Land'] = "{% trans "Land" %}";
 
-    window.SETTINGS.urls['landedge_layer'] = "{% url "land:landedge_layer" %}";
-    window.SETTINGS.urls['physicaledge_layer'] = "{% url "land:physicaledge_layer" %}";
-    window.SETTINGS.urls['competenceedge_layer'] = "{% url "land:competenceedge_layer" %}";
-    window.SETTINGS.urls['signagemanagementedge_layer'] = "{% url "land:signagemanagementedge_layer" %}";
-    window.SETTINGS.urls['workmanagementedge_layer'] = "{% url "land:workmanagementedge_layer" %}";
+    window.SETTINGS.urls['landedge_layer'] = "{% url "land:landedge-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['physicaledge_layer'] = "{% url "land:physicaledge-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['competenceedge_layer'] = "{% url "land:competenceedge-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['signagemanagementedge_layer'] = "{% url "land:signagemanagementedge-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['workmanagementedge_layer'] = "{% url "land:workmanagementedge-drf-list" format="geojson" %}";
 </script>
 <script type="text/javascript" src="{% static "land/main.js" %}"></script>

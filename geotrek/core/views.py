@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
+from django.contrib.gis.db.models.functions import Transform
 from django.core.cache import caches
 from django.db.models import Sum
 from django.http import HttpResponseRedirect
@@ -54,39 +55,39 @@ class CreateFromTopologyMixin:
         return initial
 
 
-class PathLayer(MapEntityLayer):
-    properties = ['name', 'draft']
-    queryset = Path.objects.all()
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.request.GET.get('_no_draft'):
-            qs = qs.exclude(draft=True)
-        # get display name if name is undefined to display tooltip on map feature hover
-        # Can't use annotate because it doesn't allow to use a model field name
-        # Can't use Case(When) in qs.extra
-        qs = qs.extra(select={'name': "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"},
-                      select_params=(_("path"), ))
-        return qs
-
-    def view_cache_key(self):
-        """Used by the ``view_cache_response_content`` decorator.
-        """
-        language = self.request.LANGUAGE_CODE
-        no_draft = self.request.GET.get('_no_draft')
-        if no_draft:
-            latest_saved = Path.no_draft_latest_updated()
-        else:
-            latest_saved = Path.latest_updated()
-        geojson_lookup = None
-
-        if latest_saved:
-            geojson_lookup = '%s_path_%s%s_json_layer' % (
-                language,
-                latest_saved.strftime('%y%m%d%H%M%S%f'),
-                '_nodraft' if no_draft else ''
-            )
-        return geojson_lookup
+# class PathLayer(MapEntityLayer):
+#     properties = ['name', 'draft']
+#     queryset = Path.objects.all()
+#
+#     def get_queryset(self):
+#         qs = super().get_queryset()
+#         if self.request.GET.get('_no_draft'):
+#             qs = qs.exclude(draft=True)
+#         # get display name if name is undefined to display tooltip on map feature hover
+#         # Can't use annotate because it doesn't allow to use a model field name
+#         # Can't use Case(When) in qs.extra
+#         qs = qs.extra(select={'name': "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"},
+#                       select_params=(_("path"), ))
+#         return qs
+#
+#     def view_cache_key(self):
+#         """Used by the ``view_cache_response_content`` decorator.
+#         """
+#         language = self.request.LANGUAGE_CODE
+#         no_draft = self.request.GET.get('_no_draft')
+#         if no_draft:
+#             latest_saved = Path.no_draft_latest_updated()
+#         else:
+#             latest_saved = Path.latest_updated()
+#         geojson_lookup = None
+#
+#         if latest_saved:
+#             geojson_lookup = '%s_path_%s%s_json_layer' % (
+#                 language,
+#                 latest_saved.strftime('%y%m%d%H%M%S%f'),
+#                 '_nodraft' if no_draft else ''
+#             )
+#         return geojson_lookup
 
 
 class PathList(CustomColumnsMixin, MapEntityList):
@@ -265,6 +266,20 @@ class PathViewSet(GeotrekMapentityViewSet):
     filterset_class = PathFilterSet
 
     def get_queryset(self):
+        qs = self.model.objects.all()
+        if self.format_kwarg == 'geojson':
+            if self.request.GET.get('_no_draft'):
+                qs = qs.exclude(draft=True)
+            # get display name if name is undefined to display tooltip on map feature hover
+            # Can't use annotate because it doesn't allow to use a model field name
+            # Can't use Case(When) in qs.extra
+            qs = qs.extra(
+                select={'name': "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"},
+                select_params=(_("path"),)
+            )
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only(*self.geojson_serializer_class.Meta.fields)
+            return qs
         return Path.objects.defer('geom', 'geom_cadastre', 'geom_3d')\
                            .select_related('structure', 'comfort', 'source', 'stake')\
                            .prefetch_related('usages', 'networks')
@@ -301,11 +316,6 @@ def get_graph_json(request):
 
     cache.set(key, (latest, json_graph))
     return HttpJSONResponse(json_graph)
-
-
-class TrailLayer(MapEntityLayer):
-    queryset = Trail.objects.existing()
-    properties = ['name']
 
 
 class TrailList(CustomColumnsMixin, MapEntityList):
@@ -391,7 +401,10 @@ class TrailViewSet(GeotrekMapentityViewSet):
         return TrailList.mandatory_columns + settings.COLUMNS_LISTS.get('trail_view', TrailList.default_extra_columns)
 
     def get_queryset(self):
-        return Trail.objects.existing().defer('geom', 'geom_3d')
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            return qs
+        return qs.defer('geom', 'geom_3d')
 
 
 @permission_required('core.change_path')

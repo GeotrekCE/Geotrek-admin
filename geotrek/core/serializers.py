@@ -1,7 +1,6 @@
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
-from rest_framework_gis.fields import GeometryField
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.core.models import Path, Trail
 
@@ -27,13 +26,11 @@ class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
-    api_geom = GeometryField(read_only=True, precision=7)
-
-    class Meta(PathSerializer.Meta):
-        geo_field = 'api_geom'
+class PathGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = Path
         id_field = 'id'
-        fields = "__all__"
+        fields = ["id", "name", "draft"]
 
 
 class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -45,10 +42,7 @@ class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TrailGeojsonSerializer(GeoFeatureModelSerializer, TrailSerializer):
-    api_geom = GeometryField(read_only=True, precision=7)
-
-    class Meta(TrailSerializer.Meta):
-        geo_field = 'api_geom'
-        id_field = 'id'
-        fields = "__all__"
+class TrailGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = Trail
+        fields = ["id", "name"]
