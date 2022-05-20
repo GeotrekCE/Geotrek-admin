@@ -20,28 +20,12 @@ from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.viewsets import GeotrekMapentityViewSet
+from . import models as feedback_models, serializers as feedback_serializers
 from .filters import ReportFilterSet
 from .forms import ReportForm
-from ..feedback import models as feedback_models, serializers as feedback_serializers
 
 
 # class ReportLayer(mapentity_views.MapEntityLayer):
-#     queryset = feedback_models.Report.objects.existing() \
-#         .select_related(
-#             "activity", "category", "problem_magnitude", "status", "related_trek", "assigned_user"
-#     )
-#     model = feedback_models.Report
-#     filterform = ReportFilterSet
-#     properties = ["name", "color"]
-#
-#     def get_queryset(self):
-#         qs = super().get_queryset()  # Filtered by FilterSet
-#         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
-#             qs = qs.filter(assigned_user=self.request.user)
-#         number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
-#         qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F(number), output_field=CharField()))
-#         return qs
-#
 #     def view_cache_key(self):
 #         """Used by the ``view_cache_response_content`` decorator.
 #         """

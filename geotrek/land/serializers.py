@@ -20,7 +20,7 @@ class LandEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = LandEdge
-        fields = ["id", "name", "draft"]
+        fields = ["id", "name", "color_index"]
 
 
 class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -38,7 +38,7 @@ class PhysicalEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = PhysicalEdge
-        fields = ["id", "color_index", "name"]
+        fields = ["id", "name", "color_index"]
 
 
 class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -56,7 +56,7 @@ class CompetenceEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = CompetenceEdge
-        fields = ["id", "color_index", "name"]
+        fields = ["id", "name", "color_index"]
 
 
 class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -74,7 +74,7 @@ class SignageManagementEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = SignageManagementEdge
-        fields = ["id", "color_index", "name"]
+        fields = ["id", "name", "color_index"]
 
 
 class WorkManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -92,4 +92,4 @@ class WorkManagementEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = WorkManagementEdge
-        fields = ["id", "color_index", "name"]
+        fields = ["id", "name", "color_index"]
