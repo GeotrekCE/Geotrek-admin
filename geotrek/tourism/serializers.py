@@ -1,19 +1,19 @@
+from django.conf import settings
+from django.utils.translation import gettext as _
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-
-from django.conf import settings
-from django.utils.translation import gettext as _
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
                                         PictogramSerializerMixin, RecordSourceSerializer,
                                         PicturesSerializerMixin, TranslatedModelSerializer,
                                         TargetPortalSerializer)
-from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.trekking import serializers as trekking_serializers
-from geotrek.tourism import models as tourism_models
+from geotrek.zoning.serializers import ZoningSerializerMixin
+from . import models as tourism_models
 
 
 class LabelAccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -98,6 +98,12 @@ class TouristicContentSerializer(DynamicFieldsMixin, rest_serializers.ModelSeria
         fields = "__all__"
 
 
+class TouristicContentGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = tourism_models.TouristicContent
+        fields = ('id', 'name')
+
+
 class TouristicContentAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin, ZoningSerializerMixin,
                                     TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
@@ -161,6 +167,12 @@ class TouristicEventSerializer(DynamicFieldsMixin, rest_serializers.ModelSeriali
     class Meta:
         model = tourism_models.TouristicEvent
         fields = "__all__"
+
+
+class TouristicEventGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = tourism_models.TouristicEvent
+        fields = ('id', 'name')
 
 
 class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin,
