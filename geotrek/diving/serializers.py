@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
@@ -57,6 +58,11 @@ class DiveSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
         model = diving_models.Dive
         fields = "__all__"
 
+
+class DiveGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = diving_models.Dive
+        fields = ['name', 'published']
 
 class DiveAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
