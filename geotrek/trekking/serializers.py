@@ -6,7 +6,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import GPXSerializer
+from mapentity.serializers import GPXSerializer, MapentityGeojsonModelSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -19,8 +19,8 @@ from geotrek.common.serializers import (
     PublishableSerializerMixin, RecordSourceSerializer,
     TargetPortalSerializer, LabelSerializer,
 )
-from geotrek.trekking import models as trekking_models
 from geotrek.zoning.serializers import ZoningSerializerMixin
+from . import models as trekking_models
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -157,6 +157,12 @@ class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = trekking_models.Trek
         fields = "__all__"
+
+
+class TrekGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = trekking_models.Trek
+        fields = ('id', 'name', 'published')
 
 
 class TrekAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, AltimetrySerializerMixin,
@@ -345,6 +351,12 @@ class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
+class POIGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = trekking_models.POI
+        fields = ('id', 'name', 'published')
+
+
 class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, ZoningSerializerMixin,
                        TranslatedModelSerializer):
     type = POITypeSerializer()
@@ -381,6 +393,14 @@ class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = trekking_models.Service
         fields = "__all__"
+
+
+class ServiceGeojsonSerializer(MapentityGeojsonModelSerializer):
+    name = serializers.CharField(source='type.name')
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = trekking_models.Service
+        fields = ('id', 'name', 'published')
 
 
 class ServiceAPISerializer(serializers.ModelSerializer):
