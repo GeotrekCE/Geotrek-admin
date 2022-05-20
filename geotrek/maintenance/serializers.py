@@ -1,7 +1,7 @@
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
-from rest_framework_gis.fields import GeometryField
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
 from .models import Intervention, Project
 
 
@@ -17,12 +17,10 @@ class InterventionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class InterventionGeojsonSerializer(GeoFeatureModelSerializer, InterventionSerializer):
-    # Annotated geom field with API_SRID
-    api_geom = GeometryField(read_only=True, precision=7)
-
-    class Meta(InterventionSerializer.Meta):
-        geo_field = 'api_geom'
+class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = Intervention
+        fields = ["id", "name"]
 
 
 class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -36,9 +34,7 @@ class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ProjectGeojsonSerializer(GeoFeatureModelSerializer, ProjectSerializer):
-    # Annotated geom field with API_SRID
-    api_geom = GeometryField(read_only=True, precision=7)
-
-    class Meta(ProjectSerializer.Meta):
-        geo_field = 'api_geom'
+class ProjectGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = Project
+        fields = ["id", "name"]
