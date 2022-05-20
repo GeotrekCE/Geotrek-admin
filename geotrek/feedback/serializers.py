@@ -27,7 +27,7 @@ class ReportGeojsonSerializer(MapentityGeojsonModelSerializer):
     name = rest_serializers.CharField()
     color = rest_serializers.CharField()
 
-    class Meta:
+    class Meta(MapentityGeojsonModelSerializer.Meta):
         model = feedback_models.Report
         fields = ["id", "name", "color"]
 
