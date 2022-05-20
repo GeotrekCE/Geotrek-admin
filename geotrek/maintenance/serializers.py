@@ -1,3 +1,4 @@
+from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
@@ -35,6 +36,11 @@ class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class ProjectGeojsonSerializer(MapentityGeojsonModelSerializer):
+    api_geom = serializers.SerializerMethodField()
+
+    def get_api_geom(self, obj):
+        return obj.geom.transform(settings.API_SRID, clone=True)
+
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = Project
         fields = ["id", "name"]
