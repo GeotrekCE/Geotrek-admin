@@ -19,6 +19,11 @@ class InterventionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
+    api_geom = serializers.SerializerMethodField()
+
+    def get_api_geom(self, obj):
+        return obj.geom.transform(settings.API_SRID, clone=True)
+
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = Intervention
         fields = ["id", "name"]
