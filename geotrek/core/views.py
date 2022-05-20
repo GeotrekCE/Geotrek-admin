@@ -281,10 +281,11 @@ class PathViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only("id", "name", "draft")
 
-            return qs
-        return Path.objects.defer('geom', 'geom_cadastre', 'geom_3d')\
-                           .select_related('structure', 'comfort', 'source', 'stake')\
-                           .prefetch_related('usages', 'networks')
+        else:
+            qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')\
+                   .select_related('structure', 'comfort', 'source', 'stake')\
+                   .prefetch_related('usages', 'networks')
+        return qs
 
     def get_columns(self):
         return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('path_view', PathList.default_extra_columns)
@@ -405,8 +406,11 @@ class TrailViewSet(GeotrekMapentityViewSet):
     def get_queryset(self):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
-            return qs
-        return qs.defer('geom', 'geom_3d')
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name')
+        else:
+            qs = qs.defer('geom', 'geom_3d')
+        return qs
 
 
 @permission_required('core.change_path')
