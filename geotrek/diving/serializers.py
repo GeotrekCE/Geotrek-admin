@@ -64,6 +64,7 @@ class DiveGeojsonSerializer(MapentityGeojsonModelSerializer):
         model = diving_models.Dive
         fields = ['id', 'name', 'published']
 
+
 class DiveAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     practice = PracticeSerializer()
