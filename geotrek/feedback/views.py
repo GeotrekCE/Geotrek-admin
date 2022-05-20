@@ -145,7 +145,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
             number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
             qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F(number), output_field=CharField()),
                              api_geom=Transform('geom', settings.API_SRID))
-            qs = qs.only('id', 'name', 'status')
+            qs = qs.only('id', 'status')
             return qs
 
         qs = qs.select_related("activity", "category", "problem_magnitude", "related_trek")\
