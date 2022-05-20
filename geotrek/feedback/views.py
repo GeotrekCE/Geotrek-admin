@@ -1,11 +1,12 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.db.models.functions import Transform
 from django.core.mail import send_mail
-from django.db.models.functions import Concat
 from django.db.models import F, Value, CharField
+from django.db.models.functions import Concat
 from django.urls.base import reverse
-from django.utils.translation import get_language, gettext as _
+from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
 from mapentity import views as mapentity_views
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -19,10 +20,9 @@ from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.viewsets import GeotrekMapentityViewSet
-from geotrek.feedback import models as feedback_models
-from geotrek.feedback import serializers as feedback_serializers
-from geotrek.feedback.filters import ReportFilterSet
-from geotrek.feedback.forms import ReportForm
+from .filters import ReportFilterSet
+from .forms import ReportForm
+from ..feedback import models as feedback_models, serializers as feedback_serializers
 
 
 # class ReportLayer(mapentity_views.MapEntityLayer):
@@ -138,10 +138,9 @@ class ReportUpdate(mapentity_views.MapEntityUpdate):
 
 
 class ReportViewSet(GeotrekMapentityViewSet):
-    """Disable permissions requirement"""
-
     model = feedback_models.Report
     serializer_class = feedback_serializers.ReportSerializer
+    geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     filterset_class = ReportFilterSet
@@ -151,11 +150,22 @@ class ReportViewSet(GeotrekMapentityViewSet):
                                                                          ReportList.default_extra_columns)
 
     def get_queryset(self):
-        qs = self.model.objects.existing().select_related(
-            "activity", "category", "problem_magnitude", "status", "related_trek"
-        ).prefetch_related("attachments")
-        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
-            qs = qs.filter(assigned_user=self.request.user.pk)
+        qs = self.model.objects.existing().select_related("status")
+        if settings.SURICATE_WORKFLOW_ENABLED and not (
+            self.request.user.is_superuser or self.request.user.pk in
+            list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))
+        ):
+            qs = qs.filter(assigned_user=self.request.user)
+
+        if self.format_kwarg == 'geojson':
+            number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
+            qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F(number), output_field=CharField()),
+                             api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name', 'status')
+            return qs
+
+        qs = qs.select_related("activity", "category", "problem_magnitude", "related_trek")\
+               .prefetch_related("attachments")
         return qs
 
 
