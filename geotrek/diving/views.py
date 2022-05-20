@@ -21,12 +21,7 @@ from geotrek.trekking.views import FlattenPicturesMixin
 from .filters import DiveFilterSet
 from .forms import DiveForm
 from .models import Dive
-from .serializers import DiveSerializer, DiveAPIGeojsonSerializer, DiveAPISerializer
-
-
-# class DiveLayer(MapEntityLayer):
-#     properties = ['name', 'published']
-#     queryset = Dive.objects.existing()
+from .serializers import DiveSerializer, DiveGeojsonSerializer, DiveAPIGeojsonSerializer, DiveAPISerializer
 
 
 class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
@@ -148,10 +143,16 @@ class DiveMeta(MetaMixin, DetailView):
 class DiveViewSet(GeotrekMapentityViewSet):
     model = Dive
     serializer_class = DiveSerializer
+    geojson_serializer_class = DiveGeojsonSerializer
     filterset_class = DiveFilterSet
 
     def get_queryset(self):
-        return self.model.objects.existing()
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name', 'published')
+
+        return qs
 
     def get_columns(self):
         return DiveList.mandatory_columns + settings.COLUMNS_LISTS.get('dive_view',
