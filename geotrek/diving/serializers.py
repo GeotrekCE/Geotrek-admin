@@ -62,7 +62,7 @@ class DiveSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
 class DiveGeojsonSerializer(MapentityGeojsonModelSerializer):
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = diving_models.Dive
-        fields = ['name', 'published']
+        fields = ['id', 'name', 'published']
 
 class DiveAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
