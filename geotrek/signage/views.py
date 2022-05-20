@@ -3,24 +3,22 @@ import logging
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from rest_framework import permissions as rest_permissions
-from rest_framework_datatables.filters import DatatablesFilterBackend
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.mixins.forms import FormsetMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
-from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
-from geotrek.signage.forms import SignageForm, BladeForm, LineFormset
-from geotrek.signage.models import Signage, Blade
-from geotrek.signage.serializers import (SignageSerializer, BladeSerializer,
-                                         SignageAPIGeojsonSerializer, CSVBladeSerializer, ZipBladeShapeSerializer,
-                                         SignageAPISerializer, BladeAPISerializer, BladeAPIGeojsonSerializer)
+from .filters import SignageFilterSet, BladeFilterSet
+from .forms import SignageForm, BladeForm, LineFormset
+from .models import Signage, Blade
+from .serializers import (SignageSerializer, BladeSerializer,
+                          SignageAPIGeojsonSerializer, CSVBladeSerializer, ZipBladeShapeSerializer,
+                          SignageAPISerializer, BladeAPISerializer, BladeAPIGeojsonSerializer, SignageGeojsonSerializer,
+                          BladeGeojsonSerializer)
 
 logger = logging.getLogger(__name__)
 
@@ -91,10 +89,16 @@ class SignageDelete(MapEntityDelete):
 class SignageViewSet(GeotrekMapentityViewSet):
     model = Signage
     serializer_class = SignageSerializer
+    geojson_serializer_class = SignageGeojsonSerializer
     filterset_class = SignageFilterSet
 
     def get_queryset(self):
-        qs = Signage.objects.existing().select_related('structure', 'manager', 'sealing', 'type', 'condition')
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name', 'published')
+        else:
+            qs = qs.select_related('structure', 'manager', 'sealing', 'type', 'condition')
         return qs
 
     def get_columns(self):
@@ -213,16 +217,18 @@ class BladeFormatList(MapEntityFormat, BladeList):
 class BladeViewSet(GeotrekMapentityViewSet):
     model = Blade
     serializer_class = BladeSerializer
+    geojson_serializer_class = BladeGeojsonSerializer
     filterset_class = BladeFilterSet
-    filter_backends = [DatatablesFilterBackend, DjangoFilterBackend]  # TODO : fix filter topology
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_columns(self):
         return BladeList.mandatory_columns + settings.COLUMNS_LISTS.get('blade_view',
                                                                         BladeList.default_extra_columns)
 
     def get_queryset(self):
-        return self.model.objects.all()
+        qs = self.model.objects.all()
+        if self.format_kwarg == 'geojson':
+            qs = qs.only('id', 'number')
+        return qs
 
 
 class BladeAPIViewSet(APIViewSet):
