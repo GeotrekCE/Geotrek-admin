@@ -138,12 +138,6 @@ class SiteAPIViewSet(APIViewSet):
             qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
-#
-# class CourseLayer(MapEntityLayer):
-#     properties = ['name']
-#     filterform = CourseFilterSet
-#     queryset = Course.objects.prefetch_related('type').all()
-
 
 class CourseList(CustomColumnsMixin, MapEntityList):
     queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
