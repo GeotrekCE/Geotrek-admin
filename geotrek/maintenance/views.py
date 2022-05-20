@@ -1,6 +1,7 @@
 import logging
 
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Subquery, OuterRef, Sum
 from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
@@ -20,12 +21,6 @@ from .serializers import (InterventionSerializer, ProjectSerializer,
                           InterventionGeojsonSerializer, ProjectGeojsonSerializer)
 
 logger = logging.getLogger(__name__)
-
-
-# class InterventionLayer(MapEntityLayer):
-#     queryset = Intervention.objects.existing()
-#     filterform = InterventionFilterSet
-#     properties = ['name']
 
 
 class InterventionList(CustomColumnsMixin, MapEntityList):
@@ -170,19 +165,14 @@ class InterventionViewSet(GeotrekMapentityViewSet):
     filterset_class = InterventionFilterSet
 
     def get_queryset(self):
-        return self.model.objects.existing()
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name')
+        return qs
 
     def get_columns(self):
         return InterventionList.mandatory_columns + settings.COLUMNS_LISTS.get('intervention_view', InterventionList.default_extra_columns)
-
-
-# class ProjectLayer(MapEntityLayer):
-#     queryset = Project.objects.existing()
-#     properties = ['name']
-#
-#     def get_queryset(self):
-#         nonemptyqs = Intervention.objects.existing().filter(project__isnull=False).values('project')
-#         return super().get_queryset().filter(pk__in=nonemptyqs)
 
 
 class ProjectList(CustomColumnsMixin, MapEntityList):
@@ -253,7 +243,13 @@ class ProjectViewSet(GeotrekMapentityViewSet):
     filterset_class = ProjectFilterSet
 
     def get_queryset(self):
-        return self.model.objects.existing()
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            non_empty_qs = Intervention.objects.existing().filter(project__isnull=False).values('project')
+            qs = qs.filter(pk__in=non_empty_qs)
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name')
+        return qs
 
     def get_columns(self):
         return ProjectList.mandatory_columns + settings.COLUMNS_LISTS.get('project_view', ProjectList.default_extra_columns)
