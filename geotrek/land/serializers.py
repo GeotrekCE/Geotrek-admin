@@ -1,4 +1,5 @@
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 
 from geotrek.land.models import LandEdge, PhysicalEdge, CompetenceEdge, SignageManagementEdge, WorkManagementEdge
@@ -20,6 +21,15 @@ class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = PhysicalEdge
         fields = "__all__"
+
+
+class PhysicalEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
+    color_index = serializers.IntegerField()
+    name = serializers.CharField(source='name')
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = PhysicalEdge
+        fields = ["id", "color_index", "name"]
 
 
 class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
