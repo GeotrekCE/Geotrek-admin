@@ -27,6 +27,7 @@ CHANGELOG
 
 **Maintenance**
 
+- Add a git hook to prevent pushing to master. To enable it, developpers should run the following command from root directory : `ln -s -f ../../.githooks/pre-push .git/hooks/pre-push`
 - Update to paperclip 2.5.0
 
 
