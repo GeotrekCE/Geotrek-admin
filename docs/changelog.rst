@@ -24,6 +24,7 @@ CHANGELOG
 
 - Delete filenames in captions of attachments when importing from Apidae (#2698)
 - Add copyright when importing from Apidae on attachments (#2698)
+- Improve basic fixture for Feedback app allowing to initialize Report form in one go
 
 **Maintenance**
 
