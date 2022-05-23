@@ -515,7 +515,7 @@ class ProjectViewsTest(CommonTest):
 
         self.assertEqual(len(Project.objects.all()), 2)
         self.assertEqual(len(features), 1)
-        self.assertEqual(features[0]['properties']['pk'], p1.pk)
+        self.assertEqual(features[0]['properties']['id'], p1.pk)
 
     def test_project_bbox_filter(self):
         p1 = ProjectFactory.create()
