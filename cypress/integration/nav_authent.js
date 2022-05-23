@@ -57,18 +57,15 @@ describe('Login from home page / admin page', () => {
 
 
 describe('Logout', () => {
-  before(() => {
+  beforeEach(() => {
       const username = 'admin'
       const password = 'admin'
       cy.loginByCSRF(username, password)
       .then((resp) => {
          expect(resp.status).to.eq(200)
       })
+      Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
   })
-
-  beforeEach(() => {
-    Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
-  });
 
   it('Logout', () => {
     cy.visit('/')
