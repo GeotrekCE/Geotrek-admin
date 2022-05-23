@@ -6,6 +6,7 @@ from mapentity.serializers.commasv import CSVSerializer
 from mapentity.serializers.shapefile import ZipShapeSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
+from rest_framework_gis.fields import GeometrySerializerMethodField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
@@ -78,7 +79,7 @@ class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class BladeGeojsonSerializer(MapentityGeojsonModelSerializer):
-    api_geom = serializers.SerializerMethodField()
+    api_geom = GeometrySerializerMethodField()
 
     def get_api_geom(self, obj):
         return obj.geom.transform(4326, clone=True)
