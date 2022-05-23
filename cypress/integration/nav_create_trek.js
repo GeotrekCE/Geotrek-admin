@@ -6,22 +6,13 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 describe('Create trek', () => {
   beforeEach(() => {
-      const username = 'admin';
-      const password = 'admin';
-      cy.setCookie('django_language', 'en');
-      cy.request('/login/?next=/')
-        .its('body')
-        .then((body) => {
-          // we can use Cypress.$ to parse the string body
-          // thus enabling us to query into it easily
-          const $html = Cypress.$(body)
-          const csrf = $html.find('input[name=csrfmiddlewaretoken]').val()
-
-          cy.loginByCSRF(csrf, username, password)
-          .then((resp) => {
-            expect(resp.status).to.eq(200)
-          })
-        })
+    const username = 'admin';
+    const password = 'admin';
+    cy.setCookie('django_language', 'en');
+    cy.loginByCSRF(username, password)
+    .then((resp) => {
+       expect(resp.status).to.eq(200)
+    })
   })
 
   it('Create trek', () => {
