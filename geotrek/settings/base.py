@@ -640,7 +640,7 @@ MOBILE_DURATION_INTERVALS = [
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
-    "toolbar": "bold italic forecolor | bullist numlist link media | "
+    "toolbar": "bold italic forecolor | bullist numlist link image media | "
                "undo redo | "
                "removeformat | code",
     "paste_as_text": True
