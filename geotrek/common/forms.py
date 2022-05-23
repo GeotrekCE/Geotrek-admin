@@ -193,7 +193,7 @@ class CommonForm(MapEntityForm):
             any_published = any([self.cleaned_data.get(f'published_{language[0]}', False)
                                 for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']])
 
-        if self.instance.is_complete:
+        if not self.instance.is_complete():
             if settings.COMPLETENESS_LEVEL == 'error_on_publication':
                 if any_published:
                     return True
@@ -214,13 +214,16 @@ class CommonForm(MapEntityForm):
         for field_required in completeness_fields:
             if field_required in translated_fields:
                 for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-                    field_required = f'{field_required}_{language}'
-                    if not self.cleaned_data.get(field_required):
+                    field_required_lang = f'{field_required}_{language[0]}'
+                    if not self.cleaned_data.get(field_required_lang):
+                        if self.cleaned_data.get(f'published_{language[0]}') and settings.COMPLETENESS_LEVEL == 'error_on_publication':
+                            missing_fields.append(field_required_lang)
+                            self.add_error(field_required_lang, msg)
+            else:
+                if not self.cleaned_data.get(field_required):
+                    missing_fields.append(field_required)
+                    if settings.COMPLETENESS_LEVEL == 'error_on_publication':
                         self.add_error(field_required, msg)
-                        missing_fields.append(field_required)
-            if not self.cleaned_data.get(field_required):
-                self.add_error(field_required, msg)
-                missing_fields.append(field_required)
         return missing_fields
 
     def save(self, commit=True):

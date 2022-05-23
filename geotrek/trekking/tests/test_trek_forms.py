@@ -84,7 +84,8 @@ class TrekCompletenessTest(TestCase):
         cls.user.user_permissions.add(Permission.objects.get(codename='publish_trek'))
         path = PathFactory.create()
         cls.data = {
-            'name_en': 'Trek',
+            'name_en': 'My trek',
+            'name_fr': 'Ma rando',
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -92,9 +93,16 @@ class TrekCompletenessTest(TestCase):
         else:
             cls.data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
 
+    @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
+    def test_completeness_warning(self):
+        """Test form is valid if completeness level is only warning"""
+        data = self.data
+        form = TrekForm(user=self.user, data=data)
+        self.assertTrue(form.is_valid())
+
     @override_settings(COMPLETENESS_LEVEL='error_on_publication')
     @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
-    def test_completeness_error_on_publish(self):
+    def test_completeness_error_on_publish_en(self):
         """Test completeness fields on error if empty"""
         data = self.data
         data['published_en'] = True
@@ -102,20 +110,23 @@ class TrekCompletenessTest(TestCase):
         form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(ValidationError,
-                                    'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
+                                    'Fields are missing to publish object: '
+                                    'practice, departure_en, duration, description_teaser_en'):
             form.clean()
 
     @override_settings(COMPLETENESS_LEVEL='error_on_publication')
     @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
-    def test_completeness_error_on_publish(self):
+    def test_completeness_error_on_publish_fr(self):
         """Test completeness fields on error if empty"""
         data = self.data
+        data['published_en'] = False
         data['published_fr'] = True
 
         form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(ValidationError,
-                                    'Fields are missing to publish object: practice, departure_fr, duration, description_teaser_fr'):
+                                    'Fields are missing to publish object: '
+                                    'practice, departure_fr, duration, description_teaser_fr'):
             form.clean()
 
     @override_settings(PUBLISHED_BY_LANG=False)
@@ -129,9 +140,12 @@ class TrekCompletenessTest(TestCase):
         form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(ValidationError,
-                                    'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
+                                    'Fields are missing to publish object: '
+                                    'practice, departure_en, departure_fr, duration, '
+                                    'description_teaser_en, description_teaser_fr'):
             form.clean()
 
+    @override_settings(LANGUAGE_CODE='fr')
     @override_settings(COMPLETENESS_LEVEL='error_on_review')
     @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
     def test_completeness_error_on_review(self):
@@ -143,17 +157,20 @@ class TrekCompletenessTest(TestCase):
 
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(ValidationError,
-                                    'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
+                                    'Fields are missing to publish object: '
+                                    'practice, departure_fr, duration, description_teaser_fr'):
             form.clean()
 
         # Exception should raise also if object is to be published
         data['published_en'] = True
-        data['review'] = True
+        data['review'] = False
         form = TrekForm(user=self.user, data=data)
 
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(ValidationError,
-                                    'Fields are missing to publish object: practice, departure_en, duration, description_teaser_en'):
+                                    'Fields are missing to publish object: '
+                                    'practice, departure_en, departure_fr, duration, '
+                                    'description_teaser_en, description_teaser_fr'):
             form.clean()
 
 
