@@ -44,8 +44,7 @@ class PathManager(models.Manager):
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible.
         """
-        qs = super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
-        return qs
+        return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
 
 
 class PathInvisibleManager(models.Manager):
