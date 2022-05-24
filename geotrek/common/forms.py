@@ -157,16 +157,15 @@ class CommonForm(MapEntityForm):
         # If model is publishable or reviewable, check completeness fields
         if self.completeness_fields_required:
             completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
-            msg = _('This field is required.')
             if settings.COMPLETENESS_LEVEL == 'error_on_publication':
-                msg = _('This field is required to publish object.')
+                msg_field_error = _('This field is required to publish object.')
             elif settings.COMPLETENESS_LEVEL == 'error_on_review':
-                msg = _('This field is required to review object.')
-            missing_fields = self._get_missing_completeness_fields(completeness_fields, msg)
+                msg_field_error = _('This field is required to review object.')
+            missing_fields = self._get_missing_completeness_fields(completeness_fields, msg_field_error)
 
             if missing_fields:
                 raise ValidationError(
-                    _('Fields are missing to publish object: %(fields)s'),
+                    _('Fields are missing to publish or review object: %(fields)s'),
                     params={
                         'fields': ', '.join(missing_fields)
                     },
@@ -181,25 +180,36 @@ class CommonForm(MapEntityForm):
                                                    "or related to the structure {struc} (in brackets)"), struc=structure))
 
     @property
+    def any_published(self):
+        """Check if form has published in at least one of the language"""
+        return any([self.cleaned_data.get(f'published_{language[0]}', False)
+                    for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']])
+
+    @property
+    def published_languages(self):
+        """Returns languages in which the form has published data.
+        """
+        languages = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        if settings.PUBLISHED_BY_LANG:
+            return [language for language in languages if self.cleaned_data.get(f'published_{language}', None)]
+        elif self.any_published:
+            return languages
+        else:
+            return []
+
+    @property
     def completeness_fields_required(self):
         """Return True if the completeness fields are required"""
         if not issubclass(self._meta.model, PublishableMixin):
             return False
 
-        # Check if form has published in at least one of the language
-        if not settings.PUBLISHED_BY_LANG:
-            any_published = self.cleaned_data.get('published')
-        else:
-            any_published = any([self.cleaned_data.get(f'published_{language[0]}', False)
-                                for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']])
-
         if not self.instance.is_complete():
             if settings.COMPLETENESS_LEVEL == 'error_on_publication':
-                if any_published:
+                if self.any_published:
                     return True
             elif settings.COMPLETENESS_LEVEL == 'error_on_review':
                 # Error on review implies error on publication
-                if self.cleaned_data['review'] or any_published:
+                if self.cleaned_data['review'] or self.any_published:
                     return True
 
         return False
@@ -213,17 +223,20 @@ class CommonForm(MapEntityForm):
         # Add error on each field if it is empty
         for field_required in completeness_fields:
             if field_required in translated_fields:
-                for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-                    field_required_lang = f'{field_required}_{language[0]}'
-                    if not self.cleaned_data.get(field_required_lang):
-                        if self.cleaned_data.get(f'published_{language[0]}') and settings.COMPLETENESS_LEVEL == 'error_on_publication':
+                if self.cleaned_data.get('review') and settings.COMPLETENESS_LEVEL == 'error_on_review':
+                    field_required_lang = f"{field_required}_{settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'][0][0]}"
+                    missing_fields.append(field_required_lang)
+                    self.add_error(field_required_lang, msg)
+                else:
+                    for language in self.published_languages:
+                        field_required_lang = f'{field_required}_{language}'
+                        if not self.cleaned_data.get(field_required_lang):
                             missing_fields.append(field_required_lang)
                             self.add_error(field_required_lang, msg)
             else:
                 if not self.cleaned_data.get(field_required):
                     missing_fields.append(field_required)
-                    if settings.COMPLETENESS_LEVEL == 'error_on_publication':
-                        self.add_error(field_required, msg)
+                    self.add_error(field_required, msg)
         return missing_fields
 
     def save(self, commit=True):
