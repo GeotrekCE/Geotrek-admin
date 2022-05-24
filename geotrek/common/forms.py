@@ -159,6 +159,7 @@ class CommonForm(MapEntityForm):
         # If model is publishable or reviewable,
         # check if completeness fields are required, and raise error if some fields are missing
         if self.completeness_fields_are_required():
+            missing_fields = []
             completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
             if settings.COMPLETENESS_LEVEL == 'error_on_publication':
                 missing_fields = self._get_missing_completeness_fields(completeness_fields,
@@ -166,8 +167,6 @@ class CommonForm(MapEntityForm):
             elif settings.COMPLETENESS_LEVEL == 'error_on_review':
                 missing_fields = self._get_missing_completeness_fields(completeness_fields,
                                                                        _('This field is required to review object.'))
-            else:
-                missing_fields = []
 
             if missing_fields:
                 raise ValidationError(
@@ -200,8 +199,7 @@ class CommonForm(MapEntityForm):
             return [language for language in languages if self.cleaned_data.get(f'published_{language}', None)]
         elif self.any_published:
             return languages
-        else:
-            return []
+        return []
 
     def completeness_fields_are_required(self):
         """Return True if the completeness fields are required"""
