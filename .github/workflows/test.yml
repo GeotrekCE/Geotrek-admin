@@ -235,6 +235,8 @@ jobs:
           cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
+          mkdir -p var/conf/
+          cp cypress/custom.py var/conf/custom.py
           echo 'POSTGRES_USER=ci_test' >> .env
           echo 'POSTGRES_PASSWORD=ci_test' >> .env
           echo 'POSTGRES_DB=ci_test' >> .env
@@ -242,6 +244,7 @@ jobs:
           mkdir -p var/conf/extra_static
           make load_data
           make load_test_integration
+          make load_test_integration_workflow
           docker-compose up -d
 
       - name: Prepare nginx
@@ -340,7 +343,8 @@ jobs:
 
       - name: Install cypress
         run: |
-          npm install cypress
+          cd /home/runner/work/Geotrek-admin/Geotrek-admin/cypress
+          npm ci
 
       - name: E2E test
         run: |
