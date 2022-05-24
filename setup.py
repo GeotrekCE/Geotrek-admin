@@ -33,7 +33,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.1.*',
-        'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@add_geojson_serializer_drf#egg=mapentity',
+        'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@revert_id_geojson#egg=mapentity',
         'env_file',
         # pinned by requirements.txt
         'python-memcached',
