@@ -132,8 +132,10 @@ class CommonForm(MapEntityForm):
                     self.fields[field_to_hide].widget = HiddenInput()
 
     def clean(self):
+        """Check field data with structure and completeness fields if relevant"""
         structure = self.cleaned_data.get('structure')
 
+        # if structure in form, check each field same structure
         if structure:
             # Copy cleaned_data because self.add_error may remove an item
             for name, field in self.cleaned_data.copy().items():
@@ -154,14 +156,18 @@ class CommonForm(MapEntityForm):
                 else:
                     self.check_structure(field, structure, name)
 
-        # If model is publishable or reviewable, check completeness fields
-        if self.completeness_fields_required:
+        # If model is publishable or reviewable,
+        # check if completeness fields are required, and raise error if some fields are missing
+        if self.completeness_fields_are_required():
             completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
             if settings.COMPLETENESS_LEVEL == 'error_on_publication':
-                msg_field_error = _('This field is required to publish object.')
+                missing_fields = self._get_missing_completeness_fields(completeness_fields,
+                                                                       _('This field is required to publish object.'))
             elif settings.COMPLETENESS_LEVEL == 'error_on_review':
-                msg_field_error = _('This field is required to review object.')
-            missing_fields = self._get_missing_completeness_fields(completeness_fields, msg_field_error)
+                missing_fields = self._get_missing_completeness_fields(completeness_fields,
+                                                                       _('This field is required to review object.'))
+            else:
+                missing_fields = []
 
             if missing_fields:
                 raise ValidationError(
@@ -197,8 +203,7 @@ class CommonForm(MapEntityForm):
         else:
             return []
 
-    @property
-    def completeness_fields_required(self):
+    def completeness_fields_are_required(self):
         """Return True if the completeness fields are required"""
         if not issubclass(self._meta.model, PublishableMixin):
             return False
@@ -224,6 +229,7 @@ class CommonForm(MapEntityForm):
         for field_required in completeness_fields:
             if field_required in translated_fields:
                 if self.cleaned_data.get('review') and settings.COMPLETENESS_LEVEL == 'error_on_review':
+                    # get field for first language only
                     field_required_lang = f"{field_required}_{settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'][0][0]}"
                     missing_fields.append(field_required_lang)
                     self.add_error(field_required_lang, msg)
