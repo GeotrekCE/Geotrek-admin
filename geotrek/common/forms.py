@@ -11,7 +11,7 @@ from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 from django.utils.text import format_lazy
-from django.utils.translation import get_language, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from mapentity.forms import MapEntityForm
 
