@@ -15,10 +15,10 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
-from django.urls import reverse
 from django.utils import translation
 from mapentity.helpers import is_file_uptodate
 from mapentity.tests.factories import SuperUserFactory
+from rest_framework.reverse import reverse
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
