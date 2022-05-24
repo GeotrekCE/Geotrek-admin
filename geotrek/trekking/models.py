@@ -715,13 +715,7 @@ class WebLinkCategory(PictogramMixin):
         return "%s" % self.label
 
 
-class POIManager(NoDeleteManager):
-    def get_queryset(self):
-        return super().get_queryset().select_related('type', 'structure')
-
-
 class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
-
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
@@ -732,7 +726,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         verbose_name_plural = _("POI")
 
     # Override default manager
-    objects = POIManager()
+    objects = NoDeleteManager()
 
     # Do no check structure when selecting POIs to exclude
     check_structure_in_forms = False
@@ -832,7 +826,6 @@ class POIType(PictogramMixin):
 
 
 class ServiceType(PictogramMixin, PublishableMixin):
-
     practices = models.ManyToManyField('Practice', related_name="services",
                                        blank=True,
                                        verbose_name=_("Practices"))
@@ -848,11 +841,10 @@ class ServiceType(PictogramMixin, PublishableMixin):
 
 class ServiceManager(NoDeleteManager):
     def get_queryset(self):
-        return super().get_queryset().select_related('type', 'structure')
+        return super().get_queryset().select_related('type')
 
 
 class Service(StructureRelated, MapEntityMixin, Topology):
-
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        on_delete=models.CASCADE)
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)

@@ -8,26 +8,26 @@ from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.urls.base import reverse
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from freezegun import freeze_time
+from mapentity.tests.factories import SuperUserFactory, UserFactory
+from rest_framework.reverse import reverse
+from rest_framework.test import APIClient
 
 from geotrek.authent.tests.base import AuthentFixturesMixin
-from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory, ReportInterventionFactory
-from mapentity.tests.factories import SuperUserFactory, UserFactory
-from rest_framework.test import APIClient
 from geotrek.common.tests import CommonTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
-from geotrek.feedback.tests import factories as feedback_factories
-from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS, test_for_all_suricate_modes, test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
+from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory, ReportInterventionFactory
+from . import factories as feedback_factories
+from .test_suricate_sync import SURICATE_REPORT_SETTINGS, test_for_all_suricate_modes, \
+    test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
 
 
 class ReportViewsetMailSend(TestCase):
-
     @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_MANAGEMENTT_ENABLED=False)
@@ -53,7 +53,6 @@ class ReportViewsetMailSend(TestCase):
 
 
 class ReportSerializationOptimizeTests(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.user = SuperUserFactory.create()
@@ -76,7 +75,8 @@ class ReportSerializationOptimizeTests(TestCase):
 
         # There are 5 queries to get layer
         with self.assertNumQueries(5):
-            response = self.client.get("/api/report/report.geojson")
+            response = self.client.get(reverse("feedback:report-drf-list",
+                                               format="geojson"))
         self.assertEqual(len(response.json()['features']), 4)
 
         # We check the content was created and cached
@@ -87,7 +87,8 @@ class ReportSerializationOptimizeTests(TestCase):
 
         # We have 1 less query because the generation of report was cached
         with self.assertNumQueries(4):
-            self.client.get("/api/report/report.geojson")
+            self.client.get(reverse("feedback:report-drf-list",
+                                    format="geojson"))
 
         self.classified_report_4 = feedback_factories.ReportFactory(status=self.classified_status)
         # Bypass workflow's save method does not actually save
@@ -95,7 +96,8 @@ class ReportSerializationOptimizeTests(TestCase):
 
         # Cache is updated when we add a report
         with self.assertNumQueries(5):
-            self.client.get("/api/report/report.geojson")
+            self.client.get(reverse("feedback:report-drf-list",
+                                    format="geojson"))
 
         self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
 
@@ -334,7 +336,6 @@ class ListOptionsTest(TranslationResetMixin, BaseAPITest):
 
 
 class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.workflow_manager_user = UserFactory()
@@ -358,7 +359,9 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        response = self.client.get(reverse("feedback:report-drf-list",
+                                           format="geojson"),
+                                   data={"status": self.classified_status.pk})
         self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_workflow_mode
@@ -367,7 +370,9 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 1)
-        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        response = self.client.get(reverse("feedback:report-drf-list",
+                                           format="geojson"),
+                                   data={"status": self.classified_status.pk})
         self.assertEqual(len(response.json()['features']), 1)
 
     @test_for_workflow_mode
@@ -376,7 +381,9 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        response = self.client.get(reverse("feedback:report-drf-list",
+                                           format="geojson"),
+                                   data={"status": self.classified_status.pk})
         self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_report_and_basic_modes
@@ -385,8 +392,10 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
-        self.assertEqual(len(response.json()['features']), 3)
+        response = self.client.get(reverse("feedback:report-drf-list",
+                                           format="geojson"),
+                                   data={"status": self.classified_status.pk})
+        self.assertEqual(len(response.json()['features']), 3, response.json()['features'])
 
     @test_for_workflow_mode
     def test_cannot_delete_report_intervention(self):
@@ -429,5 +438,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         response = self.client.get(reverse('feedback:report_list'), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        response = self.client.get(reverse("feedback:report-drf-list",
+                                           format="geojson"),
+                                   data={"status": self.classified_status.pk})
         self.assertEqual(len(response.json()['features']), 3)

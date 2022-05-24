@@ -1,7 +1,6 @@
 import logging
 
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Subquery, OuterRef, Sum
 from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
