@@ -31,7 +31,7 @@ Conventions
 * KISS & DRY as much as possible
 * Elegant and generic is good, simple is better
 * Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``)
-* Features are developed in a branch and merged from Github pull-requests.
+* Features are developed in a branch and merged from Github pull-requests. A git hook to is available to prevent pushing to master, to enable it, developpers should run the following command from root directory (`Geotrek-admin/`) : `ln -s -f ../../.githooks/pre-push .git/hooks/pre-push`
 
 
 Definition of done
