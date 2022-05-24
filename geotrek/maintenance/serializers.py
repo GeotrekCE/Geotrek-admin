@@ -1,22 +1,20 @@
-from rest_framework.serializers import ModelSerializer
+from drf_dynamic_fields import DynamicFieldsMixin
+from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from .models import Intervention, Project
 
 
-class InterventionSerializer(ModelSerializer):
+class InterventionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.CharField(source='name_display')
+    stake = serializers.SlugRelatedField(slug_field='stake', read_only=True)
+    status = serializers.SlugRelatedField(slug_field='status', read_only=True)
+    type = serializers.SlugRelatedField(slug_field='type', read_only=True)
+    target = serializers.CharField(source='target_display')
+
     class Meta:
         model = Intervention
-        fields = (
-            'id', 'name', 'date', 'type', 'status', 'stake',
-            'disorders', 'total_manday', 'subcontracting',
-            'width', 'height', 'length', 'area', 'structure',
-            'description', 'date_insert', 'date_update',
-            'material_cost', 'heliport_cost', 'subcontract_cost',
-            'total_cost_mandays', 'total_cost',
-            'cities', 'districts', 'areas',
-            'length', 'ascent', 'descent', 'min_elevation', 'max_elevation', 'slope',
-        )
+        fields = "__all__"
 
 
 class InterventionGeojsonSerializer(GeoFeatureModelSerializer, InterventionSerializer):
@@ -25,19 +23,17 @@ class InterventionGeojsonSerializer(GeoFeatureModelSerializer, InterventionSeria
 
     class Meta(InterventionSerializer.Meta):
         geo_field = 'api_geom'
-        fields = InterventionSerializer.Meta.fields + ('api_geom', )
 
 
-class ProjectSerializer(ModelSerializer):
+class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.CharField(source='name_display')
+    period = serializers.CharField(source='period_display')
+    type = serializers.SlugRelatedField(slug_field='type', read_only=True)
+    domain = serializers.SlugRelatedField(slug_field='domain', read_only=True)
+
     class Meta:
         model = Project
-        fields = (
-            'id', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
-            'interventions', 'interventions_total_cost', 'comments', 'contractors',
-            'project_owner', 'project_manager', 'founders',
-            'structure', 'date_insert', 'date_update',
-            'cities', 'districts', 'areas',
-        )
+        fields = "__all__"
 
 
 class ProjectGeojsonSerializer(GeoFeatureModelSerializer, ProjectSerializer):
@@ -46,4 +42,3 @@ class ProjectGeojsonSerializer(GeoFeatureModelSerializer, ProjectSerializer):
 
     class Meta(ProjectSerializer.Meta):
         geo_field = 'api_geom'
-        fields = ProjectSerializer.Meta.fields + ('api_geom', )

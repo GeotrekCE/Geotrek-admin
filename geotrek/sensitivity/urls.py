@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import path, register_converter
 
 from mapentity.registry import registry
+from rest_framework.routers import DefaultRouter
 
 from geotrek.common.urls import PublishableEntityOptions, LangConverter
 
@@ -25,6 +26,11 @@ urlpatterns = [
     path('api/<lang:lang>/sensitiveareas/<int:pk>.kml',
          views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),
 ]
+
+router = DefaultRouter(trailing_slash=False)
+router.register(r'^api/(?P<lang>[a-z]{2})/sensitiveareas', views.SensitiveAreaAPIViewSet, basename='sensitivearea')
+urlpatterns += router.urls
+
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     urlpatterns.append(path('api/<lang:lang>/treks/<int:pk>/sensitiveareas.geojson',
                             views.TrekSensitiveAreaViewSet.as_view({'get': 'list'}),

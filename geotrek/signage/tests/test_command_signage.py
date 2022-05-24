@@ -16,8 +16,9 @@ class SignageCommandTest(TestCase):
     """
     There are 2 signages in the file signage.shp
     """
-    def setUp(self):
-        self.path = PathFactory.create()
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory.create()
 
     def test_load_signage(self):
         output = StringIO()

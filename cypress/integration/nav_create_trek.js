@@ -6,33 +6,24 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 describe('Create trek', () => {
   beforeEach(() => {
-      const username = 'admin'
-      const password = 'admin'
-      cy.request('/login/?next=/')
-        .its('body')
-        .then((body) => {
-          // we can use Cypress.$ to parse the string body
-          // thus enabling us to query into it easily
-          const $html = Cypress.$(body)
-          const csrf = $html.find('input[name=csrfmiddlewaretoken]').val()
-
-          cy.loginByCSRF(csrf, username, password)
-          .then((resp) => {
-            expect(resp.status).to.eq(200)
-          })
-        })
+    const username = 'admin';
+    const password = 'admin';
+    cy.setCookie('django_language', 'en');
+    cy.loginByCSRF(username, password)
+    .then((resp) => {
+       expect(resp.status).to.eq(200)
+    })
   })
 
   it('Create trek', () => {
-    cy.visit('http://localhost:8000/trek/list')
+    cy.visit('/trek/list')
     cy.server()
     cy.route('/api/graph.json').as('graph')
     cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click()
     cy.wait('@graph')
     cy.get("a.linetopology-control").click()
-    cy.get('.leaflet-map-pane')
-      .click(405, 290)
-      .click(450, 150);
+    cy.get("textarea[id='id_topology']").type('[{"pk": 2, "kind": "TREK", "offset": 0.0, "paths": [3], "positions": {"0": [0.674882030756843, 0.110030805790642]}}]', {force: true, parseSpecialCharSequences: false})
+    cy.get("input[id='id_duration']").type('100')
     cy.get("input[name='name_en']").type('Trek number 1')
     cy.get("a[href='#name_fr']").click()
     cy.get("input[name='name_fr']").type('Randonnée numéro 1')
@@ -56,12 +47,12 @@ describe('Create trek', () => {
     cy.get('.content').should('contain', 'Trek number 1')
   })
   it('List trek waiting for publication', () => {
-    cy.visit('http://localhost:8000/trek/list')
+    cy.visit('/trek/list')
     cy.get("a[title='Trek number 1']").should('have.length', 1)
     cy.get("span.badge-warning[title='Waiting for publication']").should('have.length', 1)
   })
   it('Change trek waiting for publication', () => {
-    cy.visit('http://localhost:8000/trek/list')
+    cy.visit('/trek/list')
     cy.get("a[title='Trek number 1']").should('have.attr', 'href')
       .then((href) => {
         cy.visit(href)

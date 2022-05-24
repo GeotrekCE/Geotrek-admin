@@ -1,5 +1,5 @@
 =======
-AUTHORS
+Authors
 =======
 
 Makina Corpus
@@ -22,6 +22,7 @@ Makina Corpus
 * Bastien Potiron
 * Emmanuelle Helly
 * Célia Prat
+* Paul Florence
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com

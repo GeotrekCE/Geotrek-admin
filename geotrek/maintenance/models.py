@@ -12,12 +12,11 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, NoDeleteManager
+from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 
@@ -159,6 +158,15 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         return Path.objects.none()
 
     @property
+    def trails(self):
+        s = []
+        for p in self.target.paths.all():
+            for t in p.trails.all():
+                s.append(t.pk)
+
+        return Trail.objects.filter(pk__in=s)
+
+    @property
     def total_manday(self):
         total = 0.0
         for md in self.manday_set.all():
@@ -272,14 +280,14 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     @property
     def signages(self):
-        if self.target_type == ContentType.objects.get_for_model(Signage):
-            return [self.target]
+        if hasattr(self.target, 'signages'):
+            return self.target.signages
         return []
 
     @property
     def infrastructures(self):
-        if self.target_type == ContentType.objects.get_for_model(Infrastructure):
-            return [self.target]
+        if hasattr(self.target, 'infrastructures'):
+            return self.target.infrastructures
         return []
 
     def distance(self, to_cls):

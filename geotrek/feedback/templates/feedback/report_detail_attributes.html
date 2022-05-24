@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n mapentity_tags %}
+{% load i18n mapentity_tags feedback_tags %}
 
 
 {% block attributes %}
@@ -11,7 +11,7 @@
         </tr>
         <tr>
             <th>{{ report|verbose:"comment" }}</th>
-            <td>{{ report.comment|safe }}</td>
+            <td>{{ report.comment|safe|linebreaks }}</td>
         </tr>
         <tr>
             <th>{{ report|verbose:"activity" }}</th>
@@ -33,41 +33,80 @@
             <th>{{ report|verbose:"related_trek" }}</th>
             <td>{{ report.related_trek }}</td>
         </tr>
-        {% if suricate_enabled %}
+        <tr>
+            <th>{% trans "Districts" %}</th>
+            <td>
+                {% for district in report.districts %}
+                    {{ district.name }}{% if not forloop.last %}, {% endif %}
+                {%endfor%}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Cities" %}</th>
+            <td>
+                {% for city in report.cities %}
+                    {{ city.name }}{% if not forloop.last %}, {% endif %}
+                {%endfor%}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ report|verbose:"assigned_user" }}</th>
+            <td>{{ report.assigned_user }}</td>
+        </tr>
+        {% suricate_management_enabled as suricate_management_enabled %}
+        {% if suricate_management_enabled %}
+        <tr>
+            <th>{{ report|verbose:"created_in_suricate" }}</th>
+            <td>{{ report.created_in_suricate }}</td>
+        <tr>
+            <th>{{ report|verbose:"last_updated_in_suricate" }}</th>
+            <td>{{ report.last_updated_in_suricate }}</td>
+        </tr>
+        <tr>
+            <th>{{ report|verbose:"external_uuid" }}</th>
+            <td>{{ report.external_uuid }}</td>
+        </tr>
+        <tr>
+            <th>{{ report|verbose:"origin" }}</th>
+            <td>{{ report.origin }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Messages" %}</th>
+            <td>
+                {% for msg in report.attachedmessage_set.all %}
+                    {% if forloop.first %}
+                    <table>
+                    <thead><th>{% trans "Text" %}</th><th>{% trans "Author" %}</th><th>{% trans "Date" %}</th></thead>
+                    <tbody>
+                    {% endif %}
+                    <tr><td>{{ msg.content|safe|linebreaks }}</td><td>{{ msg.author }}</td><td>{{ msg.date }}</td></tr>
+                    {% if forloop.last %}
+                    </tbody>
+                    </table>
+                    {% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+        {% suricate_workflow_enabled as suricate_workflow_enabled %}
+        {% suricate_management_enabled as suricate_management_enabled %}
+        {% if suricate_management_enabled or suricate_workflow_enabled %}
             <tr>
-                <th>{{ report|verbose:"created_in_suricate" }}</th>
-                <td>{{ report.created_in_suricate }}</td>
-            <tr>
-                <th>{{ report|verbose:"last_updated_in_suricate" }}</th>
-                <td>{{ report.last_updated_in_suricate }}</td>
+                <th>{{ report|verbose:"eid" }}</th>
+                <td>{{ report.eid }}</td>
             </tr>
-            <tr>
-                <th>{{ report|verbose:"locked" }}</th>
-                <td>{{ report.locked }}</td>
-            </tr>
-            <tr>
-                <th>{{ report|verbose:"uid" }}</th>
-                <td>{{ report.uid }}</td>
-            </tr>
-            <tr>
-                <th>{% trans "Messages" %}</th>
-                <td>
-                    {% for msg in report.attachedmessage_set.all %}
-                        {% if forloop.first %}
-                        <table>
-                        <thead><th>{% trans "Text" %}</th><th>{% trans "Author" %}</th><th>{% trans "Date" %}</th></thead>
-                        <tbody>
-                        {% endif %}
-                        <tr><td>{{ msg.content }}</td><td>{{ msg.author }}</td><td>{{ msg.date }}</td></tr>
-                        {% if forloop.last %}
-                        </tbody>
-                        </table>
-                        {% endif %}
-                    {% empty %}
-                        <span class="none">{% trans "None" %}</span>
-                    {% endfor %}
-                </td>
-            </tr>
+        {% endif %}
+        {% if suricate_workflow_enabled %}
+        <tr>
+            <th>{{ report|verbose:"uses_timers" }}</th>
+            <td>{{ report.uses_timers }}</td>
+        </tr>
+        <tr>
+            <th>{{ report|verbose:"locked" }}</th>
+            <td>{{ report.locked }}</td>
+        </tr>
         {% endif %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
@@ -80,14 +119,22 @@
                     {% with columns="name,status,stake,total_cost,date" %}
                             {% valuetable report.interventions.all columns=columns %}
                     {% endwith %}
-                    {% if report.interventions.all|length == 0 %}
-                    <p class="spacer"></p>
-
-                    <p class="autohide">
-                        <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"
-                        class="btn btn-sm btn-success">
-                        <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
-                    </p>
+                    {% if not suricate_workflow_enabled %}
+                        <p class="spacer"></p>
+                        <p class="autohide">
+                            <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"
+                            class="btn btn-sm btn-success">
+                            <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
+                        </p>
+                    {% elif suricate_workflow_enabled and report.interventions.all|length == 0 %}
+                        {% if report.status.identifier == 'late_intervention' or report.status.identifier == 'waiting' %}
+                            <p class="spacer"></p>
+                            <p class="autohide">
+                                <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"
+                                class="btn btn-sm btn-success">
+                                <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
+                            </p>
+                        {% endif %}
                     {% endif %}
                 </td>
             {% endif %}

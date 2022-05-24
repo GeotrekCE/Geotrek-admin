@@ -120,8 +120,11 @@ class CommandUnsetStructureTests(TestCase):
 
 
 class CommandAttachmentsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.content = POIFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+
     def setUp(self):
-        self.content = POIFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
         self.picture = AttachmentFactory(content_object=self.content,
                                          attachment_file=get_dummy_uploaded_image())
 

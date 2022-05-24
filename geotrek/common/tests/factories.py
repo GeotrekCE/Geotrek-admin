@@ -57,6 +57,13 @@ class FileTypeFactory(factory.django.DjangoModelFactory):
     type = factory.Sequence(lambda n: "FileType %s" % n)
 
 
+class LicenseFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.License
+
+    label = factory.Sequence(lambda n: "License %s" % n)
+
+
 class AttachmentFactory(factory.django.DjangoModelFactory):
     """
     Create an attachment. You must provide an 'obj' keywords,
@@ -68,6 +75,7 @@ class AttachmentFactory(factory.django.DjangoModelFactory):
 
     attachment_file = get_dummy_uploaded_file()
     filetype = factory.SubFactory(FileTypeFactory)
+    license = factory.SubFactory(LicenseFactory)
 
     creator = factory.SubFactory(UserFactory)
     title = factory.Sequence("Title {0}".format)

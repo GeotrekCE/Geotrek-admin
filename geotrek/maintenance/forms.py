@@ -1,19 +1,22 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Div, Fieldset, Layout
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.forms import FloatField
-from django.utils.translation import gettext_lazy as _
 from django.forms.models import inlineformset_factory
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Fieldset, Layout, Div
+from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
+from geotrek.feedback.models import WorkflowManager
 
 from .models import Intervention, InterventionJob, ManDay, Project
+
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    from geotrek.feedback.models import Report, ReportStatus, TimerEvent
 
 
 class ManDayForm(forms.ModelForm):
@@ -141,6 +144,20 @@ class InterventionForm(CommonForm):
 
     def save(self, *args, **kwargs):
         target = self.instance.target
+        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED and isinstance(target, Report):
+            # If this is an intervention programmed for a report, change report status
+            if 'status' in self.changed_data and self.instance.status.order == 20:
+                programmed_status = ReportStatus.objects.get(identifier='programmed')
+                target.status = programmed_status
+                target.save()
+                TimerEvent.objects.create(step=programmed_status, report=target)
+            # If this is an intervention being resolved for a report, change report status and notify
+            elif 'status' in self.changed_data and self.instance.status.order == 30:
+                resolved_status = ReportStatus.objects.get(identifier='solved_intervention')
+                target.status = resolved_status
+                target.assigned_user = WorkflowManager.objects.first().user
+                target.save()
+                WorkflowManager.objects.first().notify_report_to_solve(target)
         if not target.pk:
             target.save()
         topology = self.cleaned_data.get('topology')

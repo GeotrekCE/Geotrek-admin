@@ -23,12 +23,11 @@ class ZoningFilterTest(TestCase):
         cls.area_2 = RestrictedAreaFactory.create(name='area_out', geom=cls.geom_2_wkt)
         cls.area_type_3 = RestrictedAreaTypeFactory.create()
 
-    def setUp(self):
-        self.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
+        cls.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.trek = TrekFactory.create(paths=[self.path], published=False)
+            cls.trek = TrekFactory.create(paths=[cls.path], published=False)
         else:
-            self.trek = TrekFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)', published=False)
+            cls.trek = TrekFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)', published=False)
 
     def test_filter_zoning_city(self):
         filter = PathFilterSet(data={'city': [self.city, ]})

@@ -333,11 +333,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
 
 
 class TrekUpdateGeomTest(TestCase):
-    def setUp(self):
-        self.trek = TrekFactory.create(published=True, geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154))
-
-    def tearDown(self):
-        del (self.trek)
+    @classmethod
+    def setUpTestData(cls):
+        cls.trek = TrekFactory.create(published=True, geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154))
 
     def test_save_with_same_geom(self):
         geom = LineString(((700000, 6600000), (700100, 6600100)), srid=2154)
@@ -451,11 +449,13 @@ class TrekItinerancyTest(TestCase):
 
 
 class MapImageExtentTest(TestCase):
-    def setUp(self):
-        self.trek = TrekFactory.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.trek = TrekFactory.create(
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID),
         )
+        POIFactory.create(paths=[(cls.trek.paths.first(), 0.25, 0.25)], published=True)
 
     def test_get_map_image_extent(self):
         lng_min, lat_min, lng_max, lat_max = self.trek.get_map_image_extent()
@@ -474,4 +474,4 @@ class RatingScaleTest(TestCase):
 class RatingTest(TestCase):
     def test_rating_str(self):
         scale = RatingFactory.create(name='Bar')
-        self.assertEqual(str(scale), 'Bar')
+        self.assertEqual(str(scale), 'RatingScale : Bar')

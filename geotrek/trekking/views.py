@@ -7,39 +7,37 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
-
 from django.utils.html import escape
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityFormat, MapEntityDetail, MapEntityMapImage,
-                             MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+                             MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
-from geotrek.api.v2.functions import Length
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.functions import Length
+from geotrek.common.mixins.api import APIViewSet
+from geotrek.common.mixins.forms import FormsetMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
-from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
-                                  DocumentBookletPublic, MarkupPublic)
 from geotrek.common.permissions import PublicOrReadPermMixin
+from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
-from geotrek.zoning.models import District, City, RestrictedArea
-
-from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
-from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
-                    WebLinkCreateFormPopup, ServiceForm)
-from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
-from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer,
-                          TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
 from geotrek.infrastructure.models import Infrastructure
+from geotrek.infrastructure.serializers import InfrastructureAPIGeojsonSerializer
 from geotrek.signage.models import Signage
-from geotrek.infrastructure.serializers import InfrastructureGeojsonSerializer
-from geotrek.signage.serializers import SignageGeojsonSerializer
+from geotrek.signage.serializers import SignageAPIGeojsonSerializer
+from geotrek.zoning.models import District, City, RestrictedArea
+from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
+from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup, ServiceForm
+from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
+from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer, POIAPIGeojsonSerializer,
+                          ServiceAPIGeojsonSerializer, TrekAPISerializer, TrekAPIGeojsonSerializer, POIAPISerializer,
+                          ServiceAPISerializer)
 
 
 class FlattenPicturesMixin:
@@ -66,10 +64,8 @@ class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = Trek.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
-
-
-class TrekJsonList(MapEntityJsonList, TrekList):
-    pass
+    unorderable_columns = ['thumbnail']
+    searchable_columns = ['id', 'name', 'departure', 'arrival']
 
 
 class TrekFormatList(MapEntityFormat, TrekList):
@@ -77,10 +73,10 @@ class TrekFormatList(MapEntityFormat, TrekList):
     default_extra_columns = [
         'eid', 'eid2', 'structure', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
         'description_teaser', 'networks', 'advice', 'gear', 'ambiance', 'difficulty', 'information_desks',
-        'themes', 'practice', 'ratings', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
-        'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
-        'accessibility_width', 'access', 'route', 'public_transport', 'advised_parking', 'web_links', 'labels',
-        'accessibility_infrastructure', 'parking_location', 'points_reference',
+        'themes', 'practice', 'ratings', 'ratings_description', 'accessibilities', 'accessibility_advice',
+        'accessibility_covering', 'accessibility_exposure', 'accessibility_level', 'accessibility_signage',
+        'accessibility_slope', 'accessibility_width', 'accessibility_infrastructure', 'access', 'route',
+        'public_transport', 'advised_parking', 'web_links', 'labels', 'parking_location', 'points_reference',
         'related', 'children', 'parents', 'pois', 'review', 'published',
         'publication_date', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'source', 'portal', 'length_2d', 'uuid',
@@ -244,27 +240,67 @@ class TrekMeta(MetaMixin, DetailView):
     template_name = 'trekking/trek_meta.html'
 
 
+class TrekViewSet(GeotrekMapentityViewSet):
+    model = Trek
+    serializer_class = TrekSerializer
+    filterset_class = TrekFilterSet
+
+    def get_queryset(self):
+        return self.model.objects.existing().prefetch_related('attachments')
+
+    def get_columns(self):
+        return TrekList.mandatory_columns + settings.COLUMNS_LISTS.get('trek_view',
+                                                                       TrekList.default_extra_columns)
+
+
+class TrekAPIViewSet(APIViewSet):
+    model = Trek
+    serializer_class = TrekAPISerializer
+    geojson_serializer_class = TrekAPIGeojsonSerializer
+
+    def get_queryset(self):
+        qs = self.model.objects.existing()
+        qs = qs.select_related('structure', 'difficulty', 'practice', 'route', 'accessibility_level')
+        qs = qs.prefetch_related(
+            'networks', 'source', 'portal', 'web_links', 'accessibilities', 'themes', 'aggregations',
+            'information_desks', 'attachments',
+            Prefetch('trek_relationship_a', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
+            Prefetch('trek_relationship_b', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
+            Prefetch('trek_children', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
+            Prefetch('trek_parents', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
+        )
+        qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True)).distinct('practice__order', 'pk'). \
+            order_by('-practice__order', 'pk')
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
+
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        qs = qs.annotate(length_2d_m=Length('geom'))
+
+        return qs
+
+
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
     properties = ['name', 'published']
 
 
 class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
-    model = POI
-    queryset = model.objects.existing()
+    queryset = POI.objects.existing()
     filterform = POIFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'thumbnail']
-
-
-class POIJsonList(MapEntityJsonList, POIList):
-    pass
+    unorderable_columns = ['thumbnail']
+    searchable_columns = ['id', 'name', ]
 
 
 class POIFormatList(MapEntityFormat, POIList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'id', 'structure', 'eid', 'name', 'type', 'description', 'treks',
+        'structure', 'eid', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',
@@ -284,19 +320,18 @@ class POIFormatList(MapEntityFormat, POIList):
             for d in land_layer.objects.all():
                 overlapping = POI.objects.existing().filter(geom__within=d.geom)
                 for pid in overlapping.values_list('id', flat=True):
-                    denormalized[attrname].setdefault(pid, []).append(d)
+                    denormalized[attrname].setdefault(pid, []).append(str(d))
 
         # Same for treks
         denormalized['treks'] = {}
         for d in Trek.objects.existing():
             for pid in d.pois.all():
                 denormalized['treks'].setdefault(pid, []).append(d)
-
         for poi in qs:
             # Put denormalized in specific attribute used in serializers
             for attrname in denormalized.keys():
                 overlapping = denormalized[attrname].get(poi.id, [])
-                setattr(poi, '%s_csv_display' % attrname, overlapping)
+                setattr(poi, '%s_csv_display' % attrname, ', '.join(overlapping))
             yield poi
 
 
@@ -350,42 +385,23 @@ class WebLinkCreatePopup(CreateView):
         """ % (escape(form.instance._get_pk_val()), escape(form.instance)))
 
 
-class TrekViewSet(MapEntityViewSet):
-    model = Trek
-    serializer_class = TrekSerializer
-    geojson_serializer_class = TrekGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        qs = self.model.objects.existing()
-        qs = qs.select_related('structure', 'difficulty', 'practice', 'route', 'accessibility_level')
-        qs = qs.prefetch_related(
-            'networks', 'source', 'portal', 'web_links', 'accessibilities', 'themes', 'aggregations',
-            'information_desks', 'attachments',
-            Prefetch('trek_relationship_a', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
-            Prefetch('trek_relationship_b', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
-            Prefetch('trek_children', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
-            Prefetch('trek_parents', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
-        )
-        qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True)).distinct('practice__order', 'pk').\
-            order_by('-practice__order', 'pk')
-        if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
-
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
-
-        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        qs = qs.annotate(length_2d_m=Length('geom'))
-
-        return qs
-
-
-class POIViewSet(MapEntityViewSet):
+class POIViewSet(GeotrekMapentityViewSet):
     model = POI
     serializer_class = POISerializer
-    geojson_serializer_class = POIGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    filterset_class = POIFilterSet
+
+    def get_columns(self):
+        return POIList.mandatory_columns + settings.COLUMNS_LISTS.get('poi_view',
+                                                                      POIList.default_extra_columns)
+
+    def get_queryset(self):
+        return POI.objects.existing()
+
+
+class POIAPIViewSet(APIViewSet):
+    model = POI
+    serializer_class = POIAPISerializer
+    geojson_serializer_class = POIAPIGeojsonSerializer
 
     def get_queryset(self):
         return POI.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
@@ -393,7 +409,7 @@ class POIViewSet(MapEntityViewSet):
 
 class TrekPOIViewSet(viewsets.ModelViewSet):
     model = POI
-    serializer_class = POIGeojsonSerializer
+    serializer_class = POIAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -406,7 +422,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
 
 class TrekSignageViewSet(viewsets.ModelViewSet):
     model = Signage
-    serializer_class = SignageGeojsonSerializer
+    serializer_class = SignageAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -419,7 +435,7 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
 
 class TrekInfrastructureViewSet(viewsets.ModelViewSet):
     model = Infrastructure
-    serializer_class = InfrastructureGeojsonSerializer
+    serializer_class = InfrastructureAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -436,14 +452,11 @@ class ServiceLayer(MapEntityLayer):
 
 
 class ServiceList(CustomColumnsMixin, MapEntityList):
+    queryset = Service.objects.existing()
     filterform = ServiceFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = []
-    queryset = Service.objects.existing()
-
-
-class ServiceJsonList(MapEntityJsonList, ServiceList):
-    pass
+    searchable_columns = ['id', 'name']
 
 
 class ServiceFormatList(MapEntityFormat, ServiceList):
@@ -484,11 +497,22 @@ class ServiceDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class ServiceViewSet(MapEntityViewSet):
+class ServiceViewSet(GeotrekMapentityViewSet):
     model = Service
     serializer_class = ServiceSerializer
-    geojson_serializer_class = ServiceGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return self.model.objects.existing()
+
+    def get_columns(self):
+        return ServiceList.mandatory_columns + settings.COLUMNS_LISTS.get('service_view',
+                                                                          ServiceList.default_extra_columns)
+
+
+class ServiceAPIViewSet(APIViewSet):
+    model = Service
+    serializer_class = ServiceAPISerializer
+    geojson_serializer_class = ServiceAPIGeojsonSerializer
 
     def get_queryset(self):
         return Service.objects.existing().filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
@@ -496,7 +520,7 @@ class ServiceViewSet(MapEntityViewSet):
 
 class TrekServiceViewSet(viewsets.ModelViewSet):
     model = Service
-    serializer_class = ServiceGeojsonSerializer
+    serializer_class = ServiceAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):

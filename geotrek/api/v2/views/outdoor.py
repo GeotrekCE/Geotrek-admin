@@ -1,10 +1,12 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
+from django.db.models.query import Prefetch
 from django.utils.translation import activate
 
 from geotrek.api.v2 import serializers as api_serializers, \
     filters as api_filters, viewsets as api_viewsets
-from geotrek.api.v2.functions import Transform
+from geotrek.common.models import Attachment
 from geotrek.outdoor import models as outdoor_models
 
 
@@ -21,6 +23,8 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return outdoor_models.Site.objects \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+            .prefetch_related(Prefetch('attachments',
+                                       queryset=Attachment.objects.select_related('license'))) \
             .order_by('name')  # Required for reliable pagination
 
 
@@ -87,4 +91,6 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return outdoor_models.Course.objects \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+            .prefetch_related(Prefetch('attachments',
+                                       queryset=Attachment.objects.select_related('license'))) \
             .order_by('name')  # Required for reliable pagination

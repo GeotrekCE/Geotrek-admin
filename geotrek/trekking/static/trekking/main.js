@@ -1,5 +1,4 @@
 
-
 $(window).on('entity:view:add entity:view:update', function (e, data) {
     if (data.modelname == 'trek') {
 

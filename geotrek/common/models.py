@@ -10,11 +10,10 @@ from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
-from paperclip.models import Attachment as BaseAttachment
-from paperclip.models import FileType as BaseFileType
+from paperclip.models import Attachment as BaseAttachment, FileType as BaseFileType, License as BaseLicense
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins import OptionalPictogramMixin, PictogramMixin
+from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin
 
 
 class AccessibilityAttachmentManager(models.Manager):
@@ -35,7 +34,15 @@ def attachment_accessibility_upload(instance, filename):
         renamed)
 
 
+class License(StructureOrNoneRelated, BaseLicense):
+    class Meta(BaseLicense.Meta):
+        verbose_name = _("Attachment license")
+        verbose_name_plural = _("Attachment licenses")
+        ordering = ['label']
+
+
 class AccessibilityAttachment(models.Model):
+    # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
     class InfoAccessibilityChoices(models.TextChoices):
         SLOPE = 'slope', _('Slope')
         WIDTH = 'width', _('Width')
@@ -54,6 +61,10 @@ class AccessibilityAttachment(models.Model):
                                           max_length=7,
                                           choices=InfoAccessibilityChoices.choices,
                                           default=InfoAccessibilityChoices.SLOPE)
+    license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
+                                verbose_name=_("License"),
+                                null=True, blank=True,
+                                on_delete=models.SET_NULL)
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -61,13 +72,13 @@ class AccessibilityAttachment(models.Model):
                                 verbose_name=_('Creator'),
                                 help_text=_("User that uploaded"), on_delete=models.CASCADE)
     author = models.CharField(blank=True, default='', max_length=128,
-                              db_column='auteur', verbose_name=_('Author'),
+                              verbose_name=_('Author'),
                               help_text=_("Original creator"))
     title = models.CharField(blank=True, default='', max_length=128,
-                             db_column='titre', verbose_name=_(u"Filename"),
+                             verbose_name=_("Filename"),
                              help_text=_("Renames the file"))
     legend = models.CharField(blank=True, default='', max_length=128,
-                              db_column='legende', verbose_name=_(u"Legend"),
+                              verbose_name=_("Legend"),
                               help_text=_("Details displayed"))
     date_insert = models.DateTimeField(editable=False, auto_now_add=True,
                                        verbose_name=_("Insertion date"))
@@ -255,7 +266,7 @@ class RatingMixin(OptionalPictogramMixin, models.Model):
     color = ColorField(verbose_name=_("Color"), blank=True)
 
     def __str__(self):
-        return self.name
+        return "{} : {}".format(self.scale.name, self.name)
 
     class Meta:
         abstract = True

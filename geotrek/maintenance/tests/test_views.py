@@ -96,8 +96,18 @@ class InterventionViewsTest(CommonTest):
             good_data['topology'] = 'SRID=4326;POINT (5.1 6.6)'
         return good_data
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'date': '30/03/2022',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'stake': self.obj.stake.stake,
+            'status': self.obj.status.status,
+            'type': self.obj.type.type,
+            'target': self.obj.target_display
+        }
+
     def test_creation_form_on_signage(self):
-        self.login()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             signa = SignageFactory.create()
         else:
@@ -121,7 +131,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(signa, Intervention.objects.get().target)
 
     def test_detail_target_objects(self):
-        self.login()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create(geom=LineString((200, 200), (300, 300)))
             signa = SignageFactory.create(paths=[(path, .5, .5)])
@@ -172,8 +181,6 @@ class InterventionViewsTest(CommonTest):
         self.assertNotContains(response, intervention_other.target_display)
 
     def test_creation_form_on_signage_with_errors(self):
-        self.login()
-
         if settings.TREKKING_TOPOLOGY_ENABLED:
             signa = SignageFactory.create()
         else:
@@ -199,8 +206,6 @@ class InterventionViewsTest(CommonTest):
         self.assertFalse(Intervention.objects.exists())
 
     def test_update_form_on_signage(self):
-        self.login()
-
         if settings.TREKKING_TOPOLOGY_ENABLED:
             signa = SignageFactory.create()
         else:
@@ -227,7 +232,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_update_signage(self):
-        self.login()
         target_year = 2017
         if settings.TREKKING_TOPOLOGY_ENABLED:
             intervention = SignageInterventionFactory.create()
@@ -238,7 +242,7 @@ class InterventionViewsTest(CommonTest):
         response = self.client.get(signa.get_update_url())
         form = response.context['form']
         data = form.initial
-        data['name'] = 'modified'
+        data['name_en'] = 'modified'
         data['implantation_year'] = target_year
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
@@ -254,7 +258,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(intervention.target.implantation_year, target_year)
 
     def test_creation_form_on_infrastructure(self):
-        self.login()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             infra = InfrastructureFactory.create()
         else:
@@ -273,8 +276,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_creation_form_on_infrastructure_with_errors(self):
-        self.login()
-
         if settings.TREKKING_TOPOLOGY_ENABLED:
             infra = InfrastructureFactory.create()
         else:
@@ -294,8 +295,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_update_form_on_infrastructure(self):
-        self.login()
-
         if settings.TREKKING_TOPOLOGY_ENABLED:
             infra = InfrastructureFactory.create()
         else:
@@ -322,14 +321,12 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_disorders_not_mandatory(self):
-        self.login()
         data = self.get_good_data()
         data.pop('disorders')
         response = self.client.post(Intervention.get_add_url(), data)
         self.assertEqual(response.status_code, 302)
 
     def test_update_infrastructure(self):
-        self.login()
         target_year = 2017
         if settings.TREKKING_TOPOLOGY_ENABLED:
             intervention = InfrastructureInterventionFactory.create()
@@ -340,8 +337,9 @@ class InterventionViewsTest(CommonTest):
         response = self.client.get(infra.get_update_url())
         form = response.context['form']
         data = form.initial
-        data['name'] = 'modified'
+        data['name_en'] = 'modified'
         data['implantation_year'] = target_year
+        data['accessibility'] = ''
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:
@@ -358,7 +356,6 @@ class InterventionViewsTest(CommonTest):
         """
         Without segmentation dynamic we do not have paths so we can't put any stake by default coming from paths
         """
-        self.login()
         good_data = self.get_good_data()
         good_data['stake'] = ''
         good_data['topology'] = """
@@ -372,7 +369,6 @@ class InterventionViewsTest(CommonTest):
         self.assertFalse(intervention.stake is None)
 
     def test_form_deleted_projects(self):
-        self.login()
         p1 = ProjectFactory.create()
         p2 = ProjectFactory.create()
         i = InterventionFactory.create(project=p1)
@@ -388,7 +384,6 @@ class InterventionViewsTest(CommonTest):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_csv_on_topology_multiple_paths(self):
         # We create an intervention on multiple paths and we check in csv target's field we have all the paths
-        self.login()
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((4, 0), (8, 0)))
         InterventionFactory.create(target=TopologyFactory.create(paths=[(path_AB, 0.2, 1),
@@ -492,11 +487,19 @@ class ProjectViewsTest(CommonTest):
             'funding_set-1-DELETE': ''
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'domain': None,
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'period': self.obj.period_display,
+            'type': None
+        }
+
     def _check_update_geom_permission(self, response):
         pass
 
     def test_project_layer(self):
-        self.login()
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -515,8 +518,6 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(features[0]['properties']['pk'], p1.pk)
 
     def test_project_bbox_filter(self):
-        self.login()
-
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         ProjectFactory.create()
@@ -527,11 +528,11 @@ class ProjectViewsTest(CommonTest):
         InterventionFactory.create(project=p1, target=t)
 
         def jsonlist(bbox):
-            url = self.model.get_jsonlist_url() + bbox
+            url = self.model.get_datatablelist_url() + bbox
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             jsondict = response.json()
-            return jsondict['aaData']
+            return jsondict['data']
 
         # Check that projects without interventions are always present
         self.assertEqual(len(Project.objects.all()), 3)
@@ -549,8 +550,6 @@ class ProjectViewsTest(CommonTest):
         else:
             intervention = InterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         project.interventions.add(intervention)
-
-        self.login()
         response = self.client.get(project.get_detail_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, intervention.name)
@@ -646,21 +645,23 @@ class ExportTest(TranslationResetMixin, TestCase):
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
 class TestDetailedJobCostsExports(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+
+        cls.job1 = InterventionJobFactory(job="Worker", cost=12)
+        cls.job2 = InterventionJobFactory(job="Streamer", cost=60)
+        cls.job1_column_name = "Cost Worker"
+        cls.job2_column_name = "Cost Streamer"
+        cls.interv = InterventionFactory()
+        cls.manday1 = ManDayFactory(nb_days=3, job=cls.job1, intervention=cls.interv)
+        cls.manday2 = ManDayFactory(nb_days=2, job=cls.job2, intervention=cls.interv)
+
+        cls.job3 = InterventionJobFactory(job="Banker", cost=5000)
+        cls.job3_column_name = "Cost Banker"
 
     def setUp(self):
-        self.user = SuperUserFactory.create()
         self.client.force_login(self.user)
-
-        self.job1 = InterventionJobFactory(job="Worker", cost=12)
-        self.job2 = InterventionJobFactory(job="Streamer", cost=60)
-        self.job1_column_name = "Cost Worker"
-        self.job2_column_name = "Cost Streamer"
-        self.interv = InterventionFactory()
-        self.manday1 = ManDayFactory(nb_days=3, job=self.job1, intervention=self.interv)
-        self.manday2 = ManDayFactory(nb_days=2, job=self.job2, intervention=self.interv)
-
-        self.job3 = InterventionJobFactory(job="Banker", cost=5000)
-        self.job3_column_name = "Cost Banker"
 
     def test_detailed_mandays_export(self):
         '''Test detailed intervention job costs are exported properly, and follow data changes'''
@@ -743,23 +744,29 @@ class TestDetailedJobCostsExports(TestCase):
             temp_directory = TemporaryDirectory()
             mzip.extractall(path=temp_directory.name)
             shapefiles = [shapefile for shapefile in os.listdir(temp_directory.name) if shapefile[-3:] == "shp"]
-            datasource = gdal.DataSource(os.path.join(temp_directory.name, shapefiles[0]))
-            l_point = datasource[0]
+            layers = {
+                s: gdal.DataSource(os.path.join(temp_directory.name, s))[0] for s in shapefiles
+            }
+            l_linestring = layers['LineString.shp']
+            l_point = layers['Point.shp']
+        feature_linestring = l_linestring[0]
         feature_point = l_point[0]
-        print(str(feature_point['cost_worke']))
-        self.assertEqual(Decimal(str(feature_point['cost_worke'])), self.job1.cost * self.manday1.nb_days)
-        self.assertEqual(Decimal(str(feature_point['cost_strea'])), self.job2.cost * self.manday2.nb_days)
+        self.assertEqual(Decimal(str(feature_linestring['cost_worke'])), self.job1.cost * self.manday1.nb_days)
+        self.assertEqual(Decimal(str(feature_linestring['cost_strea'])), self.job2.cost * self.manday2.nb_days)
+        self.assertIsNone(feature_point.get('cost_worke'))
+        self.assertIsNone(feature_point.get('cost_strea'))
 
 
 @override_settings(ENABLE_JOBS_COSTS_DETAILED_EXPORT=True)
 class TestInterventionTargetExports(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+        cls.path = PathFactory(name="mypath")
+        cls.interv = InterventionFactory(target=cls.path)
 
     def setUp(self):
-        self.user = SuperUserFactory.create()
         self.client.force_login(self.user)
-
-        self.path = PathFactory(name="mypath")
-        self.interv = InterventionFactory(target=self.path)
 
     def test_csv_target_content(self):
         response = self.client.get('/intervention/list/export/', params={'format': 'csv'})

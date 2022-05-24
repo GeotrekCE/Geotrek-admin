@@ -8,7 +8,7 @@ import filecmp
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.authent.tests.factories import TrekkingManagerFactory
 from geotrek.common.tests.factories import AttachmentFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.tests.factories import (TouristicContentFactory,
@@ -20,7 +20,7 @@ from unittest.mock import patch
 import os
 
 
-class TouristicContentViewsTests(CommonTest):
+class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
     model = TouristicContent
     modelfactory = TouristicContentFactory
     userfactory = TrekkingManagerFactory
@@ -103,6 +103,13 @@ class TouristicContentViewsTests(CommonTest):
             'website': None,
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'category': self.obj.category.label,
+            'id': self.obj.pk,
+            'name': self.obj.name_display
+        }
+
     def get_bad_data(self):
         return {
             'geom': 'doh!'
@@ -124,15 +131,14 @@ class TouristicContentViewsTests(CommonTest):
         CityFactory.create(name="Nor", code='09001',
                            geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
                                                      srid=settings.SRID)))
-        self.login()
         params = '?city=09000'
-        response = self.client.get(self.model.get_jsonlist_url() + params)
+        response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["map_obj_pk"]), 1)
+        self.assertEqual(response.json()["recordsFiltered"], 1)
         params = '?city=09001'
-        response = self.client.get(self.model.get_jsonlist_url() + params)
+        response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["map_obj_pk"]), 0)
+        self.assertEqual(len(response.json()["data"]), 0)
 
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns
@@ -151,7 +157,7 @@ class TouristicContentViewsTests(CommonTest):
                              ['id', 'type1', 'type2', 'eid'])
 
 
-class TouristicEventViewsTests(CommonTest):
+class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
     userfactory = TrekkingManagerFactory
@@ -231,6 +237,15 @@ class TouristicEventViewsTests(CommonTest):
             'website': None,
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'begin_date': '20/02/2002',
+            'end_date': '22/02/2202',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'type': self.obj.type.type
+        }
+
     def get_bad_data(self):
         return {
             'geom': 'doh!'
@@ -251,7 +266,6 @@ class TouristicEventViewsTests(CommonTest):
                                               title='mapimage')
         obj.attachment = attachment
         obj.save()
-        self.login()
         mock_requests.get.return_value.status_code = 200
         mock_requests.get.return_value.content = '<p id="properties">Mock</p>'
         response = self.client.get(obj.get_document_url())

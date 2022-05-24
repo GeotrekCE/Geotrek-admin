@@ -167,7 +167,9 @@ class SyncMobileFailTest(VarTmpTestCase):
             management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
 
-    def test_attachments_missing_from_disk(self):
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+    def test_attachments_missing_from_disk(self, mocke):
+        mocke.side_effect = Exception()
         trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
         attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
         os.remove(attachment.attachment_file.path)

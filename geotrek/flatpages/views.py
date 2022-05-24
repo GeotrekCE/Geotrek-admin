@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from django.views.generic import CreateView, UpdateView, DetailView
 
-from geotrek.common.views import MetaMixin
+from ..common.mixins.views import MetaMixin
 from geotrek.flatpages.serializers import FlatPageSerializer
 from geotrek.flatpages import models as flatpages_models
 

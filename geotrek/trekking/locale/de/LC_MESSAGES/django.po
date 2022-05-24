@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 15:03+0000\n"
+"POT-Creation-Date: 2022-03-25 10:07+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -208,6 +208,9 @@ msgstr "Netzwerke"
 
 msgid "Hiking networks"
 msgstr "Route Netzwerke"
+
+msgid "Accessibility type"
+msgstr ""
 
 msgid "Accessibility advice"
 msgstr ""
@@ -598,6 +601,18 @@ msgstr "Positiver Aufstieg"
 msgid "Markings"
 msgstr "Befeuerung"
 
+msgid "Cities"
+msgstr ""
+
+msgid "Altimetric profile"
+msgstr "Höhenmesserprofil"
+
+msgid "Min elevation"
+msgstr "Min. Höhe"
+
+msgid "Max elevation"
+msgstr "Max. Höhe"
+
 msgid "Stages"
 msgstr "Etappen"
 
@@ -610,18 +625,39 @@ msgstr "Alle praktischen Informationen"
 msgid "Advices"
 msgstr "Empfehlungen"
 
+msgid "How to come ?"
+msgstr ""
+
+msgid "Transports"
+msgstr "Transporte"
+
+msgid "Slope"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Signage"
+msgstr ""
+
+msgid "Covering"
+msgstr ""
+
+msgid "Exposure"
+msgstr ""
+
 msgid "Environmental sensitive areas"
 msgstr "Umweltsensible Bereiche"
 
 msgid ""
 "\n"
-"            Along your trek, you will go through sensitive areas related to "
-"the presence of a specific species or\n"
-"            environment. In these areas, an appropriate behaviour allows to "
-"contribute to their preservation. For\n"
-"            detailed information, specific forms are accessible for each "
+"              Along your trek, you will go through sensitive areas related "
+"to the presence of a specific species or\n"
+"              environment. In these areas, an appropriate behaviour allows "
+"to contribute to their preservation. For\n"
+"              detailed information, specific forms are accessible for each "
 "area.\n"
-"          "
+"            "
 msgstr ""
 "\n"
 "Auf Ihrer Reiseroute durchqueren Sie Gebiete mit hoher Empfindlichkeit, die "
@@ -635,18 +671,6 @@ msgstr "Empfindlichkeitszeitraum:"
 
 msgid "Contact:"
 msgstr "Kontakt:"
-
-msgid "Altimetric profile"
-msgstr "Höhenmesserprofil"
-
-msgid "Min elevation"
-msgstr "Min. Höhe"
-
-msgid "Max elevation"
-msgstr "Max. Höhe"
-
-msgid "Transports"
-msgstr "Transporte"
 
 msgid "Add a new poi"
 msgstr "Hinzufügen eine POI"

@@ -262,8 +262,13 @@ class BaseApiTest(TestCase):
         cls.rating2 = trek_factory.RatingFactory()
         cls.label = common_factory.LabelFactory(id=23)
         cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)],
-                                                                  geom=cls.path.geom)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)],
+                                                                      geom=cls.path.geom)
+        else:
+            cls.treks = trek_factory.TrekFactory.create_batch(cls.nb_treks, geom=cls.path.geom)
+            trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 4))
+            trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 5))
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
         cls.treks[0].labels.add(cls.label)
@@ -302,7 +307,9 @@ class BaseApiTest(TestCase):
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.all()[0], 0.5, 0.5)])
+            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
+        else:
+            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
@@ -795,6 +802,181 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_theme_filter(self):
+        response = self.get_trek_list({'themes': self.theme2.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'themes': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_portal_filter(self):
+        response = self.get_trek_list({'portals': self.portal.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'portals': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_label_filter(self):
+        response = self.get_trek_list({'labels': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'labels': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_labels_exclude_filter(self):
+        response = self.get_trek_list({'labels_exclude': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        trek = trek_factory.TrekFactory.create()
+        label = common_factory.LabelFactory.create()
+        trek.labels.add(label, self.label)
+
+        response = self.get_trek_list({'labels_exclude': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        trek = trek_factory.TrekFactory.create()
+        label_2 = common_factory.LabelFactory.create()
+        trek.labels.add(label, label_2)
+
+        response = self.get_trek_list({'labels_exclude': f'{self.label.pk},{label.pk}'})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        response = self.get_trek_list({'labels_exclude': label_2.pk})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 20)
+
+    def test_trek_city_filter(self):
+        path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
+        city3 = zoning_factory.CityFactory(code='03000',
+                                           geom='SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, -9 -10, -10 -10)))')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        else:
+            trek_factory.TrekFactory.create(geom='SRID=2154;LINESTRING(-10 -9, -9 -9)')
+        response = self.get_trek_list({'cities': city3.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'cities': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_district_filter(self):
+        path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
+        dist3 = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, '
+                                                    '-9 -10, -10 -10)))')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        else:
+            trek_factory.TrekFactory.create(geom='SRID=2154;LINESTRING(-10 -9, -9 -9)')
+        response = self.get_trek_list({'districts': dist3.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'districts': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_structure_filter(self):
+        response = self.get_trek_list({'structures': self.structure.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'cities': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_practice_filter(self):
+        response = self.get_trek_list({'practices': self.practice.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'practices': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_accessibility_level_filter(self):
+        response = self.get_trek_list({'accessibility_level': self.accessibility_level.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'accessibility_level': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_routes_filter(self):
+        response = self.get_trek_list({'routes': self.route.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'routes': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_ratings_filter(self):
+        response = self.get_trek_list({'ratings': self.rating.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'ratings': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
@@ -1385,15 +1567,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             trek_models.POI.objects.all().count() - 1
         )
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_trek(self):
         self.launch_tests_excluded_pois(self.treks[0], 'trek')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_courses(self):
         self.launch_tests_excluded_pois(self.course, 'courses')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_sites(self):
         self.launch_tests_excluded_pois(self.site, 'sites')
 
@@ -1710,6 +1889,22 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             common_models.Label
         )
 
+    def test_labels_filter_filter(self):
+        label_1 = common_factory.LabelFactory.create(filter=False)
+        label_2 = common_factory.LabelFactory.create(filter=True)
+        self.treks[0].labels.add(label_1, label_2)
+        response = self.get_label_list({'only_filters': True})
+        self.assertEqual(response.json()["count"], 2)
+        self.assertSetEqual({result["id"] for result in response.json()["results"]}, {self.label.pk, label_2.pk})
+        response = self.get_label_list({'only_filters': False})
+        self.assertEqual(response.json()["results"][0]["id"], label_1.pk)
+        self.assertEqual(response.json()["count"], 1)
+        response = self.get_label_list()
+        self.assertEqual(response.json()["count"], 3)
+
+        response = self.get_label_list({'only_filters': 'None'})
+        self.assertEqual(response.json()["count"], 0)
+
     def test_labels_detail(self):
         self.check_structure_response(
             self.get_label_detail(self.label.pk),
@@ -1728,12 +1923,19 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE
         )
 
+    def test_informationdesk_filter_trek(self):
+        response = self.get_informationdesk_list({'trek': self.treks[0].pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
+        response = self.get_informationdesk_list({'trek': self.parent.pk})
+        self.assertEqual(response.json()["count"], 0)
+
     def test_infodesk_filter_type(self):
         response = self.get_informationdesk_list({'types': self.information_desk_type.pk})
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
 
-    def test_infodesk_filter_label__accessibility(self):
+    def test_infodesk_filter_label_accessibility(self):
         response = self.get_informationdesk_list({'labels_accessibility': self.label_accessibility.pk})
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
@@ -1918,6 +2120,40 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             self.get_organism_detail(self.organism.pk),
             ORGANISM_PROPERTIES_JSON_STRUCTURE
         )
+
+    def test_sensitivearea_distance_list(self):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p1 = core_factory.PathFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
+            trek = trek_factory.TrekFactory.create(
+                published=True,
+                name='Parent',
+                paths=[p1]
+            )
+        else:
+            trek = trek_factory.TrekFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
+        specy = sensitivity_factory.SpeciesFactory.create(period01=True)
+        sensitivity_factory.SensitiveAreaFactory.create(
+            geom='SRID=2154;POLYGON((605600 6650000, 605600 6650004, 605604 6650004, 605604 6650000, 605600 6650000))',
+            species=specy,
+            description="Test"
+        )
+        sensitivity_factory.SensitiveAreaFactory.create(
+            geom='SRID=2154;POLYGON((606001 6650501, 606001 6650505, 606005 6650505, 606005 6650501, 606001 6650501))',
+            species=specy,
+            description="Test 2"
+        )
+        response = self.get_sensitivearea_list({
+            'trek': trek.id,
+            'period': '1'
+        })
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.status_code, 200)
+        with override_settings(SENSITIVE_AREA_INTERSECTION_MARGIN=700):
+            response = self.get_sensitivearea_list({
+                'trek': trek.id,
+                'period': '1'
+            })
+            self.assertEqual(response.json()['count'], 2)
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):
@@ -2349,10 +2585,14 @@ class ReportStatusTestCase(TestCase):
             "previous": None,
             "results": [
                 {
+                    'identifier': self.status1.identifier,
+                    'color': self.status1.color,
                     "id": self.status1.pk,
                     "label": {'en': "A transmettre", 'es': None, 'fr': None, 'it': None},
                 },
                 {
+                    'identifier': self.status2.identifier,
+                    'color': self.status2.color,
                     "id": self.status2.pk,
                     "label": {'en': "En cours de traitement", 'es': None, 'fr': None, 'it': None},
                 }]
@@ -3090,7 +3330,6 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     def test_updated_after_filter(self):
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
-        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'updated_after': two_years_ago})
         self.assertEqual(response.json().get("count"), 2)
 
@@ -3193,6 +3432,82 @@ class SitesTypesFilterTestCase(BaseApiTest):
         self.assertNotIn(self.site1.pk, all_ids)
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
+
+
+class SitesLabelsFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.label1 = common_factory.LabelFactory()
+        cls.label2 = common_factory.LabelFactory()
+        cls.site1 = outdoor_factory.SiteFactory()
+        cls.site1.labels.add(cls.label1)
+        cls.site2 = outdoor_factory.SiteFactory()
+        cls.site2.labels.add(cls.label2)
+        cls.site3 = outdoor_factory.SiteFactory()
+
+    def test_sites_label_filter_1(self):
+        response = self.get_site_list({'labels': self.label1.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertNotIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+
+    def test_sites_label_filter_2(self):
+        response = self.get_site_list({'labels': f"{self.label1.pk},{self.label2.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+
+    def test_sites_labels_exclude_filter(self):
+        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        site_a = outdoor_factory.SiteFactory()
+        label = common_factory.LabelFactory.create()
+        site_a.labels.add(label, self.label1)
+
+        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        site_b = outdoor_factory.SiteFactory()
+        label_2 = common_factory.LabelFactory.create()
+        site_b.labels.add(label, label_2)
+
+        response = self.get_site_list({'labels_exclude': f'{self.label1.pk},{label.pk}'})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        response = self.get_site_list({'labels_exclude': label_2.pk})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 4)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site1.pk, self.site2.pk, self.site3.pk, site_a.pk})
 
 
 class CoursesTypesFilterTestCase(BaseApiTest):

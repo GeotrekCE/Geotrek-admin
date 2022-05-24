@@ -1,12 +1,16 @@
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
-from geotrek.common.mixins import CustomColumnsMixin
+from django.conf import settings
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+                             MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
                      WorkManagementEdge, SignageManagementEdge)
 from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, SignageManagementEdgeFilterSet
 from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
+from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceEdgeSerializer, \
+    SignageManagementEdgeSerializer, WorkManagementEdgeSerializer
+from ..common.viewsets import GeotrekMapentityViewSet
 
 
 class PhysicalEdgeLayer(MapEntityLayer):
@@ -19,10 +23,6 @@ class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityLis
     filterform = PhysicalEdgeFilterSet
     mandatory_columns = ['id', 'physical_type']
     default_extra_columns = ['length']
-
-
-class PhysicalEdgeJsonList(MapEntityJsonList, PhysicalEdgeList):
-    pass
 
 
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
@@ -54,6 +54,19 @@ class PhysicalEdgeDelete(MapEntityDelete):
     model = PhysicalEdge
 
 
+class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
+    model = PhysicalEdge
+    serializer_class = PhysicalEdgeSerializer
+    filterset_class = PhysicalEdgeFilterSet
+
+    def get_columns(self):
+        return PhysicalEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('physicaledge_view',
+                                                                               PhysicalEdgeList.default_extra_columns)
+
+    def get_queryset(self):
+        return PhysicalEdge.objects.existing().select_related('physical_type').defer('geom', 'geom_3d')
+
+
 class LandEdgeLayer(MapEntityLayer):
     queryset = LandEdge.objects.existing()
     properties = ['color_index', 'name']
@@ -64,10 +77,6 @@ class LandEdgeList(CustomColumnsMixin, MapEntityList):
     filterform = LandEdgeFilterSet
     mandatory_columns = ['id', 'land_type']
     default_extra_columns = ['length']
-
-
-class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
-    pass
 
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
@@ -101,6 +110,19 @@ class LandEdgeDelete(MapEntityDelete):
     model = LandEdge
 
 
+class LandEdgeViewSet(GeotrekMapentityViewSet):
+    model = LandEdge
+    serializer_class = LandEdgeSerializer
+    filterset_class = LandEdgeFilterSet
+
+    def get_columns(self):
+        return LandEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('landedge_view',
+                                                                           LandEdgeList.default_extra_columns)
+
+    def get_queryset(self):
+        return LandEdge.objects.existing().select_related('land_type').defer('geom', 'geom_3d')
+
+
 class CompetenceEdgeLayer(MapEntityLayer):
     queryset = CompetenceEdge.objects.existing()
     properties = ['color_index', 'name']
@@ -111,10 +133,6 @@ class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
     filterform = CompetenceEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length']
-
-
-class CompetenceEdgeJsonList(MapEntityJsonList, CompetenceEdgeList):
-    pass
 
 
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
@@ -146,6 +164,19 @@ class CompetenceEdgeDelete(MapEntityDelete):
     model = CompetenceEdge
 
 
+class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
+    model = CompetenceEdge
+    serializer_class = CompetenceEdgeSerializer
+    filterset_class = CompetenceEdgeFilterSet
+
+    def get_columns(self):
+        return CompetenceEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('competenceedge_view',
+                                                                                 CompetenceEdgeList.default_extra_columns)
+
+    def get_queryset(self):
+        return CompetenceEdge.objects.existing().select_related('organization').defer('geom', 'geom_3d')
+
+
 class WorkManagementEdgeLayer(MapEntityLayer):
     queryset = WorkManagementEdge.objects.existing()
     properties = ['color_index', 'name']
@@ -156,10 +187,6 @@ class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
     filterform = WorkManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length']
-
-
-class WorkManagementEdgeJsonList(MapEntityJsonList, WorkManagementEdgeList):
-    pass
 
 
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
@@ -191,6 +218,19 @@ class WorkManagementEdgeDelete(MapEntityDelete):
     model = WorkManagementEdge
 
 
+class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
+    model = WorkManagementEdge
+    serializer_class = WorkManagementEdgeSerializer
+    filterset_class = WorkManagementEdgeFilterSet
+
+    def get_columns(self):
+        return WorkManagementEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('workmanagementedge_view',
+                                                                                     WorkManagementEdgeList.default_extra_columns)
+
+    def get_queryset(self):
+        return WorkManagementEdge.objects.existing().select_related('organization').defer('geom', 'geom_3d')
+
+
 class SignageManagementEdgeLayer(MapEntityLayer):
     queryset = SignageManagementEdge.objects.existing()
     properties = ['color_index', 'name']
@@ -201,10 +241,6 @@ class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
     filterform = SignageManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length']
-
-
-class SignageManagementEdgeJsonList(MapEntityJsonList, SignageManagementEdgeList):
-    pass
 
 
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
@@ -234,3 +270,16 @@ class SignageManagementEdgeUpdate(MapEntityUpdate):
 
 class SignageManagementEdgeDelete(MapEntityDelete):
     model = SignageManagementEdge
+
+
+class SignageManagementEdgeViewSet(GeotrekMapentityViewSet):
+    model = SignageManagementEdge
+    serializer_class = SignageManagementEdgeSerializer
+    filterset_class = SignageManagementEdgeFilterSet
+
+    def get_columns(self):
+        return SignageManagementEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('competenceedge_view',
+                                                                                        SignageManagementEdgeList.default_extra_columns)
+
+    def get_queryset(self):
+        return SignageManagementEdge.objects.existing().select_related('organization').defer('geom', 'geom_3d')

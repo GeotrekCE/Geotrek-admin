@@ -2,8 +2,8 @@ from django.conf import settings
 from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
-import geotrek.common.mixins
 import geotrek.authent.models
+import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
@@ -89,7 +89,8 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Touristic content',
                 'verbose_name_plural': 'Touristic contents',
             },
-            bases=(geotrek.common.mixins.AddPropertyMixin, mapentity.models.MapEntityMixin, geotrek.common.mixins.PicturesMixin, models.Model),
+            bases=(geotrek.common.mixins.models.AddPropertyMixin, mapentity.models.MapEntityMixin,
+                   geotrek.common.mixins.models.PicturesMixin, models.Model),
         ),
         migrations.CreateModel(
             name='TouristicContentCategory',
@@ -167,7 +168,8 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Touristic event',
                 'verbose_name_plural': 'Touristic events',
             },
-            bases=(geotrek.common.mixins.AddPropertyMixin, mapentity.models.MapEntityMixin, geotrek.common.mixins.PicturesMixin, models.Model),
+            bases=(geotrek.common.mixins.models.AddPropertyMixin, mapentity.models.MapEntityMixin,
+                   geotrek.common.mixins.models.PicturesMixin, models.Model),
         ),
         migrations.CreateModel(
             name='TouristicEventType',

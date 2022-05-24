@@ -4,7 +4,8 @@ from geotrek.flatpages.tests.factories import FlatPageFactory
 
 
 class RESTViewsTest(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         FlatPageFactory.create_batch(10, published=True)
         FlatPageFactory.create(published=False)
 

@@ -126,7 +126,6 @@ LANGUAGES = (
 LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'fr')
 
 MODELTRANSLATION_LANGUAGES = tuple(os.getenv('LANGUAGES', 'fr en').split(' '))
-MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
 LOCALE_PATHS = (
     # override locale
@@ -209,6 +208,7 @@ TEMPLATES = [
             os.path.join(VAR_DIR, 'conf', 'extra_templates'),
             os.path.join(PROJECT_DIR, 'templates'),
         ),
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
@@ -220,14 +220,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
-                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                # 'django.template.loaders.eggs.Loader',
-            ],
+            # 'loaders': [
+            #     'django.template.loaders.filesystem.Loader',
+            #     'django.template.loaders.app_directories.Loader',
+            #     # 'django.template.loaders.eggs.Loader',
+            # ],
             'debug': True,
         },
     },
@@ -323,13 +322,13 @@ SERIALIZATION_MODULES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        'TIMEOUT': 28800,  # 8 hours
+        'TIMEOUT': 2592000,  # 30 days
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': CACHE_ROOT,
-        'TIMEOUT': 28800,  # 8 hours
+        'TIMEOUT': 2592000,  # 30 days
     }
 }
 
@@ -355,6 +354,7 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 PAPERCLIP_ENABLE_VIDEO = True
 PAPERCLIP_ENABLE_LINK = True
 PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
+PAPERCLIP_LICENSE_MODEL = 'common.License'
 PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
 
 # Data projection
@@ -385,7 +385,6 @@ MAPENTITY_CONFIG = {
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
-    'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
     'MAP_FIT_MAX_ZOOM': 16,
@@ -641,7 +640,7 @@ MOBILE_DURATION_INTERVALS = [
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
-    "toolbar": "bold italic forecolor | bullist numlist link media | "
+    "toolbar": "bold italic forecolor | bullist numlist link image media | "
                "undo redo | "
                "removeformat | code",
     "paste_as_text": True
@@ -787,9 +786,13 @@ ONLY_EXTERNAL_PUBLIC_PDF = False
 
 SEND_REPORT_ACK = True
 
+ENABLE_REPORT_COLORS_PER_STATUS = True
+
 SURICATE_REPORT_ENABLED = False
 
 SURICATE_MANAGEMENT_ENABLED = False
+
+SURICATE_WORKFLOW_ENABLED = False
 
 SURICATE_REPORT_SETTINGS = {
     'URL': '',
@@ -803,6 +806,12 @@ SURICATE_MANAGEMENT_SETTINGS = {
     'ID_ORIGIN': '',
     'PRIVATE_KEY_CLIENT_SERVER': '',
     'PRIVATE_KEY_SERVER_CLIENT': '',
+}
+
+SURICATE_WORKFLOW_SETTINGS = {
+    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
+    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département"
 }
 
 REPORT_FILETYPE = "Report"
@@ -819,6 +828,12 @@ ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
 ACCESSIBILITY_ATTACHMENTS_ENABLED = True
 
+USE_X_FORWARDED_HOST = False
+
+REST_FRAMEWORK = {
+    "STRICT_JSON": False,  # allow serialize float NaN values
+}
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
@@ -832,17 +847,11 @@ if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
         exec(f.read())
 
+MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
+
 # Computed settings takes place at the end after customization
 MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
     language for language in LANGUAGES_LIST if language[0] in MODELTRANSLATION_LANGUAGES
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
-
-USE_X_FORWARDED_HOST = False
-HIDDEN_FORM_FIELDS['report'] = {
-    "status",
-    "locked",
-    "uid",
-    "origin"
-}

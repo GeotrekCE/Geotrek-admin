@@ -13,11 +13,12 @@ from geotrek.trekking.models import POI
 
 
 class LoadPOITest(TestCase):
-    def setUp(self):
-        self.cmd = Command()
-        self.filename = os.path.join(os.path.dirname(__file__),
-                                     'data', 'poi.shp')
-        self.path = PathFactory.create()
+    @classmethod
+    def setUpTestData(cls):
+        cls.cmd = Command()
+        cls.filename = os.path.join(os.path.dirname(__file__),
+                                    'data', 'poi.shp')
+        cls.path = PathFactory.create()
 
     def test_command_shows_number_of_objects(self):
         output = StringIO()

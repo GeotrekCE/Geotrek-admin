@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import migrations, models
-import geotrek.common.mixins
 import mapentity.models
 import django.contrib.gis.db.models.fields
+import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Report',
                 'verbose_name_plural': 'Reports',
             },
-            bases=(mapentity.models.MapEntityMixin, geotrek.common.mixins.PicturesMixin, models.Model),
+            bases=(mapentity.models.MapEntityMixin, geotrek.common.mixins.models.PicturesMixin, models.Model),
         ),
         migrations.CreateModel(
             name='ReportCategory',

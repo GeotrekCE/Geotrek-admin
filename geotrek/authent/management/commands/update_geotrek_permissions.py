@@ -12,7 +12,7 @@ from mapentity.registry import registry
 from mapentity.middleware import clear_internal_user_cache
 from mapentity.registry import create_mapentity_model_permissions
 
-from geotrek.common.mixins import BasePublishableMixin
+from geotrek.common.mixins.models import BasePublishableMixin
 
 
 logger = logging.getLogger(__name__)

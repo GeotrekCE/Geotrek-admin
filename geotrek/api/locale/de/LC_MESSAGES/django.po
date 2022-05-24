@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 15:03+0000\n"
+"POT-Creation-Date: 2022-03-16 09:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -452,6 +452,12 @@ msgstr ""
 msgid "Filter by one or more label id, comma-separated."
 msgstr ""
 
+msgid "Labels exclusion"
+msgstr ""
+
+msgid "Exclude one or more label id, comma-separated."
+msgstr ""
+
 msgid ""
 "Filter by some case-insensitive text contained in name, description, "
 "description teaser or ambiance."
@@ -496,6 +502,14 @@ msgstr ""
 msgid "Filter by some case-insensitive text contained in name."
 msgstr ""
 
+msgid "Filter"
+msgstr ""
+
+msgid ""
+"Filter by the fact that this label can be used as filter. 'y', 'yes', 't', "
+"'true', 'on', '1' are possible values"
+msgstr ""
+
 msgid "Rating scale"
 msgstr ""
 
@@ -521,4 +535,13 @@ msgid "Filter by one or more source id, comma-separated."
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name or content."
+msgstr ""
+
+msgid "Distance (m)"
+msgstr ""
+
+msgid "Altitude (m)"
+msgstr ""
+
+msgid "Altimetry data not available"
 msgstr ""

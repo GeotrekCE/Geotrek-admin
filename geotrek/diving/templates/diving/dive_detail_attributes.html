@@ -22,15 +22,15 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"description_teaser" }}</th>
-            <td>{{ object.description_teaser|safe }}</td>
+            <td>{{ object.description_teaser|safe|linebreaks }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>
-            <td>{{ object.description|safe }}</td>
+            <td>{{ object.description|safe|linebreaks }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"advice" }}</th>
-            <td>{{ object.advice|safe }}</td>
+            <td>{{ object.advice|safe|linebreaks }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"departure" }}</th>
@@ -38,11 +38,11 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"facilities" }}</th>
-            <td>{{ object.facilities|safe }}</td>
+            <td>{{ object.facilities|safe|linebreaks }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"disabled_sport" }}</th>
-            <td>{{ object.disabled_sport|safe }}</td>
+            <td>{{ object.disabled_sport|safe|linebreaks }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"difficulty" }}</th>

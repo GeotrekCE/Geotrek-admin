@@ -1,5 +1,5 @@
 from datetime import date, datetime
-
+from distutils.util import strtobool
 import coreschema
 
 from coreapi.document import Field
@@ -167,9 +167,12 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             for m in [int(m) for m in period.split(',')]:
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
-        trek = request.GET.get('trek')
+        trek_id = request.GET.get('trek')
+        trek = Trek.objects.filter(pk=trek_id)
         if trek:
-            contents_intersecting = intersecting(qs, Trek.objects.get(pk=trek))
+            contents_intersecting = intersecting(qs,
+                                                 trek.get(),
+                                                 distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
             qs = contents_intersecting.order_by('id')
         return qs.distinct()
 
@@ -210,7 +213,10 @@ class GeotrekPOIFilter(BaseFilterBackend):
         trek = request.GET.get('trek', None)
         if trek is not None:
             t = Trek.objects.get(pk=trek)
-            qs = Topology.overlapping(t, qs)
+            if settings.TREKKING_TOPOLOGY_ENABLED:
+                qs = Topology.overlapping(t, qs)
+            else:
+                qs = intersecting(qs, t)
             qs = qs.exclude(pk__in=t.pois_excluded.all())
         sites = request.GET.get('sites', None)
         if sites is not None:
@@ -411,6 +417,9 @@ class GeotrekInformationDeskFilter(BaseFilterBackend):
         types = request.GET.get('types')
         if types:
             qs = qs.filter(type__in=types.split(','))
+        trek = request.GET.get('trek', None)
+        if trek is not None:
+            qs = qs.filter(treks__id=trek)
         labels_accessibility = request.GET.get('labels_accessibility')
         if labels_accessibility:
             qs = qs.filter(label_accessibility__in=labels_accessibility.split(','))
@@ -663,7 +672,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(route__in=route.split(','))
         labels = request.GET.get('labels')
         if labels:
-            qs = qs.filter(portal__in=labels.split(','))
+            qs = qs.filter(labels__in=labels.split(','))
+        labels_exclude = request.GET.get('labels_exclude')
+        if labels_exclude:
+            qs = qs.exclude(labels__in=labels_exclude.split(','))
         practices = request.GET.get('practices')
         if practices:
             qs = qs.filter(practice__in=practices.split(','))
@@ -763,6 +775,12 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                     description=_('Filter by one or more label id, comma-separated.')
                 )
             ), Field(
+                name='labels_exclude', required=False, location='query', schema=coreschema.String(
+                    title=_("Labels exclusion"),
+                    description=_('Exclude one or more label id, comma-separated.')
+                )
+            ),
+            Field(
                 name='practices', required=False, location='query', schema=coreschema.String(
                     title=_("Practices"),
                     description=_('Filter by one or more practice id, comma-separated.')
@@ -821,6 +839,12 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
         types = request.GET.get('types')
         if types:
             queryset = queryset.filter(type__in=types.split(','))
+        labels = request.GET.get('labels')
+        if labels:
+            queryset = queryset.filter(labels__in=labels.split(','))
+        labels_exclude = request.GET.get('labels_exclude')
+        if labels_exclude:
+            queryset = queryset.exclude(labels__in=labels_exclude.split(','))
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
@@ -840,6 +864,17 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
                 name='types', required=False, location='query', schema=coreschema.String(
                     title=_("Types"),
                     description=_('Filter by one or more site type id, comma-separated.')
+                )
+            ), Field(
+                name='labels', required=False, location='query', schema=coreschema.String(
+                    title=_("Labels"),
+                    description=_('Filter by one or more label id, comma-separated.')
+                )
+            ),
+            Field(
+                name='labels_exclude', required=False, location='query', schema=coreschema.String(
+                    title=_("Labels exclusion"),
+                    description=_('Exclude one or more label id, comma-separated.')
                 )
             ),
             Field(
@@ -905,10 +940,7 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
         related_object = qs.model._meta.get_field(related_name).remote_field
         fields_on_related_object = related_object.model._meta.get_fields()
         associated_published_fields = [f.name for f in fields_on_related_object if f.name.startswith('published')]
-        if len(associated_published_fields) == 1:
-            related_field_name = '{}__published'.format(related_name)
-            q &= Q(**{related_field_name: True})
-        elif len(associated_published_fields) > 1:
+        if associated_published_fields:
             language = request.GET.get('language')
             if language:
                 # one language is specified
@@ -1033,6 +1065,30 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
         )
 
 
+class GeotrekLabelFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        filter_label = request.GET.get('only_filters')
+        if filter_label:
+            try:
+                # Allow to filter with many values for exemple for True : yes, true, t, True ...
+                queryset = queryset.filter(filter=bool(strtobool(filter_label)))
+            except ValueError:
+                return queryset.none()
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='only_filters', required=False, location='query', schema=coreschema.Boolean(
+                    title=_("Filter"),
+                    description=_("Filter by the fact that this label can be used as filter. "
+                                  "'y', 'yes', 't', 'true', 'on', '1' are possible values"),
+
+                )
+            ),
+        )
+
+
 class GeotrekRatingFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         scale = request.GET.get('scale')
@@ -1082,7 +1138,7 @@ class FlatPageFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         return (
             Field(
-                name='targets', required=False, location='query', schema=coreschema.Integer(
+                name='targets', required=False, location='query', schema=coreschema.String(
                     title=_("Targets"),
                     description=_('Filter by one or more target (all, mobile, hidden or web), comma-separated.')
                 )

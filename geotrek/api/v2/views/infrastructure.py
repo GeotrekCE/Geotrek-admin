@@ -1,9 +1,11 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
+from django.db.models.query import Prefetch
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets, filters as api_filters
+from geotrek.common.models import Attachment
 from geotrek.infrastructure import models as infra_models
-from geotrek.api.v2.functions import Transform
 
 
 class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -15,7 +17,9 @@ class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
     queryset = infra_models.Infrastructure.objects.existing() \
         .select_related('topo_object', 'type', ) \
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
-        .prefetch_related('topo_object__aggregations', 'attachments') \
+        .prefetch_related('topo_object__aggregations',
+                          Prefetch('attachments',
+                                   queryset=Attachment.objects.select_related('license'))) \
         .order_by('pk')
 
 

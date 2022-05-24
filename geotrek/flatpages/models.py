@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from extended_choices import Choices
 
 from mapentity.serializers import plain_text
-from geotrek.common.mixins import TimeStampedModelMixin, BasePublishableMixin
+from geotrek.common.mixins.models import TimeStampedModelMixin, BasePublishableMixin
 
 
 FLATPAGES_TARGETS = Choices(

@@ -2,12 +2,259 @@
 CHANGELOG
 =========
 
-2.76.3+dev (XXXX-XX-XX)
+2.82.2+dev  (XXXX-XX-XX)
 -----------------------
 
 **New features**
 
--
+- Display link to attachment in admin site for attachments
+- Add license field on attachments (#3089) [thanks to Paul Florence]
+
+**Bug fixes**
+
+- Fix trail detail link in list view
+- Fix infrastructure detail link in list view
+- Fix dive detail link in list view
+
+**Documentation**
+
+- Improve import from file section
+
+**Minor improvements**
+
+- Delete filenames in captions of attachments when importing from Apidae (#2698)
+- Add copyright when importing from Apidae on attachments (#2698)
+
+**Maintenance**
+
+- Update to paperclip 2.5.0
+
+
+2.82.2  (2022-04-28)
+-----------------------
+
+**Bug fixes**
+
+- Prevent exceptions on malformed images when launching `sync_suricate` command
+- Fix alert on Project list view
+
+
+2.82.1  (2022-04-28)
+-----------------------
+
+**WARNING!**
+Do not use, list view for Projects raises Datatable alert
+
+**Bug fixes**
+
+- Fix display objects with wrong colors when `ENABLE_REPORT_COLORS_PER_STATUS` is True
+
+
+2.82.0     (2022-04-27)
+-----------------------
+
+**WARNING!**
+
+Do not use, or set `ENABLE_REPORT_COLORS_PER_STATUS` to False, else objects will not be displayed properly on map - Release 2.82.1 should be used instead
+
+**New features**
+
+- Server-side list pagination. Better performance for large lists (#2967)
+- Add overlays for objects from Trekking, Maintenance, Infrastructure and Feedback modules (#1300)
+
+**Minor improvements**
+
+- Refer to Reports by a label instead of email addresses
+- Increase default cache expiration from 8hours to 30days (#2967)
+- Use distance from setting `SENSITIVE_AREA_INTERSECTION_MARGIN` in sensitive area filter `trek` in api v2
+
+**Bug fixes**
+
+- Fix filter `trek` in api v2 for information desks
+- Fix filter `trek` in api v2 for pois with setting `TREKKING_TOPOLOGY_ENABLED` (#3054)
+
+**Maintenance**
+
+- Update to mapentity 8.0.1
+
+**Suricate Workflow**  (#2366)
+
+- Add `assigned_user` field to Report model
+- Add `color` field to Report Status model
+- Add TimerEvent class, used to alert Report supervisors when timer expires, with `check_timers` command
+- Force workflow when `SURICATE_WORKFLOW_ENABLED` setting is enabled
+- Add setting `ENABLE_REPORT_COLORS_PER_STATUS` to display different colors in status list view
+- Add editable predefined emails
+- Display only some reports depending on which user is logged in
+- Add City and District information to Report detail page
+- Alert user about synchronization problems in Suricate Workflow mode
+
+
+2.81.0     (2022-04-11)
+-----------------------
+
+**New features**
+
+- Add SQL default values directly on most tables of the database (#3008)
+
+**Minor improvements**
+
+- Rename French field names of attachment and accessibility attachment tables (author, legend, title)
+- Improve pdf for sites, courses
+
+**Maintenance**
+
+- Update to paperclip 2.4.3
+
+
+2.80.0     (2022-04-05)
+-----------------------
+
+**Minor improvements**
+
+- Improve pdf for sites, courses
+- Add a new parameter in parsers, allowing to add multiple values to fields from multiple parsers (#2091)
+- Add locale altimetry filters
+- Change order list actions and add new signage in signage module (#2852)
+
+**Bug fixes**
+
+- Fix templates map and image
+- Fix trekking's template elevation was not on the right
+- Show accessibility block only with datas in accessibility
+- Compile messages of every apps
+- Fix required language in form is ignored from configuration
+- Fix link initial mode is now File (#3001)
+- Fix line topologies drawing sometimes fails on some paths
+- Fix poi's csv generation of elements from other modules (#2286)
+- Fix pdfs booklet outdoor
+- Fix api v2 schema targets (GTRV3#607)
+- Fix api v2 translation schema targets (values should not be in french)
+
+**Maintenance**
+
+- Fix required language in form is ignored from configuration
+- Allow configuring scheme forwarding though proxy
+- Update to paperclip 2.4.2
+
+**WARNING!**
+
+If an error occurred while checking the signature for debian packaging check troubleshooting section for additional informations
+
+
+2.79.0     (2022-03-25)
+-----------------------
+
+**New features**
+
+- Add public booklet pdf for courses, sites, events, contents, dives
+- Improve treks pdf templates and add new accessibility fields (#2838)
+
+**WARNING!**
+
+Check your custom trekking's templates, blocks order changed. There is a huge new block accessibility.
+Disabled infrastructure's block have been removed
+
+**Bug fixes**
+
+- Fix maps height when height is bigger than width in treks pdf (#2746)
+
+
+2.78.0     (2022-03-22)
+-----------------------
+
+**New features**
+
+- Ability to customize public PDF by portal  (#2691)
+
+**Minor improvements**
+
+- Add block logo in public PDF templates
+
+**Bug fixes**
+
+- Fix pdf booklet use the right template
+
+
+2.77.3     (2022-03-18)
+-----------------------
+
+**Minor improvements**
+
+- Add `only_filters` filter api v2 for labels (#3002)
+- Add filter labels_exclude for api v2 allowing to exclude particular label on treks, sites
+
+**Bug fixes**
+
+- Fix parser biodiv didn't collect all sensitive areas (#2966)
+- Fix attachments external links (#3001)
+
+**Maintenance**
+
+- Update to paperclip 2.4.1
+
+
+2.77.2     (2022-03-15)
+-----------------------
+
+**Bug fixes**
+
+- Fix migration 2.77.1 publication
+
+**Minor improvements**
+
+- Add publication informations by lang on infrastructure
+- Remove table Infrastructure on infrastructure
+- Fix Intervention detail page breaks when target is a Report
+- Add translation signage
+
+
+2.77.1     (2022-03-11)
+-----------------------
+
+**Minor improvements**
+
+- Show all infrastructures and signages on interventions (#2851)
+
+**Bug fixes**
+
+- Show trail and path on intervention (#2851)
+- Remove duplicate id POI export (#2893)
+- Fix migration 2.77.0 publication
+
+
+2.77.0     (2022-03-09)
+-----------------------
+
+**DO NOT USE IT!**
+
+**New features**
+
+- Add filter label sites outdoor api v2
+- Add accessibility field on Infrastructure
+
+**Minor improvements**
+
+- Add ratings_description field in export (#2755)
+
+**Bug fixes**
+
+- Remove width and height in SVG generating problems in Geotrek-rando V3 by Camille Monchicourt
+- Fix labels filter api v2 (#2764)
+- Fix linebreaks template detail
+
+**Maintenance**
+
+- Update to mapentity 7.1.3
+
+
+2.76.4     (2022-03-07)
+-----------------------
+
+**Minor improvements**
+
+- Move fields in forms and details (#2755)
+- Add information rating scale in csv for treks (#2755)
 
 
 2.76.3     (2022-02-09)
@@ -3438,7 +3685,8 @@ In order to enable those features under construction, add ``experimental = True`
 :notes:
 
     Give related permissions to the managers group in order to allow edition
-    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``, ``add_touristiccontent`` ...).
+    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``,
+     ``add_touristiccontent`` ...).
 
 
 0.27.2 (2010-10-14)
@@ -3622,7 +3870,6 @@ Since the map export have changed, empty the cache :
 * Rework display of lists in detail pages, better factorization
 * Removed links in logbook list for certain models
 * Display messages in login page too (useful for redirections)
-
 Support edition of several fields on the same map, via django-leaflet new feature (fixes #53)
 
 

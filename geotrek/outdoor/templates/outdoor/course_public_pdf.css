@@ -41,6 +41,11 @@ h5 {
   color: black;
 }
 
+legend {
+    margin-top: 0.1cm;
+    font-size: .5em
+}
+
 #footer {
   position: fixed;
   bottom: -3.2cm;
@@ -131,12 +136,16 @@ header .url .geo {
   margin: 0 0 1mm 0;
 }
 
+.main-picture-map{
+    display: flex;
+    align-items: center;
+}
+
 .main-picture,
 .main-map {
   display: inline-block;
   height: 7cm;
   margin-top: .7cm;
-  background-color: #ccc;
   background-repeat: no-repeat;
   background-position: center center;
 }
@@ -165,9 +174,7 @@ header .url .geo {
 
 .intro-left .teaser {
   font-family: serif;
-  font-size: 1.2em;
-  font-style: italic;
-  color: orange;
+  font-size: 1em;
 }
 
 .intro-left .teaser > *:first-child {
@@ -183,6 +190,7 @@ header .url .geo {
   width: 40%;
   margin-top: .8cm;
   padding-left: .5cm;
+  font-size: 0.9em;
   border-left: 1px solid #888;
 }
 
@@ -226,18 +234,18 @@ header .url .geo {
   color: #333;
 }
 
-.advice {
+.advice, .equipment, .gear, .accessibility, .label {
   margin-top: .5cm;
   padding: .5cm .3cm;
   background-color: #eee;
 }
 
-.advice-title {
+.advice-title, .equipment-title, .gear-title, .accessibility-title, .label-title {
   font-weight: bold;
   color: orange;
 }
 
-.advice-content {
+.advice-content, .equipment-content, .gear-content, .accessibility-content, .label-content {
   margin-top: .5cm;
 }
 
@@ -299,40 +307,6 @@ header .url .geo {
   margin-bottom: .5cm;
 }
 
-.information-desks h2 {
-  font-size: 1em;
-  font-weight: bold;
-  margin-top: 0;
-  color: orange;
-}
-
-.information-desks .intro {
-  font-size: .8em;
-  float: right;
-  width: 50%;
-}
-
-.information-desks .desks {
-  width: 48%;
-  margin: 0;
-  padding: 0;
-  padding-right: .5cm;
-  list-style-type: none;
-}
-
-.information-desks .desk + .desk {
-  margin-top: .5cm;
-}
-
-.information-desks .desk-email {
-  margin-top: .15cm;
-}
-
-.information-desks a {
-  text-decoration: none;
-  color: inherit;
-}
-
 .pois-summary {
   margin: .5cm 0;
 }
@@ -384,6 +358,8 @@ header .url .geo {
 }
 
 .advice-icon,
+.gear-icon,
+.label-icon,
 .information-desks-icon,
 .network-icon {
   display: inline-block;
@@ -391,6 +367,8 @@ header .url .geo {
 }
 
 .advice-icon img,
+.gear-icon img,
+.label-icon img,
 .information-desks-icon img,
 .network-icon img {
   display: block;
@@ -414,15 +392,31 @@ header .url .geo {
   list-style-type: none;
 }
 
-.source .text-content + .text-content {
-  clear: both;
-  padding-top: .5cm;
+.source {
+  width: 90%;
 }
 
 .source img {
-  float: left;
-  vertical-align: top;
-  margin-right: .5cm;
+  margin-right: 1.5cm;
   max-width: 3cm;
   max-height: 3cm;
+}
+
+.source-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0.5cm;
+}
+
+.source-name {
+  margin-bottom: .3cm;
+}
+
+.source-website {
+  font-size: .7em
+}
+
+.source-text {
+  width: 100%;
 }

@@ -6,10 +6,11 @@ from geotrek.tourism.filters import CompletedFilter, BeforeFilter, AfterFilter
 
 
 class FilterList(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         # TouristicEvent : end_date = datetime.today()
         TouristicEventFactory.create()
-        self.qs = TouristicEvent.objects.all()
+        cls.qs = TouristicEvent.objects.all()
 
     def test_touristicevent_filter_completed(self):
         cf = CompletedFilter()

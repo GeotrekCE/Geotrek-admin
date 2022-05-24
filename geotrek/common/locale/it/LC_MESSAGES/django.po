@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-04 16:54+0000\n"
+"POT-Creation-Date: 2022-04-25 09:07+0000\n"
 "PO-Revision-Date: 2013-01-25 15:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -160,6 +160,9 @@ msgstr ""
 msgid "Information accessibility"
 msgstr ""
 
+msgid "License"
+msgstr ""
+
 msgid "Creation Date"
 msgstr ""
 
@@ -198,6 +201,12 @@ msgstr "Organismo"
 
 msgid "Organisms"
 msgstr "Organismi"
+
+msgid "Attachment license"
+msgstr ""
+
+msgid "Attachment licenses"
+msgstr ""
 
 msgid "Cirkwi tag"
 msgstr ""
@@ -517,6 +526,10 @@ msgid "Sync"
 msgstr ""
 
 #, python-format
+msgid "%s day"
+msgstr ""
+
+#, python-format
 msgid "%s days"
 msgstr ""
 
@@ -564,6 +577,7 @@ msgstr ""
 msgid "Your attachment was uploaded."
 msgstr ""
 
+#, python-format
 msgid "Update attachment %s"
 msgstr ""
 

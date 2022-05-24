@@ -18,7 +18,7 @@ from mapentity.forms import MapEntityForm
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
 from geotrek.common.models import AccessibilityAttachment
 
-from .mixins import NoDeleteMixin
+from .mixins.models import NoDeleteMixin
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, Button

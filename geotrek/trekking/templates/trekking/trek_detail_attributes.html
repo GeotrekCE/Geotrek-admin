@@ -33,12 +33,6 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        <tr>
-            <th>{{ trek|verbose:"difficulty" }}</th>
-            <td>{% if trek.difficulty %}{{ trek.difficulty|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
         {% for label in labels %}
             <tr>
                 <th>{{ label.name }}</th>
@@ -51,49 +45,49 @@
         {% endfor %}
         <tr>
             <th>{{ trek|verbose:"description_teaser" }}</th>
-            <td>{% if trek.description_teaser %}{{ trek.description_teaser|safe }}
+            <td>{% if trek.description_teaser %}{{ trek.description_teaser|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"ambiance" }}</th>
-            <td>{% if trek.ambiance %}{{ trek.ambiance|safe }}
+            <td>{% if trek.ambiance %}{{ trek.ambiance|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"description" }}</th>
-            <td>{% if trek.description %}{{ trek.description|safe }}
+            <td>{% if trek.description %}{{ trek.description|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"access" }}</th>
-            <td>{% if trek.access %}{{ trek.access|safe }}
+            <td>{% if trek.access %}{{ trek.access|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"advice" }}</th>
-            <td>{% if trek.advice %}{{ trek.advice|safe }}
+            <td>{% if trek.advice %}{{ trek.advice|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"gear" }}</th>
-            <td>{% if trek.gear %}{{ trek.gear|safe }}
+            <td>{% if trek.gear %}{{ trek.gear|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"advised_parking" }}</th>
-            <td>{% if trek.advised_parking %}{{ trek.advised_parking }}
+            <td>{% if trek.advised_parking %}{{ trek.advised_parking|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"public_transport" }}</th>
-            <td>{% if trek.public_transport %}{{ trek.public_transport|safe }}
+            <td>{% if trek.public_transport %}{{ trek.public_transport|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
@@ -101,6 +95,12 @@
             <th>{{ trek|verbose:"themes" }}</th>
             <td>
                 {% valuelist trek.themes.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ trek|verbose:"difficulty" }}</th>
+            <td>{% if trek.difficulty %}{{ trek.difficulty|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
@@ -115,6 +115,10 @@
                 <td>{{ rating.name }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <th>{{ trek|verbose:"ratings_description" }}</th>
+            <td>{{ trek.ratings_description|safe|linebreaks }}</td>
+        </tr>
         <tr>
             <th>{{ trek|verbose:"networks" }}</th>
             <td>
@@ -172,11 +176,15 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{{ trek.eid }}</td>
+            <td>{% if trek.eid %}{{ trek.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Second external id" %}</th>
-            <td>{{ trek.eid2 }}</td>
+            <td>{% if trek.eid2 %}{{ trek.eid2|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Reservation system" %}</th>
@@ -210,43 +218,43 @@
         </tr>
         <tr>
             <th>{{ trek|verbose:"accessibility_infrastructure" }}</th>
-            <td>{% if trek.accessibility_infrastructure %}{{ trek.accessibility_infrastructure|safe }}
+            <td>{% if trek.accessibility_infrastructure %}{{ trek.accessibility_infrastructure|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"accessibility_slope" }}</th>
-            <td>{% if trek.accessibility_slope %}{{ trek.accessibility_slope|safe }}
+            <td>{% if trek.accessibility_slope %}{{ trek.accessibility_slope|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"accessibility_covering" }}</th>
-            <td>{% if trek.accessibility_covering %}{{ trek.accessibility_covering|safe }}
+            <td>{% if trek.accessibility_covering %}{{ trek.accessibility_covering|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"accessibility_exposure" }}</th>
-            <td>{% if trek.accessibility_exposure %}{{ trek.accessibility_exposure|safe }}
+            <td>{% if trek.accessibility_exposure %}{{ trek.accessibility_exposure|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"accessibility_width" }}</th>
-            <td>{% if trek.accessibility_width %}{{ trek.accessibility_width|safe }}
+            <td>{% if trek.accessibility_width %}{{ trek.accessibility_width|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"accessibility_advice" }}</th>
-            <td>{% if trek.accessibility_advice %}{{ trek.accessibility_advice|safe }}
+            <td>{% if trek.accessibility_advice %}{{ trek.accessibility_advice|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{{ trek|verbose:"accessibility_signage" }}</th>
-            <td>{% if trek.accessibility_signage %}{{ trek.accessibility_signage|safe }}
+            <td>{% if trek.accessibility_signage %}{{ trek.accessibility_signage|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

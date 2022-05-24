@@ -41,6 +41,11 @@ h5 {
   color: black;
 }
 
+legend {
+    margin-top: 0.1cm;
+    font-size: .5em
+}
+
 #footer {
   position: fixed;
   bottom: -3.2cm;
@@ -131,12 +136,16 @@ header .url .geo {
   margin: 0 0 1mm 0;
 }
 
+.main-picture-map{
+    display: flex;
+    align-items: center;
+}
+
 .main-picture,
 .main-map {
   display: inline-block;
   height: 7cm;
   margin-top: .7cm;
-  background-color: #ccc;
   background-repeat: no-repeat;
   background-position: center center;
 }
@@ -179,6 +188,7 @@ header .url .geo {
   width: 40%;
   margin-top: .8cm;
   padding-left: .5cm;
+  font-size: 0.9em;
   border-left: 1px solid #888;
 }
 

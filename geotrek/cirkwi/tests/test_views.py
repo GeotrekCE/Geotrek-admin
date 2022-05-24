@@ -18,17 +18,20 @@ from geotrek.trekking import urls  # NOQA
 
 
 class CirkwiTests(TranslationResetMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory.create()
+        cls.creation = make_aware(datetime.datetime(2014, 1, 1), utc)
+        cls.trek = TrekFactory.create(published=True, paths=[cls.path])
+        cls.trek.date_insert = cls.creation
+        cls.trek.save()
+        TrekFactory.create(published=False, paths=[cls.path])
+        POIFactory.create(published=False, paths=[cls.path])
+
     def setUp(self):
-        creation = make_aware(datetime.datetime(2014, 1, 1), utc)
-        self.path = PathFactory.create()
-        self.trek = TrekFactory.create(published=True, paths=[self.path])
-        self.trek.date_insert = creation
-        self.trek.save()
         self.poi = POIFactory.create(published=True, paths=[self.path])
-        self.poi.date_insert = creation
+        self.poi.date_insert = self.creation
         self.poi.save()
-        TrekFactory.create(published=False, paths=[self.path])
-        POIFactory.create(published=False, paths=[self.path])
 
     def test_export_circuits(self):
         response = self.client.get('/api/cirkwi/circuits.xml')

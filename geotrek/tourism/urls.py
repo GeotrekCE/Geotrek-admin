@@ -2,11 +2,13 @@ from django.conf import settings
 from django.urls import path, re_path, register_converter
 
 from mapentity.registry import registry
+from rest_framework.routers import DefaultRouter
 
 from geotrek.common.urls import PublishableEntityOptions, LangConverter
 
 from . import models
 from . import views as tourism_views
+from .views import TouristicContentAPIViewSet, TouristicEventAPIViewSet
 
 register_converter(LangConverter, 'lang')
 
@@ -25,6 +27,7 @@ urlpatterns = [
 
 class TouristicContentEntityOptions(PublishableEntityOptions):
     document_public_view = tourism_views.TouristicContentDocumentPublic
+    document_public_booklet_view = tourism_views.TouristicContentDocumentBookletPublic
     markup_public_view = tourism_views.TouristicContentMarkupPublic
 
 
@@ -35,8 +38,16 @@ if settings.TOURISM_ENABLED:
 
 class TouristicEventEntityOptions(PublishableEntityOptions):
     document_public_view = tourism_views.TouristicEventDocumentPublic
+    document_public_booklet_view = tourism_views.TouristicEventDocumentBookletPublic
     markup_public_view = tourism_views.TouristicEventMarkupPublic
 
+
+router = DefaultRouter(trailing_slash=False)
+
+router.register(r'^api/(?P<lang>[a-z]{2})/touristiccontents', TouristicContentAPIViewSet, basename='touristiccontent')
+router.register(r'^api/(?P<lang>[a-z]{2})/touristicevents', TouristicEventAPIViewSet, basename='touristicevent')
+
+urlpatterns += router.urls
 
 if settings.TOURISM_ENABLED:
     urlpatterns += registry.register(models.TouristicEvent, TouristicEventEntityOptions,

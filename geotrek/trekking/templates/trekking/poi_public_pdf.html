@@ -1,6 +1,8 @@
 {% load i18n mapentity_tags %}
 
-<img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}">
+{% block logo %}
+	<img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}">
+{% endblock logo %}
 
 <h2>{{ object.name }}</h2>
 

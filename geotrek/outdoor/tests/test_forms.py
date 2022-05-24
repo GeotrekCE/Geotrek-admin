@@ -20,7 +20,7 @@ class SiteFormTest(TestCase):
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(site.ratings.all(), ['<Rating: Rating>'])
+        self.assertQuerysetEqual(site.ratings.all(), ['<Rating: RatingScale : Rating>'])
 
     def test_ratings_clean(self):
         user = UserFactory()
@@ -56,7 +56,7 @@ class CourseFormTest(TestCase):
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(self.course.ratings.all(), ['<Rating: Rating>'])
+        self.assertQuerysetEqual(self.course.ratings.all(), ['<Rating: RatingScale : Rating>'])
 
     def test_no_rating_save(self):
         form = CourseForm(user=self.user, instance=self.course, data={
@@ -115,12 +115,12 @@ class CourseFormTest(TestCase):
 
 
 class CourseItinerancyTestCase(TestCase):
-
-    def setUp(self):
-        self.user = UserFactory()
-        self.course1 = CourseFactory(name="1")
-        self.course2 = CourseFactory(name="2")
-        self.course3 = CourseFactory(name="3")
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.course1 = CourseFactory(name="1")
+        cls.course2 = CourseFactory(name="2")
+        cls.course3 = CourseFactory(name="3")
 
     def test_two_children(self):
         OrderedCourseChild(child=self.course1, parent=self.course2, order=0).save()

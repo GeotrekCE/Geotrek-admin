@@ -1,24 +1,20 @@
 describe('Nav tabs properties/attachments', () => {
-  beforeEach(() => {
-      const username = 'admin'
-      const password = 'admin'
-      cy.request('/login/?next=/')
-        .its('body')
-        .then((body) => {
-          // we can use Cypress.$ to parse the string body
-          // thus enabling us to query into it easily
-          const $html = Cypress.$(body)
-          const csrf = $html.find('input[name=csrfmiddlewaretoken]').val()
-
-          cy.loginByCSRF(csrf, username, password)
-          .then((resp) => {
-            expect(resp.status).to.eq(200)
-          })
-        })
+  before(() => {
+    const username = 'admin';
+    const password = 'admin';
+    cy.setCookie('django_language', 'en');
+    cy.loginByCSRF(username, password)
+    .then((resp) => {
+       expect(resp.status).to.eq(200)
+    })
   })
 
+  beforeEach(() => {
+    Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
+  });
+
   it('Use tabs', () => {
-    cy.visit('http://localhost:8000/trek/list')
+    cy.visit('/trek/list')
     cy.get("a[title='Trek number 1']").should('have.attr', 'href')
       .then((href) => {
         cy.visit(href)

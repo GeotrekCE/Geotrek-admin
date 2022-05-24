@@ -30,34 +30,6 @@
             <th>{{ object.parent_sites.first|verbose:"practice" }}</th>
             <td>{% if object.parent_sites.first.practice %}{{ object.parent_sites.first.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
-        <tr>
-            <th>{{ object|verbose:"type" }}</th>
-            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"advice" }}</th>
-            <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-         <tr>
-            <th>{{ object|verbose:"gear" }}</th>
-            <td>{% if object.gear %}{{ object.gear|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"equipment" }}</th>
-            <td>{% if object.equipment %}{{ object.equipment|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"accessibility" }}</th>
-            <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"height" }}</th>
-            <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
         {% for rating in object.ratings.all %}
             <tr>
                 <th>{{ rating.scale.name }}</th>
@@ -65,12 +37,40 @@
             </tr>
         {% endfor %}
         <tr>
-            <th>{{ object|verbose:"duration" }}</th>
-            <td>{{ object.duration|duration }}</td>
+            <th>{{ object|verbose:"ratings_description" }}</th>
+            <td>{% if object.ratings_description %}{{ object.ratings_description|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"ratings_description" }}</th>
-            <td>{% if object.ratings_description %}{{ object.ratings_description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"advice" }}</th>
+            <td>{% if object.advice %}{{ object.advice|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+         <tr>
+            <th>{{ object|verbose:"gear" }}</th>
+            <td>{% if object.gear %}{{ object.gear|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"equipment" }}</th>
+            <td>{% if object.equipment %}{{ object.equipment|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"height" }}</th>
+            <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"duration" }}</th>
+            <td>{{ object.duration|duration }}</td>
         </tr>
         <tr>
             <th>{% trans "Itinerancy" %}</th>
