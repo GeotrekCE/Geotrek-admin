@@ -21,8 +21,8 @@ L.FieldStore.LineSnapStore = L.FieldStore.extend({
         if (layer.editing._poly.snapediting) {
             for (var i=0; i<n; i++) {
                 var marker = layer.editing._poly.snapediting._markers[i];
-                if (marker.snap && marker.snap.properties && marker.snap.properties.pk)
-                    snaplist[i] = marker.snap.properties.pk;
+                if (marker.snap && marker.snap.properties && marker.snap.properties.id)
+                    snaplist[i] = marker.snap.properties.id;
             }
         }
 
