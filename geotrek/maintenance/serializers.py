@@ -35,6 +35,6 @@ class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class ProjectGeojsonSerializer(MapentityGeojsonModelSerializer):
-   class Meta(MapentityGeojsonModelSerializer.Meta):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
         model = Project
         fields = ["id", "name"]
