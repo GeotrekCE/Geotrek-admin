@@ -899,7 +899,7 @@ Geotrek.PointOnPolyline.prototype.addToGraph = function(graph) {
 
     var self = this;
 
-    var edge = graph.edges[this.polyline.properties.pk]
+    var edge = graph.edges[this.polyline.properties.id]
       , first_node_id = edge.nodes_id[0]
       , last_node_id = edge.nodes_id[1];
 
