@@ -397,6 +397,7 @@ class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 class ServiceGeojsonSerializer(MapentityGeojsonModelSerializer):
     name = serializers.CharField(source='type.name')
+    published = serializers.BooleanField(source='type.published')
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = trekking_models.Service

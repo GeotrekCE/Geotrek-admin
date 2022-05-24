@@ -57,7 +57,8 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
-        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(
+                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
         return qs
 

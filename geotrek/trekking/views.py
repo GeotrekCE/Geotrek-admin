@@ -507,7 +507,7 @@ class ServiceViewSet(GeotrekMapentityViewSet):
         qs = self.model.objects.existing().select_related('type')
         if self.format_kwarg == 'geojson':
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
-            qs = qs.only('id', 'type', 'published')
+            qs = qs.only('id', 'type')
         return qs
 
     def get_columns(self):
