@@ -98,6 +98,17 @@ class TrekCompletenessTest(TestCase):
     def test_completeness_warning(self):
         """Test form is valid if completeness level is only warning"""
         data = self.data
+        data['published_en'] = True
+        form = TrekForm(user=self.user, data=data)
+        self.assertTrue(form.is_valid())
+
+    @override_settings(COMPLETENESS_LEVEL='error_on_publication')
+    @override_settings(COMPLETENESS_FIELDS={'trek': ['practice', 'departure', 'duration', 'description_teaser']})
+    def test_completeness_error_on_publish_not_published(self):
+        """Test form is valid if completeness level is error on publication but published in no language"""
+        data = self.data
+        data['published_en'] = False
+
         form = TrekForm(user=self.user, data=data)
         self.assertTrue(form.is_valid())
 
