@@ -33,7 +33,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekBaseSerializer(geo_serializers.GeoFeatureModelSerializer):
         cities = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
-        length = serializers.IntegerField(source='length_2d')
+        length = serializers.FloatField(source='length_2d_display')
         departure_city = serializers.SerializerMethodField()
 
         def get_cities(self, obj):

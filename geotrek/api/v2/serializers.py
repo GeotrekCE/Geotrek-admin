@@ -501,7 +501,7 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
     class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        length_2d = serializers.IntegerField()
+        length_2d = serializers.FloatField(source="length_2d_display")
         length_3d = serializers.SerializerMethodField()
 
         def get_length_3d(self, obj):
@@ -520,7 +520,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
         published = serializers.SerializerMethodField()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        length_2d = serializers.IntegerField()
+        length_2d = serializers.FloatField(source='length_2d_display')
         length_3d = serializers.SerializerMethodField()
         name = serializers.SerializerMethodField()
         access = serializers.SerializerMethodField()

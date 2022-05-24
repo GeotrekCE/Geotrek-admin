@@ -7,7 +7,7 @@ from geotrek.core.models import Path, Trail
 
 class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     checkbox = serializers.CharField(source='checkbox_display')
-    length_2d = serializers.SerializerMethodField()
+    length_2d = serializers.FloatField(source='length_2d_display')
     length = serializers.FloatField(source='length_display')
     name = serializers.CharField(source='name_display')
     usages = serializers.CharField(source='usages_display')
@@ -17,9 +17,6 @@ class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     comfort = serializers.SlugRelatedField('comfort', read_only=True)
     source = serializers.SlugRelatedField('source', read_only=True)
     stake = serializers.SlugRelatedField('stake', read_only=True)
-
-    def get_length_2d(self, obj):
-        return round(obj.length_2d, 1)
 
     class Meta:
         model = Path
