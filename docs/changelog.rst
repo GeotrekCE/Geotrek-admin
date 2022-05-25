@@ -15,7 +15,7 @@ CHANGELOG
 - Fix trail detail link in list view
 - Fix infrastructure detail link in list view
 - Fix dive detail link in list view
-- Fix signage attachment access if published
+- Fix signage and infrastructure attachment access if published
 
 **Documentation**
 
