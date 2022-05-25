@@ -243,7 +243,6 @@ jobs:
           mkdir -p var/conf/extra_static
           make load_data
           make load_test_integration
-          make load_test_integration_workflow
           docker-compose up -d
 
       - name: Prepare nginx
@@ -329,12 +328,13 @@ jobs:
       - name: Install package
         run: |
           sudo netstat -tunlp
-          sudo rm /etc/nginx/sites-enabled/default
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          sudo systemctl status nginx
+          sudo echo "test"
           sudo systemctl restart nginx
           sleep 2
+          sudo echo "test"
           curl "localhost"
+          sudo echo "test"
           sudo systemctl status geotrek
           sudo journalctl -xe
 
@@ -356,7 +356,7 @@ jobs:
 
       - name: E2E test
         run: |
-          ./node_modules/.bin/cypress run
+           /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/node_modules/.bin/cypress run
         continue-on-error: false
 
       - name: Archive results as artifacts
