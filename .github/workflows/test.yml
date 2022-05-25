@@ -357,7 +357,7 @@ jobs:
 
       - name: E2E test
         run: |
-           /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/node_modules/.bin/cypress run
+           /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/node_modules/.bin/cypress run -P /home/runner/work/Geotrek-admin/Geotrek-admin/cypress
         continue-on-error: false
 
       - name: Archive results as artifacts
