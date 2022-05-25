@@ -8,5 +8,6 @@
   "baseUrl": "http://geotrek.local:8000",
   "video": true,
   "requestTimeout": 50000,
-  "projectId": "ktpy7v"
+  "projectId": "ktpy7v",
+  "userAgent": "FrontendTest"
 }
