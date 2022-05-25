@@ -1,5 +1,15 @@
 [
     {
+        "model": "feedback.reportactivity",
+        "pk": 1,
+        "fields": {
+            "label": "Randonnée p\u00e9destre",
+            "label_en": "Trek",
+            "label_fr": "Randonnée p\u00e9destre",
+            "identifier": 31
+        }
+    },
+    {
         "model": "feedback.reportcategory",
         "pk": 1,
         "fields": {

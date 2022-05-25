@@ -113,7 +113,16 @@ Geotrek reports can work together with Suricate API, using one of 4 modes. Proce
 
 **1** - No Suricate (default)
 
-This mode sends no report data to Suricate.
+This mode sends no report data to Suricate. 
+
+To initialize Report form, load lists for categories, activities, statuses and problem magnitude:
+
+.. code-block :: python
+
+    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
+
+To make these lists available for your Geotrek-rando-v2, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
+
 
 **2** - Suricate Reports
 
@@ -131,15 +140,6 @@ Set your account settings in ``custom.py``:
         'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
         'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
     }
-
-Then load lists for categories, activities, statuses and problem magnitude:
-
-.. code-block :: python
-
-    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
-
-To make these lists available for your Geotrek-rando-v2, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
-
 
 **3** - Suricate Management
 
