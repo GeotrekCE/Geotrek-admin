@@ -296,6 +296,9 @@ class BasePublishableMixin(models.Model):
         else:
             return []
 
+    def is_public(self):
+        return self.any_published
+
 
 class PublishableMixin(BasePublishableMixin):
     """A mixin that contains all necessary stuff to publish objects
@@ -366,8 +369,6 @@ class PublishableMixin(BasePublishableMixin):
         else:
             super().prepare_map_image(rooturl)
 
-    def is_public(self):
-        return self.any_published
 
 
 class PictogramMixin(models.Model):
