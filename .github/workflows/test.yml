@@ -322,6 +322,8 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
           echo "geotrek-admin geotrek-admin/SERVER_NAME string geotrek.local" >> .debian_settings
+          mkdir -p var/conf/
+          cp cypress/custom.py var/conf/custom.py
           cat .debian_settings
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           sudo debconf-set-selections .debian_settings
@@ -331,12 +333,7 @@ jobs:
           sudo netstat -tunlp
           sudo unlink /etc/nginx/sites-enabled/default
           sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          sudo echo "test"
           sudo systemctl restart nginx
-          sleep 2
-          sudo echo "test"
-          curl "localhost"
-          sudo echo "test"
           sudo systemctl status geotrek
           sudo journalctl -xe
 
@@ -410,6 +407,8 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
+          mkdir -p var/conf/
+          cp cypress/custom.py var/conf/custom.py
           cat .debian_settings
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           sudo debconf-set-selections .debian_settings
