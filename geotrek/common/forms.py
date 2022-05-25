@@ -197,9 +197,9 @@ class CommonForm(MapEntityForm):
         languages = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         if settings.PUBLISHED_BY_LANG:
             return [language for language in languages if self.cleaned_data.get(f'published_{language}', None)]
-        elif self.any_published:
-            return languages
-        return []
+        else:
+            if self.any_published:
+                return languages
 
     def completeness_fields_are_required(self):
         """Return True if the completeness fields are required"""
