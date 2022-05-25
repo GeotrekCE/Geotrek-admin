@@ -17,7 +17,7 @@ env:
   POSTGRES_PASSWORD: ci_test
   POSTGRES_USER: ci_test
   POSTGRES_HOST: 127.0.0.1
-  SERVER_NAME: localhost
+  SERVER_NAME: geotrek.local
   SECRET_KEY: test-test-test
   CONVERSION_HOST: localhost
   CAPTURE_HOST: localhost
