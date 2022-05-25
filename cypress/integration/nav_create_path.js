@@ -2,7 +2,6 @@ describe('Create path', () => {
   before(() => {
     const username = 'admin'
     const password = 'admin'
-    cy.setCookie('django_language', 'en');
     cy.loginByCSRF(username, password)
       .then((resp) => {
          expect(resp.status).to.eq(200)
@@ -10,6 +9,7 @@ describe('Create path', () => {
   })
 
   beforeEach(() => {
+    cy.setCookie('django_language', 'en');
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
   });
 
