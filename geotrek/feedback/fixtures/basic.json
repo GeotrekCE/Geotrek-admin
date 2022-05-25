@@ -1,7 +1,7 @@
 [
     {
         "model": "feedback.reportactivity",
-        "pk": 18,
+        "pk": 1,
         "fields": {
             "label": "Randonnée p\u00e9destre",
             "label_en": "Trek",
