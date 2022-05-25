@@ -5,7 +5,7 @@
   "pluginsFile": false,
   "screenshotsFolder": "screenshots",
   "videosFolder": "videos",
-  "baseUrl": "http://localhost:8000",
+  "baseUrl": "http://geotrek.local:8000",
   "video": true,
   "requestTimeout": 50000,
   "projectId": "ktpy7v"
