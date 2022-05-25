@@ -28,6 +28,7 @@ CHANGELOG
 
 **Maintenance**
 
+- Add a git hook to prevent pushing to master.
 - Update to paperclip 2.5.0
 
 
