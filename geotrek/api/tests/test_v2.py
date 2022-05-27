@@ -4105,6 +4105,8 @@ class OutdoorFilterByPortal(BaseApiTest):
         cls.course = outdoor_factory.CourseFactory()
         cls.course.parent_sites.set([cls.site.pk])
         cls.course2 = outdoor_factory.CourseFactory()
+        cls.information_desk = tourism_factory.InformationDeskFactory()
+        cls.site.information_desks.set([cls.information_desk])
 
     def test_filter_courses_by_portal(self):
         response = self.get_course_list({'portals': self.portal.pk})
@@ -4127,6 +4129,16 @@ class OutdoorFilterByPortal(BaseApiTest):
             all_ids.append(type['id'])
         self.assertIn(self.course.pk, all_ids)
         self.assertNotIn(self.course2.pk, all_ids)
+
+    def test_filter_info_desks_by_portal_and_outdoor(self):
+        response = self.get_informationdesk_list()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = []
+        for type in returned_types:
+            all_ids.append(type['id'])
+        self.assertIn(self.information_desk.pk, all_ids)
 
 
 class AltimetryCacheTests(BaseApiTest):
