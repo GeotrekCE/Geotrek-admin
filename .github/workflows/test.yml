@@ -322,8 +322,8 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
           echo "geotrek-admin geotrek-admin/SERVER_NAME string geotrek.local" >> .debian_settings
-          mkdir -p var/conf/
-          cp cypress/custom.py var/conf/custom.py
+          mkdir -p /home/runner/work/Geotrek-admin/Geotrek-admin/var/conf/
+          cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/custom.py /home/runner/work/Geotrek-admin/Geotrek-admin/var/conf/custom.py
           cat .debian_settings
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           sudo debconf-set-selections .debian_settings
@@ -408,8 +408,8 @@ jobs:
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
-          mkdir -p var/conf/
-          cp cypress/custom.py var/conf/custom.py
+          mkdir -p /home/runner/work/Geotrek-admin/Geotrek-admin/var/conf/
+          cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/custom.py /home/runner/work/Geotrek-admin/Geotrek-admin/var/conf/custom.py
           cat .debian_settings
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           sudo debconf-set-selections .debian_settings
