@@ -33,6 +33,10 @@ CHANGELOG
 - Add a git hook to prevent pushing to master.
 - Update to paperclip 2.5.0
 
+**New ci**
+
+- New common interface github actions
+
 
 2.82.2  (2022-04-28)
 -----------------------
