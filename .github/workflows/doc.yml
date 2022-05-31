@@ -26,16 +26,7 @@ jobs:
         LANG: C.UTF-8
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Shell
-        id: check_docs_changed
-        run: |
-          docs_changed=$(if git diff-index --quiet $(git rev-list --no-merges --reverse origin/master $(git rev-parse --abbrev-ref HEAD) | head -n1) -- 'docs/*'; then echo "False"; else echo "True"; fi;)
-          echo ::set-output name=docs_changed::"$docs_changed"
-        shell: bash
       - name: Documentation
-        if: steps.check_docs_changed.outputs.docs_changed == 'True'
         run: |
           cd docs/
           pip install -r ./requirements.txt
