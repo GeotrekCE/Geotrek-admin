@@ -5,9 +5,13 @@ name: Test CI
 
 on:
   pull_request:
+    paths-ignore:
+      - 'docs/**'
   push:
     branches:
       - master
+    paths-ignore:
+      - 'docs/**'
   release:
     types:
       - created
