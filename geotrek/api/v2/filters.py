@@ -1039,6 +1039,13 @@ class TreksAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedB
         return (set_1 | set_2 | set_3).distinct()
 
 
+class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
+        set_2 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+        return (set_1 | set_2).distinct()
+
+
 class GeotrekRatingScaleFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         practices = request.GET.get('practices')

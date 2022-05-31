@@ -12,6 +12,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix APIv2 does not return information desks on published outdoor sites(#3095)
 - Fix trail detail link in list view
 - Fix infrastructure detail link in list view
 - Fix dive detail link in list view

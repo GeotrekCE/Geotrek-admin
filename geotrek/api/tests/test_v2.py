@@ -3025,9 +3025,7 @@ class TouristicEventTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
         self.assertNotIn(self.type_with_no_content.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
         self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
@@ -3041,9 +3039,8 @@ class TouristicEventTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_content.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
         self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
@@ -3089,9 +3086,8 @@ class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 0)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_content.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
         self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
@@ -3110,9 +3106,8 @@ class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_content.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
         self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
@@ -3585,9 +3580,8 @@ class TouristicContentTypeFilterTestCase(BaseApiTest):
     def assert_returned_types(self, i, response, content_in_list, content_not_in_list):
         returned_types = response.json()['results'][0]['types'][i - 1]['values']
         self.assertEqual(len(returned_types), len(content_in_list))
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         # type1
         if i == 1:
             for content in content_in_list:
@@ -3661,9 +3655,8 @@ class SiteTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_site.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
         self.assertIn(self.type_with_published_and_not_deleted_site.pk, all_ids)
@@ -3676,9 +3669,8 @@ class SiteTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_site.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
         self.assertNotIn(self.type_with_published_and_not_deleted_site.pk, all_ids)
@@ -3722,9 +3714,8 @@ class SiteTypeFilterTestCaseByPortal(SiteTypeFilterTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 0)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_site.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
         # Didn't set portal on these ones yet
@@ -3742,9 +3733,8 @@ class SiteTypeFilterTestCaseByPortal(SiteTypeFilterTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_site.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
         # Portal is set this time
@@ -3787,9 +3777,8 @@ class CourseTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_course.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_course.pk, all_ids)
         self.assertIn(self.type_with_published_and_not_deleted_course.pk, all_ids)
@@ -3802,9 +3791,8 @@ class CourseTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_course.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_course.pk, all_ids)
         self.assertNotIn(self.type_with_published_and_not_deleted_course.pk, all_ids)
@@ -3906,9 +3894,8 @@ class OutdoorFilterBySuperPracticesTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertNotIn(self.site2.pk, all_ids)
         self.assertNotIn(self.site3.pk, all_ids)
@@ -3919,9 +3906,8 @@ class OutdoorFilterBySuperPracticesTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 3)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
@@ -3953,9 +3939,8 @@ class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertNotIn(self.site2.pk, all_ids)
         self.assertNotIn(self.site3.pk, all_ids)
@@ -3966,9 +3951,8 @@ class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 3)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
@@ -3979,9 +3963,8 @@ class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 4)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
@@ -4070,9 +4053,8 @@ class OutdoorFilterByPracticesTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.course_practice.pk, all_ids)
         self.assertNotIn(self.course_site_no_practice.pk, all_ids)
         self.assertNotIn(self.course_other_practice.pk, all_ids)
@@ -4083,9 +4065,8 @@ class OutdoorFilterByPracticesTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.course_practice.pk, all_ids)
         self.assertNotIn(self.course_site_no_practice.pk, all_ids)
         self.assertNotIn(self.course_other_practice.pk, all_ids)
@@ -4105,15 +4086,16 @@ class OutdoorFilterByPortal(BaseApiTest):
         cls.course = outdoor_factory.CourseFactory()
         cls.course.parent_sites.set([cls.site.pk])
         cls.course2 = outdoor_factory.CourseFactory()
+        cls.information_desk = tourism_factory.InformationDeskFactory()
+        cls.site.information_desks.set([cls.information_desk])
 
     def test_filter_courses_by_portal(self):
         response = self.get_course_list({'portals': self.portal.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.course.pk, all_ids)
         self.assertNotIn(self.course2.pk, all_ids)
 
@@ -4122,11 +4104,19 @@ class OutdoorFilterByPortal(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.course.pk, all_ids)
         self.assertNotIn(self.course2.pk, all_ids)
+
+    def test_filter_info_desks_by_portal_and_outdoor(self):
+        response = self.get_informationdesk_list()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = [type['id'] for type in returned_types]
+
+        self.assertIn(self.information_desk.pk, all_ids)
 
 
 class AltimetryCacheTests(BaseApiTest):

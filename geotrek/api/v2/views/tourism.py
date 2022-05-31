@@ -58,7 +58,7 @@ class InformationDeskTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TreksAndSitesRelatedPortalFilter,
                                                                      api_filters.NearbyContentFilter,
                                                                      api_filters.GeotrekInformationDeskFilter)
     serializer_class = api_serializers.InformationDeskSerializer
