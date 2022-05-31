@@ -1,9 +1,9 @@
 name: Documentation
 
 on:
-  push:
+  pull_request:
     paths:
-      - '*/docs/**'
+      - 'docs/**'
 
 env:
   DEBIAN_FRONTEND: noninteractive
