@@ -5,6 +5,7 @@ on:
     paths:
       - 'docs/**'
 
+
 env:
   DEBIAN_FRONTEND: noninteractive
 
