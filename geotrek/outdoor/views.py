@@ -31,7 +31,7 @@ class SiteList(CustomColumnsMixin, MapEntityList):
     searchable_columns = ['id', 'name']
 
 
-class SiteDetail(MapEntityDetail):
+class SiteDetail(CompletenessMixin, MapEntityDetail):
     queryset = Site.objects.all()
 
     def get_context_data(self, *args, **kwargs):
