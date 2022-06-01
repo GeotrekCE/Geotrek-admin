@@ -7,6 +7,7 @@ CHANGELOG
 
 **New features**
 
+- Add filter valid geometries on topologies
 
 
 2.83.0  (2022-05-01)
