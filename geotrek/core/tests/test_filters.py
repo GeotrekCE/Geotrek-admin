@@ -49,28 +49,25 @@ class TopologyFilterTrailTest(TestCase):
         self.assertEqual(qs.count(), 1)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ValidTopologyFilterTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory()
-            cls.trek = TrekFactory.create(name="Crossed", paths=[(cls.path, 0, 1)])
-        else:
-            cls.trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
+        cls.path = PathFactory()
+        cls.trek = TrekFactory.create(name="Crossed", paths=[(cls.path, 0, 1)])
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_trek_filters_not_valid(self):
         trek = TrekFactory.create(name="Not crossed", paths=[(self.path, 0, 0.5)])
         TrekFactory.create(paths=[])
         qs = TrekFilterSet().qs
         self.assertEqual(qs.count(), 3)
 
-        data = {'is_valid': True}
+        data = {'is_valid_topology': True}
         qs = TrekFilterSet(data=data).qs
         self.assertIn(self.trek, qs)
         self.assertEqual(qs.count(), 2)
 
-        data = {'is_valid': False}
+        data = {'is_valid_topology': False}
         qs = TrekFilterSet(data=data).qs
         self.assertEqual(qs.count(), 1)
 
@@ -78,29 +75,62 @@ class ValidTopologyFilterTest(TestCase):
         PathFactory.create(geom=geom)
         self.trek.reload()
         trek.reload()
-        data = {'is_valid': True}
+        data = {'is_valid_topology': True}
         qs = TrekFilterSet(data=data).qs
         self.assertNotIn(self.trek, qs)
         self.assertIn(trek, qs)
         self.assertEqual(qs.count(), 1)
 
-        data = {'is_valid': False}
+        data = {'is_valid_topology': False}
         qs = TrekFilterSet(data=data).qs
         self.assertIn(self.trek, qs)
         self.assertNotIn(trek, qs)
         self.assertEqual(qs.count(), 2)
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_trek_filters_not_valid_nds(self):
-        TrekFactory.create(name="Empty", geom='SRID=2154;LINESTRING EMPTY')
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class ValidGeometryFilterTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory()
+
+    def test_trek_filters_not_valid_geometry(self):
+        trek_linestring = TrekFactory.create(name="LineString", paths=[(self.path, 0, 1)])
+        trek_multilinestring = TrekFactory.create(name="Multilinestring", paths=[(self.path, 0, 0.4, 1),
+                                                                                 (self.path, 0.6, 1, 2)])
+        trek_point = TrekFactory.create(name="Point", paths=[(self.path, 0, 0)])
+        trek_none = TrekFactory.create(name="None", paths=[])
+
+        qs = TrekFilterSet().qs
+        self.assertEqual(qs.count(), 4)
+
+        data = {'is_valid_geometry': True}
+        qs = TrekFilterSet(data=data).qs
+        self.assertIn(trek_linestring, qs)
+        self.assertEqual(qs.count(), 1)
+
+        data = {'is_valid_geometry': False}
+        qs = TrekFilterSet(data=data).qs
+        self.assertIn(trek_multilinestring, qs)
+        self.assertIn(trek_point, qs)
+        self.assertIn(trek_none, qs)
+        self.assertEqual(qs.count(), 3)
+
+
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class ValidGeometryFilterNDSTest(TestCase):
+    def test_trek_filters_not_valid_geometry_nds(self):
+        trek_empty = TrekFactory.create(name="Empty", geom='SRID=2154;LINESTRING EMPTY')
+        trek_valid = TrekFactory.create(name="Valid", geom=LineString((0, 0), (5, 5)))
         qs = TrekFilterSet().qs
         self.assertEqual(qs.count(), 2)
 
-        data = {'is_valid': True}
+        data = {'is_valid_geometry': True}
         qs = TrekFilterSet(data=data).qs
-        self.assertIn(self.trek, qs)
+        self.assertIn(trek_valid, qs)
         self.assertEqual(qs.count(), 1)
 
-        data = {'is_valid': False}
+        data = {'is_valid_geometry': False}
         qs = TrekFilterSet(data=data).qs
+        self.assertIn(trek_empty, qs)
         self.assertEqual(qs.count(), 1)

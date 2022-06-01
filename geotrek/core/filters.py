@@ -8,22 +8,41 @@ from .models import Topology, Path, Trail
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import RightFilter
+from geotrek.common.functions import GeometryType
 from geotrek.maintenance import models as maintenance_models
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
 
 
 class ValidTopologyFilterSet(FilterSet):
-    is_valid = BooleanFilter(label=_("Valid topology"), method='filter_valid_topology')
+    # Do not forget to add geometry_types_allowed on models if you add this filterset
+    # geometry_types_allowed = ["ST_LineString"] for example
+    # Types possible with topologies are linestring and points only
+
+    if settings.TREKKING_TOPOLOGY_ENABLED:
+        is_valid_topology = BooleanFilter(label=_("Valid topology"), method='filter_valid_topology')
+    is_valid_geometry = BooleanFilter(label=_("Valid geometry"), method='filter_valid_geometry')
 
     def filter_valid_topology(self, qs, name, value):
         if value is not None:
-            qs = qs.annotate(distinct_same_order=Count('aggregations__order', distinct=True),
+            qs = qs.annotate(number_aggregations=Count('aggregations'),
+                             distinct_same_order=Count('aggregations__order', distinct=True),
                              same_order=Count('aggregations__order'))
             if value is True:
-                qs = qs.filter(geom__isvalid=True).exclude(geom__isnull=True).exclude(geom__isempty=True).filter(same_order=F('distinct_same_order'))
+                qs = qs.filter(number_aggregations__gt=0, same_order=F('distinct_same_order'))
             elif value is False:
-                qs = qs.filter(Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True) | Q(distinct_same_order__lt=F('same_order')))
+                qs = qs.filter(Q(number_aggregations=0) | Q(distinct_same_order__lt=F('same_order')))
+        return qs
+
+    def filter_valid_geometry(self, qs, name, value):
+        if value is not None:
+            qs = qs.annotate(geometry_type=GeometryType('geom'))
+            if value is True:
+                qs = qs.filter(geom__isvalid=True).exclude(geom__isnull=True).exclude(geom__isempty=True).filter(
+                    geometry_type__in=qs.model.geometry_types_allowed)
+            elif value is False:
+                qs = qs.filter(Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True) | ~Q(
+                    geometry_type__in=qs.model.geometry_types_allowed))
         return qs
 
 

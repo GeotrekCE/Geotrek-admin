@@ -11,13 +11,6 @@ def Buffer(geom, radius, num_seg):
     return Func(geom, radius, num_seg, function='ST_Buffer', output_field=GeometryField())
 
 
-def GeometryType(geom):
-    """
-    GeometryType postgis function
-    """
-    return Func(geom, function='GeometryType', output_field=CharField())
-
-
 class Length3D(Func):
     """
     ST_3DLENGTH postgis function

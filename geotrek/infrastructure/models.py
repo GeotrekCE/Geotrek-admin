@@ -167,6 +167,8 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
                                          related_name='infrastructures_set')
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
 
+    geometry_types_allowed = ["ST_LineString", "ST_Point"]
+
     class Meta:
         verbose_name = _("Infrastructure")
         verbose_name_plural = _("Infrastructures")
