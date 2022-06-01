@@ -37,6 +37,9 @@ msgstr ""
 msgid "Valid topology"
 msgstr ""
 
+msgid "Valid geometry"
+msgstr ""
+
 msgid "length"
 msgstr ""
 

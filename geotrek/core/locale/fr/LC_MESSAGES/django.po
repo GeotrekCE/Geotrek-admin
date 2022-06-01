@@ -38,6 +38,9 @@ msgstr "La ligne a un snapping invalide"
 msgid "Valid topology"
 msgstr "Topologie valide"
 
+msgid "Valid geometry"
+msgstr "Géometrie valide"
+
 msgid "length"
 msgstr "Longueur"
 
