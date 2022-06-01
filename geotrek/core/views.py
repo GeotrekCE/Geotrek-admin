@@ -265,6 +265,25 @@ class PathViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = PathGeojsonSerializer
     filterset_class = PathFilterSet
 
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator."""
+        language = self.request.LANGUAGE_CODE
+        no_draft = self.request.GET.get('_no_draft')
+        if no_draft:
+            latest_saved = Path.no_draft_latest_updated()
+        else:
+            latest_saved = Path.latest_updated()
+        geojson_lookup = None
+
+        if latest_saved:
+            geojson_lookup = '%s_path_%s%s_json_layer' % (
+                language,
+                latest_saved.strftime('%y%m%d%H%M%S%f'),
+                '_nodraft' if no_draft else ''
+            )
+        return geojson_lookup
+
+
     def get_queryset(self):
         qs = self.model.objects.all()
         if self.format_kwarg == 'geojson':
@@ -282,9 +301,9 @@ class PathViewSet(GeotrekMapentityViewSet):
             qs = qs.only("id", "name", "draft")
 
         else:
-            qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')\
-                   .select_related('structure', 'comfort', 'source', 'stake')\
-                   .prefetch_related('usages', 'networks')
+            qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')#\
+                   # .select_related('structure', 'comfort', 'source', 'stake')\
+                   # .prefetch_related('usages', 'networks')
         return qs
 
     def get_columns(self):

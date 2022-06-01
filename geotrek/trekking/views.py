@@ -399,7 +399,7 @@ class POIViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name', 'published')
         else:
-            qs = qs.select_related('type')
+            qs = qs.select_related('type', 'structure')
             qs = qs.prefetch_related('attachments')
         return qs
 

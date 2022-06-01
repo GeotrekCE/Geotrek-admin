@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.db.models import F, Value, CharField
 from django.db.models.functions import Concat
 from django.urls.base import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, get_language
 from django.views.generic.list import ListView
 from mapentity import views as mapentity_views
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -152,6 +152,19 @@ class ReportViewSet(GeotrekMapentityViewSet):
         qs = qs.select_related("activity", "category", "problem_magnitude", "related_trek")\
                .prefetch_related("attachments")
         return qs
+
+    def view_cache_key(self):
+        """ Used by the ``view_cache_response_content`` decorator. """
+        language = get_language()
+        geojson_lookup = None
+        latest_saved = feedback_models.Report.latest_updated()
+        if latest_saved:
+            geojson_lookup = '%s_report_%s_%s_geojson_layer' % (
+                language,
+                latest_saved.isoformat(),
+                self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else ''
+            )
+        return geojson_lookup
 
 
 class ReportAPIViewSet(APIViewSet):

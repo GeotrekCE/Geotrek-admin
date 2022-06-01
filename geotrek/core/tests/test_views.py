@@ -575,7 +575,7 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=True)
 
         # There are 7 queries to get layer without drafts
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 1)
 
@@ -588,23 +588,23 @@ class PathViewsTest(CommonTest):
         content = cache.get(geojson_lookup)
         content_draft = cache.get(geojson_lookup_last_update_draft)
 
-        self.assertEqual(response.content, content)
+        self.assertEqual(response, content)
         self.assertIsNone(content_draft)
 
         # We have 1 less query because the generation of paths was cached
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(3):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
         self.modelfactory(draft=True)
 
         # Cache was not updated, the path was a draft
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(3):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
         self.modelfactory(draft=False)
 
         # Cache was updated, the path was not a draft : we get 7 queries
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
     def test_path_layer_cache(self):
@@ -618,7 +618,7 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=True)
 
         # There are 7 queries to get layer without drafts
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             response = self.client.get(obj.get_layer_url())
         self.assertEqual(len(response.json()['features']), 2)
 
@@ -632,22 +632,22 @@ class PathViewsTest(CommonTest):
         content = cache.get(geojson_lookup)
 
         self.assertIsNone(content_no_draft)
-        self.assertEqual(response.content, content)
+        self.assertEqual(response.content, content.content)
 
         # We have 1 less query because the generation of paths was cached
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(3):
             self.client.get(obj.get_layer_url())
 
         self.modelfactory(draft=True)
 
         # Cache is updated when we add a draft path
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             self.client.get(obj.get_layer_url())
 
         self.modelfactory(draft=False)
 
         # Cache is updated when we add a path
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             self.client.get(obj.get_layer_url())
 
 
@@ -700,7 +700,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(5):
             self.client.get(reverse('core:path-drf-list', kwargs={'format': 'datatables'}))
 
 

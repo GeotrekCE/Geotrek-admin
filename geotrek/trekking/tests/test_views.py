@@ -139,7 +139,7 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get(self.model.get_datatablelist_url())
 
         with self.assertNumQueries(9):
@@ -1446,7 +1446,7 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
         DistrictFactory.build_batch(10)
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get(self.model.get_datatablelist_url())
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) list

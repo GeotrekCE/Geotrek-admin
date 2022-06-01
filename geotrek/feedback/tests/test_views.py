@@ -85,10 +85,11 @@ class ReportSerializationOptimizeTests(TestCase):
         last_update_status = feedback_models.Report.latest_updated()
         geojson_lookup = f"fr_report_{last_update_status.isoformat()}_{self.user.pk}_geojson_layer"
         cache_content = cache.get(geojson_lookup)
-        self.assertEqual(response.content, cache_content)
+
+        self.assertEqual(response.content, cache_content.content)
 
         # We have 1 less query because the generation of report was cached
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get(reverse("feedback:report-drf-list",
                                     format="geojson"))
 
