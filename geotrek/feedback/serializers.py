@@ -1,4 +1,5 @@
 from django.contrib.gis.geos import GEOSGeometry
+from django.utils.html import escape
 from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometryField
@@ -34,6 +35,9 @@ class ReportAPISerializer(rest_serializers.ModelSerializer):
 
     def validate_geom(self, value):
         return GEOSGeometry(value, srid=4326)
+
+    def validate_comment(self, value):
+        return escape(value)
 
 
 class ReportAPIGeojsonSerializer(GeoFeatureModelSerializer, ReportAPISerializer):
