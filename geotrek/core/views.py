@@ -283,7 +283,6 @@ class PathViewSet(GeotrekMapentityViewSet):
             )
         return geojson_lookup
 
-
     def get_queryset(self):
         qs = self.model.objects.all()
         if self.format_kwarg == 'geojson':
@@ -301,9 +300,7 @@ class PathViewSet(GeotrekMapentityViewSet):
             qs = qs.only("id", "name", "draft")
 
         else:
-            qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')#\
-                   # .select_related('structure', 'comfort', 'source', 'stake')\
-                   # .prefetch_related('usages', 'networks')
+            qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')
         return qs
 
     def get_columns(self):

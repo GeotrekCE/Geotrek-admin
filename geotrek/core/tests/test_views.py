@@ -588,17 +588,17 @@ class PathViewsTest(CommonTest):
         content = cache.get(geojson_lookup)
         content_draft = cache.get(geojson_lookup_last_update_draft)
 
-        self.assertEqual(response, content)
+        self.assertEqual(response.content, content.content)
         self.assertIsNone(content_draft)
 
         # We have 1 less query because the generation of paths was cached
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
         self.modelfactory(draft=True)
 
         # Cache was not updated, the path was a draft
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
         self.modelfactory(draft=False)
@@ -635,7 +635,7 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.content, content.content)
 
         # We have 1 less query because the generation of paths was cached
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(obj.get_layer_url())
 
         self.modelfactory(draft=True)

@@ -89,7 +89,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.assertEqual(response.content, cache_content.content)
 
         # We have 1 less query because the generation of report was cached
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(reverse("feedback:report-drf-list",
                                     format="geojson"))
 
