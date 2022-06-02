@@ -9,6 +9,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, fromstr, LineString, GEOSGeometry
 from django.contrib.postgres.indexes import GistIndex
 from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db.models import ProtectedError
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -244,6 +245,8 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
         if not settings.TREKKING_TOPOLOGY_ENABLED:
             return super().delete(*args, **kwargs)
         topologies = list(self.topology_set.filter())
+        if topologies and not settings.ALLOW_PATH_DELETION_TOPOLOGY:
+            raise ProtectedError(_("You can't delete this path, some topologies are linked with this path"), self)
         r = super().delete(*args, **kwargs)
         if not Path.objects.exists():
             return r
