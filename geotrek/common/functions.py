@@ -7,8 +7,9 @@ class Length(GeoFunc):
     output_field = FloatField()
 
 
-def GeometryType(geom):
+class GeometryType(Func):
     """
     GeometryType postgis function
     """
-    return Func(geom, function='GeometryType', output_field=CharField())
+    output_field = CharField()
+    function = 'GeometryType'

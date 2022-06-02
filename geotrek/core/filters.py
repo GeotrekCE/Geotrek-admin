@@ -25,13 +25,12 @@ class ValidTopologyFilterSet(FilterSet):
 
     def filter_valid_topology(self, qs, name, value):
         if value is not None:
-            qs = qs.annotate(number_aggregations=Count('aggregations'),
-                             distinct_same_order=Count('aggregations__order', distinct=True),
+            qs = qs.annotate(distinct_same_order=Count('aggregations__order', distinct=True),
                              same_order=Count('aggregations__order'))
             if value is True:
-                qs = qs.filter(number_aggregations__gt=0, same_order=F('distinct_same_order'))
+                qs = qs.filter(same_order__gt=0, same_order=F('distinct_same_order'))
             elif value is False:
-                qs = qs.filter(Q(number_aggregations=0) | Q(distinct_same_order__lt=F('same_order')))
+                qs = qs.filter(Q(same_order=0) | Q(distinct_same_order__lt=F('same_order')))
         return qs
 
     def filter_valid_geometry(self, qs, name, value):
