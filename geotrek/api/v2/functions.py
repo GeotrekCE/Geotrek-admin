@@ -1,6 +1,6 @@
 from django.contrib.gis.db.models.functions import GeoFunc
 from django.db.models import Func
-from django.db.models.fields import FloatField, CharField
+from django.db.models.fields import FloatField
 from django.contrib.gis.db.models import GeometryField, PointField
 
 

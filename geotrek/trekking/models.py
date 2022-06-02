@@ -213,7 +213,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
-    geometry_types_allowed = ["ST_LineString"]
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Trek")
@@ -729,7 +729,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    geometry_types_allowed = ["ST_Point"]
+    geometry_types_allowed = ["POINT"]
 
     class Meta:
         verbose_name = _("POI")

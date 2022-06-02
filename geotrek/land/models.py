@@ -43,7 +43,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
                                       on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    geometry_types_allowed = ["ST_LineString"]
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Physical edge")
@@ -111,7 +111,7 @@ class LandEdge(MapEntityMixin, Topology):
     agreement = models.BooleanField(verbose_name=_("Agreement"), default=False)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    geometry_types_allowed = ["ST_LineString"]
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Land edge")
@@ -162,7 +162,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    geometry_types_allowed = ["ST_LineString"]
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Competence edge")
@@ -213,7 +213,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    geometry_types_allowed = ["ST_LineString"]
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Work management edge")
@@ -264,7 +264,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    geometry_types_allowed = ["ST_LineString"]
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Signage management edge")

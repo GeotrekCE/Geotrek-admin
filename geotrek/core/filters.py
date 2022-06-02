@@ -16,7 +16,7 @@ from geotrek.zoning.filters import ZoningFilterSet
 
 class ValidTopologyFilterSet(FilterSet):
     # Do not forget to add geometry_types_allowed on models if you add this filterset
-    # geometry_types_allowed = ["ST_LineString"] for example
+    # geometry_types_allowed = ["LINESTRING"] for example
     # Types possible with topologies are linestring and points only
 
     if settings.TREKKING_TOPOLOGY_ENABLED:

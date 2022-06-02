@@ -1,5 +1,5 @@
 from django.contrib.gis.db.models.functions import GeoFunc
-from django.db.models import CharField, FloatField
+from django.db.models import CharField, FloatField, Func
 
 
 class Length(GeoFunc):
@@ -7,6 +7,8 @@ class Length(GeoFunc):
     output_field = FloatField()
 
 
-class GeometryType(GeoFunc):
-    """ ST_GeometryType postgis function """
-    output_field = CharField()
+def GeometryType(geom):
+    """
+    GeometryType postgis function
+    """
+    return Func(geom, function='GeometryType', output_field=CharField())
