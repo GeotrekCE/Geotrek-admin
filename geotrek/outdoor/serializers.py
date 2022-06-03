@@ -16,7 +16,7 @@ from geotrek.common.serializers import (LabelSerializer,
                                         TranslatedModelSerializer)
 from geotrek.tourism.serializers import InformationDeskSerializer
 from geotrek.trekking.serializers import WebLinkSerializer
-from geotrek.zoning.serializers import ZoningSerializerMixin
+from geotrek.zoning.serializers import ZoningAPISerializerMixin
 from .models import Course, Site, Practice
 
 
@@ -48,7 +48,7 @@ class SiteGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ["id", "name"]
 
 
-class SiteAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
+class SiteAPISerializer(PublishableSerializerMixin, ZoningAPISerializerMixin, TranslatedModelSerializer):
     practice = PracticeSerializer()
     structure = StructureSerializer()
     labels = LabelSerializer(many=True)
@@ -67,7 +67,7 @@ class SiteAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, Trans
             'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
             'information_desks', 'web_links', 'type', 'parent', 'children', 'eid',
             'orientation', 'wind', 'ratings'
-        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
+        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
 
 
 class SiteAPIGeojsonSerializer(GeoFeatureModelSerializer, SiteAPISerializer):
@@ -95,7 +95,7 @@ class CourseGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ["id", "name"]
 
 
-class CourseAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
+class CourseAPISerializer(PublishableSerializerMixin, ZoningAPISerializerMixin, TranslatedModelSerializer):
     structure = StructureSerializer()
     points_reference = serializers.SerializerMethodField()
 
@@ -104,7 +104,7 @@ class CourseAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, Tra
         fields = (
             'id', 'structure', 'name', 'parent_sites', 'description', 'duration', 'advice', 'points_reference',
             'equipment', 'accessibility', 'height', 'eid', 'ratings', 'ratings_description', 'gear', 'type'
-        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
+        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
 
     def get_points_reference(self, obj):
         if not obj.points_reference:

@@ -18,7 +18,7 @@ describe('Create trek', () => {
   it('Create trek', () => {
     cy.visit('/trek/list')
     cy.server()
-    cy.route('/api/graph.json').as('graph')
+    cy.route('/api/path/drf/paths/graph').as('graph')
     cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click()
     cy.wait('@graph')
     cy.get("a.linetopology-control").click()

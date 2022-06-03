@@ -28,11 +28,6 @@ class LineMixin(FormsetMixin):
     formset_class = LineFormset
 
 
-# class SignageLayer(MapEntityLayer):
-#     queryset = Signage.objects.existing()
-#     properties = ['name', 'published']
-
-
 class SignageList(CustomColumnsMixin, MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
@@ -184,11 +179,6 @@ class BladeList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'number']
     default_extra_columns = ['direction', 'type', 'color']
     searchable_columns = ['id', 'number']
-
-
-# class BladeLayer(MapEntityLayer):
-#     queryset = Blade.objects.all()
-#     properties = ['number']
 
 
 class BladeFormatList(MapEntityFormat, BladeList):

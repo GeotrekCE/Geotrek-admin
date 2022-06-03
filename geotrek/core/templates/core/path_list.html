@@ -47,7 +47,7 @@
    	        	$('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
    	                $('#btn-confirm').hide();
 
-   	        	$.post("{% url 'core:merge_path' %}",
+   	        	$.post("{% url 'core:path-drf-merge-path' %}",
 	                $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
 
 	                function(response){

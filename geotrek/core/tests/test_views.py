@@ -325,17 +325,17 @@ class PathViewsTest(CommonTest):
         """
         p1 = PathFactory.create()
         p2 = PathFactory.create()
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [p1.pk]})
         self.assertEqual({'error': 'You should select two paths'}, response.json())
 
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p1.pk, p2.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [p1.pk, p1.pk, p2.pk]})
         self.assertEqual({'error': 'You should select two paths'}, response.json())
 
     def test_merge_fails_donttouch(self):
         p3 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p4 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
 
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [p3.pk, p4.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [p3.pk, p4.pk]})
         self.assertEqual({'error': 'No matching points to merge paths found'}, response.json())
 
     def test_merge_fails_other_path_intersection_less_than_snapping(self):
@@ -352,7 +352,7 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((11, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((10, 1), (10, 10)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         json_response = response.json()
         self.assertIn('error', json_response)
         self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
@@ -370,7 +370,7 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((10, 0), (10, 10)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         json_response = response.json()
         self.assertIn('error', json_response)
         self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
@@ -388,7 +388,7 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((10, 10), (10, 0)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         json_response = response.json()
         self.assertIn('error', json_response)
         self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
@@ -406,7 +406,7 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((0, 0), (0, 10), (10, 10), (10, 0)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         json_response = response.json()
         self.assertIn('error', json_response)
         self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
@@ -423,7 +423,7 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((10, 0), (10, 10)), draft=True)
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
 
     def test_merge_not_fail_start_point_end_point(self):
@@ -438,7 +438,7 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((0, 0), (0, 10)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
 
     def test_merge_not_fail_start_point_end_point_2(self):
@@ -453,7 +453,7 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((0, 10), (0, 0)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
 
     def test_merge_not_fail_start_point_end_point_3(self):
@@ -468,7 +468,7 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((20, 0), (20, 10)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
 
     def test_merge_not_fail_start_point_end_point_4(self):
@@ -483,20 +483,20 @@ class PathViewsTest(CommonTest):
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((20, 10), (20, 0)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
 
     def test_merge_works(self):
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
 
     def test_merge_works_wrong_structure(self):
         other_structure = StructureFactory(name="Other")
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)), structure=other_structure)
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [p1.pk, p2.pk]})
         self.assertEqual({'error': "You don't have the right to change these paths"}, response.json())
 
     def test_merge_works_other_line(self):
@@ -504,7 +504,7 @@ class PathViewsTest(CommonTest):
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
 
         PathFactory.create(name="CD", geom=LineString((2, 1), (3, 1)))
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
 
     def test_merge_fails_draft_with_nodraft(self):
@@ -516,7 +516,7 @@ class PathViewsTest(CommonTest):
         """
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=False)
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('error', response.json())
 
     def test_merge_ok_draft_with_draft(self):
@@ -528,7 +528,7 @@ class PathViewsTest(CommonTest):
         """
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=True)
-        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        response = self.client.post(reverse('core:path-drf-merge-path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
 
     def test_structure_is_not_changed_with_permission_error(self):

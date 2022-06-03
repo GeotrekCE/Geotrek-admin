@@ -72,7 +72,6 @@ django==3.1.14
     #   django-debug-toolbar
     #   django-embed-video
     #   django-filter
-    #   django-geojson
     #   django-leaflet
     #   django-modeltranslation
     #   django-mptt
@@ -107,8 +106,6 @@ django-extensions==2.2.9
     # via geotrek (setup.py)
 django-filter==2.4.0
     # via mapentity
-django-geojson==3.1.0
-    # via geotrek (setup.py)
 django-js-asset==1.2.2
     # via django-mptt
 django-leaflet==0.19.post9

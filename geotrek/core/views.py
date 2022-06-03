@@ -1,18 +1,17 @@
-import json
 import logging
 from collections import defaultdict
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
 from django.core.cache import caches
 from django.db.models import Sum
 from django.http import HttpResponseRedirect
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import last_modified as cache_last_modified
@@ -20,7 +19,10 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from mapentity.serializers import GPXSerializer
 from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin)
+                             MapEntityDelete, MapEntityFormat, LastModifiedMixin)
+from rest_framework.decorators import action
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
@@ -53,41 +55,6 @@ class CreateFromTopologyMixin:
         if topology:
             initial['topology'] = topology.serialize(with_pk=False)
         return initial
-
-
-# class PathLayer(MapEntityLayer):
-#     properties = ['name', 'draft']
-#     queryset = Path.objects.all()
-#
-#     def get_queryset(self):
-#         qs = super().get_queryset()
-#         if self.request.GET.get('_no_draft'):
-#             qs = qs.exclude(draft=True)
-#         # get display name if name is undefined to display tooltip on map feature hover
-#         # Can't use annotate because it doesn't allow to use a model field name
-#         # Can't use Case(When) in qs.extra
-#         qs = qs.extra(select={'name': "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"},
-#                       select_params=(_("path"), ))
-#         return qs
-#
-#     def view_cache_key(self):
-#         """Used by the ``view_cache_response_content`` decorator.
-#         """
-#         language = self.request.LANGUAGE_CODE
-#         no_draft = self.request.GET.get('_no_draft')
-#         if no_draft:
-#             latest_saved = Path.no_draft_latest_updated()
-#         else:
-#             latest_saved = Path.latest_updated()
-#         geojson_lookup = None
-#
-#         if latest_saved:
-#             geojson_lookup = '%s_path_%s%s_json_layer' % (
-#                 language,
-#                 latest_saved.strftime('%y%m%d%H%M%S%f'),
-#                 '_nodraft' if no_draft else ''
-#             )
-#         return geojson_lookup
 
 
 class PathList(CustomColumnsMixin, MapEntityList):
@@ -311,30 +278,63 @@ class PathViewSet(GeotrekMapentityViewSet):
         data = super().get_filter_count_infos(qs)
         return f"{data} ({round(qs.aggregate(sumPath=Sum(Length('geom') / 1000)).get('sumPath') or 0, 1)} km)"
 
+    @method_decorator(cache_control(max_age=0, must_revalidate=True))
+    @method_decorator(cache_last_modified(lambda x: Path.no_draft_latest_updated()))
+    @action(methods=['GET'], detail=False, url_path='graph.json', renderer_classes=[JSONRenderer, BrowsableAPIRenderer])
+    def graph(self, request, *args, **kwargs):
+        """ Return a graph of the path. """
+        cache = caches['fat']
+        key = 'path_graph_json'
 
-@login_required
-@cache_control(max_age=0, must_revalidate=True)
-@cache_last_modified(lambda x: Path.latest_updated())
-def get_graph_json(request):
-    cache = caches['fat']
-    key = 'path_graph_json'
+        result = cache.get(key)
+        latest = Path.no_draft_latest_updated()
 
-    result = cache.get(key)
-    latest = Path.latest_updated()
+        if result and latest:
+            cache_latest, graph = result
+            # Not empty and still valid
+            if cache_latest and cache_latest >= latest:
+                return Response(graph)
 
-    if result and latest:
-        cache_latest, json_graph = result
-        # Not empty and still valid
-        if cache_latest and cache_latest >= latest:
-            return HttpJSONResponse(json_graph)
+        # cache does not exist or is not up-to-date, rebuild the graph and cache it
+        graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.exclude(draft=True))
 
-    # cache does not exist or is not up to date
-    # rebuild the graph and cache the json
-    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.exclude(draft=True))
-    json_graph = json.dumps(graph)
+        cache.set(key, (latest, graph))
+        return Response(graph)
 
-    cache.set(key, (latest, json_graph))
-    return HttpJSONResponse(json_graph)
+    @method_decorator(permission_required('core.change_path'))
+    @action(methods=['POST'], detail=False, renderer_classes=[JSONRenderer])
+    def merge_path(self, request, *args, **kwargs):
+        try:
+            ids_path_merge = request.POST.getlist('path[]')
+
+            if len(ids_path_merge) != 2:
+                raise Exception(_("You should select two paths"))
+
+            path_a = Path.objects.get(pk=ids_path_merge[0])
+            path_b = Path.objects.get(pk=ids_path_merge[1])
+
+            if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+                raise Exception(_("You don't have the right to change these paths"))
+
+            if path_a.draft != path_b.draft:
+                raise Exception(_("You can't merge 1 draft path with 1 normal path"))
+
+            result = path_a.merge_path(path_b)
+
+            if result == 2:
+                raise Exception(_("You can't merge 2 paths with a 3rd path in the intersection"))
+
+            elif result == 0:
+                raise Exception(_("No matching points to merge paths found"))
+
+            else:
+                response = {'success': _("Paths merged successfully")}
+                messages.success(request, response['success'])
+
+        except Exception as exc:
+            response = {'error': '%s' % exc, }
+
+        return Response(response)
 
 
 class TrailList(CustomColumnsMixin, MapEntityList):
@@ -427,44 +427,3 @@ class TrailViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.defer('geom', 'geom_3d')
         return qs
-
-
-@permission_required('core.change_path')
-def merge_path(request):
-    """
-    Path merging view
-    """
-    response = {}
-
-    if request.method == 'POST':
-        try:
-            ids_path_merge = request.POST.getlist('path[]')
-
-            if len(ids_path_merge) != 2:
-                raise Exception(_("You should select two paths"))
-
-            path_a = Path.objects.get(pk=ids_path_merge[0])
-            path_b = Path.objects.get(pk=ids_path_merge[1])
-
-            if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-                raise Exception(_("You don't have the right to change these paths"))
-
-            if path_a.draft != path_b.draft:
-                raise Exception(_("You can't merge 1 draft path with 1 normal path"))
-
-            result = path_a.merge_path(path_b)
-
-            if result == 2:
-                raise Exception(_("You can't merge 2 paths with a 3rd path in the intersection"))
-
-            elif result == 0:
-                raise Exception(_("No matching points to merge paths found"))
-
-            else:
-                response = {'success': _("Paths merged successfully")}
-                messages.success(request, response['success'])
-
-        except Exception as exc:
-            response = {'error': '%s' % exc, }
-
-    return JsonResponse(response)

@@ -12,7 +12,7 @@ from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMi
                                         PicturesSerializerMixin, TranslatedModelSerializer,
                                         TargetPortalSerializer)
 from geotrek.trekking import serializers as trekking_serializers
-from geotrek.zoning.serializers import ZoningSerializerMixin
+from geotrek.zoning.serializers import ZoningAPISerializerMixin
 from . import models as tourism_models
 
 
@@ -104,7 +104,7 @@ class TouristicContentGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ('id', 'name')
 
 
-class TouristicContentAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin, ZoningSerializerMixin,
+class TouristicContentAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin, ZoningAPISerializerMixin,
                                     TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     category = TouristicContentCategorySerializer()
@@ -138,7 +138,7 @@ class TouristicContentAPISerializer(PicturesSerializerMixin, PublishableSerializ
             'type1', 'type2', 'touristic_contents', 'touristic_events',
             'treks', 'pois', 'source', 'portal', 'approved',
             'reservation_id', 'reservation_system', 'structure'
-        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
+        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
 
 
@@ -176,7 +176,7 @@ class TouristicEventGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializerMixin,
-                                  ZoningSerializerMixin, TranslatedModelSerializer):
+                                  ZoningAPISerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
     source = RecordSourceSerializer(many=True)
@@ -210,7 +210,7 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
             'participant_number', 'booking', 'target_audience',
             'practical_info', 'touristic_contents', 'touristic_events',
             'treks', 'pois', 'type1', 'category', 'source', 'portal', 'approved'
-        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
+        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
 
     def get_category(self, obj):

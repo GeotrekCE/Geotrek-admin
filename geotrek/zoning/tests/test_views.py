@@ -2,21 +2,35 @@ import json
 
 from django.test import TestCase
 from django.urls import reverse
+from mapentity.tests.factories import UserFactory
+from rest_framework.test import APITestCase
 
 from geotrek.zoning.tests.factories import RestrictedAreaFactory, RestrictedAreaTypeFactory
 from geotrek.zoning.templatetags.zoning_tags import all_restricted_areas, restricted_areas_by_type
 
 
-class LandLayersViewsTest(TestCase):
+class LandLayersViewsTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+    def setUp(self):
+        self.client.force_authenticate(self.user)
 
     def test_views_status(self):
         for layer in ['city', 'restrictedarea', 'district']:
             url = reverse('zoning:%s_layer' % layer)
             response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200, response.json())
 
 
-class RestrictedAreaViewsTest(TestCase):
+class RestrictedAreaViewsTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+    def setUp(self) -> None:
+        self.client.force_authenticate(self.user)
 
     def test_views_status_is_404_when_type_unknown(self):
         url = reverse('zoning:restrictedarea_type_layer', kwargs={'type_pk': 1023})
@@ -27,7 +41,7 @@ class RestrictedAreaViewsTest(TestCase):
         t = RestrictedAreaTypeFactory()
         url = reverse('zoning:restrictedarea_type_layer', kwargs={'type_pk': t.pk})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, response.json())
 
 
 class RestrictedAreasSerializationTest(TestCase):

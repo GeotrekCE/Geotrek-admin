@@ -25,22 +25,6 @@ from .filters import ReportFilterSet
 from .forms import ReportForm
 
 
-# class ReportLayer(mapentity_views.MapEntityLayer):
-#     def view_cache_key(self):
-#         """Used by the ``view_cache_response_content`` decorator.
-#         """
-#         language = get_language()
-#         geojson_lookup = None
-#         latest_saved = feedback_models.Report.latest_updated()
-#         if latest_saved:
-#             geojson_lookup = '%s_report_%s_%s_geojson_layer' % (
-#                 language,
-#                 latest_saved.isoformat(),
-#                 self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else ''
-#             )
-#         return geojson_lookup
-
-
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     queryset = (
         feedback_models.Report.objects.existing()

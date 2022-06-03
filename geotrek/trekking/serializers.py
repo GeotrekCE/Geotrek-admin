@@ -19,7 +19,7 @@ from geotrek.common.serializers import (
     PublishableSerializerMixin, RecordSourceSerializer,
     TargetPortalSerializer, LabelSerializer,
 )
-from geotrek.zoning.serializers import ZoningSerializerMixin
+from geotrek.zoning.serializers import ZoningAPISerializerMixin
 from . import models as trekking_models
 
 
@@ -166,7 +166,7 @@ class TrekGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class TrekAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, AltimetrySerializerMixin,
-                        ZoningSerializerMixin, TranslatedModelSerializer):
+                        ZoningAPISerializerMixin, TranslatedModelSerializer):
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
     networks = NetworkSerializer(many=True)
@@ -253,7 +253,7 @@ class TrekAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Alt
             'points_reference', 'gpx', 'kml', 'source', 'portal',
             'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
             'children', 'parents', 'previous', 'next', 'ratings', 'ratings_description'
-        ) + AltimetrySerializerMixin.Meta.fields + ZoningSerializerMixin.Meta.fields + \
+        ) + AltimetrySerializerMixin.Meta.fields + ZoningAPISerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + PicturesSerializerMixin.Meta.fields
 
     def get_pictures(self, obj):
@@ -357,7 +357,7 @@ class POIGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ('id', 'name', 'published')
 
 
-class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, ZoningSerializerMixin,
+class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, ZoningAPISerializerMixin,
                        TranslatedModelSerializer):
     type = POITypeSerializer()
     structure = StructureSerializer()
@@ -367,7 +367,7 @@ class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Zoni
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = (
             'id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure'
-        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
+        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
 
 
