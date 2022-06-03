@@ -2,15 +2,17 @@ import math
 from unittest import skipIf
 
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.db import IntegrityError
+from django.db.models import ProtectedError
 
 from geotrek.common.utils import dbnow
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
 from geotrek.core.tests.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
-from geotrek.core.models import Path
+from geotrek.core.models import Path, Trail
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -92,6 +94,30 @@ class PathTest(TestCase):
         self.assertAlmostEqual(lat_min, 46.499999999999936)
         self.assertAlmostEqual(lng_max, 3.0013039767202154)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_delete_protected_allow_path(self):
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        t = TrailFactory.create(paths=[p1, p2])
+
+        # Everything should be all right before delete
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 2)
+
+        p1.delete()
+        t = Trail.objects.get(pk=t.pk)
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 1)
+
+        with override_settings(ALLOW_PATH_DELETION_TOPOLOGY=False):
+            with self.assertRaisesRegex(ProtectedError,
+                                        "You can't delete this path, some topologies are linked with this path"):
+                p2.delete()
+
+        t = Trail.objects.get(pk=t.pk)
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 1)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
