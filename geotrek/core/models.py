@@ -244,13 +244,14 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     def delete(self, *args, **kwargs):
         if not settings.TREKKING_TOPOLOGY_ENABLED:
             return super().delete(*args, **kwargs)
-        topologies = list(self.topology_set.filter())
-        if topologies and not settings.ALLOW_PATH_DELETION_TOPOLOGY:
+        topologies = self.topology_set.all()
+        if topologies.exists() and not settings.ALLOW_PATH_DELETION_TOPOLOGY:
             raise ProtectedError(_("You can't delete this path, some topologies are linked with this path"), self)
+        topologies_list = list(topologies)
         r = super().delete(*args, **kwargs)
         if not Path.objects.exists():
             return r
-        for topology in topologies:
+        for topology in topologies_list:
             if isinstance(topology.geom, Point):
                 closest = self.closest(topology.geom, self)
                 position, offset = closest.interpolate(topology.geom)
