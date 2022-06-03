@@ -3,13 +3,13 @@
 
 {% block mappanel %}
     {% if object.get_geom %}
-        {% load i18n static mapentity_tags leaflet_tags geojson_tags %}
+        {% load i18n static mapentity_tags leaflet_tags %}
         <div id="detailmap"
              data-fitmaxzoom="{{ MAP_FIT_MAX_ZOOM }}"
              data-mapextent="{{ object|latlngbounds }}"
              data-readonly="{% if readonly %}readonly{% endif %}">
             <script type="application/json" class="geojsonfeature">
-                {{ object|geojsonfeature:"radius"|safe }}
+                {{ geojson|safe }}
             </script>
         </div>
         {% leaflet_map "detailmap" fitextent=False creatediv=False %}
