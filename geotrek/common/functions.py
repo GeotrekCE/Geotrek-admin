@@ -8,7 +8,7 @@ class Length(GeoFunc):
 
 
 class SimplifyPreserveTopology(GeomOutputGeoFunc):
-  """ ST_SimplifyPreserveTopology postgis function """
+    """ ST_SimplifyPreserveTopology postgis function """
 
 
 class GeometryType(GeoFunc):
