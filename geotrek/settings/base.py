@@ -282,7 +282,6 @@ PROJECT_APPS += (
 PROJECT_APPS += (
     'crispy_forms',
     'compressor',
-    'djgeojson',
     'django_filters',
     'tinymce',
     'easy_thumbnails',
