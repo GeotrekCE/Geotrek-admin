@@ -29,7 +29,7 @@
             //
             // Points of reference
             (function (map) {
-                var data = {{ object.points_reference.geojson|safe }};
+                var data = {{ object.points_reference_geojson|safe|default:"null" }};
                 L.geoJson(data, {
                     pointToLayer: (function () {
                         var counter = 1;

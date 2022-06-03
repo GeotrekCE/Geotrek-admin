@@ -440,6 +440,13 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     def parent_sites_display(self):
         return ", ".join(list(self.parent_sites.values_list("name", flat=True)))
 
+    @property
+    def points_reference_geojson(self):
+        if self.points_reference:
+            geojson = self.points_reference.transform(settings.API_SRID, clone=True).geojson
+            return geojson
+        return None
+
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 Topology.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
