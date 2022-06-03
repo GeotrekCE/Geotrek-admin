@@ -16,6 +16,11 @@ server {
     server_name ${SERVER_NAME};
     server_name_in_redirect on;
     server_tokens off;
+    gzip             on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level  4;
+    gzip_types       application/json application/geo+json;
 
     access_log /var/log/nginx/geotrek_access.log;
     error_log /var/log/nginx/geotrek_error.log;
