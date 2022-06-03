@@ -236,7 +236,7 @@ msgstr ""
 
 #, python-format
 msgid ""
-"You can't remove <strong>%(object)s</strong>, some topologies are linked "
+"You can't delete <strong>%(object)s</strong>, some topologies are linked "
 "with this path. Modify these topologies before deleting this path."
 msgstr ""
 

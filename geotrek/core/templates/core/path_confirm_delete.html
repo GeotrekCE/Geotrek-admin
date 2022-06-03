@@ -7,7 +7,7 @@
     <div class="alert alert-block">
         {% if topologies_by_model|length and not allowed_path_deletion_topology %}
             <h4 class="alert-heading">Warning!</h4>
-            {% blocktrans %}You can't remove <strong>{{ object }}</strong>, some topologies are linked with this path. Modify these topologies before deleting this path.{% endblocktrans %}
+            {% blocktrans %}You can't delete <strong>{{ object }}</strong>, some topologies are linked with this path. Modify these topologies before deleting this path.{% endblocktrans %}
         {% else %}
             <h4 class="alert-heading">Warning!</h4>
             {% blocktrans %}Do you really wish to delete <strong>{{ object }}</strong> ?{% endblocktrans %}
