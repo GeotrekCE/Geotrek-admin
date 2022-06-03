@@ -59,7 +59,6 @@ class SimpleGraph(TestCase):
         self.assertDictEqual(computed_graph, graph)
 
     def test_json_graph_empty(self):
-
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         graph = response.json()

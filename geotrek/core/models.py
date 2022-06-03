@@ -107,7 +107,11 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
 
     @classmethod
     def no_draft_latest_updated(cls):
-        return cls.objects.filter(draft=False).latest('date_update').get_date_update()
+        try:
+            latest =  cls.objects.filter(draft=False).latest('date_update').get_date_update()
+        except cls.DoesNotExist:
+            latest = None
+        return latest
 
     @property
     def length_2d_display(self):

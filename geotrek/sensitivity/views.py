@@ -53,6 +53,7 @@ class SensitiveAreaDetail(MapEntityDetail):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.object.same_structure(self.request.user)
+        self.object.api_geom = self.object.geom.transform(settings.API_SRID, clone=True)
         context['geojson'] = SensitiveAreaGeojsonSerializer(self.object).data
         return context
 
