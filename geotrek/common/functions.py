@@ -8,12 +8,10 @@ class Length(GeoFunc):
 
 
 class SimplifyPreserveTopology(GeomOutputGeoFunc):
-    pass
+  """ ST_SimplifyPreserveTopology postgis function """
 
 
 class GeometryType(GeoFunc):
-    """
-    GeometryType postgis function
-    """
+    """ GeometryType postgis function """
     output_field = CharField()
     function = 'GeometryType'
