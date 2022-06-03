@@ -108,7 +108,7 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     @classmethod
     def no_draft_latest_updated(cls):
         try:
-            latest =  cls.objects.filter(draft=False).latest('date_update').get_date_update()
+            latest =  cls.objects.filter(draft=False).only('date_update').latest('date_update').get_date_update()
         except cls.DoesNotExist:
             latest = None
         return latest

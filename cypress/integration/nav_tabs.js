@@ -2,7 +2,7 @@ describe('Nav tabs properties/attachments', () => {
   before(() => {
     const username = 'admin';
     const password = 'admin';
-    cy.setCookie('django_language', 'en');
+
     cy.loginByCSRF(username, password)
     .then((resp) => {
        expect(resp.status).to.eq(200)
@@ -11,6 +11,7 @@ describe('Nav tabs properties/attachments', () => {
 
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
+    cy.setCookie('django_language', 'en');
   });
 
   it('Use tabs', () => {
