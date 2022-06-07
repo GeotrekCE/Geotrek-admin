@@ -17,6 +17,10 @@ CHANGELOG
 
 - Display link to attachment in admin site for attachments
 - Add license field on attachments (#3089) [thanks to Paul Florence]
+- If `COMPLETENESS_FIELDS` is set for a model an object is published,
+    display completeness fields if missing on page detail
+- Avoid publication or review if `COMPLETENESS_FIELDS` is set for a model,
+    and `COMPLETENESS_LEVEL` is one of 'error_on_publication' and 'error_on_review'
 
 **Bug fixes**
 

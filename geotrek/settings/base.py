@@ -505,6 +505,11 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'course': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
+# Set 'error_on_publication' to avoid publication without completeness fields
+# and 'error_on_review' if you want this fields to be required before sending to review.
+COMPLETENESS_LEVEL = 'warning'
+
+# Set fields required or needed for review or publication, for each model
 COMPLETENESS_FIELDS = {
     'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
     'dive': ['practice', 'difficulty', 'description_teaser'],

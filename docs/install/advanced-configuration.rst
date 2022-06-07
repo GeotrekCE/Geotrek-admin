@@ -855,6 +855,26 @@ For each module, use the following syntax to configure fields to hide in the cre
 Please refer to the "settings detail" section for a complete list of modules and hideable fields.
 
 
+Configure form fields required or needed for review or publication
+-------------------------------------------------------------------
+
+Set 'error_on_publication' to avoid publication without completeness fields
+and 'error_on_review' if you want this fields to be required before sending to review.
+
+::
+
+    COMPLETENESS_LEVEL = 'warning'
+
+For each module, configure fields to be needed or required on review or publication
+
+::
+
+    COMPLETENESS_FIELDS = {
+        'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+        'dive': ['practice', 'difficulty', 'description_teaser'],
+    }
+
+
 ================
 Settings details
 ================

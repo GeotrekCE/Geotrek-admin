@@ -7,7 +7,7 @@ from django.core.checks.messages import Error
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 from django.utils.text import format_lazy
@@ -17,6 +17,8 @@ from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
 from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.mixins.models import PublishableMixin
+from geotrek.common.utils.translation import get_translated_fields
 
 from .mixins.models import NoDeleteMixin
 
@@ -130,28 +132,50 @@ class CommonForm(MapEntityForm):
                     self.fields[field_to_hide].widget = HiddenInput()
 
     def clean(self):
+        """Check field data with structure and completeness fields if relevant"""
         structure = self.cleaned_data.get('structure')
-        if not structure:
-            return self.cleaned_data
 
-        # Copy cleaned_data because self.add_error may remove an item
-        for name, field in self.cleaned_data.copy().items():
-            try:
-                modelfield = self.instance._meta.get_field(name)
-            except FieldDoesNotExist:
-                continue
-            if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
-                continue
-            model = modelfield.remote_field.model
-            if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
-                continue
-            if not model.check_structure_in_forms:
-                continue
-            if isinstance(field, QuerySet):
-                for value in field:
-                    self.check_structure(value, structure, name)
-            else:
-                self.check_structure(field, structure, name)
+        # if structure in form, check each field same structure
+        if structure:
+            # Copy cleaned_data because self.add_error may remove an item
+            for name, field in self.cleaned_data.copy().items():
+                try:
+                    modelfield = self.instance._meta.get_field(name)
+                except FieldDoesNotExist:
+                    continue
+                if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
+                    continue
+                model = modelfield.remote_field.model
+                if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
+                    continue
+                if not model.check_structure_in_forms:
+                    continue
+                if isinstance(field, QuerySet):
+                    for value in field:
+                        self.check_structure(value, structure, name)
+                else:
+                    self.check_structure(field, structure, name)
+
+        # If model is publishable or reviewable,
+        # check if completeness fields are required, and raise error if some fields are missing
+        if self.completeness_fields_are_required():
+            missing_fields = []
+            completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
+            if settings.COMPLETENESS_LEVEL == 'error_on_publication':
+                missing_fields = self._get_missing_completeness_fields(completeness_fields,
+                                                                       _('This field is required to publish object.'))
+            elif settings.COMPLETENESS_LEVEL == 'error_on_review':
+                missing_fields = self._get_missing_completeness_fields(completeness_fields,
+                                                                       _('This field is required to review object.'))
+
+            if missing_fields:
+                raise ValidationError(
+                    _('Fields are missing to publish or review object: %(fields)s'),
+                    params={
+                        'fields': ', '.join(missing_fields)
+                    },
+                )
+
         return self.cleaned_data
 
     def check_structure(self, obj, structure, name):
@@ -159,6 +183,65 @@ class CommonForm(MapEntityForm):
             if obj.structure and structure != obj.structure:
                 self.add_error(name, format_lazy(_("Please select a choice related to all structures (without brackets) "
                                                    "or related to the structure {struc} (in brackets)"), struc=structure))
+
+    @property
+    def any_published(self):
+        """Check if form has published in at least one of the language"""
+        return any([self.cleaned_data.get(f'published_{language[0]}', False)
+                    for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']])
+
+    @property
+    def published_languages(self):
+        """Returns languages in which the form has published data.
+        """
+        languages = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        if settings.PUBLISHED_BY_LANG:
+            return [language for language in languages if self.cleaned_data.get(f'published_{language}', None)]
+        else:
+            if self.any_published:
+                return languages
+
+    def completeness_fields_are_required(self):
+        """Return True if the completeness fields are required"""
+        if not issubclass(self._meta.model, PublishableMixin):
+            return False
+
+        if not self.instance.is_complete():
+            if settings.COMPLETENESS_LEVEL == 'error_on_publication':
+                if self.any_published:
+                    return True
+            elif settings.COMPLETENESS_LEVEL == 'error_on_review':
+                # Error on review implies error on publication
+                if self.cleaned_data['review'] or self.any_published:
+                    return True
+
+        return False
+
+    def _get_missing_completeness_fields(self, completeness_fields, msg):
+        """Check fields completeness and add error message if field is empty"""
+
+        missing_fields = []
+        translated_fields = get_translated_fields(self._meta.model)
+
+        # Add error on each field if it is empty
+        for field_required in completeness_fields:
+            if field_required in translated_fields:
+                if self.cleaned_data.get('review') and settings.COMPLETENESS_LEVEL == 'error_on_review':
+                    # get field for first language only
+                    field_required_lang = f"{field_required}_{settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'][0][0]}"
+                    missing_fields.append(field_required_lang)
+                    self.add_error(field_required_lang, msg)
+                else:
+                    for language in self.published_languages:
+                        field_required_lang = f'{field_required}_{language}'
+                        if not self.cleaned_data.get(field_required_lang):
+                            missing_fields.append(field_required_lang)
+                            self.add_error(field_required_lang, msg)
+            else:
+                if not self.cleaned_data.get(field_required):
+                    missing_fields.append(field_required)
+                    self.add_error(field_required, msg)
+        return missing_fields
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""
