@@ -2615,7 +2615,7 @@ It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 
 ::
 
-    ALLOW_PATH_DELETION_TOPOLOGY = False
+    ALLOW_PATH_DELETION_TOPOLOGY = True
 
 If false, it forbid to delete a path when at least one topology is linked to this path.
 
