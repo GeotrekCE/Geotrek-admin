@@ -2633,6 +2633,13 @@ If false, no mail will be sent to the sender of any feedback on Geotrek-rando we
 Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merged.
 It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 
+::
+
+    ALLOW_PATH_DELETION_TOPOLOGY = True
+
+If false, it forbid to delete a path when at least one topology is linked to this path.
+
+
 **Custom SQL**
 
 Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``

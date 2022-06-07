@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-06-03 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -131,6 +131,9 @@ msgstr ""
 msgid "Paths"
 msgstr ""
 
+msgid "You can't delete this path, some topologies are linked with this path"
+msgstr ""
+
 msgid "Trails"
 msgstr ""
 
@@ -231,6 +234,15 @@ msgstr ""
 msgid "Different topologies are linked with this path"
 msgstr ""
 
+#, python-format
+msgid ""
+"You can't delete <strong>%(object)s</strong>, some topologies are linked "
+"with this path. Modify these topologies before deleting this path."
+msgstr ""
+
+msgid "No, back to edit view"
+msgstr ""
+
 msgid "GPX"
 msgstr ""
 
@@ -262,6 +274,9 @@ msgid "Merge paths"
 msgstr ""
 
 msgid "Cancel"
+msgstr ""
+
+msgid "path"
 msgstr ""
 
 msgid ""
