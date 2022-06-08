@@ -64,3 +64,7 @@ DROP VIEW IF EXISTS v_trails CASCADE;
 -- 70
 
 DROP FUNCTION IF EXISTS ft_merge_path(integer,integer) CASCADE;
+
+-- 80
+
+DROP FUNCTION IF EXISTS path_deletion() CASCADE;
