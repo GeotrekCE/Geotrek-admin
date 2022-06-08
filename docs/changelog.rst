@@ -12,14 +12,21 @@ CHANGELOG
 
 **Breaking Changes**
 
-- This release require PostGIS 2.5 or later.
+- This release requires PostGIS 2.5 or later.
   - Ubuntu bionic 18.04 users, take care, PostGIS default is 2.4. You need to upgrade your PostGIS version.
+    - Before all backup your database ! (https://geotrek.readthedocs.io/en/latest/install/maintenance.html?highlight=backup#application-backup)
+    - apt-get update
+    - apt-get install postgresql-10-postgis-2.5-scripts  (take care to use right version of postgresql, then adapt command)
+    - sudo -u postgres psql -d geotrek -c "ALTER EXTENSION postgis UPDATE TO '2.5.5';"  (on your database server if different from geotrek server / replace geotrek by your database name)
+    - in case of error on v_projects, you can DROP this view and recreate it with the following commands:
+        - sudo -u postgres psql -d geotrek -c "DROP VIEW v_projects;" ((on your database server if different from geotrek server)
+        - sudo dpkg-reconfigure geotrek-admin / docker-compose restart
 
 **Warning**
 
 - You need to delete cache after this release upgrade.
-  - rm -r var/cache/*
-  - sudo dpkg-reconfigure geotrek-admin / docker-compose restart
+  - rm -r /opt/geotrek-admin/var/cache/* (or <geotrek directory>/var/cache/* on docker)
+  - sudo dpkg-reconfigure geotrek-admin (or docker-compose restart)
 
 **Improvments**
 
