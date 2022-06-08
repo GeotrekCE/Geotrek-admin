@@ -30,7 +30,7 @@ CHANGELOG
 
 **Improvments**
 
-- New GeoJSON generation system, using Djang Rest Framework and PostGIS functions
+- New GeoJSON generation system, using Django Rest Framework and PostGIS functions
 - Enable GZIP compression on JSON / GeoJSON on nginx
 
 **Maintenance**
