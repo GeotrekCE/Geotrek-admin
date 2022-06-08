@@ -28,11 +28,5 @@ urlpatterns = [
          name="trail_kml_detail"),
 ]
 
-
-class PathEntityOptions(AltimetryEntityOptions):
-    def get_queryset(self):
-        return super().get_queryset().prefetch_related('networks', 'usages')
-
-
-urlpatterns += registry.register(Path, PathEntityOptions, menu=(settings.PATH_MODEL_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED))
+urlpatterns += registry.register(Path, AltimetryEntityOptions, menu=(settings.PATH_MODEL_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED))
 urlpatterns += registry.register(Trail, menu=(settings.TRAIL_MODEL_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED))
