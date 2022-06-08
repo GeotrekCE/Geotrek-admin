@@ -13,7 +13,6 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.api.v2.functions import Buffer, Area
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.functions import GeometryType
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
