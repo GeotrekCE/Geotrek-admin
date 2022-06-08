@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.geos.collections import GeometryCollection
 from django.contrib.gis.geos.point import Point
@@ -142,5 +144,10 @@ class CourseTestCase(TestCase):
         self.assertIsNone(geojson)
 
     def test_points_reference_geojson_not_null(self):
-        geojson = self.course_with_points_reference.points_reference_geojson
-        self.assertEqual(geojson, '{ "type": "MultiPoint", "coordinates": [ [ 1.43697743457888, 44.449222490604605 ], [ 1.441955564370652, 44.443339997352474 ] ] }')
+        geojson_text = self.course_with_points_reference.points_reference_geojson
+        geojson = json.loads(geojson_text)
+        coordinates = geojson['coordinates']
+        self.assertAlmostEqual(coordinates[0][0], 1.43697743457888)
+        self.assertAlmostEqual(coordinates[0][1], 44.449222490604605)
+        self.assertAlmostEqual(coordinates[1][0], 1.441955564370652)
+        self.assertAlmostEqual(coordinates[1][1], 44.443339997352474)
