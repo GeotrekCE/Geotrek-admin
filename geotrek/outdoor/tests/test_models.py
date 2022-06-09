@@ -140,10 +140,12 @@ class CourseTestCase(TestCase):
         cls.course_with_points_reference = CourseFactory(points_reference='SRID=2154;MULTIPOINT((575631.94 6373472.27), (576015.10 6372811.10))')
 
     def test_points_reference_geojson_null(self):
+        """ Course points_reference geojson property should be None if null in database """
         geojson = self.course_without_points_reference.points_reference_geojson
         self.assertIsNone(geojson)
 
     def test_points_reference_geojson_not_null(self):
+        """ Course points_reference geojson property should be reprojected in geojson format if defined in database """
         geojson_text = self.course_with_points_reference.points_reference_geojson
         geojson = json.loads(geojson_text)
         coordinates = geojson['coordinates']
