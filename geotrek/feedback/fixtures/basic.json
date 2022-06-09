@@ -1,12 +1,22 @@
 [
     {
+        "model": "feedback.reportactivity",
+        "pk": 1,
+        "fields": {
+            "label": "Randonnée p\u00e9destre",
+            "label_en": "Trek",
+            "label_fr": "Randonnée p\u00e9destre",
+            "identifier": 31
+        }
+    },
+    {
         "model": "feedback.reportcategory",
         "pk": 1,
         "fields": {
             "label": "Environnement",
             "label_en": "Environment",
             "label_fr": "Environnement",
-            "suricate_id": 3
+            "identifier": 3
         }
     },
     {
@@ -16,7 +26,7 @@
             "label": "Balisage / Signal\u00e9tique",
             "label_en": "Signage",
             "label_fr": "Balisage / Signal\u00e9tique",
-            "suricate_id": 0
+            "identifier": 0
         }
     },
     {
@@ -26,7 +36,7 @@
             "label": "Incident / S\u00e9curit\u00e9",
             "label_en": "Incident / Security",
             "label_fr": "Incident / S\u00e9curit\u00e9",
-            "suricate_id": 2
+            "identifier": 2
         }
     },
     {
@@ -36,7 +46,7 @@
             "label": "Conflits d'usage",
             "label_en": "conflicts",
             "label_fr": "Conflits d'usage",
-            "suricate_id": 1
+            "identifier": 1
         }
     },
     {
@@ -45,7 +55,7 @@
         "fields": {
             "label": "Utilisation possible",
             "label_fr": "Utilisation possible",
-            "suricate_id": 0,
+            "identifier": 0,
             "suricate_label": "possible"
         }
     },
@@ -56,7 +66,7 @@
             "label": "Utilisation difficile",
             "label_fr": "Utilisation difficile",
             "label_en": "Difficult to use",
-            "suricate_id": 1,
+            "identifier": 1,
             "suricate_label": "difficile"
         }
     },
@@ -67,7 +77,7 @@
             "label": "Utilisation impossible",
             "label_fr": "Utilisation impossible",
             "label_en": "Impossible to use",
-            "suricate_id": 2,
+            "identifier": 2,
             "suricate_label": "impossible"
         }
     }

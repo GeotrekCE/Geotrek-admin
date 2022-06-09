@@ -21,12 +21,6 @@
 <script type="text/javascript">
 
         $(function(){
-            $('span#nbresults').replaceWith(' <span class="badge"><span id="nbresults">?</span><span id="sumPath"></span></span>')
-            $('#objects-list').on( 'xhr', function(e,o) {
-                obj = JSON.parse(o.jqXHR.responseText);
-                $( "#sumPath" ).html(' ('+ obj.sumPath + ' km)')
-            });
-
    	        $('#btn-merge').click(function() {
                 if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
                     $('#btn-confirm').hide();

@@ -54,6 +54,27 @@ def debug_pg_notices(f):
     return wrapped
 
 
+def replace_settings_sql(sql):
+    # Replace curly braces with settings values
+    pattern = re.compile(r'{{\s*([^\s]*)\s*}}')
+    for m in pattern.finditer(sql):
+        value = getattr(settings, m.group(1))
+        sql = sql.replace(m.group(0), str(value))
+    return sql
+
+
+def replace_schemas_sql(sql):
+    # Replace sharp braces with schemas
+    pattern = re.compile(r'{#\s*([^\s]*)\s*#}')
+    for m in pattern.finditer(sql):
+        try:
+            value = settings.DATABASE_SCHEMAS[m.group(1)]
+        except KeyError:
+            value = settings.DATABASE_SCHEMAS.get('default', 'public')
+        sql = sql.replace(m.group(0), str(value))
+    return sql
+
+
 def load_sql_files(app, stage):
     """
     Look for SQL files in Django app, and load them into database.
@@ -88,20 +109,9 @@ def load_sql_files(app, stage):
                 # TODO: this is the ugliest driver hack ever
                 sql = sql.replace('%', '%%')
 
-            # Replace curly braces with settings values
-            pattern = re.compile(r'{{\s*([^\s]*)\s*}}')
-            for m in pattern.finditer(sql):
-                value = getattr(settings, m.group(1))
-                sql = sql.replace(m.group(0), str(value))
+            sql = replace_settings_sql(sql)
 
-            # Replace sharp braces with schemas
-            pattern = re.compile(r'{#\s*([^\s]*)\s*#}')
-            for m in pattern.finditer(sql):
-                try:
-                    value = settings.DATABASE_SCHEMAS[m.group(1)]
-                except KeyError:
-                    value = settings.DATABASE_SCHEMAS.get('default', 'public')
-                sql = sql.replace(m.group(0), str(value))
+            sql = replace_schemas_sql(sql)
 
             cursor.execute(sql)
         except Exception as e:
@@ -146,12 +156,9 @@ def move_models_to_schemas(app):
     cursor = connection.cursor()
 
     for schema_name in table_schemas.keys():
-        try:
-            sql = "CREATE SCHEMA %s;" % model_schema
-            cursor.execute(sql)
-            logger.info("Created schema %s" % model_schema)
-        except Exception:
-            logger.debug("Schema %s already exists." % model_schema)
+        sql = "CREATE SCHEMA IF NOT EXISTS %s;" % model_schema
+        cursor.execute(sql)
+        logger.info("Created schema %s" % model_schema)
 
     for schema_name, tables in table_schemas.items():
         for table_name in tables:

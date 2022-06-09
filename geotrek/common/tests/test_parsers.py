@@ -10,10 +10,11 @@ from django.test import TestCase
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
+from django.db.utils import DatabaseError
 from django.test.utils import override_settings
 from django.template.exceptions import TemplateDoesNotExist
 
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import (
@@ -77,7 +78,7 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=0)
         self.assertEqual(Organism.objects.count(), 1)
         organism = Organism.objects.get()
-        self.assertEqual(organism.organism, "Comité Théodule")
+        self.assertEqual(organism.organism, "2.0")
 
     def test_duplicate_without_eid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -98,7 +99,7 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismEidParser', filename2, verbosity=0)
         self.assertEqual(Organism.objects.count(), 2)
         organisms = Organism.objects.order_by('pk')
-        self.assertEqual(organisms[0].organism, "Comité Théodule")
+        self.assertEqual(organisms[0].organism, "2.0")
         self.assertEqual(organisms[1].organism, "Comité Hippolyte")
 
     def test_report_format_text(self):
@@ -115,6 +116,14 @@ class ParserTests(TestCase):
         parser = OrganismParser()
         with self.assertRaises(TemplateDoesNotExist):
             parser.report(output_format='toto')
+
+    @mock.patch('geotrek.common.parsers.Parser.parse_row')
+    def test_databaseerror_except(self, mock_parse_row):
+        output = StringIO()
+        mock_parse_row.side_effect = DatabaseError('foo bar')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismEidParser', filename, verbosity=2, stdout=output)
+        self.assertIn('foo bar', output.getvalue())
 
 
 @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))

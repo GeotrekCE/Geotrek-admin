@@ -25,6 +25,10 @@
             <td>{% valuelist object.type2.all %}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"approved" }}</th>
+            <td>{{ object.approved|yesno:_("yes,no") }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"description_teaser" }}</th>
             <td>{{ object.description_teaser|safe }}</td>
         </tr>
@@ -53,8 +57,12 @@
             <td>{{ object.practical_info|safe }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"approved" }}</th>
-            <td>{{ object.approved|yesno:_("yes,no") }}</td>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"label_accessibility" }}</th>
+            <td>{{ object.label_accessibility }}</td>
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>

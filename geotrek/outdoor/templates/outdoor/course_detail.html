@@ -1,0 +1,16 @@
+{% extends "mapentity/mapentity_detail.html" %}
+{% load i18n l10n static geojson_tags thumbnail %}
+
+{% block download %}
+    {{ block.super }}
+  </div>
+
+  <div class="btn-group pull-right">
+    <a class="btn btn-light btn-sm" href="{% url 'outdoor:course_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'outdoor:course_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print booklet" %}</a>
+{% endblock download %}
+
+{% block detailspanel %}
+    {% include "common/publishable_completeness_fragment.html" %}
+    {{ block.super }}
+{% endblock detailspanel %}

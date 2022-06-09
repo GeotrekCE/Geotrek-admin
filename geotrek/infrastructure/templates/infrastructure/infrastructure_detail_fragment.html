@@ -1,19 +1,21 @@
 {% load i18n geotrek_tags mapentity_tags %}
-<h3>{% trans "Infrastructure" %}</h3>
-<table class="table">
-    {% if modelname != "infrastructure" %}
-    <tr>
-        <th>{% trans "Infrastructures" %}</th>
-        <td>
-            {% if perms.infrastructure.add_infrastructure %}
-                {% is_topology_model model as is_topology_model %}
-                <p class="autohide"><a href="{% url 'infrastructure:infrastructure_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-sm btn-success">
-                    <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new infrastructure" %}</a>
-                </p>
-            {% endif %}
+{% if modelname != "infrastructure" %}
+    <h3>{% trans "Infrastructure" %}</h3>
+    <table class="table">
 
-            {% valuelist object.infrastructures field='name' %}
-        </td>
-    </tr>
-    {% endif %}
-</table>
+        <tr>
+            <th>{% trans "Infrastructures" %}</th>
+            <td>
+                {% if perms.infrastructure.add_infrastructure %}
+                    {% is_topology_model model as is_topology_model %}
+                    <p class="autohide"><a href="{% url 'infrastructure:infrastructure_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-sm btn-success">
+                        <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new infrastructure" %}</a>
+                    </p>
+                {% endif %}
+
+                {% valuelist object.infrastructures field='name' %}
+            </td>
+        </tr>
+
+    </table>
+{% endif %}

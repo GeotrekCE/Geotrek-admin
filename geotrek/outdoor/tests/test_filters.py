@@ -1,8 +1,8 @@
 from django.http import QueryDict
 from django.test import TestCase
 
-from geotrek.common.factories import OrganismFactory
-from geotrek.outdoor.factories import SiteFactory, PracticeFactory, CourseFactory
+from geotrek.common.tests.factories import OrganismFactory
+from geotrek.outdoor.tests.factories import SiteFactory, PracticeFactory, CourseFactory
 from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 
 
@@ -54,8 +54,12 @@ class SiteFilterSetTest(TestCase):
 class CourseFilterSetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        CourseFactory.create(site__orientation=['E', 'S'], name='Course 1')
-        CourseFactory.create(site__orientation=['NE', 'W'], name='Course 2')
+        cls.site1 = SiteFactory(orientation=['E', 'S'])
+        cls.site2 = SiteFactory(orientation=['NE', 'W'])
+        cls.course1 = CourseFactory.create(name='Course 1')
+        cls.course2 = CourseFactory.create(name='Course 2')
+        cls.course1.parent_sites.set([cls.site1])
+        cls.course2.parent_sites.set([cls.site2])
 
     def test_orientation_filter(self):
         filterset = CourseFilterSet(QueryDict('orientation=E'))

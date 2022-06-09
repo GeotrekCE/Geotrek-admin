@@ -3,7 +3,7 @@ from unittest import skipIf
 from django.conf import settings
 from django.test import TestCase
 
-from .. import factories
+from . import factories
 
 
 class CoreFactoriesTest(TestCase):

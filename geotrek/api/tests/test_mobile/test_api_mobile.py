@@ -3,9 +3,11 @@ from django.urls import reverse
 from django.test.testcases import TestCase
 from django.contrib.gis.geos import Point, MultiPoint, MultiPolygon, Polygon
 
-from geotrek.trekking import factories as trek_factory, models as trek_models
-from geotrek.tourism import factories as tourism_factory, models as tourism_models
-from geotrek.zoning import factories as zoning_factory
+from geotrek.trekking.tests import factories as trek_factory
+from geotrek.trekking import models as trek_models
+from geotrek.tourism.tests import factories as tourism_factory
+from geotrek.tourism import models as tourism_models
+from geotrek.zoning.tests import factories as zoning_factory
 
 
 GEOJSON_STRUCTURE = sorted([

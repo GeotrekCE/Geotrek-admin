@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2022-04-04 12:25+0000\n"
 "PO-Revision-Date: 2015-10-06 12:11+0100\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -19,6 +19,24 @@ msgstr ""
 
 msgid "Altimetry"
 msgstr "Altimetrie"
+
+msgid "elevation"
+msgstr "altitude"
+
+msgid "length"
+msgstr "longueur"
+
+msgid "length 3d"
+msgstr "longueur 3d"
+
+msgid "ascent"
+msgstr "dénivelé positif"
+
+msgid "descent"
+msgstr "dénivelé négatif"
+
+msgid "slope"
+msgstr "pente"
 
 msgid "Distance (m)"
 msgstr "Distance (m)"
@@ -53,9 +71,6 @@ msgstr "Afficher/cacher le profile altimétrique"
 msgid "Altitude profile"
 msgstr "Profil altimétrique"
 
-msgid "Elevation"
-msgstr "Altitude"
-
 msgid "Length"
 msgstr "Longueur"
 
@@ -64,3 +79,6 @@ msgstr "3D"
 
 msgid "2D"
 msgstr "2D"
+
+msgid "Elevation"
+msgstr "Altitude"

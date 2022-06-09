@@ -7,13 +7,13 @@ from django.contrib.gis.geos import MultiLineString, LineString, Point
 from django.utils import translation
 
 from geotrek.core.models import Path, Topology
-from geotrek.core.factories import TopologyFactory
+from geotrek.core.tests.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
 
 
 class ElevationTest(TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         # Create a simple fake DEM
         with connection.cursor() as cur:
             cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
@@ -23,7 +23,7 @@ class ElevationTest(TestCase):
                 for x in range(0, 4):
                     cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
             if settings.TREKKING_TOPOLOGY_ENABLED:
-                self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
+                cls.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_path(self):
@@ -142,22 +142,22 @@ class ElevationProfileTest(TestCase):
         self.assertEqual(limits[1], -92)
 
 
-class AreaTestCase(TestCase):
-    def _fill_raster(self):
-        with connection.cursor() as cur:
-            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
-            cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
-            demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
-            for y in range(0, 5):
-                for x in range(0, 4):
-                    cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+def fill_raster():
+    with connection.cursor() as cur:
+        cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+        cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
+        demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+        for y in range(0, 5):
+            for x in range(0, 4):
+                cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
 
 
-class ElevationAreaTest(AreaTestCase):
-    def setUp(self):
-        self._fill_raster()
-        self.geom = LineString((100, 370), (1100, 370), srid=settings.SRID)
-        self.area = AltimetryHelper.elevation_area(self.geom)
+class ElevationAreaTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        fill_raster()
+        cls.geom = LineString((100, 370), (1100, 370), srid=settings.SRID)
+        cls.area = AltimetryHelper.elevation_area(cls.geom)
 
     def test_area_has_nice_ratio_if_horizontal(self):
         self.assertEqual(self.area['size']['x'], 1300.0)
@@ -206,9 +206,10 @@ class ElevationAreaTest(AreaTestCase):
         self.assertEqual(extent['altitudes']['min'], 0)
 
 
-class ElevationOtherGeomAreaTest(AreaTestCase):
-    def setUp(self):
-        self._fill_raster()
+class ElevationOtherGeomAreaTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        fill_raster()
 
     def test_area_small_geom(self):
         geom = LineString((10, 10), (10, 5), srid=settings.SRID)
@@ -230,10 +231,60 @@ class ElevationOtherGeomAreaTest(AreaTestCase):
         self.assertEqual(area['size']['y'], 1300.0)
 
 
+def fill_raster_order():
+    with connection.cursor() as cur:
+        cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(250, 250, 0, 250, 25, -25, 0, 0, %s))',
+                    [settings.SRID])
+        cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
+        demvalues = []
+        for x in range(0, 10):
+            demvalues.append(list(range(x * 2, x * 2 + 10)))
+
+        for y in range(0, 10):
+            for x in range(0, 10):
+                cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)',
+                            [x + 1, y + 1, demvalues[y][x]])
+
+
+class ElevationRightOrderAreaTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        fill_raster_order()
+
+    def test_area_order_lines_columns(self):
+        """
+        We check that the order is always the same not depending on the database.
+        Firstly we iterate on lines then columns. And it should be always the same order.
+        """
+        geom = LineString((125, 240), (125, 50), srid=settings.SRID)
+        area_1 = AltimetryHelper.elevation_area(geom)
+
+        self.assertEqual(area_1['altitudes'], [[18, 19, 20, 21, 22, 23, 24],
+                                               [16, 17, 18, 19, 20, 21, 22],
+                                               [14, 15, 16, 17, 18, 19, 20],
+                                               [12, 13, 14, 15, 16, 17, 18],
+                                               [10, 11, 12, 13, 14, 15, 16],
+                                               [8, 9, 10, 11, 12, 13, 14],
+                                               [6, 7, 8, 9, 10, 11, 12],
+                                               [4, 5, 6, 7, 8, 9, 10],
+                                               [2, 3, 4, 5, 6, 7, 8],
+                                               [0, 1, 2, 3, 4, 5, 6]])
+
+        geom = LineString((240, 125), (50, 125), srid=settings.SRID)
+        area_2 = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area_2['altitudes'], [[12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+                                               [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                                               [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+                                               [6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                                               [4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                                               [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                                               [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])
+
+
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class LengthTest(TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         # Create a simple fake DEM
         with connection.cursor() as cur:
             cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
@@ -242,7 +293,7 @@ class LengthTest(TestCase):
             for y in range(0, 5):
                 for x in range(0, 4):
                     cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
-            self.path = Path.objects.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+            cls.path = Path.objects.create(geom=LineString((1, 101), (81, 101), (81, 99)))
 
     def test_2dlength_is_preserved(self):
         self.assertEqual(self.path.geom_3d.length, self.path.geom.length)
@@ -259,9 +310,10 @@ class SamplingTestPath(TestCase):
     model = Path
     step = settings.ALTIMETRIC_PROFILE_PRECISION
 
-    def setUp(self):
-        if self.model is None:
-            SkipTest()
+    @classmethod
+    def setUpTestData(cls):
+        if cls.model is None:
+            SkipTest(reason="No model")
         # Create a fake empty DEM to prevent trigger optimisation to skip sampling
         with connection.cursor() as cur:
             cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_AddBand(ST_MakeEmptyRaster(100, 100, 0, 100, 25, -25, 0, 0, %s), \'16BSI\'))',
@@ -337,9 +389,10 @@ class SamplingTestTopology(TestCase):
     model = Topology
     step = settings.ALTIMETRIC_PROFILE_PRECISION
 
-    def setUp(self):
-        if self.model is None:
-            SkipTest()
+    @classmethod
+    def setUpTestData(cls):
+        if cls.model is None:
+            SkipTest(reason="None")
         # Create a fake empty DEM to prevent trigger optimisation to skip sampling
         with connection.cursor() as cur:
             cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))',

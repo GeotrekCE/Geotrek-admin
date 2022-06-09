@@ -1,32 +1,29 @@
+import functools
 import json
 import logging
-import functools
-
 import simplekml
-from modelcluster.models import ClusterableModel
-from modelcluster.fields import ParentalKey
-
+import uuid
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
-from django.conf import settings
+from django.contrib.gis.geos import Point, fromstr, LineString, GEOSGeometry
+from django.contrib.postgres.indexes import GistIndex
+from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db.models import ProtectedError
+from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
-from django.contrib.gis.geos import fromstr, LineString, GEOSGeometry
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 
-from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text
-
+from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
-                                   AddPropertyMixin)
+from geotrek.common.functions import Length
+from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
-from geotrek.altimetry.models import AltimetryMixin
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-
-from django.db import connection, connections, DEFAULT_DB_ALIAS
-from django.db.models.query import QuerySet
-
-from django.contrib.gis.geos import Point
+from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +43,7 @@ class PathManager(models.Manager):
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible.
         """
-        return super().get_queryset().filter(visible=True)
+        return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
 
 
 class PathInvisibleManager(models.Manager):
@@ -55,16 +52,12 @@ class PathInvisibleManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset()
 
-# GeoDjango note:
-# Django automatically creates indexes on geometry fields but it uses a
-# syntax which is not compatible with PostGIS 2.0. That's why index creation
-# is explicitly disbaled here (see manual index creation in custom SQL files).
-
 
 class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated, ClusterableModel):
-    geom = models.LineStringField(srid=settings.SRID, spatial_index=True)
-    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=True,
+    """ Path model. Spatial indexes disabled because managed in Meta.indexes """
+    geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
+    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
     valid = models.BooleanField(default=True, verbose_name=_("Validity"),
                                 help_text=_("Approved by manager"))
@@ -97,6 +90,7 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                                       verbose_name=_("Networks"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     objects = PathManager()
     include_invisible = PathInvisibleManager()
@@ -107,16 +101,13 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     def topology_set(self):
         return Topology.objects.filter(aggregations__path=self)
 
-    @property
-    def length_2d(self):
-        if self.geom:
-            return self.geom.length
-        else:
-            return None
-
     @classproperty
     def length_2d_verbose_name(cls):
         return _("2D Length")
+
+    @classmethod
+    def no_draft_latest_updated(cls):
+        return cls.objects.filter(draft=False).latest('date_update').get_date_update()
 
     @property
     def length_2d_display(self):
@@ -140,10 +131,18 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     class Meta:
         verbose_name = _("Path")
         verbose_name_plural = _("Paths")
-        permissions = MapEntityMixin._meta.permissions + [("add_draft_path", "Can add draft Path"),
-                                                          ("change_draft_path", "Can change draft Path"),
-                                                          ("delete_draft_path", "Can delete draft Path"),
-                                                          ]
+        permissions = MapEntityMixin._meta.permissions + [
+            ("add_draft_path", "Can add draft Path"),
+            ("change_draft_path", "Can change draft Path"),
+            ("delete_draft_path", "Can delete draft Path"),
+        ]
+        indexes = [
+            GistIndex(name='path_geom_gist_idx', fields=['geom']),
+            GistIndex(name='path_geom_cadastre_gist_idx', fields=['geom_cadastre']),
+            GistIndex(name='path_geom_3d_gist_idx', fields=['geom_3d']),
+            # some other complex indexes can't be created by django and are created in migrations
+            # Gist (ST_STARTPOINT(geom)) and (ST_ENDPOINT(geom))
+        ]
 
     @classmethod
     def closest(cls, point, exclude=None):
@@ -245,11 +244,14 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     def delete(self, *args, **kwargs):
         if not settings.TREKKING_TOPOLOGY_ENABLED:
             return super().delete(*args, **kwargs)
-        topologies = list(self.topology_set.filter())
+        topologies = self.topology_set.all()
+        if topologies.exists() and not settings.ALLOW_PATH_DELETION_TOPOLOGY:
+            raise ProtectedError(_("You can't delete this path, some topologies are linked with this path"), self)
+        topologies_list = list(topologies)
         r = super().delete(*args, **kwargs)
         if not Path.objects.exists():
             return r
-        for topology in topologies:
+        for topology in topologies_list:
             if isinstance(topology.geom, Point):
                 closest = self.closest(topology.geom, self)
                 position, offset = closest.interpolate(topology.geom)
@@ -383,14 +385,21 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
-                                default=None, spatial_index=True)
+                                default=None, spatial_index=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
 
+    geometry_types_allowed = ["LINESTRING", "POINT"]
+
     class Meta:
         verbose_name = _("Topology")
         verbose_name_plural = _("Topologies")
+        indexes = [
+            GistIndex(name='topology_geom_gist_idx', fields=['geom']),
+            GistIndex(name='topology_geom_3d_gist_idx', fields=['geom_3d']),
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -865,7 +874,6 @@ class PathSource(StructureOrNoneRelated):
 
 @functools.total_ordering
 class Stake(StructureOrNoneRelated):
-
     stake = models.CharField(verbose_name=_("Stake"), max_length=50)
 
     class Meta:
@@ -943,6 +951,8 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Trail")

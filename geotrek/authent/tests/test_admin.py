@@ -1,45 +1,20 @@
-from mapentity.factories import SuperUserFactory
-
+from mapentity.tests.factories import SuperUserFactory
+from . import factories
 from .base import AuthentFixturesTest
-from .. import factories
 
 
 class AdminSiteTest(AuthentFixturesTest):
-    def setUp(self):
-        self.admin = SuperUserFactory.create(password='booh')
-        self.pathmanager = factories.PathManagerFactory.create(password='booh')
-        self.trekmanager = factories.TrekkingManagerFactory.create(password='booh')
-        self.user = factories.UserFactory.create(password='booh')
-
-    def tearDown(self):
-        self.client.logout()
-        self.admin.delete()
-        self.pathmanager.delete()
-        self.trekmanager.delete()
-        self.user.delete()
+    @classmethod
+    def setUpTestData(cls):
+        cls.admin = SuperUserFactory()
+        cls.path_manager = factories.PathManagerFactory()
+        cls.trek_manager = factories.TrekkingManagerFactory()
 
     def login(self, user):
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
-
-    def test_user_cant_access(self):
-        self.login(self.user)
-        response = self.client.get('/admin/')
-        self.assertRedirects(response, '/admin/login/?next=/admin/')
-
-    def test_admin_can_see_everything(self):
-        self.login(self.admin)
-        response = self.client.get('/admin/core/')
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get('/admin/trekking/')
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get('/admin/')
-        self.assertContains(response, 'Core')
-        self.assertContains(response, 'Land')
-        self.assertContains(response, 'Trekking')
+        self.client.force_login(user)
 
     def test_path_manager_cannot_see_trekking_apps(self):
-        self.login(self.pathmanager)
+        self.login(self.path_manager)
         response = self.client.get('/admin/core/')
         self.assertEqual(response.status_code, 200)
         response = self.client.get('/admin/trekking/')
@@ -54,7 +29,7 @@ class AdminSiteTest(AuthentFixturesTest):
         self.assertNotContains(response, 'Trekking')
 
     def test_trek_manager_cannot_see_core_apps(self):
-        self.login(self.trekmanager)
+        self.login(self.trek_manager)
         response = self.client.get('/admin/core/')
         self.assertEqual(response.status_code, 404)
         response = self.client.get('/admin/trekking/')

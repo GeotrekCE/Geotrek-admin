@@ -2,43 +2,35 @@ import json
 import logging
 from collections import defaultdict
 
-from django.contrib.gis.db.models.functions import Transform
-from django.contrib.auth.decorators import permission_required
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from django.shortcuts import redirect
-from django.views.decorators.http import last_modified as cache_last_modified
-from django.views.decorators.cache import cache_control
-from django.views.generic import TemplateView
-from django.utils.translation import gettext as _
+from django.contrib.auth.decorators import permission_required
 from django.core.cache import caches
-from django.views.generic.detail import BaseDetailView
+from django.db.models import Sum
 from django.http import HttpResponseRedirect
-from rest_framework import permissions as rest_permissions
-
+from django.http.response import HttpResponse, JsonResponse
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.views.decorators.cache import cache_control
+from django.views.decorators.http import last_modified as cache_last_modified
+from django.views.generic import TemplateView
+from django.views.generic.detail import BaseDetailView
 from mapentity.serializers import GPXSerializer
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityViewSet,
-                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin,)
-
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
+                             MapEntityUpdate, MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins import CustomColumnsMixin
+from geotrek.common.functions import Length
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
-from geotrek.core.models import AltimetryMixin
-
-from .models import Path, Trail, Topology
-from .forms import PathForm, TrailForm
-from .filters import PathFilterSet, TrailFilterSet
-from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from . import graph as graph_lib
-from django.http.response import HttpResponse, JsonResponse
-from django.contrib import messages
-from django.db.models import Sum
-from geotrek.api.v2.functions import Length
-from django.db.models.fields import FloatField
-
+from .filters import PathFilterSet, TrailFilterSet
+from .forms import PathForm, TrailForm
+from .models import AltimetryMixin, Path, Trail, Topology
+from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -68,21 +60,31 @@ class PathLayer(MapEntityLayer):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.request.GET.get('no_draft'):
+        if self.request.GET.get('_no_draft'):
             qs = qs.exclude(draft=True)
+        # get display name if name is undefined to display tooltip on map feature hover
+        # Can't use annotate because it doesn't allow to use a model field name
+        # Can't use Case(When) in qs.extra
+        qs = qs.extra(select={'name': "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"},
+                      select_params=(_("path"), ))
         return qs
 
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator.
         """
         language = self.request.LANGUAGE_CODE
-        latest_saved = Path.latest_updated()
+        no_draft = self.request.GET.get('_no_draft')
+        if no_draft:
+            latest_saved = Path.no_draft_latest_updated()
+        else:
+            latest_saved = Path.latest_updated()
         geojson_lookup = None
+
         if latest_saved:
             geojson_lookup = '%s_path_%s%s_json_layer' % (
                 language,
                 latest_saved.strftime('%y%m%d%H%M%S%f'),
-                '_nodraft' if self.request.GET.get('no_draft') == 'true' else ''
+                '_nodraft' if no_draft else ''
             )
         return geojson_lookup
 
@@ -92,15 +94,8 @@ class PathList(CustomColumnsMixin, MapEntityList):
     filterform = PathFilterSet
     mandatory_columns = ['id', 'checkbox', 'name', 'length']
     default_extra_columns = ['length_2d']
-
-
-class PathJsonList(MapEntityJsonList, PathList):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["sumPath"] = round((self.object_list.aggregate(
-            sumPath=Sum(Length('geom'), output_field=FloatField())
-        ).get('sumPath') or 0) / 1000, 1)
-        return context
+    unorderable_columns = ['checkbox']
+    searchable_columns = ['id', 'name']
 
 
 class PathFormatList(MapEntityFormat, PathList):
@@ -108,7 +103,7 @@ class PathFormatList(MapEntityFormat, PathList):
     default_extra_columns = [
         'structure', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
         'comfort', 'source', 'stake', 'usages', 'networks',
-        'date_insert', 'date_update', 'length_2d'
+        'date_insert', 'date_update', 'length_2d', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
     def get_queryset(self):
@@ -263,14 +258,24 @@ class PathDelete(MapEntityDelete):
         return context
 
 
-class PathViewSet(MapEntityViewSet):
+class PathViewSet(GeotrekMapentityViewSet):
     model = Path
     serializer_class = PathSerializer
     geojson_serializer_class = PathGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    filterset_class = PathFilterSet
 
     def get_queryset(self):
-        return Path.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
+        return Path.objects.defer('geom', 'geom_cadastre', 'geom_3d')\
+                           .select_related('structure', 'comfort', 'source', 'stake')\
+                           .prefetch_related('usages', 'networks')
+
+    def get_columns(self):
+        return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('path_view', PathList.default_extra_columns)
+
+    def get_filter_count_infos(self, qs):
+        """ Add total path length to count infos in List dropdown menu """
+        data = super().get_filter_count_infos(qs)
+        return f"{data} ({round(qs.aggregate(sumPath=Sum(Length('geom') / 1000)).get('sumPath') or 0, 1)} km)"
 
 
 @login_required
@@ -308,10 +313,7 @@ class TrailList(CustomColumnsMixin, MapEntityList):
     filterform = TrailFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['departure', 'arrival', 'length']
-
-
-class TrailJsonList(MapEntityJsonList, TrailList):
-    pass
+    searchable_columns = ['id', 'name', 'departure', 'arrival', ]
 
 
 class TrailFormatList(MapEntityFormat, TrailList):
@@ -319,7 +321,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
     default_extra_columns = [
         'structure', 'name', 'comments', 'departure', 'arrival',
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -379,14 +381,17 @@ class TrailDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class TrailViewSet(MapEntityViewSet):
+class TrailViewSet(GeotrekMapentityViewSet):
     model = Trail
     serializer_class = TrailSerializer
     geojson_serializer_class = TrailGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    filterset_class = TrailFilterSet
+
+    def get_columns(self):
+        return TrailList.mandatory_columns + settings.COLUMNS_LISTS.get('trail_view', TrailList.default_extra_columns)
 
     def get_queryset(self):
-        return Trail.objects.existing().annotate(api_geom=Transform("geom", settings.API_SRID))
+        return Trail.objects.existing().defer('geom', 'geom_3d')
 
 
 @permission_required('core.change_path')

@@ -8,9 +8,10 @@ from geotrek.trekking import models as trekking_models
 # Trek app
 
 class TrekTO(TranslationOptions):
-    fields = ('name', 'departure', 'arrival', 'description_teaser',
-              'description', 'ambiance', 'access', 'disabled_infrastructure', 'advice',
-              'advised_parking', 'public_transport') + (
+    fields = ('name', 'departure', 'arrival', 'description_teaser', 'description', 'ambiance', 'access',
+              'accessibility_infrastructure', 'advice', 'gear', 'accessibility_signage', 'accessibility_slope',
+              'accessibility_covering', 'accessibility_exposure', 'accessibility_width',
+              'accessibility_advice', 'advised_parking', 'public_transport', 'ratings_description') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
@@ -38,6 +39,10 @@ class AccessibilityTO(TranslationOptions):
     fields = ('name', )
 
 
+class AccessibilityLevelTO(TranslationOptions):
+    fields = ('name', )
+
+
 class RouteTO(TranslationOptions):
     fields = ('route', )
 
@@ -54,6 +59,14 @@ class WebLinkCategoryTO(TranslationOptions):
     fields = ('label', )
 
 
+class RatingScaleTO(TranslationOptions):
+    fields = ('name', )
+
+
+class RatingTO(TranslationOptions):
+    fields = ('name', 'description')
+
+
 class ServiceTypeTO(TranslationOptions):
     fields = ('name', )
 
@@ -66,11 +79,14 @@ trek_translation_to_register = [
     (trekking_models.TrekNetwork, TrekNetworkTO),
     (trekking_models.Practice, PracticeTO),
     (trekking_models.Accessibility, AccessibilityTO),
+    (trekking_models.AccessibilityLevel, AccessibilityLevelTO),
     (trekking_models.Route, RouteTO),
     (trekking_models.DifficultyLevel, DifficultyLevelTO),
     (trekking_models.WebLink, WebLinkTO),
     (trekking_models.WebLinkCategory, WebLinkCategoryTO),
     (trekking_models.ServiceType, ServiceTypeTO),
+    (trekking_models.Rating, RatingTO),
+    (trekking_models.RatingScale, RatingScaleTO)
 ]
 
 for model, model_to in trek_translation_to_register:

@@ -3,8 +3,8 @@ from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
 import django.db.models.deletion
-import geotrek.common.mixins
 import geotrek.authent.models
+import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Path',
                 'verbose_name_plural': 'Paths',
             },
-            bases=(geotrek.common.mixins.AddPropertyMixin, mapentity.models.MapEntityMixin, models.Model),
+            bases=(geotrek.common.mixins.models.AddPropertyMixin, mapentity.models.MapEntityMixin, models.Model),
         ),
         migrations.CreateModel(
             name='PathAggregation',
@@ -141,7 +141,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Topology',
                 'verbose_name_plural': 'Topologies',
             },
-            bases=(geotrek.common.mixins.AddPropertyMixin, models.Model),
+            bases=(geotrek.common.mixins.models.AddPropertyMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Usage',

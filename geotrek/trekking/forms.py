@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms.models import inlineformset_factory
+
 from django import forms
 
 from crispy_forms.helper import FormHelper
@@ -16,7 +17,7 @@ from mapentity.widgets import SelectMultipleWithPop
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
-from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild
+from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild, RatingScale
 from django.db import transaction
 
 
@@ -107,7 +108,10 @@ class TrekForm(BaseTrekForm):
     <li id="tab-advanced" class="nav-item">
         <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
     </li>
-</ul>""".format(_("Main"), _("Advanced"))),
+    <li id="tab-accessibility" class="nav-item">
+        <a class="nav-link" href="#accessibility" data-toggle="tab"><i class="bi bi-eye-slash-fill"></i> {2}</a>
+    </li>
+</ul>""".format(_("Main"), _("Advanced"), _("Accessibility"))),
             Div(
                 Div(
                     'name',
@@ -116,8 +120,9 @@ class TrekForm(BaseTrekForm):
                     'departure',
                     'arrival',
                     'duration',
-                    'practice',
                     'difficulty',
+                    'practice',
+                    'ratings_description',
                     'route',
                     'access',
                     'description_teaser',
@@ -128,15 +133,14 @@ class TrekForm(BaseTrekForm):
                 ),
                 Div(
                     'points_reference',
-                    'disabled_infrastructure',
                     'advised_parking',
                     'parking_location',
                     'public_transport',
                     'advice',
+                    'gear',
                     'themes',
                     'labels',
                     'networks',
-                    'accessibilities',
                     'web_links',
                     'information_desks',
                     'source',
@@ -152,6 +156,19 @@ class TrekForm(BaseTrekForm):
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
                 ),
+                Div(
+                    'accessibilities',
+                    'accessibility_level',
+                    'accessibility_infrastructure',
+                    'accessibility_slope',
+                    'accessibility_covering',
+                    'accessibility_exposure',
+                    'accessibility_width',
+                    'accessibility_advice',
+                    'accessibility_signage',
+                    css_id="accessibility",  # used in Javascript for activating tab if error
+                    css_class="scrollable tab-pane"
+                ),
                 css_class="tab-content"
             ),
             css_class="tabbable"
@@ -163,9 +180,8 @@ class TrekForm(BaseTrekForm):
         self.fieldslayout[0][1][0].append(HTML(
             '<div class="controls">{}{}</div>'.format(
                 _('Insert service:'),
-                ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(
-                    url=t.pictogram.url, name=t.name)
-                    for t in ServiceType.objects.all()])))
+                ''.join([f'<a class="servicetype" data-url="{t.pictogram.url}" data-name={t.name}">'
+                         f'<img src="{t.pictogram.url}"></a>' for t in ServiceType.objects.all()])))
         )
         super().__init__(*args, **kwargs)
         if self.fields.get('structure'):
@@ -198,10 +214,36 @@ class TrekForm(BaseTrekForm):
 
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+
+        for scale in RatingScale.objects.all():
+            ratings = None
+            if self.instance.pk:
+                ratings = self.instance.ratings.filter(scale=scale)
+            fieldname = f'rating_scale_{scale.pk}'
+            self.fields[fieldname] = forms.ModelChoiceField(
+                label=scale.name,
+                queryset=scale.ratings.all(),
+                required=False,
+                initial=ratings if ratings else None
+            )
+            right_after_type_index = self.fieldslayout[0][1][0].fields.index('practice') + 1
+            self.fieldslayout[0][1][0].insert(right_after_type_index, fieldname)
+
         if self.instance.pk:
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0][1][1].remove('pois_excluded')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        practice = self.cleaned_data['practice']
+        for scale in RatingScale.objects.all():
+            if self.cleaned_data.get(f'rating_scale_{scale.pk}'):
+                try:
+                    practice.rating_scales.get(pk=scale.pk)
+                except RatingScale.DoesNotExist:
+                    raise ValidationError(_("One of the rating scale used is not part of the practice chosen"))
+        return cleaned_data
 
     def clean_children_trek(self):
         """
@@ -212,7 +254,7 @@ class TrekForm(BaseTrekForm):
             raise ValidationError(_("Cannot add children because this trek is itself a child."))
         for child in children:
             if child.trek_children.exists():
-                raise ValidationError(_("Cannot use parent trek {name} as a child trek.".format(name=child.name)))
+                raise ValidationError(_(f"Cannot use parent trek {child.name} as a child trek."))
         return children
 
     def save(self, *args, **kwargs):
@@ -223,6 +265,23 @@ class TrekForm(BaseTrekForm):
 
         try:
             return_value = super().save(self, *args, **kwargs)
+            # Save ratings
+            # TODO : Go through practice and not rating_scales
+            if return_value.practice:
+                field = getattr(return_value, 'ratings')
+                to_remove = list(field.exclude(scale__practice=return_value.practice).values_list('pk', flat=True))
+                to_add = []
+                for scale in return_value.practice.rating_scales.all():
+                    rating = self.cleaned_data.get(f'rating_scale_{scale.pk}')
+                    needs_removal = field.filter(scale=scale)
+                    if rating:
+                        needs_removal = needs_removal.exclude(pk=rating.pk)
+                        to_add.append(rating.pk)
+                    to_remove += list(needs_removal.values_list('pk', flat=True))
+                field.remove(*to_remove)
+                field.add(*to_add)
+
+            # save ordered children
             ordering = []
 
             if self.cleaned_data['hidden_ordered_children']:
@@ -257,12 +316,13 @@ class TrekForm(BaseTrekForm):
         fields = BaseTrekForm.Meta.fields + \
             ['structure', 'name', 'review', 'published', 'labels', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
-             'access', 'description_teaser', 'description', 'points_reference',
-             'disabled_infrastructure', 'advised_parking', 'parking_location',
-             'public_transport', 'advice', 'themes', 'networks', 'practice',
-             'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
-             'children_trek', 'eid', 'eid2', 'reservation_system', 'reservation_id',
-             'pois_excluded', 'hidden_ordered_children']
+             'access', 'description_teaser', 'description', 'ratings_description', 'points_reference',
+             'accessibility_infrastructure', 'advised_parking', 'parking_location',
+             'public_transport', 'advice', 'gear', 'themes', 'networks', 'practice', 'accessibilities',
+             'accessibility_level', 'accessibility_signage', 'accessibility_slope', 'accessibility_covering',
+             'accessibility_exposure', 'accessibility_width', 'accessibility_advice', 'web_links',
+             'information_desks', 'source', 'portal', 'children_trek', 'eid', 'eid2', 'reservation_system',
+             'reservation_id', 'pois_excluded', 'hidden_ordered_children']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -360,7 +420,7 @@ class WebLinkCreateFormPopup(TranslatedModelForm):
         # Main form layout
         # Adds every name field explicitly (name_fr, name_en, ...)
         self.helper.form_class = 'form-horizontal'
-        arg_list = ['name_{0}'.format(language[0]) for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        arg_list = [f'name_{language[0]}' for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         arg_list += ['url', 'category', FormActions(
             HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
             Submit('save_changes', _('Create'), css_class="btn-primary"),

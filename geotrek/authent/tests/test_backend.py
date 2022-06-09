@@ -40,10 +40,11 @@ def password2md5(password):
                    AUTHENT_TABLENAME='authent_table',
                    AUTHENTICATION_BACKENDS=('geotrek.authent.backend.DatabaseBackend',))
 class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
-    def setUp(self):
-        self.backend = DatabaseBackend()
+    @classmethod
+    def setUpTestData(cls):
+        cls.backend = DatabaseBackend()
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)
-        self.deleted = False
+        cls.deleted = False
 
     def tearDown(self):
         if not self.deleted:
@@ -118,6 +119,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
         test_level('a', 2, [settings.AUTHENT_GROUPS_MAPPING['EDITOR']])
         test_level('a', 3, [settings.AUTHENT_GROUPS_MAPPING['PATH_MANAGER']])
         test_level('a', 4, [settings.AUTHENT_GROUPS_MAPPING['TREKKING_MANAGER']])
+        test_level('a', 5, [settings.AUTHENT_GROUPS_MAPPING['EDITOR_TREKKING_MANAGEMENT']])
         user = test_level('a', 6, [])
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)

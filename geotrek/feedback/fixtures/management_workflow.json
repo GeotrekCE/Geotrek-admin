@@ -1,0 +1,52 @@
+[
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Programm\u00e9",
+            "label_en": "Programmed",
+            "label_fr": "Programm\u00e9",
+            "identifier": "programmed",
+            "color": "#6AA84F"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Intervention en retard",
+            "label_en": "Late intervention",
+            "label_fr": "Intervention en retard",
+            "identifier": "late_intervention",
+            "color": "#CC0000"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "R\u00e9solution en retard",
+            "label_en": "Late resolution",
+            "label_fr": "R\u00e9solution en retard",
+            "identifier": "late_resolution",
+            "color": "#CC0000"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Intervention termin\u00e9e",
+            "label_en": "Resolved intervention",
+            "label_fr": "Intervention termin\u00e9e",
+            "identifier": "solved_intervention",
+            "color": "#4285F4"
+        }
+    },
+    {
+        "model": "feedback.reportstatus",
+        "fields": {
+            "label": "Rejet\u00e9",
+            "label_en": "Rejected",
+            "label_fr": "Rejet\u00e9",
+            "identifier": "rejected",
+            "color": "#4444444"
+        }
+    }
+]

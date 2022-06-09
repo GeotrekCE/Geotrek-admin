@@ -3,12 +3,12 @@ from django.conf import settings
 
 from unittest import skipIf
 
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
-from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
-from geotrek.core.factories import TopologyFactory
-from geotrek.land.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
-                                    CompetenceEdgeFactory)
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory
+from geotrek.core.tests.factories import TopologyFactory
+from geotrek.land.tests.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
+                                          CompetenceEdgeFactory)
 
 
 class ProjectTest(TestCase):
@@ -122,18 +122,19 @@ class ProjectTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectLandTest(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         infra = InfrastructureFactory.create()
-        self.intervention = InterventionFactory.create(target=infra)
-        self.project = ProjectFactory.create()
-        self.project.interventions.add(self.intervention)
-        self.project.interventions.add(InterventionFactory.create())
+        cls.intervention = InterventionFactory.create(target=infra)
+        cls.project = ProjectFactory.create()
+        cls.project.interventions.add(cls.intervention)
+        cls.project.interventions.add(InterventionFactory.create())
 
         path = infra.paths.get()
 
-        self.signagemgt = SignageManagementEdgeFactory.create(paths=[(path, 0.3, 0.7)])
-        self.workmgt = WorkManagementEdgeFactory.create(paths=[(path, 0.3, 0.7)])
-        self.competencemgt = CompetenceEdgeFactory.create(paths=[(path, 0.3, 0.7)])
+        cls.signagemgt = SignageManagementEdgeFactory.create(paths=[(path, 0.3, 0.7)])
+        cls.workmgt = WorkManagementEdgeFactory.create(paths=[(path, 0.3, 0.7)])
+        cls.competencemgt = CompetenceEdgeFactory.create(paths=[(path, 0.3, 0.7)])
 
     def test_project_has_signage_management(self):
         self.assertIn(self.signagemgt, self.intervention.signage_edges)

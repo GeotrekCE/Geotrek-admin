@@ -20,16 +20,16 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import translation
 
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
+from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
-from geotrek.core.factories import PathFactory
-from geotrek.flatpages.factories import FlatPageFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek, OrderedTrekChild
-from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
-from geotrek.tourism.factories import (InformationDeskFactory, InformationDeskTypeFactory,
-                                       TouristicContentFactory, TouristicEventFactory)
+from geotrek.trekking.tests.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
+from geotrek.tourism.tests.factories import (InformationDeskFactory, InformationDeskTypeFactory,
+                                             TouristicContentFactory, TouristicEventFactory)
 from geotrek.tourism.models import TouristicEventType
 
 
@@ -167,7 +167,9 @@ class SyncMobileFailTest(VarTmpTestCase):
             management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
 
-    def test_attachments_missing_from_disk(self):
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+    def test_attachments_missing_from_disk(self, mocke):
+        mocke.side_effect = Exception()
         trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
         attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
         os.remove(attachment.attachment_file.path)
@@ -327,8 +329,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
     def test_sync_settings_with_picto_svg(self):
         output = StringIO()
         practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
-        TrekFactory.create(practice=practice)
-
+        self.trek = TrekFactory.create(practice=practice, published_fr=True, published_it=True, published_es=True, published_en=True)
         information_desk_type = InformationDeskTypeFactory.create(pictogram=get_dummy_uploaded_image())
         InformationDeskFactory.create(type=information_desk_type)
         pictogram_png = practice.pictogram.url.replace('.svg', '.png')
@@ -390,6 +391,14 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
                                                         published=True)
         cls.touristic_event = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
                                                     published=True)
+        cls.touristic_content_portal_a = TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                                 published=True, portals=[cls.portal_a])
+        cls.touristic_event_portal_a = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                             published=True, portals=[cls.portal_a])
+        cls.touristic_content_portal_b = TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                                 published=True, portals=[cls.portal_b])
+        cls.touristic_event_portal_b = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                             published=True, portals=[cls.portal_b])
         cls.attachment_content_1 = AttachmentFactory.create(content_object=cls.touristic_content,
                                                             attachment_file=get_dummy_uploaded_image())
         cls.attachment_event_1 = AttachmentFactory.create(content_object=cls.touristic_event,
@@ -425,14 +434,22 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, portal=self.portal_a.name, stdout=output)
         self.assertFalse(os.path.exists(
-            os.path.join('var/tmp/en', '{pk}'.format(pk=str(self.trek_3.pk)), 'trek.geojson')
+            os.path.join('var', 'tmp', 'en', str(self.trek_3.pk), 'trek.geojson')
         ))
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(os.path.join('var/tmp', lang, 'treks.geojson'), 'r') as f:
+            with open(os.path.join('var', 'tmp', lang, 'treks.geojson'), 'r') as f:
                 trek_geojson = json.load(f)
                 self.assertEqual(len(trek_geojson['features']),
                                  Trek.objects.filter(**{'published_{}'.format(lang): True})
                                  .filter(Q(portal__name__in=(self.portal_a,)) | Q(portal=None)).count())
+        with open(os.path.join('var', 'tmp', 'en', str(self.trek_1.pk), 'touristic_contents.geojson'), 'r') as f:
+            tc_geojson = json.load(f)
+            self.assertEqual(len(tc_geojson['features']), 1)
+            # Only one because factory generate a portal for touristic contents
+        with open(os.path.join('var', 'tmp', 'en', str(self.trek_1.pk), 'touristic_events.geojson'), 'r') as f:
+            te_geojson = json.load(f)
+            # Two because factory do not generate a portal for touristic events
+            self.assertEqual(len(te_geojson['features']), 2)
 
     def test_sync_pois_by_treks(self):
         output = StringIO()

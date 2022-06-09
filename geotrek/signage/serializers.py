@@ -1,5 +1,7 @@
 import csv
 
+from drf_dynamic_fields import DynamicFieldsMixin
+
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import PictogramSerializerMixin, BasePublishableSerializerMixin
 from geotrek.signage import models as signage_models
@@ -7,7 +9,7 @@ from geotrek.signage import models as signage_models
 from mapentity.serializers.commasv import CSVSerializer
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
-from rest_framework import serializers as rest_serializers
+from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -18,7 +20,20 @@ class SignageTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class SignageSerializer(BasePublishableSerializerMixin):
+class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, serializers.ModelSerializer):
+    name = serializers.CharField(source='name_display')
+    structure = serializers.SlugRelatedField('name', read_only=True)
+    type = serializers.CharField(source='type_display')
+    condition = serializers.SlugRelatedField('label', read_only=True)
+    manager = serializers.SlugRelatedField('organism', read_only=True)
+    sealing = serializers.SlugRelatedField('label', read_only=True)
+
+    class Meta:
+        model = signage_models.Signage
+        fields = "__all__"
+
+
+class SignageAPISerializer(BasePublishableSerializerMixin):
     type = SignageTypeSerializer()
     structure = StructureSerializer()
 
@@ -26,29 +41,41 @@ class SignageSerializer(BasePublishableSerializerMixin):
         model = signage_models.Signage
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = ('id', 'structure', 'name', 'type', 'code', 'printed_elevation', 'condition',
-                  'manager', 'sealing') + \
-            BasePublishableSerializerMixin.Meta.fields
+                  'manager', 'sealing') + BasePublishableSerializerMixin.Meta.fields
 
 
-class SignageGeojsonSerializer(GeoFeatureModelSerializer, SignageSerializer):
+class SignageAPIGeojsonSerializer(GeoFeatureModelSerializer, SignageAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(SignageSerializer.Meta):
+    class Meta(SignageAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = SignageSerializer.Meta.fields + ('api_geom', )
+        fields = SignageAPISerializer.Meta.fields + ('api_geom', )
 
 
-class BladeTypeSerializer(rest_serializers.ModelSerializer):
+class BladeTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = signage_models.BladeType
         fields = ('label', )
 
 
-class BladeSerializer(rest_serializers.ModelSerializer):
+class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    type = serializers.SlugRelatedField('label', read_only=True)
+    structure = serializers.SlugRelatedField('name', read_only=True)
+    direction = serializers.SlugRelatedField('label', read_only=True)
+    color = serializers.SlugRelatedField('label', read_only=True)
+    condition = serializers.SlugRelatedField('label', read_only=True)
+    number = serializers.CharField(source='number_display')
+
+    class Meta:
+        model = signage_models.Blade
+        fields = "__all__"
+
+
+class BladeAPISerializer(serializers.ModelSerializer):
     type = BladeTypeSerializer()
     structure = StructureSerializer()
-    order_lines = rest_serializers.SerializerMethodField(read_only=True)
+    order_lines = serializers.SerializerMethodField()
 
     def get_order_lines(self, obj):
         return obj.order_lines.values_list('pk', flat=True)
@@ -60,13 +87,13 @@ class BladeSerializer(rest_serializers.ModelSerializer):
         # TODO: Do a lineserializer for order_lines
 
 
-class BladeGeojsonSerializer(GeoFeatureModelSerializer, BladeSerializer):
+class BladeAPIGeojsonSerializer(GeoFeatureModelSerializer, BladeAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
-    class Meta(BladeSerializer.Meta):
+    class Meta(BladeAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = BladeSerializer.Meta.fields + ('api_geom', )
+        fields = BladeAPISerializer.Meta.fields + ('api_geom', )
 
 
 class CSVBladeSerializer(CSVSerializer):

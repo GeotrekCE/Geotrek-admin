@@ -153,13 +153,13 @@ class AltimetryHelper:
                          (SELECT COUNT(y) AS y FROM lines)   AS lin
                 ),
                 points2d AS (
-                    SELECT row_number() OVER () AS id,
+                    SELECT row_number() OVER (ORDER BY lines.y, columns.x) AS id,
                            ST_SetSRID(ST_MakePoint(x, y), {srid}) AS geom,
                            ST_Transform(ST_SetSRID(ST_MakePoint(x, y), {srid}), 4326) AS geomll
-                    FROM lines, columns
+                    FROM columns, lines
                 ),
                 draped AS (
-                    SELECT id, ST_Value(altimetry_dem.rast, p.geom)::int AS altitude
+                    SELECT id, CASE WHEN ST_Value(altimetry_dem.rast, p.geom)::int = -99999 THEN 0 ELSE ST_Value(altimetry_dem.rast, p.geom)::int END AS altitude
                     FROM altimetry_dem, points2d AS p
                     WHERE ST_Intersects(altimetry_dem.rast, p.geom)
                 ),

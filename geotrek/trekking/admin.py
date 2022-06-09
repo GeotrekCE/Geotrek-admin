@@ -1,47 +1,57 @@
 from django import forms
 from django.conf import settings
-from django.db import transaction
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
+from django.contrib.admin import widgets
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-from geotrek.common.mixins import MergeActionMixin
+from django.utils.html import format_html
+
+from geotrek.common.mixins.actions import MergeActionMixin
 from .models import (
-    POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
-    WebLink, WebLinkCategory, Trek, ServiceType
+    POIType, TrekNetwork, Practice, Accessibility, AccessibilityLevel, Route, DifficultyLevel,
+    WebLink, WebLinkCategory, Trek, ServiceType, Rating, RatingScale
 )
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.admin import TranslationAdmin
+    from modeltranslation.admin import TabbedTranslationAdmin, TranslationTabularInline
 else:
-    TranslationAdmin = admin.ModelAdmin
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin, TabularInline as TranslationTabularInline
 
 
-class POITypeAdmin(MergeActionMixin, TranslationAdmin):
+class POITypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label', 'cirkwi', 'pictogram_img')
     search_fields = ('label',)
     merge_field = 'label'
 
 
-class TrekNetworkAdmin(MergeActionMixin, TranslationAdmin):
+class TrekNetworkAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('network', 'pictogram_img')
     search_fields = ('network',)
     merge_field = 'network'
 
 
-class PracticeAdmin(MergeActionMixin, TranslationAdmin):
+class PracticeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'prefixed_id', 'order', 'cirkwi', 'distance', 'pictogram_img')
     search_fields = ('name',)
     merge_field = 'network'
 
 
-class AccessibilityAdmin(MergeActionMixin, TranslationAdmin):
+class AccessibilityAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'cirkwi', 'pictogram_img')
     search_fields = ('name',)
     merge_field = 'network'
 
 
-class RouteAdmin(MergeActionMixin, TranslationAdmin):
+class AccessibilityLevelAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    merge_field = 'name'
+
+
+class RouteAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('route', 'pictogram_img')
     search_fields = ('route',)
     merge_field = 'route'
@@ -59,7 +69,7 @@ class DifficultyLevelForm(forms.ModelForm):
         return self.newid
 
 
-class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
+class DifficultyLevelAdmin(MergeActionMixin, TabbedTranslationAdmin):
     form = DifficultyLevelForm
     list_display = ('id', 'difficulty', 'cirkwi_level', 'cirkwi', 'pictogram_img')
     search_fields = ('difficulty',)
@@ -108,19 +118,51 @@ class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
         return super().response_change(request, obj)
 
 
-class WebLinkAdmin(MergeActionMixin, TranslationAdmin):
+class WebLinkAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'url', )
     search_fields = ('name', 'url', )
     merge_field = 'name'
 
 
-class WebLinkCategoryAdmin(MergeActionMixin, TranslationAdmin):
+class WebLinkCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )
     merge_field = 'label'
 
 
-class ServiceTypeAdmin(MergeActionMixin, TranslationAdmin):
+class RatingAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('name', 'scale', 'order', 'color_markup', 'pictogram_img')
+    list_filter = ('scale', 'scale__practice')
+    search_fields = ('name', 'description', 'scale__name')
+    merge_field = 'name'
+
+    def color_markup(self, obj):
+        if not obj.color:
+            return ''
+        return format_html('<span style="color: {code};">⬤</span> {code}', code=obj.color)
+    color_markup.short_description = _("Color")
+
+
+class RatingAdminInLine(TranslationTabularInline):
+    model = Rating
+    extra = 1   # We need one extra to generate Tabbed Translation Tabular inline
+    formfield_overrides = {
+        models.TextField: {'widget': widgets.AdminTextareaWidget(
+            attrs={'rows': 1,
+                   'cols': 40,
+                   'style': 'height: 1em;'})},
+    }
+
+
+class RatingScaleAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('name', 'practice', 'order')
+    list_filter = ('practice', )
+    search_fields = ('name', )
+    merge_field = 'name'
+    inlines = [RatingAdminInLine]
+
+
+class ServiceTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'pictogram_img', 'practices_display')
     search_fields = ('name',)
     merge_field = 'name'
@@ -136,11 +178,14 @@ trek_admin_to_register = [
     (TrekNetwork, TrekNetworkAdmin),
     (Practice, PracticeAdmin),
     (Accessibility, AccessibilityAdmin),
+    (AccessibilityLevel, AccessibilityLevelAdmin),
     (Route, RouteAdmin),
     (DifficultyLevel, DifficultyLevelAdmin),
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
     (ServiceType, ServiceTypeAdmin),
+    (Rating, RatingAdmin),
+    (RatingScale, RatingScaleAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

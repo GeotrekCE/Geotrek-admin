@@ -4,7 +4,7 @@ from modeltranslation.translator import translator, TranslationOptions
 
 
 class SiteTO(TranslationOptions):
-    fields = ('name', 'description', 'description_teaser', 'ambiance', 'advice', 'period') + (
+    fields = ('name', 'description', 'description_teaser', 'ambiance', 'accessibility', 'advice', 'period') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
@@ -34,7 +34,7 @@ class RatingTO(TranslationOptions):
 
 
 class CourseTO(TranslationOptions):
-    fields = ('name', 'description', 'equipment', 'advice', 'gear', 'ratings_description') + (
+    fields = ('name', 'description', 'equipment', 'accessibility', 'advice', 'gear', 'ratings_description') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 

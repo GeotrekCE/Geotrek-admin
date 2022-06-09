@@ -1,11 +1,13 @@
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.outdoor.models import Site, Course
-from geotrek.outdoor.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
-from geotrek.authent.factories import StructureFactory
+from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
+from geotrek.authent.tests.factories import StructureFactory
+from django.test.utils import override_settings
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
 
-class SiteViewsTests(CommonTest):
+class SiteViewsTests(GeotrekAPITestCase, CommonTest):
     model = Site
     modelfactory = SiteFactory
     userfactory = OutdoorManagerFactory
@@ -13,9 +15,11 @@ class SiteViewsTests(CommonTest):
         'type': 'GeometryCollection',
         'geometries': [{'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}],
     }
+    extra_column_list = ['orientation', 'ratings', 'period']
 
     def get_expected_json_attrs(self):
         return {
+            'accessibility': 'Accessible',
             'advice': 'Warning!',
             'ambiance': 'Party time!',
             'areas': [],
@@ -76,8 +80,32 @@ class SiteViewsTests(CommonTest):
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates":[0, 0]}]}',
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'date_update': '17/03/2020 00:00:00',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'super_practices': self.obj.super_practices_display
+        }
 
-class CourseViewsTests(CommonTest):
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'name', 'orientation', 'ratings', 'period'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'orientation', 'ratings', 'period'])
+
+
+class CourseViewsTests(GeotrekAPITestCase, CommonTest):
     model = Course
     modelfactory = CourseFactory
     userfactory = OutdoorManagerFactory
@@ -85,6 +113,7 @@ class CourseViewsTests(CommonTest):
         'type': 'GeometryCollection',
         'geometries': [{'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}],
     }
+    extra_column_list = ['equipment', 'ratings', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -96,12 +125,14 @@ class CourseViewsTests(CommonTest):
             'duration': 55.0,
             'eid': '43',
             'equipment': 'Rope',
+            'accessibility': 'Accessible',
             'filelist_url': '/paperclip/get/outdoor/course/{}/'.format(self.obj.pk),
             'gear': 'Shoes mandatory',
             'height': 42,
             'map_image_url': '/image/course-{}.png'.format(self.obj.pk),
             'name': 'Course',
-            'site': self.obj.site.pk,
+            'parent_sites': [self.obj.parent_sites.first().pk],
+            'points_reference': None,
             'printable': '/api/en/courses/{}/course.pdf'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,
@@ -121,6 +152,14 @@ class CourseViewsTests(CommonTest):
             'ratings_description': 'Ths rating is ratable',
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'date_update': '17/03/2020 00:00:00',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'parent_sites': self.obj.parent_sites_display,
+        }
+
     def get_bad_data(self):
         return {
             'geom': 'doh!'
@@ -129,8 +168,24 @@ class CourseViewsTests(CommonTest):
     def get_good_data(self):
         return {
             'structure': StructureFactory.create().pk,
-            'site': SiteFactory.create().pk,
+            'parent_sites': [SiteFactory.create().pk],
             'name_en': 'test en',
             'name_fr': 'test fr',
             'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates":[0, 0]}]}',
         }
+
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'name', 'equipment', 'ratings', 'eid'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'equipment', 'ratings', 'eid'])

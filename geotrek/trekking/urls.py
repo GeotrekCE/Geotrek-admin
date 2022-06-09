@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import path, register_converter
 
 from mapentity.registry import registry
+from rest_framework.routers import DefaultRouter
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.common.urls import PublishableEntityOptions, LangConverter
@@ -10,9 +11,8 @@ from mapentity.registry import MapEntityOptions
 from . import models
 from .views import (
     TrekDocumentPublic, TrekDocumentBookletPublic, TrekMapImage, TrekMarkupPublic,
-    TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
-    CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
-    TrekServiceViewSet
+    TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup, TrekPOIViewSet,
+    TrekServiceViewSet, TrekAPIViewSet, POIAPIViewSet, ServiceAPIViewSet
 )
 
 register_converter(LangConverter, 'lang')
@@ -25,8 +25,6 @@ urlpatterns = [
     path('api/<lang:lang>/treks/<int:pk>/<slug:slug>.kml', TrekKMLDetail.as_view(), name="trek_kml_detail"),
     path('api/<lang:lang>/treks/<int:pk>/meta.html', TrekKMLDetail.as_view(), name="trek_meta"),
     path('popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
-    path('api/cirkwi/circuits.xml', CirkwiTrekView.as_view()),
-    path('api/cirkwi/pois.xml', CirkwiPOIView.as_view()),
     path('image/trek-<int:pk>-<lang:lang>.png', TrekMapImage.as_view(), name='trek_map_image'),
 ]
 
@@ -52,6 +50,14 @@ class ServiceEntityOptions(MapEntityOptions):
     pass
 
 
+router = DefaultRouter(trailing_slash=False)
+
+
+router.register(r'^api/(?P<lang>[a-z]{2})/treks', TrekAPIViewSet, basename='trek')
+router.register(r'^api/(?P<lang>[a-z]{2})/pois', POIAPIViewSet, basename='poi')
+router.register(r'^api/(?P<lang>[a-z]{2})/services', ServiceAPIViewSet, basename='service')
+
+urlpatterns += router.urls
 urlpatterns += registry.register(models.Trek, TrekEntityOptions, menu=settings.TREKKING_MODEL_ENABLED)
 urlpatterns += registry.register(models.POI, POIEntityOptions, menu=settings.POI_MODEL_ENABLED)
 urlpatterns += registry.register(models.Service, ServiceEntityOptions, menu=settings.SERVICE_MODEL_ENABLED)

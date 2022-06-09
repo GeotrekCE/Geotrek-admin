@@ -1,28 +1,31 @@
-from geotrek.outdoor.mixins import ExcludedPOIsMixin
-from colorfield.fields import ColorField
+import uuid
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
+from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
 from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
+from mptt.models import MPTTModel, TreeForeignKey
+
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin, PicturesMixin
-from geotrek.common.models import Organism
+from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin,
+                                          TimeStampedModelMixin)
+from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.maintenance.models import Intervention
-from geotrek.signage.models import Signage, Blade
+from geotrek.outdoor.mixins import ExcludedPOIsMixin
+from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.trekking.models import Trek, POI, Service
+from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
-from mptt.models import MPTTModel, TreeForeignKey
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -59,15 +62,9 @@ class Practice(OptionalPictogramMixin, models.Model):
         return self.name
 
 
-class RatingScale(models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
+class RatingScale(RatingScaleMixin):
     practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"))
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Within a practice. Alphabetical order if blank"))
-
-    def __str__(self):
-        return "{} ({})".format(self.name, self.practice.name)
 
     class Meta:
         verbose_name = _("Rating scale")
@@ -75,17 +72,9 @@ class RatingScale(models.Model):
         ordering = ('practice', 'order', 'name')
 
 
-class Rating(OptionalPictogramMixin, models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
+class Rating(RatingMixin):
     scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
                               verbose_name=_("Scale"))
-    description = models.TextField(verbose_name=_("Description"), blank=True)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Alphabetical order if blank"))
-    color = ColorField(verbose_name=_("Color"), blank=True)
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name = _("Rating")
@@ -157,7 +146,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
                                 help_text=_("Main attraction and interest"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
-    ratings = models.ManyToManyField(Rating, related_name='sites', blank=True)
+    ratings = models.ManyToManyField(Rating, related_name='sites', blank=True, verbose_name=_("Ratings"))
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
     orientation = models.JSONField(verbose_name=_("Orientation"), default=list, blank=True)
     wind = models.JSONField(verbose_name=_("Wind"), default=list, blank=True)
@@ -178,10 +167,12 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
                                            blank=True)
     web_links = models.ManyToManyField('trekking.WebLink', related_name="sites", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
 
@@ -189,6 +180,9 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         verbose_name = _("Outdoor site")
         verbose_name_plural = _("Outdoor sites")
         ordering = ('name', )
+        indexes = [
+            GistIndex(name='site_geom_3d_gist_idx', fields=['geom_3d']),
+        ]
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -219,7 +213,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_practices_id(self):
-        "Return practices of itself and its descendants as ids"
+        """ Return practices of itself and its descendants as ids """
         practices_id = self.get_descendants(include_self=True) \
             .exclude(practice=None) \
             .values_list('practice_id', flat=True)
@@ -227,7 +221,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_practices(self):
-        "Return practices of itself and its descendants as objects"
+        """ Return practices of itself and its descendants as objects """
         return Practice.objects.filter(id__in=self.super_practices_id)  # Sorted and unique
 
     @property
@@ -244,7 +238,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_ratings_id(self):
-        "Return ratings of itself and its descendants as ids"
+        """ Return ratings of itself and its descendants as ids """
         ratings_id = self.get_descendants(include_self=True) \
             .exclude(ratings=None) \
             .values_list('ratings', flat=True)
@@ -252,12 +246,12 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_ratings(self):
-        "Return ratings of itself and its descendants as objects"
+        """ Return ratings of itself and its descendants as objects """
         return Rating.objects.filter(id__in=self.super_ratings_id)  # Sorted and unique
 
     @property
     def super_sectors(self):
-        "Return sectors of itself and its descendants"
+        """ Return sectors of itself and its descendants """
         sectors_id = self.get_descendants(include_self=True) \
             .exclude(practice=None) \
             .values_list('practice__sector_id', flat=True)
@@ -265,19 +259,19 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     @property
     def super_orientation(self):
-        "Return orientation of itself and its descendants"
+        """ Return orientation of itself and its descendants """
         orientation = set(sum(self.get_descendants(include_self=True).values_list('orientation', flat=True), []))
         return [o for o, _o in self.ORIENTATION_CHOICES if o in orientation]  # Sorting
 
     @property
     def super_wind(self):
-        "Return wind of itself and its descendants"
+        """ Return wind of itself and its descendants """
         wind = set(sum(self.get_descendants(include_self=True).values_list('wind', flat=True), []))
         return [o for o, _o in self.WIND_CHOICES if o in wind]  # Sorting
 
     @property
     def super_managers(self):
-        "Return managers of itself and its descendants"
+        """ Return managers of itself and its descendants """
         sites = self.get_descendants(include_self=True)
         return Organism.objects.filter(site__in=sites)  # Sorted and unique
 
@@ -310,6 +304,7 @@ Blade.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Intervention.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 
 Site.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Site.add_property('courses', lambda self: intersecting(Course, self), _("Parcours"))
 Site.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Site.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Site.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
@@ -342,9 +337,10 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin,
+             AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
-    site = models.ForeignKey(Site, related_name="courses", on_delete=models.PROTECT, verbose_name=_("Site"))
+    parent_sites = models.ManyToManyField(Site, related_name="children_courses", verbose_name=_("Sites"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
@@ -354,14 +350,18 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
                                  validators=[MinValueValidator(0)])
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     equipment = models.TextField(verbose_name=_("Equipment"), blank=True)
-    ratings = models.ManyToManyField(Rating, related_name='courses', blank=True)
+    ratings = models.ManyToManyField(Rating, related_name='courses', blank=True, verbose_name=_("Ratings"))
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
                                            blank=True)
+    points_reference = models.MultiPointField(verbose_name=_("Points of reference"),
+                                              srid=settings.SRID, spatial_index=False, blank=True, null=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
 
@@ -369,6 +369,10 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         verbose_name = _("Outdoor course")
         verbose_name_plural = _("Outdoor courses")
         ordering = ('name', )
+        indexes = [
+            GistIndex(name='course_points_ref_gist_idx', fields=['points_reference']),
+            GistIndex(name='course_geom_3d_gist_idx', fields=['geom_3d']),
+        ]
 
     def __str__(self):
         return self.name
@@ -406,6 +410,16 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     def all_pois(self):
         return POI.outdoor_all_pois(self)
 
+    @property
+    def all_hierarchy_roots(self):
+        """ Since a course has multiple parent sites, it belongs in multiple hierarchy trees.
+            This method returns all hierarchy roots the course is a descendant of.
+        """
+        roots = []
+        for site in self.parent_sites.all():
+            roots.append(site.get_root())
+        return list(set(roots))
+
     def course_interventions(self):
         # Interventions on courses
         course_content_type = ContentType.objects.get_for_model(Course)
@@ -422,6 +436,10 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
         qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
+    @property
+    def parent_sites_display(self):
+        return ", ".join(list(self.parent_sites.values_list("name", flat=True)))
+
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 Topology.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
@@ -430,7 +448,8 @@ TouristicEvent.add_property('courses', lambda self: intersecting(Course, self), 
 Blade.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
-Course.add_property('sites', lambda self: intersecting(Course, self), _("Sites"))
+Course.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Course.add_property('courses', lambda self: intersecting(Course, self), _("Parcours"))
 Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 Course.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))

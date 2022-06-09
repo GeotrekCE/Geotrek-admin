@@ -10,37 +10,38 @@ from django.db import IntegrityError
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Path
-from geotrek.trekking.factories import POIFactory
+from geotrek.trekking.tests.factories import POIFactory
 import os
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class RemoveDuplicatePathTest(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         geom_1 = LineString((0, 0), (1, 0), (2, 0))
-        self.p1 = Path.objects.create(name='First Path', geom=geom_1)
-        self.p2 = Path.objects.create(name='Second Path', geom=geom_1)
+        cls.p1 = Path.objects.create(name='First Path', geom=geom_1)
+        cls.p2 = Path.objects.create(name='Second Path', geom=geom_1)
 
         geom_2 = LineString((0, 2), (1, 2), (2, 2))
-        self.p3 = Path.objects.create(name='Third Path', geom=geom_2)
-        self.p4 = Path.objects.create(name='Fourth Path', geom=geom_2)
+        cls.p3 = Path.objects.create(name='Third Path', geom=geom_2)
+        cls.p4 = Path.objects.create(name='Fourth Path', geom=geom_2)
 
         geom_3 = LineString((2, 2), (1, 2), (0, 2))
-        self.p5 = Path.objects.create(name='Fifth Path', geom=geom_3)
+        cls.p5 = Path.objects.create(name='Fifth Path', geom=geom_3)
 
         geom_4 = LineString((4, 0), (6, 0))
 
-        self.p6 = Path.objects.create(name='Sixth Path', geom=geom_4)
-        self.p7 = Path.objects.create(name='Seventh Path', geom=geom_4)
+        cls.p6 = Path.objects.create(name='Sixth Path', geom=geom_4)
+        cls.p7 = Path.objects.create(name='Seventh Path', geom=geom_4)
 
         geom_5 = LineString((0, 6), (1, 6), (2, 6))
 
-        self.p8 = Path.objects.create(name='Eighth Path', geom=geom_5)
-        self.p9 = Path.objects.create(name='Nineth Path', geom=geom_5)
+        cls.p8 = Path.objects.create(name='Eighth Path', geom=geom_5)
+        cls.p9 = Path.objects.create(name='Nineth Path', geom=geom_5)
 
-        POIFactory.create(name='POI1', paths=[(self.p1, 0.5, 0.5)])
-        POIFactory.create(name='POI2', paths=[(self.p2, 0.5, 0.5)])
-        POIFactory.create(name='POI3', paths=[(self.p4, 0.5, 0.5)])
+        POIFactory.create(name='POI1', paths=[(cls.p1, 0.5, 0.5)])
+        POIFactory.create(name='POI2', paths=[(cls.p2, 0.5, 0.5)])
+        POIFactory.create(name='POI3', paths=[(cls.p4, 0.5, 0.5)])
 
     def test_remove_duplicate_path(self):
         """
@@ -115,9 +116,10 @@ class RemoveDuplicatePathTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LoadPathsCommandTest(TestCase):
-    def setUp(self):
-        self.filename = os.path.join(os.path.dirname(__file__), 'data', 'paths.geojson')
-        self.structure = Structure.objects.create(name='huh')
+    @classmethod
+    def setUpTestData(cls):
+        cls.filename = os.path.join(os.path.dirname(__file__), 'data', 'paths.geojson')
+        cls.structure = Structure.objects.create(name='huh')
 
     def test_load_paths_without_file(self):
         with self.assertRaisesRegex(CommandError, 'Error: the following arguments are required: file_path'):

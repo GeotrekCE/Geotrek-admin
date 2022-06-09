@@ -4,15 +4,15 @@ from django.conf import settings
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
-from geotrek.authent.factories import PathManagerFactory
-from geotrek.core.factories import PathFactory
-from geotrek.common.factories import OrganismFactory
+from geotrek.authent.tests.factories import PathManagerFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.common.tests.factories import OrganismFactory
 from geotrek.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
                                  WorkManagementEdge, SignageManagementEdge)
-from geotrek.land.factories import (PhysicalEdgeFactory, LandEdgeFactory,
-                                    CompetenceEdgeFactory, WorkManagementEdgeFactory,
-                                    SignageManagementEdgeFactory, PhysicalTypeFactory,
-                                    LandTypeFactory)
+from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
+                                          CompetenceEdgeFactory, WorkManagementEdgeFactory,
+                                          SignageManagementEdgeFactory, PhysicalTypeFactory,
+                                          LandTypeFactory)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -72,12 +72,22 @@ class PhysicalEdgeViewsTest(CommonTest):
     modelfactory = PhysicalEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'physical_type', 'eid']
+    expected_column_formatlist_extra = ['id', 'physical_type', 'eid']
 
     def get_good_data(self):
         path = PathFactory.create()
         return {
             'physical_type': PhysicalTypeFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'physical_type': self.obj.physical_type_display
         }
 
 
@@ -87,12 +97,22 @@ class LandEdgeViewsTest(CommonTest):
     modelfactory = LandEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['owner', 'agreement']
+    expected_column_list_extra = ['id', 'land_type', 'owner', 'agreement']
+    expected_column_formatlist_extra = ['id', 'owner', 'agreement']
 
     def get_good_data(self):
         path = PathFactory.create()
         return {
             'land_type': LandTypeFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'land_type': self.obj.land_type_display,
+            'length': round(self.obj.length, 1),
         }
 
 
@@ -102,12 +122,22 @@ class CompetenceEdgeViewsTest(CommonTest):
     modelfactory = CompetenceEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
+    expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
         path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'organization': self.obj.organization_display
         }
 
 
@@ -117,12 +147,22 @@ class WorkManagementEdgeViewsTest(CommonTest):
     modelfactory = WorkManagementEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
+    expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
         path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'organization': self.obj.organization_display
         }
 
 
@@ -132,10 +172,20 @@ class SignageManagementEdgeViewsTest(CommonTest):
     modelfactory = SignageManagementEdgeFactory
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
+    expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
         path = PathFactory.create()
         return {
             'organization': OrganismFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'organization': self.obj.organization_display,
         }

@@ -6,18 +6,23 @@ from django.contrib.auth.models import Permission, User
 from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
 from django.utils import translation
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.conf import settings
+from django.urls import reverse
+from django.urls.exceptions import NoReverseMatch
 
 # Workaround https://code.djangoproject.com/ticket/22865
+from freezegun import freeze_time
+
 from geotrek.common.models import FileType  # NOQA
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.registry import app_settings
 from mapentity.tests import MapEntityTest, MapEntityLiveTest
 
-from geotrek.authent.factories import StructureFactory
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
 
 
 class TranslationResetMixin:
@@ -27,7 +32,6 @@ class TranslationResetMixin:
 
 
 class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
-    api_prefix = '/api/en/'
 
     def get_bad_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -35,10 +39,43 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         else:
             return {'geom': 'doh!'}, _('Invalid geometry value.')
 
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_public_booklet_export(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        try:
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable')
+        except NoReverseMatch:
+            return  # No public booklet export
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+
+        obj = self.modelfactory.create()
+        response = self.client.get(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable',
+                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_public_export(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        try:
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable')
+        except NoReverseMatch:
+            return  # No public booklet export
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+
+        obj = self.modelfactory.create()
+        response = self.client.get(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable',
+                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+        self.assertEqual(response.status_code, 200)
+
     def test_structure_is_set(self):
         if not hasattr(self.model, 'structure'):
             return
-        self.login()
         response = self.client.post(self._get_add_url(), self.get_good_data())
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
@@ -50,8 +87,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        self.login()
-
         obj = self.modelfactory()
 
         response = self.client.get(obj.get_list_url())
@@ -62,7 +97,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_structure_is_not_changed_without_permission(self):
         if not hasattr(self.model, 'structure'):
             return
-        self.login()
         structure = StructureFactory()
         self.assertNotEqual(structure, self.user.profile.structure)
         self.assertFalse(self.user.has_perm('authent.can_bypass_structure'))
@@ -75,7 +109,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_structure_is_changed_with_permission(self):
         if not self.model or 'structure' not in self.model._meta.get_fields():
             return
-        self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
@@ -91,7 +124,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_set_structure_with_permission(self):
         if not hasattr(self.model, 'structure'):
             return
-        self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
@@ -108,8 +140,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        self.login()
-
         obj = self.modelfactory()
 
         response = self.client.get('%s?lang=fr' % obj.get_detail_url())
@@ -118,8 +148,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_detail_with_context(self):
         if self.model is None:
             return  # Abstract test should not run
-
-        self.login()
 
         obj = self.modelfactory()
 
@@ -163,13 +191,126 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.user.user_permissions.remove(perm)
         self.user.save()
         self.user = get_object_or_404(User, pk=self.user.pk)
-        success = self.client.login(username=self.user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(user=self.user)
         obj = self.modelfactory(published=True)
 
         response = self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(response.status_code, 302)
         self.assertTrue(self.model.objects.get(pk=obj.pk).published)
+
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'{self.model._meta.model_name}_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             self.expected_column_list_extra)
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={f'{self.model._meta.model_name}_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             self.expected_column_formatlist_extra)
+
+
+class GeotrekAPITestCase:
+    api_prefix = '/api/en/'
+
+    def get_expected_json_attrs(self):
+        return {}
+
+    def get_expected_geojson_attrs(self):
+        return {}
+
+    @freeze_time("2020-03-17")
+    def test_api_list_for_model(self):
+        if self.get_expected_json_attrs is None:
+            return
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.obj = self.modelfactory.create()
+        list_url = '{api_prefix}{modelname}s.json'.format(api_prefix=self.api_prefix,
+                                                          modelname=self.model._meta.model_name)
+        response = self.client.get(list_url)
+        self.assertEqual(response.status_code, 200, f"{list_url} not found")
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json[0].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, [{'id': self.obj.pk, **self.get_expected_json_attrs()}])
+
+    @freeze_time("2020-03-17")
+    def test_api_geojson_list_for_model(self):
+        if self.get_expected_json_attrs is None:
+            return
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.obj = self.modelfactory.create()
+        list_url = '{api_prefix}{modelname}s.geojson'.format(api_prefix=self.api_prefix,
+                                                             modelname=self.model._meta.model_name)
+        response = self.client.get(list_url)
+        self.assertEqual(response.status_code, 200, f"{list_url} not found")
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json['features'][0]['properties'].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {
+            'type': 'FeatureCollection',
+            'features': [{
+                'id': self.obj.pk,
+                'type': 'Feature',
+                'geometry': self.expected_json_geom,
+                'properties': self.get_expected_json_attrs(),
+            }],
+        })
+
+    @freeze_time("2020-03-17")
+    def test_api_detail_for_model(self):
+        if self.get_expected_json_attrs is None:
+            return
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.obj = self.modelfactory.create()
+        detail_url = '{api_prefix}{modelname}s/{id}'.format(api_prefix=self.api_prefix,
+                                                            modelname=self.model._meta.model_name,
+                                                            id=self.obj.pk)
+        response = self.client.get(detail_url)
+        self.assertEqual(response.status_code, 200, f"{detail_url} not found")
+
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json.pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {'id': self.obj.pk, **self.get_expected_json_attrs()})
+
+    @freeze_time("2020-03-17")
+    def test_api_geojson_detail_for_model(self):
+        if self.get_expected_json_attrs is None:
+            return
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.obj = self.modelfactory.create()
+        detail_url = '{api_prefix}{modelname}s/{id}.geojson'.format(api_prefix=self.api_prefix,
+                                                                    modelname=self.model._meta.model_name,
+                                                                    id=self.obj.pk)
+        response = self.client.get(detail_url)
+        self.assertEqual(response.status_code, 200, f"{detail_url} not found")
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json['properties'].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {
+            'id': self.obj.pk,
+            'type': 'Feature',
+            'geometry': self.expected_json_geom,
+            'properties': self.get_expected_json_attrs(),
+        })
 
 
 class CommonLiveTest(MapEntityLiveTest):
@@ -178,8 +319,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.login(username='Superuser', password='booh')
+        user = SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)')
 
@@ -207,8 +348,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.login(username='Superuser', password='booh')
+        user = SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
 
@@ -253,8 +394,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        UserFactory.create(username='user', password='booh')
-        self.client.login(username='user', password='booh')
+        user = UserFactory.create(username='user', password='booh')
+        self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
 
@@ -278,8 +419,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
         app_settings['SENDFILE_HTTP_HEADER'] = 'X-Accel-Redirect'
-        SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.login(username='Superuser', password='booh')
+        user = SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)')
 

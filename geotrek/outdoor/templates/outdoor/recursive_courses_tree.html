@@ -1,0 +1,31 @@
+{% load i18n %}
+{% for site in sites_at_level %}
+    <ul>
+        <li style="list-style-type: circle">
+            <a href="{% url 'outdoor:site_detail' site.pk %}">{{ site }}</a>
+            <ul>
+                {% for course in site.children_courses.all %}
+                    <li style="list-style-type: disc">
+                        {% if course == original_course %}
+                            <b>{{ course }}</b>
+                        {% else %}
+                            <a href="{% url 'outdoor:course_detail' course.pk %}">{{ course }}</a>
+                        {% endif %}
+                    </li>
+
+                    </li>
+                {% endfor %}
+                {% if original_course in site.children_courses.all %}
+                    <li style="list-style-type: disc">
+                        <a href="{% url 'outdoor:course_add' %}?parent_sites={{ site.pk }}">
+                            + <i>{% trans "Add a course" %}</i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+            {% if site.children.all|length %}
+                {% include "outdoor/recursive_courses_tree.html" with sites_at_level=site.children.all original_course=original_course %}
+            {% endif %}
+        </li>
+    </ul>
+{% endfor %}

@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.urls import path, register_converter
 
-from geotrek.common.urls import PublishableEntityOptions, LangConverter
 from mapentity.registry import registry
+from rest_framework.routers import DefaultRouter
+
+from geotrek.common.urls import PublishableEntityOptions, LangConverter
 from . import models
 from . import serializers
 from . import views
@@ -27,6 +29,11 @@ urlpatterns = [
     path('api/<lang:lang>/sensitiveareas/openair',
          views.SensitiveAreaOpenAirList.as_view(), name="sensitivearea_openair_list"),
 ]
+
+router = DefaultRouter(trailing_slash=False)
+router.register(r'^api/(?P<lang>[a-z]{2})/sensitiveareas', views.SensitiveAreaAPIViewSet, basename='sensitivearea')
+urlpatterns += router.urls
+
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     urlpatterns.append(path('api/<lang:lang>/treks/<int:pk>/sensitiveareas.geojson',
                             views.TrekSensitiveAreaViewSet.as_view({'get': 'list'}),

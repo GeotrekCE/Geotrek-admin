@@ -14,6 +14,15 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
+class Status(MapEntityMixin):
+    """
+    Model with a verbose name to represent this module (meta-class)
+    """
+    class Meta:
+        verbose_name = _("Status")
+        verbose_name_plural = _("Statuses")
+
+
 class PhysicalType(StructureOrNoneRelated):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
 
@@ -33,6 +42,8 @@ class PhysicalEdge(MapEntityMixin, Topology):
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"),
                                       on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Physical edge")
@@ -100,6 +111,8 @@ class LandEdge(MapEntityMixin, Topology):
     agreement = models.BooleanField(verbose_name=_("Agreement"), default=False)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
+    geometry_types_allowed = ["LINESTRING"]
+
     class Meta:
         verbose_name = _("Land edge")
         verbose_name_plural = _("Land edges")
@@ -148,6 +161,8 @@ class CompetenceEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Competence edge")
@@ -198,6 +213,8 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
+    geometry_types_allowed = ["LINESTRING"]
+
     class Meta:
         verbose_name = _("Work management edge")
         verbose_name_plural = _("Work management edges")
@@ -246,6 +263,8 @@ class SignageManagementEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Signage management edge")

@@ -34,6 +34,7 @@ def site_practices():
 def course_sites():
     sites = {
         str(site.pk): {
+            'practice': site.practice.pk,
             'types': {
                 str(type.pk): type.name
                 for type in site.practice.course_types.all()
@@ -42,7 +43,7 @@ def course_sites():
                 str(scale.pk): scale.name
                 for scale in site.practice.rating_scales.all()
             },
-        } if not(site.practice is None) else {'types': {}, 'scales': {}}
+        } if not(site.practice is None) else {'practice': None, 'types': {}, 'scales': {}}
         for site in Site.objects.all()
     }
     return json.dumps(sites)
@@ -55,6 +56,11 @@ def all_ratings_scales():
         for scale in RatingScale.objects.all()
     }
     return json.dumps(scales)
+
+
+@register.simple_tag
+def site_as_list(site):
+    return [site]
 
 
 @register.filter

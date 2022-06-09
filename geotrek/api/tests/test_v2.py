@@ -6,39 +6,40 @@ from django.conf import settings
 from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
                                      Point, Polygon)
 from django.contrib.gis.geos.collections import GeometryCollection
+from django.db import connection
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek import __version__
-from geotrek.authent import factories as authent_factory
 from geotrek.authent import models as authent_models
-from geotrek.common import factories as common_factory
+from geotrek.authent.tests import factories as authent_factory
 from geotrek.common import models as common_models
+from geotrek.common.tests import factories as common_factory
 from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_file,
                                            get_dummy_uploaded_image)
-from geotrek.core import factories as core_factory
 from geotrek.core import models as path_models
-from geotrek.feedback import factories as feedback_factory
-from geotrek.flatpages import factories as flatpages_factory
-from geotrek.infrastructure import factories as infrastructure_factory
+from geotrek.core.tests import factories as core_factory
+from geotrek.feedback.tests import factories as feedback_factory
+from geotrek.flatpages.tests import factories as flatpages_factory
 from geotrek.infrastructure import models as infrastructure_models
-from geotrek.outdoor import factories as outdoor_factory
+from geotrek.infrastructure.tests import factories as infrastructure_factory
 from geotrek.outdoor import models as outdoor_models
-from geotrek.sensitivity import factories as sensitivity_factory
+from geotrek.outdoor.tests import factories as outdoor_factory
 from geotrek.sensitivity import models as sensitivity_models
-from geotrek.tourism import factories as tourism_factory
-from geotrek.tourism import models as tourism_models
-from geotrek.trekking import factories as trek_factory
-from geotrek.trekking import models as trek_models
-from geotrek.zoning import factories as zoning_factory
-from geotrek.zoning import models as zoning_models
-from geotrek.signage import factories as signage_factory
+from geotrek.sensitivity.tests import factories as sensitivity_factory
 from geotrek.signage import models as signage_models
-from mapentity.factories import SuperUserFactory
+from geotrek.signage.tests import factories as signage_factory
+from geotrek.tourism import models as tourism_models
+from geotrek.tourism.tests import factories as tourism_factory
+from geotrek.trekking import models as trek_models
+from geotrek.trekking.tests import factories as trek_factory
+from geotrek.zoning import models as zoning_models
+from geotrek.zoning.tests import factories as zoning_factory
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -56,26 +57,32 @@ GEOJSON_STRUCTURE = sorted([
 ])
 
 TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'access', 'accessibilities', 'advice', 'advised_parking',
-    'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
-    'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
+    'id', 'access', 'accessibilities', 'accessibility_advice', 'accessibility_covering',
+    'accessibility_exposure', 'accessibility_level', 'accessibility_signage', 'accessibility_slope',
+    'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival', 'ascent',
+    'attachments', 'attachments_accessibility', 'children', 'cities', 'create_datetime', 'departure', 'departure_geom',
     'descent', 'description', 'description_teaser', 'difficulty', 'departure_city',
-    'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url',
+    'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url', 'gear',
     'external_id', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
-    'portal', 'practice', 'previous', 'public_transport', 'published',
-    'reservation_system', 'route', 'second_external_id', 'source', 'structure',
-    'themes', 'update_datetime', 'url', 'web_links'
+    'portal', 'practice', 'previous', 'public_transport', 'published', 'ratings', 'ratings_description',
+    'reservation_system', 'reservation_id', 'route', 'second_external_id', 'source', 'structure',
+    'themes', 'update_datetime', 'url', 'uuid', 'web_links'
 ])
 
-PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
+PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url', 'uuid'])
 
 TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + ['count_children', 'steps'])
 
 POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id',
-    'name', 'attachments', 'published', 'type', 'update_datetime', 'url'
+    'name', 'attachments', 'published', 'type', 'type_label', 'type_pictogram',
+    'update_datetime', 'url', 'uuid'
+])
+
+LABEL_ACCESSIBILITY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram'
 ])
 
 TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
@@ -83,10 +90,10 @@ TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
-    'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
-    'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'name', 'pdf',
+    'accessibility', 'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
+    'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'label_accessibility', 'name', 'pdf',
     'portal', 'practical_info', 'published', 'reservation_id', 'reservation_system',
-    'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'website',
+    'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'uuid', 'website',
 ])
 
 CITY_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -109,6 +116,10 @@ ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'name', 'pictogram'
 ])
 
+ACCESSIBILITY_LEVEL_PROPERTIES_JSON_STRUCTURE = sorted([
+    'id', 'name'
+])
+
 TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'name', 'website', 'title', 'description', 'facebook_id', 'facebook_image_url', 'facebook_image_height', 'facebook_image_width'
 ])
@@ -117,8 +128,12 @@ STRUCTURE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter', 'name', 'pictogram'])
 
+INFORMATION_DESK_TYPE_PROPERTIES_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram'
+])
+
 INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
-    'id', 'description', 'email', 'latitude', 'longitude',
+    'id', 'accessibility', 'description', 'email', 'label_accessibility', 'latitude', 'longitude',
     'municipality', 'name', 'phone', 'photo_url',
     'postal_code', 'street', 'type', 'website'
 ])
@@ -128,12 +143,12 @@ SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'pictogram', 'website']
 RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'ambiance', 'attachments', 'courses', 'description', 'description_teaser', 'eid', 'geometry', 'id',
-    'information_desks', 'labels', 'managers', 'name', 'orientation', 'period', 'portal',
-    'practice', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'wind', 'web_links',
+    'accessibility', 'advice', 'ambiance', 'attachments', 'children', 'cities', 'courses', 'description', 'description_teaser', 'eid',
+    'geometry', 'id', 'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent', 'period', 'portal',
+    'practice', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid', 'wind', 'web_links',
 ])
 
-OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector'])
+OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector', 'pictogram'])
 
 OUTDOOR_SECTOR_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
@@ -153,9 +168,10 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 ])
 
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'advice', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
-    'length', 'name', 'ratings', 'ratings_description', 'site', 'structure',
-    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'children', 'duration', 'gear'
+    'accessibility', 'advice', 'cities', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
+    'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
+    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents',
+    'pdf', 'points_reference', 'children', 'duration', 'gear', 'uuid'
 ])
 
 COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
@@ -163,7 +179,7 @@ COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 ORGANISM_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 SERVICE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'eid', 'geometry', 'structure', 'type'
+    'id', 'eid', 'geometry', 'structure', 'type', 'uuid'
 ])
 
 SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -171,7 +187,9 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'attachments', 'condition', 'description', 'eid', 'geometry', 'implantation_year', 'maintenance_difficulty', 'name', 'structure', 'type', 'usage_difficulty'
+    'id', 'attachments', 'condition', 'description', 'eid', 'geometry',
+    'implantation_year', 'maintenance_difficulty', 'name', 'structure',
+    'type', 'usage_difficulty', 'uuid'
 ])
 
 INFRASTRUCTURE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -191,11 +209,11 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'accessibility', 'approved', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
+    'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
     'meeting_point', 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
     'practical_info', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
-    'type', 'update_datetime', 'url', 'website'
+    'type', 'update_datetime', 'url', 'uuid', 'website'
 ])
 
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -205,7 +223,7 @@ TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 SIGNAGE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
     'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
-    'structure', 'type'
+    'structure', 'type', 'uuid'
 ])
 
 SIGNAGE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -240,15 +258,25 @@ class BaseApiTest(TestCase):
         cls.organism = common_factory.OrganismFactory.create()
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
+        cls.rating = trek_factory.RatingFactory()
+        cls.rating2 = trek_factory.RatingFactory()
         cls.label = common_factory.LabelFactory(id=23)
         cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)], geom=cls.path.geom)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)],
+                                                                      geom=cls.path.geom)
+        else:
+            cls.treks = trek_factory.TrekFactory.create_batch(cls.nb_treks, geom=cls.path.geom)
+            trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 4))
+            trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 5))
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
         cls.treks[0].labels.add(cls.label)
+        cls.treks[0].ratings.add(cls.rating)
+        cls.treks[1].ratings.add(cls.rating2)
         trek_models.TrekRelationship(trek_a=cls.treks[0], trek_b=cls.treks[1]).save()
-        information_desk_type = tourism_factory.InformationDeskTypeFactory()
-        cls.info_desk = tourism_factory.InformationDeskFactory(type=information_desk_type)
+        cls.information_desk_type = tourism_factory.InformationDeskTypeFactory()
+        cls.info_desk = tourism_factory.InformationDeskFactory(type=cls.information_desk_type)
         cls.treks[0].information_desks.add(cls.info_desk)
         common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_image())
         common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_file())
@@ -256,6 +284,7 @@ class BaseApiTest(TestCase):
         common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='https://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='', attachment_link='https://geotrek.fr/assets/img/logo.svg')
         common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='', attachment_link='')
+        common_factory.AttachmentAccessibilityFactory(content_object=cls.treks[0])
         cls.treks[3].parking_location = None
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
         cls.treks[3].save()
@@ -266,6 +295,7 @@ class BaseApiTest(TestCase):
         cls.district = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.district2 = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.accessibility = trek_factory.AccessibilityFactory()
+        cls.accessibility_level = trek_factory.AccessibilityLevelFactory()
         cls.route = trek_factory.RouteFactory()
         cls.theme2 = common_factory.ThemeFactory()
         cls.portal = common_factory.TargetPortalFactory()
@@ -277,13 +307,20 @@ class BaseApiTest(TestCase):
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.all()[0], 0.5, 0.5)])
+            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
+        else:
+            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
         cls.site = outdoor_factory.SiteFactory(managers=[cls.organism])
+        cls.label_accessibility = tourism_factory.LabelAccessibilityFactory()
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         cls.content2.category = cls.category
+        cls.content2.label_accessibility = cls.label_accessibility
+        cls.content2.save()
+        cls.info_desk.label_accessibility = cls.label_accessibility
+        cls.info_desk.save()
         cls.content2.portal.add(cls.portal)
         common_factory.FileTypeFactory.create(type='Topoguide')
         cls.sensitivearea = sensitivity_factory.SensitiveAreaFactory()
@@ -297,6 +334,7 @@ class BaseApiTest(TestCase):
             reservation_system=cls.reservation_system,
             practice=cls.practice,
             difficulty=cls.difficulty,
+            accessibility_level=cls.accessibility_level
         )
         cls.parent.accessibilities.add(cls.accessibility)
         cls.parent.source.add(cls.source)
@@ -304,10 +342,16 @@ class BaseApiTest(TestCase):
         cls.parent.networks.add(cls.network)
         cls.parent.save()
         # For unpublished treks we avoid to create new reservation system and routes
-        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2', reservation_system=cls.reservation_system, route=cls.route)
-        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1', reservation_system=cls.reservation_system, route=cls.route)
-        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
-        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3', reservation_system=cls.reservation_system, route=cls.route)
+        cls.parent2 = trek_factory.TrekFactory.create(published=False, name='Parent2',
+                                                      reservation_system=cls.reservation_system, route=cls.route,
+                                                      accessibility_level=None)
+        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1',
+                                                     reservation_system=cls.reservation_system, route=cls.route,
+                                                     accessibility_level=None)
+        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2', accessibility_level=None)
+        cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3',
+                                                     reservation_system=cls.reservation_system, route=cls.route,
+                                                     accessibility_level=None)
         trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
@@ -329,9 +373,10 @@ class BaseApiTest(TestCase):
         cls.nb_treks += 4  # add parent, 1 child published and treks with a multilinestring/point geom
         cls.coursetype = outdoor_factory.CourseTypeFactory()
         cls.course = outdoor_factory.CourseFactory(
-            site=cls.site,
-            type=cls.coursetype
+            type=cls.coursetype,
+            points_reference=MultiPoint(Point(12, 12))
         )
+        cls.course.parent_sites.set([cls.site])
         # create a reference point for distance filter (in 4326, Cahors city)
         cls.reference_point = Point(x=1.4388656616210938,
                                     y=44.448487178796235, srid=4326)
@@ -437,8 +482,14 @@ class BaseApiTest(TestCase):
     def get_accessibility_list(self, params=None):
         return self.client.get(reverse('apiv2:accessibility-list'), params)
 
+    def get_accessibility_level_list(self, params=None):
+        return self.client.get(reverse('apiv2:accessibility-level-list'), params)
+
     def get_accessibility_detail(self, id_accessibility, params=None):
         return self.client.get(reverse('apiv2:accessibility-detail', args=(id_accessibility,)), params)
+
+    def get_accessibility_level_detail(self, id_accessibility_level, params=None):
+        return self.client.get(reverse('apiv2:accessibility-level-detail', args=(id_accessibility_level,)), params)
 
     def get_portal_list(self, params=None):
         return self.client.get(reverse('apiv2:portal-list'), params)
@@ -479,6 +530,12 @@ class BaseApiTest(TestCase):
     def get_touristiccontent_detail(self, id_content, params=None):
         return self.client.get(reverse('apiv2:touristiccontent-detail', args=(id_content,)), params)
 
+    def get_labelaccessibility_list(self, params=None):
+        return self.client.get(reverse('apiv2:labelaccessibility-list', params))
+
+    def get_labelaccessibility_detail(self, id_label_accessibility, params=None):
+        return self.client.get(reverse('apiv2:labelaccessibility-detail', args=(id_label_accessibility,)), params)
+
     def get_label_list(self, params=None):
         return self.client.get(reverse('apiv2:label-list'), params)
 
@@ -490,6 +547,12 @@ class BaseApiTest(TestCase):
 
     def get_informationdesk_detail(self, id_infodesk, params=None):
         return self.client.get(reverse('apiv2:informationdesk-detail', args=(id_infodesk,)), params)
+
+    def get_informationdesk_type_list(self, params=None):
+        return self.client.get(reverse('apiv2:informationdesktype-list'), params)
+
+    def get_informationdesk_type_detail(self, id_infodesk_type, params=None):
+        return self.client.get(reverse('apiv2:informationdesktype-detail', args=(id_infodesk_type,)), params)
 
     def get_source_list(self, params=None):
         return self.client.get(reverse('apiv2:source-list'), params)
@@ -726,17 +789,194 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'districts': self.district.pk,
             'structures': self.structure.pk,
             'accessibilities': self.accessibility.pk,
+            'accessibility_level': self.accessibility_level.pk,
             'themes': self.theme2.pk,
             'portals': self.portal.pk,
             'labels': '23',
             'routes': '68',
             'practices': '1',
+            'ratings': self.rating.pk,
             'q': 'test string',
         })
         #  test response code
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_theme_filter(self):
+        response = self.get_trek_list({'themes': self.theme2.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'themes': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_portal_filter(self):
+        response = self.get_trek_list({'portals': self.portal.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'portals': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_label_filter(self):
+        response = self.get_trek_list({'labels': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'labels': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_labels_exclude_filter(self):
+        response = self.get_trek_list({'labels_exclude': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        trek = trek_factory.TrekFactory.create()
+        label = common_factory.LabelFactory.create()
+        trek.labels.add(label, self.label)
+
+        response = self.get_trek_list({'labels_exclude': self.label.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        trek = trek_factory.TrekFactory.create()
+        label_2 = common_factory.LabelFactory.create()
+        trek.labels.add(label, label_2)
+
+        response = self.get_trek_list({'labels_exclude': f'{self.label.pk},{label.pk}'})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 18)
+
+        response = self.get_trek_list({'labels_exclude': label_2.pk})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 20)
+
+    def test_trek_city_filter(self):
+        path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
+        city3 = zoning_factory.CityFactory(code='03000',
+                                           geom='SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, -9 -10, -10 -10)))')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        else:
+            trek_factory.TrekFactory.create(geom='SRID=2154;LINESTRING(-10 -9, -9 -9)')
+        response = self.get_trek_list({'cities': city3.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'cities': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_district_filter(self):
+        path = core_factory.PathFactory.create(geom=LineString((-10, -9), (-9, -9)))
+        dist3 = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, '
+                                                    '-9 -10, -10 -10)))')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
+        else:
+            trek_factory.TrekFactory.create(geom='SRID=2154;LINESTRING(-10 -9, -9 -9)')
+        response = self.get_trek_list({'districts': dist3.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'districts': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_structure_filter(self):
+        response = self.get_trek_list({'structures': self.structure.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'cities': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_practice_filter(self):
+        response = self.get_trek_list({'practices': self.practice.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'practices': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_accessibility_level_filter(self):
+        response = self.get_trek_list({'accessibility_level': self.accessibility_level.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'accessibility_level': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_routes_filter(self):
+        response = self.get_trek_list({'routes': self.route.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'routes': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_ratings_filter(self):
+        response = self.get_trek_list({'ratings': self.rating.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'ratings': 0})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
@@ -874,6 +1114,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_trek_districts(self):
         response = self.get_trek_list({'districts': f"{self.district.pk},{self.district2.pk}"})
         self.assertEqual(len(response.json()['results']), 17)
+
+    def test_trek_ratings(self):
+        response = self.get_trek_list({'ratings': f"{self.rating.pk},{self.rating2.pk}"})
+        self.assertEqual(len(response.json()['results']), 2)
 
     def test_trek_child_not_published_detail_view_ok_if_ancestor_published(self):
         response = self.get_trek_detail(self.child1.pk)
@@ -1052,10 +1296,22 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             trek_models.Accessibility
         )
 
+    def test_accessibility_level_list(self):
+        self.check_number_elems_response(
+            self.get_accessibility_level_list(),
+            trek_models.AccessibilityLevel
+        )
+
     def test_accessibility_detail(self):
         self.check_structure_response(
             self.get_accessibility_detail(self.accessibility.pk),
             ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_accessibility_level_detail(self):
+        self.check_structure_response(
+            self.get_accessibility_level_detail(self.accessibility_level.pk),
+            ACCESSIBILITY_LEVEL_PROPERTIES_JSON_STRUCTURE
         )
 
     def test_theme_detail(self):
@@ -1311,15 +1567,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             trek_models.POI.objects.all().count() - 1
         )
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_trek(self):
         self.launch_tests_excluded_pois(self.treks[0], 'trek')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_courses(self):
         self.launch_tests_excluded_pois(self.course, 'courses')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_poi_list_filter_sites(self):
         self.launch_tests_excluded_pois(self.site, 'sites')
 
@@ -1553,6 +1806,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_touristiccontent_list({'near_trek': self.treks[0].pk})
         self.assertEqual(len(response.json()['results']), 2)
 
+    def test_touristiccontent_near_missing_trek(self):
+        response = self.get_touristiccontent_list({'near_trek': 42666})
+        self.assertEqual(len(response.json()['results']), 0)
+
     def test_touristiccontent_categories(self):
         response = self.get_touristiccontent_list({'categories': self.content.category.pk})
         self.assertEqual(len(response.json()['results']), 1)
@@ -1600,6 +1857,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_touristiccontent_list({'portals': self.content.portal.all()[0].pk})
         self.assertEqual(len(response.json()['results']), 1)
 
+    def test_touristiccontent_label_accessibility(self):
+        response = self.get_touristiccontent_list({'labels_accessibility': self.label_accessibility.pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
     def test_touristiccontent_q(self):
         response = self.get_touristiccontent_list({'q': 'Blah CT'})
         self.assertEqual(len(response.json()['results']), 2)
@@ -1610,11 +1871,39 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.json()['results'][0]['pdf'],
                          f'http://testserver/api/en/touristiccontents/{self.content.pk}/touristic-content.pdf')
 
+    def test_labels_accessibility_detail(self):
+        self.check_structure_response(
+            self.get_labelaccessibility_detail(self.label_accessibility.pk),
+            LABEL_ACCESSIBILITY_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_labels_accessibility_list(self):
+        self.check_number_elems_response(
+            self.get_labelaccessibility_list(),
+            tourism_models.LabelAccessibility
+        )
+
     def test_labels_list(self):
         self.check_number_elems_response(
             self.get_label_list(),
             common_models.Label
         )
+
+    def test_labels_filter_filter(self):
+        label_1 = common_factory.LabelFactory.create(filter=False)
+        label_2 = common_factory.LabelFactory.create(filter=True)
+        self.treks[0].labels.add(label_1, label_2)
+        response = self.get_label_list({'only_filters': True})
+        self.assertEqual(response.json()["count"], 2)
+        self.assertSetEqual({result["id"] for result in response.json()["results"]}, {self.label.pk, label_2.pk})
+        response = self.get_label_list({'only_filters': False})
+        self.assertEqual(response.json()["results"][0]["id"], label_1.pk)
+        self.assertEqual(response.json()["count"], 1)
+        response = self.get_label_list()
+        self.assertEqual(response.json()["count"], 3)
+
+        response = self.get_label_list({'only_filters': 'None'})
+        self.assertEqual(response.json()["count"], 0)
 
     def test_labels_detail(self):
         self.check_structure_response(
@@ -1632,6 +1921,35 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_informationdesk_detail(self.info_desk.pk),
             INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_informationdesk_filter_trek(self):
+        response = self.get_informationdesk_list({'trek': self.treks[0].pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
+        response = self.get_informationdesk_list({'trek': self.parent.pk})
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_infodesk_filter_type(self):
+        response = self.get_informationdesk_list({'types': self.information_desk_type.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
+
+    def test_infodesk_filter_label_accessibility(self):
+        response = self.get_informationdesk_list({'labels_accessibility': self.label_accessibility.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.info_desk.pk)
+
+    def test_informationdesk_type_list(self):
+        self.check_number_elems_response(
+            self.get_informationdesk_type_list(),
+            tourism_models.InformationDeskType
+        )
+
+    def test_informationdesk_type_detail(self):
+        self.check_structure_response(
+            self.get_informationdesk_type_detail(self.information_desk_type.pk),
+            INFORMATION_DESK_TYPE_PROPERTIES_JSON_STRUCTURE
         )
 
     def test_source_list(self):
@@ -1714,9 +2032,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
     def test_outdoorpractice_list(self):
-        self.check_number_elems_response(
-            self.get_outdoorpractice_list(),
-            outdoor_models.Practice
+        response = self.get_outdoorpractice_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(
+            len(json_response['results']),
+            outdoor_models.Practice.objects.filter(sites__published=True).distinct().count()
         )
 
     def test_outdoorpractice_detail(self):
@@ -1800,6 +2121,40 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             ORGANISM_PROPERTIES_JSON_STRUCTURE
         )
 
+    def test_sensitivearea_distance_list(self):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p1 = core_factory.PathFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
+            trek = trek_factory.TrekFactory.create(
+                published=True,
+                name='Parent',
+                paths=[p1]
+            )
+        else:
+            trek = trek_factory.TrekFactory.create(geom=LineString((605600, 6650000), (605604, 6650004), srid=2154))
+        specy = sensitivity_factory.SpeciesFactory.create(period01=True)
+        sensitivity_factory.SensitiveAreaFactory.create(
+            geom='SRID=2154;POLYGON((605600 6650000, 605600 6650004, 605604 6650004, 605604 6650000, 605600 6650000))',
+            species=specy,
+            description="Test"
+        )
+        sensitivity_factory.SensitiveAreaFactory.create(
+            geom='SRID=2154;POLYGON((606001 6650501, 606001 6650505, 606005 6650505, 606005 6650501, 606001 6650501))',
+            species=specy,
+            description="Test 2"
+        )
+        response = self.get_sensitivearea_list({
+            'trek': trek.id,
+            'period': '1'
+        })
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.status_code, 200)
+        with override_settings(SENSITIVE_AREA_INTERSECTION_MARGIN=700):
+            response = self.get_sensitivearea_list({
+                'trek': trek.id,
+                'period': '1'
+            })
+            self.assertEqual(response.json()['count'], 2)
+
 
 class APIAccessAdministratorTestCase(BaseApiTest):
     """
@@ -1816,6 +2171,9 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         Override base class login method, used before all function request 'get_api_element'
         """
         self.client.force_login(self.administrator)
+
+    def setUp(self):
+        self.login()
 
     def test_path_list(self):
         self.login()
@@ -1864,11 +2222,70 @@ class APISwaggerTestCase(BaseApiTest):
         self.assertContains(response, 'swagger')
 
 
-class RatingScaleTestCase(TestCase):
+class TrekRatingScaleTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice1 = trek_factory.PracticeFactory()
+        cls.practice2 = trek_factory.PracticeFactory()
+        cls.practice1.treks.set([trek_factory.TrekFactory()])
+        cls.practice2.treks.set([trek_factory.TrekFactory()])
+        cls.scale1 = trek_factory.RatingScaleFactory(name='AAA', practice=cls.practice1)
+        cls.scale2 = trek_factory.RatingScaleFactory(name='AAA', practice=cls.practice2)
+        cls.scale3 = trek_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
+
+    def test_list(self):
+        response = self.client.get('/api/v2/trek_ratingscale/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'count': 3,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'id': self.scale1.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice1.pk,
+            }, {
+                'id': self.scale2.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice2.pk,
+            }, {
+                'id': self.scale3.pk,
+                'name': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice2.pk,
+            }]
+        })
+
+    def test_detail(self):
+        response = self.client.get('/api/v2/trek_ratingscale/{}/'.format(self.scale1.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': self.scale1.pk,
+            'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+            'practice': self.practice1.pk,
+        })
+
+    def test_filter_q(self):
+        response = self.client.get('/api/v2/trek_ratingscale/', {'q': 'A'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for scale in response.json()['results']:
+            self.assertEqual(scale['name']['en'], 'AAA')
+
+    def test_filter_practice(self):
+        response = self.client.get('/api/v2/trek_ratingscale/', {'practices': self.practice2.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for scale in response.json()['results']:
+            self.assertEqual(scale['practice'], self.practice2.pk)
+
+
+class OutdoorRatingScaleTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.practice1 = outdoor_factory.PracticeFactory()
         cls.practice2 = outdoor_factory.PracticeFactory()
+        cls.practice1.sites.set([outdoor_factory.SiteFactory()])
+        cls.practice2.sites.set([outdoor_factory.SiteFactory()])
         cls.scale1 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice1)
         cls.scale2 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice2)
         cls.scale3 = outdoor_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
@@ -1919,7 +2336,77 @@ class RatingScaleTestCase(TestCase):
             self.assertEqual(scale['practice'], self.practice2.pk)
 
 
-class RatingTestCase(TestCase):
+class TrekRatingTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.scale1 = trek_factory.RatingScaleFactory(name='BBB')
+        cls.scale2 = trek_factory.RatingScaleFactory(name='AAA')
+        cls.rating1 = trek_factory.RatingFactory(name='AAA', scale=cls.scale1)
+        cls.rating2 = trek_factory.RatingFactory(name='AAA', scale=cls.scale2)
+        cls.rating3 = trek_factory.RatingFactory(name='BBB', scale=cls.scale2)
+        cls.rating1.treks.set([trek_factory.TrekFactory()])
+        cls.rating2.treks.set([trek_factory.TrekFactory()])
+        cls.rating3.treks.set([trek_factory.TrekFactory()])
+
+    def test_list(self):
+        response = self.client.get('/api/v2/trek_rating/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'count': 3,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'color': '',
+                'description': {'en': None, 'es': None, 'fr': None, 'it': None},
+                'id': self.rating1.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'order': None,
+                'scale': self.scale1.pk,
+            }, {
+                'color': '',
+                'description': {'en': None, 'es': None, 'fr': None, 'it': None},
+                'id': self.rating2.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'order': None,
+                'scale': self.scale2.pk,
+            }, {
+                'color': '',
+                'description': {'en': None, 'es': None, 'fr': None, 'it': None},
+                'id': self.rating3.pk,
+                'name': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
+                'order': None,
+                'scale': self.scale2.pk,
+            }]
+        })
+
+    def test_detail(self):
+        response = self.client.get('/api/v2/trek_rating/{}/'.format(self.rating2.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': self.rating2.pk,
+            'color': '',
+            'description': {'en': None, 'es': None, 'fr': None, 'it': None},
+            'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+            'order': None,
+            'scale': self.scale2.pk,
+        })
+
+    def test_filter_q(self):
+        response = self.client.get('/api/v2/trek_rating/', {'q': 'BBB'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for rating in response.json()['results']:
+            self.assertNotEqual(rating['name']['en'] == 'BBB', rating['scale'] == self.scale1.pk)
+
+    def test_filter_scale(self):
+        response = self.client.get('/api/v2/trek_rating/', {'scale': self.scale2.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for rating in response.json()['results']:
+            self.assertEqual(rating['scale'], self.scale2.pk)
+
+
+class OutdoorRatingTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.scale1 = outdoor_factory.RatingScaleFactory(name='BBB')
@@ -1927,6 +2414,9 @@ class RatingTestCase(TestCase):
         cls.rating1 = outdoor_factory.RatingFactory(name='AAA', scale=cls.scale1)
         cls.rating2 = outdoor_factory.RatingFactory(name='AAA', scale=cls.scale2)
         cls.rating3 = outdoor_factory.RatingFactory(name='BBB', scale=cls.scale2)
+        cls.rating1.sites.set([outdoor_factory.SiteFactory()])
+        cls.rating2.sites.set([outdoor_factory.SiteFactory()])
+        cls.rating3.sites.set([outdoor_factory.SiteFactory()])
 
     def test_list(self):
         response = self.client.get('/api/v2/outdoor_rating/')
@@ -2095,10 +2585,14 @@ class ReportStatusTestCase(TestCase):
             "previous": None,
             "results": [
                 {
+                    'identifier': self.status1.identifier,
+                    'color': self.status1.color,
                     "id": self.status1.pk,
                     "label": {'en': "A transmettre", 'es': None, 'fr': None, 'it': None},
                 },
                 {
+                    'identifier': self.status2.identifier,
+                    'color': self.status2.color,
                     "id": self.status2.pk,
                     "label": {'en': "En cours de traitement", 'es': None, 'fr': None, 'it': None},
                 }]
@@ -2531,9 +3025,7 @@ class TouristicEventTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
         self.assertNotIn(self.type_with_no_content.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
         self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
@@ -2547,9 +3039,8 @@ class TouristicEventTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_content.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
         self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
@@ -2595,9 +3086,8 @@ class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 0)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_content.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
         self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
@@ -2616,9 +3106,8 @@ class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_content.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_content.pk, all_ids)
         self.assertNotIn(self.type_with_only_deleted_content.pk, all_ids)
@@ -2635,12 +3124,12 @@ class NearOutdoorFilterTestCase(BaseApiTest):
     def setUpTestData(cls):
         cls.site = outdoor_factory.SiteFactory(
             published_fr=True,
-            geom=GeometryCollection(Point(0.1, 0.1, srid=2154))
+            geom=GeometryCollection(Point(100.1, 100.1, srid=2154))
         )
         cls.course = outdoor_factory.CourseFactory(
             published_fr=True,
-            geom=GeometryCollection(Point(0, 0, srid=2154)),
-            site=cls.site
+            geom=GeometryCollection(Point(100, 100, srid=2154)),
+            parent_sites=[cls.site]
         )
         # trek1 is nearby
         cls.path1 = core_factory.PathFactory.create(geom=LineString((0.0, 0.0), (1.0, 1.0), srid=2154))
@@ -2679,7 +3168,7 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         # site1 is nearby
         cls.site1 = outdoor_factory.SiteFactory(
             published_fr=True,
-            geom=GeometryCollection(Point(0.5, 0.5, srid=2154))
+            geom=GeometryCollection(Point(100.5, 100.5, srid=2154))
         )
         # site2 is far away
         cls.site2 = outdoor_factory.SiteFactory(
@@ -2689,14 +3178,15 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         # course1 is nearby
         cls.course1 = outdoor_factory.CourseFactory(
             published_fr=True,
-            geom=GeometryCollection(Point(0.5, 0.5, srid=2154)),
-            site=cls.site1
+            geom=GeometryCollection(Point(100.5, 100.5, srid=2154)),
+            parent_sites=[cls.site1]
         )
         # course2 is far away
         cls.course2 = outdoor_factory.CourseFactory(
             published_fr=True,
             geom=GeometryCollection(Point(9999.5, 9999.5, srid=2154)),
-            site=cls.site2
+            parent_sites=[cls.site2]
+
         )
         # poi 1 is nearby
         cls.poi1 = trek_factory.POIFactory(
@@ -2835,7 +3325,6 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     def test_updated_after_filter(self):
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
-        two_years_ago = (timezone.now() - relativedelta(years=2)).date()
         response = self.get_path_list({'updated_after': two_years_ago})
         self.assertEqual(response.json().get("count"), 2)
 
@@ -2907,6 +3396,148 @@ class RootSitesOnlyFilterTestCase(BaseApiTest):
         self.assertNotIn(self.site_child2.pk, all_ids)
 
 
+class SitesTypesFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site1 = outdoor_factory.SiteFactory()
+        cls.site2 = outdoor_factory.SiteFactory()
+        cls.site3 = outdoor_factory.SiteFactory()
+
+    def test_sites_type_filter_1(self):
+        response = self.get_site_list({'types': self.site1.type.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertNotIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+
+    def test_sites_type_filter_2(self):
+        response = self.get_site_list({'types': f"{self.site2.type.pk},{self.site3.type.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertIn(self.site3.pk, all_ids)
+
+
+class SitesLabelsFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.label1 = common_factory.LabelFactory()
+        cls.label2 = common_factory.LabelFactory()
+        cls.site1 = outdoor_factory.SiteFactory()
+        cls.site1.labels.add(cls.label1)
+        cls.site2 = outdoor_factory.SiteFactory()
+        cls.site2.labels.add(cls.label2)
+        cls.site3 = outdoor_factory.SiteFactory()
+
+    def test_sites_label_filter_1(self):
+        response = self.get_site_list({'labels': self.label1.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertNotIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+
+    def test_sites_label_filter_2(self):
+        response = self.get_site_list({'labels': f"{self.label1.pk},{self.label2.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_sites = response.json()['results']
+        all_ids = []
+        for type in returned_sites:
+            all_ids.append(type['id'])
+        self.assertIn(self.site1.pk, all_ids)
+        self.assertIn(self.site2.pk, all_ids)
+        self.assertNotIn(self.site3.pk, all_ids)
+
+    def test_sites_labels_exclude_filter(self):
+        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        site_a = outdoor_factory.SiteFactory()
+        label = common_factory.LabelFactory.create()
+        site_a.labels.add(label, self.label1)
+
+        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        site_b = outdoor_factory.SiteFactory()
+        label_2 = common_factory.LabelFactory.create()
+        site_b.labels.add(label, label_2)
+
+        response = self.get_site_list({'labels_exclude': f'{self.label1.pk},{label.pk}'})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site2.pk, self.site3.pk})
+
+        response = self.get_site_list({'labels_exclude': label_2.pk})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 4)
+        self.assertSetEqual({result['id'] for result in json_response.get('results')},
+                            {self.site1.pk, self.site2.pk, self.site3.pk, site_a.pk})
+
+
+class CoursesTypesFilterTestCase(BaseApiTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.course1 = outdoor_factory.CourseFactory()
+        cls.course2 = outdoor_factory.CourseFactory()
+        cls.course3 = outdoor_factory.CourseFactory()
+
+    def test_courses_type_filter_1(self):
+        response = self.get_course_list({'types': self.course1.type.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_courses = response.json()['results']
+        all_ids = []
+        for type in returned_courses:
+            all_ids.append(type['id'])
+        self.assertIn(self.course1.pk, all_ids)
+        self.assertNotIn(self.course2.pk, all_ids)
+        self.assertNotIn(self.course3.pk, all_ids)
+
+    def test_courses_type_filter_2(self):
+        response = self.get_course_list({'types': f"{self.course2.type.pk},{self.course3.type.pk}"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        returned_courses = response.json()['results']
+        all_ids = []
+        for type in returned_courses:
+            all_ids.append(type['id'])
+        self.assertNotIn(self.course1.pk, all_ids)
+        self.assertIn(self.course2.pk, all_ids)
+        self.assertIn(self.course3.pk, all_ids)
+
+
 class TouristicContentTypeFilterTestCase(BaseApiTest):
 
     @classmethod
@@ -2949,9 +3580,8 @@ class TouristicContentTypeFilterTestCase(BaseApiTest):
     def assert_returned_types(self, i, response, content_in_list, content_not_in_list):
         returned_types = response.json()['results'][0]['types'][i - 1]['values']
         self.assertEqual(len(returned_types), len(content_in_list))
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         # type1
         if i == 1:
             for content in content_in_list:
@@ -3025,9 +3655,8 @@ class SiteTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_site.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
         self.assertIn(self.type_with_published_and_not_deleted_site.pk, all_ids)
@@ -3040,9 +3669,8 @@ class SiteTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_site.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
         self.assertNotIn(self.type_with_published_and_not_deleted_site.pk, all_ids)
@@ -3086,9 +3714,8 @@ class SiteTypeFilterTestCaseByPortal(SiteTypeFilterTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 0)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_site.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
         # Didn't set portal on these ones yet
@@ -3106,9 +3733,8 @@ class SiteTypeFilterTestCaseByPortal(SiteTypeFilterTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_site.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_site.pk, all_ids)
         # Portal is set this time
@@ -3151,9 +3777,8 @@ class CourseTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_course.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_course.pk, all_ids)
         self.assertIn(self.type_with_published_and_not_deleted_course.pk, all_ids)
@@ -3166,9 +3791,8 @@ class CourseTypeFilterTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertNotIn(self.type_with_no_course.pk, all_ids)
         self.assertNotIn(self.type_with_no_published_course.pk, all_ids)
         self.assertNotIn(self.type_with_published_and_not_deleted_course.pk, all_ids)
@@ -3270,9 +3894,8 @@ class OutdoorFilterBySuperPracticesTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertNotIn(self.site2.pk, all_ids)
         self.assertNotIn(self.site3.pk, all_ids)
@@ -3283,9 +3906,8 @@ class OutdoorFilterBySuperPracticesTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 3)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
@@ -3317,9 +3939,8 @@ class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertNotIn(self.site2.pk, all_ids)
         self.assertNotIn(self.site3.pk, all_ids)
@@ -3330,9 +3951,8 @@ class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 3)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
@@ -3343,10 +3963,237 @@ class OutdoorFilterBySuperRatingsTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 4)
         returned_types = response.json()['results']
-        all_ids = []
-        for type in returned_types:
-            all_ids.append(type['id'])
+        all_ids = [type['id'] for type in returned_types]
+
         self.assertIn(self.site1.pk, all_ids)
         self.assertIn(self.site2.pk, all_ids)
         self.assertIn(self.site3.pk, all_ids)
         self.assertIn(self.site4.pk, all_ids)
+
+
+class OutdoorSiteHierarchySerializingTestCase(BaseApiTest):
+    """ Test APIV2 serialzing of parents and children in site detail
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site_root = outdoor_factory.SiteFactory(published=True)
+        cls.site_node = outdoor_factory.SiteFactory(published=True, parent=cls.site_root)
+        cls.site_leaf_published = outdoor_factory.SiteFactory(published=True, parent=cls.site_node)
+        cls.site_leaf_published_2 = outdoor_factory.SiteFactory(published=True, parent=cls.site_node)
+        cls.site_leaf_unpublished = outdoor_factory.SiteFactory(published=False, parent=cls.site_node)
+
+        cls.site_root_unpublished = outdoor_factory.SiteFactory(published=False)
+        cls.site_node_parent_unpublished = outdoor_factory.SiteFactory(published=True, parent=cls.site_root_unpublished)
+
+        cls.site_root_fr = outdoor_factory.SiteFactory(published_fr=True)
+        cls.site_node_fr = outdoor_factory.SiteFactory(published_fr=True, parent=cls.site_root_fr)
+        cls.site_leaf_published_fr = outdoor_factory.SiteFactory(published_fr=True, parent=cls.site_node_fr)
+        cls.site_leaf_published_not_fr = outdoor_factory.SiteFactory(published=True, published_fr=False, published_en=True, parent=cls.site_node_fr)
+        cls.site_leaf_unpublished_fr = outdoor_factory.SiteFactory(published_fr=False, parent=cls.site_node_fr)
+
+    def test_site_parent_published_serializing(self):
+        response = self.get_site_detail(self.site_node.pk)
+        self.assertEqual(response.status_code, 200)
+        parent = response.json()['parent']
+        self.assertEqual(parent, self.site_root.pk)
+
+    def test_site_children_published_serializing(self):
+        response = self.get_site_detail(self.site_node.pk)
+        self.assertEqual(response.status_code, 200)
+        children = response.json()['children']
+        self.assertEqual(2, len(children))
+        self.assertIn(self.site_leaf_published.pk, children)
+        self.assertIn(self.site_leaf_published_2.pk, children)
+        self.assertNotIn(self.site_leaf_unpublished.pk, children)
+
+    def test_site_parent_unpublished_serializing(self):
+        response = self.get_site_detail(self.site_node_parent_unpublished.pk)
+        self.assertEqual(response.status_code, 200)
+        parent = response.json()['parent']
+        self.assertEqual(parent, None)
+        self.assertIsNotNone(self.site_node_parent_unpublished.parent)
+
+    def test_site_parent_and_children_serializing_by_lang(self):
+        response = self.get_site_list({'language': 'fr'})
+        self.assertEqual(response.status_code, 200)
+        returned_sites = response.json()['results']
+        site_published_fr = next((site for site in returned_sites if site['id'] == self.site_node_fr.pk), None)
+        self.assertIsNotNone(site_published_fr)
+        children = site_published_fr['children']
+        self.assertEqual(1, len(children))
+        self.assertIn(self.site_leaf_published_fr.pk, children)
+        self.assertNotIn(self.site_leaf_published_not_fr.pk, children)
+        self.assertNotIn(self.site_leaf_unpublished_fr.pk, children)
+        parent = site_published_fr['parent']
+        self.assertEqual(parent, self.site_root_fr.pk)
+
+
+class OutdoorFilterByPracticesTestCase(BaseApiTest):
+    """ Test APIV2 filtering by practices on courses
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice = outdoor_factory.PracticeFactory()
+        cls.site_practice = outdoor_factory.SiteFactory(practice=cls.practice)
+        cls.course_practice = outdoor_factory.CourseFactory()
+        cls.course_practice.parent_sites.set([cls.site_practice])
+        cls.other_practice = outdoor_factory.PracticeFactory()
+        cls.site_other_practice = outdoor_factory.SiteFactory(practice=cls.other_practice)
+        cls.course_other_practice = outdoor_factory.CourseFactory()
+        cls.course_other_practice.parent_sites.set([cls.site_other_practice])
+
+        cls.site_no_practice = outdoor_factory.SiteFactory(practice=None)
+        cls.course_site_no_practice = outdoor_factory.CourseFactory()
+        cls.course_site_no_practice.parent_sites.set([cls.site_no_practice])
+
+    def test_filter_practices_on_courses(self):
+        response = self.get_course_list({'practices': self.practice.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = [type['id'] for type in returned_types]
+
+        self.assertIn(self.course_practice.pk, all_ids)
+        self.assertNotIn(self.course_site_no_practice.pk, all_ids)
+        self.assertNotIn(self.course_other_practice.pk, all_ids)
+
+    def test_filter_practices_on_courses2(self):
+        self.course_practice.parent_sites.set([self.site_practice, self.site_other_practice])
+        response = self.get_course_list({'practices': self.practice.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = [type['id'] for type in returned_types]
+
+        self.assertIn(self.course_practice.pk, all_ids)
+        self.assertNotIn(self.course_site_no_practice.pk, all_ids)
+        self.assertNotIn(self.course_other_practice.pk, all_ids)
+
+
+class OutdoorFilterByPortal(BaseApiTest):
+    """ Test APIV2 filtering on ratings on sites in hierarchy
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.portal = common_factory.TargetPortalFactory()
+        cls.theme = common_factory.ThemeFactory()
+        cls.site = outdoor_factory.SiteFactory()
+        cls.site.portal.set([cls.portal.pk])
+        cls.site.themes.set([cls.theme.pk])
+        cls.course = outdoor_factory.CourseFactory()
+        cls.course.parent_sites.set([cls.site.pk])
+        cls.course2 = outdoor_factory.CourseFactory()
+        cls.information_desk = tourism_factory.InformationDeskFactory()
+        cls.site.information_desks.set([cls.information_desk])
+
+    def test_filter_courses_by_portal(self):
+        response = self.get_course_list({'portals': self.portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = [type['id'] for type in returned_types]
+
+        self.assertIn(self.course.pk, all_ids)
+        self.assertNotIn(self.course2.pk, all_ids)
+
+    def test_filter_courses_by_themes(self):
+        response = self.get_course_list({'themes': self.theme.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = [type['id'] for type in returned_types]
+
+        self.assertIn(self.course.pk, all_ids)
+        self.assertNotIn(self.course2.pk, all_ids)
+
+    def test_filter_info_desks_by_portal_and_outdoor(self):
+        response = self.get_informationdesk_list()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        returned_types = response.json()['results']
+        all_ids = [type['id'] for type in returned_types]
+
+        self.assertIn(self.information_desk.pk, all_ids)
+
+
+class AltimetryCacheTests(BaseApiTest):
+    """ Test APIV2 DEM serialization is cached
+    """
+
+    TMP_CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': settings.CACHE_ROOT
+        }
+    }
+
+    @classmethod
+    def setUpTestData(cls):
+        # Create a simple fake DEM
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+            cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
+            demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+            for y in range(0, 5):
+                for x in range(0, 4):
+                    cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+        cls.path = core_factory.PathFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        cls.trek = trek_factory.TrekFactory.create(paths=[cls.path])
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_cache_is_used_when_getting_trek_DEM(self):
+        # There are 8 queries to get trek DEM
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        # When cache is used there are only 7 queries to get trek DEM
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_cache_is_used_when_getting_trek_DEM_nds(self):
+        self.trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        # There are 8 queries to get trek DEM
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        # When cache is used there are only 7 queries to get trek DEM
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_cache_is_used_when_getting_trek_profile(self):
+        # There are 8 queries to get trek profile
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertIn("profile", response.json().keys())
+        # When cache is used there are only 7 queries to get trek profile
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertIn("profile", response.json().keys())
+
+    # Override default cache with fat cache since we can't use memcached in tests
+    @override_settings(CACHES=TMP_CACHES)
+    def test_cache_is_used_when_getting_trek_profile_svg(self):
+        # There are 8 queries to get trek profile svg
+        with self.assertNumQueries(8):
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'image/svg+xml')
+        # When cache is used there are only 7 queries to get trek profile
+        with self.assertNumQueries(7):
+            response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'image/svg+xml')

@@ -26,7 +26,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{{ object.description|safe }}
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
@@ -51,15 +51,13 @@
             <th>{{ object|verbose:"manager" }}</th>
             <td>{{ object.manager|default:"" }}</td>
         </tr>
-        <tr>
-            <th>{{ object|verbose:"published" }}</th>
-            <td>{{ object.published|yesno|title }}</td>
-        </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
+        {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
-    {% if perms.signage.read_blade %}
+    {% blades_enabled as is_blades_enabled %}
+    {% if is_blades_enabled and perms.signage.read_blade %}
         <h3>{% trans "Blades" %}</h3>
         <table class="table blades">
             {% if object.order_blades %}

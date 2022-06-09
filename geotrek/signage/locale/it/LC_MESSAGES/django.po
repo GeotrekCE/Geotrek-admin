@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Signage"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Intervention year"
+msgstr ""
+
+msgid "Trail"
+msgstr ""
+
+msgid "Lines"
+msgstr ""
+
+#, python-format
+msgid "Number already exists, numbers already used : %s"
+msgstr ""
+
+#, python-format
+msgid "On %s"
+msgstr ""
+
+msgid "Sealing"
+msgstr ""
+
+msgid "Sealings"
+msgstr ""
+
+msgid "Signage Type"
+msgstr ""
+
+msgid "Signage Types"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Manager"
+msgstr ""
+
+msgid "Printed elevation"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Coordinates"
+msgstr ""
+
+msgid "Signages"
+msgstr ""
+
+msgid "Published Signages"
+msgstr ""
+
+msgid "Direction"
+msgstr ""
+
+msgid "Directions"
+msgstr ""
+
+msgid "Blade color"
+msgstr ""
+
+msgid "Blade colors"
+msgstr ""
+
+msgid "Blade type"
+msgstr ""
+
+msgid "Blade types"
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "Condition"
+msgstr ""
+
+msgid "Blades"
+msgstr ""
+
+msgid "City"
+msgstr ""
+
+msgid "Blade"
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+msgid "Distance"
+msgstr ""
+
+msgid "Pictogram"
+msgstr ""
+
+msgctxt "duration"
+msgid "Time"
+msgstr ""
+
+msgid "Hours:Minutes:Seconds"
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Line"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Picto"
+msgstr ""
+
+msgid "Add a line"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "Add a new blade"
+msgstr ""
+
+msgid "Add a new signage"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "meters"
+msgstr ""

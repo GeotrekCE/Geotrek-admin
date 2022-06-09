@@ -8,6 +8,11 @@ register = template.Library()
 
 
 @register.simple_tag
+def is_photos_accessibilities_enabled():
+    return settings.ACCESSIBILITY_ATTACHMENTS_ENABLED
+
+
+@register.simple_tag
 def settings_value(name):
     return getattr(settings, name, "")
 
@@ -45,10 +50,13 @@ def duration(value):
 
     if duration.day > 1:
         if duration.hour > 0 or duration.minute > 0:
-            final_duration = _("%s days") % duration.day
+            final_duration = _("%s days" % duration.day)
 
         else:
-            final_duration = _("%s days") % (duration.day - 1)
+            if duration.day - 1 == 1:
+                final_duration = _("%s day") % (duration.day - 1)
+            else:
+                final_duration = _("%s days") % (duration.day - 1)
 
     elif duration.hour > 0 and duration.minute > 0:
         final_duration = _("%(hour)s h %(min)s") % {'hour': duration.hour,

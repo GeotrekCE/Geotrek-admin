@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2022-02-03 17:15+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
-"Last-Translator: jean.lenormand\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -37,18 +37,6 @@ msgstr "tt/mm/jjjj"
 msgid "HH:MM"
 msgstr "ZZ:MM"
 
-msgid "GeoJSON"
-msgstr "GeoJSON"
-
-msgid "TourInFrance"
-msgstr "TourInFrance"
-
-msgid "Apidae"
-msgstr "Apidae"
-
-msgid "Public website"
-msgstr "Öffentliche Website"
-
 msgid "Label"
 msgstr "Label"
 
@@ -57,6 +45,12 @@ msgstr "Art des Informationspunktes"
 
 msgid "Information desk types"
 msgstr "Art des Informationspunktes"
+
+msgid "Label accessibility"
+msgstr ""
+
+msgid "Labels accessibility"
+msgstr ""
 
 msgid "Title"
 msgstr "Titel"
@@ -90,6 +84,9 @@ msgstr "Postleitzahl"
 
 msgid "Municipality"
 msgstr "Stadt"
+
+msgid "Accessibility"
+msgstr "Zugänglichkeit"
 
 msgid "Emplacement"
 msgstr "Standort"
@@ -128,6 +125,12 @@ msgstr "Sortierung"
 msgid "Alphabetical order if blank"
 msgstr "Alphabetische Reihenfolge bei Leerzeichen"
 
+msgid "Color"
+msgstr ""
+
+msgid "Color of the category, only used in mobile."
+msgstr ""
+
 msgid "Touristic content category"
 msgstr "Kategorie der touristischen Inhalte"
 
@@ -146,20 +149,17 @@ msgstr "Zweiter"
 msgid "Touristic content type"
 msgstr "Art der touristischen Inhalte"
 
+msgid "Type1"
+msgstr "Type 1"
+
 msgid "First list types"
 msgstr "Typen in der ersten Liste"
 
+msgid "Type2"
+msgstr "Type 2"
+
 msgid "Second list types"
 msgstr "Typen in der zweiten Liste"
-
-msgid "Name"
-msgstr "Name"
-
-msgid "Reservation system"
-msgstr "Buchungssystem"
-
-msgid "Reservation systems"
-msgstr "Buchungssysteme"
 
 msgid "Description teaser"
 msgstr "Beschreibung Teaser"
@@ -206,17 +206,26 @@ msgstr "Portal"
 msgid "External id"
 msgstr "Externer Identifikator"
 
+msgid "Reservation system"
+msgstr "Buchungssystem"
+
 msgid "Reservation ID"
 msgstr "Buchungs-ID"
 
 msgid "Approved"
 msgstr "Labelliert"
 
+msgid "Indicates whether the content has a label or brand"
+msgstr ""
+
 msgid "Touristic content"
 msgstr "Touristische Inhalte"
 
 msgid "Touristic contents"
 msgstr "Touristische Inhalte"
+
+msgid "touristic-content"
+msgstr "touristische Inhalte"
 
 msgid "Published touristic contents"
 msgstr "Veröffentlichte touristische Inhalte"
@@ -257,9 +266,6 @@ msgstr "Organisator"
 msgid "Speaker"
 msgstr "Lautsprecher"
 
-msgid "Accessibility"
-msgstr "Zugänglichkeit"
-
 msgid "Number of participants"
 msgstr "Anzahl der Plätze"
 
@@ -290,26 +296,23 @@ msgstr "bis {end}"
 msgid "from {begin} to {end}"
 msgstr "von {begin} bis {end}"
 
+msgid "touristic-event"
+msgstr "touristische Veranstaltung"
+
 msgid "Published touristic events"
 msgstr "Veröffentlichte touristische Veranstaltungen"
 
 #, python-brace-format
-msgid "Failed to download {url}. HTTP status code {status_code}"
-msgstr "Der Download von {url} konnte nicht durchgeführt werden. HTTP Statuscode {status_code}"
-
-#, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr "Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
+msgstr ""
+"Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie "
+"es hinzu"
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr "Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
-
-msgid "touristic-content"
-msgstr "touristische Inhalte"
-
-msgid "touristic-event"
-msgstr "touristische Veranstaltung"
+msgstr ""
+"Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie "
+"es hinzu"
 
 msgid "Add a new touristic content"
 msgstr "Touristische Inhalte hinzufügen"
@@ -335,14 +338,14 @@ msgstr "Druck"
 msgid "Attributes"
 msgstr "Informationen"
 
+msgid "None"
+msgstr "Keine"
+
 msgid "yes,no"
 msgstr "Ja, nein,"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"
-
-msgid "All"
-msgstr "Alle"
 
 msgid "Powered by geotrek.fr"
 msgstr "Powered by geotrek.fr"
@@ -358,18 +361,6 @@ msgstr "Geographische Lage"
 
 msgid "All useful information"
 msgstr "Alle praktischen Informationen"
-
-msgid "Advice"
-msgstr "Mitteilungen"
-
-msgid "Related Treks"
-msgstr "Zugehörige Routen"
-
-msgid "Powered by http://geotrek.fr"
-msgstr "Powered by geotrek.fr"
-
-msgid "None"
-msgstr "Keine"
 
 msgid "Date"
 msgstr "Datum"

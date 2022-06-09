@@ -1,4 +1,6 @@
 from django.contrib.gis.geos import GEOSGeometry
+from django.utils.html import escape
+from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -6,7 +8,21 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from geotrek.feedback import models as feedback_models
 
 
-class ReportSerializer(rest_serializers.ModelSerializer):
+class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
+    email = rest_serializers.CharField()
+    activity = rest_serializers.SlugRelatedField('label', read_only=True)
+    category = rest_serializers.SlugRelatedField('label', read_only=True)
+    problem_magnitude = rest_serializers.SlugRelatedField('label', read_only=True)
+    status = rest_serializers.SlugRelatedField('label', read_only=True)
+    eid = rest_serializers.CharField(source='name_display')
+    color = rest_serializers.CharField(source="status.color")
+
+    class Meta:
+        model = feedback_models.Report
+        fields = "__all__"
+
+
+class ReportAPISerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = feedback_models.Report
         id_field = 'id'
@@ -20,14 +36,17 @@ class ReportSerializer(rest_serializers.ModelSerializer):
     def validate_geom(self, value):
         return GEOSGeometry(value, srid=4326)
 
+    def validate_comment(self, value):
+        return escape(value)
 
-class ReportGeojsonSerializer(GeoFeatureModelSerializer, ReportSerializer):
+
+class ReportAPIGeojsonSerializer(GeoFeatureModelSerializer, ReportAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = GeometryField(read_only=True, precision=7)
 
-    class Meta(ReportSerializer.Meta):
+    class Meta(ReportAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = ReportSerializer.Meta.fields + ('api_geom', )
+        fields = ReportAPISerializer.Meta.fields + ('api_geom', )
 
 
 class ReportActivitySerializer(rest_serializers.ModelSerializer):

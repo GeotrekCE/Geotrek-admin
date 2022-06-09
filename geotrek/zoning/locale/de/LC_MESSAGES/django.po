@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Publish (visible on Geotrek-rando)"
+msgstr ""
+
+msgid "Unpublish (hidden on Geotrek-rando)"
+msgstr ""
 
 msgid "Zoning"
 msgstr "Zonierung"
@@ -26,9 +32,6 @@ msgstr "Kommune"
 msgid "District"
 msgstr "Distrikt"
 
-msgid "Name"
-msgstr "Name"
-
 msgid "Restricted area type"
 msgstr "Eingeschränkter Bereichstyp"
 
@@ -38,29 +41,20 @@ msgstr "Regulatorische Zonierung"
 msgid "Restricted areas"
 msgstr "Regulatorische Zonierung"
 
-msgid "Restricted area edge"
-msgstr "Restricted area edge"
+msgid "Name"
+msgstr "Name"
 
-msgid "Restricted area edges"
-msgstr "Restricted area edge"
+msgid "Published"
+msgstr ""
+
+msgid "Visible on Geotrek-rando"
+msgstr ""
 
 msgid "Cities"
 msgstr "Kommunen"
 
-msgid "City edge"
-msgstr "City edge"
-
-msgid "City edges"
-msgstr "City edges"
-
 msgid "Districts"
 msgstr "Distrikte"
-
-msgid "District edge"
-msgstr "District edge"
-
-msgid "District edges"
-msgstr "District edges"
 
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
@@ -71,8 +65,8 @@ msgid ""
 "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not "
 "{geom_type}"
 msgstr ""
-"Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte "
-"(Multi)Polygon, nicht {geom_type}"
+"Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte (Multi)Polygon, "
+"nicht {geom_type}"
 
 msgid "Restricted Area"
 msgstr "Regulatorische Zonierung"

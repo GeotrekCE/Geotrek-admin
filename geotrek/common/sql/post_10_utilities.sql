@@ -15,3 +15,10 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION {# geotrek.common #}.ft_uuid_insert() RETURNS trigger SECURITY DEFINER AS $$
+BEGIN
+    NEW.uuid := gen_random_uuid();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;

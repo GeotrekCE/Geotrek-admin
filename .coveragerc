@@ -1,6 +1,5 @@
 [run]
 source =
-    mapentity
     geotrek
 omit =
     */tests*
@@ -12,3 +11,7 @@ data_file = var/.coverage
 
 [report]
 ignore_errors = true
+exclude_lines =
+    if settings.DEBUG or settings.TEST:
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin, TabularInline as TranslationTabularInline
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin

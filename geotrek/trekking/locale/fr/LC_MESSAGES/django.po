@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 11:08+0000\n"
+"POT-Creation-Date: 2022-03-25 10:07+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -26,6 +26,9 @@ msgstr "Une difficulté avec l'id %s existe déjà"
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
+
+msgid "Color"
+msgstr "Couleur"
 
 msgid "Practices"
 msgstr "Pratiques"
@@ -51,26 +54,77 @@ msgstr "Basique"
 msgid "Advanced"
 msgstr "Avancé"
 
+msgid "Accessibility"
+msgstr "Accessibilité"
+
 msgid "Related treks"
 msgstr "Itinéraires liés"
 
 msgid "Insert service:"
 msgstr "Insérer un service :"
 
+msgid "One of the rating scale used is not part of the practice chosen"
+msgstr ""
+"Une des échelles de notation utilisées ne fait pas partie de la pratique "
+"choisie"
+
 msgid "Cannot add children because this trek is itself a child."
 msgstr ""
 "Impossible d'ajouter des enfants car cet itinéraire est lui-même un enfant."
 
 #, python-brace-format
-msgid "Cannot use parent trek {name} as a child trek."
+msgid "Cannot use parent trek {child.name} as a child trek."
 msgstr ""
-"Impossible d'utiliser l'itinéraire parent {name} comme itinéraire enfant."
+"Impossible d'utiliser l'itinéraire parent {child.name} comme itinéraire "
+"enfant."
 
 msgid "Cancel"
 msgstr "Annuler"
 
 msgid "Create"
 msgstr "Créer"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Distance"
+msgstr "Distance"
+
+msgid ""
+"Touristic contents and events will associate within this distance (meters)"
+msgstr ""
+"Les contenus et événements touristiques seront associés selon cette distance "
+"(mètres)"
+
+msgid "Cirkwi locomotion"
+msgstr "Locomotion Cirkwi"
+
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Alphabetical order if blank"
+msgstr "Ordre alphabétique si vide"
+
+msgid "Color of the practice, only used in mobile."
+msgstr "Couleur définie pour la pratique, utilisée seulement pour le mobile."
+
+msgid "Practice"
+msgstr "Pratique"
+
+msgid "Rating scale"
+msgstr "Échelle de cotation"
+
+msgid "Rating scales"
+msgstr "Échelles de cotation"
+
+msgid "Scale"
+msgstr "Échelle"
+
+msgid "Rating"
+msgstr "Cotation"
+
+msgid "Ratings"
+msgstr "Cotations"
 
 msgid "Departure"
 msgstr "Départ"
@@ -108,12 +162,6 @@ msgstr "Accès routier"
 msgid "Best way to go"
 msgstr "Accès recommandé"
 
-msgid "Disabled infrastructure"
-msgstr "Aménagement handicapés"
-
-msgid "Any specific infrastructure"
-msgstr "Infrastructure à disposition"
-
 msgid "Duration"
 msgstr "Durée"
 
@@ -141,6 +189,15 @@ msgstr "Recommandations"
 msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
 
+msgid "Ratings description"
+msgstr "Description de cotation"
+
+msgid "Gear"
+msgstr "Matériel"
+
+msgid "Gear needed, adviced ..."
+msgstr "Matériel nécessaire, conseillé ..."
+
 msgid "Themes"
 msgstr "Thématiques"
 
@@ -153,11 +210,83 @@ msgstr "Réseaux de randonnée"
 msgid "Hiking networks"
 msgstr "Réseaux de randonnée"
 
-msgid "Practice"
-msgstr "Pratique"
+msgid "Accessibility type"
+msgstr "Type d'accessibilité"
 
-msgid "Accessibility"
-msgstr "Accessibilité"
+msgid "Accessibility advice"
+msgstr "Conseils d'accessibilité"
+
+msgid ""
+"Specific elements allowing to appreciate the context of the itinerary for "
+"PRMs (advice, delicate passages, etc.)"
+msgstr ""
+"Eléments particuliers permettant d’apprécier le contexte de l’itinéraire "
+"pour les PMR (conseils, passages délicats, etc.)"
+
+msgid "Accessibility covering"
+msgstr "Revêtement accessibilité"
+
+msgid ""
+"Description of the surfaces encountered on the entire route. Track, path, "
+"road + type of surface (stony, presence of stones, sand, paving, slab...)"
+msgstr ""
+"Description des revêtements rencontrés sur la totalité d’un itinéraire. "
+"Piste, sentier, route + type de Revêtement (Caillouteux, présence de "
+"pierres, sable, pavettage, dalle...)"
+
+msgid "Level accessibility"
+msgstr "Niveau d'Accessibilité"
+
+msgid ""
+"Beginner (Little drop – terrain without difficulties) / Experienced "
+"(Significant slope – Technical terrain, with obstacles)"
+msgstr ""
+"Débutant (Peu de dénivelé – terrain sans de difficultés) / Expérimenté "
+"(Pente importante – Terrain technique, avec obstacles)"
+
+msgid "Accessibility exposure"
+msgstr "Exposition accessibilité"
+
+msgid ""
+"Description of exposures and shaded areas. Shaded, High exposure, Presence "
+"of shaded areas"
+msgstr ""
+"Description des expositions et des zones ombragées. Ombragé, Forte "
+"expositions, Présence de zone ombragées"
+
+msgid "Accessibility infrastructure"
+msgstr "Aménagements d'accessibilité"
+
+msgid "Any specific accessibility infrastructure"
+msgstr "Infrastructure d'accessibilité spécifique à disposition"
+
+msgid "Accessibility signage"
+msgstr "Signalétique accessibilité"
+
+msgid "Description of the size, shape and colors of signages."
+msgstr "Description de taille, forme et couleurs des signalétiques."
+
+msgid "Accessibility slope"
+msgstr "Pente accessibilité"
+
+msgid ""
+"Description of the slope: greater than 10% (Requires assistance when the "
+"slope is greater than 8%); slope break"
+msgstr ""
+"Description de la pente : supérieure à 10 % (Nécessite une assistance quand "
+"la pente est supérieur à 8%) ; rupture de pente"
+
+msgid "Accessibility width"
+msgstr "Largeur accessibilité"
+
+msgid ""
+"Description of the narrowing of the trails and the minimum width for "
+"wheelchairs (Trail>0.90 m, Joëlette, Narrow trail requiring strong driving "
+"technique)"
+msgstr ""
+"Description des rétrécissements des sentiers et la largueur minimum pour les "
+"fauteuils (Sentier>0,90 m, Joëlette, Sentier étroit demandant une forte "
+"technique de conduite)"
 
 msgid "Route"
 msgstr "Parcours"
@@ -262,44 +391,23 @@ msgstr "Tronçons"
 msgid "Circuit"
 msgstr "Circuit"
 
-msgid "Name"
-msgstr "Nom"
-
 msgid "Trek network"
 msgstr "Réseau d'itinéraire"
 
 msgid "Trek networks"
 msgstr "Réseaux randonnée"
 
-msgid "Distance"
-msgstr "Distance"
-
-msgid ""
-"Touristic contents and events will associate within this distance (meters)"
-msgstr ""
-"Les contenus et événements touristiques seront associés selon cette distance "
-"(mètres)"
-
-msgid "Cirkwi locomotion"
-msgstr "Locomotion Cirkwi"
-
-msgid "Order"
-msgstr "Ordre"
-
-msgid "Alphabetical order if blank"
-msgstr "Ordre alphabétique si vide"
-
-msgid "Color"
-msgstr "Couleur"
-
-msgid "Color of the practice, only used in mobile."
-msgstr "Couleur définie pour la pratique, utilisée seulement pour le mobile."
-
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
 
 msgid "Accessibilities"
 msgstr "Accessibilités"
+
+msgid "Accessibility level"
+msgstr "Niveau d'accessibilité"
+
+msgid "Accessibility levels"
+msgstr "Niveaux d'accessibilité"
 
 msgid "Routes"
 msgstr "Parcours"
@@ -445,6 +553,9 @@ msgstr "Impression livret grand public"
 msgid "Print booklet"
 msgstr "Impr. livret"
 
+msgid "Photos accessibility"
+msgstr "Photos accessibilité"
+
 msgid "yes"
 msgstr "oui"
 
@@ -505,6 +616,18 @@ msgstr "Dénivelé positif"
 msgid "Markings"
 msgstr "Balisage"
 
+msgid "Cities"
+msgstr "Communes"
+
+msgid "Altimetric profile"
+msgstr "Profil altimétrique"
+
+msgid "Min elevation"
+msgstr "Altitude min"
+
+msgid "Max elevation"
+msgstr "Altitude max"
+
 msgid "Stages"
 msgstr "Étapes"
 
@@ -517,18 +640,39 @@ msgstr "Toutes les infos pratiques"
 msgid "Advices"
 msgstr "Recommandations"
 
+msgid "How to come ?"
+msgstr "Comment venir ?"
+
+msgid "Transports"
+msgstr "Transports"
+
+msgid "Slope"
+msgstr "Pente"
+
+msgid "Width"
+msgstr "Largeur"
+
+msgid "Signage"
+msgstr "Signalétique"
+
+msgid "Covering"
+msgstr "Revêtement"
+
+msgid "Exposure"
+msgstr "Exposition"
+
 msgid "Environmental sensitive areas"
 msgstr "Zones de sensibilité environnementale"
 
 msgid ""
 "\n"
-"            Along your trek, you will go through sensitive areas related to "
-"the presence of a specific species or\n"
-"            environment. In these areas, an appropriate behaviour allows to "
-"contribute to their preservation. For\n"
-"            detailed information, specific forms are accessible for each "
+"              Along your trek, you will go through sensitive areas related "
+"to the presence of a specific species or\n"
+"              environment. In these areas, an appropriate behaviour allows "
+"to contribute to their preservation. For\n"
+"              detailed information, specific forms are accessible for each "
 "area.\n"
-"          "
+"            "
 msgstr ""
 "\n"
 "Le long de votre itinéraire, vous allez traverser des zones de sensibilité "
@@ -543,21 +687,6 @@ msgstr "Période de sensibilité :"
 msgid "Contact:"
 msgstr "Contact :"
 
-msgid "Altimetric profile"
-msgstr "Profil altimétrique"
-
-msgid "Min elevation"
-msgstr "Altitude min"
-
-msgid "Max elevation"
-msgstr "Altitude max"
-
-msgid "Transports"
-msgstr "Transports"
-
-msgid "Disabled Infrastructure"
-msgstr "Aménagement handicapés"
-
 msgid "Add a new poi"
 msgstr "Ajouter un POI"
 
@@ -569,22 +698,6 @@ msgstr "Sync"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
-
-#, python-format
-msgid "%s days"
-msgstr "%s jours"
-
-#, python-format
-msgid "%(hour)s h %(min)s"
-msgstr "%(hour)s h %(min)s"
-
-#, python-format
-msgid "%(hour)s h"
-msgstr "%(hour)s h"
-
-#, python-format
-msgid "%s min"
-msgstr "%s min"
 
 msgid "Geographical location"
 msgstr "Situation géographique"

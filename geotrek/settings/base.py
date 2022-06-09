@@ -103,6 +103,7 @@ AUTHENT_GROUPS_MAPPING = {
     'TREKKING_MANAGER': 2,
     'EDITOR': 3,
     'READER': 4,
+    'EDITOR_TREKKING_MANAGEMENT': 6,
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -124,12 +125,13 @@ LANGUAGES = (
 )
 LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'fr')
 
-MODELTRANSLATION_LANGUAGES = os.getenv('LANGUAGES', 'fr en').split(' ')
-MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
+MODELTRANSLATION_LANGUAGES = tuple(os.getenv('LANGUAGES', 'fr en').split(' '))
 
 LOCALE_PATHS = (
     # override locale
+    os.path.join(PROJECT_DIR, 'locale'),
     os.path.join(VAR_DIR, 'conf', 'extra_locale'),
+
 )
 
 SITE_ID = 1
@@ -206,6 +208,7 @@ TEMPLATES = [
             os.path.join(VAR_DIR, 'conf', 'extra_templates'),
             os.path.join(PROJECT_DIR, 'templates'),
         ),
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
@@ -217,14 +220,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
-                'geotrek.context_processors.suricate_enabled',
                 'mapentity.context_processors.settings',
             ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                # 'django.template.loaders.eggs.Loader',
-            ],
+            # 'loaders': [
+            #     'django.template.loaders.filesystem.Loader',
+            #     'django.template.loaders.app_directories.Loader',
+            #     # 'django.template.loaders.eggs.Loader',
+            # ],
             'debug': True,
         },
     },
@@ -320,13 +322,13 @@ SERIALIZATION_MODULES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        'TIMEOUT': 28800,  # 8 hours
+        'TIMEOUT': 2592000,  # 30 days
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': CACHE_ROOT,
-        'TIMEOUT': 28800,  # 8 hours
+        'TIMEOUT': 2592000,  # 30 days
     }
 }
 
@@ -352,6 +354,7 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 PAPERCLIP_ENABLE_VIDEO = True
 PAPERCLIP_ENABLE_LINK = True
 PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
+PAPERCLIP_LICENSE_MODEL = 'common.License'
 PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
 
 # Data projection
@@ -382,7 +385,6 @@ MAPENTITY_CONFIG = {
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
-    'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
     'MAP_FIT_MAX_ZOOM': 16,
@@ -407,7 +409,8 @@ MAPENTITY_CONFIG = {
             'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
                      'arrowColor': 'black', 'arrowSize': 10},
         }
-    }
+    },
+    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg)$'
 }
 
 MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
@@ -447,7 +450,7 @@ LEAFLET_CONFIG = {
     'PLUGINS': {
         'geotrek': {'js': ['core/leaflet.lineextremities.js',
                            'core/leaflet.textpath.js',
-                           'trekking/points_reference.js',
+                           'common/points_reference.js',
                            'trekking/parking_location.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
@@ -502,6 +505,11 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'course': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
+# Set 'error_on_publication' to avoid publication without completeness fields
+# and 'error_on_review' if you want this fields to be required before sending to review.
+COMPLETENESS_LEVEL = 'warning'
+
+# Set fields required or needed for review or publication, for each model
 COMPLETENESS_FIELDS = {
     'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
     'dive': ['practice', 'difficulty', 'description_teaser'],
@@ -553,6 +561,7 @@ REPORT_INTERSECTION_MARGIN = 500  # meters (always used)
 SIGNAGE_LINE_ENABLED = False
 
 TREK_POINTS_OF_REFERENCE_ENABLED = True
+OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
 TREK_EXPORT_POI_LIST_LIMIT = 14
 TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
 
@@ -580,8 +589,8 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',
     messages.DEBUG: 'alert-info',
-    messages.WARNING: 'alert-error',
-    messages.ERROR: 'alert-error',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
 }
 
 CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
@@ -636,6 +645,10 @@ MOBILE_DURATION_INTERVALS = [
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
+    "toolbar": "bold italic forecolor | bullist numlist link image media | "
+               "undo redo | "
+               "removeformat | code",
+    "paste_as_text": True
 }
 
 SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
@@ -740,8 +753,10 @@ LOGGING = {
     }
 }
 
+BLADE_ENABLED = True
 BLADE_CODE_TYPE = int
 BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+LINE_ENABLED = True
 LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 LINE_DISTANCE_FORMAT = "{:0.1f} km"
 LINE_TIME_FORMAT = "{hours}h{minutes:02d}"
@@ -755,6 +770,9 @@ THUMBNAIL_COPYRIGHT_FORMAT = ""
 # You can also add legend
 
 THUMBNAIL_COPYRIGHT_SIZE = 15
+PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
+PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = False
 
 ENABLED_MOBILE_FILTERS = [
     'practice',
@@ -775,9 +793,13 @@ ONLY_EXTERNAL_PUBLIC_PDF = False
 
 SEND_REPORT_ACK = True
 
+ENABLE_REPORT_COLORS_PER_STATUS = True
+
 SURICATE_REPORT_ENABLED = False
 
 SURICATE_MANAGEMENT_ENABLED = False
+
+SURICATE_WORKFLOW_ENABLED = False
 
 SURICATE_REPORT_SETTINGS = {
     'URL': '',
@@ -793,6 +815,12 @@ SURICATE_MANAGEMENT_SETTINGS = {
     'PRIVATE_KEY_SERVER_CLIENT': '',
 }
 
+SURICATE_WORKFLOW_SETTINGS = {
+    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
+    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département"
+}
+
 REPORT_FILETYPE = "Report"
 
 # Parser parameters for retries and error codes
@@ -804,6 +832,16 @@ USE_BOOKLET_PDF = False
 HIDDEN_FORM_FIELDS = {}
 COLUMNS_LISTS = {}
 ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
+
+ACCESSIBILITY_ATTACHMENTS_ENABLED = True
+
+USE_X_FORWARDED_HOST = False
+
+REST_FRAMEWORK = {
+    "STRICT_JSON": False,  # allow serialize float NaN values
+}
+
+ALLOW_PATH_DELETION_TOPOLOGY = True
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
@@ -818,17 +856,11 @@ if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
         exec(f.read())
 
+MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
+
 # Computed settings takes place at the end after customization
 MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
     language for language in LANGUAGES_LIST if language[0] in MODELTRANSLATION_LANGUAGES
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
-
-USE_X_FORWARDED_HOST = False
-HIDDEN_FORM_FIELDS['report'] = {
-    "status",
-    "locked",
-    "uid",
-    "origin"
-}

@@ -4,19 +4,30 @@ orbs:
 jobs:
   codestyle:
     docker:
-      - image: ubuntu:bionic
+      - image: python:3.6
     environment:
       LANG: C.UTF-8
     steps:
-      - run: apt update
-      - run: apt install -y python3-pip
       - checkout
       - run: pip3 install flake8
       - run: flake8 --exclude "" --ignore=E501,F821 geotrek/settings
-      - run: flake8 geotrek mapentity
+      - run: flake8 geotrek
       - run: test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
+  doc:
+    docker:
+      - image: python:3.6
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      - run: |
+          cd docs/
+          pip install -r ./requirements.txt
+          make html
+
   docker_image:
-    machine: true
+    machine:
+      image: ubuntu-2004:202201-02
     steps:
       - checkout
       - run: BASE_IMAGE_TAG=focal-3.8 make build
@@ -24,7 +35,8 @@ jobs:
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
   docker_image_18_04:
-    machine: true
+    machine:
+      image: ubuntu-2004:202201-02
     steps:
       - checkout
       - run: BASE_IMAGE_TAG=bionic-3.6 make build
@@ -32,7 +44,8 @@ jobs:
       - run: docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
   docker_test:
-    machine: true
+    machine:
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -41,7 +54,7 @@ jobs:
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
-      - run: docker-compose run web ./manage.py makemigrations --check 
+      - run: docker-compose run web ./manage.py makemigrations --check
       - run: docker-compose run web update.sh
       - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
       - run: docker-compose run web coverage xml -o var/coverage.xml
@@ -50,7 +63,8 @@ jobs:
           flags: test
           when: on_success
   docker_test_18_04:
-    machine: true
+    machine:
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -62,7 +76,8 @@ jobs:
       - run: docker-compose run web update.sh
       - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
   docker_test_nds:
-    machine: true
+    machine:
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -79,7 +94,8 @@ jobs:
           flags: test_nds
           when: on_success
   docker_test_nds_18_04:
-    machine: true
+    machine:
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -108,7 +124,8 @@ jobs:
       - run: npm install geotrek/jstests
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
   docker_test_integration:
-    machine: true
+    machine:
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -116,6 +133,8 @@ jobs:
       - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
       - run: echo 'LANGUAGES=en fr' >> .env
       - run: echo 'LANGUAGE_CODE=en' >> .env
+      - run: mkdir -p var/conf/
+      - run: cp cypress/custom.py var/conf/custom.py
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
@@ -133,8 +152,11 @@ jobs:
       - run: sudo ls -l /var/www/geotrek
       - run: sudo rm /etc/nginx/sites-enabled/default
       - run: sudo nginx -s reload
-      - run: npm install cypress
-      - run: ./node_modules/.bin/cypress run --record --key 64a5a9b3-9869-4a2f-91e4-e3cd27c2f564
+      - run:
+          command: |
+            cd /home/circleci/project/cypress
+            npm ci
+            ./node_modules/.bin/cypress run --record --key 64a5a9b3-9869-4a2f-91e4-e3cd27c2f564
 
       - store_artifacts:
           path: /home/circleci/project/cypress/videos/
@@ -144,7 +166,8 @@ jobs:
           destination: cypress-screenshots
 
   docker_publish:
-    machine: true
+    machine:
+      image: ubuntu-2004:202201-02
     environment:
       LANG: C.UTF-8
     steps:
@@ -186,6 +209,9 @@ jobs:
       - persist_to_workspace:
           root: /root
           paths: geotrek-admin_*_amd64.deb
+      - store_artifacts:
+          path: geotrek-admin_*_amd64.deb
+          destination: ubuntu-package-18.04
   ubuntu_publish:
     docker:
       - image: ubuntu:bionic
@@ -206,6 +232,10 @@ workflows:
   all:
     jobs:
       - codestyle:
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
+      - doc:
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/

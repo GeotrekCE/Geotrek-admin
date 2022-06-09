@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2022-04-25 09:07+0000\n"
 "PO-Revision-Date: 2013-01-25 15:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,19 +32,82 @@ msgstr "min %s"
 msgid "max %s"
 msgstr "max %s"
 
+msgid "This field is required to publish object."
+msgstr ""
+
+#, python-format
+msgid "Fields are missing to publish object: %(fields)s"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Please select a choice related to all structures (without brackets) or "
+"related to the structure {struc} (in brackets)"
+msgstr ""
+
 msgid "Data to import from network"
 msgstr ""
 
 msgid "Import"
 msgstr ""
 
+msgid "Data to import from Suricate"
+msgstr ""
+
 msgid "File"
+msgstr ""
+
+msgid "Encoding"
 msgstr ""
 
 msgid "Data to import from local file"
 msgstr ""
 
 msgid "File must be of ZIP type."
+msgstr ""
+
+msgid "Launch Sync"
+msgstr ""
+
+msgid "Overview of the tricky passage"
+msgstr ""
+
+msgid "Submit attachment"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Update attachment"
+msgstr ""
+
+msgid "Global tiles syncing ..."
+msgstr ""
+
+msgid "Trek tiles syncing ..."
+msgstr ""
+
+msgid "Tiles synced ..."
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Sync ended"
+msgstr ""
+
+msgid "Geotrek Rando"
+msgstr ""
+
+msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
+msgstr ""
+
+msgid "Is in the midst of the park"
+msgstr ""
+
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
 msgstr ""
 
 msgid "Insertion date"
@@ -56,8 +119,7 @@ msgstr "Data di modifica"
 msgid "Deleted"
 msgstr "Cancellato"
 
-#, python-format
-msgid "Image %s invalid or missing from disk."
+msgid "Image {} invalid or missing from disk: {}."
 msgstr ""
 
 msgid "Thumbnail"
@@ -87,14 +149,71 @@ msgstr ""
 msgid "Pictogram"
 msgstr "Pittogramma"
 
+msgid "Merge"
+msgstr ""
+
+msgid "Slope"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Signage"
+msgstr ""
+
+msgid "Image"
+msgstr ""
+
+msgid "Information accessibility"
+msgstr ""
+
+msgid "License"
+msgstr ""
+
+msgid "Creation Date"
+msgstr ""
+
+msgid "Creator"
+msgstr ""
+
+msgid "User that uploaded"
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+msgid "Original creator"
+msgstr ""
+
+msgid "Filename"
+msgstr ""
+
+msgid "Renames the file"
+msgstr ""
+
+msgid "Legend"
+msgstr ""
+
+msgid "Details displayed"
+msgstr ""
+
+msgid "Attachment accessibility"
+msgstr ""
+
+msgid "Attachments accessibility"
+msgstr ""
+
 msgid "Organism"
 msgstr "Organismo"
 
 msgid "Organisms"
 msgstr "Organismi"
 
-msgid "Label"
-msgstr "Etichetta"
+msgid "Attachment license"
+msgstr ""
+
+msgid "Attachment licenses"
+msgstr ""
 
 msgid "Cirkwi tag"
 msgstr ""
@@ -117,10 +236,79 @@ msgstr ""
 msgid "Used for sync"
 msgstr ""
 
+msgid "Title Rando"
+msgstr ""
+
+msgid "Title on Geotrek Rando"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Description on Geotrek Rando"
+msgstr ""
+
+msgid "Facebook ID"
+msgstr ""
+
+msgid "Facebook ID for Geotrek Rando"
+msgstr ""
+
+msgid "Facebook image url"
+msgstr ""
+
+msgid "Url of the facebook image"
+msgstr ""
+
+msgid "Facebook image width"
+msgstr ""
+
+msgid "Facebook image's width"
+msgstr ""
+
+msgid "Facebook image height"
+msgstr ""
+
+msgid "Facebook image's height"
+msgstr ""
+
 msgid "Target portal"
 msgstr ""
 
 msgid "Target portals"
+msgstr ""
+
+msgid "Reservation system"
+msgstr ""
+
+msgid "Reservation systems"
+msgstr ""
+
+msgid "Advice"
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
+msgid "Show this label as a filter in public portal"
+msgstr ""
+
+msgid "Label"
+msgstr "Etichetta"
+
+msgid "Labels"
+msgstr "Etichette"
+
+msgid "Order"
+msgstr ""
+
+msgid "Within a practice. Alphabetical order if blank"
+msgstr ""
+
+msgid "Alphabetical order if blank"
+msgstr ""
+
+msgid "Color"
 msgstr ""
 
 #, python-brace-format
@@ -163,6 +351,10 @@ msgid ""
 msgstr ""
 
 #, python-brace-format
+msgid "Bad ownership '{structure}' for object '{eid_val}'."
+msgstr ""
+
+#, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 
@@ -186,6 +378,10 @@ msgstr ""
 msgid "File does not exists at: {filename}"
 msgstr ""
 
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr ""
+
 msgid "Invalid geometry pointer"
 msgstr ""
 
@@ -200,11 +396,41 @@ msgstr ""
 msgid "Failed to download '{url}'"
 msgstr ""
 
-#, python-brace-format
-msgid "Failed to download {url}. HTTP status code {status_code}"
+msgid "Import from web."
 msgstr ""
 
-msgid "Import from web."
+msgid "Init sync ..."
+msgstr ""
+
+msgid "Photos to illustrate information related to the accessibility of treks."
+msgstr ""
+
+msgid "Photos accessibility"
+msgstr ""
+
+msgid "Accessibility type"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
+
+msgid "Update"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "No file attached for accessibility"
+msgstr ""
+
+msgid "You are not allowed to see attachments."
+msgstr ""
+
+msgid " Confirm file deletion"
+msgstr ""
+
+#, python-brace-format
+msgid "Are you sure to delete this file {file} ?"
 msgstr ""
 
 msgid "Paths"
@@ -223,6 +449,15 @@ msgid "Mouse"
 msgstr ""
 
 msgid "Imports"
+msgstr ""
+
+msgid "Sync mobile"
+msgstr ""
+
+msgid "Decoding error. Please check encoding and use only ASCII in file names."
+msgstr ""
+
+msgid "No parser available."
 msgstr ""
 
 msgid "Display report"
@@ -273,45 +508,104 @@ msgstr ""
 msgid "looks incomplete;"
 msgstr ""
 
+msgid "these fields should be completed:"
+msgstr ""
+
 msgid "has invalid geometry;"
+msgstr ""
+
+msgid "Sync verifications"
+msgstr ""
+
+msgid "Sync in progress"
+msgstr ""
+
+msgid "An error occured"
+msgstr ""
+
+msgid "Public web site sync"
+msgstr ""
+
+msgid "Confirmation"
+msgstr ""
+
+msgid "Are you sure you want to sync ?"
+msgstr ""
+
+msgid "Sync"
+msgstr ""
+
+#, python-format
+msgid "%s day"
+msgstr ""
+
+#, python-format
+msgid "%s days"
+msgstr ""
+
+#, python-format
+msgid "%(hour)s h %(min)s"
+msgstr ""
+
+#, python-format
+msgid "%(hour)s h"
+msgstr ""
+
+#, python-format
+msgid "%s min"
 msgstr ""
 
 msgid "Topology is not valid."
 msgstr "La topologia non è valida."
 
+msgid "Invalid geometry value."
+msgstr ""
+
+msgctxt "North"
+msgid "N"
+msgstr ""
+
+msgctxt "South"
+msgid "S"
+msgstr ""
+
+msgctxt "East"
+msgid "E"
+msgstr ""
+
+msgctxt "West"
+msgid "W"
+msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+#, python-format
+msgid "Add attachment %s"
+msgstr ""
+
+msgid "Your attachment was uploaded."
+msgstr ""
+
+#, python-format
+msgid "Update attachment %s"
+msgstr ""
+
+msgid "Your attachment was updated."
+msgstr ""
+
+#, python-format
+msgid "Remove attachment %s"
+msgstr ""
+
+msgid "Your attachment was deleted."
+msgstr ""
+
+msgid "You are not allowed to delete this attachment."
+msgstr ""
+
 msgid "Any year"
 msgstr "Annuale"
 
-
-msgid "Title Rando"
-msgstr ""
-
-msgid "Title on Geotrek Rando"
-msgstr ""
-
-msgid "Description on Geotrek Rando"
-msgstr ""
-
-msgid "Facebook ID"
-msgstr ""
-
-msgid "Facebook image url"
-msgstr ""
-
-msgid "Url of the facebook image"
-msgstr ""
-
-msgid "Facebook image height"
-msgstr ""
-
-msgid "Facebook image width"
-msgstr ""
-
-msgid "Facebook image's width"
-msgstr ""
-
-msgid "Facebook image's height"
-msgstr ""
-
-msgid "Facebook ID for Geotrek Rando"
+msgid "Any value"
 msgstr ""

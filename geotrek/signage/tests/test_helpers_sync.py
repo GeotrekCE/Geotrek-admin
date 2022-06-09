@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from geotrek.common.factories import FakeSyncCommand
-from geotrek.signage.factories import SignageFactory
+from geotrek.common.tests.factories import FakeSyncCommand
+from geotrek.signage.tests.factories import SignageFactory
 from geotrek.signage.helpers_sync import SyncRando
 
 

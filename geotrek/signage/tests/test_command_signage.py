@@ -6,18 +6,19 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
 
-from geotrek.core.factories import PathFactory
-from geotrek.signage.factories import SignageFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.signage.tests.factories import SignageFactory
 from geotrek.signage.models import Signage
-from geotrek.authent.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory
 
 
 class SignageCommandTest(TestCase):
     """
     There are 2 signages in the file signage.shp
     """
-    def setUp(self):
-        self.path = PathFactory.create()
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory.create()
 
     def test_load_signage(self):
         output = StringIO()
@@ -65,14 +66,16 @@ class SignageCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         call_command('loadsignage', filename, type_field='label', name_field='name',
                      condition_field='condition', structure_default='structure',
-                     description_field='descriptio', year_field='year', verbosity=1, stdout=output)
+                     description_field='descriptio', year_field='year', code_field='name', verbosity=1, stdout=output)
         self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
         self.assertIn("SignageType 'type' created", output.getvalue())
         self.assertIn("Condition Type 'condition' created", output.getvalue())
         value = Signage.objects.all()
         names = [val.name for val in value]
         years = [val.implantation_year for val in value]
+        codes = [val.code for val in value]
         self.assertIn('coucou', names)
+        self.assertIn('name', codes)
         self.assertIn(2010, years)
         self.assertIn(2012, years)
         self.assertEqual(value.count(), 2)
@@ -109,15 +112,16 @@ class SignageCommandTest(TestCase):
         call_command('loadsignage', filename, type_default='label', name_field='name',
                      year_field='wrong_implantation_year_field', stdout=output)
         call_command('loadsignage', filename, type_default='label', name_field='name',
+                     code_field='wrong_code_field', stdout=output)
+        call_command('loadsignage', filename, type_default='label', name_field='name',
                      structure_field='wrong_structure_field', stdout=output)
         call_command('loadsignage', filename, type_default='label', name_field='name',
                      eid_field='wrong_eid_field', stdout=output)
-        elements_to_check = ['wrong_type_field', 'wrong_name_field', 'wrong_condition_field',
+        elements_to_check = ['wrong_type_field', 'wrong_name_field', 'wrong_condition_field', 'wrong_code_field',
                              'wrong_description_field', 'wrong_implantation_year_field', 'wrong_structure_field',
                              'wrong_eid_field']
         self.assertEqual(output.getvalue().count("set a default value"), 2)
-        self.assertEqual(output.getvalue().count("Change your"), 5)
-        self.assertEqual(output.getvalue().count("set a default value"), 2)
+        self.assertEqual(output.getvalue().count("Change your"), 6)
         for element in elements_to_check:
             self.assertIn("Field '{}' not found in data source".format(element),
                           output.getvalue())

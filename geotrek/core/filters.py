@@ -5,24 +5,43 @@ from django_filters import BooleanFilter, CharFilter, FilterSet
 
 from .models import Topology, Path, Trail
 
+from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.common.filters import OptionalRangeFilter, RightFilter
+from geotrek.common.filters import RightFilter
+from geotrek.common.functions import GeometryType
 from geotrek.maintenance import models as maintenance_models
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
 
 
 class ValidTopologyFilterSet(FilterSet):
-    is_valid = BooleanFilter(label=_("Valid topology"), method='filter_valid_topology')
+    # Do not forget to add geometry_types_allowed on models if you add this filterset
+    # geometry_types_allowed = ["LINESTRING"] for example
+    # Types possible with topologies are linestring and points only
+
+    if settings.TREKKING_TOPOLOGY_ENABLED:
+        is_valid_topology = BooleanFilter(label=_("Valid topology"), method='filter_valid_topology')
+    is_valid_geometry = BooleanFilter(label=_("Valid geometry"), method='filter_valid_geometry')
 
     def filter_valid_topology(self, qs, name, value):
         if value is not None:
             qs = qs.annotate(distinct_same_order=Count('aggregations__order', distinct=True),
                              same_order=Count('aggregations__order'))
             if value is True:
-                qs = qs.filter(geom__isvalid=True).exclude(geom__isnull=True).exclude(geom__isempty=True).filter(same_order=F('distinct_same_order'))
+                qs = qs.filter(same_order__gt=0, same_order=F('distinct_same_order'))
             elif value is False:
-                qs = qs.filter(Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True) | Q(distinct_same_order__lt=F('same_order')))
+                qs = qs.filter(Q(same_order=0) | Q(distinct_same_order__lt=F('same_order')))
+        return qs
+
+    def filter_valid_geometry(self, qs, name, value):
+        if value is not None:
+            qs = qs.annotate(geometry_type=GeometryType('geom'))
+            if value is True:
+                qs = qs.filter(geom__isvalid=True).exclude(geom__isnull=True).exclude(geom__isempty=True).filter(
+                    geometry_type__in=qs.model.geometry_types_allowed)
+            elif value is False:
+                qs = qs.filter(Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True) | ~Q(
+                    geometry_type__in=qs.model.geometry_types_allowed))
         return qs
 
 
@@ -77,18 +96,17 @@ class TopologyFilter(RightFilter):
             return qs.filter(pk__in=[topo.pk for topo in overlapping])
 
 
-class PathFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    length = OptionalRangeFilter(label=_('length'))
+class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['valid', 'length', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
+            ['valid', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
 
 
-class TrailFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
+class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')

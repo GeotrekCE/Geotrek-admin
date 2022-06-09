@@ -1,5 +1,5 @@
 ==========================
-FREQUENTLY ASKED QUESTIONS
+Frequently asked questions
 ==========================
 
 How are 3D informations obtained ?
@@ -65,7 +65,7 @@ objects.
 
 
 Why does Makina Corpus sell Geotrek, released under an Open-Source license ?
-------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 In the early years of the Free Software movement, it was quite common to pay
 in order to receive a physical copy (on floppy disks) of some GNU programs and source

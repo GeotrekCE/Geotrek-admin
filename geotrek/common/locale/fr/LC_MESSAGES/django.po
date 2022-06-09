@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 11:07+0000\n"
+"POT-Creation-Date: 2022-04-25 09:07+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -18,9 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.1.1\n"
-
-msgid "Merge"
-msgstr "Fusionner"
 
 msgid "content type"
 msgstr "type d'objet"
@@ -36,6 +33,13 @@ msgstr "min %s"
 msgid "max %s"
 msgstr "max %s"
 
+msgid "This field is required to publish object."
+msgstr "Ce champs est obligatoire pour publier l'objet."
+
+#, python-format
+msgid "Fields are missing to publish object: %(fields)s"
+msgstr "Ces champs doivent être renseignés pour publier l'objet : %(fields)s"
+
 #, python-brace-format
 msgid ""
 "Please select a choice related to all structures (without brackets) or "
@@ -49,6 +53,9 @@ msgstr "Données à importer depuis le réseau"
 
 msgid "Import"
 msgstr "Importer"
+
+msgid "Data to import from Suricate"
+msgstr ""
 
 msgid "File"
 msgstr "Fichier"
@@ -64,6 +71,18 @@ msgstr "Le fichier doit être de type ZIP."
 
 msgid "Launch Sync"
 msgstr "Lancer la synchro"
+
+msgid "Overview of the tricky passage"
+msgstr "Aperçu du passage délicat"
+
+msgid "Submit attachment"
+msgstr "Soumettre le fichier"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Update attachment"
+msgstr "Modifier le fichier"
 
 msgid "Global tiles syncing ..."
 msgstr "Synchro des tuiles globales..."
@@ -136,14 +155,71 @@ msgstr "En attente de publication"
 msgid "Pictogram"
 msgstr "Pictogramme"
 
+msgid "Merge"
+msgstr "Fusionner"
+
+msgid "Slope"
+msgstr "Pente"
+
+msgid "Width"
+msgstr "Largeur"
+
+msgid "Signage"
+msgstr "Signalétique"
+
+msgid "Image"
+msgstr "Image"
+
+msgid "Information accessibility"
+msgstr "Information accessibilité"
+
+msgid "License"
+msgstr "Licence"
+
+msgid "Creation Date"
+msgstr "Date de création"
+
+msgid "Creator"
+msgstr "Créateur"
+
+msgid "User that uploaded"
+msgstr "Utilisateur"
+
+msgid "Author"
+msgstr "Auteur"
+
+msgid "Original creator"
+msgstr "Créateur original"
+
+msgid "Filename"
+msgstr "Nom de fichier"
+
+msgid "Renames the file"
+msgstr "Renomme le fichier"
+
+msgid "Legend"
+msgstr "Légende"
+
+msgid "Details displayed"
+msgstr "Détails affichés"
+
+msgid "Attachment accessibility"
+msgstr "Pièce-jointe accéssibilité"
+
+msgid "Attachments accessibility"
+msgstr "Pièce-jointes accessibilité"
+
 msgid "Organism"
 msgstr "Organisme"
 
 msgid "Organisms"
 msgstr "Organismes"
 
-msgid "Creation Date"
-msgstr "Date de création"
+msgid "Attachment license"
+msgstr "Licence pièce-jointes"
+
+msgid "Attachment licenses"
+msgstr "Licences Pièce-jointes"
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
@@ -228,6 +304,18 @@ msgstr "Étiquette"
 
 msgid "Labels"
 msgstr "Étiquettes"
+
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Within a practice. Alphabetical order if blank"
+msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
+
+msgid "Alphabetical order if blank"
+msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
+
+msgid "Color"
+msgstr "Couleur"
 
 #, python-brace-format
 msgid "Line {line}"
@@ -330,6 +418,39 @@ msgstr "Importer du web."
 msgid "Init sync ..."
 msgstr "Début de synchro"
 
+msgid "Photos to illustrate information related to the accessibility of treks."
+msgstr ""
+"Photos pour illustrer les informations liées à l'accessibilité des "
+"randonnées."
+
+msgid "Photos accessibility"
+msgstr "Photos accessibilité"
+
+msgid "Accessibility type"
+msgstr "Type d'accessibilité"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Update"
+msgstr "Mettre à jour"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "No file attached for accessibility"
+msgstr "Pas de fichier attaché pour l'accessibilité"
+
+msgid "You are not allowed to see attachments."
+msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés."
+
+msgid "Confirm file deletion"
+msgstr "Confirmer la suppression du fichier"
+
+#, python-brace-format
+msgid "Are you sure to delete this file {file} ?"
+msgstr "Êtes vous sûr de vouloir supprimer ce fichier {file} ?"
+
 msgid "Paths"
 msgstr "Tronçons"
 
@@ -407,6 +528,9 @@ msgstr "L'objet est publié mais"
 msgid "looks incomplete;"
 msgstr "semble incomplet ;"
 
+msgid "these fields should be completed:"
+msgstr "ces champs doivent être renseignés :"
+
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide ;"
 
@@ -428,11 +552,28 @@ msgstr "Confirmation"
 msgid "Are you sure you want to sync ?"
 msgstr "Etes-vous certain de vouloir lancer la synchro ?"
 
-msgid "Cancel"
-msgstr "Annuler"
-
 msgid "Sync"
 msgstr "Sync"
+
+#, python-format
+msgid "%s day"
+msgstr "%s jour"
+
+#, python-format
+msgid "%s days"
+msgstr "%s jours"
+
+#, python-format
+msgid "%(hour)s h %(min)s"
+msgstr ""
+
+#, python-format
+msgid "%(hour)s h"
+msgstr ""
+
+#, python-format
+msgid "%s min"
+msgstr ""
 
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
@@ -455,6 +596,33 @@ msgstr "E"
 msgctxt "West"
 msgid "W"
 msgstr "O"
+
+msgid "Reports"
+msgstr ""
+
+#, python-format
+msgid "Add attachment %s"
+msgstr "Ajout du fichier %s"
+
+msgid "Your attachment was uploaded."
+msgstr "Votre fichier a été ajouté."
+
+#, python-format
+msgid "Update attachment %s"
+msgstr "Modifier le fichier attaché %s"
+
+msgid "Your attachment was updated."
+msgstr "Votre fichier a été modifié."
+
+#, python-format
+msgid "Remove attachment %s"
+msgstr "Suppression du fichier %s"
+
+msgid "Your attachment was deleted."
+msgstr "Votre fichier a été supprimé."
+
+msgid "You are not allowed to delete this attachment."
+msgstr "Vous n'êtes pas autorisé à supprimer ce fichier attaché."
 
 msgid "Any year"
 msgstr "N'importe quelle année"

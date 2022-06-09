@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-28 06:17+0000\n"
+"POT-Creation-Date: 2022-03-25 17:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,6 +35,9 @@ msgstr "Orientation"
 msgid "Wind"
 msgstr "Vent"
 
+msgid "One of the rating scale use is not part of the practice chosen"
+msgstr "Une des échelles de cotation ne fait pas partie de la pratique choisie"
+
 msgid "Children"
 msgstr "Enfants"
 
@@ -49,9 +52,10 @@ msgstr ""
 "Impossible d'ajouter des enfants car ce parcours est lui-même un enfant."
 
 #, python-brace-format
-msgid "Cannot use parent course {name} as a child course."
+msgid "Cannot use parent course {child.name} as a child course."
 msgstr ""
-"Impossible d'utiliser le parcours parent {name} comme itinéraire enfant."
+"Impossible d'utiliser le parcours parent {child.name} comme itinéraire "
+"enfant."
 
 msgid "Name"
 msgstr "Nom"
@@ -65,12 +69,6 @@ msgstr "Pratique"
 msgid "Practices"
 msgstr "Pratiques"
 
-msgid "Order"
-msgstr "Ordre"
-
-msgid "Within a practice. Alphabetical order if blank"
-msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
-
 msgid "Rating scale"
 msgstr "Échelle de cotation"
 
@@ -79,12 +77,6 @@ msgstr "Échelles de cotation"
 
 msgid "Scale"
 msgstr "Échelle"
-
-msgid "Description"
-msgstr "Description"
-
-msgid "Alphabetical order if blank"
-msgstr "Ordre alphabétique si vide"
 
 msgid "Rating"
 msgstr "Cotation"
@@ -97,6 +89,12 @@ msgstr "Type de site"
 
 msgid "Site types"
 msgstr "Types de site"
+
+msgid "Course type"
+msgstr "Type de parcours"
+
+msgid "Course types"
+msgstr "Types de parcours"
 
 msgid "↑ N"
 msgstr "↑ N"
@@ -152,6 +150,9 @@ msgstr "Emplacement"
 msgid "Parent"
 msgstr "Parent"
 
+msgid "Description"
+msgstr "Description"
+
 msgid "Complete description"
 msgstr "Description complète"
 
@@ -168,7 +169,7 @@ msgid "Main attraction and interest"
 msgstr "Attraction principal et intérêts"
 
 msgid "Advice"
-msgstr "Recommandations"
+msgstr "Recommandation"
 
 msgid "Risks, danger, best period, ..."
 msgstr "Risques, danger, meilleure période, ..."
@@ -197,11 +198,17 @@ msgstr "Portail"
 msgid "Source"
 msgstr "Source"
 
+msgid "Excluded POIs"
+msgstr ""
+
 msgid "Web links"
 msgstr "Liens web"
 
 msgid "External resources"
 msgstr "Ressources externes"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
 
 msgid "Type"
 msgstr "Type"
@@ -224,11 +231,11 @@ msgstr "Ajouter un nouveau site outdoor"
 msgid "Sites"
 msgstr "Sites"
 
+msgid "Parcours"
+msgstr "Parcours"
+
 msgid "Treks"
 msgstr "Itinéraires"
-
-msgid "POIs"
-msgstr "POI"
 
 msgid "Services"
 msgstr "Services"
@@ -251,14 +258,26 @@ msgstr "Événements touristiques"
 msgid "Interventions"
 msgstr "Interventions"
 
-msgid "Site"
-msgstr "Site"
+msgid "Ratings description"
+msgstr "Description des cotations"
+
+msgid "Gear"
+msgstr "Matériel"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
 
 msgid "Equipment"
 msgstr "Équipement"
 
 msgid "Height"
 msgstr "Hauteur"
+
+msgid "Points of reference"
+msgstr ""
 
 msgid "Outdoor course"
 msgstr "Parcours outdoor"
@@ -272,11 +291,20 @@ msgstr "Ajouter un nouveau parcours outdoor"
 msgid "Courses"
 msgstr "Parcours"
 
+msgid "Public print"
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
+msgid "Public print booklet"
+msgstr "Impression livret grand public"
+
+msgid "Print booklet"
+msgstr "Impr. livret"
+
 msgid "Tree view"
 msgstr "Vue arborescente"
-
-msgid "Add a course"
-msgstr "Ajouter un parcours outdoor"
 
 msgid "Attributes"
 msgstr "Informations"
@@ -314,6 +342,9 @@ msgstr "Situation géographique"
 msgid "All useful information"
 msgstr "Toutes les infos pratiques"
 
+msgid "Add a course"
+msgstr "Ajouter un parcours outdoor"
+
 msgid "Add a child site"
 msgstr "Ajouter site enfant"
 
@@ -323,26 +354,5 @@ msgstr "Ajouter un site frère"
 msgid "Parents"
 msgstr "Parents"
 
-msgid "Practical info"
-msgstr "Informations pratiques"
-
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
-
-msgid "Ratings description"
-msgstr "Description des cotations"
-
-msgid "Gear"
-msgstr "Matériel"
-
-msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
-msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
-
-msgid "Duration"
-msgstr "Durée"
-
-msgid "Course type"
-msgstr "Type de parcours"
-
-msgid "Course types"
-msgstr "Types de parcours"

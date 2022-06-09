@@ -9,16 +9,24 @@
       <style type="text/css">
         {% include template_css %}
 
-        .intro-left .teaser,
         .meta-items-title,
         .advice-title,
+        .accessibility-title,
+        .label-title,
+        .gear-title,
+        .equipment-title,
         .elevation-title,
         .half-block h2,
-        .block h2,
-        .information-desks h2 {
+        .block h2 {
           color: {{ primary_color }};
         }
-
+        /* TODO: Remove when the map generation is fixed */
+        .full-map img {
+            max-height: 20cm;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
       </style>
     {% endblock style %}
   </head>
@@ -26,7 +34,9 @@
     {% block body %}
       <header>
         <div class="logo">
-          <img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}" alt="">
+          {% block logo %}
+            <img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}" alt="">
+          {% endblock logo %}
         </div>
         <div class="url">
           {% block url %}
@@ -36,9 +46,9 @@
         </div>
       </header>
       <div class="gray">
-        {% if object.site.practice.pictogram %}
-          <div class="main-icon category-S{{ object.site.practice.pk }}">
-            <img src="file://{{ object.site.practice.pictogram.path }}" alt="">
+        {% if object.parent_sites.first.practice.pictogram %}
+          <div class="main-icon category-S{{ object.parent_sites.first.practice.pk }}">
+            <img src="file://{{ object.parent_sites.first.practice.pictogram.path }}" alt="">
           </div>
         {% endif %}
         <div class="main-title">
@@ -49,51 +59,183 @@
           </h2>
         </div>
         <hr>
-        {% if object.picture_print %}
-          <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
-          {% if object.picture_print.legend or object.picture_print.author %}
-            <legend>
-              {% trans "Attribution" %} :
-              {{ object.picture_print.legend }}
-              {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
-            </legend>
+        <div class="main-picture-map">
+          {% if object.picture_print %}
+            <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div>
+            <div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+
+          {% else %}
+            <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
           {% endif %}
-        {% else %}
-          <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+        </div>
+        {% if object.picture_print.legend or object.picture_print.author %}
+          <legend>
+            {{ object.picture_print.legend }}
+            {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
+          </legend>
         {% endif %}
       </div>
       <div class="intro">
+        <div class="intro-left">
+          {% if object.description %}
+            <section class="teaser text-content">
+              {{ object.description|safe }}
+            </section>
+          {% endif %}
+        </div>
         <div class="meta-items">
           <div class="meta-items-title">{% trans "Useful information" %}</div>
           <section class="meta-items-list">
-            {% if object.site.practice %}
+            {% if object.parent_sites.first.practice %}
               <span class="meta-item">
                 <span class="meta-item-label">{% trans "Practice" %}</span>
-                <span class="meta-item-value">{{ object.site.practice }}</span>
+                <span class="meta-item-value">{{ object.parent_sites.first.practice }}</span>
               </span>
             {% endif %}
+            {% if object.height %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Height" %}</span>
+                <span class="meta-item-value">{{ object.height }} m</span>
+              </span>
+            {% endif %}
+            {% if object.duration %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Duration" %}</span>
+                <span class="meta-item-value">{{ object.duration|duration }}</span>
+              </span>
+            {% endif %}
+            {% if object.type %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Type" %}</span>
+                <span class="meta-item-value">{{ object.type }}</span>
+              </span>
+            {% endif %}
+            {% for rating in object.ratings.all%}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans rating.scale.name %}</span>
+                <span class="meta-item-value">{% trans rating.name %}</span>
+              </span>
+            {% endfor %}
           </section>
         </div>
       </div>
-      {% block description %}
-        {% if object.description %}
-          <div class="inner-title">
-            <h2>{% trans "Description" %}</h2>
-          </div>
-          <section class="description">
-            <div class="text-content">{{ object.description|safe }}</div>
-          </section>
-        {% endif %}
-      {% endblock description %}
       <div class="inner-title">
         <h2>{% trans "Geographical location" %}</h2>
       </div>
       <div class="full-map">
         <img src="file://{{ map_path }}" alt="">
       </div>
+      {% block poisSummary %}
+        <section class="pois-summary">
+          {% if pois %}
+            {% for poi in pois %}
+              <div class="poi">
+                  {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
+                  {{ poi.name }} ({{ poi.letter }})
+              </div>
+            {% endfor %}
+          {% endif %}
+        </section>
+      {% endblock poisSummary %}
       <div class="inner-title">
         <h2>{% trans "All useful information" %}</h2>
       </div>
+      {% block advice %}
+        {% if object.advice %}
+          <div class="advice">
+            <div class="advice-title">
+              <div class="advice-icon">
+                <img src="file://{{ STATIC_ROOT }}/trekking/advice.svg">
+              </div>
+              {% trans "Advice" %}
+            </div>
+            <div class="advice-content">{{ object.advice | safe }}</div>
+          </div>
+        {% endif %}
+      {% endblock advice %}
+      {% block gear %}
+        {% if object.gear %}
+          <div class="gear">
+            <div class="gear-title">
+              <div class="gear-icon">
+                <img src="file://{{ STATIC_ROOT }}/trekking/gear.svg">
+              </div>
+              {% trans "Gear" %}
+            </div>
+            <div class="gear-content">{{ object.gear | safe }}</div>
+          </div>
+        {% endif %}
+      {% endblock gear %}
+      {% block equipment %}
+        {% if object.equipment %}
+          <div class="equipment">
+            <div class="equipment-title">
+              {% trans "Equipment" %}
+            </div>
+            <div class="equipment-content">{{ object.equipment | safe }}</div>
+          </div>
+        {% endif %}
+      {% endblock equipment %}
+      {% block accessibility %}
+        {% if object.accessibility %}
+          <div class="accessibility">
+            <div class="accessibility-title">
+              {% trans "Accessibility" %}
+            </div>
+            <div class="accessibility-content">{{ object.accessibility | safe }}</div>
+          </div>
+        {% endif %}
+      {% endblock accessibility %}
+      {% block source %}
+        {% if object.source.all %}
+          <section class="half-block source">
+            <h2>{% trans "Source" %}</h2>
+            {% for s in object.source.all %}
+              <div class="source-content">
+                <div class="source-pictogram">
+                  {% if s.pictogram %}<img src="file://{{ s.pictogram.path }}">{% endif %}
+                </div>
+                <div class="source-text">
+                  <div class="source-name">
+                    {{ s.name }}
+                  </div>
+                  <div class="source-website">
+                    {% if s.website %}{{ s.website }}{% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </section>
+        {% endif %}
+      {% endblock source %}
+      {% block poisDetails %}
+        <section class="pois-details">
+          {% if pois %}
+            <div class="inner-title">
+              <h2>{% trans "On your path..." %}</h2>
+            </div>
+            {% for poi in pois %}
+              <div class="poi">
+                <div class="thumbnail">
+                  {% if poi.thumbnail %}
+                    <img src="file://{{ poi.thumbnail.path }}">
+                  {% endif %}
+                </div>
+                <div class="content with-pic">
+                  <h3>
+                    {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
+                    {{ poi.name }} ({{ poi.letter }})
+                  </h3>
+                  <div class="description">{{ poi.description|safe }}</div>
+                  {% if poi.thumbnail and poi.thumbnail.author %}
+                    <legend>{% trans "Attribution" %} : {{ poi.thumbnail.author }}</legend>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </section>
+      {% endblock poisDetails %}
     {% endblock body %}
     {% block footer %}
       <div id="footer">

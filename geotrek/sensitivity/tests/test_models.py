@@ -2,8 +2,8 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 
-from geotrek.sensitivity.factories import SensitiveAreaFactory, SpeciesFactory
-from geotrek.trekking.factories import TrekFactory
+from geotrek.sensitivity.tests.factories import SensitiveAreaFactory, SpeciesFactory
+from geotrek.trekking.tests.factories import TrekFactory
 
 
 class SensitiveAreaModelTest(TestCase):

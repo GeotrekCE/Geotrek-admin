@@ -1,43 +1,34 @@
-from datetime import datetime
 import json
+from datetime import datetime
 from unittest import mock
-from django.conf import settings
 
-from django.test.utils import override_settings
-from django.utils.translation import gettext_lazy as _
-from django.test import TestCase
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core import mail
+from django.core.cache import caches
+from django.test import TestCase
+from django.test.utils import override_settings
+from django.urls.base import reverse
+from django.utils.module_loading import import_string
+from django.utils.translation import gettext_lazy as _
+from freezegun import freeze_time
 
-from mapentity.factories import SuperUserFactory, UserFactory
-
-from geotrek.common.tests import CommonTest, TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
-from geotrek.feedback import models as feedback_models
-from geotrek.feedback import factories as feedback_factories
+from geotrek.authent.tests.base import AuthentFixturesMixin
+from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory, ReportInterventionFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 from rest_framework.test import APIClient
-
-
-class ReportModelTest(TestCase):
-    """Test some custom model"""
-
-    def test_default_no_status(self):
-        my_report = feedback_factories.ReportFactory()
-        self.assertEqual(my_report.status, None)
-
-    def test_default_status_exists(self):
-        self.default_status = feedback_factories.ReportStatusFactory(label="Nouveau")
-        my_report = feedback_factories.ReportFactory()
-        self.assertEqual(my_report.status, self.default_status)
+from geotrek.common.tests import CommonTest, TranslationResetMixin, GeotrekAPITestCase
+from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
+                                           get_dummy_uploaded_image,
+                                           get_dummy_uploaded_image_svg)
+from geotrek.feedback import models as feedback_models
+from geotrek.feedback.tests import factories as feedback_factories
+from geotrek.feedback.tests.test_suricate_sync import SURICATE_REPORT_SETTINGS, test_for_all_suricate_modes, test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
 
 
 class ReportViewsetMailSend(TestCase):
 
-    @override_settings(SURICATE_REPORT_SETTINGS={"URL": "http://suricate.example.com",
-                                                 "ID_ORIGIN": "geotrek",
-                                                 "PRIVATE_KEY_CLIENT_SERVER": "",
-                                                 "PRIVATE_KEY_SERVER_CLIENT": "",
-                                                 "AUTH": ("", "")})
+    @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
     @override_settings(SURICATE_REPORT_ENABLED=True)
     @override_settings(SURICATE_MANAGEMENTT_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -50,8 +41,8 @@ class ReportViewsetMailSend(TestCase):
             '/api/en/reports/report',
             {
                 'geom': '{\"type\":\"Point\",\"coordinates\":[4.3728446995373815,43.856935212211454]}',
-                'email': 'test@geotrek.local',
-                'comment': 'Test comment',
+                'email': 'test_post@geotrek.local',
+                'comment': 'Test comment <>',
                 'activity': feedback_factories.ReportActivityFactory.create().pk,
                 'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
             })
@@ -59,9 +50,59 @@ class ReportViewsetMailSend(TestCase):
         self.assertEqual(mail.outbox[1].subject, "Geotrek : Signal a mistake")
         self.assertIn("We acknowledge receipt of your feedback", mail.outbox[1].body)
         self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
+        created_report = feedback_models.Report.objects.filter(email="test_post@geotrek.local").first()
+        self.assertEqual(created_report.comment, "Test comment &lt;&gt;")
 
 
-class ReportViewsTest(CommonTest):
+class ReportSerializationOptimizeTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+        cls.classified_status = feedback_factories.ReportStatusFactory(identifier='classified', label="Classé sans suite")
+        cls.filed_status = feedback_factories.ReportStatusFactory(identifier='filed', label="Classé sans suite")
+        cls.classified_report_1 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.classified_report_2 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.classified_report_3 = feedback_factories.ReportFactory(status=cls.classified_status)
+        cls.filed_report = feedback_factories.ReportFactory(status=cls.filed_status)
+
+    def setUp(cls):
+        cls.client.force_login(cls.user)
+
+    @test_for_workflow_mode
+    def test_report_layer_cache(self):
+        """
+        This test checks report's cache
+        """
+        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
+
+        # There are 5 queries to get layer
+        with self.assertNumQueries(5):
+            response = self.client.get("/api/report/report.geojson")
+        self.assertEqual(len(response.json()['features']), 4)
+
+        # We check the content was created and cached
+        last_update_status = feedback_models.Report.latest_updated()
+        geojson_lookup = f"fr_report_{last_update_status.isoformat()}_{self.user.pk}_geojson_layer"
+        cache_content = cache.get(geojson_lookup)
+        self.assertEqual(response.content, cache_content)
+
+        # We have 1 less query because the generation of report was cached
+        with self.assertNumQueries(4):
+            self.client.get("/api/report/report.geojson")
+
+        self.classified_report_4 = feedback_factories.ReportFactory(status=self.classified_status)
+        # Bypass workflow's save method does not actually save
+        self.classified_report_4.save_no_suricate()
+
+        # Cache is updated when we add a report
+        with self.assertNumQueries(5):
+            self.client.get("/api/report/report.geojson")
+
+        self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
+
+
+class ReportViewsTest(GeotrekAPITestCase, CommonTest):
     model = feedback_models.Report
     modelfactory = feedback_factories.ReportFactory
     userfactory = SuperUserFactory
@@ -69,6 +110,7 @@ class ReportViewsTest(CommonTest):
         'type': 'Point',
         'coordinates': [3.0, 46.5],
     }
+    extra_column_list = ['email', 'comment', 'advice']
 
     def get_expected_json_attrs(self):
         return {
@@ -77,8 +119,18 @@ class ReportViewsTest(CommonTest):
             'comment': self.obj.comment,
             'related_trek': None,
             'email': self.obj.email,
-            'status': None,
+            'status': self.obj.status_id,
             'problem_magnitude': self.obj.problem_magnitude.pk
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'activity': self.obj.activity.label,
+            'category': self.obj.category.label,
+            'date_update': '17/03/2020 00:00:00',
+            'id': self.obj.pk,
+            'status': str(self.obj.status),
+            'eid': f'<a data-pk="{self.obj.pk}" href="/report/{self.obj.pk}/" title="Report {self.obj.pk}">Report {self.obj.pk}</a>'
         }
 
     def get_bad_data(self):
@@ -96,7 +148,6 @@ class ReportViewsTest(CommonTest):
         """Test report created if `name` in data"""
         data = self.get_good_data()
         data['name'] = 'Anonymous'
-        self.login()
         response = self.client.post(self._get_add_url(), data)
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
@@ -106,8 +157,6 @@ class ReportViewsTest(CommonTest):
     def test_crud_status(self):
         if self.model is None:
             return  # Abstract test should not run
-
-        self.login()
 
         obj = self.modelfactory()
 
@@ -146,31 +195,59 @@ class ReportViewsTest(CommonTest):
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 302)
 
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'feedback_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'eid', 'activity', 'email', 'comment', 'advice'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'feedback_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'email', 'comment', 'advice'])
+
+    @freeze_time("2020-03-17")
+    def test_api_datatables_list_for_model_in_suricate_mode(self):
+        self.report = feedback_factories.ReportFactory()
+        with override_settings(SURICATE_WORKFLOW_ENABLED=True):
+            list_url = '/api/{modelname}/drf/{modelname}s.datatables'.format(modelname=self.model._meta.model_name)
+            response = self.client.get(list_url)
+            self.assertEqual(response.status_code, 200, f"{list_url} not found")
+            content_json = response.json()
+            datatable_attrs = {
+                'activity': self.report.activity.label,
+                'category': self.report.category.label,
+                'date_update': '17/03/2020 00:00:00',
+                'id': self.report.pk,
+                'status': str(self.report.status),
+                'eid': f'<a data-pk="{self.report.pk}" href="/report/{self.report.pk}/" title="Report {self.report.eid}">Report {self.report.eid}</a>'
+            }
+            self.assertEqual(content_json, {'data': [datatable_attrs],
+                                            'draw': 1,
+                                            'recordsFiltered': 1,
+                                            'recordsTotal': 1})
+
 
 class BaseAPITest(TestCase):
-    def setUp(self):
-        self.user = UserFactory(password='booh')
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory(password='booh')
         perm = Permission.objects.get_by_natural_key('add_report', 'feedback', 'report')
-        self.user.user_permissions.add(perm)
+        cls.user.user_permissions.add(perm)
 
-        self.login_url = '/login/'
-
-    def login(self):
-        response = self.client.get(self.login_url)
-        csrftoken = response.cookies.get('csrftoken', '')
-        response = self.client.post(self.login_url,
-                                    {'username': self.user.username,
-                                     'password': 'booh',
-                                     'csrfmiddlewaretoken': csrftoken},
-                                    allow_redirects=False)
-        self.assertEqual(response.status_code, 302)
+        cls.login_url = '/login/'
 
 
 class CreateReportsAPITest(BaseAPITest):
-    def setUp(self):
-        super().setUp()
-        self.add_url = '/api/en/reports/report'
-        self.data = {
+    @classmethod
+    def setUpTestData(cls):
+        cls.add_url = '/api/en/reports/report'
+        cls.data = {
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
             'email': 'yeah@you.com',
             'activity': feedback_factories.ReportActivityFactory.create().pk,
@@ -181,7 +258,7 @@ class CreateReportsAPITest(BaseAPITest):
         client = APIClient()
         response = client.post(self.add_url, data=data,
                                allow_redirects=False)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, self.add_url)
 
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)
@@ -206,9 +283,9 @@ class CreateReportsAPITest(BaseAPITest):
 
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
-    def setUp(self):
-        super().setUp()
-        self.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
+    @classmethod
+    def setUpTestData(cls):
+        cls.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
 
     def test_categories_can_be_obtained_as_json(self):
         response = self.client.get('/api/en/feedback/categories.json')
@@ -225,11 +302,11 @@ class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
 
 
 class ListOptionsTest(TranslationResetMixin, BaseAPITest):
-    def setUp(self):
-        super().setUp()
-        self.activity = feedback_factories.ReportActivityFactory(label_it='Hiking')
-        self.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
-        self.pb_magnitude = feedback_factories.ReportProblemMagnitudeFactory(label_it='Possible')
+    @classmethod
+    def setUpTestData(cls):
+        cls.activity = feedback_factories.ReportActivityFactory(label_it='Hiking')
+        cls.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
+        cls.pb_magnitude = feedback_factories.ReportProblemMagnitudeFactory(label_it='Possible')
 
     def test_options_can_be_obtained_as_json(self):
         response = self.client.get('/api/en/feedback/options.json')
@@ -256,3 +333,103 @@ class ListOptionsTest(TranslationResetMixin, BaseAPITest):
         r = feedback_factories.ReportFactory(created_in_suricate=date_time_1, last_updated_in_suricate=date_time_2)
         self.assertEqual("03/24/2021 8:51 p.m.", r.created_in_suricate_display)
         self.assertEqual("03/28/2021 5:51 a.m.", r.last_updated_in_suricate_display)
+
+
+class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.workflow_manager_user = UserFactory()
+        cls.normal_user = UserFactory()
+        cls.super_user = SuperUserFactory()
+        cls.classified_status = feedback_factories.ReportStatusFactory(identifier="classified")
+        feedback_factories.WorkflowManagerFactory(user=cls.workflow_manager_user)
+        cls.admin = SuperUserFactory(username="Admin", password="drowssap")
+        cls.report = feedback_factories.ReportFactory(assigned_user=cls.normal_user, status=cls.classified_status)
+        cls.report = feedback_factories.ReportFactory(assigned_user=cls.workflow_manager_user, status=cls.classified_status)
+        cls.report = feedback_factories.ReportFactory(status=cls.classified_status)
+        permission = Permission.objects.get(name__contains='Can read Report')
+        cls.workflow_manager_user.user_permissions.add(permission)
+        cls.normal_user.user_permissions.add(permission)
+        cls.intervention = ReportInterventionFactory()
+        cls.unrelated_intervention = InfrastructureInterventionFactory()
+
+    @test_for_workflow_mode
+    def test_manager_sees_everything(self):
+        self.client.force_login(user=self.workflow_manager_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 4)
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        self.assertEqual(len(response.json()['features']), 3)
+
+    @test_for_workflow_mode
+    def test_normal_user_sees_only_assigned_reports(self):
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 1)
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        self.assertEqual(len(response.json()['features']), 1)
+
+    @test_for_workflow_mode
+    def test_super_user_sees_everything(self):
+        self.client.force_login(user=self.super_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 4)
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        self.assertEqual(len(response.json()['features']), 3)
+
+    @test_for_report_and_basic_modes
+    def test_normal_user_sees_everything_1(self):
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 4)
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        self.assertEqual(len(response.json()['features']), 3)
+
+    @test_for_workflow_mode
+    def test_cannot_delete_report_intervention(self):
+        self.client.force_login(user=self.admin)
+        response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("disabled delete", response.content.decode("utf-8"))
+
+    @test_for_workflow_mode
+    def test_can_delete_closed_report_intervention(self):
+        self.client.force_login(user=self.admin)
+        report = self.intervention.target
+        report.status = feedback_factories.ReportStatusFactory(identifier='solved')
+        report.save()
+        response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn("delete", response.content.decode("utf-8"))
+        self.assertNotIn("disabled delete", response.content.decode("utf-8"))
+
+    @test_for_report_and_basic_modes
+    @test_for_management_mode
+    def test_can_delete_report_intervention(self):
+        self.client.force_login(user=self.admin)
+        response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("delete", response.content.decode("utf-8"))
+        self.assertNotIn("disabled delete", response.content.decode("utf-8"))
+
+    @test_for_all_suricate_modes
+    def test_can_delete_intervention(self):
+        self.client.force_login(user=self.admin)
+        response = self.client.get(f"/intervention/edit/{self.unrelated_intervention.pk}/", follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("delete", response.content.decode("utf-8"))
+        self.assertNotIn("disabled delete", response.content.decode("utf-8"))
+
+    @test_for_management_mode
+    def test_normal_user_sees_everything_2(self):
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get(reverse('feedback:report_list'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data['object_list'].count(), 4)
+        response = self.client.get(f"/api/report/report.geojson?status={self.classified_status.pk}")
+        self.assertEqual(len(response.json()['features']), 3)

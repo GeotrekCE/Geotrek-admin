@@ -1,30 +1,47 @@
-from rest_framework.serializers import ModelSerializer, ReadOnlyField
+import json
+
+from django.conf import settings
+from drf_dynamic_fields import DynamicFieldsMixin
+from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
-from geotrek.common.serializers import (PublishableSerializerMixin, TranslatedModelSerializer,
-                                        LabelSerializer, ThemeSerializer, TargetPortalSerializer,
-                                        RecordSourceSerializer)
-from geotrek.outdoor.models import Practice, Site, Course
+from geotrek.common.serializers import (LabelSerializer,
+                                        PublishableSerializerMixin,
+                                        RecordSourceSerializer,
+                                        TargetPortalSerializer,
+                                        ThemeSerializer,
+                                        TranslatedModelSerializer)
+from geotrek.outdoor.models import Course, Site, Practice
 from geotrek.tourism.serializers import InformationDeskSerializer
 from geotrek.trekking.serializers import WebLinkSerializer
 from geotrek.zoning.serializers import ZoningSerializerMixin
 
 
-class PracticeSerializer(ModelSerializer):
+class PracticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Practice
         fields = ('id', 'name')
 
 
-class SiteTypeSerializer(ModelSerializer):
+class SiteTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Practice
         fields = ('id', 'name')
 
 
-class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
+class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.CharField(source='name_display')
+    super_practices = serializers.CharField(source='super_practices_display')
+    structure = serializers.SlugRelatedField('name', read_only=True)
+
+    class Meta:
+        model = Site
+        fields = "__all__"
+
+
+class SiteAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
     practice = PracticeSerializer()
     structure = StructureSerializer()
     labels = LabelSerializer(many=True)
@@ -34,42 +51,59 @@ class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Translat
     information_desks = InformationDeskSerializer(many=True)
     web_links = WebLinkSerializer(many=True)
     type = SiteTypeSerializer()
-    children = ReadOnlyField(source='published_children')
+    children = serializers.ReadOnlyField(source='published_children')
 
     class Meta:
         model = Site
-        fields = ('id', 'structure', 'name', 'practice', 'description', 'description_teaser',
-                  'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
-                  'information_desks', 'web_links', 'type', 'parent', 'children', 'eid',
-                  'orientation', 'wind', 'ratings') + \
-            ZoningSerializerMixin.Meta.fields + \
-            PublishableSerializerMixin.Meta.fields
+        fields = (
+            'id', 'structure', 'name', 'practice', 'accessibility', 'description', 'description_teaser',
+            'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
+            'information_desks', 'web_links', 'type', 'parent', 'children', 'eid',
+            'orientation', 'wind', 'ratings'
+        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
 
 
-class SiteGeojsonSerializer(GeoFeatureModelSerializer, SiteSerializer):
+class SiteAPIGeojsonSerializer(GeoFeatureModelSerializer, SiteAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = GeometryField(read_only=True, precision=7)
 
-    class Meta(SiteSerializer.Meta):
+    class Meta(SiteAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = SiteSerializer.Meta.fields + ('api_geom', )
+        fields = SiteAPISerializer.Meta.fields + ('api_geom', )
 
 
-class CourseSerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
-    structure = StructureSerializer()
+class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    structure = serializers.SlugRelatedField('name', read_only=True)
+    parent_sites = serializers.CharField(source='parent_sites_display')
+    name = serializers.CharField(source='name_display')
 
     class Meta:
         model = Course
-        fields = ('id', 'structure', 'name', 'site', 'description', 'duration', 'advice',
-                  'equipment', 'height', 'eid', 'ratings', 'ratings_description', 'gear', 'type') + \
-            ZoningSerializerMixin.Meta.fields + \
-            PublishableSerializerMixin.Meta.fields
+        fields = "__all__"
 
 
-class CourseGeojsonSerializer(GeoFeatureModelSerializer, CourseSerializer):
+class CourseAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
+    structure = StructureSerializer()
+    points_reference = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Course
+        fields = (
+            'id', 'structure', 'name', 'parent_sites', 'description', 'duration', 'advice', 'points_reference',
+            'equipment', 'accessibility', 'height', 'eid', 'ratings', 'ratings_description', 'gear', 'type'
+        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
+
+    def get_points_reference(self, obj):
+        if not obj.points_reference:
+            return None
+        geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
+        return json.loads(geojson)
+
+
+class CourseAPIGeojsonSerializer(GeoFeatureModelSerializer, CourseAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = GeometryField(read_only=True, precision=7)
 
-    class Meta(CourseSerializer.Meta):
+    class Meta(CourseAPISerializer.Meta):
         geo_field = 'api_geom'
-        fields = CourseSerializer.Meta.fields + ('api_geom', )
+        fields = CourseAPISerializer.Meta.fields + ('api_geom', )

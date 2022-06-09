@@ -8,7 +8,7 @@ class SyncRando:
         self.global_sync = sync
 
     def sync(self, lang):
-        self.global_sync.sync_geojson(lang, views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
+        self.global_sync.sync_geojson(lang, views.SensitiveAreaAPIViewSet, 'sensitiveareas.geojson',
                                       params={'practices': 'Terrestre'})
         for area in models.SensitiveArea.objects.existing().filter(published=True):
             name = os.path.join('api', lang, 'sensitiveareas', '{obj.pk}.kml'.format(obj=area))

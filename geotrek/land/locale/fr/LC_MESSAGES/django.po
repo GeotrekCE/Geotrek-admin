@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2022-01-11 16:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,43 +18,53 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 msgid "Land"
-msgstr "Foncier"
+msgstr "Statuts"
 
-msgid "Physical type"
-msgstr "Type physique"
-
-msgid "Land type"
+msgid "Land edge"
 msgstr "Type foncier"
 
-msgid "Competence"
-msgstr "Compétence"
+msgid "Physical edge"
+msgstr "Type de voie"
 
-msgid "Signage management"
-msgstr "Gestion signalétique"
+msgid "Competence edge"
+msgstr "Compétence sentiers"
 
-msgid "Work management"
-msgstr "Gestion de travaux"
+msgid "Signage management edge"
+msgstr "Gestionnaire signalétique"
+
+msgid "Work management edge"
+msgstr "Gestionnaire travaux"
+
+msgid "Status"
+msgstr "Statuts"
+
+
+msgid "Statuses"
+msgstr "Statuts"
 
 msgid "Name"
 msgstr "Nom"
 
+msgid "Physical type"
+msgstr "Type de voie"
+
 msgid "Physical types"
-msgstr "Types physique"
+msgstr "Types de voie"
 
 msgid "External id"
 msgstr "ID externe"
 
-msgid "Physical edge"
-msgstr "Tronçon physique"
-
 msgid "Physical edges"
-msgstr "Tronçons physique"
+msgstr "Types de voie"
 
 msgid "Right of way"
 msgstr "Droit de passage"
 
+msgid "Land type"
+msgstr "Type foncier"
+
 msgid "Land types"
-msgstr "Types foncier"
+msgstr "Types fonciers"
 
 msgid "Owner"
 msgstr "Propriétaire"
@@ -62,53 +72,38 @@ msgstr "Propriétaire"
 msgid "Agreement"
 msgstr "Conventionné"
 
-msgid "Land edge"
-msgstr "Statut"
-
 msgid "Land edges"
-msgstr "Statuts"
+msgstr "Types fonciers"
 
 msgid "Organism"
 msgstr "Organisme"
 
-msgid "Competence edge"
-msgstr "Tronçon de compétence"
-
 msgid "Competence edges"
-msgstr "Tronçons de compétence"
-
-msgid "Work management edge"
-msgstr "Tronçon de gestion de travaux"
+msgstr "Compétences sentiers"
 
 msgid "Work management edges"
-msgstr "Tronçons de gestion de travaux"
-
-msgid "Signage management edge"
-msgstr "Tronçon de gestion signalétique"
+msgstr "Gestionnaires travaux"
 
 msgid "Signage management edges"
-msgstr "Tronçons de gestion signalétique"
+msgstr "Gestionnaires signalétique"
 
 msgid "Add a new land edge"
-msgstr "Renseigner la nature foncière"
+msgstr "Ajouter un type foncier"
 
 msgid "Add a new physical edge"
-msgstr "Renseigner la nature physique"
+msgstr "Ajouter un type de voie"
 
 msgid "Add a new competence edge"
-msgstr "Renseigner l'organisme compétent"
+msgstr "Ajouter une compétence sentier"
 
 msgid "Add a new work management edge"
-msgstr "Renseigner le gestionnaire travaux"
+msgstr "Ajouter un gestionnaire travaux"
 
 msgid "Add a new signage management edge"
-msgstr "Renseigner le gestionnaire signalétique"
+msgstr "Ajouter un gestionnaire signalétique"
 
-msgid "Competence zones"
-msgstr "Zones de compétence"
-
-msgid "Competence paths"
-msgstr "Compétence sentiers"
+msgid "Competence"
+msgstr "Compétence"
 
 msgid "Yes"
 msgstr "Oui"

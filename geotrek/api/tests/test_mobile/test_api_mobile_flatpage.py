@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.test.testcases import TestCase
 from django.utils import translation
 
-from geotrek.flatpages.factories import FlatPageFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 
 FLATPAGE_DETAIL_PROPERTIES_JSON_STRUCTURE = sorted([

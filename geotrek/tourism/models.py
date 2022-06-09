@@ -1,30 +1,27 @@
-import os
 import logging
-
+import os
+import uuid
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.postgres.indexes import GistIndex
 from django.db.models.query_utils import Q
-from django.utils.translation import gettext_lazy as _
 from django.utils.formats import date_format
-
-from colorfield.fields import ColorField
+from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text
+from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Topology
-from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
-                                   PictogramMixin, OptionalPictogramMixin,
-                                   PublishableMixin, PicturesMixin,
-                                   AddPropertyMixin)
-from geotrek.common.models import Theme, ReservationSystem
+from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
+                                          PicturesMixin, PublishableMixin, TimeStampedModelMixin)
+from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.utils import intersecting
+from geotrek.core.models import Topology
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-
-from extended_choices import Choices
+from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.manager import MultilingualManager
@@ -41,6 +38,19 @@ class InformationDeskType(PictogramMixin):
     class Meta:
         verbose_name = _("Information desk type")
         verbose_name_plural = _("Information desk types")
+        ordering = ['label']
+
+    def __str__(self):
+        return self.label
+
+
+class LabelAccessibility(PictogramMixin):
+
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Label accessibility")
+        verbose_name_plural = _("Labels accessibility")
         ordering = ['label']
 
     def __str__(self):
@@ -70,7 +80,9 @@ class InformationDesk(models.Model):
     municipality = models.CharField(verbose_name=_("Municipality"),
                                     blank=True, null=True,
                                     max_length=256)
-
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
+    label_accessibility = models.ForeignKey(LabelAccessibility, verbose_name=_("Label accessibility"),
+                                            on_delete=models.PROTECT, related_name='desks', blank=True, null=True)
     geom = models.PointField(verbose_name=_("Emplacement"),
                              blank=True, null=True,
                              srid=settings.SRID, spatial_index=False)
@@ -81,6 +93,9 @@ class InformationDesk(models.Model):
         verbose_name = _("Information desk")
         verbose_name_plural = _("Information desks")
         ordering = ['name']
+        indexes = [
+            GistIndex(name='informationdesk_geom_gist_idx', fields=['geom']),
+        ]
 
     def __str__(self):
         return self.name
@@ -292,12 +307,18 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='touristiccontents',
                                     verbose_name=_("Portal"))
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
+    label_accessibility = models.ForeignKey(LabelAccessibility, verbose_name=_("Label accessibility"),
+                                            on_delete=models.CASCADE, related_name='contents', blank=True,
+                                            null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
                                            on_delete=models.CASCADE, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
-    approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    approved = models.BooleanField(verbose_name=_("Approved"), default=False,
+                                   help_text=_("Indicates whether the content has a label or brand"))
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     class Meta:
         verbose_name = _("Touristic content")
@@ -391,7 +412,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     organizer = models.CharField(verbose_name=_("Organizer"), max_length=256, blank=True)
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
     type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.CASCADE)
-    accessibility = models.CharField(verbose_name=_("Accessibility"), max_length=256, blank=True)
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     participant_number = models.CharField(verbose_name=_("Number of participants"), max_length=256, blank=True)
     booking = models.TextField(verbose_name=_("Booking"), blank=True)
     target_audience = models.CharField(verbose_name=_("Target audience"), max_length=128, blank=True, null=True)
@@ -405,6 +426,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     id_prefix = 'E'
 

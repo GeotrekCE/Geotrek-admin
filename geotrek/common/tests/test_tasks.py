@@ -62,7 +62,7 @@ class TasksTest(TestCase):
         log = mock.getvalue()
         self.assertEqual(Organism.objects.count(), 1)
         organism = Organism.objects.get()
-        self.assertEqual(organism.organism, "Comité Théodule")
+        self.assertEqual(organism.organism, "2.0")
         self.assertEqual("100%", log)
         self.assertEqual(task.status, "SUCCESS")
 

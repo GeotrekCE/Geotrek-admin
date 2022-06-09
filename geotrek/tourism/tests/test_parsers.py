@@ -9,15 +9,15 @@ from django.test import TestCase, override_settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
+from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.tourism.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
-                                       TouristicContentType2Factory, TouristicEventTypeFactory)
+from geotrek.tourism.tests.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
+                                             TouristicContentType2Factory, TouristicEventTypeFactory)
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEventApidaeParser, EspritParcParser,
-                                     TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParser,
-                                     TouristicEventTourInSoftParser)
+                                     TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
+                                     TouristicContentTourInSoftParser, TouristicEventTourInSoftParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
@@ -70,11 +70,28 @@ class HOT28v3(TouristicContentTourInSoftParserV3):
     portal = "Itinérance"
 
 
+class HOT28v3withMedias(TouristicContentTourInSoftParserV3withMedias):
+    url = "http://wcf.tourinsoft.com/Syndication/3.0/cdt28/xxx/Objects"
+    source = "CDT 28"
+    category = "Où dormir"
+    type1 = "Hôtels"
+    type2 = "****"
+    portal = "Itinérance"
+
+
 class FMA28(TouristicEventTourInSoftParser):
     url = "http://wcf.tourinsoft.com/Syndication/cdt28/xxx/Objects"
     source = "CDT 28"
     type = "Agenda rando"
     portal = "Itinérance"
+
+
+class FMA28OtherPortal(TouristicEventTourInSoftParser):
+    url = "http://wcf.tourinsoft.com/Syndication/cdt28/xxx/Objects"
+    source = "CDT 28"
+    type = "Agenda rando"
+    portal = "Other_portal"
+    m2m_aggregate_fields = ["portal"]
 
 
 class ParserTests(TranslationResetMixin, TestCase):
@@ -253,7 +270,7 @@ class ParserTests(TranslationResetMixin, TestCase):
             ['<TouristicContentType1: Type A>', '<TouristicContentType1: Type B>']
         )
         self.assertQuerysetEqual(content.type2.all(), [])
-        self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(Attachment.objects.count(), 4)
         self.assertEqual(Attachment.objects.first().content_object, content)
 
     @mock.patch('geotrek.common.parsers.requests.get')
@@ -485,8 +502,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         portal = TargetPortalFactory(name="Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28v3', verbosity=0)
         self.assertTrue(mocked.called)
-        self.assertEqual(TouristicContent.objects.count(), 1)
-        content = TouristicContent.objects.get()
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        content = TouristicContent.objects.first()
         self.assertEqual(content.eid, "HOTCEN0280010001")
         self.assertEqual(content.name, "Hôtel du Perche")
         self.assertEqual(content.description[:27], "")
@@ -507,9 +524,12 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.type2.get().label, "****")
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(Attachment.objects.first().content_object, content)
+        call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28v3withMedias', verbosity=0)
+        self.assertEqual(Attachment.objects.filter(author="Mairie de Briouze", legend="SteCath800").count(), 1)
 
     @mock.patch('geotrek.common.parsers.requests.get')
-    def test_create_event_tourinsoft(self, mocked):
+    @mock.patch('geotrek.common.parsers.requests.head')
+    def test_create_event_tourinsoft(self, mocked_head, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftEvent.json')
             with open(filename, 'r') as f:
@@ -517,6 +537,10 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 666}
+
         FileType.objects.create(type="Photographie")
         type = TouristicEventTypeFactory(type="Agenda rando")
         source = RecordSourceFactory(name="CDT 28")
@@ -544,3 +568,41 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.first().content_object, event)
         self.assertEqual(event.begin_date, date(2100, 6, 1))
         self.assertEqual(event.end_date, date(2100, 6, 2))
+
+    @mock.patch('geotrek.common.parsers.requests.get')
+    @mock.patch('geotrek.common.parsers.requests.head')
+    def test_create_event_multiple_parsers(self, mocked_head, mocked):
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftEvent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+
+        # Mock HEAD
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 666}
+
+        FileType.objects.create(type="Photographie")
+        TouristicEventTypeFactory(type="Agenda rando")
+        RecordSourceFactory(name="CDT 28")
+        TargetPortalFactory(name="Itinérance")
+        TargetPortalFactory(name='Other_portal')
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28', verbosity=0)
+
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertQuerysetEqual(event.portal.all(), ['<TargetPortal: Itinérance>'])
+        call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28OtherPortal',
+                     verbosity=0)
+
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertQuerysetEqual(event.portal.all(),
+                                 ['<TargetPortal: Itinérance>',
+                                  '<TargetPortal: Other_portal>'],
+                                 ordered=False)

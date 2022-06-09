@@ -8,7 +8,8 @@ from django.conf import settings
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins import AddPropertyMixin, OptionalPictogramMixin, NoDeleteManager
+from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
 
@@ -55,7 +56,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
 
 
 class SignageGISManager(NoDeleteManager):
-    """ Overide default typology mixin manager, and filter by type. """
+    """ Override default typology mixin manager, and filter by type. """
     def implantation_year_choices(self):
         choices = self.get_queryset().existing().filter(implantation_year__isnull=False)\
             .order_by('-implantation_year').distinct('implantation_year') \
@@ -72,6 +73,8 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
     type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.CASCADE)
     coordinates_verbose_name = _("Coordinates")
+
+    geometry_types_allowed = ["POINT"]
 
     class Meta:
         verbose_name = _("Signage")
@@ -122,6 +125,16 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     def distance(self, to_cls):
         """Distance to associate this signage to another class"""
         return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for trek in self.treks.all():
+            trek.save()
+
+    def delete(self, *args, **kwargs):
+        for trek in self.treks.all():
+            trek.save()
+        super().delete(*args, **kwargs)
 
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))

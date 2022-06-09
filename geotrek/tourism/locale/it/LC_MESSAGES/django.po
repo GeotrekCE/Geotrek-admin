@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-04 16:21+0100\n"
+"POT-Creation-Date: 2022-02-03 17:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,9 +36,6 @@ msgstr "gg/mm/aaaa"
 msgid "HH:MM"
 msgstr "HH:MM"
 
-msgid "Public website"
-msgstr "Sito web pubblico"
-
 msgid "Label"
 msgstr "Label"
 
@@ -47,6 +44,12 @@ msgstr "Tipo di punto informazioni"
 
 msgid "Information desk types"
 msgstr "Tipi di punti d'informazione"
+
+msgid "Label accessibility"
+msgstr ""
+
+msgid "Labels accessibility"
+msgstr ""
 
 msgid "Title"
 msgstr "Titolo"
@@ -80,6 +83,9 @@ msgstr "Codice postale"
 
 msgid "Municipality"
 msgstr "Comune"
+
+msgid "Accessibility"
+msgstr "Accessibilità"
 
 msgid "Emplacement"
 msgstr "Posizione"
@@ -118,6 +124,12 @@ msgstr "Ordine"
 msgid "Alphabetical order if blank"
 msgstr "Ordine alfabetico se vuoto"
 
+msgid "Color"
+msgstr ""
+
+msgid "Color of the category, only used in mobile."
+msgstr ""
+
 msgid "Touristic content category"
 msgstr "Categoria di contenuti turistici"
 
@@ -136,20 +148,17 @@ msgstr "Secondo"
 msgid "Touristic content type"
 msgstr "Tipo di contenuto turistico"
 
+msgid "Type1"
+msgstr "Tipo 1"
+
 msgid "First list types"
 msgstr "Tipi nel primo elenco"
 
+msgid "Type2"
+msgstr "Tipo 2"
+
 msgid "Second list types"
 msgstr "Tipi nella seconda lista"
-
-msgid "Name"
-msgstr "Nome"
-
-msgid "Reservation system"
-msgstr ""
-
-msgid "Reservation systems"
-msgstr "Sistemi di prenotazione"
 
 msgid "Description teaser"
 msgstr "Descrizione teaser"
@@ -196,11 +205,17 @@ msgstr "Portale"
 msgid "External id"
 msgstr "External id"
 
+msgid "Reservation system"
+msgstr ""
+
 msgid "Reservation ID"
 msgstr "ID di prenotazione"
 
 msgid "Approved"
 msgstr "Approvato"
+
+msgid "Indicates whether the content has a label or brand"
+msgstr ""
 
 msgid "Touristic content"
 msgstr "Contenuto turistico"
@@ -235,8 +250,8 @@ msgstr "3 giorni, stagione, ...."
 msgid "Meeting point"
 msgstr "Punto d'incontro"
 
-msgid "Where exactly?"
-msgstr "Dove esattamente?"
+msgid "Where exactly ?"
+msgstr ""
 
 msgid "Meeting time"
 msgstr "Orario della riunione"
@@ -249,9 +264,6 @@ msgstr "Organizzatore"
 
 msgid "Speaker"
 msgstr "Altoparlante"
-
-msgid "Accessibility"
-msgstr "Accessibilità"
 
 msgid "Number of participants"
 msgstr "Numero di partecipanti"
@@ -290,16 +302,16 @@ msgid "Published touristic events"
 msgstr "Pubblicato eventi turistici"
 
 #, python-brace-format
-msgid "Failed to download {url}. HTTP status code {status_code}"
-msgstr "Non è riuscito a scaricare {url}. Codice di stato HTTP {status_code}"
-
-#, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr "Il tipo 1 '{subval}' non esiste per la categoria '{cat}'. Si prega di aggiungerlo"
+msgstr ""
+"Il tipo 1 '{subval}' non esiste per la categoria '{cat}'. Si prega di "
+"aggiungerlo"
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr "Il tipo 2 '{subval}' non esiste per la categoria '{cat}'. Si prega di aggiungerlo"
+msgstr ""
+"Il tipo 2 '{subval}' non esiste per la categoria '{cat}'. Si prega di "
+"aggiungerlo"
 
 msgid "Add a new touristic content"
 msgstr "Aggiungere un nuovo contenuto turistico"
@@ -325,17 +337,14 @@ msgstr "Stampa"
 msgid "Attributes"
 msgstr "Attributi"
 
+msgid "None"
+msgstr "Nessuna"
+
 msgid "yes,no"
 msgstr "si, no"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"
-
-msgid "All"
-msgstr "Tutti"
-
-msgid "Geotrek Rando"
-msgstr "Geotrek Rando"
 
 msgid "Powered by geotrek.fr"
 msgstr "Realizzato da geotrek.fr"
@@ -351,9 +360,6 @@ msgstr "Posizione geografica"
 
 msgid "All useful information"
 msgstr "Tutte le informazioni utili"
-
-msgid "None"
-msgstr "Nessuna"
 
 msgid "Date"
 msgstr "Data"

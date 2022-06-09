@@ -9,7 +9,8 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.utils import classproperty
-from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin, NoDeleteManager
+from geotrek.common.mixins.models import BasePublishableMixin, OptionalPictogramMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.core.models import Topology, Path
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -140,7 +141,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
 
 class InfrastructureGISManager(NoDeleteManager):
-    """ Overide default typology mixin manager"""
+    """ Override default typology mixin manager"""
     def implantation_year_choices(self):
         all_years = self.get_queryset().existing().filter(implantation_year__isnull=False) \
             .order_by('-implantation_year').distinct('implantation_year') \
@@ -164,6 +165,9 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
                                          blank=True, null=True,
                                          on_delete=models.SET_NULL,
                                          related_name='infrastructures_set')
+    accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
+
+    geometry_types_allowed = ["LINESTRING", "POINT"]
 
     class Meta:
         verbose_name = _("Infrastructure")
@@ -189,6 +193,16 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
     @classmethod
     def published_topology_infrastructure(cls, topology):
         return cls.topology_infrastructures(topology).filter(published=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for trek in self.treks.all():
+            trek.save()
+
+    def delete(self, *args, **kwargs):
+        for trek in self.treks.all():
+            trek.save()
+        super().delete(*args, **kwargs)
 
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))

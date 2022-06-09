@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-16 11:08+0000\n"
+"POT-Creation-Date: 2022-02-03 17:15+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -47,6 +47,12 @@ msgstr "Type de lieu de renseignement"
 msgid "Information desk types"
 msgstr "Types de lieu de renseignement"
 
+msgid "Label accessibility"
+msgstr "Label accessibilité"
+
+msgid "Labels accessibility"
+msgstr "Labels accessibilité"
+
 msgid "Title"
 msgstr "Titre"
 
@@ -79,6 +85,9 @@ msgstr "Code postal"
 
 msgid "Municipality"
 msgstr "Ville"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
 
 msgid "Emplacement"
 msgstr "Emplacement"
@@ -207,6 +216,9 @@ msgstr "ID de réservation"
 msgid "Approved"
 msgstr "Labellisé"
 
+msgid "Indicates whether the content has a label or brand"
+msgstr "Indique si le contenu a une étiquette ou une marque"
+
 msgid "Touristic content"
 msgstr "Contenu touristique"
 
@@ -254,9 +266,6 @@ msgstr "Organisateur"
 
 msgid "Speaker"
 msgstr "Intervenant"
-
-msgid "Accessibility"
-msgstr "Accessibilité"
 
 msgid "Number of participants"
 msgstr "Nombre de places"
@@ -330,14 +339,14 @@ msgstr "Impr."
 msgid "Attributes"
 msgstr "Informations"
 
+msgid "None"
+msgstr "Aucun(e)"
+
 msgid "yes,no"
 msgstr "oui,non"
 
 msgid "Thumbnail"
 msgstr "Aperçu"
-
-msgid "All"
-msgstr "Tout"
 
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
@@ -353,9 +362,6 @@ msgstr "Emplacement géographique"
 
 msgid "All useful information"
 msgstr "Toutes les informations pratiques"
-
-msgid "None"
-msgstr "Aucun(e)"
 
 msgid "Date"
 msgstr "Date"

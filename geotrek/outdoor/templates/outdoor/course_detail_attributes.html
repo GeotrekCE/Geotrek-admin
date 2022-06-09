@@ -1,33 +1,9 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
 {% load i18n geotrek_tags mapentity_tags outdoor_tags %}
-
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
-    {% for ancestor in object.site.get_ancestors %}
-        <ul>
-            <li>
-                <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
-    {% endfor %}
-                <ul>
-                    <li>
-                        <a href="{% url 'outdoor:site_detail' object.site.pk %}">{{ object.site }}</a>
-                        <ul>
-                            <li>
-                                <b>{{ object }}</b>
-                            </li>
-                            <li>
-                                <a href="{% url 'outdoor:course_add' %}?site={{ object.site.pk }}">
-                                    + <i>{% trans "Add a course" %}</i>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-    {% for ancestor in object.site.get_ancestors %}
-            </li>
-        </ul>
-    {% endfor %}
-
+            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=course.all_hierarchy_roots original_course=object %}    
+    </ul>
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
@@ -39,36 +15,20 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
-            <th>{% trans "Site" %}</th>
-            <td>{% if object.site %}{% valuelist object.site.get_ancestors field='name_display' %}{{ object.site.name_display|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{% trans "Sites" %}</th>
+            <td>
+                {% for site in object.parent_sites.all %}
+                    {{ site.name_display|safe }}<br>
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Sector" %}</th>
-            <td>{% if object.site.practice.sector %}{{ object.site.practice.sector }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.parent_sites.first.practice.sector %}{{ object.parent_sites.first.practice.sector }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
-            <th>{{ object.site|verbose:"practice" }}</th>
-            <td>{% if object.site.practice %}{{ object.site.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"type" }}</th>
-            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"advice" }}</th>
-            <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"equipment" }}</th>
-            <td>{% if object.equipment %}{{ object.equipment|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"height" }}</th>
-            <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{{ object.parent_sites.first|verbose:"practice" }}</th>
+            <td>{% if object.parent_sites.first.practice %}{{ object.parent_sites.first.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         {% for rating in object.ratings.all %}
             <tr>
@@ -77,16 +37,40 @@
             </tr>
         {% endfor %}
         <tr>
+            <th>{{ object|verbose:"ratings_description" }}</th>
+            <td>{% if object.ratings_description %}{{ object.ratings_description|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"advice" }}</th>
+            <td>{% if object.advice %}{{ object.advice|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+         <tr>
+            <th>{{ object|verbose:"gear" }}</th>
+            <td>{% if object.gear %}{{ object.gear|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"equipment" }}</th>
+            <td>{% if object.equipment %}{{ object.equipment|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"height" }}</th>
+            <td>{% if object.height %}{{ object.height }} m{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"duration" }}</th>
             <td>{{ object.duration|duration }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"ratings_description" }}</th>
-            <td>{% if object.ratings_description %}{{ object.ratings_description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"gear" }}</th>
-            <td>{% if object.gear %}{{ object.gear|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "Itinerancy" %}</th>

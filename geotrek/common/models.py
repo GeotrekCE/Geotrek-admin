@@ -1,19 +1,112 @@
 import os
-from PIL import Image
+import uuid
 
+from colorfield.fields import ColorField
+from PIL import Image
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
+from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
-
-from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
+from paperclip.models import Attachment as BaseAttachment, FileType as BaseFileType, License as BaseLicense
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
+from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin
+
+
+class AccessibilityAttachmentManager(models.Manager):
+    def attachments_for_object(self, obj):
+        object_type = ContentType.objects.get_for_model(obj)
+        return self.filter(content_type__pk=object_type.id,
+                           object_id=obj.id)
+
+
+def attachment_accessibility_upload(instance, filename):
+    """Stores the attachment in a "per module/appname/primary key" folder"""
+    name, ext = os.path.splitext(filename)
+    renamed = slugify(instance.title or name) + ext
+    return 'attachments_accessibility/%s/%s/%s' % (
+        '%s_%s' % (instance.content_object._meta.app_label,
+                   instance.content_object._meta.model_name),
+        instance.content_object.pk,
+        renamed)
+
+
+class License(StructureOrNoneRelated, BaseLicense):
+    class Meta(BaseLicense.Meta):
+        verbose_name = _("Attachment license")
+        verbose_name_plural = _("Attachment licenses")
+        ordering = ['label']
+
+
+class AccessibilityAttachment(models.Model):
+    # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
+    class InfoAccessibilityChoices(models.TextChoices):
+        SLOPE = 'slope', _('Slope')
+        WIDTH = 'width', _('Width')
+        SIGNAGE = 'signage', _('Signage')
+
+    objects = AccessibilityAttachmentManager()
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    attachment_accessibility_file = models.ImageField(_('Image'), blank=True,
+                                                      upload_to=attachment_accessibility_upload,
+                                                      max_length=512, null=False)
+    info_accessibility = models.CharField(verbose_name=_("Information accessibility"),
+                                          max_length=7,
+                                          choices=InfoAccessibilityChoices.choices,
+                                          default=InfoAccessibilityChoices.SLOPE)
+    license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
+                                verbose_name=_("License"),
+                                null=True, blank=True,
+                                on_delete=models.SET_NULL)
+    creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name="created_attachments_accessibility",
+                                verbose_name=_('Creator'),
+                                help_text=_("User that uploaded"), on_delete=models.CASCADE)
+    author = models.CharField(blank=True, default='', max_length=128,
+                              verbose_name=_('Author'),
+                              help_text=_("Original creator"))
+    title = models.CharField(blank=True, default='', max_length=128,
+                             verbose_name=_("Filename"),
+                             help_text=_("Renames the file"))
+    legend = models.CharField(blank=True, default='', max_length=128,
+                              verbose_name=_("Legend"),
+                              help_text=_("Details displayed"))
+    date_insert = models.DateTimeField(editable=False, auto_now_add=True,
+                                       verbose_name=_("Insertion date"))
+    date_update = models.DateTimeField(editable=False, auto_now=True,
+                                       verbose_name=_("Update date"))
+
+    class Meta:
+        ordering = ['-date_insert']
+        verbose_name = _("Attachment accessibility")
+        verbose_name_plural = _("Attachments accessibility")
+        default_permissions = ()
+
+    def __str__(self):
+        return '{} attached {}'.format(
+            self.creator.username,
+            self.attachment_accessibility_file.name
+        )
+
+    @property
+    def info_accessibility_display(self):
+        return self.get_info_accessibility_display()
+
+    @property
+    def filename(self):
+        return os.path.split(self.attachment_accessibility_file.name)[1]
 
 
 class Organism(StructureOrNoneRelated):
-
     organism = models.CharField(max_length=128, verbose_name=_("Organism"))
 
     class Meta:
@@ -28,16 +121,13 @@ class Organism(StructureOrNoneRelated):
 
 
 class FileType(StructureOrNoneRelated, BaseFileType):
-    """
-    Attachment FileTypes, related to structure and with custom table name.
-    """
+    """ Attachment FileTypes, related to structure and with custom table name."""
     class Meta(BaseFileType.Meta):
         pass
 
     @classmethod
     def objects_for(cls, request):
-        """Override this method to filter form choices depending on structure.
-        """
+        """ Override this method to filter form choices depending on structure."""
         return cls.objects.filter(Q(structure=request.user.profile.structure) | Q(structure=None))
 
     def __str__(self):
@@ -47,12 +137,11 @@ class FileType(StructureOrNoneRelated, BaseFileType):
 
 
 class Attachment(BaseAttachment):
-
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 
 class Theme(PictogramMixin):
-
     label = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
 
@@ -83,13 +172,12 @@ class Theme(PictogramMixin):
             image = Image.open(pictopath)
             w, h = image.size
             if w > h:
-                image = image.crop((0, 0, w / 2, h))
+                image = image.crop(box=(0, 0, w / 2, h))
             image.save(output)
         return open(output, 'rb')
 
 
 class RecordSource(OptionalPictogramMixin):
-
     name = models.CharField(verbose_name=_("Name"), max_length=50)
     website = models.URLField(verbose_name=_("Website"), max_length=256, blank=True, null=True)
 
@@ -156,3 +244,29 @@ class Label(OptionalPictogramMixin):
 
     def __str__(self):
         return self.name
+
+
+class RatingScaleMixin(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Within a practice. Alphabetical order if blank"))
+
+    def __str__(self):
+        return "{} ({})".format(self.name, self.practice.name)
+
+    class Meta:
+        abstract = True
+
+
+class RatingMixin(OptionalPictogramMixin, models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    description = models.TextField(verbose_name=_("Description"), blank=True)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Alphabetical order if blank"))
+    color = ColorField(verbose_name=_("Color"), blank=True)
+
+    def __str__(self):
+        return "{} : {}".format(self.scale.name, self.name)
+
+    class Meta:
+        abstract = True

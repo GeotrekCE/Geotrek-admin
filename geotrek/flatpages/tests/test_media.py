@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from geotrek.flatpages.factories import FlatPageFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory
 
 
 class FlatPageMediaTest(TestCase):

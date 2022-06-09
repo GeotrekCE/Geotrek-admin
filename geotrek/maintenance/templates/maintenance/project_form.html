@@ -8,8 +8,9 @@
     
     <fieldset class="formset">
         {{ funding_formset.management_form }}
-        {% for funding_form in funding_formset %}
-            <div class="form-row inline controls controls-row {{ funding_formset.prefix }}">
+        {% for funding_form in funding_formset.forms %}
+            <div class="form-row inline controls controls-row {{ funding_from.prefix }}">
+            {% if funding_form.instance.pk %}{{ funding_form.DELETE }}{% endif %}
             {% crispy funding_form %}
             </div>
         {% endfor %}
@@ -27,7 +28,7 @@ $(function() {
     
     $(".clearfix").removeClass("clearfix");
     
-    $('.form-row.inline.{{ funding_formset.prefix }}').formset({
+    $('.form-row.inline').formset({
         prefix: '{{ funding_formset.prefix }}',
         keepFieldValues: "[name='csrfmiddlewaretoken']",
         addCssClass: 'btn btn-success add-row',

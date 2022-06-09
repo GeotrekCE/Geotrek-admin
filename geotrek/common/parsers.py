@@ -29,10 +29,10 @@ from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment
+from geotrek.common.utils.translation import get_translated_fields
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.fields import TranslationField
-    from modeltranslation.translator import translator, NotRegistered
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +74,7 @@ class Parser:
     m2m_fields = {}
     constant_fields = {}
     m2m_constant_fields = {}
+    m2m_aggregate_fields = []
     non_fields = {}
     natural_keys = {}
     field_options = {}
@@ -89,13 +90,7 @@ class Parser:
         self.user = user
         self.structure = user and user.profile.structure or default_structure()
         self.encoding = encoding
-
-        try:
-            mto = translator.get_options_for_model(self.model)
-        except NotRegistered:
-            self.translated_fields = []
-        else:
-            self.translated_fields = mto.fields.keys()
+        self.translated_fields = get_translated_fields(self.model)
 
         if self.fields is None:
             self.fields = {
@@ -187,7 +182,7 @@ class Parser:
         if val == "" and not field.blank:
             raise RowImportError(_("Blank value not allowed for field '{src}'".format(src=src)))
         if isinstance(field, models.CharField):
-            val = val[:256]
+            val = str(val)[:256]
         if isinstance(field, models.ManyToManyField):
             fk = getattr(self.obj, dst)
             fk.set(val)
@@ -204,6 +199,8 @@ class Parser:
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 old = set(getattr(self.obj, dst).all())
                 val = set(val)
+                if dst in self.m2m_aggregate_fields:
+                    val = val | old
             else:
                 old = getattr(self.obj, dst)
             if isinstance(old, float) and isinstance(val, float):
@@ -462,7 +459,7 @@ class Parser:
             except DatabaseError as e:
                 if settings.DEBUG:
                     raise
-                self.add_warning(str(e).decode('utf8'))
+                self.add_warning(str(e))
             except (ValueImportError, RowImportError) as e:
                 self.add_warning(str(e))
             except Exception as e:

@@ -9,10 +9,10 @@ from geotrek.zoning.models import RestrictedArea, RestrictedAreaType, City, Dist
 
 
 class RestrictedAreasCommandTest(TestCase):
-
-    def setUp(self):
-        self.filename_out_in = os.path.join(os.path.dirname(__file__), 'data', 'polygons_in_out.geojson')
-        self.filename = os.path.join(os.path.dirname(__file__), 'data', 'city.shp')
+    @classmethod
+    def setUpTestData(cls):
+        cls.filename_out_in = os.path.join(os.path.dirname(__file__), 'data', 'polygons_in_out.geojson')
+        cls.filename = os.path.join(os.path.dirname(__file__), 'data', 'city.shp')
 
     """
     Get Restricted Area
@@ -98,9 +98,10 @@ class RestrictedAreasCommandTest(TestCase):
 
 class CitiesCommandTest(TestCase):
 
-    def setUp(self):
-        self.filename = os.path.join(os.path.dirname(__file__), 'data', 'city.shp')
-        self.filename_out_in = os.path.join(os.path.dirname(__file__), 'data', 'polygons_in_out.geojson')
+    @classmethod
+    def setUpTestData(cls):
+        cls.filename = os.path.join(os.path.dirname(__file__), 'data', 'city.shp')
+        cls.filename_out_in = os.path.join(os.path.dirname(__file__), 'data', 'polygons_in_out.geojson')
     """
     Get cities
     """
@@ -194,9 +195,10 @@ class CitiesCommandTest(TestCase):
 
 
 class DistrictsCommandTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.filename = os.path.join(os.path.dirname(__file__), 'data', 'polygons_in_out.geojson')
 
-    def setUp(self):
-        self.filename = os.path.join(os.path.dirname(__file__), 'data', 'polygons_in_out.geojson')
     """
     Get cities
     """

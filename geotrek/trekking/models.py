@@ -2,10 +2,12 @@ import os
 import logging
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Transform, LineLocatePoint
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db.models import F, Value
+from django.db.models import F
 from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
@@ -14,13 +16,12 @@ import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
-from geotrek.api.v2.functions import LineLocatePoint, Transform
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
-from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
-                                   PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
-from geotrek.common.models import Theme, ReservationSystem
+from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin
+from geotrek.common.mixins.managers import NoDeleteManager
+from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 
 from geotrek.maintenance.models import Intervention, Project
@@ -60,6 +61,56 @@ class OrderedTrekChild(models.Model):
         )
 
 
+class Practice(PictogramMixin):
+
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
+                                   help_text=_("Touristic contents and events will associate within this distance (meters)"))
+    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.CASCADE)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Alphabetical order if blank"))
+    color = ColorField(verbose_name=_("Color"), default='#444444',
+                       help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
+
+    id_prefix = 'T'
+
+    class Meta:
+        verbose_name = _("Practice")
+        verbose_name_plural = _("Practices")
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def slug(self):
+        return slugify(self.name) or str(self.pk)
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
+
+
+class RatingScale(RatingScaleMixin):
+    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
+                                 verbose_name=_("Practice"))
+
+    class Meta:
+        verbose_name = _("Rating scale")
+        verbose_name_plural = _("Rating scales")
+        ordering = ('practice', 'order', 'name')
+
+
+class Rating(RatingMixin):
+    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
+                              verbose_name=_("Scale"))
+
+    class Meta:
+        verbose_name = _("Rating")
+        verbose_name_plural = _("Ratings")
+        ordering = ('order', 'name')
+
+
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     departure = models.CharField(verbose_name=_("Departure"), max_length=128, blank=True,
@@ -74,8 +125,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                 help_text=_("Main attraction and interest"))
     access = models.TextField(verbose_name=_("Access"), blank=True,
                               help_text=_("Best way to go"))
-    disabled_infrastructure = models.TextField(verbose_name=_("Disabled infrastructure"),
-                                               blank=True, help_text=_("Any specific infrastructure"))
     duration = models.FloatField(verbose_name=_("Duration"), null=True, blank=True,
                                  help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
                                  validators=[MinValueValidator(0)])
@@ -87,6 +136,10 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                         help_text=_("Train, bus (see web links)"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
+    ratings = models.ManyToManyField(Rating, related_name='treks', blank=True, verbose_name=_("Ratings"))
+    ratings_description = models.TextField(verbose_name=_("Ratings description"), blank=True)
+    gear = models.TextField(verbose_name=_("Gear"), blank=True,
+                            help_text=_("Gear needed, adviced ..."))
     themes = models.ManyToManyField(Theme, related_name="treks", blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks", blank=True, verbose_name=_("Networks"),
@@ -94,7 +147,36 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     practice = models.ForeignKey('Practice', related_name="treks", on_delete=models.CASCADE,
                                  blank=True, null=True, verbose_name=_("Practice"))
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
-                                             verbose_name=_("Accessibility"))
+                                             verbose_name=_("Accessibility type"))
+    accessibility_advice = models.TextField(verbose_name=_("Accessibility advice"),
+                                            blank=True,
+                                            help_text=_("Specific elements allowing to appreciate the context "
+                                                        "of the itinerary for PRMs (advice, delicate passages, etc.)"))
+    accessibility_covering = models.TextField(verbose_name=_("Accessibility covering"),
+                                              blank=True, help_text=_("Description of the surfaces encountered on the "
+                                                                      "entire route. Track, path, road + type of "
+                                                                      "surface (stony, presence of stones, sand, "
+                                                                      "paving, slab...)"))
+    accessibility_level = models.ForeignKey('AccessibilityLevel', related_name="treks", blank=True,
+                                            verbose_name=_("Level accessibility"), null=True, on_delete=models.PROTECT,
+                                            help_text=_("Beginner (Little drop – terrain without difficulties) / Experienced "
+                                                        "(Significant slope – Technical terrain, with obstacles)"))
+    accessibility_exposure = models.TextField(verbose_name=_("Accessibility exposure"),
+                                              blank=True, help_text=_("Description of exposures and shaded areas. "
+                                                                      "Shaded, High exposure, Presence of shaded areas"))
+    accessibility_infrastructure = models.TextField(verbose_name=_("Accessibility infrastructure"),
+                                                    blank=True, help_text=_("Any specific accessibility infrastructure"))
+    accessibility_signage = models.TextField(verbose_name=_("Accessibility signage"),
+                                             blank=True, help_text=_("Description of the size, shape and colors of signages."))
+    accessibility_slope = models.TextField(verbose_name=_("Accessibility slope"),
+                                           blank=True, help_text=_("Description of the slope: greater than 10% "
+                                                                   "(Requires assistance when the slope is greater "
+                                                                   "than 8%); slope break"))
+    accessibility_width = models.TextField(verbose_name=_("Accessibility width"),
+                                           blank=True, help_text=_("Description of the narrowing of the trails and the "
+                                                                   "minimum width for wheelchairs (Trail>0.90 m, "
+                                                                   "Joëlette, Narrow trail requiring strong driving "
+                                                                   "technique)"))
     route = models.ForeignKey('Route', related_name='treks', on_delete=models.CASCADE,
                               blank=True, null=True, verbose_name=_("Route"))
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.CASCADE,
@@ -127,8 +209,11 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                            on_delete=models.CASCADE, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
+    attachments_accessibility = GenericRelation('common.AccessibilityAttachment')
 
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
+
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Trek")
@@ -511,36 +596,6 @@ class TrekNetwork(PictogramMixin):
         return self.network
 
 
-class Practice(PictogramMixin):
-
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
-    distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
-                                   help_text=_("Touristic contents and events will associate within this distance (meters)"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.CASCADE)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Alphabetical order if blank"))
-    color = ColorField(verbose_name=_("Color"), default='#444444',
-                       help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
-
-    id_prefix = 'T'
-
-    class Meta:
-        verbose_name = _("Practice")
-        verbose_name_plural = _("Practices")
-        ordering = ['order', 'name']
-
-    def __str__(self):
-        return self.name
-
-    @property
-    def slug(self):
-        return slugify(self.name) or str(self.pk)
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
-
-
 class Accessibility(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
@@ -563,6 +618,18 @@ class Accessibility(OptionalPictogramMixin):
     @property
     def slug(self):
         return slugify(self.name) or str(self.pk)
+
+
+class AccessibilityLevel(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Accessibility level")
+        verbose_name_plural = _("Accessibility levels")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class Route(OptionalPictogramMixin):
@@ -662,6 +729,8 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
+    geometry_types_allowed = ["POINT"]
+
     class Meta:
         verbose_name = _("POI")
         verbose_name_plural = _("POI")
@@ -704,8 +773,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
             object_geom = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.existing().filter(geom__intersects=object_geom)
             if topology.geom.geom_type == 'LineString':
-                qs = qs.annotate(locate=LineLocatePoint(Transform(Value(topology.geom.ewkt,
-                                                                        output_field=models.GeometryField()),
+                qs = qs.annotate(locate=LineLocatePoint(Transform(topology.geom,
                                                                   settings.SRID),
                                                         Transform(F('geom'), settings.SRID)))
                 qs = qs.order_by('locate')

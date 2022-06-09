@@ -1,26 +1,24 @@
 import os
 from datetime import datetime
-
-from django.db.models import Q, Min, Max
-from django.db.models.functions import ExtractYear
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
+from django.contrib.postgres.indexes import GistIndex
+from django.db.models import Q, Min, Max
+from django.db.models.functions import ExtractYear
+from django.utils.translation import gettext_lazy as _
 
-from mapentity.models import MapEntityMixin
-
-from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.altimetry.models import AltimetryMixin
-from geotrek.core.models import Topology, Path, Trail
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Organism
-from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, NoDeleteManager
 from geotrek.common.utils import classproperty
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
+from geotrek.core.models import Topology, Path, Trail
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from mapentity.models import MapEntityMixin
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -53,7 +51,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"))
     subcontract_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Subcontract cost"))
 
-    # AltimetyMixin for denormalized fields from related topology, updated via trigger.
+    # AltimetryMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
 
     stake = models.ForeignKey('core.Stake', null=True, blank=True, on_delete=models.CASCADE,
@@ -77,9 +75,14 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     objects = InterventionManager()
 
+    geometry_types_allowed = ["LINESTRING", "POINT"]
+
     class Meta:
         verbose_name = _("Intervention")
         verbose_name_plural = _("Interventions")
+        indexes = [
+            GistIndex(name='intervention_geom_3d_gist_idx', fields=['geom_3d']),
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -136,6 +139,9 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     @property
     def target_csv_display(self):
+        if self.target._meta.model_name == "topology":
+            title = _('Path')
+            return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all()])
         return "%s: %s (%s)" % (
             _(self.target._meta.verbose_name),
             self.target,
@@ -152,6 +158,15 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
         if self.target:
             return self.target.paths.all()
         return Path.objects.none()
+
+    @property
+    def trails(self):
+        s = []
+        for p in self.target.paths.all():
+            for t in p.trails.all():
+                s.append(t.pk)
+
+        return Trail.objects.filter(pk__in=s)
 
     @property
     def total_manday(self):
@@ -267,19 +282,27 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     @property
     def signages(self):
-        if self.target_type == ContentType.objects.get_for_model(Signage):
-            return [self.target]
+        if hasattr(self.target, 'signages'):
+            return self.target.signages
         return []
 
     @property
     def infrastructures(self):
-        if self.target_type == ContentType.objects.get_for_model(Infrastructure):
-            return [self.target]
+        if hasattr(self.target, 'infrastructures'):
+            return self.target.infrastructures
         return []
 
     def distance(self, to_cls):
         """Distance to associate this intervention to another class"""
         return settings.MAINTENANCE_INTERSECTION_MARGIN
+
+    @property
+    def disorders_display(self):
+        return ', '.join([str(disorder) for disorder in self.disorders.all()])
+
+    @property
+    def jobs_display(self):
+        return ', '.join([str(job) for job in self.jobs.all()])
 
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))
@@ -456,7 +479,15 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStamp
         """
         if self._geom is None:
             interventions = Intervention.objects.existing().filter(project=self)
-            geoms = [i.geom for i in interventions if i.geom is not None]
+            geoms = []
+            for i in interventions:
+                geom = i.geom
+                if geom is not None:
+                    if isinstance(geom, GeometryCollection):
+                        for sub_geom in geom:
+                            geoms.append(sub_geom)
+                    else:
+                        geoms.append(geom)
             if geoms:
                 self._geom = GeometryCollection(*geoms, srid=settings.SRID)
         return self._geom

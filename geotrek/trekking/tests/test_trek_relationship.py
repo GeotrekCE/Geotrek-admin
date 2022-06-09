@@ -2,18 +2,18 @@ from django.test import TestCase
 from django.db import IntegrityError
 from django.db.models import Q
 
-from ..factories import TrekFactory, TrekRelationshipFactory
+from .factories import TrekFactory, TrekRelationshipFactory
 from ..models import TrekRelationship
 
 
 class TrekRelationshipsTestCase(TestCase):
-
-    def setUp(self):
-        self.trek1 = TrekFactory(name="1")
-        self.trek2 = TrekFactory(name="2")
-        self.trek3 = TrekFactory(name="3")
-        TrekRelationshipFactory(trek_a=self.trek1, trek_b=self.trek2)
-        TrekRelationshipFactory(trek_a=self.trek2, trek_b=self.trek3)
+    @classmethod
+    def setUpTestData(cls):
+        cls.trek1 = TrekFactory(name="1")
+        cls.trek2 = TrekFactory(name="2")
+        cls.trek3 = TrekFactory(name="3")
+        TrekRelationshipFactory(trek_a=cls.trek1, trek_b=cls.trek2)
+        TrekRelationshipFactory(trek_a=cls.trek2, trek_b=cls.trek3)
 
     def test_related_treks_symetries(self):
         self.assertCountEqual(self.trek1.related.all(), [self.trek2])

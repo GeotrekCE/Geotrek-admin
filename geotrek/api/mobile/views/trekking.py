@@ -1,12 +1,13 @@
-
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Count, F, Q
 from django_filters.rest_framework.backends import DjangoFilterBackend
 
 from geotrek.api.mobile.serializers import trekking as api_serializers_trekking
 from geotrek.api.mobile.serializers import tourism as api_serializers_tourism
 
-from geotrek.api.v2.functions import Transform, Length, StartPoint, EndPoint
+from geotrek.api.v2.functions import StartPoint, EndPoint
+from geotrek.common.functions import Length
 from geotrek.trekking import models as trekking_models
 
 from rest_framework_extensions.mixins import DetailSerializerMixin
@@ -59,8 +60,10 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     def touristic_contents(self, request, *args, **kwargs):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk
-        qs = trek.touristic_contents.filter(published=True).prefetch_related('attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
+        qs = trek.touristic_contents.filter(published=True)
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+        qs = qs.prefetch_related('attachments').annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_tourism.TouristicContentListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
@@ -68,7 +71,9 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     def touristic_events(self, request, *args, **kwargs):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk
-        qs = trek.trek.touristic_events.filter(published=True).prefetch_related('attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
+        qs = trek.trek.touristic_events.filter(published=True)
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+        qs = qs.prefetch_related('attachments').annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_tourism.TouristicEventListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)

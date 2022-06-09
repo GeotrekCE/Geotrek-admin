@@ -5,18 +5,18 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.common.mixins import MergeActionMixin
+from geotrek.common.mixins.actions import MergeActionMixin
 from .models import (
     Practice, Difficulty, Level, Dive
 )
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.admin import TranslationAdmin
+    from modeltranslation.admin import TabbedTranslationAdmin
 else:
-    TranslationAdmin = admin.ModelAdmin
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
 
 
-class PracticeAdmin(MergeActionMixin, TranslationAdmin):
+class PracticeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('name', 'order', 'pictogram_img')
     search_fields = ('name', )
 
@@ -32,7 +32,7 @@ class DifficultyForm(forms.ModelForm):
         return self.newid
 
 
-class DifficultyAdmin(MergeActionMixin, TranslationAdmin):
+class DifficultyAdmin(MergeActionMixin, TabbedTranslationAdmin):
     form = DifficultyForm
     list_display = ('name', 'id', 'pictogram_img')
     search_fields = ('name',)
@@ -92,7 +92,7 @@ class LevelForm(forms.ModelForm):
         return self.newid
 
 
-class LevelAdmin(MergeActionMixin, TranslationAdmin):
+class LevelAdmin(MergeActionMixin, TabbedTranslationAdmin):
     form = LevelForm
     list_display = ('name', 'id', 'pictogram_img')
     search_fields = ('name',)

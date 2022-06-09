@@ -7,7 +7,7 @@ from django.core.checks.messages import Error
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 from django.utils.text import format_lazy
@@ -16,11 +16,14 @@ from django.utils.translation import gettext_lazy as _
 from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
+from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.mixins.models import PublishableMixin
+from geotrek.common.utils.translation import get_translated_fields
 
-from .mixins import NoDeleteMixin
+from .mixins.models import NoDeleteMixin
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Submit
+from crispy_forms.layout import Layout, Div, Submit, Button
 from crispy_forms.bootstrap import FormActions
 
 import logging
@@ -129,28 +132,50 @@ class CommonForm(MapEntityForm):
                     self.fields[field_to_hide].widget = HiddenInput()
 
     def clean(self):
+        """Check field data with structure and completeness fields if relevant"""
         structure = self.cleaned_data.get('structure')
-        if not structure:
-            return self.cleaned_data
 
-        # Copy cleaned_data because self.add_error may remove an item
-        for name, field in self.cleaned_data.copy().items():
-            try:
-                modelfield = self.instance._meta.get_field(name)
-            except FieldDoesNotExist:
-                continue
-            if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
-                continue
-            model = modelfield.remote_field.model
-            if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
-                continue
-            if not model.check_structure_in_forms:
-                continue
-            if isinstance(field, QuerySet):
-                for value in field:
-                    self.check_structure(value, structure, name)
-            else:
-                self.check_structure(field, structure, name)
+        # if structure in form, check each field same structure
+        if structure:
+            # Copy cleaned_data because self.add_error may remove an item
+            for name, field in self.cleaned_data.copy().items():
+                try:
+                    modelfield = self.instance._meta.get_field(name)
+                except FieldDoesNotExist:
+                    continue
+                if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
+                    continue
+                model = modelfield.remote_field.model
+                if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
+                    continue
+                if not model.check_structure_in_forms:
+                    continue
+                if isinstance(field, QuerySet):
+                    for value in field:
+                        self.check_structure(value, structure, name)
+                else:
+                    self.check_structure(field, structure, name)
+
+        # If model is publishable or reviewable,
+        # check if completeness fields are required, and raise error if some fields are missing
+        if self.completeness_fields_are_required():
+            missing_fields = []
+            completeness_fields = settings.COMPLETENESS_FIELDS.get(self._meta.model._meta.model_name, [])
+            if settings.COMPLETENESS_LEVEL == 'error_on_publication':
+                missing_fields = self._get_missing_completeness_fields(completeness_fields,
+                                                                       _('This field is required to publish object.'))
+            elif settings.COMPLETENESS_LEVEL == 'error_on_review':
+                missing_fields = self._get_missing_completeness_fields(completeness_fields,
+                                                                       _('This field is required to review object.'))
+
+            if missing_fields:
+                raise ValidationError(
+                    _('Fields are missing to publish or review object: %(fields)s'),
+                    params={
+                        'fields': ', '.join(missing_fields)
+                    },
+                )
+
         return self.cleaned_data
 
     def check_structure(self, obj, structure, name):
@@ -158,6 +183,65 @@ class CommonForm(MapEntityForm):
             if obj.structure and structure != obj.structure:
                 self.add_error(name, format_lazy(_("Please select a choice related to all structures (without brackets) "
                                                    "or related to the structure {struc} (in brackets)"), struc=structure))
+
+    @property
+    def any_published(self):
+        """Check if form has published in at least one of the language"""
+        return any([self.cleaned_data.get(f'published_{language[0]}', False)
+                    for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']])
+
+    @property
+    def published_languages(self):
+        """Returns languages in which the form has published data.
+        """
+        languages = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        if settings.PUBLISHED_BY_LANG:
+            return [language for language in languages if self.cleaned_data.get(f'published_{language}', None)]
+        else:
+            if self.any_published:
+                return languages
+
+    def completeness_fields_are_required(self):
+        """Return True if the completeness fields are required"""
+        if not issubclass(self._meta.model, PublishableMixin):
+            return False
+
+        if not self.instance.is_complete():
+            if settings.COMPLETENESS_LEVEL == 'error_on_publication':
+                if self.any_published:
+                    return True
+            elif settings.COMPLETENESS_LEVEL == 'error_on_review':
+                # Error on review implies error on publication
+                if self.cleaned_data['review'] or self.any_published:
+                    return True
+
+        return False
+
+    def _get_missing_completeness_fields(self, completeness_fields, msg):
+        """Check fields completeness and add error message if field is empty"""
+
+        missing_fields = []
+        translated_fields = get_translated_fields(self._meta.model)
+
+        # Add error on each field if it is empty
+        for field_required in completeness_fields:
+            if field_required in translated_fields:
+                if self.cleaned_data.get('review') and settings.COMPLETENESS_LEVEL == 'error_on_review':
+                    # get field for first language only
+                    field_required_lang = f"{field_required}_{settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'][0][0]}"
+                    missing_fields.append(field_required_lang)
+                    self.add_error(field_required_lang, msg)
+                else:
+                    for language in self.published_languages:
+                        field_required_lang = f'{field_required}_{language}'
+                        if not self.cleaned_data.get(field_required_lang):
+                            missing_fields.append(field_required_lang)
+                            self.add_error(field_required_lang, msg)
+            else:
+                if not self.cleaned_data.get(field_required):
+                    missing_fields.append(field_required)
+                    self.add_error(field_required, msg)
+        return missing_fields
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""
@@ -291,9 +375,73 @@ class SyncRandoForm(forms.Form):
         helper.form_action = reverse('common:sync_randos')
         helper.form_class = 'search'
         # submit button with boostrap attributes, disabled by default
-        helper.add_input(Submit('sync-web', _("Launch Sync"),
+        helper.add_input(Button('sync-web', _("Launch Sync"),
+                                css_class="btn-primary",
                                 **{'data-toggle': "modal",
                                    'data-target': "#confirm-submit",
                                    'disabled': 'disabled'}))
 
         return helper
+
+
+class AttachmentAccessibilityForm(forms.ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        self._object = kwargs.pop('object', None)
+
+        super().__init__(*args, **kwargs)
+        self.fields['legend'].widget.attrs['placeholder'] = _('Overview of the tricky passage')
+
+        # Detect fields errors without uploading (using HTML5)
+        self.fields['author'].widget.attrs['pattern'] = r'^\S.*'
+        self.fields['legend'].widget.attrs['pattern'] = r'^\S.*'
+        self.fields['attachment_accessibility_file'].required = True
+        self.fields['attachment_accessibility_file'].widget = forms.FileInput()
+
+        self.helper = FormHelper(form=self)
+        self.helper.form_tag = True
+        self.helper.form_class = 'attachments-accessibility form-horizontal'
+        self.helper.help_text_inline = True
+        self.helper.form_style = "default"
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+
+        if not self.instance.pk:
+            form_actions = [
+                Submit('submit_attachment',
+                       _('Submit attachment'),
+                       css_class="btn-primary")
+            ]
+            self.form_url = reverse('add_attachment_accessibility', kwargs={
+                'app_label': self._object._meta.app_label,
+                'model_name': self._object._meta.model_name,
+                'pk': self._object.pk
+            })
+        else:
+            form_actions = [
+                Button('cancel', _('Cancel'), css_class=""),
+                Submit('submit_attachment',
+                       _('Update attachment'),
+                       css_class="btn-primary")
+            ]
+            self.fields['title'].widget.attrs['readonly'] = True
+            self.form_url = reverse('update_attachment_accessibility', kwargs={
+                'attachment_pk': self.instance.pk
+            })
+
+        self.helper.form_action = self.form_url
+        self.helper.layout.fields.append(
+            FormActions(*form_actions, css_class="form-actions"))
+
+    class Meta:
+        model = AccessibilityAttachment
+        fields = ('attachment_accessibility_file', 'info_accessibility', 'author', 'title', 'legend')
+
+    def success_url(self):
+        obj = self._object
+        return f"{obj.get_detail_url()}?tab=attachments-accessibility"
+
+    def save(self, request, *args, **kwargs):
+        obj = self._object
+        self.instance.creator = request.user
+        self.instance.content_object = obj
+        return super().save(*args, **kwargs)

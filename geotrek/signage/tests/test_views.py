@@ -4,14 +4,14 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.common.tests import CommonTest
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory, StructureFactory
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.signage.models import Signage, Blade
-from geotrek.core.factories import PathFactory
-from geotrek.signage.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
-                                       SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                       InfrastructureConditionFactory, LineFactory)
+from geotrek.core.tests.factories import PathFactory
+from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
+                                             SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
+                                             InfrastructureConditionFactory, LineFactory)
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.infrastructure.tests.test_views import InfraFilterTestMixin
 
@@ -29,11 +29,15 @@ class SignageTest(TestCase):
         self.assertCountEqual(p.signages, [sign])
 
 
-class BladeViewsTest(CommonTest):
+class BladeViewsTest(GeotrekAPITestCase, CommonTest):
     model = Blade
     modelfactory = BladeFactory
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'number', 'direction', 'type', 'color']
+    expected_column_formatlist_extra = ['id', 'city', 'signage', 'printedelevation', 'bladecode', 'type',
+                                        'color', 'direction', 'condition', 'coordinates']
 
     def get_expected_json_attrs(self):
         return {
@@ -46,6 +50,15 @@ class BladeViewsTest(CommonTest):
             'type': {
                 'label': 'Blade type'
             }
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'color': self.obj.color.label,
+            'direction': self.obj.direction.label,
+            'id': self.obj.pk,
+            'number': self.obj.number_display,
+            'type': self.obj.type.label
         }
 
     def get_bad_data(self):
@@ -107,8 +120,6 @@ class BladeViewsTest(CommonTest):
             self.assertContains(response, '.modifiable = false;')
 
     def test_creation_form_on_signage(self):
-        self.login()
-
         signa = SignageFactory.create()
         signage = "%s" % signa
 
@@ -124,7 +135,6 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_delete_redirection(self):
-        self.login()
         signage = SignageFactory.create()
         blade = BladeFactory.create(signage=signage)
 
@@ -133,8 +143,6 @@ class BladeViewsTest(CommonTest):
         self.assertRedirects(response, signage.get_detail_url(), status_code=302)
 
     def test_structure_is_set(self):
-        self.login()
-
         signa = SignageFactory.create()
 
         response = self.client.post(self._get_add_url() + '?signage=%s' % signa.pk, self.get_good_data())
@@ -143,7 +151,6 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(obj.structure, self.user.profile.structure)
 
     def test_basic_format_not_ascii(self):
-        self.login()
         signage = SignageFactory.create(name="ééé")
         BladeFactory.create(signage=signage)
         for fmt in ('csv', 'shp', 'gpx'):
@@ -151,10 +158,11 @@ class BladeViewsTest(CommonTest):
             self.assertEqual(response.status_code, 200, "")
 
     def test_csv_format_with_lines(self):
-        self.login()
         signage = SignageFactory.create(name="ééé")
         blade = BladeFactory.create(signage=signage)
+        blade.lines.all().delete()
         LineFactory.create(blade=blade, number=3)
+        LineFactory.create(blade=blade, number=2)
         response = self.client.get(self.model.get_format_list_url() + '?format=csv')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Code,Type,Color,"
@@ -165,7 +173,6 @@ class BladeViewsTest(CommonTest):
     def test_set_structure_with_permission(self):
         # The structure do not change because it changes with the signage form.
         # Need to check blade structure and line
-        self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
@@ -178,10 +185,8 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
         self.assertEqual(obj.signage.structure, structure)
-        self.logout()
 
     def test_structure_is_not_changed_without_permission(self):
-        self.login()
         structure = StructureFactory()
         self.assertNotEqual(structure, self.user.profile.structure)
         self.assertFalse(self.user.has_perm('authent.can_bypass_structure'))
@@ -189,14 +194,16 @@ class BladeViewsTest(CommonTest):
         result = self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(result.status_code, 302)
         self.assertEqual(self.model.objects.first().structure, structure)
-        self.logout()
 
 
-class SignageViewsTest(CommonTest):
+class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     model = Signage
     modelfactory = SignageFactory
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -205,10 +212,10 @@ class SignageViewsTest(CommonTest):
             'manager': None,
             'name': 'Signage',
             'printed_elevation': 4807,
-            'publication_date': None,
+            'publication_date': '2020-03-17',
             'published': True,
             'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': False},
+                {'lang': 'en', 'language': 'English', 'status': True},
                 {'lang': 'es', 'language': 'Spanish', 'status': False},
                 {'lang': 'fr', 'language': 'French', 'status': False},
                 {'lang': 'it', 'language': 'Italian', 'status': False}
@@ -222,10 +229,21 @@ class SignageViewsTest(CommonTest):
             },
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'code': self.obj.code,
+            'condition': self.obj.condition.label,
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'type': self.obj.type.label
+        }
+
     def get_good_data(self):
         good_data = {
-            'name': 'test',
-            'description': 'oh',
+            'name_fr': 'test',
+            'name_en': 'test_en',
+            'description_fr': 'oh',
+            'publication_date': '2020-03-17',
             'type': SignageTypeFactory.create().pk,
             'condition': InfrastructureConditionFactory.create().pk,
         }
@@ -238,13 +256,11 @@ class SignageViewsTest(CommonTest):
 
     def test_content_in_detail_page(self):
         signa = SignageFactory.create(description="<b>Beautiful !</b>")
-        self.login()
         response = self.client.get(signa.get_detail_url())
         self.assertContains(response, "<b>Beautiful !</b>")
         self.assertContains(response, "(WGS 84 / Pseudo-Mercator)")
 
     def test_check_structure_or_none_related_are_visible(self):
-        self.login()
         signagetype = SignageTypeFactory.create(structure=None)
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
@@ -254,9 +270,7 @@ class SignageViewsTest(CommonTest):
         self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
 
     def test_no_pictogram(self):
-        self.login()
-
-        self.obj = SignageNoPictogramFactory.create()
+        self.obj = SignageNoPictogramFactory.create(publication_date='2020-03-17')
         response = self.client.get('/api/en/signages/{}'.format(self.obj.pk))
         self.assertEqual(response.status_code, 200)
         expected_json_attrs = {'id': self.obj.pk, **self.get_expected_json_attrs()}

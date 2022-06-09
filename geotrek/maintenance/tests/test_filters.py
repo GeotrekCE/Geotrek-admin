@@ -1,21 +1,24 @@
 from unittest import skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiPolygon, Polygon
+from django.contrib.gis.geos import GeometryCollection, LineString, MultiPolygon, Point, Polygon
 from django.test import TestCase
 
-from geotrek.land.factories import (
+from geotrek.land.tests.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
-from geotrek.core.factories import PathFactory, getRandomLineStringInBounds, TopologyFactory
+from geotrek.core.tests.factories import PathFactory, getRandomLineStringInBounds, TopologyFactory
 
 # Make sure dynamic filters are set up when testing
 from geotrek.land import filters  # noqa
 
 from geotrek.maintenance.filters import ProjectFilterSet, InterventionFilterSet
-from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
-from geotrek.zoning.factories import CityFactory, DistrictFactory
+from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory
+from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory
+from geotrek.signage.tests.factories import BladeFactory, SignageFactory
+from geotrek.zoning.tests.factories import (CityFactory, DistrictFactory,
+                                            RestrictedAreaFactory, RestrictedAreaTypeFactory)
 
 
 class InterventionFilteringByBboxTest(TestCase):
@@ -39,6 +42,60 @@ class InterventionFilteringByBboxTest(TestCase):
         self.assertEqual(len(qs), 0)
 
 
+class InterventionZoningFilterTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.geom_1_wkt = 'SRID=2154;MULTIPOLYGON(((200000 300000, 900000 300000, 900000 1200000, 200000 1200000, ' \
+                         '200000 300000)))'
+        cls.geom_2_wkt = 'SRID=2154;MULTIPOLYGON(((1200000 300000, 1300000 300000, 1300000 1200000, 1200000 1200000, ' \
+                         '1200000 300000)))'
+        cls.city = CityFactory.create(name='city_in', geom=cls.geom_1_wkt)
+        cls.city_2 = CityFactory.create(name='city_out', geom=cls.geom_2_wkt)
+        cls.district = DistrictFactory.create(name='district_in', geom=cls.geom_1_wkt)
+        cls.district_2 = DistrictFactory.create(name='district_out', geom=cls.geom_2_wkt)
+        cls.area = RestrictedAreaFactory.create(name='area_in', geom=cls.geom_1_wkt)
+        cls.area_2 = RestrictedAreaFactory.create(name='area_out', geom=cls.geom_2_wkt)
+        cls.area_type_3 = RestrictedAreaTypeFactory.create()
+        if not settings.TREKKING_TOPOLOGY_ENABLED:
+            seek_topo = TopologyFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
+        else:
+            cls.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
+            seek_topo = TopologyFactory.create(paths=[cls.path])
+        cls.seek_inter = InterventionFactory.create(target=seek_topo)
+
+    def test_filter_zoning_city(self):
+        filter = InterventionFilterSet(data={'city': [self.city, ]})
+
+        self.assertIn(self.seek_inter, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+        filter = InterventionFilterSet(data={'city': [self.city_2, ]})
+
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_zoning_district(self):
+        filter = InterventionFilterSet(data={'district': [self.district, ]})
+
+        self.assertIn(self.seek_inter, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+        filter = InterventionFilterSet(data={'district': [self.district_2, ]})
+
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_zoning_area_type(self):
+        filter = InterventionFilterSet(data={'area_type': [self.area.area_type, ]})
+
+        self.assertIn(self.seek_inter, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+        filter = InterventionFilterSet(data={'area_type': [self.area_2.area_type, ]})
+        self.assertEqual(len(filter.qs), 0)
+
+        filter = InterventionFilterSet(data={'area_type': [self.area_type_3, ]})
+        self.assertEqual(len(filter.qs), 0)
+
+
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionFilteringByLandTest(TestCase):
     @classmethod
@@ -51,6 +108,13 @@ class InterventionFilteringByLandTest(TestCase):
 
         InterventionFactory.create(target=topo_1)
         cls.seek_inter = InterventionFactory.create(target=seek_topo)
+
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            site = SiteFactory()
+            cls.seek_site = InterventionFactory.create(target=site)
+
+            outdoor = CourseFactory()
+            cls.seek_course = InterventionFactory.create(target=outdoor)
 
     def test_filter_by_physical_edge(self):
         edge = PhysicalEdgeFactory(paths=[self.seek_path])
@@ -105,6 +169,22 @@ class InterventionFilteringByLandTest(TestCase):
 
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], self.seek_inter)
+
+    @skipIf('geotrek.outdoor' not in settings.INSTALLED_APPS, 'Outdoor module not installed')
+    def test_filter_by_target_site(self):
+        # filter by target
+        data = {'on': 'site'}
+        qs = InterventionFilterSet(data=data).qs
+        self.assertEqual(len(qs), 1)
+        self.assertEqual(qs[0], self.seek_site)
+
+    @skipIf('geotrek.outdoor' not in settings.INSTALLED_APPS, 'Outdoor module not installed')
+    def test_filter_by_target_course(self):
+        # filter by target
+        data = {'on': 'course'}
+        qs = InterventionFilterSet(data=data).qs
+        self.assertEqual(len(qs), 1)
+        self.assertEqual(qs[0], self.seek_course)
 
 
 class ProjectFilteringByYearTest(TestCase):
@@ -192,7 +272,289 @@ class ProjectFilteringByLandTest(TestCase):
         self.assertEqual(qs[0], self.seek_proj)
 
 
-class ProjectIntersectionFilterCityTest(TestCase):
+class InterventionIntersectionFilterZoningTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path_in_1 = PathFactory.create(geom=LineString((0, 0), (2, 1), srid=settings.SRID))
+            cls.path_in_2 = PathFactory.create(geom=LineString((5, 5), (4, 4), srid=settings.SRID))
+            cls.topo_in_1 = TopologyFactory.create(paths=[cls.path_in_1])
+            cls.topo_in_2 = TopologyFactory.create(paths=[cls.path_in_2])
+            signage_in_1 = SignageFactory.create(paths=[cls.path_in_1])
+            signage_in_2 = SignageFactory.create(paths=[cls.path_in_2])
+        else:
+            cls.topo_in_1 = TopologyFactory.create(geom=LineString((0, 0), (2, 1), srid=settings.SRID))
+            cls.topo_in_2 = TopologyFactory.create(geom=LineString((5, 5), (4, 4), srid=settings.SRID))
+            signage_in_1 = SignageFactory.create(geom=Point(1, 1, srid=settings.SRID))
+            signage_in_2 = SignageFactory.create(geom=Point(5, 5, srid=settings.SRID))
+        cls.intervention_topology_in_1 = InterventionFactory.create(target=cls.topo_in_1)
+        cls.intervention_topology_in_2 = InterventionFactory.create(target=cls.topo_in_2)
+
+        cls.site_in_1 = SiteFactory.create(geom=GeometryCollection(Point(1, 1), srid=settings.SRID))
+        cls.intervention_site_in_1 = InterventionFactory.create(target=cls.site_in_1)
+
+        cls.course_in_1 = CourseFactory.create(parent_sites=[cls.site_in_1.pk],
+                                               geom=GeometryCollection(Point(1, 1), srid=settings.SRID))
+        cls.intervention_course_in_1 = InterventionFactory.create(target=cls.course_in_1)
+
+        cls.site_in_2 = SiteFactory.create(geom=GeometryCollection(Point(5, 5), srid=settings.SRID))
+        cls.intervention_site_in_2 = InterventionFactory.create(target=cls.site_in_2)
+
+        cls.course_in_2 = CourseFactory.create(parent_sites=[cls.site_in_2.pk],
+                                               geom=GeometryCollection(Point(5, 5), srid=settings.SRID))
+        cls.intervention_course_in_2 = InterventionFactory.create(target=cls.course_in_2)
+
+        cls.blade_in_1 = BladeFactory.create(signage=signage_in_1)
+        cls.intervention_blade_in_1 = InterventionFactory.create(target=cls.blade_in_1)
+
+        cls.blade_in_2 = BladeFactory.create(signage=signage_in_2)
+        cls.intervention_blade_in_2 = InterventionFactory.create(target=cls.blade_in_2)
+
+        cls.geom_in_1 = MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID))
+        cls.geom_in_2 = MultiPolygon(Polygon(((4, 4), (5, 4), (5, 5), (4, 5), (4, 4)), srid=settings.SRID))
+        cls.geom_out = MultiPolygon(Polygon(((6, 6), (10, 6), (10, 10), (6, 10), (6, 6)), srid=settings.SRID))
+
+    def test_filter_in_1_city(self):
+        """
+        We should have 1 interventions on topologies, 1 intervention on sites, 1 intervention on courses,
+        1 intervention on blade
+        """
+        filter = InterventionFilterSet(data={'city': [CityFactory.create(geom=self.geom_in_1)]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_1,
+                             self.intervention_site_in_1,
+                             self.intervention_course_in_1,
+                             self.intervention_blade_in_1})
+        self.assertEqual(len(filter.qs), 4)
+
+    def test_filter_in_2_city(self):
+        """
+        We should have 1 interventions on topologies, 1 intervention on sites, 1 intervention on courses,
+        1 intervention on blade
+        """
+        filter = InterventionFilterSet(data={'city': [CityFactory.create(geom=self.geom_in_2)]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_2,
+                             self.intervention_site_in_2,
+                             self.intervention_course_in_2,
+                             self.intervention_blade_in_2})
+        self.assertEqual(len(filter.qs), 4)
+
+    def test_filter_in_1_and_2_city(self):
+        """
+        We should have 2 interventions on topologies, 2 interventions on sites, 2 interventions on courses,
+        2 interventions on blade
+        """
+        filter = InterventionFilterSet(data={'city': [CityFactory.create(geom=self.geom_in_2),
+                                                      CityFactory.create(geom=self.geom_in_1)]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_2,
+                             self.intervention_site_in_2,
+                             self.intervention_course_in_2,
+                             self.intervention_blade_in_2,
+                             self.intervention_topology_in_1,
+                             self.intervention_site_in_1,
+                             self.intervention_course_in_1,
+                             self.intervention_blade_in_1})
+        self.assertEqual(len(filter.qs), 8)
+
+    def test_filter_out_city(self):
+        """
+        We should not have any interventions
+        """
+        filter = InterventionFilterSet(data={'city': [CityFactory.create(geom=self.geom_out)]})
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_in_1_district(self):
+        """
+        We should have 1 interventions on topologies, 1 intervention on sites, 1 intervention on courses,
+        1 intervention on blade
+        """
+        filter = InterventionFilterSet(data={'district': [DistrictFactory.create(geom=self.geom_in_1)]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_1,
+                             self.intervention_site_in_1,
+                             self.intervention_course_in_1,
+                             self.intervention_blade_in_1})
+        self.assertEqual(len(filter.qs), 4)
+
+    def test_filter_in_2_district(self):
+        """
+        We should have 1 interventions on topologies, 1 intervention on sites, 1 intervention on courses,
+        1 intervention on blade
+        """
+        filter = InterventionFilterSet(data={'district': [DistrictFactory.create(geom=self.geom_in_2)]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_2,
+                             self.intervention_site_in_2,
+                             self.intervention_course_in_2,
+                             self.intervention_blade_in_2})
+        self.assertEqual(len(filter.qs), 4)
+
+    def test_filter_in_1_and_2_district(self):
+        """
+        We should have 2 interventions on topologies, 2 interventions on sites, 2 interventions on courses,
+        2 interventions on blade
+        """
+        filter = InterventionFilterSet(data={'district': [DistrictFactory.create(geom=self.geom_in_1),
+                                                          DistrictFactory.create(geom=self.geom_in_2)]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_2,
+                             self.intervention_site_in_2,
+                             self.intervention_course_in_2,
+                             self.intervention_blade_in_2,
+                             self.intervention_topology_in_1,
+                             self.intervention_site_in_1,
+                             self.intervention_course_in_1,
+                             self.intervention_blade_in_1})
+        self.assertEqual(len(filter.qs), 8)
+
+    def test_filter_out_district(self):
+        """
+        We should not have any interventions
+        """
+        filter = InterventionFilterSet(data={'district': [DistrictFactory.create(geom=self.geom_out)]})
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_in_1_restricted_area(self):
+        """
+        We should have 1 interventions on topologies, 1 intervention on sites, 1 intervention on courses,
+        1 intervention on blade
+        """
+        filter = InterventionFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_in_1)]})
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_1,
+                             self.intervention_site_in_1,
+                             self.intervention_course_in_1,
+                             self.intervention_blade_in_1})
+        self.assertEqual(len(filter.qs), 4)
+
+    def test_filter_in_2_restricted_area(self):
+        """
+        We should have 1 interventions on topologies, 1 intervention on sites, 1 intervention on courses,
+        1 intervention on blade
+        """
+        filter = InterventionFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_in_2)]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_2,
+                             self.intervention_site_in_2,
+                             self.intervention_course_in_2,
+                             self.intervention_blade_in_2})
+        self.assertEqual(len(filter.qs), 4)
+
+    def test_filter_in_1_and_2_restricted_area(self):
+        """
+        We should have 2 interventions on topologies, 2 interventions on sites, 2 interventions on courses,
+        2 interventions on blade
+        """
+        filter = InterventionFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_in_1),
+                                                      RestrictedAreaFactory.create(geom=self.geom_in_2)]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_2,
+                             self.intervention_site_in_2,
+                             self.intervention_course_in_2,
+                             self.intervention_blade_in_2,
+                             self.intervention_topology_in_1,
+                             self.intervention_site_in_1,
+                             self.intervention_course_in_1,
+                             self.intervention_blade_in_1})
+        self.assertEqual(len(filter.qs), 8)
+
+    def test_filter_out_restricted_area(self):
+        """
+        We should not have any interventions
+        """
+        filter = InterventionFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_out)]})
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_in_1_restricted_area_type(self):
+        """
+        We should have 1 interventions on topologies, 1 intervention on sites, 1 intervention on courses,
+        1 intervention on blade
+        """
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        RestrictedAreaFactory.create(geom=self.geom_in_1, area_type=restricted_area_type)
+        filter = InterventionFilterSet(data={'area_type': [restricted_area_type.pk]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_1,
+                             self.intervention_site_in_1,
+                             self.intervention_course_in_1,
+                             self.intervention_blade_in_1})
+        self.assertEqual(len(filter.qs), 4)
+
+    def test_filter_in_2_restricted_area_type(self):
+        """
+        We should have 1 interventions on topologies, 1 intervention on sites, 1 intervention on courses,
+        1 intervention on blade
+        """
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        RestrictedAreaFactory.create(geom=self.geom_in_2, area_type=restricted_area_type)
+        filter = InterventionFilterSet(data={'area_type': [restricted_area_type.pk]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_2,
+                             self.intervention_site_in_2,
+                             self.intervention_course_in_2,
+                             self.intervention_blade_in_2})
+        self.assertEqual(len(filter.qs), 4)
+
+    def test_filter_in_1_and_in_2_restricted_area_type(self):
+        """
+        We should have 2 interventions on topologies, 2 interventions on sites, 2 interventions on courses,
+        2 interventions on blade
+        """
+        restricted_area_type_1 = RestrictedAreaTypeFactory.create()
+        restricted_area_type_2 = RestrictedAreaTypeFactory.create()
+
+        RestrictedAreaFactory.create(geom=self.geom_in_1, area_type=restricted_area_type_1)
+        RestrictedAreaFactory.create(geom=self.geom_in_2, area_type=restricted_area_type_2)
+        filter = InterventionFilterSet(data={'area_type': [restricted_area_type_1.pk,
+                                                           restricted_area_type_2.pk]})
+        self.assertTrue(filter.is_valid())
+        self.assertSetEqual(set(filter.qs),
+                            {self.intervention_topology_in_2,
+                             self.intervention_site_in_2,
+                             self.intervention_course_in_2,
+                             self.intervention_blade_in_2,
+                             self.intervention_topology_in_1,
+                             self.intervention_site_in_1,
+                             self.intervention_course_in_1,
+                             self.intervention_blade_in_1})
+        self.assertEqual(len(filter.qs), 8)
+
+    def test_filter_out_restricted_area_type(self):
+        """
+        We should not have any interventions
+        """
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        RestrictedAreaFactory.create(geom=self.geom_out, area_type=restricted_area_type)
+        filter = InterventionFilterSet(data={'area_type': [restricted_area_type.pk]})
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_restricted_area_type_without_restricted_area(self):
+        """
+        We should not have any interventions
+        """
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        filter = ProjectFilterSet(data={'area_type': [restricted_area_type.pk]})
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+
+class ProjectIntersectionFilterZoningTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -234,5 +596,47 @@ class ProjectIntersectionFilterCityTest(TestCase):
         filter = ProjectFilterSet(data={'district': [DistrictFactory.create(geom=self.geom_zoning)]})
         project_out = ProjectFactory.create()
         project_out.interventions.add(self.intervention_out)
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_in_restricted_area(self):
+        filter = ProjectFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_zoning)]})
+        project_in = ProjectFactory.create()
+        project_in.interventions.add(self.intervention_in)
+        self.assertTrue(filter.is_valid())
+        self.assertIn(project_in, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+    def test_filter_in_restricted_area_type(self):
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        RestrictedAreaFactory.create(geom=self.geom_zoning, area_type=restricted_area_type)
+        filter = ProjectFilterSet(data={'area_type': [restricted_area_type.pk]})
+        project_in = ProjectFactory.create()
+        project_in.interventions.add(self.intervention_in)
+        self.assertTrue(filter.is_valid())
+        self.assertIn(project_in, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+    def test_filter_out_restricted_area(self):
+        filter = ProjectFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_zoning)]})
+        project_out = ProjectFactory.create()
+        project_out.interventions.add(self.intervention_out)
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_out_restricted_area_type(self):
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        RestrictedAreaFactory.create(geom=self.geom_zoning, area_type=restricted_area_type)
+        filter = ProjectFilterSet(data={'area_type': [restricted_area_type.pk]})
+        project_out = ProjectFactory.create()
+        project_out.interventions.add(self.intervention_out)
+        self.assertTrue(filter.is_valid())
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_restricted_area_type_without_restricted_area(self):
+        restricted_area_type = RestrictedAreaTypeFactory.create()
+        filter = ProjectFilterSet(data={'area_type': [restricted_area_type.pk]})
+        project_in = ProjectFactory.create()
+        project_in.interventions.add(self.intervention_in)
         self.assertTrue(filter.is_valid())
         self.assertEqual(len(filter.qs), 0)

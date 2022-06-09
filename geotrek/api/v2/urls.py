@@ -4,7 +4,6 @@ from django.views.generic import RedirectView
 from rest_framework import routers
 
 from geotrek.api.v2 import views as api_views
-from geotrek.api.v2.viewsets import get_geotrek_version
 
 
 router = routers.DefaultRouter()
@@ -34,10 +33,13 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('poi_type', api_views.POITypeViewSet, basename='poitype')
     router.register('tour', api_views.TourViewSet, basename='tour')
     router.register('trek_accessibility', api_views.AccessibilityViewSet, basename='accessibility')
+    router.register('trek_accessibility_level', api_views.AccessibilityLevelViewSet, basename='accessibility-level')
     router.register('trek_route', api_views.RouteViewSet, basename='route')
     router.register('trek_difficulty', api_views.DifficultyViewSet, basename='difficulty')
     router.register('trek_network', api_views.NetworkViewSet, basename='network')
     router.register('trek_practice', api_views.PracticeViewSet, basename='practice')
+    router.register('trek_ratingscale', api_views.TrekRatingScaleViewSet, basename='trek-ratingscale')
+    router.register('trek_rating', api_views.TrekRatingViewSet, basename='trek-rating')
     router.register('weblink_category', api_views.WebLinkCategoryViewSet, basename='weblink-category')
     router.register('service_type', api_views.ServiceTypeViewSet, basename='servicetype')
     router.register('service', api_views.ServiceViewSet, basename='service')
@@ -48,6 +50,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristicevent', api_views.TouristicEventViewSet, basename='touristicevent')
     router.register('touristicevent_type', api_views.TouristicEventTypeViewSet, basename='touristiceventtype')
     router.register('informationdesk', api_views.InformationDeskViewSet, basename='informationdesk')
+    router.register('informationdesk_type', api_views.InformationDeskTypeViewSet, basename='informationdesktype')
+    router.register('label_accessibility', api_views.LabelAccessibilityViewSet, basename='labelaccessibility')
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     router.register('sensitivearea', api_views.SensitiveAreaViewSet, basename='sensitivearea')
     router.register('sensitivearea_practice', api_views.SportPracticeViewSet, basename='sportpractice')
@@ -61,8 +65,8 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('outdoor_sector', api_views.SectorViewSet, basename='outdoor-sector')
     router.register('outdoor_sitetype', api_views.SiteTypeViewSet, basename='sitetype')
     router.register('outdoor_coursetype', api_views.CourseTypeViewSet, basename='coursetype')
-    router.register('outdoor_ratingscale', api_views.RatingScaleViewSet, basename='ratingscale')
-    router.register('outdoor_rating', api_views.RatingViewSet, basename='rating')
+    router.register('outdoor_ratingscale', api_views.OutdoorRatingScaleViewSet, basename='outdoor-ratingscale')
+    router.register('outdoor_rating', api_views.OutdoorRatingViewSet, basename='outdoor-rating')
     router.register('outdoor_course', api_views.CourseViewSet, basename='course')
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     router.register('flatpage', api_views.FlatPageViewSet, basename='flatpage')
@@ -83,7 +87,7 @@ _urlpatterns += [
     path('config/', api_views.ConfigView.as_view(), name='config'),
     path('sportpractice/', RedirectView.as_view(pattern_name='apiv2:sportpractice-list', permanent=True)),
     path('sportpractice/<int:pk>/', RedirectView.as_view(pattern_name='apiv2:sportpractice-detail', permanent=True)),
+    path('version', api_views.GeotrekVersionAPIView.as_view()),
     path('', include(router.urls)),
-    path('version', get_geotrek_version)
 ]
 urlpatterns = [path('api/v2/', include(_urlpatterns))]

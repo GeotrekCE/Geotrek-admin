@@ -9,10 +9,11 @@ from unittest import skipIf
 from bs4 import BeautifulSoup
 
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.core.factories import PathFactory
-from geotrek.zoning.factories import DistrictFactory, CityFactory
-from geotrek.trekking.factories import (POIFactory, TrekFactory,
-                                        TrekWithPOIsFactory, ServiceFactory)
+from geotrek.core.tests.factories import PathFactory
+from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
+from geotrek.trekking.tests.factories import (POIFactory, TrekFactory,
+                                              TrekWithPOIsFactory, ServiceFactory,
+                                              RatingFactory, RatingScaleFactory)
 from geotrek.trekking.models import Trek, OrderedTrekChild
 
 
@@ -332,11 +333,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
 
 
 class TrekUpdateGeomTest(TestCase):
-    def setUp(self):
-        self.trek = TrekFactory.create(published=True, geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154))
-
-    def tearDown(self):
-        del (self.trek)
+    @classmethod
+    def setUpTestData(cls):
+        cls.trek = TrekFactory.create(published=True, geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154))
 
     def test_save_with_same_geom(self):
         geom = LineString(((700000, 6600000), (700100, 6600100)), srid=2154)
@@ -450,11 +449,13 @@ class TrekItinerancyTest(TestCase):
 
 
 class MapImageExtentTest(TestCase):
-    def setUp(self):
-        self.trek = TrekFactory.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.trek = TrekFactory.create(
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID),
         )
+        POIFactory.create(paths=[(cls.trek.paths.first(), 0.25, 0.25)], published=True)
 
     def test_get_map_image_extent(self):
         lng_min, lat_min, lng_max, lat_max = self.trek.get_map_image_extent()
@@ -462,3 +463,15 @@ class MapImageExtentTest(TestCase):
         self.assertAlmostEqual(lat_min, -5.983856309208769)
         self.assertAlmostEqual(lng_max, 3.001303976720215)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
+
+
+class RatingScaleTest(TestCase):
+    def test_ratingscale_str(self):
+        scale = RatingScaleFactory.create(name='Bar', practice__name='Foo')
+        self.assertEqual(str(scale), 'Bar (Foo)')
+
+
+class RatingTest(TestCase):
+    def test_rating_str(self):
+        scale = RatingFactory.create(name='Bar')
+        self.assertEqual(str(scale), 'RatingScale : Bar')

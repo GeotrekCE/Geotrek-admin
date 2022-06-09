@@ -4,17 +4,18 @@ from django.test import TestCase
 from django.conf import settings
 from django.test.utils import override_settings
 
-from geotrek.core import factories as core_factories
-from geotrek.tourism import factories as tourism_factories
-from geotrek.trekking import factories as trekking_factories
-from geotrek.tourism.factories import InformationDeskFactory, InformationDeskTypeFactory
+from geotrek.core.tests import factories as core_factories
+from geotrek.tourism.tests import factories as tourism_factories
+from geotrek.trekking.tests import factories as trekking_factories
+from geotrek.tourism.tests.factories import InformationDeskFactory, InformationDeskTypeFactory
 
 import datetime
 
 
 class InformationDeskTypeTest(TestCase):
-    def setUp(self):
-        self.type_informationdesk = InformationDeskTypeFactory(label="Office")
+    @classmethod
+    def setUpTestData(cls):
+        cls.type_informationdesk = InformationDeskTypeFactory(label="Office")
 
     def test_str(self):
         self.assertEqual(str(self.type_informationdesk), "Office")
@@ -42,19 +43,23 @@ class InformationDeskTest(TestCase):
 
 
 class TourismRelations(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        cls.content2 = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, name="ZZZ")
+        cls.event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(50 50)' % settings.SRID)
+        cls.event2 = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(60 60)' % settings.SRID, name="ZZZ")
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
+            cls.poi = trekking_factories.POIFactory(paths=[(cls.path, 0.5, 0.5)])
+        else:
+            cls.poi = trekking_factories.POIFactory(geom='SRID=%s;POINT(50 100)' % settings.SRID)
 
     def setUp(self):
-        self.content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        self.content2 = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, name="ZZZ")
-        self.event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(50 50)' % settings.SRID)
-        self.event2 = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(60 60)' % settings.SRID, name="ZZZ")
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
-            self.trek = trekking_factories.TrekFactory(paths=[path])
-            self.poi = trekking_factories.POIFactory(paths=[(path, 0.5, 0.5)])
+            self.trek = trekking_factories.TrekFactory(paths=[self.path])
         else:
             self.trek = trekking_factories.TrekFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
-            self.poi = trekking_factories.POIFactory(geom='SRID=%s;POINT(50 100)' % settings.SRID)
 
     def test_spatial_link_with_tourism(self):
         self.assertIn(self.content2, self.content.touristic_contents.all())

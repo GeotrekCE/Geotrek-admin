@@ -1,46 +1,44 @@
-from mapentity.views.generic import MapEntityList
-from geotrek.common.mixins import CustomColumnsMixin
+import os
 import re
 from unittest import skipIf, mock
 
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.test.utils import override_settings
+from django.core.cache import caches
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
 from django.test import TestCase
 
-from mapentity.factories import UserFactory
+from mapentity.tests.factories import UserFactory
 
 from geotrek.common.tests import CommonTest
 
-from geotrek.authent.factories import PathManagerFactory, StructureFactory
-from geotrek.authent.tests import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
 
-from geotrek.core.views import PathFormatList, PathList
 from geotrek.core.models import Path, Trail, PathSource
 
-from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
-from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
-from geotrek.maintenance.factories import InterventionFactory
-from geotrek.core.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
-from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
-
-from unittest.mock import patch
+from geotrek.trekking.tests.factories import POIFactory, TrekFactory, ServiceFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.maintenance.tests.factories import InterventionFactory
+from geotrek.core.tests.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = PathManagerFactory.create(password='booh')
+
     def setUp(self):
         self.login()
 
     def login(self):
-        self.user = PathManagerFactory.create(password='booh')
-        success = self.client.login(username=self.user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(user=self.user)
 
     def logout(self):
         self.client.logout()
@@ -101,7 +99,10 @@ class PathViewsTest(CommonTest):
         'type': 'LineString',
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
-    length = 141.42135623731
+    length = 141.4
+    extra_column_list = ['length_2d', 'eid']
+    expected_column_list_extra = ['id', 'checkbox', 'name', 'length', 'length_2d', 'eid']
+    expected_column_formatlist_extra = ['id', 'length_2d', 'eid']
 
     def get_expected_json_attrs(self):
         return {
@@ -117,6 +118,15 @@ class PathViewsTest(CommonTest):
             'slope': 0.0,
             'valid': True,
             'visible': True
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'checkbox': self.obj.checkbox_display,
+            'id': self.obj.pk,
+            'length': 141.4,
+            'length_2d': 141.4,
+            'name': self.obj.name_display
         }
 
     def get_bad_data(self):
@@ -155,7 +165,7 @@ class PathViewsTest(CommonTest):
         user.user_permissions.add(perm_read_path)
         user.user_permissions.add(perm_change_draft_path)
         user.user_permissions.add(perm_add_draft_path)
-        self.client.login(username=user.username, password='booh')
+        self.client.force_login(user=user)
         response = self.client.get(path.get_update_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, path.get_delete_url())
@@ -196,8 +206,7 @@ class PathViewsTest(CommonTest):
         p = user.profile
         p.structure = s1
         p.save()
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(user=user)
         response = self.client.get(Path.get_add_url())
         self.assertEqual(response.status_code, 200)
         self.assertTrue('form' in response.context)
@@ -211,7 +220,6 @@ class PathViewsTest(CommonTest):
     def test_set_structure_with_permission_object_linked_none_structure(self):
         if not hasattr(self.model, 'structure'):
             return
-        self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
@@ -224,7 +232,6 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
         self.assertEqual(obj.structure, self.user.profile.structure)
-        self.logout()
 
     def test_basic_format(self):
         self.modelfactory.create()
@@ -232,14 +239,12 @@ class PathViewsTest(CommonTest):
         super().test_basic_format()
 
     def test_path_form_is_not_valid_if_no_geometry_provided(self):
-        self.login()
         data = self.get_good_data()
         data['geom'] = ''
         response = self.client.post(Path.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
 
     def test_manager_can_delete(self):
-        self.login()
         path = PathFactory()
         response = self.client.get(path.get_detail_url())
         self.assertEqual(response.status_code, 200)
@@ -247,7 +252,6 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_delete_show_topologies(self):
-        self.login()
         path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
         poi = POIFactory.create(name='POI', paths=[(path, 0.5, 0.5)])
         trail = TrailFactory.create(name='Trail', paths=[(path, 0.1, 0.2)])
@@ -271,7 +275,6 @@ class PathViewsTest(CommonTest):
         self.assertContains(response, '<a href="/intervention/%d/">Intervention2</a>' % intervention2.pk)
 
     def test_elevation_area_json(self):
-        self.login()
         path = self.modelfactory.create()
         url = '/api/en/paths/{pk}/dem.json'.format(pk=path.pk)
         response = self.client.get(url)
@@ -279,52 +282,47 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_sum_path_zero(self):
-        self.login()
-        response = self.client.get('/api/path/paths.json')
+        response = self.client.get('/api/path/drf/paths/filter_infos.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 0.0)
+        self.assertEqual(response.json()['count'], '0 (0 km)')
 
     def test_sum_path_two(self):
-        self.login()
         PathFactory()
         PathFactory()
-        response = self.client.get('/api/path/paths.json')
+        response = self.client.get('/api/path/drf/paths/filter_infos.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 0.3)
+        self.assertEqual(response.json()['count'], '2 (0.3 km)')
 
     def test_sum_path_filter_cities(self):
-        self.login()
         p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
         city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
         city2 = CityFactory(code='09001', geom=MultiPolygon(
             Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
         self.assertEqual(len(p1.cities), 1)
-        response = self.client.get('/api/path/paths.json?city=%s' % city.code)
+        response = self.client.get('/api/path/drf/paths/filter_infos.json?city=%s' % city.code)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 0.0)
-        response = self.client.get('/api/path/paths.json?city=%s' % city2.code)
+        self.assertEqual(response.json()['count'], '0 (0 km)')
+        response = self.client.get('/api/path/drf/paths/filter_infos.json?city=%s' % city2.code)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 1.0)
+        self.assertEqual(response.json()['count'], '1 (1.0 km)')
 
     def test_sum_path_filter_districts(self):
-        self.login()
         p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
         district = DistrictFactory(geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
         district2 = DistrictFactory(geom=MultiPolygon(
             Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
         self.assertEqual(len(p1.districts), 1)
-        response = self.client.get('/api/path/paths.json?district=%s' % district.pk)
+        response = self.client.get('/api/path/drf/paths/filter_infos.json?district=%s' % district.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 0.0)
-        response = self.client.get('/api/path/paths.json?district=%s' % district2.pk)
+        self.assertEqual(response.json()['count'], '0 (0 km)')
+        response = self.client.get('/api/path/drf/paths/filter_infos.json?district=%s' % district2.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['sumPath'], 1.0)
+        self.assertEqual(response.json()['count'], '1 (1.0 km)')
 
     def test_merge_fails_parameters(self):
         """
         Should fail if path[] length != 2
         """
-        self.login()
         p1 = PathFactory.create()
         p2 = PathFactory.create()
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk]})
@@ -332,16 +330,13 @@ class PathViewsTest(CommonTest):
 
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p1.pk, p2.pk]})
         self.assertEqual({'error': 'You should select two paths'}, response.json())
-        self.logout()
 
     def test_merge_fails_donttouch(self):
-        self.login()
         p3 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p4 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
 
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p3.pk, p4.pk]})
         self.assertEqual({'error': 'No matching points to merge paths found'}, response.json())
-        self.logout()
 
     def test_merge_fails_other_path_intersection_less_than_snapping(self):
         """
@@ -354,7 +349,6 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((11, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((10, 1), (10, 10)))
@@ -362,7 +356,6 @@ class PathViewsTest(CommonTest):
         json_response = response.json()
         self.assertIn('error', json_response)
         self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
-        self.logout()
 
     def test_merge_fails_other_path_intersection(self):
         """
@@ -374,7 +367,6 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((10, 0), (10, 10)))
@@ -382,7 +374,6 @@ class PathViewsTest(CommonTest):
         json_response = response.json()
         self.assertIn('error', json_response)
         self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
-        self.logout()
 
     def test_merge_fails_other_path_intersection_2(self):
         """
@@ -394,7 +385,6 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((10, 10), (10, 0)))
@@ -402,7 +392,6 @@ class PathViewsTest(CommonTest):
         json_response = response.json()
         self.assertIn('error', json_response)
         self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
-        self.logout()
 
     def test_merge_fails_other_path_intersection_3(self):
         """
@@ -414,7 +403,6 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((0, 0), (0, 10), (10, 10), (10, 0)))
@@ -422,7 +410,6 @@ class PathViewsTest(CommonTest):
         json_response = response.json()
         self.assertIn('error', json_response)
         self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
-        self.logout()
 
     def test_merge_not_fail_draftpath_intersection(self):
         """
@@ -433,13 +420,11 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((10, 0), (10, 10)), draft=True)
         response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
-        self.logout()
 
     def test_merge_not_fail_start_point_end_point(self):
         """
@@ -450,13 +435,11 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((0, 0), (0, 10)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
-        self.logout()
 
     def test_merge_not_fail_start_point_end_point_2(self):
         """
@@ -467,13 +450,11 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((0, 10), (0, 0)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
-        self.logout()
 
     def test_merge_not_fail_start_point_end_point_3(self):
         """
@@ -484,13 +465,11 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((20, 0), (20, 10)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
-        self.logout()
 
     def test_merge_not_fail_start_point_end_point_4(self):
         """
@@ -501,40 +480,32 @@ class PathViewsTest(CommonTest):
         |--------A--------|-----------B-----------|
 
         """
-        self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
         PathFactory.create(name="C", geom=LineString((20, 10), (20, 0)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('success', response.json())
-        self.logout()
 
     def test_merge_works(self):
-        self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
-        self.logout()
 
     def test_merge_works_wrong_structure(self):
-        self.login()
         other_structure = StructureFactory(name="Other")
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)), structure=other_structure)
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertEqual({'error': "You don't have the right to change these paths"}, response.json())
-        self.logout()
 
     def test_merge_works_other_line(self):
-        self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
 
         PathFactory.create(name="CD", geom=LineString((2, 1), (3, 1)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
-        self.logout()
 
     def test_merge_fails_draft_with_nodraft(self):
         """
@@ -543,12 +514,10 @@ class PathViewsTest(CommonTest):
 
         Do not merge !
         """
-        self.login()
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=False)
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('error', response.json())
-        self.logout()
 
     def test_merge_ok_draft_with_draft(self):
         """
@@ -557,15 +526,12 @@ class PathViewsTest(CommonTest):
 
         Merge !
         """
-        self.login()
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=True)
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
-        self.logout()
 
     def test_structure_is_not_changed_with_permission_error(self):
-        self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
@@ -578,11 +544,9 @@ class PathViewsTest(CommonTest):
         data['structure'] = structure_2.pk
         response = self.client.post(obj.get_update_url(), data)
         self.assertContains(response, "Please select a choice related to all structures")
-        self.logout()
 
     def test_restricted_area_urls_fragment(self):
         area_type = RestrictedAreaTypeFactory(name="Test")
-        self.login()
         obj = self.modelfactory()
         response = self.client.get(obj.get_detail_url())
         self.assertNotContains(response, '/api/restrictedarea/type/{}/restrictedarea.geojson'.format(area_type.pk))
@@ -594,46 +558,108 @@ class PathViewsTest(CommonTest):
         self.assertContains(response, '/api/restrictedarea/type/{}/restrictedarea.geojson'.format(area_type.pk))
 
     def test_draft_path_layer(self):
-        self.login()
         obj = self.modelfactory(draft=False)
         self.modelfactory(draft=False)
         self.modelfactory(draft=True)
-        response = self.client.get(obj.get_layer_url(), {"no_draft": "true"})
+        response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 2)
 
-    @override_settings(COLUMNS_LISTS={'path_view': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
-    def test_custom_columns_mixin_on_list(self):
-        # Assert columns equal mandatoy columns plus custom extra columns
-        self.assertEqual(PathList().columns, ['id', 'checkbox', 'name', 'length', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+    def test_draft_path_layer_cache(self):
+        """
 
-    @override_settings(COLUMNS_LISTS={'path_export': ['length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation']})
-    def test_custom_columns_mixin_on_export(self):
-        # Assert columns equal mandatoy columns plus custom extra columns
-        self.assertEqual(PathFormatList().columns, ['id', 'length_2d', 'valid', 'structure', 'visible', 'min_elevation', 'max_elevation'])
+        This test check draft path's cache is not the same as path's cache and works independently
+        """
+        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
 
-    @override_settings(COLUMNS_LISTS={})
-    @patch('geotrek.common.mixins.logger')
-    def test_custom_columns_mixin_error_log(self, mock_logger):
-        # Create view where columns fields are omitted
-        class MissingColumns(CustomColumnsMixin, MapEntityList):
-            model = Path
-            # columns = None
+        obj = self.modelfactory(draft=False)
+        self.modelfactory(draft=True)
 
-        MissingColumns()
-        # Assert logger raises error message
-        message = "Cannot build columns for class MissingColumns.\nPlease define on this class either : \n  - a field 'columns'\nOR \n  - two fields 'mandatory_columns' AND 'default_extra_columns'"
-        mock_logger.error.assert_called_with(message)
+        # There are 7 queries to get layer without drafts
+        with self.assertNumQueries(7):
+            response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
+        self.assertEqual(len(response.json()['features']), 1)
+
+        # We check the content was created and cached with no_draft key
+        # We check that any cached content can be found with no_draft (we still didn't ask for it)
+        last_update = Path.no_draft_latest_updated()
+        last_update_draft = Path.latest_updated()
+        geojson_lookup = 'en_path_%s_nodraft_json_layer' % last_update.strftime('%y%m%d%H%M%S%f')
+        geojson_lookup_last_update_draft = 'en_path_%s_json_layer' % last_update_draft.strftime('%y%m%d%H%M%S%f')
+        content = cache.get(geojson_lookup)
+        content_draft = cache.get(geojson_lookup_last_update_draft)
+
+        self.assertEqual(response.content, content)
+        self.assertIsNone(content_draft)
+
+        # We have 1 less query because the generation of paths was cached
+        with self.assertNumQueries(6):
+            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
+
+        self.modelfactory(draft=True)
+
+        # Cache was not updated, the path was a draft
+        with self.assertNumQueries(6):
+            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
+
+        self.modelfactory(draft=False)
+
+        # Cache was updated, the path was not a draft : we get 7 queries
+        with self.assertNumQueries(7):
+            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
+
+    def test_path_layer_cache(self):
+        """
+
+        This test check path's cache is not the same as draft path's cache and works independently
+        """
+        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
+
+        obj = self.modelfactory(draft=False)
+        self.modelfactory(draft=True)
+
+        # There are 7 queries to get layer without drafts
+        with self.assertNumQueries(7):
+            response = self.client.get(obj.get_layer_url())
+        self.assertEqual(len(response.json()['features']), 2)
+
+        # We check the content was created and cached without no_draft key
+        # We check that any cached content can be found without no_draft (we still didn't ask for it)
+        last_update_no_draft = Path.no_draft_latest_updated()
+        last_update = Path.latest_updated()
+        geojson_lookup_no_draft = 'en_path_%s_nodraft_json_layer' % last_update_no_draft.strftime('%y%m%d%H%M%S%f')
+        geojson_lookup = 'en_path_%s_json_layer' % last_update.strftime('%y%m%d%H%M%S%f')
+        content_no_draft = cache.get(geojson_lookup_no_draft)
+        content = cache.get(geojson_lookup)
+
+        self.assertIsNone(content_no_draft)
+        self.assertEqual(response.content, content)
+
+        # We have 1 less query because the generation of paths was cached
+        with self.assertNumQueries(6):
+            self.client.get(obj.get_layer_url())
+
+        self.modelfactory(draft=True)
+
+        # Cache is updated when we add a draft path
+        with self.assertNumQueries(7):
+            self.client.get(obj.get_layer_url())
+
+        self.modelfactory(draft=False)
+
+        # Cache is updated when we add a path
+        with self.assertNumQueries(7):
+            self.client.get(obj.get_layer_url())
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create(is_staff=True, is_superuser=True)
+        cls.path = PathFactory.create(comments='exportable path')
+
     def setUp(self):
-        super().setUp()
-        self.user = UserFactory.create(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
-
-        self.path = PathFactory.create(comments='exportable path')
-
         self.gpx_response = self.client.get(reverse('core:path_gpx_detail', args=('en', self.path.pk, 'slug')))
         self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
 
@@ -655,10 +681,11 @@ class PathKmlGPXTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class DenormalizedTrailTest(AuthentFixturesTest):
-    def setUp(self):
-        self.path = PathFactory()
-        self.trail1 = TrailFactory(paths=[self.path])
-        self.trail2 = TrailFactory(paths=[self.path])
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory()
+        cls.trail1 = TrailFactory(paths=[cls.path])
+        cls.trail2 = TrailFactory(paths=[cls.path])
 
     def test_path_and_trails_are_linked(self):
         self.assertIn(self.trail1, self.path.trails.all())
@@ -673,8 +700,8 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(7):
-            self.client.get(reverse('core:path_json_list'))
+        with self.assertNumQueries(8):
+            self.client.get(reverse('core:path-drf-list', kwargs={'format': 'datatables'}))
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -686,6 +713,9 @@ class TrailViewsTest(CommonTest):
         'type': 'LineString',
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
+    extra_column_list = ['length', 'eid', 'departure', 'arrival']
+    expected_column_list_extra = ['id', 'name', 'length', 'eid', 'departure', 'arrival']
+    expected_column_formatlist_extra = ['id', 'length', 'eid', 'departure', 'arrival']
 
     def get_expected_json_attrs(self):
         return {
@@ -693,6 +723,15 @@ class TrailViewsTest(CommonTest):
             'departure': self.obj.departure,
             'arrival': self.obj.arrival,
             'comments': self.obj.comments,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'arrival': self.obj.arrival,
+            'departure': self.obj.departure,
+            'id': self.obj.pk,
+            'length': round(self.obj.length, 1),
+            'name': self.obj.name_display
         }
 
     def get_good_data(self):
@@ -710,25 +749,25 @@ class TrailViewsTest(CommonTest):
         return good_data
 
     def test_detail_page(self):
-        self.login()
         trail = TrailFactory()
         response = self.client.get(trail.get_detail_url())
         self.assertEqual(response.status_code, 200)
 
-    @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
-    def test_document_export(self, get_attributes_html):
-        get_attributes_html.return_value = b'<p>mock</p>'
-        trail = TrailFactory()
-        self.login()
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_export(self, mock_requests):
+        trail = TrailFactory(date_update="2000-01-01")
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
         with open(trail.get_map_image_path(), 'wb') as f:
             f.write(b'***' * 1000)
+
+        self.assertEqual(os.path.getsize(trail.get_map_image_path()), 3000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)
 
     def test_add_trail_from_existing_topology_does_not_use_pk(self):
         import bs4
 
-        self.login()
         trail = TrailFactory(offset=3.14)
         response = self.client.get(Trail.get_add_url() + '?topology=%s' % trail.pk)
         soup = bs4.BeautifulSoup(response.content, 'lxml')
@@ -738,7 +777,6 @@ class TrailViewsTest(CommonTest):
         self.assertNotIn('"pk": %s' % trail.pk, textarea_field.text)
 
     def test_add_trail_from_existing_topology(self):
-        self.login()
         trail = TrailFactory()
         form_data = self.get_good_data()
         form_data['topology'] = trail.serialize(with_pk=False)
@@ -753,12 +791,13 @@ class TrailViewsTest(CommonTest):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):
-    def setUp(self):
-        super().setUp()
-        self.user = UserFactory.create(is_staff=True, is_superuser=True)
-        self.client.force_login(self.user)
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create(is_staff=True, is_superuser=True)
+        cls.trail = TrailFactory.create(comments='exportable trail')
 
-        self.trail = TrailFactory.create(comments='exportable trail')
+    def setUp(self):
+        self.client.force_login(self.user)
 
         self.gpx_response = self.client.get(reverse('core:trail_gpx_detail', args=('en', self.trail.pk, 'slug')))
         self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')

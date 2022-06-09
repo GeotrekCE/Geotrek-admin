@@ -3,15 +3,15 @@ import datetime
 from django.conf import settings
 from django.test import TestCase
 
-from geotrek.common.tests import CommonTest
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory
-from geotrek.maintenance.factories import InterventionFactory
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory
+from geotrek.maintenance.tests.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureCondition, INFRASTRUCTURE_TYPES)
-from geotrek.core.factories import PathFactory
-from geotrek.infrastructure.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
-                                              InfrastructureTypeFactory, InfrastructureConditionFactory,
-                                              PointInfrastructureFactory)
+from geotrek.core.tests.factories import PathFactory
+from geotrek.infrastructure.tests.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
+                                                    InfrastructureTypeFactory, InfrastructureConditionFactory,
+                                                    PointInfrastructureFactory)
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 
 
@@ -27,19 +27,23 @@ class InfrastructureTest(TestCase):
         self.assertCountEqual(p.infrastructures, [infra])
 
 
-class InfrastructureViewsTest(CommonTest):
+class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
         return {
+            'accessibility': '',
             'name': self.obj.name,
-            'publication_date': None,
+            'publication_date': '2020-03-17',
             'published': True,
             'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': False},
+                {'lang': 'en', 'language': 'English', 'status': True},
                 {'lang': 'es', 'language': 'Spanish', 'status': False},
                 {'lang': 'fr', 'language': 'French', 'status': False},
                 {'lang': 'it', 'language': 'Italian', 'status': False}
@@ -55,12 +59,23 @@ class InfrastructureViewsTest(CommonTest):
             },
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'cities': '[]',
+            'condition': self.obj.condition.label,
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'type': self.obj.type.label,
+        }
+
     def get_good_data(self):
         good_data = {
-            'name': 'test',
+            'name_fr': 'test',
+            'name_en': 'test_en',
             'description': 'oh',
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
             'condition': InfrastructureConditionFactory.create().pk,
+            'accessibility': 'description accessibility'
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
@@ -71,12 +86,10 @@ class InfrastructureViewsTest(CommonTest):
 
     def test_description_in_detail_page(self):
         infra = InfrastructureFactory.create(description="<b>Beautiful !</b>")
-        self.login()
         response = self.client.get(infra.get_detail_url())
         self.assertContains(response, "<b>Beautiful !</b>")
 
     def test_check_structure_or_none_related_are_visible(self):
-        self.login()
         infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
@@ -93,10 +106,15 @@ class InfrastructureViewsTest(CommonTest):
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
     modelfactory = PointInfrastructureFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+    extra_column_list = ['type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_good_data(self):
         good_data = {
-            'name': 'test',
+            'accessibility': 'description accessibility',
+            'name_fr': 'test',
+            'name_en': 'test_en',
             'description': 'oh',
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
             'condition': InfrastructureConditionFactory.create().pk,
@@ -118,14 +136,13 @@ class InfrastructureConditionTest(TestCase):
         self.assertCountEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
 
 
-class InfraFilterTestMixin():
+class InfraFilterTestMixin:
     factory = None
     filterset = None
 
     def login(self):
         user = PathManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(user=user)
 
     def test_intervention_filter(self):
         self.login()
@@ -150,12 +167,10 @@ class InfraFilterTestMixin():
         data = {
             'intervention_year': year
         }
-        response = self.client.get(model.get_jsonlist_url(), data)
+        response = self.client.get(model.get_datatablelist_url(), data)
 
         self.assertEqual(response.status_code, 200)
-        topo_pk = response.json()['map_obj_pk']
-
-        self.assertCountEqual(topo_pk, [good_topo.pk])
+        self.assertEqual(len(response.json()['data']), 1)
 
     def test_duplicate_implantation_year_filter(self):
         self.login()
@@ -182,7 +197,6 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     filterset = InfrastructureFilterSet
 
     def test_none_implantation_year_filter(self):
-
         self.login()
         model = self.factory._meta.model
         InfrastructureFactory.create()

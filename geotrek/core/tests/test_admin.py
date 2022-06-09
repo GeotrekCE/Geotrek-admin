@@ -1,26 +1,20 @@
 from django.urls import reverse
 
-from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory
-
-from ..factories import StakeFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import PathManagerFactory
+from .factories import StakeFactory
 
 
 class StakeAdminTest(AuthentFixturesTest):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = PathManagerFactory.create()
+        cls.stake = StakeFactory.create()
+
     def setUp(self):
-        self.user = PathManagerFactory.create(password='booh')
-        self.stake = StakeFactory.create()
-
-    def tearDown(self):
-        self.client.logout()
-        self.user.delete()
-
-    def login(self):
-        success = self.client.login(username=self.user.username, password='booh')
-        self.assertTrue(success)
+        self.client.force_login(self.user)
 
     def test_stake_can_be_deleted(self):
-        self.login()
         delete_url = reverse('admin:core_stake_delete', args=[self.stake.pk])
         detail_url = reverse('admin:core_stake_change', args=[self.stake.pk])
         response = self.client.post(delete_url)

@@ -3,50 +3,8 @@
 
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
-    {% for ancestor in object.get_ancestors %}
-        <ul>
-            <li>
-                <a href="{% url 'outdoor:site_detail' ancestor.pk %}">{{ ancestor }}</a>
-    {% endfor %}
-                <ul>
-                    <li>
-                        <b>{{ object }}</b>
-                        <ul>
-                            {% for child in object.children.all %}
-                                <li>
-                                    <a href="{% url 'outdoor:site_detail' child.pk %}">{{ child }}</a>
-                                </li>
-                            {% endfor %}
-                            {% for course in object.courses.all %}
-                                <li>
-                                    <a href="{% url 'outdoor:course_detail' course.pk %}">{{ course }}</a>
-                                </li>
-                            {% endfor %}
-                            <li>
-                                <a href="{% url 'outdoor:site_add' %}?site={{ object.pk }}">
-                                    + <i>{% trans "Add a child site" %}</i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'outdoor:course_add' %}?site={{ object.pk }}">
-                                    + <i>{% trans "Add a course" %}</i>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    {% if object.parent %}
-                    <li>
-                        <a href="{% url 'outdoor:site_add' %}?site={{ object.parent.pk }}">
-                            + <i>{% trans "Add a brother site" %}</i>
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-    {% for ancestor in object.get_ancestors %}
-            </li>
-        </ul>
-    {% endfor %}
-
+        {% site_as_list site.get_root as root_as_list %}
+        {% include "outdoor/recursive_sites_tree.html" with sites_at_level=root_as_list original_site=object %}
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
@@ -89,26 +47,6 @@
                 {% endfor %}
             </td>
         </tr>
-        <tr>
-            <th>{{ object|verbose:"type" }}</th>
-            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"description_teaser" }}</th>
-            <td>{% if object.description_teaser %}{{ object.description_teaser|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"ambiance" }}</th>
-            <td>{% if object.ambiance %}{{ object.ambiance|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"advice" }}</th>
-            <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-        </tr>
         {% regroup  object.super_ratings by scale as scales_list %}
         {% for scale in scales_list%}
             <tr>
@@ -123,6 +61,30 @@
                 </td>
             </tr>
         {% endfor %}
+        <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description_teaser" }}</th>
+            <td>{% if object.description_teaser %}{{ object.description_teaser|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"ambiance" }}</th>
+            <td>{% if object.ambiance %}{{ object.ambiance|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"advice" }}</th>
+            <td>{% if object.advice %}{{ object.advice|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"accessibility" }}</th>
+            <td>{% if object.accessibility %}{{ object.accessibility|safe|linebreaks }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
         <tr>
             <th>{{ object|verbose:"period" }}</th>
             <td>{% if object.period %}{{ object.period }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>

@@ -4,16 +4,15 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 from django.conf import settings
 
-from geotrek.authent.factories import StructureFactory
-from geotrek.common.factories import AttachmentFactory, TargetPortalFactory
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
 from geotrek.common.models import TargetPortal
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.factories import POIFactory
-from geotrek.infrastructure.factories import InfrastructureFactory, InfrastructureTypeFactory
+from geotrek.trekking.tests.factories import POIFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory, InfrastructureTypeFactory
 from geotrek.infrastructure.models import InfrastructureType, Infrastructure
 from geotrek.core.models import Usage, Path
-from geotrek.core.factories import UsageFactory
-from geotrek.core.factories import PathFactory
+from geotrek.core.tests.factories import UsageFactory, PathFactory
 
 from easy_thumbnails.models import Thumbnail
 
@@ -121,8 +120,11 @@ class CommandUnsetStructureTests(TestCase):
 
 
 class CommandAttachmentsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.content = POIFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+
     def setUp(self):
-        self.content = POIFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
         self.picture = AttachmentFactory(content_object=self.content,
                                          attachment_file=get_dummy_uploaded_image())
 

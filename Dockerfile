@@ -46,14 +46,12 @@ RUN /opt/venv/bin/pip install -U pip setuptools wheel
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 
 COPY geotrek/ geotrek/
-COPY mapentity/ mapentity/
 COPY manage.py manage.py
 COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
-RUN cd geotrek; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ../manage.py compilemessages; cd ..
-RUN cd mapentity; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ../manage.py compilemessages; cd ..
+RUN ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ./manage.py compilemessages
 
 EXPOSE 8000
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]

@@ -21,8 +21,9 @@
         {% crispy form %}
         <fieldset class="formset">
             {{ relationship_formset.management_form }}
-            {% for relationship_form in relationship_formset %}
-                <div class="form-row inline controls controls-row {{ relationship_formset.prefix }}">
+            {% for relationship_form in relationship_formset.forms %}
+                <div class="form-row inline controls controls-row {{ relationship_from.prefix }}">
+                {% if relationship_form.instance.pk %}{{ relationship_form.DELETE }}{% endif %}
                 {% crispy relationship_form %}
                 </div>
             {% endfor %}
@@ -46,7 +47,7 @@
             // TODO: do this with crispyforms !
             $("fieldset.formset").detach().appendTo('#mainform fieldset');
 
-            $('.form-row.inline.{{ relationship_formset.prefix }}').formset({
+            $('.form-row.inline').formset({
                 prefix: '{{ relationship_formset.prefix }}',
                 keepFieldValues: "[name='csrfmiddlewaretoken']",
                 addCssClass: 'btn btn-success add-row',

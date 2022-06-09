@@ -6,18 +6,19 @@ from django.contrib.gis.geos import LineString
 from django.conf import settings
 
 from geotrek.core.fields import SnappedLineStringField, TopologyField
-from geotrek.core.factories import PathFactory
+from geotrek.core.tests.factories import PathFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SnappedLineStringFieldTest(TestCase):
-    def setUp(self):
-        self.f = SnappedLineStringField()
-        self.wktgeom = ('LINESTRING(-0.77054223313507 -5.32573853776343,'
-                        '-0.168053647782867 -4.66595028627023)')
-        self.geojson = ('{"type":"LineString","coordinates":['
-                        ' [-0.77054223313507,-5.32573853776343],'
-                        ' [-0.168053647782867,-4.66595028627023]]}')
+    @classmethod
+    def setUpTestData(cls):
+        cls.f = SnappedLineStringField()
+        cls.wktgeom = ('LINESTRING(-0.77054223313507 -5.32573853776343,'
+                       '-0.168053647782867 -4.66595028627023)')
+        cls.geojson = ('{"type":"LineString","coordinates":['
+                       ' [-0.77054223313507,-5.32573853776343],'
+                       ' [-0.168053647782867,-4.66595028627023]]}')
 
     def test_dict_with_geom_is_mandatory(self):
         self.assertRaises(ValidationError, self.f.clean,
@@ -62,8 +63,9 @@ class SnappedLineStringFieldTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyFieldTest(TestCase):
-    def setUp(self):
-        self.f = TopologyField()
+    @classmethod
+    def setUpTestData(cls):
+        cls.f = TopologyField()
 
     def test_validation_fails_if_null_is_submitted(self):
         self.assertRaises(ValidationError, self.f.clean, 'null')

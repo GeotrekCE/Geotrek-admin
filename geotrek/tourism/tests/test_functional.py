@@ -1,31 +1,35 @@
 from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.conf import settings
+from django.test.utils import override_settings
 from django.utils.translation import gettext_lazy as _
+from django.utils.module_loading import import_string
 
 import filecmp
-from geotrek.authent.factories import StructureFactory
-from geotrek.authent.factories import TrekkingManagerFactory
-from geotrek.common.factories import AttachmentFactory
-from geotrek.common.tests import CommonTest
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.authent.tests.factories import TrekkingManagerFactory
+from geotrek.common.tests.factories import AttachmentFactory
+from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.tourism.factories import (TouristicContentFactory,
-                                       TouristicContentCategoryFactory,
-                                       TouristicEventFactory)
-from geotrek.zoning.factories import CityFactory
+from geotrek.tourism.tests.factories import (TouristicContentFactory,
+                                             TouristicContentCategoryFactory,
+                                             TouristicEventFactory)
+from geotrek.zoning.tests.factories import CityFactory
 
 from unittest.mock import patch
 import os
 
 
-class TouristicContentViewsTests(CommonTest):
+class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
     model = TouristicContent
     modelfactory = TouristicContentFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
+    extra_column_list = ['type1', 'type2', 'eid']
 
     def get_expected_json_attrs(self):
         return {
+            'accessibility': 'Accessible',
             'approved': False,
             'areas': [],
             'category': {
@@ -46,6 +50,11 @@ class TouristicContentViewsTests(CommonTest):
             'email': None,
             'filelist_url': '/paperclip/get/tourism/touristiccontent/{}/'.format(self.obj.pk),
             'files': [],
+            'label_accessibility': {
+                'id': self.obj.label_accessibility.pk,
+                'label': self.obj.label_accessibility.label,
+                'pictogram': '/media/upload/dummy_img.png'
+            },
             'map_image_url': '/image/touristiccontent-{}.png'.format(self.obj.pk),
             'name': 'Touristic content',
             'pictures': [],
@@ -94,6 +103,13 @@ class TouristicContentViewsTests(CommonTest):
             'website': None,
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'category': self.obj.category.label,
+            'id': self.obj.pk,
+            'name': self.obj.name_display
+        }
+
     def get_bad_data(self):
         return {
             'geom': 'doh!'
@@ -115,22 +131,38 @@ class TouristicContentViewsTests(CommonTest):
         CityFactory.create(name="Nor", code='09001',
                            geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
                                                      srid=settings.SRID)))
-        self.login()
         params = '?city=09000'
-        response = self.client.get(self.model.get_jsonlist_url() + params)
+        response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["map_obj_pk"]), 1)
+        self.assertEqual(response.json()["recordsFiltered"], 1)
         params = '?city=09001'
-        response = self.client.get(self.model.get_jsonlist_url() + params)
+        response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["map_obj_pk"]), 0)
+        self.assertEqual(len(response.json()["data"]), 0)
+
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'touristic_content_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'name', 'type1', 'type2', 'eid'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'touristic_content_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'type1', 'type2', 'eid'])
 
 
-class TouristicEventViewsTests(CommonTest):
+class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
+    extra_column_list = ['type', 'eid', 'themes']
 
     def get_expected_json_attrs(self):
         return {
@@ -205,6 +237,15 @@ class TouristicEventViewsTests(CommonTest):
             'website': None,
         }
 
+    def get_expected_datatables_attrs(self):
+        return {
+            'begin_date': '20/02/2002',
+            'end_date': '22/02/2202',
+            'id': self.obj.pk,
+            'name': self.obj.name_display,
+            'type': self.obj.type.type
+        }
+
     def get_bad_data(self):
         return {
             'geom': 'doh!'
@@ -225,7 +266,6 @@ class TouristicEventViewsTests(CommonTest):
                                               title='mapimage')
         obj.attachment = attachment
         obj.save()
-        self.login()
         mock_requests.get.return_value.status_code = 200
         mock_requests.get.return_value.content = '<p id="properties">Mock</p>'
         response = self.client.get(obj.get_document_url())
@@ -234,3 +274,19 @@ class TouristicEventViewsTests(CommonTest):
         first_path = os.path.join(settings.MEDIA_ROOT, 'maps', element_in_dir[0])
         second_path = os.path.join(settings.MEDIA_ROOT, attachment.attachment_file.name)
         self.assertTrue(filecmp.cmp(first_path, second_path))
+
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'touristic_event_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'name', 'type', 'eid', 'themes'])
+
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'touristic_event_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'type', 'eid', 'themes'])

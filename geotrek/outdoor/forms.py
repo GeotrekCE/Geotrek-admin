@@ -1,3 +1,4 @@
+from django.conf import settings
 from crispy_forms.layout import Div
 from django import forms
 from django.core.exceptions import ValidationError
@@ -25,6 +26,7 @@ class SiteForm(CommonForm):
             'ambiance',
             'description',
             'advice',
+            'accessibility',
             'period',
             'orientation',
             'wind',
@@ -43,7 +45,7 @@ class SiteForm(CommonForm):
     class Meta:
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
                   'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
-                  'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'eid',
+                  'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'accessibility', 'eid',
                   'orientation', 'wind', 'managers', 'pois_excluded']
         model = Site
 
@@ -57,7 +59,7 @@ class SiteForm(CommonForm):
             ratings = None
             if self.instance.pk:
                 ratings = self.instance.ratings.filter(scale=scale)
-            fieldname = 'rating_scale_{}'.format(scale.pk)
+            fieldname = f'rating_scale_{scale.pk}'
             self.fields[fieldname] = forms.ModelMultipleChoiceField(
                 label=scale.name,
                 queryset=scale.ratings.all(),
@@ -71,6 +73,17 @@ class SiteForm(CommonForm):
         else:
             self.fieldslayout[0].remove('pois_excluded')
 
+    def clean(self):
+        cleaned_data = super().clean()
+        practice = self.cleaned_data['practice']
+        for scale in RatingScale.objects.all():
+            if self.cleaned_data.get(f'rating_scale_{scale.pk}'):
+                try:
+                    practice.rating_scales.get(pk=scale.pk)
+                except RatingScale.DoesNotExist:
+                    raise ValidationError(_("One of the rating scale use is not part of the practice chosen"))
+        return cleaned_data
+
     def save(self, *args, **kwargs):
         site = super().save(self, *args, **kwargs)
 
@@ -80,7 +93,7 @@ class SiteForm(CommonForm):
             to_remove = list(field.exclude(scale__practice=site.practice).values_list('pk', flat=True))
             to_add = []
             for scale in site.practice.rating_scales.all():
-                ratings = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
+                ratings = self.cleaned_data.get(f'rating_scale_{scale.pk}')
                 needs_removal = field.filter(scale=scale)
                 if ratings is not None:
                     for rating in ratings:
@@ -105,9 +118,10 @@ class CourseForm(CommonForm):
 
     fieldslayout = [
         Div(
+            'points_reference',
             'structure',
             'name',
-            'site',
+            'parent_sites',
             'type',
             'review',
             'published',
@@ -115,8 +129,9 @@ class CourseForm(CommonForm):
             'ratings_description',
             'duration',
             'advice',
-            'equipment',
             'gear',
+            'equipment',
+            'accessibility',
             'height',
             'pois_excluded',
             'children_course',
@@ -126,20 +141,21 @@ class CourseForm(CommonForm):
     ]
 
     class Meta:
-        fields = ['geom', 'structure', 'name', 'site', 'type', 'review', 'published', 'description', 'ratings_description', 'duration', 'pois_excluded',
-                  'advice', 'gear', 'equipment', 'height', 'eid', 'children_course', 'hidden_ordered_children']
+        fields = ['geom', 'structure', 'name', 'parent_sites', 'type', 'review', 'published', 'description', 'ratings_description', 'duration', 'pois_excluded',
+                  'points_reference', 'advice', 'gear', 'equipment', 'accessibility', 'height', 'eid', 'children_course', 'hidden_ordered_children']
         model = Course
 
-    def __init__(self, site=None, *args, **kwargs):
+    def __init__(self, parent_sites=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['site'].queryset = Site.objects.only('name').order_by('name')
-        self.fields['site'].initial = site
+        self.fields['parent_sites'].queryset = Site.objects.only('name').order_by('name')
+        if parent_sites:
+            self.fields['parent_sites'].initial = parent_sites
         self.fields['duration'].widget.attrs['min'] = '0'
         for scale in RatingScale.objects.all():
             ratings = None
-            if self.instance.pk and self.instance.site and self.instance.site.practice:
+            if self.instance.pk and self.instance.parent_sites.exists() and self.instance.parent_sites.first().practice:
                 ratings = self.instance.ratings.filter(scale=scale)
-            fieldname = 'rating_scale_{}'.format(scale.pk)
+            fieldname = f'rating_scale_{scale.pk}'
             self.fields[fieldname] = forms.ModelChoiceField(
                 label=scale.name,
                 queryset=scale.ratings.all(),
@@ -159,6 +175,13 @@ class CourseForm(CommonForm):
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0].remove('pois_excluded')
+        if not settings.OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop('points_reference')
+        else:
+            # Edit points of reference with custom edition JavaScript class
+            self.fields['points_reference'].label = ''
+            self.fields['points_reference'].widget.target_map = 'geom'
+            self.fields['points_reference'].widget.geometry_field_class = 'PointsReferenceField'
 
     def clean_children_course(self):
         """
@@ -169,19 +192,19 @@ class CourseForm(CommonForm):
             raise ValidationError(_("Cannot add children because this course is itself a child."))
         for child in children:
             if child.course_children.exists():
-                raise ValidationError(_("Cannot use parent course {name} as a child course.".format(name=child.name)))
+                raise ValidationError(_(f"Cannot use parent course {child.name} as a child course."))
         return children
 
     def save(self, *args, **kwargs):
         course = super().save(self, *args, **kwargs)
 
         # Save ratings
-        if course.site and course.site.practice:
-            to_remove = list(course.ratings.exclude(scale__practice=course.site.practice).values_list('pk', flat=True))
+        if course.parent_sites.exists() and course.parent_sites.first().practice:
+            to_remove = list(course.ratings.exclude(scale__practice=course.parent_sites.first().practice).values_list('pk', flat=True))
             to_add = []
-            for scale in course.site.practice.rating_scales.all():
-                rating = self.cleaned_data.get('rating_scale_{}'.format(scale.pk))
-                needs_removal = course.site.ratings.filter(scale=scale)
+            for scale in course.parent_sites.first().practice.rating_scales.all():
+                rating = self.cleaned_data.get(f'rating_scale_{scale.pk}')
+                needs_removal = course.parent_sites.first().ratings.filter(scale=scale)
                 if rating:
                     needs_removal = needs_removal.exclude(pk=rating.pk)
                     to_add.append(rating.pk)

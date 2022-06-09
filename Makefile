@@ -8,7 +8,7 @@ serve:
 	docker-compose up
 
 messages:
-	docker-compose run --rm web bash -c 'for d in geotrek/*/locale; do cd $$d; cd ..; ../../manage.py makemessages -a --no-location; cd ../../; done'
+	docker-compose run --rm web ./manage.py makemessages -a --no-location
 
 test:
 	docker-compose -e ENV=tests run web ./manage.py test
@@ -44,18 +44,18 @@ css:
 
 %.pdf:
 	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "$*_.*"
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "$*_.*" --password=geotrek -s "public"
 	dot geotrekdb.dot -T pdf -o docs/data-model/$@
 	rm geotrekdb.dot
 
 authent.pdf:
 	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "auth(ent)?_.*"
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "auth(ent)?_.*" --password=geotrek -s "public"
 	dot geotrekdb.dot -T pdf -o docs/data-model/authent.pdf
 	rm geotrekdb.dot
 
 global.pdf:
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot --password=geotrek -s "public"
 	dot geotrekdb.dot -T pdf -o docs/data-model/global.pdf
 	rm geotrekdb.dot
 

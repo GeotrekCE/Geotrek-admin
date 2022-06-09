@@ -1,40 +1,54 @@
-from rest_framework.serializers import ModelSerializer
+from drf_dynamic_fields import DynamicFieldsMixin
+from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.core.models import Path, Trail
 
 
-class PathSerializer(ModelSerializer):
+class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
+    length_2d = serializers.SerializerMethodField()
+    length = serializers.FloatField(source='length_display')
+    name = serializers.CharField(source='name_display')
+    usages = serializers.CharField(source='usages_display')
+    networks = serializers.CharField(source='networks_display')
+    trails = serializers.CharField(source='trails_display')
+    structure = serializers.SlugRelatedField('name', read_only=True)
+    comfort = serializers.SlugRelatedField('comfort', read_only=True)
+    source = serializers.SlugRelatedField('source', read_only=True)
+    stake = serializers.SlugRelatedField('stake', read_only=True)
+
+    def get_length_2d(self, obj):
+        return round(obj.length_2d, 1)
+
     class Meta:
         model = Path
-        id_field = 'id'
-        fields = (
-            'id', 'arrival', 'ascent', 'departure', 'descent', 'draft', 'eid', 'length',
-            'max_elevation', 'min_elevation', 'name', 'slope', 'valid', 'visible',
-        )
+        fields = "__all__"
 
 
 class PathGeojsonSerializer(GeoFeatureModelSerializer, PathSerializer):
-    # Annotated geom field with API_SRID
     api_geom = GeometryField(read_only=True, precision=7)
 
     class Meta(PathSerializer.Meta):
         geo_field = 'api_geom'
-        fields = PathSerializer.Meta.fields + ('api_geom', )
+        id_field = 'id'
+        fields = "__all__"
 
 
-class TrailSerializer(ModelSerializer):
+class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    length = serializers.FloatField(source='length_display')
+    name = serializers.CharField(source='name_display')
+
     class Meta:
         model = Trail
-        id_field = 'id'
-        fields = ('id', 'arrival', 'departure', 'comments', 'name')
+        fields = "__all__"
 
 
 class TrailGeojsonSerializer(GeoFeatureModelSerializer, TrailSerializer):
-    # Annotated geom field with API_SRID
     api_geom = GeometryField(read_only=True, precision=7)
 
     class Meta(TrailSerializer.Meta):
         geo_field = 'api_geom'
-        fields = TrailSerializer.Meta.fields + ('api_geom', )
+        id_field = 'id'
+        fields = "__all__"
