@@ -700,7 +700,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             self.client.get(reverse('core:path-drf-list', kwargs={'format': 'datatables'}))
 
 
