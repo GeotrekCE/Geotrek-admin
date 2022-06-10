@@ -10,6 +10,15 @@ CHANGELOG
 - Add filter valid geometries on topologies (#2515)[3.1]
 - Add setting `ALLOW_PATH_DELETION_TOPOLOGY` which protect or not against deletion of path with topologies linked to it (#2515)[3.3.1]
 
+**Bug fixes**
+
+- Log entry menu is now only displayed if user has permission
+- Admin menu is now only displayed if user has permission
+- Object 'All history' button is now only displayed if user has permission
+- Error 404 default template now display a visible message
+- Error 500 default template don't make recursive exceptions
+- Log entry permissions are now managed by "mapentity - xxx log entries" instead of "admin - xxx log entries"
+
 **Breaking Changes**
 
 - This release requires PostGIS 2.5 or later.
@@ -30,12 +39,12 @@ CHANGELOG
 
 **Improvments**
 
-- New GeoJSON generation system, using Django Rest Framework and PostGIS functions
+- New GeoJSON generation system, using Django Rest Framework and PostGIS functions (#2967)
 - Enable GZIP compression on JSON / GeoJSON on nginx
 
 **Maintenance**
 
-- upgrade mapentity to 8.1.0
+- upgrade mapentity to 8.1.2
 
 
 2.83.0  (2022-05-01)
