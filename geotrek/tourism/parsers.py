@@ -1,17 +1,22 @@
 import json
+import os
 
 import datetime
 
 from mimetypes import guess_type
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.translation import gettext as _
+from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
                                     TourInSoftParser)
-from geotrek.tourism.models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
+from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
+                                    TouristicContentType1, TouristicContentType2)
 
 
 class TouristicContentMixin:
@@ -128,6 +133,16 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         geom.transform(settings.SRID)
         return geom
 
+    def _filter_comm(self, val, code, multiple=True):
+        if not val:
+            return None
+        vals = [subval['coordonnees']['fr'] for subval in val if subval['type']['id'] == code]
+        if multiple:
+            return ' / '.join(vals)
+        if vals:
+            return vals[0]
+        return None
+
 
 class AttachmentApidaeParserMixin(object):
     def filter_attachments(self, src, val):
@@ -144,6 +159,90 @@ class AttachmentApidaeParserMixin(object):
                 legend = name_attachment
             result.append((subval['traductionFichiers'][0]['url'], legend, copyright_attachment))
         return result
+
+
+class InformationDeskApidaeParser(ApidaeParser):
+    type = None
+    model = InformationDesk
+    fields = {
+        'eid': 'id',
+        'description': 'presentation.descriptifDetaille.libelleFr',
+        'geom': 'localisation.geolocalisation.geoJson.coordinates',
+        'phone': 'informations.moyensCommunication',
+        'email': 'informations.moyensCommunication',
+        'website': 'informations.moyensCommunication',
+        'photo': 'illustrations',
+        'street': ('localisation.adresse.adresse1',
+                   'localisation.adresse.adresse2',
+                   'localisation.adresse.adresse3',),
+        'postal_code': 'localisation.adresse.codePostal',
+        'municipality': 'localisation.adresse.commune.nom',
+        'name': 'nom.libelleFr',
+    }
+    constant_fields = {}
+    natural_keys = {
+        'type': 'label',
+    }
+    non_fields = {}
+    responseFields = [
+        'id',
+        'nom',
+        'presentation.descriptifDetaille',
+        'localisation.adresse',
+        'localisation.geolocalisation.geoJson.coordinates',
+        'informations.moyensCommunication',
+        'illustrations'
+    ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.constant_fields = self.constant_fields.copy()
+        self.m2m_constant_fields = self.m2m_constant_fields.copy()
+        self.field_options = self.field_options.copy()
+        self.field_options['type'] = {'create': True}
+        if self.type is not None:
+            self.constant_fields['type'] = self.type
+
+    def filter_photo(self, src, val):
+        url = None
+        i = 0
+        file = None
+        while not url and i < len(val):
+            url = val[i]['traductionFichiers'][0]['url']
+        if url:
+            url = self.base_url + url
+            parsed_url = urlparse(url)
+
+            if (parsed_url.scheme in ('http', 'https') and self.download_attachments) or parsed_url.scheme == 'ftp':
+                content = self.download_attachment(url)
+                if content is not None:
+                    f = ContentFile(content)
+                    basename, ext = os.path.splitext(os.path.basename(url))
+                    name = '%s%s' % (basename[:128], ext)
+                    file = UploadedFile(f, name=name)
+                    if file and self.obj.photo:
+                        if os.path.exists(self.obj.photo.path):
+                            os.remove(self.obj.photo.path)
+        return file
+
+    def filter_street(self, src, val):
+        return val[0]
+
+    def filter_postal_code(self, src, val):
+        return str(val)
+
+    def filter_municipality(self, src, val):
+        return str(val)
+
+    def filter_phone(self, src, val):
+        tel = self._filter_comm(val, 201, multiple=True)
+        return str(tel)
+
+    def filter_email(self, src, val):
+        return self._filter_comm(val, 204, multiple=False)
+
+    def filter_website(self, src, val):
+        return self._filter_comm(val, 205, multiple=False)
 
 
 class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
@@ -252,7 +351,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
 
     def filter_contact(self, src, val):
         (address1, address2, address3, zipCode, commune, comm) = val
-        tel = self.filter_comm(comm, 201, multiple=True)
+        tel = self._filter_comm(comm, 201, multiple=True)
         if tel:
             tel = "Tél. " + tel
         lines = [line for line in [
@@ -265,10 +364,10 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         return '<br>'.join(lines)
 
     def filter_email(self, src, val):
-        return self.filter_comm(val, 204, multiple=False)
+        return self._filter_comm(val, 204, multiple=False)
 
     def filter_website(self, src, val):
-        return self.filter_comm(val, 205, multiple=False)
+        return self._filter_comm(val, 205, multiple=False)
 
     def filter_practical_info(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, langues, localisation, datemodif, proprio) = val
@@ -299,16 +398,6 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
             modif,
         ] if line]
         return '<br>'.join(lines)
-
-    def filter_comm(self, val, code, multiple=True):
-        if not val:
-            return None
-        vals = [subval['coordonnees']['fr'] for subval in val if subval['type']['id'] == code]
-        if multiple:
-            return ' / '.join(vals)
-        if vals:
-            return vals[0]
-        return None
 
 
 class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContentMixin, ApidaeParser):
@@ -379,25 +468,15 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
         if self.portal is not None:
             self.m2m_constant_fields['portal'] = self.portal
 
-    def filter_comm(self, val, code, multiple=True):
-        if not val:
-            return None
-        vals = [subval['coordonnees']['fr'] for subval in val if subval['type']['id'] == code]
-        if multiple:
-            return ' / '.join(vals)
-        if vals:
-            return vals[0]
-        return None
-
     def filter_email(self, src, val):
-        return self.filter_comm(val, 204, multiple=False)
+        return self._filter_comm(val, 204, multiple=False)
 
     def filter_website(self, src, val):
-        return self.filter_comm(val, 205, multiple=False)
+        return self._filter_comm(val, 205, multiple=False)
 
     def filter_contact(self, src, val):
         (address1, address2, address3, zipCode, commune, comm) = val
-        tel = self.filter_comm(comm, 201, multiple=True)
+        tel = self._filter_comm(comm, 201, multiple=True)
         if tel:
             tel = "Tél. " + tel
         lines = [line for line in [
