@@ -37,6 +37,8 @@ CHANGELOG
   - rm -r /opt/geotrek-admin/var/cache/* (or <geotrek directory>/var/cache/* on docker)
   - sudo dpkg-reconfigure geotrek-admin (or docker-compose restart)
 
+- From now, Geotrek-admin is not installable on Ubuntu 18.04 bionic anymore. But upgrade are already available.
+
 **Improvments**
 
 - New GeoJSON generation system, using Django Rest Framework and PostGIS functions (#2967)
