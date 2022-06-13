@@ -635,3 +635,12 @@ class ParserTests(TranslationResetMixin, TestCase):
         with information_desk.photo.open() as f:
             data = f.read()
         self.assertEqual(data, b'Fake image')
+
+        mocked.return_value.content = b'Fake other image'
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestInformationDeskParser')
+
+        information_desk.refresh_from_db()
+
+        with information_desk.photo.open() as f:
+            data = f.read()
+        self.assertEqual(data, b'Fake other image')
