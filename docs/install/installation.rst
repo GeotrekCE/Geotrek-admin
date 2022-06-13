@@ -184,8 +184,8 @@ Geotrek-admin requires at least PostGIS 2.5.
 
 If you installed Geotrek-admin on bionic ubuntu with provided install method, you should update your database :
 ::
-    # FIrstly, backup your database (see previous section)
-    # install postgresql apt repository
+    # Firstly, backup your database (see previous section)
+    # install postgresql APT repository
     # (from https://wiki.postgresql.org/wiki/Apt)
 
     sudo apt install curl ca-certificates gnupg
@@ -195,19 +195,19 @@ If you installed Geotrek-admin on bionic ubuntu with provided install method, yo
 
     # install postgis 2.5 on postgresql 10
     sudo apt install postgresql-10-postgis-2.5-scripts
-    sudo -u postgres psql -d geotrekdb -c "ALTER EXTENSION POSTGIS UPDATE";
+    sudo -u postgres psql -d geotrekdb -c "ALTER EXTENSION POSTGIS UPDATE";  # replace geotrekdb by your database name
 
     # You database is now using postgis 2.5 !
 
     # Troubleshooting
-    # If you encounter error with last command to update postgis, just drop view v_projects view and retry
+    # If you encounter error with last command to update postgis, just drop view v_projects and retry
     # This view will be recreated after next Geotrek-admin upgrade or dpkg-reconfigure.
     sudo -u postgres psql -d geotrekdb -c "DROP VIEW v_projects;";
     sudo -u postgres psql -d geotrekdb -c "ALTER EXTENSION POSTGIS UPDATE";
 
-    # Warning, by using postgresql official apt repo, next apt upgrade or apt full-upgrade will install postgresql9.6 and postgis 3 along your database, because postgis meta-package has changed
-    # If your are not using postgresql9.6, you can remove it
-    # apt remove postgresql-9.6
+    # Warning, by using postgresql official apt repo, next apt upgrade or apt full-upgrade will install postgresql-9.6 and postgis 3 along your database, because postgis meta-package has changed
+    # If your are not using postgresql-9.6, you can remove it (bionic postgresql default version is 10)
+    # sudo apt remove postgresql-9.6
 
 If you use an external database, you should adapt this method along your system
 

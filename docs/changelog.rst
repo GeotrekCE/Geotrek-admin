@@ -16,7 +16,7 @@ CHANGELOG
 - Admin menu is now only displayed if user has permission
 - Object 'All history' button is now only displayed if user has permission
 - Error 404 default template now display a visible message
-- Error 500 default template don't make recursive exceptions
+- Error 500 default template doesn't make recursive exceptions anymore
 - Log entry permissions are now managed by "mapentity - xxx log entries" instead of "admin - xxx log entries"
 
 **Breaking Changes**
@@ -32,7 +32,7 @@ CHANGELOG
   - rm -r /opt/geotrek-admin/var/cache/* (or <geotrek directory>/var/cache/* on docker)
   - sudo dpkg-reconfigure geotrek-admin (or docker-compose restart)
 
-- From now, Geotrek-admin is not installable on Ubuntu 18.04 bionic anymore. But upgrade are already available.
+- From now, Geotrek-admin is not installable on Ubuntu 18.04 bionic anymore. But upgrade are still available.
 
 **Improvments**
 
