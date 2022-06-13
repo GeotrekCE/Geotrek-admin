@@ -31,18 +31,6 @@
       "informations": {
         "moyensCommunication": [
           {
-            "identifiant": 1,
-            "type": {
-              "elementReferenceType": "MoyenCommunicationType",
-              "id": 201,
-              "libelleFr": "Téléphone",
-              "ordre": 1
-            },
-            "coordonnees": {
-              "fr": "01 01 01 01 01"
-            }
-          },
-          {
             "identifiant": 2,
             "type": {
               "elementReferenceType": "MoyenCommunicationType",
