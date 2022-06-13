@@ -71,7 +71,7 @@ echo "Your Geotrek-admin configuration has been copied."
 # Install deb package
 echo "Installing geotrek-admin debian package…"
 if [ "`./bin/django shell -c "from django.conf import settings; print(settings.DATABASES['default']['HOST'])"`" == "localhost" ]; then
-	curl https://packages.geotrek.fr/install.sh | bash
+	curl https://github.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash
 else
-	curl https://packages.geotrek.fr/install.sh | bash -s - --nodb
+	curl https://github.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash -s - --nodb
 fi
