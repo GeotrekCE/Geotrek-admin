@@ -127,7 +127,7 @@ Then, go inside your existing Geotrek-admin installation directory and run the d
 
 ::
 
-   curl https://packages.geotrek.fr/migrate.sh | bash
+   curl https://github.com/GeotrekCE/Geotrek-admin/blob/master/tools/migrate.sh | bash
 
 
 Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.py`` (see Advanced configuration section)
@@ -167,14 +167,50 @@ Backup settings, media files and database on the old server:
 
 ::
 
-	sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-	tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/
+    sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
+    tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/
 
 Restore files on the new server:
 ::
 
-	scp old_server_ip:path/to/data.tgz .
-	tar xvzf data.tgz
+    scp old_server_ip:path/to/data.tgz .
+    tar xvzf data.tgz
+
+
+Ubuntu bionic PostGIS 2.5 upgrade
+---------------------------------
+
+Geotrek-admin requires at least PostGIS 2.5.
+
+If you installed Geotrek-admin on bionic ubuntu with provided install method, you should update your database :
+::
+    # FIrstly, backup your database (see previous section)
+    # install postgresql apt repository
+    # (from https://wiki.postgresql.org/wiki/Apt)
+
+    sudo apt install curl ca-certificates gnupg
+    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
+    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    sudo apt update
+
+    # install postgis 2.5 on postgresql 10
+    sudo apt install postgresql-10-postgis-2.5-scripts
+    sudo -u postgres psql -d geotrekdb -c "ALTER EXTENSION POSTGIS UPDATE";
+
+    # You database is now using postgis 2.5 !
+
+    # Troubleshooting
+    # If you encounter error with last command to update postgis, just drop view v_projects view and retry
+    # This view will be recreated after next Geotrek-admin upgrade or dpkg-reconfigure.
+    sudo -u postgres psql -d geotrekdb -c "DROP VIEW v_projects;";
+    sudo -u postgres psql -d geotrekdb -c "ALTER EXTENSION POSTGIS UPDATE";
+
+    # Warning, by using postgresql official apt repo, next apt upgrade or apt full-upgrade will install postgresql9.6 and postgis 3 along your database, because postgis meta-package has changed
+    # If your are not using postgresql9.6, you can remove it
+    # apt remove postgresql-9.6
+
+If you use an external database, you should adapt this method along your system
+
 
 
 Uninstallation
