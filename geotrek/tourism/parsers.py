@@ -134,6 +134,11 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         return geom
 
     def _filter_comm(self, val, code, multiple=True):
+        """
+        With the code of the section (mail, phone etc...), allow to get the rigth information from 'informations.moyensCommunication'
+        When the information is multiple (val is a list), you can either get the first element (multiple=False),
+        either get all elements separated by a / (multiple=True)
+        """
         if not val:
             return None
         vals = [subval['coordonnees']['fr'] for subval in val if subval['type']['id'] == code]
@@ -162,6 +167,7 @@ class AttachmentApidaeParserMixin(object):
 
 
 class InformationDeskApidaeParser(ApidaeParser):
+    """Parser to import information desks from APIDAE"""
     type = None
     model = InformationDesk
     fields = {
