@@ -1,0 +1,114 @@
+{
+  "query": {
+    "selectionIds": [
+      1
+    ],
+    "searchFields": "NOM_DESCRIPTION_CRITERES",
+    "first": 0,
+    "count": 100,
+    "order": "IDENTIFIANT",
+    "asc": true,
+    "responseFields": [
+      "id",
+      "nom",
+      "presentation.descriptifDetaille",
+      "localisation.adresse",
+      "localisation.geolocalisation.geoJson.coordinates",
+      "informations.moyensCommunication",
+      "illustrations"
+    ],
+    "apiKey": "xxxxx",
+    "projetId": 1
+  },
+  "numFound": 18,
+  "objetsTouristiques": [
+    {
+      "type": "Bar",
+      "id": 1,
+      "nom": {
+        "libelleFr": "Foo bar"
+      },
+      "informations": {
+        "moyensCommunication": [
+          {
+            "identifiant": 1,
+            "type": {
+              "elementReferenceType": "MoyenCommunicationType",
+              "id": 201,
+              "libelleFr": "Téléphone",
+              "ordre": 1
+            },
+            "coordonnees": {
+              "fr": "01 01 01 01 01"
+            }
+          },
+          {
+            "identifiant": 2,
+            "type": {
+              "elementReferenceType": "MoyenCommunicationType",
+              "id": 204,
+              "libelleFr": "Mél",
+              "ordre": 2
+            },
+            "coordonnees": {
+              "fr": "info.labollenevesubie@nicecotedazurtourisme.com"
+            }
+          }
+        ]
+      },
+      "presentation": {
+        "descriptifDetaille": {
+          "libelleFr": "Description"
+        }
+      },
+      "localisation": {
+        "adresse": {
+          "nomDuLieu": "Place Général de Gaulle",
+          "codePostal": "06450",
+          "etat": "France",
+          "commune": {
+            "id": 1952,
+            "code": "06020",
+            "nom": "La Bollène-Vésubie",
+            "pays": {
+              "elementReferenceType": "Pays",
+              "id": 532,
+              "libelleFr": "France",
+              "ordre": 78
+            },
+            "codePostal": "06450"
+          }
+        },
+        "geolocalisation": {
+          "geoJson": {
+            "coordinates": [
+              7.332209,
+              43.990611
+            ]
+          }
+        }
+      },
+      "illustrations": [
+        {
+          "identifiant": 1,
+          "link": false,
+          "type": "IMAGE",
+          "traductionFichiers": [
+            {
+              "locale": "fr",
+              "url": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/123/137/12880251.jpg",
+              "extension": "jpg",
+              "fileName": "DSC_9138",
+              "taille": 4027316,
+              "hauteur": 2000,
+              "largeur": 2992,
+              "lastModifiedDate": "2022-03-14T14:37:02.896+0000"
+            }
+          ],
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "formatVersion": "v002"
+}

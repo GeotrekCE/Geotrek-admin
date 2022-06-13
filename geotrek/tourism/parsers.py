@@ -203,6 +203,9 @@ class InformationDeskApidaeParser(ApidaeParser):
         if self.type is not None:
             self.constant_fields['type'] = self.type
 
+    def start(self):
+        Parser.start(self)
+
     def filter_photo(self, src, val):
         url = None
         i = 0
