@@ -49,7 +49,7 @@ Run the following command in a shell prompt on your server:
 
 ::
 
-   curl https://packages.geotrek.fr/install.sh | bash
+   curl https://github.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash
 
 If you don't want to use a local database, you can run the following command instead.
 This will prevent the script to install PostgreSQL server locally.
@@ -57,7 +57,7 @@ Don't forget to enable PostGIS extension in your remote database before installa
 
 ::
 
-   curl https://packages.geotrek.fr/install.sh | bash -s - --nodb
+   curl https://github.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash -s - --nodb
 
 Then create the application administrator account and connect to the web interface.
 
@@ -77,7 +77,7 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 .. note ::
 
     Geotrek-admin is automatically installed in ``/opt/geotrek-admin/`` directory.
-	
+
     The installation automatically creates an internal ``geotrek`` linux user, owner of this directory
 
     The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
@@ -134,13 +134,13 @@ Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.
 
 .. note ::
 
-    Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory 
-    and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py`` 
-    (with spatial extent, map and modules configuration...). 
+    Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory
+    and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``
+    (with spatial extent, map and modules configuration...).
 
     See advanced configuration documentation for details.
 
-    The ``etc/settings.ini`` file is replaced by basic configuration, updated with 
+    The ``etc/settings.ini`` file is replaced by basic configuration, updated with
     ``sudo dpkg-reconfigure geotrek-admin`` command (database, SRID, languages, server_name, timeout...).
 
     Update your imports, synchronization and backup commands and directories.
@@ -161,15 +161,15 @@ Make sure to run the following command **BEFORE** upgrading:
 Server migration
 ----------------
 
-It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration). These commands apply to versions >= 2.33. If your version is below 2.33, please check the doc of your version. 
+It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration). These commands apply to versions >= 2.33. If your version is below 2.33, please check the doc of your version.
 
 Backup settings, media files and database on the old server:
 
 ::
 
 	sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-	tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/ 
-	
+	tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/
+
 Restore files on the new server:
 ::
 
