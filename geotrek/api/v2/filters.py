@@ -1042,7 +1042,9 @@ class TreksAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedB
 class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
-        set_2 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+        set_2 = qs.none()
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            set_2 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
         return (set_1 | set_2).distinct()
 
 
