@@ -58,7 +58,7 @@ class LabelAccessibility(PictogramMixin):
 
 
 class InformationDesk(models.Model):
-
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     name = models.CharField(verbose_name=_("Title"), max_length=256)
     type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.CASCADE,
                              related_name='desks')
