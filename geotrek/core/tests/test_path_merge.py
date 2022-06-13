@@ -383,5 +383,5 @@ class MergePathTest(TestCase):
         self.assertEqual(e4_updated.offset, -e4.offset)
 
     def test_response_is_json(self):
-        response = self.client.post(reverse('core:merge_path'))
+        response = self.client.post(reverse('core:path-drf-merge-path'))
         self.assertEqual(response.get('Content-Type'), 'application/json')

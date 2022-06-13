@@ -11,7 +11,7 @@ from django.utils.html import escape
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
@@ -38,7 +38,7 @@ from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateForm
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer, POIAPIGeojsonSerializer,
                           ServiceAPIGeojsonSerializer, TrekAPISerializer, TrekAPIGeojsonSerializer, POIAPISerializer,
-                          ServiceAPISerializer)
+                          ServiceAPISerializer, TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
 
 
 class FlattenPicturesMixin:
@@ -53,11 +53,6 @@ class FlattenPicturesMixin:
                                      ).exclude(title='mapimage').order_by('-starred', 'attachment_file'),
                                      to_attr="_pictures"))
         return qs
-
-
-class TrekLayer(MapEntityLayer):
-    properties = ['name', 'published']
-    queryset = Trek.objects.existing()
 
 
 class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
@@ -244,10 +239,17 @@ class TrekMeta(MetaMixin, DetailView):
 class TrekViewSet(GeotrekMapentityViewSet):
     model = Trek
     serializer_class = TrekSerializer
+    geojson_serializer_class = TrekGeojsonSerializer
     filterset_class = TrekFilterSet
 
     def get_queryset(self):
-        return self.model.objects.existing().prefetch_related('attachments')
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name', 'published')
+        else:
+            qs = qs.prefetch_related('attachments')
+        return qs
 
     def get_columns(self):
         return TrekList.mandatory_columns + settings.COLUMNS_LISTS.get('trek_view',
@@ -282,11 +284,6 @@ class TrekAPIViewSet(APIViewSet):
         qs = qs.annotate(length_2d_m=Length('geom'))
 
         return qs
-
-
-class POILayer(MapEntityLayer):
-    queryset = POI.objects.existing()
-    properties = ['name', 'published']
 
 
 class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
@@ -389,6 +386,7 @@ class WebLinkCreatePopup(CreateView):
 class POIViewSet(GeotrekMapentityViewSet):
     model = POI
     serializer_class = POISerializer
+    geojson_serializer_class = POIGeojsonSerializer
     filterset_class = POIFilterSet
 
     def get_columns(self):
@@ -396,7 +394,14 @@ class POIViewSet(GeotrekMapentityViewSet):
                                                                       POIList.default_extra_columns)
 
     def get_queryset(self):
-        return POI.objects.existing()
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name', 'published')
+        else:
+            qs = qs.select_related('type', 'structure')
+            qs = qs.prefetch_related('attachments')
+        return qs
 
 
 class POIAPIViewSet(APIViewSet):
@@ -445,11 +450,6 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
         if not self.request.user.has_perm('infrastructure.read_infrastructure') and not trek.is_public():
             raise Http404
         return trek.infrastructures.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
-class ServiceLayer(MapEntityLayer):
-    properties = ['label', 'published']
-    queryset = Service.objects.existing()
 
 
 class ServiceList(CustomColumnsMixin, MapEntityList):
@@ -501,9 +501,14 @@ class ServiceDelete(MapEntityDelete):
 class ServiceViewSet(GeotrekMapentityViewSet):
     model = Service
     serializer_class = ServiceSerializer
+    geojson_serializer_class = ServiceGeojsonSerializer
 
     def get_queryset(self):
-        return self.model.objects.existing()
+        qs = self.model.objects.existing().select_related('type')
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'type')
+        return qs
 
     def get_columns(self):
         return ServiceList.mandatory_columns + settings.COLUMNS_LISTS.get('service_view',

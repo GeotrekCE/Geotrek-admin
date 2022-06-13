@@ -6,7 +6,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
-from mapentity.serializers import GPXSerializer
+from mapentity.serializers import GPXSerializer, MapentityGeojsonModelSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -19,8 +19,8 @@ from geotrek.common.serializers import (
     PublishableSerializerMixin, RecordSourceSerializer,
     TargetPortalSerializer, LabelSerializer,
 )
-from geotrek.trekking import models as trekking_models
-from geotrek.zoning.serializers import ZoningSerializerMixin
+from geotrek.zoning.serializers import ZoningAPISerializerMixin
+from . import models as trekking_models
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -159,8 +159,14 @@ class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
+class TrekGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = trekking_models.Trek
+        fields = ('id', 'name', 'published')
+
+
 class TrekAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, AltimetrySerializerMixin,
-                        ZoningSerializerMixin, TranslatedModelSerializer):
+                        ZoningAPISerializerMixin, TranslatedModelSerializer):
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
     networks = NetworkSerializer(many=True)
@@ -247,7 +253,7 @@ class TrekAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Alt
             'points_reference', 'gpx', 'kml', 'source', 'portal',
             'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
             'children', 'parents', 'previous', 'next', 'ratings', 'ratings_description'
-        ) + AltimetrySerializerMixin.Meta.fields + ZoningSerializerMixin.Meta.fields + \
+        ) + AltimetrySerializerMixin.Meta.fields + ZoningAPISerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + PicturesSerializerMixin.Meta.fields
 
     def get_pictures(self, obj):
@@ -345,7 +351,13 @@ class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, ZoningSerializerMixin,
+class POIGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = trekking_models.POI
+        fields = ('id', 'name', 'published')
+
+
+class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, ZoningAPISerializerMixin,
                        TranslatedModelSerializer):
     type = POITypeSerializer()
     structure = StructureSerializer()
@@ -355,7 +367,7 @@ class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Zoni
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = (
             'id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure'
-        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
+        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
 
 
@@ -381,6 +393,15 @@ class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = trekking_models.Service
         fields = "__all__"
+
+
+class ServiceGeojsonSerializer(MapentityGeojsonModelSerializer):
+    name = serializers.CharField(source='type.name')
+    published = serializers.BooleanField(source='type.published')
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = trekking_models.Service
+        fields = ('id', 'name', 'published')
 
 
 class ServiceAPISerializer(serializers.ModelSerializer):

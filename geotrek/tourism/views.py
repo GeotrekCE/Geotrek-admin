@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 from django_filters.rest_framework import DjangoFilterBackend
-from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
+from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -29,18 +29,14 @@ from .forms import TouristicContentForm, TouristicEventForm
 from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           TouristicContentAPIGeojsonSerializer, TouristicEventAPIGeojsonSerializer,
-                          InformationDeskGeojsonSerializer, TouristicContentAPISerializer, TouristicEventAPISerializer)
+                          InformationDeskGeojsonSerializer, TouristicContentAPISerializer, TouristicEventAPISerializer,
+                          TouristicContentGeojsonSerializer, TouristicEventGeojsonSerializer)
 
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
 
 
 logger = logging.getLogger(__name__)
-
-
-class TouristicContentLayer(MapEntityLayer):
-    queryset = TouristicContent.objects.existing()
-    properties = ['name']
 
 
 class TouristicContentList(CustomColumnsMixin, MapEntityList):
@@ -160,10 +156,15 @@ class TouristicContentMeta(MetaMixin, DetailView):
 class TouristicContentViewSet(GeotrekMapentityViewSet):
     model = TouristicContent
     serializer_class = TouristicContentSerializer
+    geojson_serializer_class = TouristicContentGeojsonSerializer
     filterset_class = TouristicContentFilterSet
 
     def get_queryset(self):
-        return self.model.objects.existing()
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name')
+        return qs
 
     def get_columns(self):
         return TouristicContentList.mandatory_columns + settings.COLUMNS_LISTS.get('touristic_content_view',
@@ -187,11 +188,6 @@ class TouristicContentAPIViewSet(APIViewSet):
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
-
-
-class TouristicEventLayer(MapEntityLayer):
-    queryset = TouristicEvent.objects.existing()
-    properties = ['name']
 
 
 class TouristicEventList(CustomColumnsMixin, MapEntityList):
@@ -296,10 +292,15 @@ class TouristicEventMeta(MetaMixin, DetailView):
 class TouristicEventViewSet(GeotrekMapentityViewSet):
     model = TouristicEvent
     serializer_class = TouristicEventSerializer
+    geojson_serializer_class = TouristicEventGeojsonSerializer
     filterset_class = TouristicEventFilterSet
 
     def get_queryset(self):
-        return TouristicEvent.objects.existing()
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name')
+        return qs
 
     def get_columns(self):
         return TouristicEventList.mandatory_columns + settings.COLUMNS_LISTS.get('touristic_event_view',

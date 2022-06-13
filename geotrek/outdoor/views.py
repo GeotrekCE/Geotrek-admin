@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Q
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
+from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
                              MapEntityUpdate, MapEntityDelete, MapEntityFormat)
 
 from geotrek.authent.decorators import same_structure_required
@@ -10,17 +10,12 @@ from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
-from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
-from geotrek.outdoor.forms import SiteForm, CourseForm
-from geotrek.outdoor.models import Site, Course
-from geotrek.outdoor.serializers import SiteSerializer, CourseSerializer, CourseAPISerializer, \
-    CourseAPIGeojsonSerializer, SiteAPISerializer, SiteAPIGeojsonSerializer
-
-
-class SiteLayer(MapEntityLayer):
-    properties = ['name']
-    filterform = SiteFilterSet
-    queryset = Site.objects.all()
+from .filters import SiteFilterSet, CourseFilterSet
+from .forms import SiteForm, CourseForm
+from .models import Site, Course
+from .serializers import SiteSerializer, CourseSerializer, CourseAPISerializer, \
+    CourseAPIGeojsonSerializer, SiteAPISerializer, SiteAPIGeojsonSerializer, SiteGeojsonSerializer, \
+    CourseGeojsonSerializer
 
 
 class SiteList(CustomColumnsMixin, MapEntityList):
@@ -115,6 +110,7 @@ class SiteFormatList(MapEntityFormat, SiteList):
 class SiteViewSet(GeotrekMapentityViewSet):
     model = Site
     serializer_class = SiteSerializer
+    geojson_serializer_class = SiteGeojsonSerializer
     filterset_class = SiteFilterSet
 
     def get_columns(self):
@@ -122,7 +118,11 @@ class SiteViewSet(GeotrekMapentityViewSet):
                                                                        SiteList.default_extra_columns)
 
     def get_queryset(self):
-        return self.model.objects.all()
+        qs = self.model.objects.all()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name')
+        return qs
 
 
 class SiteAPIViewSet(APIViewSet):
@@ -137,12 +137,6 @@ class SiteAPIViewSet(APIViewSet):
         if 'portal' in self.request.GET:
             qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
-class CourseLayer(MapEntityLayer):
-    properties = ['name']
-    filterform = CourseFilterSet
-    queryset = Course.objects.prefetch_related('type').all()
 
 
 class CourseList(CustomColumnsMixin, MapEntityList):
@@ -235,6 +229,7 @@ class CourseFormatList(MapEntityFormat, CourseList):
 class CourseViewSet(GeotrekMapentityViewSet):
     model = Course
     serializer_class = CourseSerializer
+    geojson_serializer_class = CourseGeojsonSerializer
     filterset_class = CourseFilterSet
 
     def get_columns(self):
@@ -242,7 +237,13 @@ class CourseViewSet(GeotrekMapentityViewSet):
                                                                          CourseList.default_extra_columns)
 
     def get_queryset(self):
-        return self.model.objects.all().prefetch_related('parent_sites')
+        qs = self.model.objects.all()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name')
+        else:
+            qs = qs.prefetch_related('parent_sites')
+        return qs
 
 
 class CourseAPIViewSet(APIViewSet):

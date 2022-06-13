@@ -1,11 +1,13 @@
 from django.urls import reverse
 from django.utils.translation import get_language
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
 from geotrek.common.serializers import PictogramSerializerMixin, TranslatedModelSerializer
-from geotrek.sensitivity import models as sensitivity_models
+from . import models as sensitivity_models
 
 
 class SportPracticeSerializer(TranslatedModelSerializer):
@@ -34,6 +36,14 @@ class SensitiveAreaSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializ
     class Meta:
         model = sensitivity_models.SensitiveArea
         fields = "__all__"
+
+
+class SensitiveAreaGeojsonSerializer(MapentityGeojsonModelSerializer):
+    radius = rest_serializers.IntegerField()
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = sensitivity_models.SensitiveArea
+        fields = ['id', 'species', 'radius', 'published']
 
 
 class SensitiveAreaAPISerializer(TranslatedModelSerializer):

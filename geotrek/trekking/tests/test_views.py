@@ -1,55 +1,49 @@
 import csv
-from io import StringIO
-from mapentity.helpers import is_file_uptodate
+import hashlib
 import os
 from collections import OrderedDict
-import hashlib
-
+from io import StringIO
 from unittest import skipIf, mock
 
 from bs4 import BeautifulSoup
-
 from django.conf import settings
-from django.test import TestCase
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
-from django.urls import reverse
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
-from django.test import RequestFactory
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.utils import translation
-
+from mapentity.helpers import is_file_uptodate
 from mapentity.tests.factories import SuperUserFactory
+from rest_framework.reverse import reverse
 
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
+from geotrek.common.templatetags import geotrek_tags
+from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
                                             RecordSourceFactory, TargetPortalFactory)
-from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
-from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.signage.models import Signage
 from geotrek.signage.tests.factories import SignageFactory
-from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
-from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
-from geotrek.trekking.tests.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
-                                              TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
-                                              TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
-                                              TrekWithServicesFactory, TrekWithInfrastructuresFactory,
-                                              TrekWithSignagesFactory)
-from geotrek.common.templatetags import geotrek_tags
-from geotrek.trekking import views as trekking_views
 from geotrek.tourism.tests import factories as tourism_factories
-
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
-
+from geotrek.trekking import views as trekking_views
+from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
 from .base import TrekkingManagerTest
+from .factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
+                        TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
+                        TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
+                        TrekWithServicesFactory, TrekWithInfrastructuresFactory,
+                        TrekWithSignagesFactory)
+from ..models import POI, Trek, Service, OrderedTrekChild
 
 
 class POIViewsTest(GeotrekAPITestCase, CommonTest):
@@ -1176,24 +1170,20 @@ class TrekViewTranslationTest(TrekkingManagerTest):
                 self.assertEqual(obj['name'], expected)
 
     def test_geojson_translation(self):
-        url = '/api/trek/trek.geojson'
-
         for lang, expected in [('fr', self.trek.name_fr),
                                ('it', self.trek.name_it)]:
             self.login()
-            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), HTTP_ACCEPT_LANGUAGE=lang)
             self.assertEqual(response.status_code, 200)
             obj = response.json()
             self.assertEqual(obj['features'][0]['properties']['name'], expected)
             self.client.logout()  # Django 1.6 keeps language in session
 
     def test_published_translation(self):
-        url = '/api/trek/trek.geojson'
-
         for lang, expected in [('fr', self.trek.published_fr),
                                ('it', self.trek.published_it)]:
             self.login()
-            response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
+            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), HTTP_ACCEPT_LANGUAGE=lang)
             self.assertEqual(response.status_code, 200)
             obj = response.json()
             self.assertEqual(obj['features'][0]['properties']['published'], expected)

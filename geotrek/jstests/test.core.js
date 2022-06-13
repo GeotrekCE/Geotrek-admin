@@ -139,29 +139,29 @@ describe('Topology helper', function() {
         features: [
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[0,0], [10,0], [10,10], [0,10]]},
-             properties: {pk: 1}},
+             properties: {id: 1}},
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[0,0], [0,10]]},
-             properties: {pk: 2}},
+             properties: {id: 2}},
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[0,10], [0,20]]},
-             properties: {pk: 3}},
+             properties: {id: 3}},
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[0,0], [0,-10]]},
-             properties: {pk: 4}},
+             properties: {id: 4}},
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[10,-10], [0,-10]]},
-             properties: {pk: 5}},
+             properties: {id: 5}},
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[0,40], [0,30]]},
-             properties: {pk: 6}},
+             properties: {id: 6}},
             {type: "Feature",
              geometry: {type: "LineString", coordinates: [[0,30], [10,30], [10,40], [0, 40]]},
-             properties: {pk: 7}}
+             properties: {id: 7}}
         ]
     }).addTo(map);
 
-    function idToLayer(pk) { return layer.getLayer(pk); }
+    function idToLayer(id) { return layer.getLayer(id); }
 
     function __inputData(from, to, ids) {
         /**

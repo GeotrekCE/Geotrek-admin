@@ -12,7 +12,37 @@ CHANGELOG
 
 **Bug fixes**
 
+- Log entry menu is now only displayed if user has permission
+- Admin menu is now only displayed if user has permission
+- Object 'All history' button is now only displayed if user has permission
+- Error 404 default template now display a visible message
+- Error 500 default template doesn't make recursive exceptions anymore
+- Log entry permissions are now managed by "mapentity - xxx log entries" instead of "admin - xxx log entries"
 - Fix information desk filter when outdoor module is not available (#3135)
+
+**Breaking Changes**
+
+- This release requires PostGIS 2.5 or later.
+  - Ubuntu bionic 18.04 users, take care, PostGIS default is 2.4. You need to upgrade your PostGIS version.
+    - See documentation https://geotrek.readthedocs.io/en/latest/install/installation.html#ubuntu-bionic-postgis-2.5-upgrade)
+
+
+**Warning**
+
+- You need to delete cache after this release upgrade.
+  - rm -r /opt/geotrek-admin/var/cache/* (or <geotrek directory>/var/cache/* on docker)
+  - sudo dpkg-reconfigure geotrek-admin (or docker-compose restart)
+
+- From now, Geotrek-admin is not installable on Ubuntu 18.04 bionic anymore. But upgrade are still available.
+
+**Improvments**
+
+- New GeoJSON generation system, using Django Rest Framework and PostGIS functions (#2967)
+- Enable GZIP compression on JSON / GeoJSON on nginx
+
+**Maintenance**
+
+- upgrade mapentity to 8.1.2
 
 
 2.83.0  (2022-05-01)

@@ -116,7 +116,7 @@ class Command(BaseCommand):
 
         headers = {}
         if self.indent:
-            headers['HTTP_ACCEPT'] = 'application/json; indent={}'.format(self.indent)
+            headers['HTTP_ACCEPT'] = 'application/geo+json; indent={}'.format(self.indent)
 
         self.sync_view(lang, view, name, params=params, headers=headers, zipfile=zipfile, fix2028=True, **kwargs)
 

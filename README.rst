@@ -74,20 +74,16 @@ Status of sub-projects
 
 * |django-mapentity| `django-mapentity <https://github.com/makinacorpus/django-mapentity>`_
 * |django-leaflet| `django-leaflet <https://github.com/makinacorpus/django-leaflet>`_
-* |django-geojson| `django-geojson <https://github.com/makinacorpus/django-geojson>`_
 * |convertit| `ConvertIt <https://github.com/makinacorpus/convertit>`_
 * |Leaflet.GeometryUtil| `Leaflet.GeometryUtil <https://github.com/makinacorpus/Leaflet.GeometryUtil>`_
 * |Leaflet.FileLayer| `Leaflet.FileLayer <https://github.com/makinacorpus/Leaflet.FileLayer>`_
 * |Leaflet.AlmostOver| `Leaflet.AlmostOver <https://github.com/makinacorpus/Leaflet.AlmostOver>`_
 
 .. |django-mapentity| image:: https://github.com/makinacorpus/django-mapentity/actions/workflows/python-ci.yml/badge.svg
-    :target: https://travis-ci.org/makinacorpus/django-mapentity?branch=master
+    :target: https://github.com/makinacorpus/django-mapentity/actions/workflows/python-ci.yml
 
-.. |django-leaflet| image:: https://travis-ci.org/makinacorpus/django-leaflet.png?branch=master
-    :target: https://travis-ci.org/makinacorpus/django-leaflet?branch=master
-
-.. |django-geojson| image:: https://travis-ci.org/makinacorpus/django-geojson.png?branch=master
-    :target: https://travis-ci.org/makinacorpus/django-geojson?branch=master
+.. |django-leaflet| image:: https://github.com/makinacorpus/django-leaflet/actions/workflows/python-app.yml/badge.svg
+    :target: https://github.com/makinacorpus/django-leaflet/actions/workflows/python-app.yml
 
 .. |convertit| image:: https://circleci.com/gh/makinacorpus/convertit.svg?style=shield
     :target: https://circleci.com/gh/makinacorpus/convertit

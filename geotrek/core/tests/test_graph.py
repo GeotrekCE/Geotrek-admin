@@ -1,22 +1,22 @@
 from unittest import skipIf
 
-from django.test import TestCase
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.contrib.gis.geos import LineString
+from django.test import TestCase
 from django.urls import reverse
+from mapentity.tests.factories import UserFactory
 
-from geotrek.core.tests.factories import PathFactory
 from geotrek.core.graph import graph_edges_nodes_of_qs
 from geotrek.core.models import Path
+from geotrek.core.tests.factories import PathFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SimpleGraph(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = User.objects.create_user('homer', 'h@s.com', 'dooh')
-        cls.url = reverse('core:path_json_graph')
+        cls.user = UserFactory()
+        cls.url = reverse('core:path-drf-graph')
 
     def setUp(self):
         self.client.force_login(user=self.user)
@@ -59,7 +59,6 @@ class SimpleGraph(TestCase):
         self.assertDictEqual(computed_graph, graph)
 
     def test_json_graph_empty(self):
-
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         graph = response.json()
