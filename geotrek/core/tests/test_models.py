@@ -1,14 +1,16 @@
 import math
 from unittest import skipIf
+import os
 
+from django.apps import apps
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
-from django.db import IntegrityError
+from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 from django.db.models import ProtectedError
-
 from geotrek.common.utils import dbnow
+from geotrek.common.utils.postgresql import replace_settings_sql, replace_schemas_sql
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
 from geotrek.core.tests.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
@@ -94,6 +96,42 @@ class PathTest(TestCase):
         self.assertAlmostEqual(lat_min, 46.499999999999936)
         self.assertAlmostEqual(lng_max, 3.0013039767202154)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_delete_allow_path_trigger(self):
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        TrailFactory.create(paths=[p1])
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM core_path WHERE id = {p1.pk}")
+        cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")
+        self.assertEqual(Path.objects.count(), 0)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @override_settings(ALLOW_PATH_DELETION_TOPOLOGY=False)
+    def test_delete_protected_allow_path_trigger(self):
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        TrailFactory.create(paths=[p1])
+
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+
+        app = apps.get_app_config('core')
+        sql_file = os.path.normpath(os.path.join(app.path, 'sql', 'post_80_paths_deletion.sql'))
+        f = open(sql_file)
+        sql = f.read()
+        f.close()
+        cur.execute("DROP FUNCTION IF EXISTS path_deletion() CASCADE;")
+        sql = replace_settings_sql(sql)
+        sql = replace_schemas_sql(sql)
+        cur.execute(sql)
+
+        cur.execute(f"DELETE FROM core_path WHERE id = {p1.pk}")
+        cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")
+
+        self.assertEqual(Path.objects.count(), 1)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_delete_protected_allow_path(self):

@@ -834,6 +834,8 @@ REST_FRAMEWORK = {
     "STRICT_JSON": False,  # allow serialize float NaN values
 }
 
+ALLOW_PATH_DELETION_TOPOLOGY = True
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
@@ -855,5 +857,3 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
-
-ALLOW_PATH_DELETION_TOPOLOGY = True
