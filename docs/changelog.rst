@@ -9,6 +9,8 @@ CHANGELOG
 
 - Add filter valid geometries on topologies (#2515)[3.1]
 - Add setting `ALLOW_PATH_DELETION_TOPOLOGY` which protect or not against deletion of path with topologies linked to it (#2515)[3.3.1]
+- Add eid on InformationDesk
+- Add parser InformationDesk for Apidae
 
 **Bug fixes**
 
