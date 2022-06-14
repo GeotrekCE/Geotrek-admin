@@ -13,20 +13,6 @@ class OptionalRangeFilter(RangeFilter):
         self.field.fields[1].label = _('max %s') % self.field.label
 
 
-class ValueFilter(Filter):
-    def do_filter(self, qs, value):
-        return qs.filter(**{
-            '%s' % self.field_name: value,
-        }).distinct()
-
-    def filter(self, qs, value):
-        try:
-            new_value = int(value)
-        except (ValueError, TypeError):
-            new_value = -1
-        return qs if new_value < 0 else self.do_filter(qs, new_value)
-
-
 class RightFilter(ModelMultipleChoiceFilter):
     model = None
     queryset = None
