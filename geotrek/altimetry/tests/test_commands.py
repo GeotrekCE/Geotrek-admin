@@ -44,11 +44,11 @@ class CommandLoadDemTest(TransactionTestCase):
         value = dems.first()
         self.assertAlmostEqual(value.int, 343.600006103516)
 
-    def test_success_without_replace_update_path(self):
+    def test_success_without_replace_update_altimetry(self):
         output_stdout = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         self.path = PathFactory.create(geom=LineString((605600, 6650000), (605900, 6650010), srid=2154))
-        call_command('loaddem', filename, update_paths=True, verbosity=2, stdout=output_stdout)
+        call_command('loaddem', filename, update_altimetry=True, verbosity=2, stdout=output_stdout)
         self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
         self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
         dems = Dem.objects.all().annotate(int=RasterValue('rast', Point(x=605600, y=6650000, srid=2154)))
