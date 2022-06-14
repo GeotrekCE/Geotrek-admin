@@ -627,8 +627,8 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         InformationDeskTypeFactory.create(label="Foo")
         call_command('import', 'geotrek.tourism.tests.test_parsers.TestInformationDeskParser')
-        self.assertEqual(InformationDesk.objects.count(), 1)
-        information_desk = InformationDesk.objects.first()
+        self.assertEqual(InformationDesk.objects.count(), 2)
+        information_desk = InformationDesk.objects.get(eid=1)
         self.assertEqual(information_desk.name, 'Foo bar')
         self.assertEqual(information_desk.description, 'Description')
 
@@ -644,3 +644,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         with information_desk.photo.open() as f:
             data = f.read()
         self.assertEqual(data, b'Fake other image')
+
+        information_desk_2 = InformationDesk.objects.get(eid=2)
+        self.assertEqual(information_desk_2.website, None)

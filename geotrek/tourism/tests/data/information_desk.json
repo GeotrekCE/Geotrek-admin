@@ -20,7 +20,7 @@
     "apiKey": "xxxxx",
     "projetId": 1
   },
-  "numFound": 18,
+  "numFound": 2,
   "objetsTouristiques": [
     {
       "type": "Bar",
@@ -43,6 +43,68 @@
             }
           }
         ]
+      },
+      "presentation": {
+        "descriptifDetaille": {
+          "libelleFr": "Description"
+        }
+      },
+      "localisation": {
+        "adresse": {
+          "nomDuLieu": "Place Général de Gaulle",
+          "codePostal": "06450",
+          "etat": "France",
+          "commune": {
+            "id": 1952,
+            "code": "06020",
+            "nom": "La Bollène-Vésubie",
+            "pays": {
+              "elementReferenceType": "Pays",
+              "id": 532,
+              "libelleFr": "France",
+              "ordre": 78
+            },
+            "codePostal": "06450"
+          }
+        },
+        "geolocalisation": {
+          "geoJson": {
+            "coordinates": [
+              7.332209,
+              43.990611
+            ]
+          }
+        }
+      },
+      "illustrations": [
+        {
+          "identifiant": 1,
+          "link": false,
+          "type": "IMAGE",
+          "traductionFichiers": [
+            {
+              "locale": "fr",
+              "url": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/123/137/12880251.jpg",
+              "extension": "jpg",
+              "fileName": "DSC_9138",
+              "taille": 4027316,
+              "hauteur": 2000,
+              "largeur": 2992,
+              "lastModifiedDate": "2022-03-14T14:37:02.896+0000"
+            }
+          ],
+          "locked": false
+        }
+      ]
+    },
+    {
+      "type": "Bar",
+      "id": 2,
+      "nom": {
+        "libelleFr": "Bar foo"
+      },
+      "informations": {
+        "moyensCommunication": []
       },
       "presentation": {
         "descriptifDetaille": {
