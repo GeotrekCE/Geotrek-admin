@@ -3,6 +3,7 @@ import shutil
 from io import StringIO
 from unittest.mock import patch
 
+from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -56,8 +57,8 @@ class SyncMobileViewTest(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True})
+                       SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp'),
+                       SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile(self, mocked_stdout):
         self.client.force_login(self.super_user)
         launch_sync_mobile.apply()
@@ -68,8 +69,9 @@ class SyncMobileViewTest(TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
-    @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True})
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp'),
+                       SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
+                                            'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
         self.client.force_login(self.super_user)
         launch_sync_mobile.apply()
@@ -78,8 +80,9 @@ class SyncMobileViewTest(TestCase):
         self.assertIn(b'"exc_message": "This is a test"', response.content)
 
     @patch('sys.stdout', new_callable=StringIO)
-    @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True})
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp'),
+                       SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
+                                            'skip_tiles': True})
     def test_launch_sync_mobile(self, mocked_stdout):
         task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
@@ -97,7 +100,7 @@ class SyncMobileViewTest(TestCase):
         self.assertNotIn('Sync mobile ended', log)
         self.assertEqual(task.status, "FAILURE")
 
-    @override_settings(SYNC_MOBILE_ROOT='tmp')
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp'))
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
     @patch('sys.stdout', new_callable=StringIO)
