@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import RangeFilter, Filter, ModelMultipleChoiceFilter
+from django_filters import RangeFilter, ModelMultipleChoiceFilter
 from .fields import OneLineRangeField
 
 
