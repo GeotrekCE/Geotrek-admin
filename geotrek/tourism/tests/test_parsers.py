@@ -501,7 +501,7 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         self.assertIn("><br><b>Services:</b><br>English Service, Other Service<br>",
                       event.practical_info_en)
-        self.assertIn("<b>Openning:</b><br>Tuesday, August 6, 2019 from 9am to noon.<br>", event.practical_info_en)
+        self.assertIn("<b>Opening:</b><br>Tuesday, August 6, 2019 from 9am to noon.<br>", event.practical_info_en)
         self.assertIn("<b>Spoken languages:</b><br>French<br><br>", event.practical_info_en)
         self.assertIn("<b>Access:</b><br>TestEn<br>", event.practical_info_en)
         self.assertTrue(event.published)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 17:15+0000\n"
+"POT-Creation-Date: 2022-06-14 17:54+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -52,6 +52,9 @@ msgstr "Label accessibilité"
 
 msgid "Labels accessibility"
 msgstr "Labels accessibilité"
+
+msgid "External id"
+msgstr "ID externe"
 
 msgid "Title"
 msgstr "Titre"
@@ -204,9 +207,6 @@ msgstr "Source"
 msgid "Portal"
 msgstr "Portail"
 
-msgid "External id"
-msgstr "ID externe"
-
 msgid "Reservation system"
 msgstr "Système de réservation"
 
@@ -303,6 +303,39 @@ msgstr "evenement-touristique"
 msgid "Published touristic events"
 msgstr "Évènements touristiques publiés"
 
+msgid "Opening"
+msgstr "Ouverture"
+
+msgid "Total Capacity"
+msgstr "Capacité totale"
+
+msgid "Prices"
+msgstr "Tarifs"
+
+msgid "Payment method"
+msgstr "Modes de paiement"
+
+msgid "Services"
+msgstr "Services"
+
+msgid "Spoken languages"
+msgstr "Langues Parlées"
+
+msgid "Access:"
+msgstr "Accès:"
+
+msgid "Update sheet by "
+msgstr ""
+
+msgid " the "
+msgstr ""
+
+msgid "Sheet updated by "
+msgstr "Fiche mise à jour par"
+
+msgid " on "
+msgstr " le "
+
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
 msgstr ""
@@ -336,14 +369,20 @@ msgstr "Impression grand public"
 msgid "Print"
 msgstr "Impr."
 
+msgid "Public print booklet"
+msgstr "Impression livret grand public"
+
+msgid "Print booklet"
+msgstr ""
+
 msgid "Attributes"
 msgstr "Informations"
 
-msgid "None"
-msgstr "Aucun(e)"
-
 msgid "yes,no"
 msgstr "oui,non"
+
+msgid "None"
+msgstr "Aucun(e)"
 
 msgid "Thumbnail"
 msgstr "Aperçu"
@@ -368,30 +407,3 @@ msgstr "Date"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
-
-msgid "Openning"
-msgstr "Ouverture"
-
-msgid "Total Capacity"
-msgstr "Capacité totale"
-
-msgid "Payment method"
-msgstr "Modes de paiement"
-
-msgid "Prices"
-msgstr "Tarifs"
-
-msgid "Services"
-msgstr "Services"
-
-msgid "Spoken languages"
-msgstr "Langues Parlées"
-
-msgid "Access:"
-msgstr "Accès:"
-
-msgid "Update sheet by "
-msgstr "Fiche mise à jour par"
-
-msgid " the "
-msgstr " le "

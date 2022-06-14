@@ -388,7 +388,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         (ouverture, capacite, tarifs, paiement, services, langues, localisation, datemodif, proprio) = val
         language = translation.get_language().title()
         if ouverture:
-            ouverture = "<b>" + _("Openning") + ":</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
+            ouverture = "<b>" + _("Opening") + ":</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
         if capacite:
             capacite = "<b>" + _("Total Capacity") + ":</b><br>" + str(capacite) + "<br>"
         if tarifs:
@@ -524,7 +524,7 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
         (ouverture, capacite, tarifs, paiement, services, localisation, datemodif, proprio) = val
         language = translation.get_language().capitalize()
         if ouverture:
-            ouverture = "<b>" + _("Openning") + ":</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
+            ouverture = "<b>" + _("Opening") + ":</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
         if capacite:
             capacite = "<b>" + _("Total Capacity") + ":</b><br>" + str(capacite) + "<br>"
         if tarifs:
@@ -541,7 +541,7 @@ class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContent
         if localisation:
             localisation = "<b>" + _("Access:") + "</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = "<i>" + _("Update sheet by ") + proprio + _(" the ") + datemodif + "</i>"
+        modif = "<i>" + _("Sheet updated by ") + proprio + _(" on ") + datemodif + "</i>"
         lines = [line for line in [
             ouverture,
             capacite,
