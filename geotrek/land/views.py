@@ -22,7 +22,7 @@ class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityLis
     queryset = PhysicalEdge.objects.existing()
     filterform = PhysicalEdgeFilterSet
     mandatory_columns = ['id', 'physical_type']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
@@ -79,15 +79,14 @@ class LandEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = LandEdge.objects.existing()
     filterform = LandEdgeFilterSet
     mandatory_columns = ['id', 'land_type']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'land_type', 'owner', 'agreement',
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        'land_type', 'owner', 'agreement', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -136,13 +135,13 @@ class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = CompetenceEdge.objects.existing()
     filterform = CompetenceEdgeFilterSet
     mandatory_columns = ['id', 'organization']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
     default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -191,13 +190,12 @@ class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = WorkManagementEdge.objects.existing()
     filterform = WorkManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
     default_extra_columns = [
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -246,13 +244,12 @@ class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = SignageManagementEdge.objects.existing()
     filterform = SignageManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
     default_extra_columns = [
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 

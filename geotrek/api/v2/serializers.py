@@ -17,7 +17,6 @@ from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.v2.functions import Length3D
-from geotrek.common.functions import Length
 from geotrek.api.v2.mixins import PDFSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
@@ -502,11 +501,8 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
     class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        length_2d = serializers.SerializerMethodField()
+        length_2d = serializers.FloatField(source="length_2d_display")
         length_3d = serializers.SerializerMethodField()
-
-        def get_length_2d(self, obj):
-            return round(obj.length_2d_m, 1)
 
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
@@ -524,7 +520,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
         published = serializers.SerializerMethodField()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        length_2d = serializers.SerializerMethodField()
+        length_2d = serializers.FloatField(source='length_2d_display')
         length_3d = serializers.SerializerMethodField()
         name = serializers.SerializerMethodField()
         access = serializers.SerializerMethodField()
@@ -632,9 +628,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_description_teaser(self, obj):
             return get_translation_or_dict('description_teaser', self, obj)
 
-        def get_length_2d(self, obj):
-            return round(obj.length_2d_m, 1)
-
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
 
@@ -717,7 +710,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 .select_related('topo_object', 'difficulty') \
                 .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
                 .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
-                          length_2d_m=Length('geom'),
                           length_3d_m=Length3D('geom_3d'))
             FinalClass = override_serializer(self.context.get('request').GET.get('format'),
                                              TrekSerializer)

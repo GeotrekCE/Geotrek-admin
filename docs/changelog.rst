@@ -12,6 +12,12 @@ CHANGELOG
 - Add eid on InformationDesk
 - Add parser InformationDesk for Apidae
 
+
+**Minor improvements**
+
+- Add length 2d for land's app for exports and lists
+
+
 **Bug fixes**
 
 - Log entry menu is now only displayed if user has permission

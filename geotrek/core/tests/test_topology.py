@@ -62,7 +62,8 @@ class TopologyTest(TestCase):
     def test_length_2d(self):
         e = TopologyFactory.build()
         e.save()
-        self.assertEqual(e.length_2d, None)
+        topology = Topology.objects.get(pk=e.pk)
+        self.assertEqual(topology.length_2d, 0)
 
     def test_kind(self):
         from geotrek.land.models import LandEdge

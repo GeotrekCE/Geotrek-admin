@@ -202,7 +202,7 @@ class TrekAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Alt
     # Method called to retrieve relevant pictures based on settings
     pictures = serializers.SerializerMethodField()
 
-    length = serializers.ReadOnlyField(source='length_2d_m')
+    length = serializers.ReadOnlyField(source='length_2d')
 
     def __init__(self, instance=None, *args, **kwargs):
         # duplicate each trek for each one of its accessibilities

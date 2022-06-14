@@ -17,7 +17,6 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
-from geotrek.common.functions import Length
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
@@ -281,7 +280,6 @@ class TrekAPIViewSet(APIViewSet):
             qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        qs = qs.annotate(length_2d_m=Length('geom'))
 
         return qs
 

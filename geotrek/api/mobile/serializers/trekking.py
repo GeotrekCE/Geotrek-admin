@@ -6,7 +6,6 @@ from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.mobile.serializers.tourism import InformationDeskSerializer
 from geotrek.api.v2.functions import StartPoint, EndPoint
-from geotrek.common.functions import Length
 from geotrek.zoning.models import City, District
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -34,7 +33,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekBaseSerializer(geo_serializers.GeoFeatureModelSerializer):
         cities = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
-        length = serializers.SerializerMethodField()
+        length = serializers.FloatField(source='length_2d_display')
         departure_city = serializers.SerializerMethodField()
 
         def get_cities(self, obj):
@@ -49,9 +48,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 if city:
                     return city.code
             return None
-
-        def get_length(self, obj):
-            return round(obj.length_2d_m, 1)
 
         def get_districts(self, obj):
             qs = District.objects.filter(published=True)
@@ -93,8 +89,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return obj.serializable_pictures_mobile(root_pk)
 
         def get_children(self, obj):
-            children = obj.children.all().annotate(length_2d_m=Length('geom'),
-                                                   start_point=Transform(StartPoint('geom'), settings.API_SRID),
+            children = obj.children.all().annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
                                                    end_point=Transform(EndPoint('geom'), settings.API_SRID))
             serializer_children = TrekListSerializer(children, many=True, context={'root_pk': obj.pk})
             return serializer_children.data
