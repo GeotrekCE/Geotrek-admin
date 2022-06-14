@@ -1,6 +1,7 @@
 from django.contrib.gis.gdal.error import GDALException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
+from django.db.models import F
 from django.conf import settings
 from django.contrib.gis.gdal import GDALRaster
 import os.path
@@ -8,6 +9,7 @@ from subprocess import call, PIPE
 import tempfile
 
 from geotrek.altimetry.models import Dem
+from geotrek.core.models import Path
 
 
 class Command(BaseCommand):
@@ -19,10 +21,14 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('dem_path')
         parser.add_argument('--replace', action='store_true', default=False, help='Replace existing DEM if any.')
+        parser.add_argument('--update-paths', action='store_true', default=False,
+                            help='/!\\ DO NOT USE WHEN PATH ARE MODIFY, Update altimetry of paths.')
 
     def handle(self, *args, **options):
 
         verbose = options['verbosity'] != 0
+
+        update_altimetry_paths = options['update_paths']
 
         try:
             cmd = 'raster2pgsql -G > /dev/null'
@@ -100,6 +106,8 @@ class Command(BaseCommand):
         output.close()
         if verbose:
             self.stdout.write('DEM successfully loaded.\n')
+        if update_altimetry_paths:
+            Path.objects.all().update(geom=F('geom'))
         return
 
     def call_command_system(self, cmd, **kwargs):
