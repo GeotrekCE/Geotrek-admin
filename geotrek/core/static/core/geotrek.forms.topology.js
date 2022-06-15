@@ -29,7 +29,7 @@ L.FieldStore.TopologyStore = L.FieldStore.extend({
             serialized = {lat: p.lat, lng: p.lng};
             // In case the marker is snapped, serialize this information.
             if (layer.snap) {
-                serialized['snap'] = layer.snap.properties.pk;
+                serialized['snap'] = layer.snap.properties.id;
             }
         }
         else {

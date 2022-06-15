@@ -4,5 +4,5 @@
     MapEntity.i18n['Intervention'] = "{% trans "Intervention" %}";
     MapEntity.i18n['Maintenance'] = "{% trans "Maintenance" %}";
 
-    window.SETTINGS.urls['intervention_layer'] = "{% url "maintenance:intervention_layer" %}";
+    window.SETTINGS.urls['intervention_layer'] = "{% url "maintenance:intervention-drf-list" format="geojson" %}";
 </script>

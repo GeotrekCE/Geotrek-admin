@@ -306,17 +306,16 @@ L.Handler.MultiPath = L.Handler.extend({
         this.disable();
         this.reset();
         this.enable();
-
-        console.debug('setState('+JSON.stringify({start:{pk:state.start_layer.properties.pk,
+        console.debug('setState('+JSON.stringify({start:{pk:state.start_layer.properties.id,
                                                          latlng:state.start_ll.toString()},
-                                                  end:  {pk:state.end_layer.properties.pk,
+                                                  end:  {pk:state.end_layer.properties.id,
                                                          latlng:state.end_ll.toString()}})+')');
 
         this._onClick({latlng: state.start_ll, layer:state.start_layer});
         this._onClick({latlng: state.end_ll, layer:state.end_layer});
 
         state.via_markers && $.each(state.via_markers, function(idx, via_marker) {
-            console.debug('Add via marker (' + JSON.stringify({pk: via_marker.layer.properties.pk,
+            console.debug('Add via marker (' + JSON.stringify({pk: via_marker.layer.properties.id,
                                                                latlng: via_marker.marker.getLatLng().toString()}) + ')');
             self.addViaStep(via_marker.marker, idx + 1);
             self.forceMarkerToLayer(via_marker.marker, via_marker.layer);
@@ -609,7 +608,7 @@ L.Handler.MultiPath = L.Handler.extend({
                 }
                 var interpolated = L.GeometryUtil.interpolateOnLine(self.map, layer, used_pos);
                 if (!interpolated) {
-                    throw ('Could not interpolate ' + used_pos + ' on layer ' + layer.properties.pk);
+                    throw ('Could not interpolate ' + used_pos + ' on layer ' + layer.properties.id);
                 }
                 return interpolated.latLng;
             };
@@ -900,7 +899,7 @@ Geotrek.PointOnPolyline.prototype.addToGraph = function(graph) {
 
     var self = this;
 
-    var edge = graph.edges[this.polyline.properties.pk]
+    var edge = graph.edges[this.polyline.properties.id]
       , first_node_id = edge.nodes_id[0]
       , last_node_id = edge.nodes_id[1];
 

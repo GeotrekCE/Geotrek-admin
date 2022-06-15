@@ -12,11 +12,12 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    from geotrek.outdoor.models import Course, Site
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
+
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from geotrek.outdoor.models import Course, Site
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -1042,7 +1043,9 @@ class TreksAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedB
 class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
-        set_2 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+        set_2 = qs.none()
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            set_2 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
         return (set_1 | set_2).distinct()
 
 

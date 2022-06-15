@@ -653,7 +653,7 @@ It is also possible to use color defined for practice for pictogram by adding in
 CSS can be overriden like html templates: copy them to ``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` folder
 ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.css`` for example.
 
-You can also create a template for each portal.
+**You can also create a template for each portal.**
 
 Add a folder ``portal_{id_portal}`` (portal ids are located in the portal url path ``/admin/common/targetportal/{id_portal}``) in
 ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, as the first template, and add at the top of your file:
@@ -670,6 +670,26 @@ The template for a specific portal will use the modification made on the overrid
 
     This modification is not mandatory, if you have multiple portal and you want to modify the template of only one portal, you create one folder for this specific portal
 
+**You might need to use your own images in the PDF templates.**
+
+Add your own images in ``/opt/geotrek-admin/var/conf/extra_static/images/``.
+
+You can then use these images in your PDF templates with ``{% static 'images/file.jpg' %}``, after adding ``{% load static %}`` at the top of the file.
+
+Example of a customised template (``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``) with a customised logo and URL:
+
+::
+
+    {% extends "trekking/trek_public_pdf.html" %}
+    {% load static %}
+
+    {% block logo %}
+       <img src="{% static 'images/logo-gte.jpg' %}" alt="Grand tour des Ecrins">
+    {% endblock %}
+    {% block url %}
+       <div class="main">Grand tour des Ecrins</div>
+       <div class="geo"><a href="https://www.grand-tour-ecrins.fr">grand-tour-ecrins.fr</a></div>
+    {% endblock url %}
 
 .. note ::
 

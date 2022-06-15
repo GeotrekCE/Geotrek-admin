@@ -282,7 +282,6 @@ PROJECT_APPS += (
 PROJECT_APPS += (
     'crispy_forms',
     'compressor',
-    'djgeojson',
     'django_filters',
     'tinymce',
     'easy_thumbnails',
@@ -314,10 +313,6 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.feedback',
     'geotrek.api',
 )
-
-SERIALIZATION_MODULES = {
-    'geojson': 'djgeojson.serializers'
-}
 
 CACHES = {
     'default': {

@@ -102,7 +102,7 @@
 
             //
             // Load intervention layer filtered on project
-            var layer_url = "{% url 'maintenance:intervention_layer' %}?project={{ object.pk}}";
+            var layer_url = "{% url 'maintenance:intervention-drf-list' %}?project={{ object.pk}}";
             var DETAIL_STYLE = L.Util.extend(window.SETTINGS.map.styles.detail, {clickable: true});
 
             var layer = new L.ObjectsLayer(layer_url, {

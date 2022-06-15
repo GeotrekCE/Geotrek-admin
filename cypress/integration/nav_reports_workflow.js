@@ -10,6 +10,7 @@ describe('Nav reports workflow', () => {
 
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
+    cy.setCookie('django_language', 'en');
   });
 
   it('Handles resolved intervention reports', () => {

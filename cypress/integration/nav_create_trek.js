@@ -5,20 +5,25 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 })
 
 describe('Create trek', () => {
+    before(() => {
+      const username = 'admin';
+      const password = 'admin';
+
+      cy.loginByCSRF(username, password)
+        .then((resp) => {
+           expect(resp.status).to.eq(200);
+        })
+    });
+
   beforeEach(() => {
-    const username = 'admin';
-    const password = 'admin';
+    Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
     cy.setCookie('django_language', 'en');
-    cy.loginByCSRF(username, password)
-    .then((resp) => {
-       expect(resp.status).to.eq(200)
-    })
-  })
+  });
 
   it('Create trek', () => {
     cy.visit('/trek/list')
     cy.server()
-    cy.route('/api/graph.json').as('graph')
+    cy.route('/api/path/drf/paths/graph.json').as('graph')
     cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click()
     cy.wait('@graph')
     cy.get("a.linetopology-control").click()

@@ -21,9 +21,8 @@ Geotrek.TopologyHelper = (function() {
 
         var pk_start = L.GeometryUtil.locateOnLine(polyline_start._map, polyline_start, ll_start),
             pk_end = L.GeometryUtil.locateOnLine(polyline_end._map, polyline_end, ll_end);
-
-        console.debug('Start on layer ' + polyline_start.properties.pk + ' ' + pk_start + ' ' + ll_start.toString());
-        console.debug('End on layer ' + polyline_end.properties.pk + ' ' + pk_end + ' ' + ll_end.toString());
+        console.debug('Start on layer ' + polyline_start.properties.id + ' ' + pk_start + ' ' + ll_start.toString());
+        console.debug('End on layer ' + polyline_end.properties.id + ' ' + pk_end + ' ' + ll_end.toString());
 
         if (single_path) {
             var path_pk = paths[0],

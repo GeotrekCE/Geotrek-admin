@@ -1,28 +1,28 @@
 from django.conf import settings
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+from django.contrib.gis.db.models.functions import Transform
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+
 from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
+from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, \
+    SignageManagementEdgeFilterSet
+from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
                      WorkManagementEdge, SignageManagementEdge)
-from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, SignageManagementEdgeFilterSet
-from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
 from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceEdgeSerializer, \
-    SignageManagementEdgeSerializer, WorkManagementEdgeSerializer
-from ..common.viewsets import GeotrekMapentityViewSet
-
-
-class PhysicalEdgeLayer(MapEntityLayer):
-    queryset = PhysicalEdge.objects.existing()
-    properties = ['color_index', 'name']
+    SignageManagementEdgeSerializer, WorkManagementEdgeSerializer, PhysicalEdgeGeojsonSerializer, \
+    LandEdgeGeojsonSerializer, CompetenceEdgeGeojsonSerializer, WorkManagementEdgeGeojsonSerializer, \
+    SignageManagementEdgeGeojsonSerializer
 
 
 class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
     queryset = PhysicalEdge.objects.existing()
     filterform = PhysicalEdgeFilterSet
     mandatory_columns = ['id', 'physical_type']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
@@ -57,6 +57,7 @@ class PhysicalEdgeDelete(MapEntityDelete):
 class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
     model = PhysicalEdge
     serializer_class = PhysicalEdgeSerializer
+    geojson_serializer_class = PhysicalEdgeGeojsonSerializer
     filterset_class = PhysicalEdgeFilterSet
 
     def get_columns(self):
@@ -64,27 +65,28 @@ class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
                                                                                PhysicalEdgeList.default_extra_columns)
 
     def get_queryset(self):
-        return PhysicalEdge.objects.existing().select_related('physical_type').defer('geom', 'geom_3d')
+        qs = self.model.objects.existing().select_related('physical_type')
 
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'physical_type')
+            return qs
 
-class LandEdgeLayer(MapEntityLayer):
-    queryset = LandEdge.objects.existing()
-    properties = ['color_index', 'name']
+        return qs.defer('geom', 'geom_3d')
 
 
 class LandEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = LandEdge.objects.existing()
     filterform = LandEdgeFilterSet
     mandatory_columns = ['id', 'land_type']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'land_type', 'owner', 'agreement',
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        'land_type', 'owner', 'agreement', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -113,6 +115,7 @@ class LandEdgeDelete(MapEntityDelete):
 class LandEdgeViewSet(GeotrekMapentityViewSet):
     model = LandEdge
     serializer_class = LandEdgeSerializer
+    geojson_serializer_class = LandEdgeGeojsonSerializer
     filterset_class = LandEdgeFilterSet
 
     def get_columns(self):
@@ -120,25 +123,25 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
                                                                            LandEdgeList.default_extra_columns)
 
     def get_queryset(self):
-        return LandEdge.objects.existing().select_related('land_type').defer('geom', 'geom_3d')
-
-
-class CompetenceEdgeLayer(MapEntityLayer):
-    queryset = CompetenceEdge.objects.existing()
-    properties = ['color_index', 'name']
+        qs = self.model.objects.existing().select_related('land_type')
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'land_type')
+            return qs
+        return qs.defer('geom', 'geom_3d')
 
 
 class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = CompetenceEdge.objects.existing()
     filterform = CompetenceEdgeFilterSet
     mandatory_columns = ['id', 'organization']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
     default_extra_columns = [
         'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -167,6 +170,7 @@ class CompetenceEdgeDelete(MapEntityDelete):
 class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
     model = CompetenceEdge
     serializer_class = CompetenceEdgeSerializer
+    geojson_serializer_class = CompetenceEdgeGeojsonSerializer
     filterset_class = CompetenceEdgeFilterSet
 
     def get_columns(self):
@@ -174,25 +178,24 @@ class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
                                                                                  CompetenceEdgeList.default_extra_columns)
 
     def get_queryset(self):
-        return CompetenceEdge.objects.existing().select_related('organization').defer('geom', 'geom_3d')
-
-
-class WorkManagementEdgeLayer(MapEntityLayer):
-    queryset = WorkManagementEdge.objects.existing()
-    properties = ['color_index', 'name']
+        qs = self.model.objects.existing().select_related('organization')
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'organization')
+            return qs
+        return qs.defer('geom', 'geom_3d')
 
 
 class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = WorkManagementEdge.objects.existing()
     filterform = WorkManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
     default_extra_columns = [
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -221,6 +224,7 @@ class WorkManagementEdgeDelete(MapEntityDelete):
 class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
     model = WorkManagementEdge
     serializer_class = WorkManagementEdgeSerializer
+    geojson_serializer_class = WorkManagementEdgeGeojsonSerializer
     filterset_class = WorkManagementEdgeFilterSet
 
     def get_columns(self):
@@ -228,25 +232,24 @@ class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
                                                                                      WorkManagementEdgeList.default_extra_columns)
 
     def get_queryset(self):
-        return WorkManagementEdge.objects.existing().select_related('organization').defer('geom', 'geom_3d')
-
-
-class SignageManagementEdgeLayer(MapEntityLayer):
-    queryset = SignageManagementEdge.objects.existing()
-    properties = ['color_index', 'name']
+        qs = self.model.objects.existing().select_related('organization')
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'organization')
+            return qs
+        return qs.defer('geom', 'geom_3d')
 
 
 class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = SignageManagementEdge.objects.existing()
     filterform = SignageManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
-    default_extra_columns = ['length']
+    default_extra_columns = ['length', 'length_2d']
 
 
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
     default_extra_columns = [
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -275,6 +278,7 @@ class SignageManagementEdgeDelete(MapEntityDelete):
 class SignageManagementEdgeViewSet(GeotrekMapentityViewSet):
     model = SignageManagementEdge
     serializer_class = SignageManagementEdgeSerializer
+    geojson_serializer_class = SignageManagementEdgeGeojsonSerializer
     filterset_class = SignageManagementEdgeFilterSet
 
     def get_columns(self):
@@ -282,4 +286,9 @@ class SignageManagementEdgeViewSet(GeotrekMapentityViewSet):
                                                                                         SignageManagementEdgeList.default_extra_columns)
 
     def get_queryset(self):
-        return SignageManagementEdge.objects.existing().select_related('organization').defer('geom', 'geom_3d')
+        qs = self.model.objects.existing().select_related('organization')
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'organization')
+            return qs
+        return qs.defer('geom', 'geom_3d')

@@ -7,7 +7,6 @@ from geotrek.api.mobile.serializers import trekking as api_serializers_trekking
 from geotrek.api.mobile.serializers import tourism as api_serializers_tourism
 
 from geotrek.api.v2.functions import StartPoint, EndPoint
-from geotrek.common.functions import Length
 from geotrek.trekking import models as trekking_models
 
 from rest_framework_extensions.mixins import DetailSerializerMixin
@@ -29,7 +28,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         queryset = trekking_models.Trek.objects.existing()\
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'attachments') \
-            .order_by('pk').annotate(length_2d_m=Length('geom'))
+            .order_by('pk')
         if not self.action == 'list':
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         if self.action == 'list':

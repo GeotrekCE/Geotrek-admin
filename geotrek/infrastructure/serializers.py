@@ -1,11 +1,12 @@
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import PictogramSerializerMixin, BasePublishableSerializerMixin
-from geotrek.infrastructure import models as infrastructure_models
+from . import models as infrastructure_models
 
 
 class InfrastructureTypeSerializer(PictogramSerializerMixin):
@@ -26,6 +27,12 @@ class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = infrastructure_models.Infrastructure
         fields = "__all__"
+
+
+class InfrastructureGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = infrastructure_models.Infrastructure
+        fields = ['id', 'name', 'published']
 
 
 class InfrastructureAPISerializer(BasePublishableSerializerMixin):

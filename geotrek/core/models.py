@@ -18,6 +18,7 @@ from modelcluster.models import ClusterableModel
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.functions import Length
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
@@ -107,7 +108,11 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
 
     @classmethod
     def no_draft_latest_updated(cls):
-        return cls.objects.filter(draft=False).latest('date_update').get_date_update()
+        try:
+            latest = cls.objects.filter(draft=False).only('date_update').latest('date_update').get_date_update()
+        except cls.DoesNotExist:
+            latest = None
+        return latest
 
     @property
     def length_2d_display(self):
@@ -376,6 +381,14 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
         return None
 
 
+class TopologyManager(NoDeleteManager):
+    # Use this manager when walking through FK/M2M relationships
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return super().get_queryset().annotate(length_2d=Length('geom'))
+
+
 class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
                TimeStampedModelMixin, NoDeleteMixin, ClusterableModel):
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
@@ -392,6 +405,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
     srid = settings.API_SRID
 
     geometry_types_allowed = ["LINESTRING", "POINT"]
+    objects = TopologyManager()
 
     class Meta:
         verbose_name = _("Topology")
@@ -410,21 +424,13 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
     def paths(self):
         return Path.objects.filter(aggregations__topo_object=self)
 
-    @property
-    def length_2d(self):
-        if self.geom and not self.ispoint():
-            return round(self.geom.length, 1)
-
-        else:
-            return None
-
     @classproperty
     def length_2d_verbose_name(cls):
         return _("2D Length")
 
     @property
     def length_2d_display(self):
-        return self.length_2d
+        return round(self.length_2d, 1)
 
     @classproperty
     def KIND(cls):

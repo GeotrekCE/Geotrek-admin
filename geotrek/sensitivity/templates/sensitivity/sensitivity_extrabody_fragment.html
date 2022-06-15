@@ -3,5 +3,5 @@
 <script type="text/javascript">
     MapEntity.i18n['Sensitivity'] = "{% trans "Sensitivity" %}";
     MapEntity.i18n['sensitivearea'] = "{% trans "Sensitive area" %}";
-    window.SETTINGS.urls['sensitivearea_layer'] = "{% url "sensitivity:sensitivearea_layer" %}";
+    window.SETTINGS.urls['sensitivearea_layer'] = "{% url "sensitivity:sensitivearea-drf-list" format="geojson" %}";
 </script>

@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n l10n static geojson_tags thumbnail geotrek_tags mapentity_tags %}
+{% load i18n l10n static thumbnail geotrek_tags mapentity_tags %}
 
 {% block download %}
     {{ block.super }}
@@ -66,8 +66,8 @@
                     iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],
                     iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],
                 });
-                var point = {{object.parking_location|geojsonfeature|safe}};
-                var location = point.geometry.coordinates.reverse();
+                var point = {{object.parking_location.geojson|safe}};
+                var location = point.coordinates.reverse();
                 L.marker(location, {icon: parkingIcon})
                  .bindPopup("{{ object.advised_parking|default:_("None") }}")
                  .addTo(map);
@@ -171,7 +171,7 @@
             //
             // Points of reference
             (function (map) {
-                var data = {{ object.points_reference|geojsonfeature|safe }};
+                var data = {{ object.points_reference.geojson|safe|default:'null' }};
                 L.geoJson(data, {
                     pointToLayer: (function () {
                         var counter = 1;
