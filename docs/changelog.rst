@@ -16,7 +16,7 @@ CHANGELOG
 **Minor improvements**
 
 - Add length 2d for land's app for exports and lists
-- Add options for recalculation altimetry with `loaddem` command
+- Add option to recalculate altimetry with `loaddem` command
 
 **Bug fixes**
 
