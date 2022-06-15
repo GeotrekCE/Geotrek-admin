@@ -503,22 +503,25 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
-        with tempfile.TemporaryDirectory(dir=settings.VAR_DIR) as self.tmp_root:
-            try:
-                self.sync()
-                if self.celery_task:
-                    self.celery_task.update_state(
-                        state='PROGRESS',
-                        meta={
-                            'name': self.celery_task.name,
-                            'current': 100,
-                            'total': 100,
-                            'infos': "{}".format(_("Sync ended"))
-                        }
-                    )
-                self.rename_root()
-            except Exception:
-                raise
+        if not os.path.exists(settings.TMP_DIR):
+            os.mkdir(settings.TMP_DIR)
+        self.tmp_root = tempfile.TemporaryDirectory(dir=settings.TMP_DIR).name
+        try:
+            self.sync()
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 100,
+                        'total': 100,
+                        'infos': "{}".format(_("Sync ended"))
+                    }
+                )
+            self.rename_root()
+        except Exception:
+            shutil.rmtree(self.tmp_root)
+            raise
 
         done_message = 'Done'
         if self.successfull:

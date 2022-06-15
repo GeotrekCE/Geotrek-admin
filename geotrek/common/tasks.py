@@ -132,6 +132,8 @@ def launch_sync_rando(*args, **kwargs):
     """
     celery shared task - sync rando command
     """
+    if not os.path.exists(settings.TMP_DIR):
+        os.mkdir(settings.TMP_DIR)
     if not os.path.exists(settings.SYNC_RANDO_ROOT):
         os.mkdir(settings.SYNC_RANDO_ROOT)
 

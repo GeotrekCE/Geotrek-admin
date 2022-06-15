@@ -57,7 +57,7 @@ class SyncMobileViewTest(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp'),
+                       SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp', 'tmp_sync'),
                        SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile(self, mocked_stdout):
         self.client.force_login(self.super_user)
@@ -69,7 +69,7 @@ class SyncMobileViewTest(TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
-    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp'),
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp', 'tmp_sync'),
                        SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
                                             'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
@@ -80,7 +80,7 @@ class SyncMobileViewTest(TestCase):
         self.assertIn(b'"exc_message": "This is a test"', response.content)
 
     @patch('sys.stdout', new_callable=StringIO)
-    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp'),
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.TMP_DIR, 'tmp_sync'),
                        SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
                                             'skip_tiles': True})
     def test_launch_sync_mobile(self, mocked_stdout):
@@ -100,7 +100,7 @@ class SyncMobileViewTest(TestCase):
         self.assertNotIn('Sync mobile ended', log)
         self.assertEqual(task.status, "FAILURE")
 
-    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp'))
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.VAR_DIR, 'tmp', 'tmp_sync'))
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
     @patch('sys.stdout', new_callable=StringIO)
