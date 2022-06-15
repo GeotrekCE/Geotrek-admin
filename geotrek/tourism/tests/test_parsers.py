@@ -104,6 +104,18 @@ class DifferentDefaultLanguageParser(TouristicEventApidaeParser):
     default_language = 'en'
 
 
+class RequiredParser(TouristicEventApidaeParser):
+    warn_on_missing_fields = True
+    field_options = {'reservation_id': {'required': True}}
+    default_language = 'nl'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields = self.fields.copy()
+        self.fields['approved'] = 'bar'
+        self.fields['reservation_id'] = 'foo'
+
+
 class ListFieldsParser(TouristicEventApidaeParser):
     fields = {
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
@@ -464,6 +476,25 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.practical_info_fr[:38], "<b>Ouverture:</b><br>Mardi 6 août 2019")
+
+    @mock.patch('requests.get')
+    def test_required_apidae(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEventEn.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        self.assertEqual(TouristicEvent.objects.count(), 0)
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.tests.test_parsers.RequiredParser', verbosity=2, stdout=output)
+        self.assertEqual(TouristicEvent.objects.count(), 0)
+        str_output = output.getvalue()
+        self.assertIn("Missing field 'bar'", str_output)
+        self.assertIn("Missing required field 'foo'", str_output)
 
     @mock.patch('requests.get')
     def test_create_event_apidae_empty_languagefr_default_language(self, mocked):
