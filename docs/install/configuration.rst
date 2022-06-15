@@ -60,12 +60,12 @@ if you did not enable *External authent* (see below).
 
 By default six groups are created:
 
-* Readers
-* Path managers
-* Trek managers
-* Editors
-* Geotrek-rando
-* Trek and management editors
+* Readers ("Lecteurs")
+* Path managers ("Référents sentiers")
+* Trek managers ("Référents communication")
+* Editors ("Rédacteurs")
+* Geotrek-rando ("Geotrek-rando")
+* Trek and management editors ("Rédacteurs rando et gestion")
 
 Once the application is installed, it is possible to modify the default permissions
 of these existing groups, create new ones etc...
