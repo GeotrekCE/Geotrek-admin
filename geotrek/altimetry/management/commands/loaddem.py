@@ -22,7 +22,7 @@ class Command(BaseCommand):
         parser.add_argument('dem_path')
         parser.add_argument('--replace', action='store_true', default=False, help='Replace existing DEM if any.')
         parser.add_argument('--update-altimetry', action='store_true', default=False,
-                            help='/!\\ DO NOT USE WHEN PATH ARE MODIFY, Update altimetry of paths.')
+                            help='Update altimetry of all 3D geometries, /!\\ This option takes lot of time to perform')
 
     def handle(self, *args, **options):
 
@@ -107,6 +107,8 @@ class Command(BaseCommand):
         if verbose:
             self.stdout.write('DEM successfully loaded.\n')
         if update_altimetry_paths:
+            if verbose:
+                self.stdout.write('Updating 3d geometries.\n')
             Path.objects.all().update(geom=F('geom'))
         return
 

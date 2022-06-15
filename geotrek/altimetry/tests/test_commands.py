@@ -51,6 +51,7 @@ class CommandLoadDemTest(TransactionTestCase):
         call_command('loaddem', filename, update_altimetry=True, verbosity=2, stdout=output_stdout)
         self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
         self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
+        self.assertIn('Updating 3d geometries.', output_stdout.getvalue())
         dems = Dem.objects.all().annotate(int=RasterValue('rast', Point(x=605600, y=6650000, srid=2154)))
         value = dems.first()
         self.assertAlmostEqual(value.int, 343.600006103516)
