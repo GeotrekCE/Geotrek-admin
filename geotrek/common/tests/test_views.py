@@ -317,9 +317,10 @@ class SyncRandoViewTest(TestCase):
     @mock.patch('sys.stdout', new_callable=StringIO)
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
-    @override_settings(SYNC_RANDO_ROOT=os.path.join('var', 'tmp', 'tmp_sync'), SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': False,
-                                                                      'skip_pdf': False,
-                                                                      'skip_dem': False, 'skip_profile_png': False})
+    @override_settings(SYNC_RANDO_ROOT=os.path.join('var', 'tmp', 'tmp_sync'),
+                       SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': False,
+                                           'skip_pdf': False,
+                                           'skip_dem': False, 'skip_profile_png': False})
     def test_launch_sync_rando(self, mock_tile, mock_map_image, mocked_stdout):
         task = launch_sync_rando.apply()
         log = mocked_stdout.getvalue()
