@@ -37,6 +37,12 @@ class VarTmpTestCase(TestCase):
 
 
 class SyncRandoTilesTest(VarTmpTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
+
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
     def test_tiles(self, mock_tileslist, mock_tiles):

@@ -48,6 +48,8 @@ class SyncMobileTilesTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
         translation.deactivate()
 
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
