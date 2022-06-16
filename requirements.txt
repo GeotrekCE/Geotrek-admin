@@ -183,7 +183,7 @@ landez==2.5.0
     # via geotrek (setup.py)
 lxml==4.7.1
     # via mapentity
-mapentity==8.1.2
+mapentity @ git+https://github.com/makinacorpus/django-mapentity.git@improve_authent_screamshotter
     # via geotrek (setup.py)
 markupsafe==1.1.1
     # via jinja2
@@ -191,8 +191,6 @@ mbutil==0.3.0
     # via landez
 munch==2.5.0
     # via fiona
-netifaces==0.10.9
-    # via mapentity
 packaging==21.3
     # via drf-yasg
 paperclip==2.5.0
