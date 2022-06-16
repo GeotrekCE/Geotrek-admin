@@ -470,7 +470,7 @@ class Command(BaseCommand):
         self.skip_tiles = options['skip_tiles']
         self.indent = options['indent']
         self.factory = RequestFactory()
-        self.dst_root = os.path.join(os.path.dirname(settings.PROJECT_DIR), options["path"].rstrip('/'))
+        self.dst_root = options["path"].rstrip('/')
         self.abs_path = os.path.abspath(options["path"])
         self.check_dst_root_is_empty()
 
