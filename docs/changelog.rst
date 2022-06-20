@@ -16,16 +16,15 @@ CHANGELOG
 **New features**
 
 - Add filter valid geometries on topologies (#2515)[3.1]
-- Add setting `ALLOW_PATH_DELETION_TOPOLOGY` which protect or not against deletion of path with topologies linked to it (#2515)[3.3.1]
+- Add setting ``ALLOW_PATH_DELETION_TOPOLOGY`` which protect or not against deletion of path with topologies linked to it (#2515)[3.3.1]
 - Add eid on InformationDesk
 - Add parser InformationDesk for Apidae
 - Add accessibility on Infrastructure in api v2
 
-
 **Minor improvements**
 
-- Add length 2d for land's app for exports and lists
-- Add option to recalculate altimetry with `loaddem` command
+- Add length 2d for land's app for exports and lists (#2976)
+- Add option to recalculate altimetry with ``loaddem`` command
 
 **Bug fixes**
 
@@ -54,11 +53,14 @@ CHANGELOG
   - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
 
 - From now, Geotrek-admin is not installable on Ubuntu 18.04 bionic anymore. But upgrade are still available.
+- The default Nginx configuration template `has been improved <https://github.com/GeotrekCE/Geotrek-admin/commit/3d44447893037944f35cd4280e89021f693b3a1f>`_ to increase data loading performances. It is highly recommanded to apply changes to your Nginx configuration template (in ``/opt/geotrek-admin/var/conf/nginx.conf.in``).
 
 **Improvments**
 
 - New GeoJSON generation system, using Django Rest Framework and PostGIS functions (#2967)
 - Enable GZIP compression on JSON / GeoJSON by Nginx
+
+`Link text <link URL>`_
 
 **Maintenance**
 
@@ -72,10 +74,10 @@ CHANGELOG
 
 - Display link to attachment in admin site for attachments
 - Add license field on attachments (#3089) [thanks to Paul Florence]
-- If `COMPLETENESS_FIELDS` is set for a model an object is published,
-    display completeness fields if missing on page detail
-- Avoid publication or review if `COMPLETENESS_FIELDS` is set for a model,
-    and `COMPLETENESS_LEVEL` is one of 'error_on_publication' and 'error_on_review'
+- If ``COMPLETENESS_FIELDS`` is set for a model an object is published, 
+  display completeness fields if missing on page detail (#2898)
+- Avoid publication or review if ``COMPLETENESS_FIELDS`` is set for a model, 
+  and ``COMPLETENESS_LEVEL`` is one of 'error_on_publication' and 'error_on_review' (#2898)
 
 **Bug fixes**
 
@@ -107,7 +109,7 @@ CHANGELOG
 
 **Bug fixes**
 
-- Prevent exceptions on malformed images when launching `sync_suricate` command
+- Prevent exceptions on malformed images when launching ``sync_suricate`` command
 - Fix alert on Project list view
 
 
@@ -119,7 +121,7 @@ Do not use, list view for Projects raises Datatable alert
 
 **Bug fixes**
 
-- Fix display objects with wrong colors when `ENABLE_REPORT_COLORS_PER_STATUS` is True
+- Fix display objects with wrong colors when ``ENABLE_REPORT_COLORS_PER_STATUS`` is True
 
 
 2.82.0     (2022-04-27)
@@ -127,7 +129,7 @@ Do not use, list view for Projects raises Datatable alert
 
 **WARNING!**
 
-Do not use, or set `ENABLE_REPORT_COLORS_PER_STATUS` to False, else objects will not be displayed properly on map - Release 2.82.1 should be used instead
+Do not use, or set ``ENABLE_REPORT_COLORS_PER_STATUS`` to False, else objects will not be displayed properly on map - Release 2.82.1 should be used instead
 
 **New features**
 
@@ -138,12 +140,12 @@ Do not use, or set `ENABLE_REPORT_COLORS_PER_STATUS` to False, else objects will
 
 - Refer to Reports by a label instead of email addresses
 - Increase default cache expiration from 8hours to 30days (#2967)
-- Use distance from setting `SENSITIVE_AREA_INTERSECTION_MARGIN` in sensitive area filter `trek` in api v2
+- Use distance from setting ``SENSITIVE_AREA_INTERSECTION_MARGIN`` in sensitive area filter `trek` in api v2
 
 **Bug fixes**
 
-- Fix filter `trek` in api v2 for information desks
-- Fix filter `trek` in api v2 for pois with setting `TREKKING_TOPOLOGY_ENABLED` (#3054)
+- Fix filter ``trek`` in api v2 for information desks
+- Fix filter ``trek`` in api v2 for pois with setting ``TREKKING_TOPOLOGY_ENABLED`` (#3054)
 
 **Maintenance**
 
@@ -151,11 +153,11 @@ Do not use, or set `ENABLE_REPORT_COLORS_PER_STATUS` to False, else objects will
 
 **Suricate Workflow**  (#2366)
 
-- Add `assigned_user` field to Report model
-- Add `color` field to Report Status model
-- Add TimerEvent class, used to alert Report supervisors when timer expires, with `check_timers` command
-- Force workflow when `SURICATE_WORKFLOW_ENABLED` setting is enabled
-- Add setting `ENABLE_REPORT_COLORS_PER_STATUS` to display different colors in status list view
+- Add ``assigned_user`` field to Report model
+- Add ``color`` field to Report Status model
+- Add TimerEvent class, used to alert Report supervisors when timer expires, with ``check_timers`` command
+- Force workflow when ``SURICATE_WORKFLOW_ENABLED`` setting is enabled
+- Add setting ``ENABLE_REPORT_COLORS_PER_STATUS`` to display different colors in status list view
 - Add editable predefined emails
 - Display only some reports depending on which user is logged in
 - Add City and District information to Report detail page
