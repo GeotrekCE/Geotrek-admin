@@ -414,6 +414,11 @@ class BaseApiTest(TestCase):
         cls.sector = outdoor_factory.SectorFactory()
         cls.outdoor_practice = outdoor_factory.PracticeFactory(sector=cls.sector)
         cls.site2 = outdoor_factory.SiteFactory(practice=None)
+        cls.site2.portal.set([cls.portal])
+        cls.theme3 = common_factory.ThemeFactory()
+        cls.site2.themes.add(cls.theme3)
+        cls.label_3 = common_factory.LabelFactory()
+        cls.site2.labels.add(cls.label_3)
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -1215,6 +1220,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_theme_list(self):
         response = self.get_themes_list({'portals': self.portal.pk})
         self.assertContains(response, self.theme.label)
+        self.assertContains(response, self.theme3.label)
 
     def test_theme_list_filter_portal(self):
         portal2 = common_factory.TargetPortalFactory()
@@ -1894,13 +1900,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         label_2 = common_factory.LabelFactory.create(filter=True)
         self.treks[0].labels.add(label_1, label_2)
         response = self.get_label_list({'only_filters': True})
-        self.assertEqual(response.json()["count"], 2)
-        self.assertSetEqual({result["id"] for result in response.json()["results"]}, {self.label.pk, label_2.pk})
+        self.assertEqual(response.json()["count"], 3)
+        self.assertSetEqual({result["id"] for result in response.json()["results"]}, {self.label.pk, label_2.pk, self.label_3.pk})
         response = self.get_label_list({'only_filters': False})
         self.assertEqual(response.json()["results"][0]["id"], label_1.pk)
         self.assertEqual(response.json()["count"], 1)
         response = self.get_label_list()
-        self.assertEqual(response.json()["count"], 3)
+        self.assertEqual(response.json()["count"], 4)
 
         response = self.get_label_list({'only_filters': 'None'})
         self.assertEqual(response.json()["count"], 0)

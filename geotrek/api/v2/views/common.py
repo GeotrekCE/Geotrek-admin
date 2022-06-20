@@ -12,7 +12,7 @@ class TargetPortalViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ThemeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TreksAndTourismRelatedPortalThemeFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TreksAndSitesAndTourismRelatedPortalThemeFilter,)
     serializer_class = api_serializers.ThemeSerializer
     queryset = common_models.Theme.objects.all()
 
@@ -48,7 +48,7 @@ class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
 
 
 class LabelViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TreksAndSitesRelatedPortalFilter,
                                                                      api_filters.GeotrekLabelFilter)
     serializer_class = api_serializers.LabelSerializer
     queryset = common_models.Label.objects.all()
