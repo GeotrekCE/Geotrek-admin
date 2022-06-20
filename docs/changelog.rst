@@ -60,8 +60,6 @@ CHANGELOG
 - New GeoJSON generation system, using Django Rest Framework and PostGIS functions (#2967)
 - Enable GZIP compression on JSON / GeoJSON by Nginx
 
-`Link text <link URL>`_
-
 **Maintenance**
 
 - Upgrade mapentity to 8.1.2
