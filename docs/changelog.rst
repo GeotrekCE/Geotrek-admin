@@ -28,6 +28,7 @@ CHANGELOG
 - Error 500 default template doesn't make recursive exceptions anymore
 - Log entry permissions are now managed by "mapentity - xxx log entries" instead of "admin - xxx log entries"
 - Fix information desk filter when outdoor module is not available (#3135)
+- Fix APIv2 does not return labels and themes on published outdoor sites
 
 **Breaking Changes**
 
