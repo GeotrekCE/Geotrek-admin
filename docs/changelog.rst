@@ -2,16 +2,12 @@
 CHANGELOG
 =========
 
-2.84.0+dev (XXXX-XX-XX)
+2.84.1     (2022-06-21)
 -----------------------
 
 **Bug fixes**
 
 - Fix length_2d or land's app for exports and lists
-
-**New features**
-
--
 
 
 2.84.0     (2022-06-20)
