@@ -5,6 +5,10 @@ CHANGELOG
 2.84.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix length_2d or land's app for exports and lists
+
 **New features**
 
 -
