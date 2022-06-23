@@ -951,6 +951,10 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
+    certifications = models.ManyToManyField('CertificationTrail',
+                                            blank=True, related_name="trails",
+                                            verbose_name=_("Certifications"))
+
     geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
@@ -985,6 +989,26 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
+
+
+class CertificationLabel(StructureOrNoneRelated):
+    """Certification label model"""
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+
+class CertificationStatus(StructureOrNoneRelated):
+    """Certification status model"""
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+
+class CertificationTrail(StructureOrNoneRelated):
+    """Certification trail model"""
+    certification_label = models.ForeignKey("core.CertificationLabel",
+                                            related_name='certifications', on_delete=models.CASCADE,
+                                            verbose_name=_("Certification label"))
+    certification_status = models.ForeignKey("core.CertificationStatus",
+                                             related_name='certifications', on_delete=models.CASCADE,
+                                             verbose_name=_("Certification status"))
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _("Trails"))
