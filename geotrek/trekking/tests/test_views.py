@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
+from django.core import mail
 from django.core.management import call_command
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.shortcuts import get_object_or_404
@@ -119,6 +120,14 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         response = self.client.get(self.model.get_datatablelist_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Waiting for publication')
+
+    @override_settings(ALERT_REVIEW=True)
+    def test_status_review_alert(self):
+        element_not_published = self.modelfactory.create()
+        element_not_published.published = False
+        element_not_published.review = True
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_empty_topology(self):
         data = self.get_good_data()
