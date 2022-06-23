@@ -996,6 +996,11 @@ class CertificationLabel(StructureOrNoneRelated):
             return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
+    class Meta:
+        verbose_name = _("Certification label")
+        verbose_name_plural = _("Certification labels")
+        ordering = ['label']
+
 
 class CertificationStatus(StructureOrNoneRelated):
     """Certification status model"""
@@ -1006,9 +1011,15 @@ class CertificationStatus(StructureOrNoneRelated):
             return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
+    class Meta:
+        verbose_name = _("Certification status")
+        verbose_name_plural = _("Certification statuses")
+        ordering = ['label']
+
 
 class CertificationTrail(StructureOrNoneRelated):
     """Certification trail model"""
+
     trail = models.ForeignKey("core.Trail",
                               related_name='certifications',
                               on_delete=models.CASCADE,
