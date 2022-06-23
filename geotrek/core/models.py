@@ -951,10 +951,6 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    certifications = models.ManyToManyField('CertificationTrail',
-                                            blank=True, related_name="trails",
-                                            verbose_name=_("Certifications"))
-
     geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
@@ -1013,12 +1009,21 @@ class CertificationStatus(StructureOrNoneRelated):
 
 class CertificationTrail(StructureOrNoneRelated):
     """Certification trail model"""
+    trail = models.ForeignKey("core.Trail",
+                              related_name='certifications',
+                              on_delete=models.CASCADE,
+                              verbose_name=_("Trail"))
     certification_label = models.ForeignKey("core.CertificationLabel",
-                                            related_name='certifications', on_delete=models.CASCADE,
+                                            related_name='certifications',
+                                            on_delete=models.CASCADE,
                                             verbose_name=_("Certification label"))
     certification_status = models.ForeignKey("core.CertificationStatus",
-                                             related_name='certifications', on_delete=models.CASCADE,
+                                             related_name='certifications',
+                                             on_delete=models.CASCADE,
                                              verbose_name=_("Certification status"))
+
+    class Meta:
+        unique_together = ['trail', 'certification_label', 'certification_status']
 
     def __str__(self):
         return f"{self.certification_label} / {self.certification_status}"
