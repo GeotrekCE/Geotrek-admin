@@ -995,10 +995,20 @@ class CertificationLabel(StructureOrNoneRelated):
     """Certification label model"""
     label = models.CharField(verbose_name=_("Name"), max_length=128)
 
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
 
 class CertificationStatus(StructureOrNoneRelated):
     """Certification status model"""
     label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
 
 
 class CertificationTrail(StructureOrNoneRelated):
@@ -1009,6 +1019,9 @@ class CertificationTrail(StructureOrNoneRelated):
     certification_status = models.ForeignKey("core.CertificationStatus",
                                              related_name='certifications', on_delete=models.CASCADE,
                                              verbose_name=_("Certification status"))
+
+    def __str__(self):
+        return f"{self.certification_label} / {self.certification_status}"
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _("Trails"))

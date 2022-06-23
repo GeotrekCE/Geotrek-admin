@@ -13,7 +13,10 @@ from django.db.models import ProtectedError
 from geotrek.common.utils import dbnow
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
-from geotrek.core.tests.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
+from geotrek.core.tests.factories import (
+    ComfortFactory, PathFactory, StakeFactory, TrailFactory,
+    CertificationLabelFactory, CertificationStatusFactory, CertificationTrailFactory
+)
 from geotrek.core.models import Path, Trail
 
 
@@ -309,3 +312,34 @@ class ComfortTest(TestCase):
     def test_name_without_structure(self):
         comfort = ComfortFactory.create(comfort="comfort")
         self.assertEqual("comfort", str(comfort))
+
+
+class CertificationTest(TestCase):
+    """Test certifications trail models"""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.structure = StructureFactory.create(name="structure")
+        cls.certification_label = CertificationLabelFactory.create(label="certification label")
+        cls.certification_status = CertificationStatusFactory.create(label="certification status")
+
+    def test_certification_label_name_with_structure(self):
+        certification_label = CertificationLabelFactory.create(label="certification label", structure=self.structure)
+        self.assertEqual("certification label (structure)", str(certification_label))
+
+    def test_certification_label_name_without_structure(self):
+        self.assertEqual("certification label", str(self.certification_label))
+
+    def test_certification_status_name_with_structure(self):
+        certification_status = CertificationStatusFactory.create(label="certification status", structure=self.structure)
+        self.assertEqual("certification status (structure)", str(certification_status))
+
+    def test_certification_status_name_without_structure(self):
+        self.assertEqual("certification status", str(self.certification_status))
+
+    def test_certification_name(self):
+        certification_trail = CertificationTrailFactory.create(
+            certification_label=self.certification_label,
+            certification_status=self.certification_status,
+        )
+        self.assertEqual("certification label / certification status", str(certification_trail))
