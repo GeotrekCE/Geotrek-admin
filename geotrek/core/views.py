@@ -27,11 +27,12 @@ from rest_framework.response import Response
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
 from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from . import graph as graph_lib
 from .filters import PathFilterSet, TrailFilterSet
-from .forms import PathForm, TrailForm
+from .forms import PathForm, TrailForm, CertificationTrailFormSet
 from .models import AltimetryMixin, Path, Trail, Topology
 from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
 
@@ -337,6 +338,11 @@ class PathViewSet(GeotrekMapentityViewSet):
         return Response(response)
 
 
+class CertificationTrailMixin(FormsetMixin):
+    context_name = 'certificationtrail_formset'
+    formset_class = CertificationTrailFormSet
+
+
 class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
@@ -388,12 +394,12 @@ class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 
 
-class TrailCreate(CreateFromTopologyMixin, MapEntityCreate):
+class TrailCreate(CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
     model = Trail
     form_class = TrailForm
 
 
-class TrailUpdate(MapEntityUpdate):
+class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
     queryset = Trail.objects.existing()
     form_class = TrailForm
 
