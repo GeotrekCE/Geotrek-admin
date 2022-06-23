@@ -5,9 +5,10 @@ CHANGELOG
 2.84.1+dev (XXXX-XX-XX)
 -----------------------
 
-**Bug fixes**
+**New features**
 
 - Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
+- Use permission bypass_structure on attachments and accessibility attachments (#2899)
 
 **Documentation**
 
