@@ -72,7 +72,7 @@ class EntityAttachmentTestCase(TestCase):
         response = self.client.get(self.object.get_detail_url())
 
         html = response.content
-        self.assertTemplateUsed(response, template_name='paperclip/attachment_list.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_list.html')
         self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
 
         self.assertEqual(1, len(AccessibilityAttachment.objects.attachments_for_object(self.object)))
@@ -93,7 +93,7 @@ class EntityAttachmentTestCase(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.object.get_detail_url())
 
-        self.assertTemplateUsed(response, template_name='paperclip/attachment_list.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_list.html')
         self.assertTemplateNotUsed(response, template_name='common/attachment_accessibility_list.html')
 
     def test_add_form_in_details_if_perms(self):
@@ -118,6 +118,27 @@ class EntityAttachmentTestCase(TestCase):
         self.assertIn(
             '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
+
+    def test_create_attachments_object_other_structure(self):
+        def user_perms(p):
+            return {'authent.can_bypass_structure': False}.get(p, True)
+        self.createAttachmentAccessibility(self.object)
+        user = UserFactory()
+        user.has_perm = mock.MagicMock(side_effect=user_perms)
+        user.user_permissions.add(Permission.objects.get(codename='read_trek'))
+        user.user_permissions.add(Permission.objects.get(codename='read_attachment'))
+        self.client.force_login(user)
+        response = self.client.get(self.object.get_detail_url())
+
+        html = response.content
+        self.assertTemplateUsed(response, template_name='common/attachment_list.html')
+        self.assertTemplateNotUsed(response, template_name='common/_attachment_table.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
+
+        self.assertNotIn(b"Submit attachment", html)
+        self.assertNotIn(
+            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            html)
 
 
 class UploadAddAttachmentTestCase(TestCase):

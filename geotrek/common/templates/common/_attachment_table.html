@@ -1,0 +1,78 @@
+{% load i18n attachments_tags thumbnail static embed_video_tags %}
+<table class="table">
+    <thead>
+        <th>{% trans "Filename" %}</th>
+        <th>{% trans "Legend" %}</th>
+        <th>{% trans "Author" %}</th>
+        <th>{% trans "Insertion date" %}</th>
+        <th>{% trans "Update date" %}</th>
+        {% block extra_column_header %}{% endblock %}
+        {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
+            <th>{% trans "Actions" %}</th>
+        {% endif %}
+    </thead>
+    <tbody>
+    {% for att in attachments_list %}
+    <tr data-id="{{ att.pk }}"
+        data-title="{{ att.filename }}">
+        <td>
+            {% if att.attachment_file %}
+                <a href="{{ att.attachment_file.url }}" target="_blank">
+                    {% if att.is_image %}
+                        <img class="img-polaroid" src="{{ att.attachment_file|thumbnail_url:'thumbnail' }}" alt="{{ att.title|default:att.filename }}" title="{{ att.title|default:att.filename }}">
+                    {% else %}
+                        <img src="{% get_static_prefix %}paperclip/fileicons/{{ att|icon_name }}.png"/>&nbsp;{{ att.title|default:att.filename }}
+                    {% endif %}
+                </a>
+            {% elif att.attachment_video %}
+                {% video att.attachment_video as video %}
+                <a href="{{ video.url }}" target="_blank">
+                    <img class="img-polaroid" src="{{ video.thumbnail }}" alt="{{ att.title|default:att.filename }}" title="{{ att.title|default:att.filename }}">
+                </a>
+                {% endvideo %}
+            {% elif att.attachment_link %}
+                <img class="img-polaroid" src="{{ att.attachment_link }}" alt="{{ att.title|default:att.filename }}" title="{{ att.title|default:att.filename }}">
+            {% else %}
+
+            {% endif %}
+        </td>
+        <td>{{ att.legend }}</td>
+        <td><p>{{ att.author }}</p><p><i style="font-size:10px;">{{ att.license.label }}</i></p></td>
+        <td>{{ att.date_insert }}</td>
+        <td>{{ att.date_update }}</td>
+        {% block extra_column_data %}{% endblock %}
+        {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
+            <td>
+            {% if perms|change_attachment %}
+            <a href="#"
+               class="{{ att.starred|yesno:"unstar,star" }}"
+               data-star-url="{% url 'star_attachment' att.pk %}"
+               title="{% if att.starred %}{% trans "Remove star" %}{% else %}{% trans "Star item" %}{% endif %}">
+               <img src="{% get_static_prefix %}paperclip/star-{{ att.starred|yesno:"on,off" }}.svg"/>
+            </a>
+            {% else %}
+                <img src="{% get_static_prefix %}paperclip/star-{{ att.starred|yesno:"on,off" }}.svg"/>
+            {% endif %}
+
+            {% if perms|change_attachment %}
+                &nbsp;
+                <a href="#"
+                   class="update-action"
+                   data-update-url="{% url 'update_attachment' att.pk %}?next={{ attachment_form_next|urlencode }}">
+                    {% trans "Update" %}
+                </a>
+            {% endif %}
+
+            {% if perms|delete_attachment %}
+                &nbsp;
+                <a href="#"
+                   class="delete-action"
+                   data-delete-url="{% url 'delete_attachment' att.pk %}?next={{ attachment_form_next|urlencode }}">
+                   {% trans "Delete" %}
+                </a>
+            {% endif %}
+            </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
