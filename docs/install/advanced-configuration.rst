@@ -2771,6 +2771,16 @@ It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 If false, it forbid to delete a path when at least one topology is linked to this path.
 
 
+::
+
+    ALERT_REVIEW = False
+
+If True, it sends a message to managers (MAIL_MANAGERS) whenever an object which can be published has been changed to review mode.
+
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
+
+
 **Custom SQL**
 
 Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``
