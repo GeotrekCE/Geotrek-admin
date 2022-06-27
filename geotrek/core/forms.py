@@ -144,4 +144,9 @@ class CertificationTrailForm(forms.ModelForm):
         self.helper.layout = Layout('id', 'certification_label', 'certification_status')
 
 
-CertificationTrailFormSet = inlineformset_factory(Trail, CertificationTrail, form=CertificationTrailForm, extra=1)
+CertificationTrailFormSet = inlineformset_factory(
+    Trail,
+    CertificationTrail,
+    form=CertificationTrailForm,
+    extra=1
+)
