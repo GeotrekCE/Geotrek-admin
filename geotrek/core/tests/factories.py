@@ -183,11 +183,6 @@ class TrailFactory(TopologyFactory):
     arrival = factory.Sequence(lambda n: "Arrival %s" % n)
     comments = factory.Sequence(lambda n: "Comments %s" % n)
 
-    @factory.post_generation
-    def create_trail(obj, create, extracted, **kwargs):
-        if create:
-            obj.certifications.add(CertificationTrailFactory.create())
-
 
 class CertificationLabelFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -207,5 +202,6 @@ class CertificationTrailFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.CertificationTrail
 
+    certification_trail = factory.SubFactory(TrailFactory)
     certification_label = factory.SubFactory(CertificationLabelFactory)
     certification_status = factory.SubFactory(CertificationStatusFactory)
