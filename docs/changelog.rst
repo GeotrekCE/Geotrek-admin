@@ -28,6 +28,7 @@ CHANGELOG
 
 **New features**
 
+- Add certification label and status fields on trails (#2900)
 - Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
 - Use permission bypass_structure on attachments and accessibility attachments (#2899)
 - Add boolean field 'display_in_legend' to Report Status model
