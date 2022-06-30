@@ -9,6 +9,9 @@ CHANGELOG
 
 -
 
+**Documentation**
+
+- Add tutorial to visualize sql views in Qgis
 
 2.84.1     (2022-06-21)
 -----------------------
