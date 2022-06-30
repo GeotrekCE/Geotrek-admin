@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fiw downgrade user permissions (is_staff, is_superuser) for external authent
 
 
 2.84.1     (2022-06-21)
@@ -50,7 +50,7 @@ CHANGELOG
 - This release requires PostGIS 2.5 or later.
 
   - Ubuntu bionic 18.04 users, take care, PostGIS default is 2.4. You need to upgrade your PostGIS version.
-  
+
     - See documentation https://geotrek.readthedocs.io/en/latest/install/installation.html#ubuntu-bionic-postgis-2.5-upgrade)
 
 **Warning**
@@ -80,9 +80,9 @@ CHANGELOG
 
 - Display link to attachment in admin site for attachments
 - Add license field on attachments (#3089) [thanks to Paul Florence]
-- If ``COMPLETENESS_FIELDS`` is set for a model an object is published, 
+- If ``COMPLETENESS_FIELDS`` is set for a model an object is published,
   display completeness fields if missing on page detail (#2898)
-- Avoid publication or review if ``COMPLETENESS_FIELDS`` is set for a model, 
+- Avoid publication or review if ``COMPLETENESS_FIELDS`` is set for a model,
   and ``COMPLETENESS_LEVEL`` is one of 'error_on_publication' and 'error_on_review' (#2898)
 
 **Bug fixes**
