@@ -14,10 +14,8 @@ CREATE OR REPLACE VIEW {{ schema_geotrek }}.v_pois AS (
 
 -- Itinéraires
 
-DROP VIEW IF EXISTS v_treks_qgis ;
 
-
-CREATE OR REPLACE VIEW v_treks_qgis AS WITH v_trek AS
+CREATE VIEW {# geotrek.trekking #}.v_treks_qgis AS WITH v_trek AS
     (SELECT e.geom,
             e.geom_3d,
             e.id,
@@ -170,10 +168,7 @@ LEFT JOIN
      GROUP BY topo_object_id) n ON a.topo_object_id = n.topo_object_id ;
 -- POI
 
-DROP VIEW IF EXISTS v_pois_qgis;
-
-
-CREATE OR REPLACE VIEW v_pois_qgis AS WITH v_poi AS
+CREATE VIEW {# geotrek.trekking #}.v_pois_qgis AS WITH v_poi AS
     (SELECT e.geom,
             e.id,
             i.topo_object_id,

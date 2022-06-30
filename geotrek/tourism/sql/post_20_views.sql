@@ -1,10 +1,8 @@
 
 -- Contenus touristiques
 
-DROP VIEW IF EXISTS v_touristiccontent_qgis;
 
-
-CREATE OR REPLACE VIEW v_touristiccontent_qgis AS
+CREATE VIEW {# geotrek.tourism #}.v_touristiccontent_qgis AS
 SELECT a.id,
        c.name AS "Structure liée",
        f.zoning_city AS "Commune",

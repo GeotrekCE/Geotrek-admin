@@ -16,10 +16,8 @@ CREATE VIEW {{ schema_geotrek }}.v_projects AS (
 
 -- Interventions
 
-DROP VIEW IF EXISTS v_intervention_qgis;
 
-
-CREATE OR REPLACE VIEW v_intervention_qgis AS
+CREATE VIEW {# geotrek.maintenance #}.v_intervention_qgis AS
 SELECT a.id,
        e.name AS "Structure liée",
        f.zoning_city AS "Commune",
@@ -100,10 +98,7 @@ WHERE a.deleted = FALSE
 
 -- Chantiers
 
-DROP VIEW IF EXISTS v_project_qgis;
-
-
-CREATE OR REPLACE VIEW v_project_qgis AS
+CREATE VIEW {# geotrek.maintenance #}.v_project_qgis AS
 SELECT a.id,
        c.name AS "Structure liée",
        a.name AS "Nom",
@@ -158,4 +153,5 @@ LEFT JOIN
      FROM maintenance_contractor a
      JOIN maintenance_project_contractors b ON a.id = b.contractor_id
      JOIN maintenance_project c ON b.project_id = c.id) k ON a.id = k.project_id
-WHERE a.deleted IS FALSE ;
+WHERE a.deleted IS FALSE 
+;

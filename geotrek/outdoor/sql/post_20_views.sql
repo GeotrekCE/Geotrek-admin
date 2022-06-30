@@ -1,9 +1,6 @@
 -- Parcours outdoor
 
-DROP VIEW IF EXISTS v_outdoor_course_qgis_point;
-
-
-CREATE OR REPLACE VIEW v_outdoor_course_qgis_point AS
+CREATE VIEW {# geotrek.outdoor #}.v_outdoor_course_qgis_point AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -122,14 +119,11 @@ LEFT JOIN
 WHERE ST_GEOMETRYTYPE(ST_CollectionExtract(a.geom, 1)) IN ('ST_MultiPoint',
                                                            'ST_Point')
     AND ST_AsText(ST_CollectionExtract(a.geom, 1)) != 'MULTIPOINT EMPTY'
-   -- AND d.name != 'Pyrénées';
+   -- AND d.name != 'Pyrénées'
+   ;
 
 
-
-DROP VIEW IF EXISTS v_outdoor_course_qgis_polygon;
-
-
-CREATE OR REPLACE VIEW v_outdoor_course_qgis_polygon AS
+CREATE VIEW {# geotrek.outdoor #}.v_outdoor_course_qgis_polygon AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -246,13 +240,11 @@ LEFT JOIN
                JOIN outdoor_sector c ON b.sector_id = c.id
                GROUP BY a.id) b ON a.id = b.id) b ON a.site = b.site) i ON a.id = i.id
 WHERE ST_AsText(ST_CollectionExtract(a.geom, 3)) != 'MULTIPOLYGON EMPTY'
-  --  AND d.name != 'Pyrénées' ;
+  --  AND d.name != 'Pyrénées' 
+  ;
 
 
-DROP VIEW IF EXISTS v_outdoor_course_qgis_line;
-
-
-CREATE OR REPLACE VIEW v_outdoor_course_qgis_line AS
+CREATE VIEW {# geotrek.outdoor #}.v_outdoor_course_qgis_line AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -369,15 +361,13 @@ LEFT JOIN
                JOIN outdoor_sector c ON b.sector_id = c.id
                GROUP BY a.id) b ON a.id = b.id) b ON a.site = b.site) i ON a.id = i.id
 WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
-   -- AND d.name != 'Pyrénées' ;
+   -- AND d.name != 'Pyrénées' 
+   ;
 
 
 -- Sites outdoor
 
-DROP VIEW IF EXISTS v_outdoor_site_qgis_point;
-
-
-CREATE OR REPLACE VIEW v_outdoor_site_qgis_point AS
+CREATE VIEW {# geotrek.outdoor #}.v_outdoor_site_qgis_point AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -549,13 +539,11 @@ LEFT JOIN
      JOIN outdoor_sector c ON b.sector_id = c.id
      GROUP BY a.id) p ON a.id = p.id
 WHERE ST_AsText(ST_CollectionExtract(a.geom, 1)) != 'MULTIPOINT EMPTY'
-  --  AND d.name != 'Pyrénées' ;
+  --  AND d.name != 'Pyrénées' 
+  ;
 
 
-DROP VIEW IF EXISTS v_outdoor_site_qgis_line;
-
-
-CREATE OR REPLACE VIEW v_outdoor_site_qgis_line AS
+CREATE VIEW {# geotrek.outdoor #}.v_outdoor_site_qgis_line AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -727,13 +715,11 @@ LEFT JOIN
      JOIN outdoor_sector c ON b.sector_id = c.id
      GROUP BY a.id) p ON a.id = p.id
 WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
-  --  AND d.name != 'Pyrénées' ;
+  --  AND d.name != 'Pyrénées' 
+  ;
 
 
-DROP VIEW IF EXISTS v_outdoor_site_qgis_polygon;
-
-
-CREATE OR REPLACE VIEW v_outdoor_site_qgis_polygon AS
+CREATE VIEW {# geotrek.outdoor #}.v_outdoor_site_qgis_polygon AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -905,4 +891,5 @@ LEFT JOIN
      JOIN outdoor_sector c ON b.sector_id = c.id
      GROUP BY a.id) p ON a.id = p.id
 WHERE ST_AsText(ST_CollectionExtract(a.geom, 3)) != 'MULTIPOLYGON EMPTY'
- --   AND d.name != 'Pyrénées' ;
+ --   AND d.name != 'Pyrénées' 
+ ;

@@ -7,10 +7,7 @@ CREATE VIEW {{ schema_geotrek }}.v_signages AS (
 
 -- Signalétique
 
-DROP VIEW IF EXISTS v_signages_qgis;
-
-
-CREATE OR REPLACE VIEW v_signages_qgis AS WITH v_signaletique AS
+CREATE VIEW {# geotrek.signage #}.v_signages_qgis AS WITH v_signaletique AS
     (SELECT e.id,
             t.published,
             t.publication_date,

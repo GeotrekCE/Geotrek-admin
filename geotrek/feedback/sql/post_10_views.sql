@@ -1,10 +1,7 @@
 
 -- Signalement
 
-DROP VIEW IF EXISTS v_report_qgis ;
-
-
-CREATE OR REPLACE VIEW v_report_qgis AS
+CREATE VIEW {# geotrek.feedback #}.v_report_qgis AS
 SELECT a.id,
        f.zoning_city AS "Commune",
        g.zoning_district AS "Zone",

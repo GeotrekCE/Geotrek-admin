@@ -7,10 +7,8 @@ CREATE VIEW {{ schema_geotrek }}.v_trails AS (
 
 -- Sentiers
 
-DROP VIEW IF EXISTS v_trail_qgis ;
-
-
-CREATE OR REPLACE VIEW v_trail_qgis AS WITH v_trails AS
+CREATE VIEW {# geotrek.core #}.v_trail_qgis 
+AS WITH v_trails AS
     (SELECT core_topology.geom,
             core_topology.id,
             core_trail.structure_id,
