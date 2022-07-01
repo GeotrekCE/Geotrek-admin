@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-- Fix downgrade user permissions (is_staff, is_superuser) for external authent
+- Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
 
 
 2.84.1     (2022-06-21)
