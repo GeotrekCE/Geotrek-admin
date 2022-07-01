@@ -320,7 +320,10 @@ class PublishableMixin(BasePublishableMixin):
         abstract = True
 
     def save(self, *args, **kwargs):
-        old_object = self.__class__.objects.filter(pk=self.pk)
+        try:
+            old_object = self.__class__.objects.get(pk=self.pk)
+        except self.__class__.DoesNotExist:
+            old_object = None
         if (old_object and getattr(old_object, 'review', None) != self.review and self.review) and settings.ALERT_REVIEW:
             subject = _("{obj} need a review").format(obj=self)
             message = render_to_string('common/review_email_message.txt', {"obj": self})

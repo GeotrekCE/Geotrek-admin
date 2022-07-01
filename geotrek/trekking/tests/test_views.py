@@ -113,9 +113,7 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         return good_data
 
     def test_status_only_review(self):
-        element_not_published = self.modelfactory.create()
-        element_not_published.published = False
-        element_not_published.review = True
+        element_not_published = self.modelfactory.create(published=False, review=True)
         element_not_published.save()
         response = self.client.get(self.model.get_datatablelist_url())
         self.assertEqual(response.status_code, 200)
@@ -123,11 +121,24 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
 
     @override_settings(ALERT_REVIEW=True)
     def test_status_review_alert(self):
-        element_not_published = self.modelfactory.create()
+        element_not_published = self.modelfactory.create(published=False, review=False)
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 0)
+        element_not_published.review = True
+        element_not_published.save()
+        element_not_published.name = "Bar"
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 1)
+        element_not_published.review = False
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 1)
+        element_not_published.published = True
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 1)
         element_not_published.published = False
         element_not_published.review = True
         element_not_published.save()
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2)
 
     def test_empty_topology(self):
         data = self.get_good_data()
