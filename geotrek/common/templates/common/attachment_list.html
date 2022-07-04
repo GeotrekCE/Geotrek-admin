@@ -1,40 +1,18 @@
-{% load i18n attachments_tags thumbnail static %}
+{% extends "paperclip/attachment_list.html" %}
+{% load i18n %}
 
-<div class="file-attachment file-attachment-detail">
-    <h3>{% trans "Attached files" %}</h3>
-    {% if not user.profile.structure == object.structure and not perms.authent.can_bypass_structure %}
-        <div class="alert alert-warning">
-            {% trans "You are not able to modify attachments on this object, this object is not from the same structure." %}
-        </div>
-    {% endif %}
-    {% if perms|read_attachment %}
+{% block info_list_attachments %}
+    <div class="alert alert-warning">
+        {% trans "You are not able to modify attachments on this object, this object is not from the same structure." %}
+    </div>
+{% endblock info_list_attachments %}
 
-        {% get_attachments_for object as "attachments_list" %}
-        {% if attachments_list %}
-            {% include "common/_attachment_table.html" %}
-        {% else %}
-            {% trans "No file attached" %}
-        {% endif %}
-
-    {% else %}
-        {% trans "You are not allowed to see attachments." %}
-    {% endif %}
-</div>
-
-{% if perms|add_attachment %}
+{% block permissions_add_attachment %}
     {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
-        <div class="file-attachment-form">
-            <div class="create">
-            {% attachment_form object %}
-            </div>
-            <div class="update"></div>
-        </div>
+        {{ block.super }}
     {% endif %}
-{% endif %}
+{% endblock permissions_add_attachment %}
 
-<div class="confirm-modal"
-     data-confirm-delete-heading="{% trans "Confirm file deletion" %}"
-     data-confirm-delete-msg="{% trans "Are you sure to delete this file {file} ?" %}"
-     data-confirm-delete-close-button="{% trans "Cancel" %}"
-     data-confirm-delete-confirm-button="{% trans "Delete" %}"></div>
-<script type="text/javascript" src="{% static "paperclip/paperclip.js" %}"></script>
+{% block inclusion_attachment_table %}
+    {% include "common/attachment_table.html" %}
+{% endblock inclusion_attachment_table %}
