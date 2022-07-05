@@ -13,6 +13,11 @@ CHANGELOG
 
 - Add tutorial to visualize sql views in Qgis
 
+**New features**
+
+- Add setting ``ALERT_REVIEW`` which send mail whenever an object has been changed to review (#2903)
+
+
 2.84.1     (2022-06-21)
 -----------------------
 

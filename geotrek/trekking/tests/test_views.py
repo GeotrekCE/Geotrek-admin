@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
+from django.core import mail
 from django.core.management import call_command
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.shortcuts import get_object_or_404
@@ -112,13 +113,45 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         return good_data
 
     def test_status_only_review(self):
-        element_not_published = self.modelfactory.create()
-        element_not_published.published = False
-        element_not_published.review = True
+        element_not_published = self.modelfactory.create(published=False, review=True)
         element_not_published.save()
         response = self.client.get(self.model.get_datatablelist_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Waiting for publication')
+
+    @override_settings(ALERT_REVIEW=True)
+    def test_status_review_alert(self):
+        element_not_published = self.modelfactory.create(published=False, review=False)
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 0)
+        element_not_published.review = True
+        element_not_published.save()
+        element_not_published.name = "Bar"
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 1)
+        element_not_published.review = False
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 1)
+        element_not_published.published = True
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 1)
+        element_not_published.published = False
+        element_not_published.review = True
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 2)
+
+    @override_settings(ALERT_REVIEW=True)
+    @mock.patch('geotrek.common.mixins.models.mail_managers')
+    def test_status_review_fail_mail(self, mock_mail):
+        mock_mail.side_effect = Exception("Test")
+        element_not_published = self.modelfactory.create(published=False, review=False)
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 0)
+        element_not_published.review = True
+        element_not_published.save()
+        element_not_published.name = "Bar"
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_empty_topology(self):
         data = self.get_good_data()

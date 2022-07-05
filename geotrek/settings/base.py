@@ -510,6 +510,8 @@ COMPLETENESS_FIELDS = {
     'dive': ['practice', 'difficulty', 'description_teaser'],
 }
 
+ALERT_REVIEW = False
+
 EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.YoutubeBackend',
     'geotrek.common.embed.backends.DailymotionBackend',

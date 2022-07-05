@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 09:07+0000\n"
+"POT-Creation-Date: 2022-06-24 12:39+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -21,6 +21,9 @@ msgstr ""
 
 msgid "content type"
 msgstr "type d'objet"
+
+msgid "Linked content"
+msgstr ""
 
 msgid "Common"
 msgstr "Commun"
@@ -36,9 +39,11 @@ msgstr "max %s"
 msgid "This field is required to publish object."
 msgstr "Ce champs est obligatoire pour publier l'objet."
 
-#, python-format
-msgid "Fields are missing to publish object: %(fields)s"
-msgstr "Ces champs doivent être renseignés pour publier l'objet : %(fields)s"
+msgid "This field is required to review object."
+msgstr "Ce champs est obligatoire pour réviser l'objet."
+
+msgid "Fields are missing to publish or review object: %(fields)s"
+msgstr "Ces champs doivent être renseignés pour publier ou réviser l'objet : %(fields)s"
 
 #, python-brace-format
 msgid ""
@@ -116,6 +121,9 @@ msgstr ""
 "Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
 "réglementation qu’il est utile de connaître pour préparer son séjour"
 
+msgid "Merge"
+msgstr "Fusionner"
+
 msgid "Insertion date"
 msgstr "Date d'insertion"
 
@@ -152,11 +160,18 @@ msgstr "Nom public (changez prudemment)"
 msgid "Waiting for publication"
 msgstr "En attente de publication"
 
+#, python-brace-format
+msgid "{obj} need a review"
+msgstr "{obj} a besoin d'une review"
+
 msgid "Pictogram"
 msgstr "Pictogramme"
 
-msgid "Merge"
-msgstr "Fusionner"
+msgid "Attachment license"
+msgstr "Licence pièce-jointes"
+
+msgid "Attachment licenses"
+msgstr "Licences Pièce-jointes"
 
 msgid "Slope"
 msgstr "Pente"
@@ -214,12 +229,6 @@ msgstr "Organisme"
 
 msgid "Organisms"
 msgstr "Organismes"
-
-msgid "Attachment license"
-msgstr "Licence pièce-jointes"
-
-msgid "Attachment licenses"
-msgstr "Licences Pièce-jointes"
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
@@ -444,7 +453,7 @@ msgstr "Pas de fichier attaché pour l'accessibilité"
 msgid "You are not allowed to see attachments."
 msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés."
 
-msgid "Confirm file deletion"
+msgid " Confirm file deletion"
 msgstr "Confirmer la suppression du fichier"
 
 #, python-brace-format
@@ -534,6 +543,10 @@ msgstr "ces champs doivent être renseignés :"
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide ;"
 
+#, python-format
+msgid "%(obj)s has changed  state, it needs a review to be published. "
+msgstr "%(obj)s a changé d'état, et a besoin d'être review pour être publié."
+
 msgid "Sync verifications"
 msgstr "Vérification des synchros"
 
@@ -556,12 +569,12 @@ msgid "Sync"
 msgstr "Sync"
 
 #, python-format
-msgid "%s day"
-msgstr "%s jour"
-
-#, python-format
 msgid "%s days"
 msgstr "%s jours"
+
+#, python-format
+msgid "%s day"
+msgstr "%s jour"
 
 #, python-format
 msgid "%(hour)s h %(min)s"
@@ -623,9 +636,3 @@ msgstr "Votre fichier a été supprimé."
 
 msgid "You are not allowed to delete this attachment."
 msgstr "Vous n'êtes pas autorisé à supprimer ce fichier attaché."
-
-msgid "Any year"
-msgstr "N'importe quelle année"
-
-msgid "Any value"
-msgstr "N'importe quelle valeur"
