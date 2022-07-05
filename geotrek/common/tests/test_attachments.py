@@ -9,8 +9,8 @@ from django.test.utils import override_settings
 from django.urls import reverse
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
-from geotrek.common.models import AccessibilityAttachment
-from geotrek.common.tests.factories import AttachmentAccessibilityFactory
+from geotrek.common.models import AccessibilityAttachment, Attachment
+from geotrek.common.tests.factories import AttachmentAccessibilityFactory, FileTypeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.tests.factories import TrekFactory, PracticeFactory
 from geotrek.trekking.views import TrekDetail
@@ -64,6 +64,18 @@ class EntityAttachmentTestCase(TestCase):
         }
         return AccessibilityAttachment.objects.create(**kwargs)
 
+    def createAttachment(self, obj):
+        kwargs = {
+            'content_type': ContentType.objects.get_for_model(obj),
+            'object_id': obj.pk,
+            'filetype_id': FileTypeFactory.create().pk,
+            'creator': self.user,
+            'title': "Attachment title",
+            'legend': "Attachment legend",
+            'attachment_file': get_dummy_uploaded_image(),
+        }
+        return Attachment.objects.create(**kwargs)
+
     def test_list_attachments_in_details(self):
         self.createAttachmentAccessibility(self.object)
         self.user.user_permissions.add(Permission.objects.get(codename='read_trek'))
@@ -72,7 +84,7 @@ class EntityAttachmentTestCase(TestCase):
         response = self.client.get(self.object.get_detail_url())
 
         html = response.content
-        self.assertTemplateUsed(response, template_name='paperclip/attachment_list.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_list.html')
         self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
 
         self.assertEqual(1, len(AccessibilityAttachment.objects.attachments_for_object(self.object)))
@@ -93,7 +105,7 @@ class EntityAttachmentTestCase(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.object.get_detail_url())
 
-        self.assertTemplateUsed(response, template_name='paperclip/attachment_list.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_list.html')
         self.assertTemplateNotUsed(response, template_name='common/attachment_accessibility_list.html')
 
     def test_add_form_in_details_if_perms(self):
@@ -118,6 +130,53 @@ class EntityAttachmentTestCase(TestCase):
         self.assertIn(
             '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
+        self.assertIn(
+            '<form  action="/paperclip/add-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            html.content)
+
+    def test_create_attachments_accessibility_object_other_structure(self):
+        def user_perms(p):
+            return {'authent.can_bypass_structure': False}.get(p, True)
+        self.createAttachmentAccessibility(self.object)
+        user = UserFactory()
+        user.has_perm = mock.MagicMock(side_effect=user_perms)
+        user.user_permissions.add(Permission.objects.get(codename='read_trek'))
+        user.user_permissions.add(Permission.objects.get(codename='read_attachment'))
+        self.client.force_login(user)
+        response = self.client.get(self.object.get_detail_url())
+
+        html = response.content
+        self.assertTemplateUsed(response, template_name='common/attachment_list.html')
+        self.assertTemplateNotUsed(response, template_name='common/_attachment_table.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
+
+        self.assertNotIn(b"Submit attachment", html)
+        self.assertNotIn(
+            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            html)
+        self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
+
+    def test_create_attachments_object_other_structure(self):
+        def user_perms(p):
+            return {'authent.can_bypass_structure': False}.get(p, True)
+        self.createAttachment(self.object)
+        user = UserFactory()
+        user.has_perm = mock.MagicMock(side_effect=user_perms)
+        user.user_permissions.add(Permission.objects.get(codename='read_trek'))
+        user.user_permissions.add(Permission.objects.get(codename='read_attachment'))
+        self.client.force_login(user)
+        response = self.client.get(self.object.get_detail_url())
+
+        html = response.content
+        self.assertTemplateUsed(response, template_name='common/attachment_list.html')
+        self.assertTemplateNotUsed(response, template_name='common/_attachment_table.html')
+        self.assertTemplateUsed(response, template_name='common/attachment_accessibility_list.html')
+
+        self.assertNotIn(b"Submit attachment", html)
+        self.assertNotIn(
+            '<form  action="/trekking/add-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            html)
+        self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
 
 
 class UploadAddAttachmentTestCase(TestCase):

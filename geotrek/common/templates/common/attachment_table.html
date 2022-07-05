@@ -1,0 +1,15 @@
+{% extends "paperclip/_attachment_table.html" %}
+{% load i18n %}
+
+
+{% block actions_attachment_header %}
+    {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
+        <th>{% trans "Actions" %}</th>
+    {% endif %}
+{% endblock actions_attachment_header %}
+
+{% block actions_attachment_data %}
+    {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
+        {{ block.super }}
+    {% endif %}
+{% endblock actions_attachment_data %}

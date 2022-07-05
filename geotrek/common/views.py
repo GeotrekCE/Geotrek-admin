@@ -437,6 +437,7 @@ class ServeAttachmentAccessibility(View):
 
 @require_POST
 @permission_required(settings_paperclip.get_attachment_permission('add_attachment'), raise_exception=True)
+@permission_required('authent.can_bypass_structure')
 def add_attachment_accessibility(request, app_label, model_name, pk,
                                  attachment_form=AttachmentAccessibilityForm,
                                  extra_context=None):
@@ -452,6 +453,7 @@ def add_attachment_accessibility(request, app_label, model_name, pk,
 
 @require_http_methods(["GET", "POST"])
 @permission_required(settings_paperclip.get_attachment_permission('change_attachment'), raise_exception=True)
+@permission_required('authent.can_bypass_structure')
 def update_attachment_accessibility(request, attachment_pk,
                                     attachment_form=AttachmentAccessibilityForm,
                                     extra_context=None):
@@ -474,6 +476,7 @@ def update_attachment_accessibility(request, attachment_pk,
 
 
 @permission_required(settings_paperclip.get_attachment_permission('delete_attachment'), raise_exception=True)
+@permission_required('authent.can_bypass_structure')
 def delete_attachment_accessibility(request, attachment_pk):
     g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = g.content_object
