@@ -140,6 +140,19 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         element_not_published.save()
         self.assertEqual(len(mail.outbox), 2)
 
+    @override_settings(ALERT_REVIEW=True)
+    @mock.patch('geotrek.common.mixins.models.mail_managers')
+    def test_status_review_fail_mail(self, mock_mail):
+        mock_mail.side_effect = Exception("Test")
+        element_not_published = self.modelfactory.create(published=False, review=False)
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 0)
+        element_not_published.review = True
+        element_not_published.save()
+        element_not_published.name = "Bar"
+        element_not_published.save()
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_empty_topology(self):
         data = self.get_good_data()
         if settings.TREKKING_TOPOLOGY_ENABLED:
