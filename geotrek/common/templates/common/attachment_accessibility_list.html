@@ -7,7 +7,7 @@
     <h3>{% trans "Photos accessibility" %}</h3>
     {% if not user.profile.structure == object.structure and not perms.authent.can_bypass_structure %}
         <div class="alert alert-warning">
-            {% trans "You are not able to modify attachments on this object, this object is not from the same structure." %}
+            {% trans "You are not allowed to modify attachments on this object, this object is not from the same structure." %}
         </div>
     {% endif %}
     {% if perms|read_attachment %}

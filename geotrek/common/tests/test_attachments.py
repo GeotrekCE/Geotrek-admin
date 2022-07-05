@@ -154,7 +154,7 @@ class EntityAttachmentTestCase(TestCase):
         self.assertNotIn(
             '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html)
-        self.assertIn(b"You are not able to modify attachments on this object, this object is not from the same structure.", html)
+        self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
 
     def test_create_attachments_object_other_structure(self):
         def user_perms(p):
@@ -176,7 +176,7 @@ class EntityAttachmentTestCase(TestCase):
         self.assertNotIn(
             '<form  action="/trekking/add-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html)
-        self.assertIn(b"You are not able to modify attachments on this object, this object is not from the same structure.", html)
+        self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
 
 
 class UploadAddAttachmentTestCase(TestCase):

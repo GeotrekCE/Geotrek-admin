@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-24 12:39+0000\n"
+"POT-Creation-Date: 2022-07-05 12:24+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -42,8 +42,11 @@ msgstr "Ce champs est obligatoire pour publier l'objet."
 msgid "This field is required to review object."
 msgstr "Ce champs est obligatoire pour réviser l'objet."
 
+#, python-format
 msgid "Fields are missing to publish or review object: %(fields)s"
-msgstr "Ces champs doivent être renseignés pour publier ou réviser l'objet : %(fields)s"
+msgstr ""
+"Ces champs doivent être renseignés pour publier ou réviser l'objet : "
+"%(fields)s"
 
 #, python-brace-format
 msgid ""
@@ -434,6 +437,11 @@ msgstr ""
 
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
+
+msgid ""
+"You are not allowed to modify attachments on this object, this object is not "
+"from the same structure."
+msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet objet n'est pas de la même structure"
 
 msgid "Accessibility type"
 msgstr "Type d'accessibilité"
