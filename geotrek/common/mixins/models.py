@@ -323,7 +323,7 @@ class PublishableMixin(BasePublishableMixin):
         if (self.pk and self.__class__.objects.get(pk=self.pk).review != self.review and self.review) and settings.ALERT_REVIEW:
             subject = _("{obj} need a review").format(obj=self)
             message = render_to_string('common/review_email_message.txt', {"obj": self})
-            mail_managers(subject, message, fail_silently=False)
+            mail_managers(subject, message, fail_silently=True)
         super().save(*args, **kwargs)
 
     @property
