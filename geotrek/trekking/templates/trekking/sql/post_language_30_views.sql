@@ -229,7 +229,6 @@ LEFT JOIN
               AND e.deleted = FALSE) a
      JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
      GROUP BY a.id) g ON a.id = g.id 
-  --AND g.name != 'Pyrénées'
 ;
 
 --Services
@@ -292,5 +291,4 @@ LEFT JOIN
               AND e.deleted = FALSE) a
      JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
      GROUP BY a.id) g ON a.id = g.id 
---AND g.name != 'Pyrénées'
 ;

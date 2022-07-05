@@ -59,5 +59,4 @@ LEFT JOIN
               AND core_topology.deleted = FALSE) a
      JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
      GROUP BY a.id) g ON a.id = g.id 
---WHERE g.name != 'Pyrénées'
 ;

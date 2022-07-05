@@ -93,7 +93,6 @@ LEFT JOIN
               app_label) k ON a.target_type_id = k.target_type_id
 JOIN core_topology l ON a.target_id = l.id
 WHERE a.deleted = FALSE 
--- AND g.name != 'Pyrénées'
  ;
 
 -- Chantiers
@@ -102,14 +101,7 @@ CREATE VIEW {# geotrek.maintenance #}.v_project_qgis AS
 SELECT a.id,
        c.name AS "Structure liée",
        a.name AS "Nom",
-       CASE
-           WHEN begin_year IS NULL
-                AND end_year IS NOT NULL THEN end_year::varchar
-           WHEN end_year IS NULL
-                AND begin_year IS NOT NULL THEN begin_year::varchar
-           WHEN begin_year IS NOT NULL
-                AND end_year IS NOT NULL THEN concat(cast(a.begin_year AS varchar), ' - ', cast(a.end_year AS varchar))::varchar
-       END AS "Période",
+       COALESCE(a.begin_year::varchar || ' - ' || a.end_year::varchar, a.begin_year::varchar, a.end_year::varchar) AS "Période",
        b.type AS "Type",
        e.domain AS "Domaine",
        a.begin_year AS "Année de début",

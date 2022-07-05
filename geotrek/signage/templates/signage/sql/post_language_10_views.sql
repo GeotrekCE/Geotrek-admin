@@ -89,5 +89,5 @@ LEFT JOIN
     (SELECT organism,
             b.topo_object_id
      FROM common_organism a
-     JOIN signage_signage b ON a.id = b.manager_id) h ON a.topo_object_id = h.topo_object_id -- WHERE g.name != 'Pyrénées'
+     JOIN signage_signage b ON a.id = b.manager_id) h ON a.topo_object_id = h.topo_object_id 
 ;

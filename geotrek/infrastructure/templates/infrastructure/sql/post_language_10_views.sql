@@ -84,5 +84,5 @@ LEFT JOIN
               AND e.deleted = FALSE) a
      JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
      GROUP BY a.id) g ON a.id = g.id
-LEFT JOIN authent_structure i ON a.structure_id = i.id -- WHERE g.name != 'Pyrénées'
+LEFT JOIN authent_structure i ON a.structure_id = i.id 
 ;

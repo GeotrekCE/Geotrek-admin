@@ -30,5 +30,4 @@ LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_district
      JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
      GROUP BY a.id) g ON a.id = g.id
 WHERE deleted IS FALSE 
---AND g.name != 'Pyrénées'
 ;
