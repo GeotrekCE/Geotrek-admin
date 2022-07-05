@@ -325,8 +325,9 @@ class PublishableMixin(BasePublishableMixin):
             message = render_to_string('common/review_email_message.txt', {"obj": self})
             try:
                 mail_managers(subject, message, fail_silently=False)
-            except Exception:
-                logger.warning("Error mail managers didn't work")
+            except Exception as exc:
+                msg = f'Caught {exc.__class__.__name__}: {exc}'
+                logger.warning(f"Error mail managers didn't work ({msg})")
         super().save(*args, **kwargs)
 
     @property
