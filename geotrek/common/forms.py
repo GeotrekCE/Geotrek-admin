@@ -446,7 +446,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
     def clean_attachment_accessibility_file(self):
         uploaded_image = self.cleaned_data.get("attachment_accessibility_file", False)
         is_image = is_an_image(mimetype(uploaded_image))
-        if not self.is_creation:
+        if self.instance.pk:
             try:
                 uploaded_image.file.readline()
             except FileNotFoundError:
@@ -455,12 +455,10 @@ class AttachmentAccessibilityForm(forms.ModelForm):
             raise forms.ValidationError(_('The uploaded file is too large'))
         if not is_image:
             return uploaded_image
-        if settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < uploaded_image.size:
-            raise forms.ValidationError(_('The uploaded file is too large'))
         width, height = get_image_dimensions(uploaded_image)
-        if settings.PAPERCLIP_MIN_ATTACHMENT_WIDTH and settings.PAPERCLIP_MIN_ATTACHMENT_WIDTH > width:
+        if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > width:
             raise forms.ValidationError(_('The uploaded file is not wide enough'))
-        if settings.PAPERCLIP_MIN_ATTACHMENT_HEIGHT and settings.PAPERCLIP_MIN_ATTACHMENT_HEIGHT > height:
+        if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > height:
             raise forms.ValidationError(_('The uploaded file is not tall enough'))
         return uploaded_image
 

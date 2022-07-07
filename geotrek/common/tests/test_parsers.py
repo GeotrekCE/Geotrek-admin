@@ -165,7 +165,7 @@ class AttachmentParserTests(TestCase):
 
     @mock.patch('requests.get')
     @override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH=6)
-    def test_attachment_bigger_size(self, mocked):
+    def test_attachment_min_width(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = get_dummy_img()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -179,7 +179,7 @@ class AttachmentParserTests(TestCase):
 
     @mock.patch('requests.get')
     @override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT=6)
-    def test_attachment_bigger_size(self, mocked):
+    def test_attachment_min_height(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = get_dummy_img()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
