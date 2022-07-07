@@ -663,15 +663,15 @@ class AttachmentParserMixin:
                     continue
                 f = ContentFile(content)
                 if settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < f.size:
-                    logger.warning(_('The uploaded file is too large'))
+                    logger.warning(_(f'{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is too large'))
                     return updated
                 try:
                     image = Image.open(BytesIO(content))
                     if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > image.width:
-                        logger.warning(_(f"{url} : the uploaded file is not wide enough"))
+                        logger.warning(_(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not wide enough"))
                         return updated
                     if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > image.height:
-                        logger.warning(_(f"{url} : the uploaded file is not tall enough"))
+                        logger.warning(_(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not tall enough"))
                         return updated
                 except UnidentifiedImageError:
                     pass
