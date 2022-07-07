@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 import re
 import requests
@@ -9,6 +10,7 @@ import xml.etree.ElementTree as ET
 from functools import reduce
 from collections import Iterable
 from time import sleep
+from PIL import Image, UnidentifiedImageError
 
 from ftplib import FTP
 from os.path import dirname
@@ -660,6 +662,19 @@ class AttachmentParserMixin:
                 if content is None:
                     continue
                 f = ContentFile(content)
+                if settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < f.size:
+                    logger.warning(_('The uploaded file is too large'))
+                    return updated
+                try:
+                    image = Image.open(BytesIO(content))
+                    if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > image.width:
+                        logger.warning(_(f"{url} : the uploaded file is not wide enough"))
+                        return updated
+                    if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > image.height:
+                        logger.warning(_(f"{url} : the uploaded file is not tall enough"))
+                        return updated
+                except UnidentifiedImageError:
+                    pass
                 attachment.attachment_file.save(name, f, save=False)
             else:
                 attachment.attachment_link = url

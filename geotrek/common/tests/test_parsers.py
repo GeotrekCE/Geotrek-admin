@@ -21,6 +21,7 @@ from geotrek.common.parsers import (
     ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
     TourismSystemParser, OpenSystemParser,
 )
+from geotrek.common.utils.testdata import get_dummy_img
 
 
 class OrganismParser(ExcelParser):
@@ -138,7 +139,7 @@ class AttachmentParserTests(TestCase):
     @mock.patch('requests.get')
     def test_attachment(self, mocked):
         mocked.return_value.status_code = 200
-        mocked.return_value.content = ''
+        mocked.return_value.content = b''
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         organism = Organism.objects.get()
@@ -149,9 +150,51 @@ class AttachmentParserTests(TestCase):
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
     @mock.patch('requests.get')
+    @override_settings(PAPERCLIP_MAX_BYTES_SIZE_IMAGE=20)
+    def test_attachment_bigger_size(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+
+        self.assertEqual(Attachment.objects.count(), 0)
+        with override_settings(PAPERCLIP_MAX_BYTES_SIZE_IMAGE=86):
+            # Dummy Image is of size 85
+            call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+            self.assertEqual(Attachment.objects.count(), 1)
+
+    @mock.patch('requests.get')
+    @override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH=6)
+    def test_attachment_bigger_size(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+
+        self.assertEqual(Attachment.objects.count(), 0)
+        with override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH=4):
+            # Dummy Image is of size 85
+            call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+            self.assertEqual(Attachment.objects.count(), 1)
+
+    @mock.patch('requests.get')
+    @override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT=6)
+    def test_attachment_bigger_size(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+
+        self.assertEqual(Attachment.objects.count(), 0)
+        with override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT=4):
+            # Dummy Image is of size 85
+            call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+            self.assertEqual(Attachment.objects.count(), 1)
+
+    @mock.patch('requests.get')
     def test_attachment_long_name(self, mocked):
         mocked.return_value.status_code = 200
-        mocked.return_value.content = ''
+        mocked.return_value.content = b''
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism3.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         organism = Organism.objects.get()
@@ -165,7 +208,7 @@ class AttachmentParserTests(TestCase):
     @mock.patch('requests.get')
     def test_attachment_long_legend(self, mocked):
         mocked.return_value.status_code = 200
-        mocked.return_value.content = ''
+        mocked.return_value.content = b''
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism4.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentLegendParser', filename, verbosity=0)
         organism = Organism.objects.get()
@@ -184,7 +227,7 @@ class AttachmentParserTests(TestCase):
         structure = StructureFactory.create(name="Structure")
         FileType.objects.create(type="Photographie", structure=structure)
         mocked.return_value.status_code = 200
-        mocked.return_value.content = ''
+        mocked.return_value.content = b''
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         organism = Organism.objects.get()
@@ -199,7 +242,7 @@ class AttachmentParserTests(TestCase):
     def test_attachment_with_no_filetype_photographie(self, mocked):
         self.filetype.delete()
         mocked.return_value.status_code = 200
-        mocked.return_value.content = ''
+        mocked.return_value.content = b''
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         with self.assertRaisesRegex(CommandError, "FileType 'Photographie' does not exists in Geotrek-Admin. Please add it"):
             call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
@@ -208,7 +251,7 @@ class AttachmentParserTests(TestCase):
     @mock.patch('requests.head')
     def test_attachment_not_updated(self, mocked_head, mocked_get):
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.content = ''
+        mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {'content-length': 0}
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -222,7 +265,7 @@ class AttachmentParserTests(TestCase):
     @mock.patch('requests.head')
     def test_attachment_request_fail(self, mocked_head, mocked_get):
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.content = ''
+        mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 503
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
@@ -235,7 +278,7 @@ class AttachmentParserTests(TestCase):
     @mock.patch('requests.head')
     def test_attachment_request_except(self, mocked_head, mocked_get):
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.content = ''
+        mocked_get.return_value.content = b''
         mocked_head.side_effect = DownloadImportError()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
