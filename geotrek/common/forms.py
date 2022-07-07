@@ -443,8 +443,8 @@ class AttachmentAccessibilityForm(forms.ModelForm):
         obj = self._object
         return f"{obj.get_detail_url()}?tab=attachments-accessibility"
 
-    def clean_attachment_file(self):
-        uploaded_image = self.cleaned_data.get("attachment_file", False)
+    def clean_attachment_accessibility_file(self):
+        uploaded_image = self.cleaned_data.get("attachment_accessibility_file", False)
         is_image = is_an_image(mimetype(uploaded_image))
         if not self.is_creation:
             try:
