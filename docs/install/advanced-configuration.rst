@@ -803,6 +803,8 @@ If you want to prohibit the usage of small pictures in pixels :
     PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
     PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
 
+These 3 settings will not also allow downloading images from the parsers
+
 
 Share services between several Geotrek instances
 ------------------------------------------------
