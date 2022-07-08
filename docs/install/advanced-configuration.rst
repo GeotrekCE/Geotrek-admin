@@ -770,7 +770,7 @@ You can also add ``{legend}``.
 
 
 Resizing uploaded pictures
----------------------
+--------------------------
 
 Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
 
@@ -784,6 +784,26 @@ These corresponding height/width parameters can be overriden to select resized i
 
     PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
     PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+
+
+Prohibits usage of big pictures and small width / height
+--------------------------------------------------------
+
+If you want to prohibit the usage of heavy pictures :
+
+::
+
+    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
+
+
+If you want to prohibit the usage of small pictures in pixels :
+
+::
+
+    PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
+    PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
+
+These 3 settings will not also allow downloading images from the parsers
 
 
 Share services between several Geotrek instances

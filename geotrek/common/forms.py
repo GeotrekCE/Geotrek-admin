@@ -4,6 +4,7 @@ from copy import deepcopy
 from django import forms
 from django.conf import settings
 from django.core.checks.messages import Error
+from django.core.files.images import get_image_dimensions
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
@@ -439,6 +440,22 @@ class AttachmentAccessibilityForm(forms.ModelForm):
     def success_url(self):
         obj = self._object
         return f"{obj.get_detail_url()}?tab=attachments-accessibility"
+
+    def clean_attachment_accessibility_file(self):
+        uploaded_image = self.cleaned_data.get("attachment_accessibility_file", False)
+        if self.instance.pk:
+            try:
+                uploaded_image.file.readline()
+            except FileNotFoundError:
+                return uploaded_image
+        if settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < uploaded_image.size:
+            raise forms.ValidationError(_('The uploaded file is too large'))
+        width, height = get_image_dimensions(uploaded_image)
+        if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > width:
+            raise forms.ValidationError(_('The uploaded file is not wide enough'))
+        if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > height:
+            raise forms.ValidationError(_('The uploaded file is not tall enough'))
+        return uploaded_image
 
     def save(self, request, *args, **kwargs):
         obj = self._object

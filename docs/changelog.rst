@@ -17,7 +17,10 @@ CHANGELOG
 **New features**
 
 - Add setting ``ALERT_REVIEW`` which send mail whenever an object has been changed to review (#2903)
-
+- Add setting ``PAPERCLIP_MAX_BYTES_SIZE_IMAGE`` unallow usage of huge image (#2902)
+- Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH`` unallow usage of images with small width (#2902)
+- Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT`` unallow usage of images with small height (#2902)
+  These settings will influence the attachments downloaded in parsers
 
 2.84.1     (2022-06-21)
 -----------------------
