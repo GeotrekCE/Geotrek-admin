@@ -1,8 +1,10 @@
+from io import BytesIO
+from PIL import Image
 from unittest import mock
-
 
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
@@ -356,3 +358,152 @@ class ServeAttachmentTestCase(TestCase):
         self.client.force_login(user=self.superuser)
         response = self.client.get(attachment.attachment_accessibility_file.url)
         self.assertEqual(response.status_code, 404)
+
+
+class ReduceSaveSettingsTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.superuser = SuperUserFactory(username='bar')
+        cls.object = TrekFactory.create(name="foo object")
+
+        file = BytesIO()
+        file.name = 'foo_file.txt'
+        file.seek(0)
+        cls.pk = cls.object.pk
+
+    def get_big_dummy_uploaded_image(self):
+        file = BytesIO()
+        image = Image.new('RGBA', size=(2000, 4000), color=(155, 0, 0))
+        image.save(file, 'png')
+        file.name = 'test_big.png'
+        file.seek(0)
+        return SimpleUploadedFile(file.name, file.read(), content_type='image/png')
+
+    @override_settings(PAPERCLIP_MAX_BYTES_SIZE_IMAGE=1093)
+    def test_attachment_is_larger_max_size(self):
+        self.client.force_login(self.superuser)
+
+        file = BytesIO()
+        image = Image.new('RGBA', size=(200, 400), color=(155, 0, 0))
+        image.save(file, 'png')
+        file.name = 'small.png'
+        file.seek(0)
+        response = self.client.post(
+            add_url_for_obj(self.object),
+            data={
+                'creator': self.superuser,
+                'title': "A title",
+                'legend': "A legend",
+                'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
+                'author': "newauthor",
+                'info_accessibility': 'slope'
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(AccessibilityAttachment.objects.count(), 1)
+
+        big_image = self.get_big_dummy_uploaded_image()
+        response = self.client.post(
+            add_url_for_obj(self.object),
+            data={
+                'creator': self.superuser,
+                'title': "A title",
+                'legend': "A legend",
+                'attachment_accessibility_file': big_image,
+                'author': "newauthor",
+                'info_accessibility': 'slope'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(AccessibilityAttachment.objects.count(), 1)
+        self.assertIn(b'The uploaded file is too large', response.content)
+
+    @override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH=50)
+    def test_attachment_is_not_wide_enough(self):
+        self.client.force_login(self.superuser)
+
+        file = BytesIO()
+        image = Image.new('RGBA', size=(51, 400), color=(155, 0, 0))
+        image.save(file, 'png')
+        file.name = 'big.png'
+        file.seek(0)
+        response = self.client.post(
+            add_url_for_obj(self.object),
+            data={
+                'creator': self.superuser,
+                'title': "A title",
+                'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
+                'author': "newauthor",
+                'legend': "A legend",
+                'info_accessibility': 'slope'
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(AccessibilityAttachment.objects.count(), 1)
+
+        small_file = BytesIO()
+        small_image = Image.new('RGBA', size=(49, 400), color=(155, 0, 0))
+        small_image.save(small_file, 'png')
+        small_file.name = 'small.png'
+        small_file.seek(0)
+        response = self.client.post(
+            add_url_for_obj(self.object),
+            data={
+                'creator': self.superuser,
+                'title': "A title",
+                'legend': "A legend",
+                'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
+                'author': "newauthor",
+                'info_accessibility': 'slope'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(AccessibilityAttachment.objects.count(), 1)
+        self.assertIn(b'The uploaded file is not wide enough', response.content)
+
+    @override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT=50)
+    def test_attachment_is_not_tall_enough(self):
+        # Create attachment with small image
+        permission = Permission.objects.get(codename="add_attachment")
+        self.superuser.user_permissions.add(permission)
+        self.client.force_login(self.superuser)
+
+        file = BytesIO()
+        image = Image.new('RGBA', size=(400, 51), color=(155, 0, 0))
+        image.save(file, 'png')
+        file.name = 'big.png'
+        file.seek(0)
+        response = self.client.post(
+            add_url_for_obj(self.object),
+            data={
+                'creator': self.superuser,
+                'title': "A title",
+                'legend': "A legend",
+                'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
+                'author': "newauthor",
+                'info_accessibility': 'slope'
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(AccessibilityAttachment.objects.count(), 1)
+
+        small_file = BytesIO()
+        small_image = Image.new('RGBA', size=(400, 49), color=(155, 0, 0))
+        small_image.save(small_file, 'png')
+        small_file.name = 'small.png'
+        small_file.seek(0)
+        response = self.client.post(
+            add_url_for_obj(self.object),
+            data={
+                'creator': self.superuser,
+                'title': "A title",
+                'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
+                'author': "newauthor",
+                'legend': "A legend",
+                'info_accessibility': 'slope'
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(AccessibilityAttachment.objects.count(), 1)
+        self.assertIn(b'The uploaded file is not tall enough', response.content)
