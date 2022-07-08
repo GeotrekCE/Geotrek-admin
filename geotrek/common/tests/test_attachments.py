@@ -1,3 +1,4 @@
+import os
 from io import BytesIO
 from PIL import Image
 from unittest import mock
@@ -464,8 +465,6 @@ class ReduceSaveSettingsTestCase(TestCase):
     @override_settings(PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT=50)
     def test_attachment_is_not_tall_enough(self):
         # Create attachment with small image
-        permission = Permission.objects.get(codename="add_attachment")
-        self.superuser.user_permissions.add(permission)
         self.client.force_login(self.superuser)
 
         file = BytesIO()
@@ -507,3 +506,23 @@ class ReduceSaveSettingsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
         self.assertIn(b'The uploaded file is not tall enough', response.content)
+
+    def test_attachment_deleted(self):
+        # Create attachment with small image
+        self.client.force_login(self.superuser)
+        attachment = AttachmentAccessibilityFactory.create(content_object=self.object)
+        os.remove(attachment.attachment_accessibility_file.path)
+
+        response = self.client.post(
+            update_url_for_obj(attachment),
+            data={
+                'creator': self.superuser,
+                'title': "A title",
+                'attachment_accessibility_file': "file",
+                'author': "newauthor",
+                'legend': "A legend",
+                'info_accessibility': 'slope'
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(AccessibilityAttachment.objects.count(), 1)
