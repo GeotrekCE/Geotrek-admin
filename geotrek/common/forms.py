@@ -16,8 +16,6 @@ from django.utils.translation import gettext_lazy as _
 
 from mapentity.forms import MapEntityForm
 
-from paperclip.utils import is_an_image, mimetype
-
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
 from geotrek.common.models import AccessibilityAttachment
 from geotrek.common.mixins.models import PublishableMixin
