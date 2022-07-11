@@ -8,6 +8,7 @@ from geotrek.land.models import LandEdge, PhysicalEdge, CompetenceEdge, SignageM
 class LandEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     land_type = serializers.CharField(source='land_type_display')
     length = serializers.FloatField(source='length_display')
+    length_2d = serializers.FloatField(source='length_2d_display')
 
     class Meta:
         model = LandEdge
@@ -26,6 +27,7 @@ class LandEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     physical_type = serializers.CharField(source='physical_type_display')
     length = serializers.FloatField(source='length_display')
+    length_2d = serializers.FloatField(source='length_2d_display')
 
     class Meta:
         model = PhysicalEdge
@@ -44,6 +46,7 @@ class PhysicalEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
+    length_2d = serializers.FloatField(source='length_2d_display')
 
     class Meta:
         model = CompetenceEdge
@@ -62,6 +65,7 @@ class CompetenceEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
+    length_2d = serializers.FloatField(source='length_2d_display')
 
     class Meta:
         model = SignageManagementEdge
@@ -80,6 +84,7 @@ class SignageManagementEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 class WorkManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
+    length_2d = serializers.FloatField(source='length_2d_display')
 
     class Meta:
         model = WorkManagementEdge

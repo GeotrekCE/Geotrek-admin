@@ -1032,12 +1032,15 @@ class TouristicContentRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPor
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'contents')
 
 
-class TreksAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+class TreksAndSitesAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
         set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristiccontents')
         set_3 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristic_events')
-        return (set_1 | set_2 | set_3).distinct()
+        set_4 = qs.none()
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            set_4 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+        return (set_1 | set_2 | set_3 | set_4).distinct()
 
 
 class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
