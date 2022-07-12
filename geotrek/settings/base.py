@@ -206,6 +206,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': (
             os.path.join(VAR_DIR, 'conf', 'extra_templates'),
+            os.path.join(VAR_DIR, 'conf', 'extra_sql'),
             os.path.join(PROJECT_DIR, 'templates'),
         ),
         'APP_DIRS': True,

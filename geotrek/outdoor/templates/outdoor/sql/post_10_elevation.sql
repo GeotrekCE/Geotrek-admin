@@ -2,7 +2,7 @@
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.outdoor #}.elevation_outdoor_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.elevation_outdoor_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     geom geometry;
     elevation elevation_infos;

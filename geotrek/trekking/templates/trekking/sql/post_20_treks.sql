@@ -1,4 +1,4 @@
-CREATE FUNCTION {# geotrek.trekking #}.create_relationships_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.create_relationships_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     t_count integer;
 BEGIN
@@ -23,7 +23,7 @@ AFTER INSERT OR UPDATE ON trekking_trekrelationship
 FOR EACH ROW EXECUTE PROCEDURE create_relationships_iu();
 
 
-CREATE FUNCTION {# geotrek.trekking #}.cleanup_relationships_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.cleanup_relationships_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     DELETE FROM trekking_trekrelationship

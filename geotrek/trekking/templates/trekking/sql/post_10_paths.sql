@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION {# geotrek.trekking #}.paths_unpublish_trek_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE OR REPLACE FUNCTION {{ schema_geotrek }}.paths_unpublish_trek_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Un-published treks because they might be broken

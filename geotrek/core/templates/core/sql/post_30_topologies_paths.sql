@@ -28,7 +28,7 @@ ALTER TABLE core_pathaggregation ADD FOREIGN KEY (path_id) REFERENCES core_path(
 -- Evenements utilities
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.ft_path_interpolate(path integer, point geometry) RETURNS RECORD AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_path_interpolate(path integer, point geometry) RETURNS RECORD AS $$
 DECLARE
   line GEOMETRY;
   result RECORD;
@@ -44,7 +44,7 @@ $$ LANGUAGE plpgsql;
 -- Compute geometry of Evenements
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_geometry() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_topologies_paths_geometry() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
         UPDATE core_topology SET geom_need_update = TRUE WHERE id = NEW.topo_object_id AND kind != 'TMP';
@@ -69,7 +69,7 @@ FOR EACH ROW EXECUTE PROCEDURE ft_topologies_paths_geometry();
 DROP TRIGGER IF EXISTS core_pathaggregation_geometry_statement_tgr ON core_pathaggregation;
 DROP FUNCTION IF EXISTS ft_topologies_paths_geometry_statement() CASCADE;
 
-CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_geometry_statement() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_topologies_paths_geometry_statement() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     rec record;
 BEGIN
@@ -90,7 +90,7 @@ FOR EACH STATEMENT EXECUTE PROCEDURE ft_topologies_paths_geometry_statement();
 -- Emulate junction points
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_junction_point_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_topologies_paths_junction_point_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     junction geometry;
     t_count integer;

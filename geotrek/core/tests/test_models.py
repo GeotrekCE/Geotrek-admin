@@ -3,6 +3,7 @@ from unittest import skipIf
 import os
 
 from django.apps import apps
+from django.template.loader import get_template
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
@@ -10,7 +11,6 @@ from django.contrib.gis.geos import LineString, Point
 from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 from django.db.models import ProtectedError
 from geotrek.common.utils import dbnow
-from geotrek.common.utils.postgresql import replace_settings_sql, replace_schemas_sql
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
 from geotrek.core.tests.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
@@ -119,14 +119,17 @@ class PathTest(TestCase):
         cur = conn.cursor()
 
         app = apps.get_app_config('core')
-        sql_file = os.path.normpath(os.path.join(app.path, 'sql', 'post_80_paths_deletion.sql'))
-        f = open(sql_file)
-        sql = f.read()
-        f.close()
+        sql_file = os.path.normpath(os.path.join(app.path, 'templates', app.label, 'sql', 'post_80_paths_deletion.sql'))
+        template = get_template(sql_file)
+        context_settings = settings.__dict__['_wrapped'].__dict__
+        context = dict(
+            schema_geotrek='public',
+            schema_django='public',
+        )
+        context.update(context_settings)
+        rendered_sql = template.render(context)
         cur.execute("DROP FUNCTION IF EXISTS path_deletion() CASCADE;")
-        sql = replace_settings_sql(sql)
-        sql = replace_schemas_sql(sql)
-        cur.execute(sql)
+        cur.execute(rendered_sql)
 
         cur.execute(f"DELETE FROM core_path WHERE id = {p1.pk}")
         cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")

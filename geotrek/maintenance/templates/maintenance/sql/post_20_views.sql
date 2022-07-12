@@ -1,4 +1,4 @@
-CREATE VIEW {# geotrek.maintenance #}.v_interventions AS (
+CREATE VIEW {{ schema_geotrek }}.v_interventions AS (
 
 	SELECT e.geom, e.uuid, i.*
 	FROM maintenance_intervention AS i, core_topology AS e,  signage_blade as b
@@ -7,7 +7,7 @@ CREATE VIEW {# geotrek.maintenance #}.v_interventions AS (
 	AND i.deleted = FALSE
 );
 
-CREATE VIEW {# geotrek.maintenance #}.v_projects AS (
+CREATE VIEW {{ schema_geotrek }}.v_projects AS (
 	SELECT ST_Union(t.geom) AS geom, s.*
 	FROM v_interventions AS t, maintenance_project AS s
 	WHERE t.project_id = s.id

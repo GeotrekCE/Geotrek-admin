@@ -7,6 +7,7 @@ import re
 from django.conf import settings
 from django.db import connection
 from django.db.models import ManyToManyField
+from django.template.loader import get_template
 
 logger = logging.getLogger(__name__)
 
@@ -54,36 +55,16 @@ def debug_pg_notices(f):
     return wrapped
 
 
-def replace_settings_sql(sql):
-    # Replace curly braces with settings values
-    pattern = re.compile(r'{{\s*([^\s]*)\s*}}')
-    for m in pattern.finditer(sql):
-        value = getattr(settings, m.group(1))
-        sql = sql.replace(m.group(0), str(value))
-    return sql
-
-
-def replace_schemas_sql(sql):
-    # Replace sharp braces with schemas
-    pattern = re.compile(r'{#\s*([^\s]*)\s*#}')
-    for m in pattern.finditer(sql):
-        try:
-            value = settings.DATABASE_SCHEMAS[m.group(1)]
-        except KeyError:
-            value = settings.DATABASE_SCHEMAS.get('default', 'public')
-        sql = sql.replace(m.group(0), str(value))
-    return sql
-
-
 def load_sql_files(app, stage):
     """
     Look for SQL files in Django app, and load them into database.
     We remove RAISE NOTICE instructions from SQL outside unit testing
     since they lead to interpolation errors of '%' character in python.
     """
-    app_dir = app.path
-    sql_dir = os.path.normpath(os.path.join(app_dir, 'sql'))
-    custom_sql_dir = os.path.join(settings.VAR_DIR, 'conf/extra_sql', app.label)
+    if 'geotrek' not in app.name:
+        return
+    sql_dir = os.path.normpath(os.path.join(app.path, 'templates', app.label, 'sql'))
+    custom_sql_dir = os.path.join(settings.VAR_DIR, 'conf', 'extra_sql', app.label)
     sql_files = []
     r = re.compile(r'^{}_.*\.sql$'.format(stage))
     if os.path.exists(sql_dir):
@@ -96,24 +77,28 @@ def load_sql_files(app, stage):
         ]
     sql_files.sort()
 
+    schemas = settings.DATABASE_SCHEMAS
+
+    schema_app = schemas.get(app.name)
+    schema = schema_app if schema_app else schemas.get('default', 'public')
+
+    schema_django = schemas.get('django')
+    schema_django = schema_django if schema_django else schemas.get('default', 'public')
+
     cursor = connection.cursor()
     for sql_file in sql_files:
         try:
             logger.info("Loading initial SQL data from '%s'" % sql_file)
-            f = open(sql_file)
-            sql = f.read()
-            f.close()
-            if not settings.TEST and not settings.DEBUG:
-                # Remove RAISE NOTICE (/!\ only one-liners)
-                sql = re.sub(r"\n.*RAISE NOTICE.*\n", "\n", sql)
-                # TODO: this is the ugliest driver hack ever
-                sql = sql.replace('%', '%%')
+            template = get_template(sql_file)
+            context_settings = settings.__dict__['_wrapped'].__dict__
+            context = dict(
+                schema_geotrek=schema,
+                schema_django=schema_django,
+            )
+            context.update(context_settings)
+            rendered_sql = template.render(context)
 
-            sql = replace_settings_sql(sql)
-
-            sql = replace_schemas_sql(sql)
-
-            cursor.execute(sql)
+            cursor.execute(rendered_sql)
         except Exception as e:
             logger.critical("Failed to install custom SQL file '%s': %s\n" %
                             (sql_file, e))

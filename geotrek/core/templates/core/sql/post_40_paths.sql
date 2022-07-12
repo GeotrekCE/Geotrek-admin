@@ -18,7 +18,7 @@ CREATE TRIGGER core_path_uuid_insert_tgr
 -- Check overlapping paths
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.check_path_not_overlap(pid integer, line geometry) RETURNS BOOL AS $$
+CREATE FUNCTION {{ schema_geotrek }}.check_path_not_overlap(pid integer, line geometry) RETURNS BOOL AS $$
 DECLARE
     t_count integer;
     tolerance float;
@@ -36,7 +36,7 @@ $$ LANGUAGE plpgsql;
 -- Update geometry of related topologies
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.update_topology_geom_when_path_changes() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.update_topology_geom_when_path_changes() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     eid integer;
     egeom geometry;
@@ -94,7 +94,7 @@ ALTER TABLE core_path ADD CONSTRAINT core_path_geom_issimple CHECK (ST_IsSimple(
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.elevation_path_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.elevation_path_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
@@ -120,7 +120,7 @@ FOR EACH ROW EXECUTE PROCEDURE elevation_path_iu();
 -- Change status of related objects when paths are deleted
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.paths_related_objects_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.paths_related_objects_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Mark empty topologies as deleted
@@ -145,7 +145,7 @@ FOR EACH ROW EXECUTE PROCEDURE paths_related_objects_d();
 -- Make sure cache key (base on lastest updated) is refresh on DELETE
 ---------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.path_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.path_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Touch latest path
