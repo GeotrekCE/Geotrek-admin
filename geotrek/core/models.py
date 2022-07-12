@@ -21,7 +21,6 @@ from geotrek.common.functions import Length
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
-from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
@@ -234,7 +233,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
             TimeStampedModelMixin.reload(self, fromdb)
         return self
 
-    @debug_pg_notices
     def save(self, *args, **kwargs):
         # If the path was reversed, we have to invert related topologies
         if self.is_reversed:
@@ -570,7 +568,6 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
         return self
 
-    @debug_pg_notices
     def save(self, *args, **kwargs):
         # HACK: these fields are readonly from the Django point of view
         # but they can be changed at DB level. Since Django write all fields
@@ -851,10 +848,6 @@ class PathAggregation(models.Model):
     def is_full(self):
         return (self.start_position == 0.0 and self.end_position == 1.0
                 or self.start_position == 1.0 and self.end_position == 0.0)
-
-    @debug_pg_notices
-    def save(self, *args, **kwargs):
-        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Path aggregation")

@@ -1,6 +1,5 @@
 import logging
 import traceback
-from functools import wraps
 
 import os
 import re
@@ -12,54 +11,9 @@ from django.template.loader import get_template
 logger = logging.getLogger(__name__)
 
 
-def debug_pg_notices(f):
-
-    @wraps(f)
-    def wrapped(*args, **kwargs):
-        r = None
-
-        if connection.connection:
-            del connection.connection.notices[:]
-        try:
-            r = f(*args, **kwargs)
-        finally:
-            # Show triggers output
-            allnotices = []
-            current = ''
-            if connection.connection:
-                notices = []
-                for notice in connection.connection.notices:
-                    try:
-                        notice, context = notice.split('CONTEXT:', 1)
-                        context = re.sub(r"\s+", " ", context)
-                    except ValueError:
-                        context = ''
-                    notices.append((context, notice))
-                    if context != current:
-                        allnotices.append(notices)
-                        notices = []
-                        current = context
-                allnotices.append(notices)
-            current = ''
-            for notices in allnotices:
-                for context, notice in notices:
-                    if context != current:
-                        if context != '':
-                            logger.debug('Context %s...:' % context.strip()[:80])
-                        current = context
-                    notice = notice.replace('NOTICE: ', '')
-                    prefix = ''
-                    logger.debug('%s%s' % (prefix, notice.strip()))
-        return r
-
-    return wrapped
-
-
 def load_sql_files(app, stage):
     """
     Look for SQL files in Django app, and load them into database.
-    We remove RAISE NOTICE instructions from SQL outside unit testing
-    since they lead to interpolation errors of '%' character in python.
     """
     if 'geotrek' not in app.name:
         return
