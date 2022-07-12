@@ -1,7 +1,4 @@
-from unittest import mock
-
 from django.contrib.gis.geos import Point
-from django.db import connection
 from django.test import TestCase, override_settings
 
 from ..utils import sql_extent, uniquify, format_coordinates, spatial_reference
