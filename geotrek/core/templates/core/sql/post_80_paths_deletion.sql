@@ -1,6 +1,6 @@
 
 
-CREATE FUNCTION {# geotrek.core #}.path_deletion() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.path_deletion() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     IF {{ ALLOW_PATH_DELETION_TOPOLOGY }} THEN

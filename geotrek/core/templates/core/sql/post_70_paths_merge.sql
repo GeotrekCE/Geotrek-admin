@@ -1,4 +1,4 @@
-CREATE FUNCTION {# geotrek.core #}.ft_merge_path(updated integer, merged integer)
+CREATE FUNCTION {{ schema_geotrek }}.ft_merge_path(updated integer, merged integer)
   RETURNS integer AS $$
 
 DECLARE

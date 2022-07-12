@@ -18,14 +18,14 @@ CREATE TRIGGER maintenance_project_date_update_tgr
 -- Delete related interventions when a topology is deleted
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.maintenance #}.delete_related_intervention() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.delete_related_intervention() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     UPDATE maintenance_intervention SET deleted = NEW.deleted WHERE target_id = NEW.id AND target_type_id NOT IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'blade');
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION {# geotrek.maintenance #}.delete_related_intervention_blade() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.delete_related_intervention_blade() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     UPDATE maintenance_intervention SET deleted = NEW.deleted WHERE target_id = NEW.id AND target_type_id IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'blade');
     RETURN NULL;
@@ -41,7 +41,7 @@ FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention();
 -- Denormalized altimetry information
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.maintenance #}.update_altimetry_topology_intervention() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.update_altimetry_topology_intervention() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     UPDATE maintenance_intervention SET
         length = CASE WHEN ST_GeometryType(NEW.geom) <> 'ST_Point' THEN NEW.length ELSE length END,
@@ -60,7 +60,7 @@ AFTER UPDATE OF length, slope,
 FOR EACH ROW EXECUTE PROCEDURE update_altimetry_topology_intervention();
 
 
-CREATE FUNCTION {# geotrek.maintenance #}.update_altimetry_intervention() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.update_altimetry_intervention() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
@@ -89,7 +89,7 @@ FOR EACH ROW EXECUTE PROCEDURE update_altimetry_intervention();
 -- Compute area
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.maintenance #}.update_area_intervention() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.update_area_intervention() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
    NEW.area := NEW.width * NEW.length;
    RETURN NEW;

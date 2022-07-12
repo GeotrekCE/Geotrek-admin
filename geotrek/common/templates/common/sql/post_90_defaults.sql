@@ -62,8 +62,8 @@ ALTER TABLE common_attachment ALTER COLUMN date_update SET DEFAULT now();
 ALTER TABLE common_targetportal ALTER COLUMN title SET DEFAULT '';
 ALTER TABLE common_targetportal ALTER COLUMN description SET DEFAULT '';
 ALTER TABLE common_targetportal ALTER COLUMN facebook_image_url SET DEFAULT '{{ FACEBOOK_IMAGE }}';
-ALTER TABLE common_targetportal ALTER COLUMN facebook_image_width SET DEFAULT '{{ FACEBOOK_IMAGE_WIDTH }}';
-ALTER TABLE common_targetportal ALTER COLUMN facebook_image_height SET DEFAULT '{{ FACEBOOK_IMAGE_HEIGHT }}';
+ALTER TABLE common_targetportal ALTER COLUMN facebook_image_width SET DEFAULT {{ FACEBOOK_IMAGE_WIDTH }};
+ALTER TABLE common_targetportal ALTER COLUMN facebook_image_height SET DEFAULT {{ FACEBOOK_IMAGE_HEIGHT }};
 
 
 -- ReservationSystem

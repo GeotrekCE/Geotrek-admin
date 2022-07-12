@@ -2,7 +2,7 @@
 -- Interpolate along : the opposite of ST_LocateAlong
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.ST_InterpolateAlong(line geometry, point geometry) RETURNS RECORD AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ST_InterpolateAlong(line geometry, point geometry) RETURNS RECORD AS $$
 DECLARE
     linear_offset float;
     shortest_line geometry;
@@ -33,7 +33,7 @@ $$ LANGUAGE plpgsql;
 -- A smart ST_LineSubstring that supports start > end
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.ST_SmartLineSubstring(geom geometry, t_start float, t_end float) RETURNS geometry AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ST_SmartLineSubstring(geom geometry, t_start float, t_end float) RETURNS geometry AS $$
 DECLARE
     egeom geometry;
 BEGIN
@@ -47,14 +47,14 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE FUNCTION {# geotrek.core #}.ft_IsBefore(line1 geometry, line2 geometry) RETURNS boolean AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_IsBefore(line1 geometry, line2 geometry) RETURNS boolean AS $$
 BEGIN
     RETURN ST_Distance(ST_EndPoint(line1), ST_StartPoint(line2)) < 1;
 END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE FUNCTION {# geotrek.core #}.ft_IsAfter(line1 geometry, line2 geometry) RETURNS boolean AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_IsAfter(line1 geometry, line2 geometry) RETURNS boolean AS $$
 BEGIN
     RETURN ST_Distance(ST_StartPoint(line1), ST_EndPoint(line2)) < 1;
 END;
@@ -65,7 +65,7 @@ $$ LANGUAGE plpgsql;
 -- A smart ST_MakeLine that will re-oder linestring before merging them
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.ft_Smart_MakeLine(lines geometry[]) RETURNS geometry AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_Smart_MakeLine(lines geometry[]) RETURNS geometry AS $$
 DECLARE
     result geometry;
     t_line geometry;

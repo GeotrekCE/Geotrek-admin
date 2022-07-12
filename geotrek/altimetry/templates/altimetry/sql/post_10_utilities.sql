@@ -2,7 +2,7 @@
 -- Convert 2D to 3D using a DEM
 -------------------------------------------------------------------------------
 
-CREATE TYPE {# geotrek.altimetry #}.elevation_infos AS (
+CREATE TYPE {{ schema_geotrek }}.elevation_infos AS (
     draped geometry,
     slope float,
     min_elevation integer,
@@ -11,7 +11,7 @@ CREATE TYPE {# geotrek.altimetry #}.elevation_infos AS (
     negative_gain integer
 );
 
-CREATE FUNCTION {# geotrek.altimetry #}.ft_smooth_line(geom geometry)
+CREATE FUNCTION {{ schema_geotrek }}.ft_smooth_line(geom geometry)
   RETURNS SETOF geometry AS $$
 DECLARE
     current geometry;
@@ -42,7 +42,7 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION {# geotrek.altimetry #}.ft_smooth_line(
+CREATE FUNCTION {{ schema_geotrek }}.ft_smooth_line(
     linegeom geometry,
     step integer)
   RETURNS SETOF geometry AS $$
@@ -93,7 +93,7 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION {# geotrek.altimetry #}.ft_drape_line(linegeom geometry, step integer)
+CREATE FUNCTION {{ schema_geotrek }}.ft_drape_line(linegeom geometry, step integer)
     RETURNS SETOF geometry AS $$
 DECLARE
     points geometry[];
@@ -132,7 +132,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE FUNCTION {# geotrek.altimetry #}.add_point_elevation(geom geometry) RETURNS geometry AS $$
+CREATE FUNCTION {{ schema_geotrek }}.add_point_elevation(geom geometry) RETURNS geometry AS $$
 DECLARE
     ele integer;
     geom3d geometry;
@@ -155,7 +155,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION {# geotrek.altimetry #}.ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
     current geometry;
@@ -220,7 +220,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE FUNCTION {# geotrek.altimetry #}.ft_elevation_infos(geom geometry, epsilon float) RETURNS elevation_infos AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_elevation_infos(geom geometry, epsilon float) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
     current geometry;

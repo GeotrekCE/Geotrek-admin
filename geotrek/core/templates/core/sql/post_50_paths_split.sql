@@ -1,4 +1,4 @@
-CREATE FUNCTION {# geotrek.core #}.paths_snap_extremities() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.paths_snap_extremities() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     linestart geometry;
     lineend geometry;
@@ -86,7 +86,7 @@ FOR EACH ROW EXECUTE PROCEDURE paths_snap_extremities();
 -- Split paths when crossing each other
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.paths_topology_intersect_split() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.paths_topology_intersect_split() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     path record;
     tid_clone integer;

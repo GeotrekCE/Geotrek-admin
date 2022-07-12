@@ -18,7 +18,7 @@ CREATE TRIGGER core_topology_date_update_tgr
 -- Make sure cache key (base on lastest updated) is refresh on DELETE
 ---------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.topology_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.topology_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Touch latest path
@@ -37,7 +37,7 @@ FOR EACH ROW EXECUTE PROCEDURE topology_latest_updated_d();
 -- Update geometry of a topology
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.update_geometry_of_topology(topology_id integer) RETURNS void AS $$
+CREATE FUNCTION {{ schema_geotrek }}.update_geometry_of_topology(topology_id integer) RETURNS void AS $$
 DECLARE
     egeom geometry;
     egeom_3d geometry;
@@ -149,7 +149,7 @@ $$ LANGUAGE plpgsql;
 -- Update geometry when offset change
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.update_topology_geom_when_offset_changes() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.update_topology_geom_when_offset_changes() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     -- Note: We are using an "after" trigger here because the function below
     -- takes topology id as an argument and emits its own SQL queries to read
@@ -173,7 +173,7 @@ EXECUTE PROCEDURE update_topology_geom_when_offset_changes();
 -- Update altimetry when geom change (Geotrek-light)
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {# geotrek.core #}.topology_elevation_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {{ schema_geotrek }}.topology_elevation_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
