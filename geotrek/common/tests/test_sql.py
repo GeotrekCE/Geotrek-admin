@@ -1,10 +1,16 @@
+import os
+import shutil
+from tempfile import NamedTemporaryFile
 from django.test import TestCase
 
+from django.apps import apps
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection
 
 from geotrek.common.models import AccessibilityAttachment, Attachment, Label, TargetPortal
 from geotrek.common.tests.factories import FileTypeFactory
+from geotrek.common.utils.postgresql import load_sql_files
 from geotrek.trekking.tests.factories import TrekFactory
 from geotrek.authent.tests.factories import UserFactory
 
@@ -81,3 +87,41 @@ class SQLDefaultValuesTest(TestCase):
                                    )""")
         label = Label.objects.first()
         self.assertFalse(label.filter)
+
+
+class ExtraSQLTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        if not os.path.exists(os.path.join(settings.VAR_DIR, 'conf', 'extra_sql')):
+            os.mkdir(os.path.join(settings.VAR_DIR, 'conf', 'extra_sql'))
+            os.mkdir(os.path.join(settings.VAR_DIR, 'conf', 'extra_sql', 'common'))
+
+    def test_custom_sql(self):
+
+        tmp_file = NamedTemporaryFile(suffix='.sql', prefix='test_', mode='w+',
+                                      dir=os.path.join(settings.VAR_DIR, 'conf', 'extra_sql', 'common'))
+        tmp_file.write("""
+        CREATE FUNCTION {{ schema_geotrek }}.test() RETURNS char SECURITY DEFINER AS $$
+        BEGIN
+            RETURN 'test';
+        END;
+        $$ LANGUAGE plpgsql;
+        """)
+        tmp_file.flush()
+        common = apps.get_app_config('common')
+        load_sql_files(common, 'test')
+        tmp_file.close()
+
+        cursor = connection.cursor()
+        cursor.execute("""
+        SELECT public.test();
+        """)
+        result = cursor.fetchall()
+        tmp_file.close()
+        self.assertEqual(result[0][0], 'test')
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(os.path.join(settings.VAR_DIR, 'conf', 'extra_sql'))
