@@ -51,8 +51,9 @@ COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
+ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
+EXPOSE 8000
+
 RUN ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ./manage.py compilemessages
 
-EXPOSE 8000
-ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000"]
