@@ -1,54 +1,39 @@
-CREATE VIEW {{ schema_geotrek }}.v_interventions AS (
-
-	SELECT e.geom, e.uuid, i.*
-	FROM maintenance_intervention AS i, core_topology AS e,  signage_blade as b
-	WHERE (i.target_id = e.id AND i.target_type_id NOT IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'blade')) OR
-	(i.target_id = b.id AND i.target_type_id IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'blade') AND e.id=b.signage_id)
-	AND i.deleted = FALSE
-);
-
-CREATE VIEW {{ schema_geotrek }}.v_projects AS (
-	SELECT ST_Union(t.geom) AS geom, s.*
-	FROM v_interventions AS t, maintenance_project AS s
-	WHERE t.project_id = s.id
-	GROUP BY t.project_id, s.id
-);
-
 -- Interventions
 
 
-CREATE VIEW {{ schema_geotrek }}.v_intervention_qgis AS
+CREATE VIEW {{ schema_geotrek }}.v_interventions AS
 SELECT a.id,
-       e.name AS "Structure liée",
-       f.zoning_city AS "Commune",
-       g.zoning_district AS "Zone",
-       a.name AS "Nom",
+       e.name AS "Related structure",
+       f.zoning_city AS "City",
+       g.zoning_district AS "District",
+       a.name AS "Name",
        a.date AS "Date",
-       d.stake AS "Enjeu",
-       c.status AS "Statut",
+       d.stake AS "Stake",
+       c.status AS "Status",
        b.type AS "Type",
        CASE
-           WHEN a.subcontracting IS FALSE THEN 'Non'
+           WHEN a.subcontracting IS FALSE THEN 'No'
            WHEN a.subcontracting IS TRUE THEN 'Oui'
-       END AS "Sous-traitance",
-       i.disorder AS "Désordres",
-       a.material_cost AS "Coût matériel",
-       a.heliport_cost AS "Coût héliportage",
-       a.subcontract_cost AS "Coût sous-traitance",
-       j.job AS "Fonction",
-       j.cost AS "Jours-Hommes",
-       j.nb_days AS "Coût",
-       (a.material_cost+a.heliport_cost+a.subcontract_cost)::float AS "Coût total",
-       h.name AS "Chantier",
+       END AS "Subcontracting",
+       i.disorder AS "Disorders",
+       a.material_cost AS "Material cost",
+       a.heliport_cost AS "Heliport cost",
+       a.subcontract_cost AS "Subcontract cost",
+       j.job AS "Job",
+       j.cost AS "Mandays",
+       j.nb_days AS "Cost",
+       (a.material_cost+a.heliport_cost+a.subcontract_cost)::float AS "Total cost",
+       h.name AS "Project",
        CASE
            WHEN k.app_label = 'core' THEN 'Tronçons'
            WHEN k.app_label = 'infrastructure' THEN 'Aménagements'
-       END AS "Objet lié",
-       CONCAT ('Min: ', a.min_elevation, ' m, Max: ', a.max_elevation, ' m') AS "Altitude",
+       END AS "Related object",
+       CONCAT(a.min_elevation, ' m') AS "Elevation minimum",
+       CONCAT(a.max_elevation, ' m') AS "Elevation maximum",
        CONCAT ('h: ',height::numeric(10, 2), 'm , L: ', a.LENGTH::numeric(10, 2),'m , l: ', width::numeric(10, 2),'m : ', area::numeric(10, 1), 'm²') AS "Dimensions",
        a.description AS "Description",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        a.geom_3d
 FROM maintenance_intervention a
 LEFT JOIN maintenance_interventiontype b ON a.type_id = b.id
@@ -97,7 +82,7 @@ WHERE a.deleted = FALSE
 
 -- Chantiers
 
-CREATE VIEW {{ schema_geotrek }}.v_project_qgis AS
+CREATE VIEW {{ schema_geotrek }}.v_projects AS
 SELECT a.id,
        c.name AS "Structure liée",
        a.name AS "Nom",
