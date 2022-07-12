@@ -14,8 +14,8 @@ SELECT a.id,
        {% for lang in MODELTRANSLATION_LANGUAGES %}
        d.label AS "Status {{ lang }}",
        {% endfor %}
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        a.comment AS "Comment",
        a.geom
 FROM public.feedback_report a
