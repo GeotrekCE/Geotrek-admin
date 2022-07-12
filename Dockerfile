@@ -15,6 +15,7 @@ ENV CAPTURE_HOST="screamshotter"
 ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
 
 WORKDIR /opt/geotrek-admin
+RUN mkdir -p /opt/geotrek-admin/var/log
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update -qq && apt-get install -y -qq  \
