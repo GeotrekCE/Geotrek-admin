@@ -2,7 +2,7 @@
 -- Contenus touristiques
 
 
-CREATE VIEW {# geotrek.tourism #}.v_touristiccontent_qgis AS
+CREATE VIEW {{ schema_geotrek }}.v_touristiccontent_qgis AS
 SELECT a.id,
        c.name AS "Structure liée",
        f.zoning_city AS "Commune",

@@ -1,6 +1,6 @@
 -- Zones sensibles
 
-CREATE VIEW {# geotrek.sensitivity #}.v_sensitivearea_qgis AS
+CREATE VIEW {{ schema_geotrek }}.v_sensitivearea_qgis AS
 SELECT a.id,
        d.name AS "Structure liée",
        f.zoning_city AS "Commune",

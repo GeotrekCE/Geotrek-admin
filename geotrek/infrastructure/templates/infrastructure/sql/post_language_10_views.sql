@@ -8,7 +8,7 @@ CREATE VIEW {{ schema_geotrek }}.v_infrastructures AS (
 -- Infrastructures
 
 
-CREATE VIEW {# geotrek.maintenance #}.v_infrastructures_qgis AS WITH v_infra AS
+CREATE VIEW {{ schema_geotrek }}.v_infrastructures_qgis AS WITH v_infra AS
     (SELECT e.geom,
             e.id,
             t.published,

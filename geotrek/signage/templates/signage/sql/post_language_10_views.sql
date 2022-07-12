@@ -7,7 +7,7 @@ CREATE VIEW {{ schema_geotrek }}.v_signages AS (
 
 -- Signalétique
 
-CREATE VIEW {# geotrek.signage #}.v_signages_qgis AS WITH v_signaletique AS
+CREATE VIEW {{ schema_geotrek }}.v_signages_qgis AS WITH v_signaletique AS
     (SELECT e.id,
             t.published,
             t.publication_date,

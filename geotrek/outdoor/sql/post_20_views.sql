@@ -1,6 +1,6 @@
 -- Parcours outdoor
 
-CREATE VIEW {# geotrek.outdoor #}.v_outdoor_course_qgis_point AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_qgis_point AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -123,7 +123,7 @@ WHERE ST_GEOMETRYTYPE(ST_CollectionExtract(a.geom, 1)) IN ('ST_MultiPoint',
    ;
 
 
-CREATE VIEW {# geotrek.outdoor #}.v_outdoor_course_qgis_polygon AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_qgis_polygon AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -244,7 +244,7 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 3)) != 'MULTIPOLYGON EMPTY'
   ;
 
 
-CREATE VIEW {# geotrek.outdoor #}.v_outdoor_course_qgis_line AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_qgis_line AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -367,7 +367,7 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
 
 -- Sites outdoor
 
-CREATE VIEW {# geotrek.outdoor #}.v_outdoor_site_qgis_point AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_qgis_point AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -543,7 +543,7 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 1)) != 'MULTIPOINT EMPTY'
   ;
 
 
-CREATE VIEW {# geotrek.outdoor #}.v_outdoor_site_qgis_line AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_qgis_line AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",
@@ -719,7 +719,7 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
   ;
 
 
-CREATE VIEW {# geotrek.outdoor #}.v_outdoor_site_qgis_polygon AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_qgis_polygon AS
 SELECT a.id,
        b.name AS "Structure liée",
        c.zoning_city AS "Commune",

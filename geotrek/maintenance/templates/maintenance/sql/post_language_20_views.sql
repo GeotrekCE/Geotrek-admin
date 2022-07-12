@@ -17,7 +17,7 @@ CREATE VIEW {{ schema_geotrek }}.v_projects AS (
 -- Interventions
 
 
-CREATE VIEW {# geotrek.maintenance #}.v_intervention_qgis AS
+CREATE VIEW {{ schema_geotrek }}.v_intervention_qgis AS
 SELECT a.id,
        e.name AS "Structure liée",
        f.zoning_city AS "Commune",
@@ -97,7 +97,7 @@ WHERE a.deleted = FALSE
 
 -- Chantiers
 
-CREATE VIEW {# geotrek.maintenance #}.v_project_qgis AS
+CREATE VIEW {{ schema_geotrek }}.v_project_qgis AS
 SELECT a.id,
        c.name AS "Structure liée",
        a.name AS "Nom",
