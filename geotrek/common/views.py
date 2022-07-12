@@ -31,6 +31,10 @@ from django.views import static
 from django.views.defaults import page_not_found
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.generic import TemplateView, UpdateView, View
+from django.views.generic import RedirectView, TemplateView, UpdateView, View
+from django.views.decorators.http import require_POST, require_http_methods
+from django.views.generic import RedirectView, View, FormView
+from django.views.generic import TemplateView
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from geotrek.common.filters import HDViewPointFilterSet

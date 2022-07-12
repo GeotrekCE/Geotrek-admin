@@ -7,7 +7,6 @@ from rest_framework.routers import DefaultRouter
 from .models import HDViewPoint
 from . import views
 
-
 class LangConverter(converters.StringConverter):
     regex = "[a-z]{2}(-[a-z]{2,4})?"   # noqa
 
@@ -63,6 +62,9 @@ urlpatterns += rest_router.urls
 
 
 class PublishableEntityOptions(MapEntityOptions):
+    document_public_view = views.DocumentPublic
+    document_public_booklet_view = views.DocumentBookletPublic
+    markup_public_view =views.MarkupPublic
     document_public_view = views.DocumentPublic
     document_public_booklet_view = views.DocumentBookletPublic
     markup_public_view = views.MarkupPublic
