@@ -9,10 +9,10 @@ SELECT a.id,
        b.label_{{ lang }} AS "Activity {{ lang }}",
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-       c.label AS "Category {{ lang }}",
+       c.label_{{ lang }} AS "Category {{ lang }}",
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-       d.label AS "Status {{ lang }}",
+       d.label_{{ lang }} AS "Status {{ lang }}",
        {% endfor %}
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",

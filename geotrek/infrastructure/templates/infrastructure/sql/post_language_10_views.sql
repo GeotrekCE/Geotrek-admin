@@ -17,7 +17,7 @@ CREATE VIEW {{ schema_geotrek }}.v_infrastructures AS WITH v_infra AS
             t.name_{{ lang }},
             {% endfor %}
             {% for lang in MODELTRANSLATION_LANGUAGES %}
-            t.description,
+            t.description_{{ lang }},
             {% endfor %}
             CONCAT (e.min_elevation, 'm') AS altitude,
             t.implantation_year,
@@ -45,7 +45,7 @@ SELECT a.id,
        b.label AS "Type",
        c.label AS "Condition",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-       a.description AS "Description {{ lang }}",
+       a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
        a.altitude AS "Elevation",
        a.implantation_year AS "Implantation year",
