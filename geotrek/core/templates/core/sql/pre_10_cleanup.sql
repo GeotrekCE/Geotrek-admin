@@ -60,7 +60,6 @@ DROP FUNCTION IF EXISTS paths_topology_intersect_split() CASCADE;
 
 DROP VIEW IF EXISTS l_v_sentier CASCADE;
 DROP VIEW IF EXISTS v_trails CASCADE;
-DROP VIEW IF EXISTS v_trail_qgis CASCADE;
 
 -- 70
 
