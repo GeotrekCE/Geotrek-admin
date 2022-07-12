@@ -1,22 +1,25 @@
-CREATE VIEW {{ schema_geotrek }}.v_infrastructures AS (
-	SELECT e.geom, e.id, e.uuid, t.*
-	FROM infrastructure_infrastructure AS t, infrastructure_infrastructuretype AS b, core_topology AS e
-	WHERE t.topo_object_id = e.id AND t.type_id = b.id
-	AND e.deleted = FALSE
-);
-
 -- Infrastructures
 
 
-CREATE VIEW {{ schema_geotrek }}.v_infrastructures_qgis AS WITH v_infra AS
+CREATE VIEW {{ schema_geotrek }}.v_infrastructures AS WITH v_infra AS
     (SELECT e.geom,
             e.id,
+            {% if PUBLISHED_BY_LANG %}
+            {% for lang in MODELTRANSLATION_LANGUAGES %}
+            t.published_{{ lang }},
+            {% endfor %}
+            {% else %}
             t.published,
+            {% endif %}
             t.publication_date,
             t.topo_object_id,
-            t.name,
+            {% for lang in MODELTRANSLATION_LANGUAGES %}
+            t.name_{{ lang }},
+            {% endfor %}
+            {% for lang in MODELTRANSLATION_LANGUAGES %}
             t.description,
-            CONCAT ('Min: ', e.min_elevation, 'm') AS altitude,
+            {% endfor %}
+            CONCAT (e.min_elevation, 'm') AS altitude,
             t.implantation_year,
             t.condition_id,
             t.structure_id,
@@ -33,23 +36,36 @@ CREATE VIEW {{ schema_geotrek }}.v_infrastructures_qgis AS WITH v_infra AS
          AND t.type_id = b.id
          AND e.deleted = FALSE)
 SELECT a.id,
-       i.name AS "Structure liée",
-       f.zoning_city AS "Commune",
-       g.zoning_district AS "Zone",
-       a.name AS "Nom",
+       i.name AS "Related structure",
+       f.zoning_city AS "City",
+       g.zoning_district AS "District",
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+       a.name_{{ lang }} AS "Name {{ lang }}",
+       {% endfor %}
        b.label AS "Type",
-       c.label AS "État",
-       a.description AS "Description",
-       a.altitude AS "Altitude",
-       a.implantation_year AS "Année d'implantation",
-       d.label AS "Niveau des usagers",
-       e.label AS "Niveau des interventions",
+       c.label AS "Condition",
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+       a.description AS "Description {{ lang }}",
+       {% endfor %}
+       a.altitude AS "Elevation",
+       a.implantation_year AS "Implantation year",
+       d.label AS "Usage difficulty",
+       e.label AS "Maintenance difficulty",
+       {% if PUBLISHED_BY_LANG %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
        CASE
-           WHEN a.published IS TRUE THEN 'Oui'
-           ELSE 'Non'
-       END AS "Publié",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+           WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           ELSE 'No'
+       END AS "Published {{ lang }}",
+       {% endfor %}
+       {% else %}
+       CASE
+           WHEN a.published IS TRUE THEN 'Yes'
+           ELSE 'No'
+       END AS "Published",
+       {% endif %}
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        a.geom
 FROM v_infra a
 LEFT JOIN infrastructure_infrastructuretype b ON a.type_id = b.id
