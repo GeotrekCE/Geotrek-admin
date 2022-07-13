@@ -1,39 +1,44 @@
 -- Parcours outdoor
 
-CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_qgis_point AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_point AS
 SELECT a.id,
-       b.name AS "Structure liée",
-       c.zoning_city AS "Commune",
-       d.zoning_district AS "Zone",
-       a.name AS "Nom",
+       b.name AS "Related structure",
+       c.zoning_city AS "City",
+       d.zoning_district AS "District",
+       a.name AS "Name",
        g.site AS "Sites",
-       i.filieres AS "Filières",
-       h.pratique AS "Pratique",
-       a.ratings_description AS "Description de cotation",
+       i.filieres AS "Sectors",
+       h.pratique AS "Practice",
+       a.ratings_description AS "Ratings description",
        e.name AS "Type",
        a.description AS "Description",
-       a.advice AS "Recommandation",
-       a.gear AS "Matériel",
-       a.equipment AS "Équipement",
-       a.accessibility AS "Accessibilité",
+       a.advice AS "Advice",
+       a.gear AS "Gear",
+       a.equipment AS "Equipment",
+       a.accessibility AS "Accessibility",
        CASE
            WHEN a.height IS NOT NULL THEN concat(a.height, ' m')
            ELSE NULL
-       END AS "Hauteur",
-       a.duration AS "Durée",
-       a.eid AS "ID externe",
+       END AS "Height",
+       a.duration AS "Duration",
+       a.eid AS "External id",
        CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       concat ('↝ ', a.length::numeric(10, 1),' m (→', st_length(geom_3d)::numeric(10, 1),' m)') AS "Longueur",
+           WHEN a.published IS FALSE THEN 'No'
+           WHEN a.published IS TRUE THEN 'Yes'
+       END AS "Published",
+
+       concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
+       a.length AS "Length",
+       st_length(geom_3d) AS "Length 3d",
        CASE
            WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
            WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
-       END AS "Pente",
-       CONCAT ('Min: ', a.min_elevation, 'm, Max: ', a.max_elevation, 'm') AS "Altitude",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+       END AS "Slope",
+       a.min_elevation
+       CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
+       COCANT (a.max_elevation, 'm') AS "Maximum elevation",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 1) AS geom
 FROM outdoor_course a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
@@ -123,40 +128,45 @@ WHERE ST_GEOMETRYTYPE(ST_CollectionExtract(a.geom, 1)) IN ('ST_MultiPoint',
    ;
 
 
-CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_qgis_polygon AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_polygon AS
 SELECT a.id,
-       b.name AS "Structure liée",
-       c.zoning_city AS "Commune",
-       d.zoning_district AS "Zone",
-       a.name AS "Nom",
+       b.name AS "Related structure",
+       c.zoning_city AS "City",
+       d.zoning_district AS "District",
+       a.name AS "Name",
        g.site AS "Sites",
-       i.filieres AS "Filières",
-       h.pratique AS "Pratique",
-       a.ratings_description AS "Description de cotation",
+       i.filieres AS "Sectors",
+       h.pratique AS "Practice",
+       a.ratings_description AS "Ratings description",
        e.name AS "Type",
        a.description AS "Description",
-       a.advice AS "Recommandation",
-       a.gear AS "Matériel",
-       a.equipment AS "Équipement",
-       a.accessibility AS "Accessibilité",
+       a.advice AS "Advice",
+       a.gear AS "Gear",
+       a.equipment AS "Equipment",
+       a.accessibility AS "Accessibility",
        CASE
            WHEN a.height IS NOT NULL THEN concat(a.height, ' m')
            ELSE NULL
-       END AS "Hauteur",
-       a.duration AS "Durée",
-       a.eid AS "ID externe",
+       END AS "Height",
+       a.duration AS "Duration",
+       a.eid AS "External id",
        CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       concat ('↝ ', a.length::numeric(10, 1),' m (→', st_length(geom_3d)::numeric(10, 1),' m)') AS "Longueur",
+           WHEN a.published IS FALSE THEN 'No'
+           WHEN a.published IS TRUE THEN 'Yes'
+       END AS "Published",
+
+       concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
+       a.length AS "Length",
+       st_length(geom_3d) AS "Length 3d",
        CASE
            WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
            WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
-       END AS "Pente",
-       CONCAT ('Min: ', a.min_elevation, 'm, Max: ', a.max_elevation, 'm') AS "Altitude",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+       END AS "Slope",
+       a.min_elevation
+       CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
+       COCANT (a.max_elevation, 'm') AS "Maximum elevation",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 3) AS geom
 FROM outdoor_course a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
@@ -244,40 +254,45 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 3)) != 'MULTIPOLYGON EMPTY'
   ;
 
 
-CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_qgis_line AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_line AS
 SELECT a.id,
-       b.name AS "Structure liée",
-       c.zoning_city AS "Commune",
-       d.zoning_district AS "Zone",
-       a.name AS "Nom",
+       b.name AS "Related structure",
+       c.zoning_city AS "City",
+       d.zoning_district AS "District",
+       a.name AS "Name",
        g.site AS "Sites",
-       i.filieres AS "Filières",
-       h.pratique AS "Pratique",
-       a.ratings_description AS "Description de cotation",
+       i.filieres AS "Sectors",
+       h.pratique AS "Practice",
+       a.ratings_description AS "Ratings description",
        e.name AS "Type",
        a.description AS "Description",
-       a.advice AS "Recommandation",
-       a.gear AS "Matériel",
-       a.equipment AS "Équipement",
-       a.accessibility AS "Accessibilité",
+       a.advice AS "Advice",
+       a.gear AS "Gear",
+       a.equipment AS "Equipment",
+       a.accessibility AS "Accessibility",
        CASE
            WHEN a.height IS NOT NULL THEN concat(a.height, ' m')
            ELSE NULL
-       END AS "Hauteur",
-       a.duration AS "Durée",
-       a.eid AS "ID externe",
+       END AS "Height",
+       a.duration AS "Duration",
+       a.eid AS "External id",
        CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       concat ('↝ ', a.length::numeric(10, 1),' m (→', st_length(geom_3d)::numeric(10, 1),' m)') AS "Longueur",
+           WHEN a.published IS FALSE THEN 'No'
+           WHEN a.published IS TRUE THEN 'Yes'
+       END AS "Published",
+
+       concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
+       a.length AS "Length",
+       st_length(geom_3d) AS "Length 3d",
        CASE
            WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
            WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
-       END AS "Pente",
-       CONCAT ('Min: ', a.min_elevation, 'm, Max: ', a.max_elevation, 'm') AS "Altitude",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+       END AS "Slope",
+       a.min_elevation
+       CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
+       COCANT (a.max_elevation, 'm') AS "Maximum elevation",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 2) AS geom
 FROM outdoor_course a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
@@ -367,16 +382,16 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
 
 -- Sites outdoor
 
-CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_qgis_point AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_point AS
 SELECT a.id,
-       b.name AS "Structure liée",
-       c.zoning_city AS "Commune",
-       d.zoning_district AS "Zone",
-       a.name AS "Nom",
-       n.enfants AS "Enfants",
+       b.name AS "Related structure",
+       c.zoning_city AS "City",
+       d.zoning_district AS "District",
+       a.name AS "Name",
+       n.enfants AS "Children",
        o.parents AS "Parents",
-       p.filieres AS "Filières",
-       f.name AS "Pratique",
+       p.filieres AS "Sectors",
+       f.name AS "Practice",
        m."Classe",
        m."Caractère vertical",
        m."Caractère aquatique",
@@ -386,28 +401,29 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       description_teaser AS "Chapeau",
+       description_teaser AS "Description teaser",
        a.ambiance AS "Ambiance",
        a.description AS "Description",
-       a.advice AS "Recommandation",
-       a.accessibility AS "Accessibilité",
+       a.advice AS "Advice",
+       a.accessibility AS "Accessibility",
        period AS "Période",
        orientation AS "Orientation",
-       wind AS "Vent",
-       k.etiquettes AS "Étiquette",
-       g.lieux_renseignement AS "Lieux de renseignement",
-       i.url AS "Liens web",
-       j.portail AS "Portail",
+       wind AS "Wind",
+       k.etiquettes AS "Label",
+       g.lieux_renseignement AS "Information desk",
+       i.url AS "Web link",
+       j.portail AS "Portal",
        h.name AS "Source",
-       l.gestionnaire AS "Gestionnaire",
-       a.eid AS "ID externe",
+       l.gestionnaire AS "Manager",
+       a.eid AS "External ID",
        CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       CONCAT ('Min: ', a.min_elevation, 'm, Max: ', a.max_elevation, 'm') AS "Altitude",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+           WHEN a.published IS FALSE THEN 'No'
+           WHEN a.published IS TRUE THEN 'Yes'
+       END AS "Published",
+       CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
+       CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 1) AS geom
 FROM public.outdoor_site a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
@@ -543,16 +559,16 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 1)) != 'MULTIPOINT EMPTY'
   ;
 
 
-CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_qgis_line AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_line AS
 SELECT a.id,
-       b.name AS "Structure liée",
-       c.zoning_city AS "Commune",
-       d.zoning_district AS "Zone",
-       a.name AS "Nom",
-       n.enfants AS "Enfants",
+       b.name AS "Related structure",
+       c.zoning_city AS "City",
+       d.zoning_district AS "District",
+       a.name AS "Name",
+       n.enfants AS "Children",
        o.parents AS "Parents",
-       p.filieres AS "Filières",
-       f.name AS "Pratique",
+       p.filieres AS "Sectors",
+       f.name AS "Practice",
        m."Classe",
        m."Caractère vertical",
        m."Caractère aquatique",
@@ -562,28 +578,29 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       description_teaser AS "Chapeau",
+       description_teaser AS "Description teaser",
        a.ambiance AS "Ambiance",
        a.description AS "Description",
-       a.advice AS "Recommandation",
-       a.accessibility AS "Accessibilité",
+       a.advice AS "Advice",
+       a.accessibility AS "Accessibility",
        period AS "Période",
        orientation AS "Orientation",
-       wind AS "Vent",
-       k.etiquettes AS "Étiquette",
-       g.lieux_renseignement AS "Lieux de renseignement",
-       i.url AS "Liens web",
-       j.portail AS "Portail",
+       wind AS "Wind",
+       k.etiquettes AS "Label",
+       g.lieux_renseignement AS "Information desk",
+       i.url AS "Web link",
+       j.portail AS "Portal",
        h.name AS "Source",
-       l.gestionnaire AS "Gestionnaire",
-       a.eid AS "ID externe",
+       l.gestionnaire AS "Manager",
+       a.eid AS "External ID",
        CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       CONCAT ('Min: ', a.min_elevation, 'm, Max: ', a.max_elevation, 'm') AS "Altitude",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+           WHEN a.published IS FALSE THEN 'No'
+           WHEN a.published IS TRUE THEN 'Yes'
+       END AS "Published",
+       CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
+       CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 2) AS geom
 FROM public.outdoor_site a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
@@ -719,16 +736,16 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
   ;
 
 
-CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_qgis_polygon AS
+CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_polygon AS
 SELECT a.id,
-       b.name AS "Structure liée",
-       c.zoning_city AS "Commune",
-       d.zoning_district AS "Zone",
-       a.name AS "Nom",
-       n.enfants AS "Enfants",
+       b.name AS "Related structure",
+       c.zoning_city AS "City",
+       d.zoning_district AS "District",
+       a.name AS "Name",
+       n.enfants AS "Children",
        o.parents AS "Parents",
-       p.filieres AS "Filières",
-       f.name AS "Pratique",
+       p.filieres AS "Sectors",
+       f.name AS "Practice",
        m."Classe",
        m."Caractère vertical",
        m."Caractère aquatique",
@@ -738,28 +755,29 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       description_teaser AS "Chapeau",
+       description_teaser AS "Description teaser",
        a.ambiance AS "Ambiance",
        a.description AS "Description",
-       a.advice AS "Recommandation",
-       a.accessibility AS "Accessibilité",
+       a.advice AS "Advice",
+       a.accessibility AS "Accessibility",
        period AS "Période",
        orientation AS "Orientation",
-       wind AS "Vent",
-       k.etiquettes AS "Étiquette",
-       g.lieux_renseignement AS "Lieux de renseignement",
-       i.url AS "Liens web",
-       j.portail AS "Portail",
+       wind AS "Wind",
+       k.etiquettes AS "Label",
+       g.lieux_renseignement AS "Information desk",
+       i.url AS "Web link",
+       j.portail AS "Portal",
        h.name AS "Source",
-       l.gestionnaire AS "Gestionnaire",
-       a.eid AS "ID externe",
+       l.gestionnaire AS "Manager",
+       a.eid AS "External ID",
        CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       CONCAT ('Min: ', a.min_elevation, 'm, Max: ', a.max_elevation, 'm') AS "Altitude",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+           WHEN a.published IS FALSE THEN 'No'
+           WHEN a.published IS TRUE THEN 'Yes'
+       END AS "Published",
+       CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
+       CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 3) AS geom
 FROM public.outdoor_site a
 LEFT JOIN authent_structure b ON a.structure_id = b.id

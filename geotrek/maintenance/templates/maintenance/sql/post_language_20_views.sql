@@ -84,22 +84,22 @@ WHERE a.deleted = FALSE
 
 CREATE VIEW {{ schema_geotrek }}.v_projects AS
 SELECT a.id,
-       c.name AS "Structure liée",
-       a.name AS "Nom",
-       COALESCE(a.begin_year::varchar || ' - ' || a.end_year::varchar, a.begin_year::varchar, a.end_year::varchar) AS "Période",
+       c.name AS "Related structure",
+       a.name AS "Name",
+       a.begin_year::varchar || ' - ' || a.end_year::varchar, a.begin_year::varchar, a.end_year::varchar) AS "Period",
        b.type AS "Type",
-       e.domain AS "Domaine",
-       a.begin_year AS "Année de début",
-       a.end_year AS "Année de fin",
-       a.global_cost AS "Coût global",
-       a."constraint" AS "Contraintes",
-       h.organism AS "Maître d'ouvrage",
-       j.organism AS "Maître d'oeuvre",
-       k.contractor AS "Prestataires",
-       i.financement AS "Financements",
-       a.comments AS "Commentaires",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification"
+       e.domain AS "Domain",
+       a.begin_year AS "Begin year",
+       a.end_year AS "End year",
+       a.global_cost AS "Global cost",
+       a."constraint" AS "Constraint",
+       h.organism AS "Project owner",
+       j.organism AS "Project manager",
+       k.contractor AS "Contractors",
+       i.financement AS "Fundings",
+       a.comments AS "Comments",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date"
 FROM maintenance_project a
 LEFT JOIN maintenance_projecttype b ON a.type_id = b.id
 LEFT JOIN authent_structure c ON a.structure_id = c.id
