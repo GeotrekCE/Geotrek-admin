@@ -2,61 +2,61 @@
 
 CREATE VIEW {{ schema_geotrek }}.v_sensitivearea_qgis AS
 SELECT a.id,
-       d.name AS "Structure liée",
-       f.zoning_city AS "Commune",
-       g.zoning_district AS "Zone",
-       b.name AS "Nom",
+       d.name AS "Structure",
+       f.zoning_city AS "City",
+       g.zoning_district AS "District",
+       b.name AS "Name",
        CASE
-           WHEN h.category = 2 THEN 'Règlementaire'
-           WHEN h.category = 1 THEN 'Espèce'
-       END AS "Catégorie",
+           WHEN h.category = 2 THEN 'Regulatory'
+           WHEN h.category = 1 THEN 'Specie'
+       END AS "Category",
        CONCAT(CASE
-                  WHEN h.period01 IS TRUE THEN CONCAT('Janvier', ', ')
+                  WHEN h.period01 IS TRUE THEN CONCAT('January', ', ')
                   ELSE NULL
               END, CASE
-                       WHEN h.period02 IS TRUE THEN CONCAT('Février', ', ')
+                       WHEN h.period02 IS TRUE THEN CONCAT('February', ', ')
                        ELSE NULL
                    END, CASE
-                            WHEN h.period03 IS TRUE THEN CONCAT('Mars', ', ')
+                            WHEN h.period03 IS TRUE THEN CONCAT('March', ', ')
                             ELSE NULL
                         END, CASE
-                                 WHEN h.period04 IS TRUE THEN CONCAT('Avril', ', ')
+                                 WHEN h.period04 IS TRUE THEN CONCAT('April', ', ')
                                  ELSE NULL
                              END, CASE
-                                      WHEN h.period05 IS TRUE THEN CONCAT('Mai', ', ')
+                                      WHEN h.period05 IS TRUE THEN CONCAT('May', ', ')
                                       ELSE NULL
                                   END, CASE
-                                           WHEN h.period06 IS TRUE THEN CONCAT('Juin', ', ')
+                                           WHEN h.period06 IS TRUE THEN CONCAT('June', ', ')
                                            ELSE NULL
                                        END, CASE
-                                                WHEN h.period07 IS TRUE THEN CONCAT('Juillet', ', ')
+                                                WHEN h.period07 IS TRUE THEN CONCAT('July', ', ')
                                                 ELSE NULL
                                             END, CASE
-                                                     WHEN h.period08 IS TRUE THEN CONCAT('Août', ', ')
+                                                     WHEN h.period08 IS TRUE THEN CONCAT('August', ', ')
                                                      ELSE NULL
                                                  END, CASE
-                                                          WHEN h.period09 IS TRUE THEN CONCAT('Septembre', ', ')
+                                                          WHEN h.period09 IS TRUE THEN CONCAT('September', ', ')
                                                           ELSE NULL
                                                       END, CASE
-                                                               WHEN h.period10 IS TRUE THEN CONCAT('Octobre', ', ')
+                                                               WHEN h.period10 IS TRUE THEN CONCAT('October', ', ')
                                                                ELSE NULL
                                                            END, CASE
-                                                                    WHEN h.period11 IS TRUE THEN CONCAT('Novembre', ', ')
+                                                                    WHEN h.period11 IS TRUE THEN CONCAT('November', ', ')
                                                                     ELSE NULL
                                                                 END, CASE
-                                                                         WHEN h.period12 IS TRUE THEN 'Décembre'
-                                                                     END) AS "Période",
-       c.pratiques_sportives AS "Pratiques sportives",
-       b.url_fr AS "URL",
+                                                                         WHEN h.period12 IS TRUE THEN 'December'
+                                                                     END) AS "Period",
+       c.pratiques_sportives AS "Sport practices",
+       b.url AS "URL",
        a.description AS "Description",
        a.contact AS "Contact",
        CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
-       a.publication_date AS "Date de publication",
+           WHEN a.published IS FALSE THEN 'No'
+           WHEN a.published IS TRUE THEN 'Yes'
+       END AS "Published",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Modifiation date",
+       a.publication_date AS "Publication date",
        a.geom
 FROM sensitivity_sensitivearea a
 LEFT JOIN sensitivity_species b ON a.species_id = b.id
