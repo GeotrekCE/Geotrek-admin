@@ -2,51 +2,35 @@
 -- Contenus touristiques
 
 
-CREATE VIEW {{ schema_geotrek }}.v_touristiccontent_qgis AS
+CREATE VIEW {{ schema_geotrek }}.v_touristiccontents AS
 SELECT a.id,
-       c.name AS "Structure liée",
-       f.zoning_city AS "Commune",
-       g.zoning_district AS "Zone",
-       a.name AS "Nom",
-       b.label AS "Catégorie",
-       CASE
-           WHEN k.type1_label = 'Type d''usage' THEN k.labels
-       END AS "Type d''usage",
-       CASE
-           WHEN k.type1_label = 'Label' THEN k.labels
-       END AS "Label",
-       CASE
-           WHEN k.type1_label = 'Thématique' THEN k.labels
-       END AS "Thématique",
-       CASE
-           WHEN m.type2_label = 'Label' THEN m.labels
-       END AS "Label 2",
-       CASE
-           WHEN m.type2_label = 'Service' THEN m.labels
-       END AS "Service",
-       CASE
-           WHEN m.type2_label IS NULL THEN m.labels
-       END AS "Type 2",
+       c.name AS "Structure",
+       f.zoning_city AS "City",
+       g.zoning_district AS "District",
+       a.name AS "Name",
+       b.label AS "Category",
+       --k.labels AS 'type1_label',
+       --m.labels AS SELECT * FROM m.type2_label,
        a.description AS "Description",
-       p.labels AS "Thèmes",
-       a.description_teaser AS "Chapeau",
+       p.labels AS "Themes",
+       a.description_teaser AS "Description teaser",
        a.contact AS "Contact",
-       a.email AS "Courriel",
-       a.website AS "Site web",
-       a.practical_info AS "Informations pratiques",
+       a.email AS "Email",
+       a.website AS "Website",
+       a.practical_info AS "Practical info",
        CASE
-           WHEN a.approved IS TRUE THEN 'oui'
-           ELSE 'non'
-       END AS "Labellisé",
+           WHEN a.approved IS TRUE THEN 'Yes'
+           ELSE 'No'
+       END AS "Approved",
        o.name AS "Source",
        CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       a.eid AS "ID externe",
-       d.name AS "Système de réservation",
-       date_insert AS "Date d'insertion",
-       date_update AS "Date de modification",
+           WHEN a.published IS FALSE THEN 'No'
+           WHEN a.published IS TRUE THEN 'Yes'
+       END AS "Published",
+       a.eid AS "External ID",
+       d.name AS "Reservation system",
+       date_insert AS "Insertion date",
+       date_update AS "Update date",
        a.geom
 FROM tourism_touristiccontent a
 LEFT JOIN tourism_touristiccontentcategory b ON a.category_id = b.id
