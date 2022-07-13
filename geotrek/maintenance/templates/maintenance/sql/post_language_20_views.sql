@@ -86,7 +86,7 @@ CREATE VIEW {{ schema_geotrek }}.v_projects AS
 SELECT a.id,
        c.name AS "Structure",
        a.name AS "Name",
-       a.begin_year::varchar || ' - ' || a.end_year::varchar, a.begin_year::varchar, a.end_year::varchar) AS "Period",
+       coalesce(a.begin_year::varchar || ' - ' || a.end_year::varchar, a.begin_year::varchar, a.end_year::varchar) AS "Period",
        b.type AS "Type",
        e.domain AS "Domain",
        a.begin_year AS "Begin year",
