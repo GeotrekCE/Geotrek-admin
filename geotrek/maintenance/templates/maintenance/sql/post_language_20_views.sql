@@ -3,7 +3,7 @@
 
 CREATE VIEW {{ schema_geotrek }}.v_interventions AS
 SELECT a.id,
-       e.name AS "Related structure",
+       e.name AS "Structure",
        f.zoning_city AS "City",
        g.zoning_district AS "District",
        a.name AS "Name",
@@ -84,7 +84,7 @@ WHERE a.deleted = FALSE
 
 CREATE VIEW {{ schema_geotrek }}.v_projects AS
 SELECT a.id,
-       c.name AS "Related structure",
+       c.name AS "Structure",
        a.name AS "Name",
        a.begin_year::varchar || ' - ' || a.end_year::varchar, a.begin_year::varchar, a.end_year::varchar) AS "Period",
        b.type AS "Type",

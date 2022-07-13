@@ -36,7 +36,7 @@ CREATE VIEW {{ schema_geotrek }}.v_infrastructures AS WITH v_infra AS
          AND t.type_id = b.id
          AND e.deleted = FALSE)
 SELECT a.id,
-       i.name AS "Related structure",
+       i.name AS "Structure",
        f.zoning_city AS "City",
        g.zoning_district AS "District",
        {% for lang in MODELTRANSLATION_LANGUAGES %}

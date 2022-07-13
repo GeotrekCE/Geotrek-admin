@@ -2,7 +2,7 @@
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_point AS
 SELECT a.id,
-       b.name AS "Related structure",
+       b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        a.name AS "Name",
@@ -130,7 +130,7 @@ WHERE ST_GEOMETRYTYPE(ST_CollectionExtract(a.geom, 1)) IN ('ST_MultiPoint',
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_polygon AS
 SELECT a.id,
-       b.name AS "Related structure",
+       b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        a.name AS "Name",
@@ -256,7 +256,7 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 3)) != 'MULTIPOLYGON EMPTY'
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_line AS
 SELECT a.id,
-       b.name AS "Related structure",
+       b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        a.name AS "Name",
@@ -384,7 +384,7 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_point AS
 SELECT a.id,
-       b.name AS "Related structure",
+       b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        a.name AS "Name",
@@ -561,7 +561,7 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 1)) != 'MULTIPOINT EMPTY'
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_line AS
 SELECT a.id,
-       b.name AS "Related structure",
+       b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        a.name AS "Name",
@@ -738,7 +738,7 @@ WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_site_polygon AS
 SELECT a.id,
-       b.name AS "Related structure",
+       b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        a.name AS "Name",

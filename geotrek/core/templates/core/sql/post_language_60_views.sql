@@ -18,7 +18,7 @@ AS WITH v_trails AS
      WHERE core_trail.topo_object_id = core_topology.id
          AND core_topology.deleted = FALSE)
 SELECT a.id,
-       d.name AS "Related structure",
+       d.name AS "Structure",
        f.zoning_city AS "City",
        g.zoning_district AS "District",
        a.name AS "Name",
