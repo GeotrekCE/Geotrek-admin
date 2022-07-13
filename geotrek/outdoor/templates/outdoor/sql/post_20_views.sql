@@ -5,28 +5,43 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       a.name AS "Name",
+       {% for lang in MODELTRANSLATIONS %}
+        a.name_{{ lang }} AS "Name {{lang}}",
+       {% endfor %}
        g.site AS "Sites",
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
-       a.ratings_description AS "Ratings description",
+       {% for lang in MODELTRANSLATIONS %}
+        a.ratings_description AS "Ratings description",
+       {% endfor %}
        e.name AS "Type",
-       a.description AS "Description",
-       a.advice AS "Advice",
-       a.gear AS "Gear",
-       a.equipment AS "Equipment",
-       a.accessibility AS "Accessibility",
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.advice AS "Advice",
+        {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.gear_{{ lang }} AS "Gear {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.equipment_{{ lang }} AS "Equipment {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.accessibility AS "Accessibility {{ lang }}",
+       {% endfor %}
        CASE
            WHEN a.height IS NOT NULL THEN concat(a.height, ' m')
            ELSE NULL
        END AS "Height",
        a.duration AS "Duration",
        a.eid AS "External id",
-       CASE
-           WHEN a.published IS FALSE THEN 'No'
-           WHEN a.published IS TRUE THEN 'Yes'
-       END AS "Published",
-
+       {% for lang in MODELTRANSLATIONS %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% endfor %}
        concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
        a.length AS "Length",
        st_length(geom_3d) AS "Length 3d",
@@ -123,9 +138,7 @@ LEFT JOIN
                GROUP BY a.id) b ON a.id = b.id) b ON a.site = b.site) i ON a.id = i.id
 WHERE ST_GEOMETRYTYPE(ST_CollectionExtract(a.geom, 1)) IN ('ST_MultiPoint',
                                                            'ST_Point')
-    AND ST_AsText(ST_CollectionExtract(a.geom, 1)) != 'MULTIPOINT EMPTY'
-   -- AND d.name != 'Pyrénées'
-   ;
+    AND ST_AsText(ST_CollectionExtract(a.geom, 1)) != 'MULTIPOINT EMPTY';
 
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_polygon AS
@@ -133,28 +146,43 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       a.name AS "Name",
+       {% for lang in MODELTRANSLATIONS %}
+        a.name_{{ lang }} AS "Name {{lang}}",
+       {% endfor %}
        g.site AS "Sites",
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
-       a.ratings_description AS "Ratings description",
+       {% for lang in MODELTRANSLATIONS %}
+        a.ratings_description AS "Ratings description",
+       {% endfor %}
        e.name AS "Type",
-       a.description AS "Description",
-       a.advice AS "Advice",
-       a.gear AS "Gear",
-       a.equipment AS "Equipment",
-       a.accessibility AS "Accessibility",
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.advice AS "Advice",
+        {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.gear_{{ lang }} AS "Gear {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.equipment_{{ lang }} AS "Equipment {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.accessibility AS "Accessibility {{ lang }}",
+       {% endfor %}
        CASE
            WHEN a.height IS NOT NULL THEN concat(a.height, ' m')
            ELSE NULL
        END AS "Height",
        a.duration AS "Duration",
        a.eid AS "External id",
-       CASE
-           WHEN a.published IS FALSE THEN 'No'
-           WHEN a.published IS TRUE THEN 'Yes'
-       END AS "Published",
-
+       {% for lang in MODELTRANSLATIONS %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% endfor %}
        concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
        a.length AS "Length",
        st_length(geom_3d) AS "Length 3d",
@@ -167,7 +195,7 @@ SELECT a.id,
        COCANT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       ST_CollectionExtract(a.geom, 3) AS geom
+       ST_CollectionExtract(a.geom, 1) AS geom
 FROM outdoor_course a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
@@ -249,9 +277,7 @@ LEFT JOIN
                JOIN outdoor_practice b ON a.practice_id = b.id
                JOIN outdoor_sector c ON b.sector_id = c.id
                GROUP BY a.id) b ON a.id = b.id) b ON a.site = b.site) i ON a.id = i.id
-WHERE ST_AsText(ST_CollectionExtract(a.geom, 3)) != 'MULTIPOLYGON EMPTY'
-  --  AND d.name != 'Pyrénées' 
-  ;
+WHERE ST_AsText(ST_CollectionExtract(a.geom, 3)) != 'MULTIPOLYGON EMPTY';
 
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_course_line AS
@@ -259,28 +285,43 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       a.name AS "Name",
+       {% for lang in MODELTRANSLATIONS %}
+        a.name_{{ lang }} AS "Name {{lang}}",
+       {% endfor %}
        g.site AS "Sites",
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
-       a.ratings_description AS "Ratings description",
+       {% for lang in MODELTRANSLATIONS %}
+        a.ratings_description AS "Ratings description",
+       {% endfor %}
        e.name AS "Type",
-       a.description AS "Description",
-       a.advice AS "Advice",
-       a.gear AS "Gear",
-       a.equipment AS "Equipment",
-       a.accessibility AS "Accessibility",
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.advice AS "Advice",
+        {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.gear_{{ lang }} AS "Gear {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.equipment_{{ lang }} AS "Equipment {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.accessibility AS "Accessibility {{ lang }}",
+       {% endfor %}
        CASE
            WHEN a.height IS NOT NULL THEN concat(a.height, ' m')
            ELSE NULL
        END AS "Height",
        a.duration AS "Duration",
        a.eid AS "External id",
-       CASE
-           WHEN a.published IS FALSE THEN 'No'
-           WHEN a.published IS TRUE THEN 'Yes'
-       END AS "Published",
-
+       {% for lang in MODELTRANSLATIONS %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% endfor %}
        concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
        a.length AS "Length",
        st_length(geom_3d) AS "Length 3d",
@@ -293,7 +334,7 @@ SELECT a.id,
        COCANT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       ST_CollectionExtract(a.geom, 2) AS geom
+       ST_CollectionExtract(a.geom, 1) AS geom
 FROM outdoor_course a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
@@ -376,7 +417,6 @@ LEFT JOIN
                JOIN outdoor_sector c ON b.sector_id = c.id
                GROUP BY a.id) b ON a.id = b.id) b ON a.site = b.site) i ON a.id = i.id
 WHERE ST_AsText(ST_CollectionExtract(a.geom, 2)) != 'MULTILINESTRING EMPTY'
-   -- AND d.name != 'Pyrénées' 
    ;
 
 
@@ -387,7 +427,9 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       a.name AS "Name",
+       {% for lang in MODELTRANSLATIONS %}
+        a.name AS "Name",
+       {% endfor %}
        n.enfants AS "Children",
        o.parents AS "Parents",
        p.filieres AS "Sectors",
@@ -401,14 +443,26 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       description_teaser AS "Description teaser",
-       a.ambiance AS "Ambiance",
-       a.description AS "Description",
-       a.advice AS "Advice",
-       a.accessibility AS "Accessibility",
-       period AS "Période",
-       orientation AS "Orientation",
-       wind AS "Wind",
+       {% for lang in MODELTRANSLATIONS %}
+        description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.ambiance_{{ lang }} AS "Ambiance {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.advice_{{ lang }} AS "Advice {{ lang }}",
+       {% enfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
+       {% enfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.period_{{ lang }} AS "Period {{ lang }}",
+       {% endfor %}
+       a.orientation AS "Orientation",
+       a.wind AS "Wind",
        k.etiquettes AS "Label",
        g.lieux_renseignement AS "Information desk",
        i.url AS "Web link",
@@ -416,10 +470,12 @@ SELECT a.id,
        h.name AS "Source",
        l.gestionnaire AS "Manager",
        a.eid AS "External ID",
-       CASE
-           WHEN a.published IS FALSE THEN 'No'
-           WHEN a.published IS TRUE THEN 'Yes'
-       END AS "Published",
+       {% for lang in MODELTRANSLATIONS %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% enfor %}
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
@@ -564,7 +620,9 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       a.name AS "Name",
+       {% for lang in MODELTRANSLATIONS %}
+        a.name AS "Name",
+       {% endfor %}
        n.enfants AS "Children",
        o.parents AS "Parents",
        p.filieres AS "Sectors",
@@ -578,14 +636,26 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       description_teaser AS "Description teaser",
-       a.ambiance AS "Ambiance",
-       a.description AS "Description",
-       a.advice AS "Advice",
-       a.accessibility AS "Accessibility",
-       period AS "Période",
-       orientation AS "Orientation",
-       wind AS "Wind",
+       {% for lang in MODELTRANSLATIONS %}
+        description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.ambiance_{{ lang }} AS "Ambiance {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.advice_{{ lang }} AS "Advice {{ lang }}",
+       {% enfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
+       {% enfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.period_{{ lang }} AS "Period {{ lang }}",
+       {% endfor %}
+       a.orientation AS "Orientation",
+       a.wind AS "Wind",
        k.etiquettes AS "Label",
        g.lieux_renseignement AS "Information desk",
        i.url AS "Web link",
@@ -593,15 +663,17 @@ SELECT a.id,
        h.name AS "Source",
        l.gestionnaire AS "Manager",
        a.eid AS "External ID",
-       CASE
-           WHEN a.published IS FALSE THEN 'No'
-           WHEN a.published IS TRUE THEN 'Yes'
-       END AS "Published",
+       {% for lang in MODELTRANSLATIONS %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% enfor %}
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       ST_CollectionExtract(a.geom, 2) AS geom
+       ST_CollectionExtract(a.geom, 1) AS geom
 FROM public.outdoor_site a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
@@ -741,7 +813,9 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       a.name AS "Name",
+       {% for lang in MODELTRANSLATIONS %}
+        a.name AS "Name",
+       {% endfor %}
        n.enfants AS "Children",
        o.parents AS "Parents",
        p.filieres AS "Sectors",
@@ -755,14 +829,26 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       description_teaser AS "Description teaser",
-       a.ambiance AS "Ambiance",
-       a.description AS "Description",
-       a.advice AS "Advice",
-       a.accessibility AS "Accessibility",
-       period AS "Période",
-       orientation AS "Orientation",
-       wind AS "Wind",
+       {% for lang in MODELTRANSLATIONS %}
+        description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.ambiance_{{ lang }} AS "Ambiance {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.advice_{{ lang }} AS "Advice {{ lang }}",
+       {% enfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
+       {% enfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.period_{{ lang }} AS "Period {{ lang }}",
+       {% endfor %}
+       a.orientation AS "Orientation",
+       a.wind AS "Wind",
        k.etiquettes AS "Label",
        g.lieux_renseignement AS "Information desk",
        i.url AS "Web link",
@@ -770,15 +856,17 @@ SELECT a.id,
        h.name AS "Source",
        l.gestionnaire AS "Manager",
        a.eid AS "External ID",
-       CASE
-           WHEN a.published IS FALSE THEN 'No'
-           WHEN a.published IS TRUE THEN 'Yes'
-       END AS "Published",
+       {% for lang in MODELTRANSLATIONS %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% enfor %}
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       ST_CollectionExtract(a.geom, 3) AS geom
+       ST_CollectionExtract(a.geom, 1) AS geom
 FROM public.outdoor_site a
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
