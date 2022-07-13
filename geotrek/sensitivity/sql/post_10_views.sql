@@ -1,11 +1,15 @@
 -- Zones sensibles
 
-CREATE VIEW {{ schema_geotrek }}.v_sensitivearea_qgis AS
+CREATE VIEW {{ schema_geotrek }}.v_sensitivearea AS
 SELECT a.id,
-       d.name AS "Structure",
+       {% for lang in MODELTRANSLATIONS %}
+        d.name AS "Structure",
+       {% endfor %}
        f.zoning_city AS "City",
        g.zoning_district AS "District",
-       b.name AS "Name",
+       {% for lang in MODELTRANSLATIONS %}
+        b.name AS "Name",
+       {% endfor %}
        CASE
            WHEN h.category = 2 THEN 'Regulatory'
            WHEN h.category = 1 THEN 'Specie'
@@ -47,8 +51,12 @@ SELECT a.id,
                                                                          WHEN h.period12 IS TRUE THEN 'December'
                                                                      END) AS "Period",
        c.pratiques_sportives AS "Sport practices",
-       b.url AS "URL",
-       a.description AS "Description",
+       {% for lang in MODELTRANSLATIONS %}
+        b.url AS "URL",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.description AS "Description",
+       {% endfor %}
        a.contact AS "Contact",
        CASE
            WHEN a.published IS FALSE THEN 'No'
