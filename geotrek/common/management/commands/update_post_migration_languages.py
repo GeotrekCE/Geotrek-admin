@@ -1,6 +1,5 @@
 import logging
 
-from django.apps import apps
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Q
@@ -8,7 +7,6 @@ from django.utils.translation import gettext as _
 from django.utils import translation
 
 from geotrek.common.models import TargetPortal, Label
-from geotrek.common.utils.postgresql import move_models_to_schemas, load_sql_files
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +39,3 @@ class Command(BaseCommand):
                                                         'subjected to regulations which must be known '
                                                         'by all visitors.')})
         self.stdout.write("Done.")
-        for app in apps.get_app_configs():
-            move_models_to_schemas(app)
-            load_sql_files(app, 'post_language')
