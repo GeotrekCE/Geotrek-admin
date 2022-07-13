@@ -7,26 +7,36 @@ SELECT a.id,
        c.name AS "Structure",
        f.zoning_city AS "City",
        g.zoning_district AS "District",
-       a.name AS "Name",
+       {% for lang in MODELTRANSLATIONS %}
+        a.name_{{ lang }} AS "Name {{ lang }}",
+       {% endfor %}
        b.label AS "Category",
        --k.labels AS 'type1_label',
        --m.labels AS SELECT * FROM m.type2_label,
-       a.description AS "Description",
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
        p.labels AS "Themes",
-       a.description_teaser AS "Description teaser",
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
+       {% endfor %}
        a.contact AS "Contact",
        a.email AS "Email",
        a.website AS "Website",
-       a.practical_info AS "Practical info",
+       {% for lang in MODELTRANSLATIONS %}
+        a.practical_info_{{ lang }} AS "Practical info {{ lang }}",
+       {% enfor %}
        CASE
            WHEN a.approved IS TRUE THEN 'Yes'
            ELSE 'No'
        END AS "Approved",
        o.name AS "Source",
-       CASE
-           WHEN a.published IS FALSE THEN 'No'
-           WHEN a.published IS TRUE THEN 'Yes'
-       END AS "Published",
+       {% for lang in MODELTRANSLATIONS %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% endfor %}
        a.eid AS "External ID",
        d.name AS "Reservation system",
        date_insert AS "Insertion date",
