@@ -7,12 +7,18 @@ SELECT a.id,
        c.name AS "Structure",
        f.zoning_city AS "City",
        g.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
-       b.label AS "Category",
-       --k.labels AS 'type1_label',
-       --m.labels AS SELECT * FROM m.type2_label,
+       {% for lang in MODELTRANSLATIONS %}
+        b.label_{{ lang }} AS "Category {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+           k.type1_label_{{ lang }} AS "Label's name type1 {{ lang }}",
+           k.labels_{{ lang }} AS "Labels type1 {{ lang }}",
+           m.type2_label_{{ lang }} AS "Label's name type2 {{ lang }}",
+           m.labels_{{ lang }} AS "Labels type2 {{ lang }}",
+       {% endfor %}
        {% for lang in MODELTRANSLATIONS %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
@@ -25,7 +31,7 @@ SELECT a.id,
        a.website AS "Website",
        {% for lang in MODELTRANSLATIONS %}
         a.practical_info_{{ lang }} AS "Practical info {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        CASE
            WHEN a.approved IS TRUE THEN 'Yes'
            ELSE 'No'
@@ -107,13 +113,6 @@ LEFT JOIN
           JOIN tourism_touristiccontent_type2 e ON e.touristiccontent_id = c.id
           AND e.touristiccontenttype2_id = a.id) b ON a.id = b.id) m ON a.id = m.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (label), ', ', '*') pratiques_sportives,
-            c.id
-     FROM common_theme a
-     JOIN tourism_touristiccontent_themes b ON a.id = b.theme_id
-     JOIN tourism_touristiccontent c ON c.id = b.touristiccontent_id
-     GROUP BY c.id) n ON a.id = n.id
-LEFT JOIN
     (SELECT a.name,
             c.id
      FROM common_recordsource a
@@ -152,31 +151,51 @@ DROP VIEW IF EXISTS v_touristicevent_qgis;
 
 CREATE OR REPLACE VIEW v_touristicevent_qgis AS
 SELECT a.id,
-       c.name AS "Structure liée",
-       f.zoning_city AS "Commune",
-       g.zoning_district AS "Zone",
-       a.name AS "Nom",
+       c.name AS "Structure",
+       f.zoning_city AS "City",
+       g.zoning_district AS "District",
+       {% for lang in MODELTRANSLATIONS %}
+        a.name_{{ lang }} AS "Name {{ lang }}",
+       {% endfor %}
        b.type AS "Type",
        a.contact AS "Contact",
-       a.email AS "Courriel",
-       a.website AS "Site web",
-       a.practical_info AS "Informations pratiques",
-       a.description AS "Description",
-       h.labels AS "Thèmes",
-       a.begin_date AS "Date de début",
-       a.end_date AS "Date de fin",
-       concat(a.duration, ' jours') AS "Durée",
-       a.booking AS "Réservation",
-       CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       a.meeting_point AS "Lieu",
-       a.organizer AS "Organisateur",
-       a.accessibility AS "Accessibilité",
-       a.participant_number AS "Nombre de participants",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+       a.email AS "Email",
+       a.website AS "Website",
+       {% for lang in MODELTRANSLATIONS %}
+        a.practical_info_{{ lang }} AS "Practical info {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
+       {% endfor %}
+       h.labels AS "Themes",
+       a.begin_date AS "Begin date",
+       a.end_date AS "End date",
+       concat(a.duration, ' days') AS "Duration",
+       {% for lang in MODELTRANSLATIONS %}
+        a.booking_{{ lang }} AS "Booking {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% endfor %}
+       {% for lang in MODELTRANSLATIONS %}
+        a.meeting_point_{{ lang }} AS "Meeting point",
+       {% endfor %}
+       a.organizer AS "Organizer",
+       {% for lang in MODELTRANSLATIONS %}
+        a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
+       {% endfor %}
+       a.participant_number AS "Number of participants",
+       {% for lang in MODELTRANSLATIONS %}
+        a.target_audience_{{ lang }} AS "Target audience {{ lang }}"
+       {% endfor %}
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        a.geom
 FROM public.tourism_touristicevent a
 LEFT JOIN public.tourism_touristiceventtype b ON a.type_id = b.id
