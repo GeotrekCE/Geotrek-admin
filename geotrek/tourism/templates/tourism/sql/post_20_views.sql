@@ -10,26 +10,26 @@ SELECT a.id,
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         b.label_{{ lang }} AS "Category {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            k.type1_label_{{ lang }} AS "Label's name type1 {{ lang }}",
            k.labels_{{ lang }} AS "Labels type1 {{ lang }}",
            m.type2_label_{{ lang }} AS "Label's name type2 {{ lang }}",
            m.labels_{{ lang }} AS "Labels type2 {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
        p.labels AS "Themes",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
        {% endfor %}
        a.contact AS "Contact",
        a.email AS "Email",
        a.website AS "Website",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.practical_info_{{ lang }} AS "Practical info {{ lang }}",
        {% endfor %}
        CASE
@@ -37,7 +37,7 @@ SELECT a.id,
            ELSE 'No'
        END AS "Approved",
        o.name AS "Source",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
@@ -52,29 +52,34 @@ FROM tourism_touristiccontent a
 LEFT JOIN tourism_touristiccontentcategory b ON a.category_id = b.id
 LEFT JOIN
     (SELECT DISTINCT ON (a.id) a.id,
-                        a.labels,
-                        b.type1_label,
-                        b.type2_label
+                        {% for lang in MODELTRANSLATION_LANGUAGES %}
+                            b.type1_label_{{ lang }},
+                            a.labels_{{ lang }}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
      FROM
          (WITH labels AS
-              (SELECT a.label,
-                      c.id,
-                      b.type1_label,
-                      b.type2_label
+              (SELECT
+                      {% for lang in MODELTRANSLATION_LANGUAGES %}
+                        b.type1_label_{{ lang }},
+                        a.label_{{ lang }},
+                      {% endfor %}
+                      c.id
                FROM tourism_touristiccontenttype a
                JOIN tourism_touristiccontentcategory b ON a.category_id = b.id
                JOIN tourism_touristiccontent c ON b.id = c.category_id
                AND b.id = c.category_id
                JOIN tourism_touristiccontent_type1 d ON d.touristiccontent_id = c.id
-               AND d.touristiccontenttype1_id = a.id) SELECT array_to_string(ARRAY_AGG (label), ', ', '*') labels,
+               AND d.touristiccontenttype1_id = a.id) SELECT {% for lang in MODELTRANSLATION_LANGUAGES %}array_to_string(ARRAY_AGG (label_{{ lang }}), ', ', '*') labels_{{ lang }},{% endfor %}
                                                              id
           FROM labels
           GROUP BY id) a
      INNER JOIN
-         (SELECT a.label,
-                 c.id,
-                 b.type1_label,
-                 b.type2_label
+         (SELECT
+                 {% for lang in MODELTRANSLATION_LANGUAGES %}
+                    a.label_{{ lang }},
+                    b.type1_label_{{ lang }},
+                 {% endfor %}
+                 c.id
           FROM tourism_touristiccontenttype a
           JOIN tourism_touristiccontentcategory b ON a.category_id = b.id
           JOIN tourism_touristiccontent c ON b.id = c.category_id
@@ -83,29 +88,34 @@ LEFT JOIN
           AND d.touristiccontenttype1_id = a.id) b ON a.id = b.id) k ON a.id = k.id
 LEFT JOIN
     (SELECT DISTINCT ON (a.id) a.id,
-                        a.labels,
-                        b.type1_label,
-                        b.type2_label
+                        {% for lang in MODELTRANSLATION_LANGUAGES %}
+                            b.type2_label_{{ lang }},
+                            a.labels_{{ lang }}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
      FROM
          (WITH labels AS
-              (SELECT a.label,
-                      c.id,
-                      b.type1_label,
-                      b.type2_label
+              (SELECT
+                      {% for lang in MODELTRANSLATION_LANGUAGES %}
+                            b.type2_label_{{ lang }},
+                            a.label_{{ lang }},
+                      {% endfor %}
+                      c.id
                FROM tourism_touristiccontenttype a
                JOIN tourism_touristiccontentcategory b ON a.category_id = b.id
                JOIN tourism_touristiccontent c ON b.id = c.category_id
                AND b.id = c.category_id
                JOIN tourism_touristiccontent_type2 e ON e.touristiccontent_id = c.id
-               AND e.touristiccontenttype2_id = a.id) SELECT array_to_string(ARRAY_AGG (label), ', ', '*') labels,
+               AND e.touristiccontenttype2_id = a.id) SELECT {% for lang in MODELTRANSLATION_LANGUAGES %}array_to_string(ARRAY_AGG (label_{{ lang }}), ', ', '*') labels_{{ lang }},{% endfor %}
                                                              id
           FROM labels
           GROUP BY id) a
      INNER JOIN
-         (SELECT a.label,
-                 c.id,
-                 b.type1_label,
-                 b.type2_label
+         (SELECT
+                 {% for lang in MODELTRANSLATION_LANGUAGES %}
+                     b.type2_label_{{ lang }},
+                     a.label_{{ lang }},
+                 {% endfor %}
+                 c.id
           FROM tourism_touristiccontenttype a
           JOIN tourism_touristiccontentcategory b ON a.category_id = b.id
           JOIN tourism_touristiccontent c ON b.id = c.category_id
@@ -146,53 +156,50 @@ WHERE deleted IS FALSE
 -- Évènements touristiques
 
 
-DROP VIEW IF EXISTS v_touristicevent_qgis;
-
-
-CREATE OR REPLACE VIEW v_touristicevent_qgis AS
+CREATE OR REPLACE VIEW v_touristicevents AS
 SELECT a.id,
        c.name AS "Structure",
        f.zoning_city AS "City",
        g.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
        b.type AS "Type",
        a.contact AS "Contact",
        a.email AS "Email",
        a.website AS "Website",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.practical_info_{{ lang }} AS "Practical info {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
        {% endfor %}
        h.labels AS "Themes",
        a.begin_date AS "Begin date",
        a.end_date AS "End date",
        concat(a.duration, ' days') AS "Duration",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.booking_{{ lang }} AS "Booking {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
            END AS "Published {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
-        a.meeting_point_{{ lang }} AS "Meeting point",
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+        a.meeting_point_{{ lang }} AS "Meeting point {{ lang }}",
        {% endfor %}
        a.organizer AS "Organizer",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% endfor %}
        a.participant_number AS "Number of participants",
-       {% for lang in MODELTRANSLATIONS %}
-        a.target_audience_{{ lang }} AS "Target audience {{ lang }}"
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+        a.target_audience_{{ lang }} AS "Target audience {{ lang }}",
        {% endfor %}
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",

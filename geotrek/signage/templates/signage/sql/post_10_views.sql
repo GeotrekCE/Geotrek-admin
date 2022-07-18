@@ -2,15 +2,15 @@
 
 CREATE VIEW {{ schema_geotrek }}.v_signages AS WITH v_signage_tmp AS
     (SELECT e.id,
-            {% for lang in MODELTRANSLATIONS %}
+            {% for lang in MODELTRANSLATION_LANGUAGES %}
                 t.published_{{ lang }},
             {% endfor %}
             t.publication_date,
             t.topo_object_id,
-            {% for lang in MODELTRANSLATIONS %}
+            {% for lang in MODELTRANSLATION_LANGUAGES %}
                 t.name_{{ lang }},
             {% endfor %}
-            {% for lang in MODELTRANSLATIONS %}
+            {% for lang in MODELTRANSLATION_LANGUAGES %}
                 t.description_{{ lang }},
             {% endfor %}
             t.implantation_year,
@@ -34,21 +34,21 @@ SELECT a.id,
        e.name AS "Structure",
        f.zoning_city AS "City",
        g.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
-        a.name AS "Name",
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+        a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
        a.code AS "Code",
        b.label AS "Type",
        c.label AS "State",
-       {% for lang in MODELTRANSLATIONS %}
-        a.description AS "Description",
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
        a.implantation_year AS "Implantation year",
        a.printed_elevation AS "Printed elevation",
        concat('X : ', st_x(st_transform(a.geom,{{ API_SRID }}))::int,' / Y : ',st_y(st_transform(a.geom,{{ API_SRID }}))::int,' ({{ spatial_reference }})')AS "Coordinates",
        d.label AS "Sealing",
        h.organism AS "Manager",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'

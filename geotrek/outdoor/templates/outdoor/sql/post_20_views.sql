@@ -5,29 +5,29 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name_{{ lang }} AS "Name {{lang}}",
        {% endfor %}
        g.site AS "Sites",
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.ratings_description AS "Ratings description",
        {% endfor %}
        e.name AS "Type",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice AS "Advice",
         {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.gear_{{ lang }} AS "Gear {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.equipment_{{ lang }} AS "Equipment {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility AS "Accessibility {{ lang }}",
        {% endfor %}
        CASE
@@ -36,7 +36,7 @@ SELECT a.id,
        END AS "Height",
        a.duration AS "Duration",
        a.eid AS "External id",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
@@ -146,29 +146,29 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name_{{ lang }} AS "Name {{lang}}",
        {% endfor %}
        g.site AS "Sites",
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.ratings_description AS "Ratings description",
        {% endfor %}
        e.name AS "Type",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice AS "Advice",
         {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.gear_{{ lang }} AS "Gear {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.equipment_{{ lang }} AS "Equipment {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility AS "Accessibility {{ lang }}",
        {% endfor %}
        CASE
@@ -177,7 +177,7 @@ SELECT a.id,
        END AS "Height",
        a.duration AS "Duration",
        a.eid AS "External id",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
@@ -285,29 +285,29 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name_{{ lang }} AS "Name {{lang}}",
        {% endfor %}
        g.site AS "Sites",
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.ratings_description AS "Ratings description",
        {% endfor %}
        e.name AS "Type",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice AS "Advice",
         {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.gear_{{ lang }} AS "Gear {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.equipment_{{ lang }} AS "Equipment {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility AS "Accessibility {{ lang }}",
        {% endfor %}
        CASE
@@ -316,7 +316,7 @@ SELECT a.id,
        END AS "Height",
        a.duration AS "Duration",
        a.eid AS "External id",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
@@ -427,7 +427,7 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name AS "Name",
        {% endfor %}
        n.enfants AS "Children",
@@ -443,22 +443,22 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.ambiance_{{ lang }} AS "Ambiance {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice_{{ lang }} AS "Advice {{ lang }}",
        {% enfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% enfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.period_{{ lang }} AS "Period {{ lang }}",
        {% endfor %}
        a.orientation AS "Orientation",
@@ -470,7 +470,7 @@ SELECT a.id,
        h.name AS "Source",
        l.gestionnaire AS "Manager",
        a.eid AS "External ID",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
@@ -620,7 +620,7 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name AS "Name",
        {% endfor %}
        n.enfants AS "Children",
@@ -636,22 +636,22 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.ambiance_{{ lang }} AS "Ambiance {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice_{{ lang }} AS "Advice {{ lang }}",
        {% enfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% enfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.period_{{ lang }} AS "Period {{ lang }}",
        {% endfor %}
        a.orientation AS "Orientation",
@@ -663,7 +663,7 @@ SELECT a.id,
        h.name AS "Source",
        l.gestionnaire AS "Manager",
        a.eid AS "External ID",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
@@ -813,7 +813,7 @@ SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
        d.zoning_district AS "District",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name AS "Name",
        {% endfor %}
        n.enfants AS "Children",
@@ -829,22 +829,22 @@ SELECT a.id,
        m."Cotation globale",
        m."Engagement / éloignement",
        e.name AS "Type",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.ambiance_{{ lang }} AS "Ambiance {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice_{{ lang }} AS "Advice {{ lang }}",
        {% enfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% enfor %}
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.period_{{ lang }} AS "Period {{ lang }}",
        {% endfor %}
        a.orientation AS "Orientation",
@@ -856,7 +856,7 @@ SELECT a.id,
        h.name AS "Source",
        l.gestionnaire AS "Manager",
        a.eid AS "External ID",
-       {% for lang in MODELTRANSLATIONS %}
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
