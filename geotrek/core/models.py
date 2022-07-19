@@ -951,6 +951,7 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
+    certifications_verbose_name = _("Certifications")
     geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
@@ -1034,6 +1035,8 @@ class CertificationTrail(StructureOrNoneRelated):
                                              verbose_name=_("Certification status"))
 
     class Meta:
+        verbose_name = _("Certification")
+        verbose_name_plural = _("Certifications")
         unique_together = ['trail', 'certification_label', 'certification_status']
 
     def __str__(self):
