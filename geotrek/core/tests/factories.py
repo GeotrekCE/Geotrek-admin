@@ -188,14 +188,14 @@ class CertificationLabelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.CertificationLabel
 
-    label = factory.Sequence(lambda n: "Certification status %s" % n)
+    label = factory.Sequence(lambda n: "My certification label %s" % n)
 
 
 class CertificationStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.CertificationStatus
 
-    label = factory.Sequence(lambda n: "Certification label %s" % n)
+    label = factory.Sequence(lambda n: "My certification status %s" % n)
 
 
 class CertificationTrailFactory(factory.django.DjangoModelFactory):
