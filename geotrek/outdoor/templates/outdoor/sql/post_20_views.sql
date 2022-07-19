@@ -12,15 +12,15 @@ SELECT a.id,
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.ratings_description AS "Ratings description",
+        a.ratings_description_{{ lang }} AS "Ratings description {{ lang }}",
        {% endfor %}
        e.name AS "Type",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.advice AS "Advice",
-        {% endfor %}
+        a.advice_{{ lang }} AS "Advice {{ lang }}",
+       {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.gear_{{ lang }} AS "Gear {{ lang }}",
        {% endfor %}
@@ -49,9 +49,8 @@ SELECT a.id,
            WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
            WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
        END AS "Slope",
-       a.min_elevation
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
-       COCANT (a.max_elevation, 'm') AS "Maximum elevation",
+       CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 1) AS geom
@@ -153,15 +152,15 @@ SELECT a.id,
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.ratings_description AS "Ratings description",
+        a.ratings_description_{{ lang }} AS "Ratings description {{ lang }}",
        {% endfor %}
        e.name AS "Type",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.advice AS "Advice",
-        {% endfor %}
+        a.advice_{{ lang }} AS "Advice {{ lang }}",
+       {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.gear_{{ lang }} AS "Gear {{ lang }}",
        {% endfor %}
@@ -190,9 +189,8 @@ SELECT a.id,
            WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
            WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
        END AS "Slope",
-       a.min_elevation
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
-       COCANT (a.max_elevation, 'm') AS "Maximum elevation",
+       CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 1) AS geom
@@ -292,14 +290,14 @@ SELECT a.id,
        i.filieres AS "Sectors",
        h.pratique AS "Practice",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.ratings_description AS "Ratings description",
+        a.ratings_description_{{ lang }} AS "Ratings description {{ lang }}",
        {% endfor %}
        e.name AS "Type",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.advice AS "Advice",
+        a.advice_{{ lang }} AS "Advice {{ lang }}",
         {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.gear_{{ lang }} AS "Gear {{ lang }}",
@@ -329,9 +327,8 @@ SELECT a.id,
            WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
            WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
        END AS "Slope",
-       a.min_elevation
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
-       COCANT (a.max_elevation, 'm') AS "Maximum elevation",
+       CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
        ST_CollectionExtract(a.geom, 1) AS geom
@@ -428,7 +425,7 @@ SELECT a.id,
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.name AS "Name",
+        a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
        n.enfants AS "Children",
        o.parents AS "Parents",
@@ -621,7 +618,7 @@ SELECT a.id,
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.name AS "Name",
+        a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
        n.enfants AS "Children",
        o.parents AS "Parents",
@@ -814,7 +811,7 @@ SELECT a.id,
        c.zoning_city AS "City",
        d.zoning_district AS "District",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.name AS "Name",
+        a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
        n.enfants AS "Children",
        o.parents AS "Parents",

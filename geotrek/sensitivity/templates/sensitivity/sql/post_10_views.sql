@@ -2,13 +2,11 @@
 
 CREATE VIEW {{ schema_geotrek }}.v_sensitivearea AS
 SELECT a.id,
-       {% for lang in MODELTRANSLATION_LANGUAGES %}
-        d.name AS "Structure",
-       {% endfor %}
+       d.name AS "Structure",
        f.zoning_city AS "City",
        g.zoning_district AS "District",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        b.name AS "Name",
+        b.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
        CASE
            WHEN h.category = 2 THEN 'Regulatory'
@@ -52,10 +50,10 @@ SELECT a.id,
                                                                      END) AS "Period",
        c.pratiques_sportives AS "Sport practices",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        b.url AS "URL",
+        b.url_{{ lang }} AS "URL {{ lang }}",
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
-        a.description AS "Description",
+        a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
        a.contact AS "Contact",
        CASE
