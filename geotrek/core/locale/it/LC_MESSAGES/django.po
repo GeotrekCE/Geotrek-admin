@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-27 08:58+0000\n"
+"POT-Creation-Date: 2022-07-19 14:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -224,6 +224,9 @@ msgstr ""
 msgid "Certification statuses"
 msgstr ""
 
+msgid "Certification"
+msgstr ""
+
 msgid "Management"
 msgstr ""
 
@@ -288,7 +291,16 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-msgid "path"
+msgid "No certification"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "This field is required."
 msgstr ""
 
 msgid ""
@@ -298,6 +310,9 @@ msgstr ""
 msgid ""
 "Access to the requested resource is restricted by structure. You have been "
 "redirected."
+msgstr ""
+
+msgid "path"
 msgstr ""
 
 msgid "You should select two paths"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-27 08:56+0000\n"
+"POT-Creation-Date: 2022-07-19 14:31+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -72,7 +72,7 @@ msgid "Geometry overlaps another."
 msgstr "La géométrie en superpose une autre"
 
 msgid "Certifications"
-msgstr "Certifications"
+msgstr "Labellisations"
 
 msgid "Validity"
 msgstr "Validité"
@@ -216,16 +216,19 @@ msgid "Network"
 msgstr "Réseau"
 
 msgid "Certification label"
-msgstr "Libellé de certification"
+msgstr "Labellisation"
 
 msgid "Certification labels"
-msgstr "Libellés de certification"
+msgstr "Labellisations"
 
 msgid "Certification status"
-msgstr "Statut de certification"
+msgstr "Statut de labellisation"
 
 msgid "Certification statuses"
-msgstr "Statuts de certification"
+msgstr "Statuts de labellisation"
+
+msgid "Certification"
+msgstr "Labellisation"
 
 msgid "Management"
 msgstr "Gestion"
@@ -293,8 +296,8 @@ msgstr "Fusionner les tronçons"
 msgid "Cancel"
 msgstr "Annuler"
 
-msgid "path"
-msgstr "tronçon"
+msgid "No certification"
+msgstr "Aucune labellisation"
 
 msgid ""
 "Access to the requested resource is restricted. You have been redirected."
@@ -306,6 +309,9 @@ msgid ""
 msgstr ""
 "L'accès à cette ressource est restreint selon la structure. Vous avez été "
 "redirigé."
+
+msgid "path"
+msgstr "tronçon"
 
 msgid "You should select two paths"
 msgstr "Vous devez sélectionner 2 tronçons"
