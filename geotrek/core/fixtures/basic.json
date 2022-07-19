@@ -197,11 +197,43 @@
         }
     },
     {
+        "model": "core.certificationlabel",
+        "pk": 2,
+        "fields": {
+            "structure": null,
+            "label": "PDESI"
+        }
+    },
+    {
+        "model": "core.certificationlabel",
+        "pk": 3,
+        "fields": {
+            "structure": null,
+            "label": "RLESI"
+        }
+    },
+    {
+        "model": "core.certificationlabel",
+        "pk": 4,
+        "fields": {
+            "structure": null,
+            "label": "PR"
+        }
+    },
+    {
+        "model": "core.certificationlabel",
+        "pk": 5,
+        "fields": {
+            "structure": null,
+            "label": "VTT-FFC"
+        }
+    },
+    {
         "model": "core.certificationstatus",
         "pk": 1,
         "fields": {
             "structure": null,
-            "label": "Souhaitée"
+            "label": "Constitution du dossier"
         }
     },
     {
@@ -209,7 +241,7 @@
         "pk": 2,
         "fields": {
             "structure": null,
-            "label": "Validée"
+            "label": "En cours d'instruction"
         }
     },
     {
@@ -217,7 +249,15 @@
         "pk": 3,
         "fields": {
             "structure": null,
-            "label": "En cours"
+            "label": "Validée"
+        }
+    },
+    {
+        "model": "core.certificationstatus",
+        "pk": 4,
+        "fields": {
+            "structure": null,
+            "label": "Rejetée"
         }
     }
 ]
