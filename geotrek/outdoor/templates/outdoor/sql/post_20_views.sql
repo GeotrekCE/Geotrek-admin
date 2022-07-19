@@ -454,10 +454,10 @@ SELECT a.id,
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice_{{ lang }} AS "Advice {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.period_{{ lang }} AS "Period {{ lang }}",
        {% endfor %}
@@ -475,7 +475,7 @@ SELECT a.id,
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
            END AS "Published {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
@@ -647,10 +647,10 @@ SELECT a.id,
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice_{{ lang }} AS "Advice {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.period_{{ lang }} AS "Period {{ lang }}",
        {% endfor %}
@@ -668,7 +668,7 @@ SELECT a.id,
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
            END AS "Published {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
@@ -840,10 +840,10 @@ SELECT a.id,
        {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.advice_{{ lang }} AS "Advice {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.period_{{ lang }} AS "Period {{ lang }}",
        {% endfor %}
@@ -861,7 +861,7 @@ SELECT a.id,
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
            END AS "Published {{ lang }}",
-       {% enfor %}
+       {% endfor %}
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
