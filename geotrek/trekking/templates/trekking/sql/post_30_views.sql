@@ -45,7 +45,9 @@ CREATE VIEW {{ schema_geotrek }}.v_treks AS WITH v_treks AS
             CONCAT (e.min_elevation, 'm') AS min_elevation,
             CONCAT (e.max_elevation, 'm') AS max_elevation,
             i.reservation_id,
-            i.reservation_system_id
+            i.reservation_system_id,
+            e.date_insert,
+            e.date_update
      FROM trekking_trek i,
           core_topology e
      WHERE i.topo_object_id = e.id
@@ -140,6 +142,8 @@ SELECT a.id,
             WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
            END AS "Published {{ lang }}",
        {% endfor %}
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        a.geom
 FROM v_treks a
 LEFT JOIN trekking_difficultylevel b ON a.difficulty_id = b.id
@@ -218,33 +222,45 @@ CREATE VIEW {{ schema_geotrek }}.v_pois AS WITH v_poi AS
     (SELECT e.geom,
             e.id,
             i.topo_object_id,
-            i.name,
-            i.description,
+            {% for lang in MODELTRANSLATION_LANGUAGES %}
+                i.name_{{ lang }},
+                i.description_{{ lang }},
+                i.published_{{ lang }},
+            {% endfor %}
             i.type_id,
-            i.published,
             i.publication_date,
             i.structure_id,
             i.review,
             i.eid,
-            CONCAT ('Min: ', e.min_elevation, ' m') AS altitude
+            CONCAT (e.min_elevation, ' m') AS elevation,
+            e.date_insert,
+            e.date_update
      FROM trekking_poi i,
           core_topology e
      WHERE i.topo_object_id = e.id
          AND e.deleted = FALSE)
 SELECT a.id,
-       c.name AS "Structure liée",
-       f.zoning_city AS "Commune",
-       g.zoning_district AS "Zone",
-       a.name AS "Nom",
+       c.name AS "Structure",
+       f.zoning_city AS "City",
+       g.zoning_district AS "District",
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+        a.name_{{ lang }} AS "Name {{ lang }}",
+       {% endfor %}
        b.label AS "Type",
-       a.description AS "Description",
-       a.eid AS "ID externe",
-       a.altitude AS "Altitude",
-       CASE
-           WHEN a.published IS FALSE THEN 'Non'
-           WHEN a.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       a.publication_date AS "Date d'insertion",
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+        a.description_{{ lang }} AS "Description {{ lang }}",
+       {% endfor %}
+       a.eid AS "External ID",
+       a.elevation AS "Elevation",
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+           CASE
+               WHEN a.published_{{ lang }} IS FALSE THEN 'No'
+               WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
+           END AS "Published {{ lang }}",
+       {% endfor %}
+       a.publication_date AS "Publication date",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        a.geom
 FROM v_poi a
 LEFT JOIN trekking_poitype b ON a.type_id = b.id
@@ -254,8 +270,7 @@ LEFT JOIN
             a.id
      FROM
          (SELECT e.geom,
-                 e.id,
-                 CONCAT ('Min: ', e.min_elevation, ' m') AS altitude
+                 e.id
           FROM trekking_poi i,
                core_topology e
           WHERE i.topo_object_id = e.id
@@ -267,8 +282,7 @@ LEFT JOIN
             a.id
      FROM
          (SELECT e.geom,
-                 e.id,
-                 CONCAT ('Min: ', e.min_elevation, ' m') AS altitude
+                 e.id
           FROM trekking_poi i,
                core_topology e
           WHERE i.topo_object_id = e.id
@@ -279,17 +293,14 @@ LEFT JOIN
 
 --Services
 
-DROP VIEW IF EXISTS v_services_qgis;
-
-
-CREATE OR REPLACE VIEW v_services_qgis AS WITH v_services AS
+CREATE OR REPLACE VIEW v_services AS WITH v_services AS
     (SELECT e.geom,
             e.id,
             i.topo_object_id,
             i.type_id,
             i.structure_id,
             i.eid,
-            CONCAT ('Min: ', e.min_elevation, ' m') AS altitude,
+            CONCAT (e.min_elevation, ' m') AS elevation,
             e.date_insert,
             e.date_update
      FROM trekking_service i,
@@ -297,18 +308,18 @@ CREATE OR REPLACE VIEW v_services_qgis AS WITH v_services AS
      WHERE i.topo_object_id = e.id
          AND e.deleted = FALSE)
 SELECT a.id,
-       c.name AS "Structure liée",
-       f.zoning_city AS "Commune",
-       g.zoning_district AS "Zone",
+       c.name AS "Structure",
+       f.zoning_city AS "City",
+       g.zoning_district AS "District",
        b.name AS "Type",
-       a.eid AS "ID externe",
-       a.altitude AS "Altitude",
+       a.eid AS "External ID",
+       a.elevation AS "Elevation",
        CASE
-           WHEN b.published IS FALSE THEN 'Non'
-           WHEN b.published IS TRUE THEN 'Oui'
-       END AS "Publié",
-       a.date_insert AS "Date d'insertion",
-       a.date_update AS "Date de modification",
+           WHEN b.published IS FALSE THEN 'No'
+           WHEN b.published IS TRUE THEN 'Yes'
+       END AS "Published",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        a.geom
 FROM v_services a
 LEFT JOIN trekking_servicetype b ON a.type_id = b.id
