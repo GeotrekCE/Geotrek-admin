@@ -184,6 +184,13 @@ class TrailFactory(TopologyFactory):
     comments = factory.Sequence(lambda n: "Comments %s" % n)
 
 
+class TrailCategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.TrailCategory
+
+    label = factory.Sequence(lambda n: "Trail category %s" % n)
+
+
 class CertificationLabelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.CertificationLabel
