@@ -57,14 +57,8 @@ Importer une vue SQL sous forme de couche
   * Zones <> `v_districts`
   * Communes <> `v_cities`
 * Couches supplémentaires (dépend des projets)
-  * Sites outdoor
-    * Points : `v_outdoor_site_point`
-    * Lignes : `v_outdoor_site_line`
-    * Polygones : `v_outdoor_site_polygon`
-  * Parcours outdoor
-    * Points : `v_outdoor_course_point`
-    * Lignes : `v_outdoor_course_line`
-    * Polygones : `v_outdoor_course_polygon`
+  * Sites outdoor <> `v_outdoor_sites`
+  * Parcours outdoor <> `v_outdoor_courses`
 
 Afficher un fond de plan OpenStreetMap
 --------------
