@@ -19,5 +19,3 @@ DROP VIEW IF EXISTS f_v_secteur CASCADE;
 DROP VIEW IF EXISTS v_districts CASCADE;
 DROP VIEW IF EXISTS f_v_zonage CASCADE;
 DROP VIEW IF EXISTS v_restrictedareas CASCADE;
-DROP VIEW IF EXISTS v_zoning_city_qgis CASCADE;;
-DROP VIEW IF EXISTS v_zoning_district_qgis CASCADE;;
