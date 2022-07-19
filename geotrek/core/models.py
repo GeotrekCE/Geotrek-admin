@@ -1015,7 +1015,6 @@ class CertificationStatus(StructureOrNoneRelated):
     class Meta:
         verbose_name = _("Certification status")
         verbose_name_plural = _("Certification statuses")
-        ordering = ['label']
 
 
 class CertificationTrail(StructureOrNoneRelated):
