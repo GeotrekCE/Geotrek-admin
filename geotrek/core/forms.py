@@ -113,6 +113,7 @@ class TrailForm(TopologyForm):
         Div(
             'structure',
             'name',
+            'category',
             'departure',
             'arrival',
             'comments',
@@ -122,7 +123,7 @@ class TrailForm(TopologyForm):
 
     class Meta(CommonForm.Meta):
         model = Trail
-        fields = CommonForm.Meta.fields + ['structure', 'name', 'departure', 'arrival', 'comments']
+        fields = CommonForm.Meta.fields + ['structure', 'name', 'category', 'departure', 'arrival', 'comments']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
