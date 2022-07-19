@@ -41,30 +41,30 @@ Importer une vue SQL sous forme de couche
 --------------
 
 * Dans l'Explorateur > PostgreSQL > Ouvrir la connexion précédemment créé > Schéma public
-* Ajouter les vues suffixées par `_qgis` : Clic droit sur l'objet > Ajouter la couche au projet
+* Ajouter les vues : Clic droit sur l'objet > Ajouter la couche au projet
 * Correspondance couches <> vues
-  * Sentiers <> `v_trail_qgis`
-  * Aménagements <> `v_infrastructures_qgis`
-  * Signalétiques <> `v_signage_qgis`
-  * Interventions <> `v_intervention_qgis`
-  * Chantiers <> `v_project_qgis`
-  * Itinéraires <> `v_treks_qgis`
-  * POI's <> `v_pois_qgis`
-  * Contenus touristiques <> `v_touristiccontent_qgis`
-  * Évènements touristiques <> `v_touristicevent_qgis`
-  * Signalement <> `v_report_qgis`
+  * Sentiers <> `v_trails`
+  * Aménagements <> `v_infrastructures`
+  * Signalétiques <> `v_signages`
+  * Interventions <> `v_interventions`
+  * Chantiers <> `v_projects`
+  * Itinéraires <> `v_treks`
+  * POI's <> `v_pois`
+  * Contenus touristiques <> `v_touristiccontents`
+  * Évènements touristiques <> `v_touristicevents`
+  * Signalement <> `v_reports`
   * Zones sensibles <> `v_sensitivearea_qgis`
-  * Zones <> `v_zoning_district_qgis`
-  * Communes <> `v_zoning_city_qgis`
+  * Zones <> `v_districts`
+  * Communes <> `v_cities`
 * Couches supplémentaires (dépend des projets)
   * Sites outdoor
-    * Points : `v_outdoor_site_qgis_point`
-    * Lignes : `v_outdoor_site_qgis_line`
-    * Polygones : `v_outdoor_site_qgis_polygon`
+    * Points : `v_outdoor_site_point`
+    * Lignes : `v_outdoor_site_line`
+    * Polygones : `v_outdoor_site_polygon`
   * Parcours outdoor
-    * Points : `v_outdoor_course_qgis_point`
-    * Lignes : `v_outdoor_course_qgis_line`
-    * Polygones : `v_outdoor_course_qgis_polygon`
+    * Points : `v_outdoor_course_point`
+    * Lignes : `v_outdoor_course_line`
+    * Polygones : `v_outdoor_course_polygon`
 
 Afficher un fond de plan OpenStreetMap
 --------------

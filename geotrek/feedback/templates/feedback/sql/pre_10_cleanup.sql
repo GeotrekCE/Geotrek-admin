@@ -1,4 +1,4 @@
 -- 10
 
-DROP VIEW IF EXISTS v_report CASCADE;
+DROP VIEW IF EXISTS v_reports CASCADE;
 

@@ -1,6 +1,6 @@
 -- Report
 
-CREATE VIEW {{ schema_geotrek }}.v_report AS
+CREATE VIEW {{ schema_geotrek }}.v_reports AS
 SELECT a.id,
        f.zoning_city AS "City",
        g.zoning_district AS "District",
