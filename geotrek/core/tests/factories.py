@@ -202,6 +202,6 @@ class CertificationTrailFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.CertificationTrail
 
-    certification_trail = factory.SubFactory(TrailFactory)
+    trail = factory.SubFactory(TrailFactory)
     certification_label = factory.SubFactory(CertificationLabelFactory)
     certification_status = factory.SubFactory(CertificationStatusFactory)
