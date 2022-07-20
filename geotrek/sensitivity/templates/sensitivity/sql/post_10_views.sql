@@ -15,39 +15,51 @@ SELECT a.id,
        CONCAT(CASE
                   WHEN h.period01 IS TRUE THEN CONCAT('January', ', ')
                   ELSE NULL
-              END, CASE
-                       WHEN h.period02 IS TRUE THEN CONCAT('February', ', ')
-                       ELSE NULL
-                   END, CASE
-                            WHEN h.period03 IS TRUE THEN CONCAT('March', ', ')
-                            ELSE NULL
-                        END, CASE
-                                 WHEN h.period04 IS TRUE THEN CONCAT('April', ', ')
-                                 ELSE NULL
-                             END, CASE
-                                      WHEN h.period05 IS TRUE THEN CONCAT('May', ', ')
-                                      ELSE NULL
-                                  END, CASE
-                                           WHEN h.period06 IS TRUE THEN CONCAT('June', ', ')
-                                           ELSE NULL
-                                       END, CASE
-                                                WHEN h.period07 IS TRUE THEN CONCAT('July', ', ')
-                                                ELSE NULL
-                                            END, CASE
-                                                     WHEN h.period08 IS TRUE THEN CONCAT('August', ', ')
-                                                     ELSE NULL
-                                                 END, CASE
-                                                          WHEN h.period09 IS TRUE THEN CONCAT('September', ', ')
-                                                          ELSE NULL
-                                                      END, CASE
-                                                               WHEN h.period10 IS TRUE THEN CONCAT('October', ', ')
-                                                               ELSE NULL
-                                                           END, CASE
-                                                                    WHEN h.period11 IS TRUE THEN CONCAT('November', ', ')
-                                                                    ELSE NULL
-                                                                END, CASE
-                                                                         WHEN h.period12 IS TRUE THEN 'December'
-                                                                     END) AS "Period",
+              END,
+              CASE
+                  WHEN h.period02 IS TRUE THEN CONCAT('February', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period03 IS TRUE THEN CONCAT('March', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period04 IS TRUE THEN CONCAT('April', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period05 IS TRUE THEN CONCAT('May', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period06 IS TRUE THEN CONCAT('June', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period07 IS TRUE THEN CONCAT('July', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period08 IS TRUE THEN CONCAT('August', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period09 IS TRUE THEN CONCAT('September', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period10 IS TRUE THEN CONCAT('October', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period11 IS TRUE THEN CONCAT('November', ', ')
+                  ELSE NULL
+              END,
+              CASE
+                  WHEN h.period12 IS TRUE THEN 'December'
+                  END
+              ) AS "Period",
        c.pratiques_sportives AS "Sport practices",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         b.url_{{ lang }} AS "URL {{ lang }}",
