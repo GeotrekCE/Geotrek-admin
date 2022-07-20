@@ -381,9 +381,13 @@ class BaseApiTest(TestCase):
         cls.reference_point = Point(x=1.4388656616210938,
                                     y=44.448487178796235, srid=4326)
         cls.service_type = trek_factory.ServiceTypeFactory()
+        cls.service_type_2 = trek_factory.ServiceTypeFactory(published=False)
         cls.service1 = trek_factory.ServiceFactory()
         cls.service = trek_factory.ServiceFactory(
             type=cls.service_type
+        )
+        cls.service_2 = trek_factory.ServiceFactory(
+            type=cls.service_type_2
         )
         cls.infrastructure_type = infrastructure_factory.InfrastructureTypeFactory()
         cls.infrastructure_condition = infrastructure_factory.InfrastructureConditionFactory()
@@ -1355,10 +1359,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_service_list(self):
-        self.check_number_elems_response(
-            self.get_service_list(),
-            trek_models.Service
-        )
+        response = self.get_service_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        services = trek_models.Service.objects.all()
+        self.assertEquals(len(json_response['results']), services.count() - 1, services.filter(type__published=True).count())
 
     def test_service_detail(self):
         self.check_structure_response(
@@ -1427,10 +1432,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_servicetype_list(self):
-        self.check_number_elems_response(
-            self.get_servicetype_list(),
-            trek_models.ServiceType
-        )
+        response = self.get_servicetype_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        services = trek_models.ServiceType.objects.all()
+        self.assertEquals(len(json_response['results']), services.count() - 1, services.filter(published=True).count())
 
     def test_servicetype_detail(self):
         self.check_structure_response(
