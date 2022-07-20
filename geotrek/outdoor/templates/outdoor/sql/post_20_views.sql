@@ -151,14 +151,7 @@ SELECT a.id,
        o.parents AS "Parents",
        p.filieres AS "Sectors",
        f.name AS "Practice",
-       m."Classe",
-       m."Caractère vertical",
-       m."Caractère aquatique",
-       m."Engagement / envergure",
-       m."Niveau",
-       m."Cotation",
-       m."Cotation globale",
-       m."Engagement / éloignement",
+       m."Ratings",
        e.name AS "Type",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         description_teaser_{{ lang }} AS "Description teaser {{ lang }}",
@@ -260,54 +253,17 @@ LEFT JOIN
      JOIN outdoor_site c ON a.site_id = c.id
      GROUP BY c.id) l ON a.id = l.id
 LEFT JOIN
-    (WITH rating AS
+    (WITH ratings AS
          (SELECT d.id,
-                 CASE
-                     WHEN b.name = 'Classe' THEN a.name
-                     ELSE NULL
-                 END AS "Classe",
-                 CASE
-                     WHEN b.name = 'Caractère vertical' THEN a.name
-                     ELSE NULL
-                 END AS "Caractère vertical",
-                 CASE
-                     WHEN b.name = 'Caractère aquatique' THEN a.name
-                     ELSE NULL
-                 END AS "Caractère aquatique",
-                 CASE
-                     WHEN b.name = 'Engagement / envergure' THEN a.name
-                     ELSE NULL
-                 END AS "Engagement / envergure",
-                 CASE
-                     WHEN b.name = 'Niveau' THEN a.name
-                     ELSE NULL
-                 END AS "Niveau",
-                 CASE
-                     WHEN b.name = 'Cotation' THEN a.name
-                     ELSE NULL
-                 END AS "Cotation",
-                 CASE
-                     WHEN b.name = 'Cotation globale' THEN a.name
-                     ELSE NULL
-                 END AS "Cotation globale",
-                 CASE
-                     WHEN b.name = 'Engagement / éloignement' THEN a.name
-                     ELSE NULL
-                 END AS "Engagement / éloignement"
+                 b.name as "Name ratingscale",
+                 a.name as "Name"
           FROM outdoor_rating a
           JOIN outdoor_ratingscale b ON a.scale_id = b.id
           JOIN outdoor_site_ratings c ON a.id= c.rating_id
-          JOIN outdoor_site d ON c.site_id = d.id) SELECT id,
-                                                          array_to_string(ARRAY_AGG ("Classe"), ', ', NULL) "Classe",
-                                                          array_to_string(ARRAY_AGG ("Caractère vertical"), ', ', NULL) "Caractère vertical",
-                                                          array_to_string(ARRAY_AGG ("Caractère aquatique"), ', ', NULL) "Caractère aquatique",
-                                                          array_to_string(ARRAY_AGG ("Engagement / envergure"), ', ', NULL) "Engagement / envergure",
-                                                          array_to_string(ARRAY_AGG ("Niveau"), ', ', NULL) "Niveau",
-                                                          array_to_string(ARRAY_AGG ("Cotation"), ', ', NULL) "Cotation",
-                                                          array_to_string(ARRAY_AGG ("Cotation globale"), ', ', NULL) "Cotation globale",
-                                                          array_to_string(ARRAY_AGG ("Engagement / éloignement"), ', ', NULL) "Engagement / éloignement"
-     FROM rating
-     GROUP BY id) m ON a.id = m.id
+          JOIN outdoor_site d ON c.site_id = d.id),
+         by_rating_scales AS
+         (SELECT id, "Name ratingscale", array_to_string(array_agg("Name"), ', ', NULL) AS "Name as string" From ratings group by "Name ratingscale", id)
+    SELECT id, array_to_string(array_agg(array["Name ratingscale", "Name as string"]), ' : ', NULL) AS "Ratings" FROM by_rating_scales group by id) m ON a.id = m.id
 LEFT JOIN
     (SELECT parent_id,
             array_to_string(ARRAY_AGG (name), ', ', '*') enfants
