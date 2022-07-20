@@ -13,6 +13,7 @@ CHANGELOG
 **Documentation**
 
 - Add tutorial to visualize sql views in Qgis
+- Add sql views for Qgis
 
 **Bug fixes**
 

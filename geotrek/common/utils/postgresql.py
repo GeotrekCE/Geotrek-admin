@@ -8,6 +8,8 @@ from django.db import connection
 from django.db.models import ManyToManyField
 from django.template.loader import get_template
 
+from geotrek.common.utils import spatial_reference
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,6 +50,7 @@ def load_sql_files(app, stage):
             context = dict(
                 schema_geotrek=schema,
                 schema_django=schema_django,
+                spatial_reference=spatial_reference()
             )
             context.update(context_settings)
             rendered_sql = template.render(context)
