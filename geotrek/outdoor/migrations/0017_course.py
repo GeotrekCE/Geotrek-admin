@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('eid', models.CharField(blank=True, max_length=1024, null=True, verbose_name='External id')),
                 ('ratings', models.ManyToManyField(blank=True, related_name='courses', to='outdoor.Rating')),
                 ('site', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='courses', to='outdoor.site', verbose_name='Site')),
-                ('structure', models.ForeignKey(default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.structure', verbose_name='Related structure')),
+                ('structure', models.ForeignKey(default=settings.DEFAULT_STRUCTURE_PK, on_delete=django.db.models.deletion.CASCADE, to='authent.structure', verbose_name='Related structure')),
             ],
             options={
                 'verbose_name': 'Outdoor course',

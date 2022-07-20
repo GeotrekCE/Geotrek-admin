@@ -8,23 +8,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authent', '0006_auto_20210216_1413'),
-        ('trekking', '0027_auto_20210121_0943'),
+        ('authent', '0010_auto_20220720_1613'),
+        ('tourism', '0022_informationdesk_eid'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='poi',
+            model_name='touristiccontent',
             name='structure',
             field=models.ForeignKey(default=settings.DEFAULT_STRUCTURE_PK, on_delete=django.db.models.deletion.CASCADE, to='authent.structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
-            model_name='service',
-            name='structure',
-            field=models.ForeignKey(default=settings.DEFAULT_STRUCTURE_PK, on_delete=django.db.models.deletion.CASCADE, to='authent.structure', verbose_name='Related structure'),
-        ),
-        migrations.AlterField(
-            model_name='trek',
+            model_name='touristicevent',
             name='structure',
             field=models.ForeignKey(default=settings.DEFAULT_STRUCTURE_PK, on_delete=django.db.models.deletion.CASCADE, to='authent.structure', verbose_name='Related structure'),
         ),
