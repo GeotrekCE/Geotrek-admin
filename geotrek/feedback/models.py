@@ -196,17 +196,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         ordering = ["-date_insert"]
 
     def __str__(self):
-        """
-        Also called 'tag' in views/serializers
-        """
         if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) and self.eid:
             return f"{_('Report')} {self.eid}"
         else:
             return f"{_('Report')} {self.pk}"
-
-    @property
-    def tag_verbose_name(self):
-        return _("Tag")
 
     @classmethod
     def get_suricate_messenger(cls):
@@ -393,7 +386,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     @property
     def eid_verbose_name(self):
-        return _("Label")
+        return _("Tag") if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else _("Label")
 
     def distance(self, to_cls):
         """Distance to associate this report to another class"""
