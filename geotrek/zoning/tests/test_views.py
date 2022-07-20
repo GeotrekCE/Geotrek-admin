@@ -68,8 +68,8 @@ class RestrictedAreasSerializationTest(TestCase):
         correct_data = json.dumps({
             f"{self.type_1.pk}": {"areas": [{f"{self.area_1.pk}": "ABC - aaa"}, {f"{self.area_2.pk}": "ABC - aab"}]},
             f"{self.type_2.pk}": {"areas": [{f"{self.area_3.pk}": "AAC - aaa"}, {f"{self.area_4.pk}": "AAC - aab"}]},
-            f"{self.type_3.pk}": {"areas": [{f"{self.area_6.pk}": "ABB - aaa"}, {f"{self.area_5.pk}": "ABB - aab"}]},
-            f"{self.type_4.pk}": {"areas": [{f"{self.area_9.pk}": "AAA - aaa"}, {f"{self.area_7.pk}": "AAA - aba"}, {f"{self.area_8.pk}": "AAA - aca"}]}
+            f"{self.type_3.pk}": {"areas": [{f"{self.area_5.pk}": "ABB - aab"}, {f"{self.area_6.pk}": "ABB - aaa"}]},
+            f"{self.type_4.pk}": {"areas": [{f"{self.area_7.pk}": "AAA - aba"}, {f"{self.area_8.pk}": "AAA - aca"}, {f"{self.area_9.pk}": "AAA - aaa"}]}
         })
         self.assertJSONEqual(serizalized, correct_data)
 
