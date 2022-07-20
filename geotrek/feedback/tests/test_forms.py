@@ -218,7 +218,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         # Assert user is notified
         self.assertEqual(len(mail.outbox), mails_before + 1)
-        self.assertEqual(mail.outbox[-1].subject, "Geotrek - Nouveau Signalement à traiter")
+        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] - Nouveau Signalement à traiter")
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
 
     @test_for_workflow_mode
@@ -266,7 +266,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
         self.assertEqual(self.interv_report.assigned_user, WorkflowManager.objects.first().user)
         self.assertEqual(len(mail.outbox), mails_before + 1)
-        self.assertEqual(mail.outbox[-1].subject, "Geotrek - Un Signalement est à clôturer")
+        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] Un Signalement est à clôturer")
         self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])
 
     @test_for_report_and_basic_modes
