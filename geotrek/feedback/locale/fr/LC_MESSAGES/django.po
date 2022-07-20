@@ -64,7 +64,7 @@ msgid "Tag"
 msgstr "Étiquette"
 
 msgid "Last updated in Suricate"
-msgstr "Date de modification dans Suricate"
+msgstr "Modifié dans Suricate"
 
 msgid "Report"
 msgstr "Signalement"
