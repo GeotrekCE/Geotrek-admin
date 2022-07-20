@@ -1,6 +1,7 @@
-from geotrek.authent.models import default_structure
+from geotrek.authent.models import Structure
 from geotrek.common.tests.factories import LabelFactory, OrganismFactory
 from geotrek.common.models import Theme
+from django.conf import settings
 from django.core.files import File
 from django.test import TestCase
 import os
@@ -38,7 +39,7 @@ class LabelTest(TestCase):
 class OrganismTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.organism_with_structure = OrganismFactory.create(structure=default_structure())
+        cls.organism_with_structure = OrganismFactory.create(structure=Structure.objects.get(pk=settings.DEFAULT_STRUCTURE_PK))
         cls.organism_without_structure = OrganismFactory.create()
 
     def test_str_with_structure(self):
