@@ -64,7 +64,7 @@ class TestFeedbackTemplateTags(TestCase):
         )
 
     def test_status_ids_and_colors(self):
-        expected = json.loads(f"{{\"{self.solved_status.pk}\": {{\"label\": \"{self.solved_status.label}\", \"id\": \"solved_intervention\", \"color\": \"#448654\"}}, \"{self.status_1.pk}\": {{\"label\": \"{self.status_1.label}\", \"id\": \"{self.status_1.identifier}\", \"color\": \"#444444\"}}, \"{self.status_2.pk}\": {{\"label\": \"{self.status_2.label}\", \"id\": \"{self.status_2.identifier}\", \"color\": \"#444444\"}}}}")
+        expected = json.loads(f"{{\"{self.solved_status.pk}\": {{\"label\": \"{self.solved_status.label}\", \"id\": \"solved_intervention\", \"color\": \"#448654\", \"display_in_legend\": true}}, \"{self.status_1.pk}\": {{\"label\": \"{self.status_1.label}\", \"id\": \"{self.status_1.identifier}\", \"color\": \"#444444\", \"display_in_legend\": true}}, \"{self.status_2.pk}\": {{\"label\": \"{self.status_2.label}\", \"id\": \"{self.status_2.identifier}\", \"color\": \"#444444\", \"display_in_legend\": true}}}}")
         actual = json.loads(status_ids_and_colors())
         self.assertEqual(
             sorted(expected.items()),

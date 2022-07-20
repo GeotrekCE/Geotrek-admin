@@ -218,7 +218,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         # Assert user is notified
         self.assertEqual(len(mail.outbox), mails_before + 1)
-        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] - Nouveau Signalement à traiter")
+        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] Nouveau Signalement à traiter")
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
 
     @test_for_workflow_mode
