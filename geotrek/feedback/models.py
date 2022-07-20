@@ -15,6 +15,7 @@ from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.formats import date_format
+from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from mapentity.models import MapEntityMixin
 
@@ -300,9 +301,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             type=type
         )
 
-    def try_send_email(self, subject, message):
+    def try_send_email(self, subject, html_message):
+        plain_message = strip_tags(html_message)
         try:
-            success = send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email], fail_silently=False)
+            success = send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email], html_message=html_message, fail_silently=False)
         except Exception as e:
             success = 0  # 0 mails successfully sent
             logger.error("Email could not be sent to report's assigned user.")
@@ -311,13 +313,13 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             PendingEmail.objects.create(
                 recipient=self.assigned_user.email,
                 subject=subject,
-                message=message,
+                message=html_message,
                 error_message=e.args,
                 report=self
             )
         finally:
             if success == 1:
-                self.attach_email(message, self.assigned_user.email)
+                self.attach_email(html_message, self.assigned_user.email)
 
     @property
     def formatted_external_uuid(self):
@@ -331,13 +333,13 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return formatted_external_uuid
 
     def notify_assigned_user(self, message):
-        subject = _("Geotrek - New report to process")
-        message = render_to_string("feedback/affectation_email.txt", {"report": self, "message": message})
+        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(_("New report to process"))
+        message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
         self.try_send_email(subject, message)
 
     def notify_late_report(self, status_id):
-        subject = _("Geotrek - Late report processsing")
-        message = render_to_string(f"feedback/late_{status_id}_email.txt", {"report": self})
+        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(_("Late report processing"))
+        message = render_to_string(f"feedback/late_{status_id}_email.html", {"report": self})
         self.try_send_email(subject, message)
 
     def lock_in_suricate(self):
@@ -555,8 +557,9 @@ class PendingEmail(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE, null=True)
 
     def retry(self):
+        plain_message = strip_tags(self.message)
         try:
-            success = send_mail(self.subject, self.message, settings.DEFAULT_FROM_EMAIL, [self.recipient], fail_silently=False)
+            success = send_mail(self.subject, plain_message, settings.DEFAULT_FROM_EMAIL, [self.recipient], html_message=self.message, fail_silently=False)
             self.delete()
         except Exception as e:
             success = 0  # 0 mails successfully sent
@@ -631,16 +634,16 @@ class WorkflowManager(models.Model):
                 self.attach_email_to_report(report, message, self.user.email)
 
     def notify_report_to_solve(self, report):
-        subject = _("Geotrek - A report must be solved")
-        message = render_to_string("feedback/cloture_email.txt", {"report": report})
+        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(_("A report must be solved"))
+        message = render_to_string("feedback/cloture_email.html", {"report": report})
         self.try_send_email(subject, message, report)
 
     def notify_new_reports(self, reports):
         reports_urls = []
         for report in Report.objects.filter(pk__in=reports):
             reports_urls.append(report.full_url)
-        subject = _("Geotrek - New reports from Suricate")
-        message = render_to_string("feedback/reports_email.txt", {"reports_urls": reports_urls})
+        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(_("New reports from Suricate"))
+        message = render_to_string("feedback/reports_email.html", {"reports_urls": reports_urls})
         self.try_send_email(subject, message)
 
 

@@ -24,8 +24,8 @@ msgstr "Retours utilisateurs"
 msgid "Feedback from {email}"
 msgstr "Signalement de {email}"
 
-msgid "Geotrek - New reports from Suricate"
-msgstr "Geotrek - Nouveaux signalements Suricate"
+msgid "New reports from Suricate"
+msgstr "Nouveaux signalements Suricate"
 
 msgid "Email"
 msgstr "Email"
@@ -219,8 +219,8 @@ msgstr "De nouveaux signalements ont été importés depuis Suricate."
 msgid "Please consult your reports in Geotrek-Admin."
 msgstr "Consultez vos signalements dans Geotrek-Admin."
 
-msgid "Geotrek - Un Signalement est à clôturer"
-msgstr "Geotrek - A Report is ready to be resolved"
+msgid "Un Signalement est à clôturer"
+msgstr "A Report is ready to be resolved"
 
 msgid ""
 "Hello,\n"
@@ -261,14 +261,14 @@ msgstr "L'intervention associée doit être cloturée."
 msgid "An intervention must be planned."
 msgstr "Une intervention doit être programmée."
 
-msgid "Geotrek - New report to process"
-msgstr "Geotrek - Nouveau Signalement à traiter"
+msgid "New report to process"
+msgstr "Nouveau Signalement à traiter"
 
-msgid "Geotrek - Late report processsing"
-msgstr "Geotrek - Signalement à traiter en retard"
+msgid "Late report processing"
+msgstr "Signalement à traiter en retard"
 
-msgid "Geotrek - A report must be solved"
-msgstr "Geotrek - Un Signalement est à clôturer"
+msgid "A report must be solved"
+msgstr "Un Signalement est à clôturer"
 
 msgid "Synchronisation error"
 msgstr "Erreur de synchronisation"
