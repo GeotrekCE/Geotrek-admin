@@ -40,7 +40,7 @@ LEFT JOIN
                core_topology
           WHERE core_trail.topo_object_id = core_topology.id
               AND core_topology.deleted = FALSE) a
-     JOIN zoning_city b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_district,
@@ -52,6 +52,6 @@ LEFT JOIN
                core_topology
           WHERE core_trail.topo_object_id = core_topology.id
               AND core_topology.deleted = FALSE) a
-     JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) g ON a.id = g.id
 ;

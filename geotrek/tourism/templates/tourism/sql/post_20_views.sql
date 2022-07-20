@@ -141,13 +141,13 @@ LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_city,
             a.id
      FROM tourism_touristiccontent a
-     JOIN zoning_city b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_district,
             a.id
      FROM tourism_touristiccontent a
-     JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) g ON a.id = g.id
 WHERE deleted IS FALSE 
 ;
@@ -211,13 +211,13 @@ LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_city,
             a.id
      FROM tourism_touristicevent a
-     JOIN zoning_city b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_district,
             a.id
      FROM tourism_touristicevent a
-     JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) g ON a.id = g.id
 LEFT JOIN
     (SELECT c.id,

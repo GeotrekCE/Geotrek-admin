@@ -26,12 +26,12 @@ LEFT JOIN public.feedback_reportproblemmagnitude e ON a.problem_magnitude_id = e
 LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_city,
             a.id
      FROM       feedback_report a
-     JOIN zoning_city b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_district,
             a.id
      FROM            feedback_report a
-     JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) g ON a.id = g.id
 WHERE deleted IS FALSE 
 ;

@@ -61,14 +61,14 @@ LEFT JOIN
             a.id
      FROM
          outdoor_course a
-     JOIN zoning_city b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) c ON a.id = c.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_district,
             a.id
      FROM
          outdoor_course a
-     JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) d ON a.id = d.id 
 LEFT JOIN outdoor_coursetype e ON a.type_id = d.id
 LEFT JOIN
@@ -198,14 +198,14 @@ LEFT JOIN
             a.id
      FROM
          outdoor_site a
-     JOIN zoning_city b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) c ON a.id = c.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '*') zoning_district,
             a.id
      FROM
          outdoor_site a
-     JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom), b.geom)
+     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) d ON a.id = d.id 
 LEFT JOIN outdoor_sitetype e ON a.type_id = e.id
 LEFT JOIN outdoor_practice f ON a.practice_id = f.id
