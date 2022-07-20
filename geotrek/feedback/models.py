@@ -462,6 +462,8 @@ class ReportStatus(models.Model):
         verbose_name=_("Identifiant"),
     )
     color = ColorField(verbose_name=_("Color"), default='#444444')
+    display_in_legend = models.BooleanField(verbose_name=_("Display in legend"), default=True,
+                                            help_text=_("Whether or not this status should be displayed in legend"))
 
     class Meta:
         verbose_name = _("Status")

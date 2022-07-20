@@ -66,6 +66,12 @@ msgstr "Étiquette"
 msgid "Last updated in Suricate"
 msgstr "Modifié dans Suricate"
 
+msgid "Display in legend"
+msgstr "Afficher dans la légende"
+
+msgid "Whether or not this status should be displayed in legend"
+msgstr "Indique si ce statut doit être affiché dans la légende du module signalement"
+
 msgid "Report"
 msgstr "Signalement"
 
