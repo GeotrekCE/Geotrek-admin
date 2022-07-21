@@ -326,12 +326,12 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return formatted_external_uuid
 
     def notify_assigned_user(self, message):
-        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(_("New report to process"))
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('New report to process')}"
         message = render_to_string("feedback/affectation_email.html", {"report": self, "message": message})
         self.try_send_email(subject, message)
 
     def notify_late_report(self, status_id):
-        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(_("Late report processing"))
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('Late report processing')}"
         message = render_to_string(f"feedback/late_{status_id}_email.html", {"report": self})
         self.try_send_email(subject, message)
 
@@ -629,7 +629,7 @@ class WorkflowManager(models.Model):
                 self.attach_email_to_report(report, message, self.user.email)
 
     def notify_report_to_solve(self, report):
-        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(_("A report must be solved"))
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('A report must be solved')}"
         message = render_to_string("feedback/cloture_email.html", {"report": report})
         self.try_send_email(subject, message, report)
 
@@ -637,7 +637,7 @@ class WorkflowManager(models.Model):
         reports_urls = []
         for report in Report.objects.filter(pk__in=reports):
             reports_urls.append(report.full_url)
-        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(_("New reports from Suricate"))
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('New reports from Suricate')}"
         message = render_to_string("feedback/reports_email.html", {"reports_urls": reports_urls})
         self.try_send_email(subject, message)
 
