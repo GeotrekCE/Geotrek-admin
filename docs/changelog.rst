@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
 - Use permission bypass_structure on attachments and accessibility attachments (#2899)
+- Add boolean field 'display_in_legend' to Report Status model
 
 **Documentation**
 
@@ -21,6 +22,11 @@ CHANGELOG
 - Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH`` unallow usage of images with small width (#2902)
 - Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT`` unallow usage of images with small height (#2902)
   These settings will influence the attachments downloaded in parsers
+
+**Minor improvements**
+
+- Improve Suricate workflow alert emails
+
 
 2.84.1     (2022-06-21)
 -----------------------
