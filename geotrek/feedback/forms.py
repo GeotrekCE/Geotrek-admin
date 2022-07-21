@@ -100,6 +100,7 @@ class ReportForm(CommonForm):
                     self.fieldslayout[0].insert(right_after_message_sentinel_index, 'message_administrators')
                     # Use timers
                     self.fields["uses_timers"].widget = CheckboxInput()
+                    self.fields["assigned_user"].empty_label = None
             else:
                 # On new reports
                 self.fields["status"].widget = HiddenInput()

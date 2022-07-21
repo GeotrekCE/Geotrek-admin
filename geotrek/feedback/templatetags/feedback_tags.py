@@ -1,5 +1,5 @@
 import json
-from geotrek.feedback.models import PredefinedEmail, ReportStatus
+from geotrek.feedback.models import PredefinedEmail, ReportStatus, WorkflowManager
 from django import template
 from django.conf import settings
 
@@ -68,3 +68,11 @@ def resolved_intervention_info(report):
             }
             return json.dumps(resolved_intervention_info)
     return json.dumps({})
+
+
+@register.simple_tag
+def workflow_manager():
+    workflow_manager_json = {
+        'pk': WorkflowManager.objects.first().user.pk
+    }
+    return json.dumps(workflow_manager_json)
