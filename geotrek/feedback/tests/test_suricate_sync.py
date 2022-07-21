@@ -614,13 +614,14 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
                 'geom': self.report_filed_1.geom,
                 'email': self.report_filed_1.email,
                 'status': self.classified_status.pk,
-                'message_sentinel': "Problème déjà réglé"
+                'message_sentinel': "Problème déjà réglé",
+                'message_administrators': "Je ne fais rien"
             }
         )
         self.assertTrue(form.is_valid)
         form.save()
-        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.formatted_external_uuid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.formatted_external_uuid, self.classified_status.identifier, "Problème déjà réglé")
+        #mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.formatted_external_uuid, "Problème déjà réglé", "Je ne fais rien")
+        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.formatted_external_uuid, self.classified_status.identifier, "Problème déjà réglé", "Je ne fais rien")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")

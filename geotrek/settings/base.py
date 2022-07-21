@@ -817,7 +817,7 @@ SURICATE_MANAGEMENT_SETTINGS = {
 SURICATE_WORKFLOW_SETTINGS = {
     "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
     "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
-    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département"
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département"
 }
 
 REPORT_FILETYPE = "Report"

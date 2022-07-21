@@ -93,6 +93,11 @@ class ReportForm(CommonForm):
                     self.fields["message_supervisor"].label = _("Message for supervisor")
                     right_after_user_index = self.fieldslayout[0].fields.index('assigned_user') + 1
                     self.fieldslayout[0].insert(right_after_user_index, 'message_supervisor')
+                    # message for administrators
+                    self.fields["message_administrators"] = CharField(required=False, widget=Textarea())
+                    self.fields["message_administrators"].label = _("Message for administrators")
+                    right_after_message_sentinel_index = self.fieldslayout[0].fields.index('message_sentinel') + 1
+                    self.fieldslayout[0].insert(right_after_message_sentinel_index, 'message_administrators')
                     # Use timers
                     self.fields["uses_timers"].widget = CheckboxInput()
             else:
@@ -120,8 +125,9 @@ class ReportForm(CommonForm):
                 report.lock_in_suricate()
                 TimerEvent.objects.create(step=waiting_status, report=report)
             if self.old_status_identifier != report.status.identifier or self.old_supervisor != report.assigned_user:
-                msg = self.cleaned_data.get('message_sentinel', "")
-                report.send_notifications_on_status_change(self.old_status_identifier, msg)
+                msg_sentinel = self.cleaned_data.get('message_sentinel', "")
+                msg_admins = self.cleaned_data.get('message_administrators', "")
+                report.send_notifications_on_status_change(self.old_status_identifier, msg_sentinel, msg_admins)
             if self.old_status_identifier != report.status.identifier and report.status.identifier in ['solved', 'classified', 'rejected']:
                 report.unlock_in_suricate()
             if 'geom' in self.changed_data and report.status.identifier in ['filed', 'waiting', 'programmed', 'late_intervention', 'late_resolution', 'solved_intervention']:  # geom cannot change for statuses 'rejected', 'classified' or 'solved'
@@ -129,7 +135,8 @@ class ReportForm(CommonForm):
                 if self.old_status_identifier == 'filed' and report.status.identifier == 'filed' and not WorkflowDistrict.objects.filter(district__geom__covers=report.geom):
                     # from 'filed' to 'filed': set to 'waiting' in suricate
                     # Status needs to be 'waiting' for position to change in Suricate
-                    report.update_status_in_suricate("waiting", settings.SURICATE_WORKFLOW_SETTINGS.get("SURICATE_RELOCATED_REPORT_MESSAGE"))
+                    relocated_message = settings.SURICATE_WORKFLOW_SETTINGS.get("SURICATE_RELOCATED_REPORT_MESSAGE")
+                    report.update_status_in_suricate("waiting", relocated_message)
                     rejected_status = ReportStatus.objects.get(identifier='rejected')
                     report.status = rejected_status
                     report.save()

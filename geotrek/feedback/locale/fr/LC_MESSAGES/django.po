@@ -171,6 +171,9 @@ msgstr "Géométrie invalide"
 msgid "Message for sentinel"
 msgstr "Message pour la sentinelle"
 
+msgid "Message for administrators"
+msgstr "Message pour les administrateurs"
+
 msgid "Supervisor"
 msgstr "Gestionnaire"
 

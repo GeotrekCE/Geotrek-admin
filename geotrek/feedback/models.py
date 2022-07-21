@@ -346,14 +346,16 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         long, lat = rep_gps
         self.get_suricate_messenger().update_gps(self.formatted_external_uuid, lat, long, force)
 
-    def update_status_in_suricate(self, status_identifier, message):
-        self.get_suricate_messenger().update_status(self.formatted_external_uuid, status_identifier, message)
+    def update_status_in_suricate(self, status_identifier, message_sentinel, message_admins=None):
+        if not message_admins:
+            message_admins = message_sentinel
+        self.get_suricate_messenger().update_status(self.formatted_external_uuid, status_identifier, message_sentinel, message_admins)
 
-    def send_notifications_on_status_change(self, old_status_identifier, message):
+    def send_notifications_on_status_change(self, old_status_identifier, message_sentinel, message_admins):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
-            self.update_status_in_suricate(self.status.identifier, message)
-            if message:
-                self.get_suricate_messenger().message_sentinel(self.formatted_external_uuid, message)
+            self.update_status_in_suricate(self.status.identifier, message_sentinel, message_admins)
+            if message_sentinel:
+                self.get_suricate_messenger().message_sentinel(self.formatted_external_uuid, message_sentinel)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
