@@ -228,9 +228,6 @@ msgstr "De nouveaux signalements ont été importés depuis Suricate."
 msgid "Please consult your reports in Geotrek-Admin."
 msgstr "Consultez vos signalements dans Geotrek-Admin."
 
-msgid "Un Signalement est à clôturer"
-msgstr "A Report is ready to be resolved"
-
 msgid ""
 "Hello,\n"
 "\n"
