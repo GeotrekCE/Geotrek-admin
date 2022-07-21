@@ -1,7 +1,0 @@
-{% load i18n l10n %}
-{% autoescape off %}
-
-{% trans "You have been assigned a report on Geotrek" %} : {{report.full_url}}
-{% trans "Message from the manager" %} : {{ message }}
-
-{% endautoescape %}

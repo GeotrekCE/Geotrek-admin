@@ -5,7 +5,7 @@
 {% trans "Please consult your reports in Geotrek-Admin." %}
 
 {% for url in reports_urls %}
-    {{ url }}
+    <a href="{{ url }}">{{ url }}</a>
 {% endfor %}
 
 {% endautoescape %}

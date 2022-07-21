@@ -85,7 +85,9 @@ class SuricateParser(SuricateGestionRequestManager):
         rep_status = ReportStatus.objects.get(identifier=report["statut"])
 
         # Keep or discard
-        should_import = rep_point.within(self.bbox) and rep_status.identifier != 'created' and bool(report["locked"])
+        should_import = rep_point.within(self.bbox) and rep_status.identifier != 'created'
+        if settings.SURICATE_WORKFLOW_ENABLED:
+            should_import = should_import and bool(report["locked"])  # In Workflow mode, only import locked reports. In Management mode, import locked or unlocked reports.
 
         if should_import:
             # Parse dates

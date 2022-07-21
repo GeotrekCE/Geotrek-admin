@@ -28,7 +28,8 @@ def status_ids_and_colors():
         status.pk: {
             "label": str(status.label),
             "id": str(status.identifier),
-            "color": str(status.color)
+            "color": str(status.color),
+            "display_in_legend": status.display_in_legend
         }
         for status in ReportStatus.objects.all()
     }
