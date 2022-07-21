@@ -620,7 +620,7 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
         )
         self.assertTrue(form.is_valid)
         form.save()
-        #mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.formatted_external_uuid, "Problème déjà réglé", "Je ne fais rien")
+        mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.formatted_external_uuid, "Problème déjà réglé")
         mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.formatted_external_uuid, self.classified_status.identifier, "Problème déjà réglé", "Je ne fais rien")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=False)
