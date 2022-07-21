@@ -23,8 +23,9 @@ CHANGELOG
 - Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT`` unallow usage of images with small height (#2902)
   These settings will influence the attachments downloaded in parsers
 
-**Minor improvements**
+**Suricate Workflow**  (#2366)
 
+- Add form field to enter messages for administrators in Report Workflow Mode
 - Improve Suricate workflow alert emails
 
 
