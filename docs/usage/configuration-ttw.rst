@@ -105,7 +105,7 @@ Zones
 Gestion des utilisateurs
 ========================
 
-Dans Geotrek, il est possible de créer et de paramétrer des profils d'utilisateurs, possédants chacun des droits spécifiques et rattachés à des structures.
+Dans Geotrek, il est possible de créer et de paramétrer des profils d'utilisateurs, possédants chacun des droits spécifiques et rattachés à des structures. La gestion des utilisateurs et des groupes est basé sur le `système d'authentification de Django <https://docs.djangoproject.com/fr/4.0/topics/auth/>`_.
 Pour cela les objets suivants dans l'interface d'administration doivent être utilisés :
 
 |image9|
@@ -132,6 +132,7 @@ Cette gestion fine des droits permet de déterminer les différents accès aux m
 -  Lecture
 -  Ecriture
 -  Modification
+-  Modification de la géométrie de l'objet
 -  Publication
 -  Export
 
@@ -139,29 +140,28 @@ Groupes
 -------
 
 Pour faciliter l'opération de création d'utilisateurs et d'affectation de permissions, il existe un système de groupes dans Geotrek.
-Il est possible de créer des groupes, et pour chaque groupe d'associer un certain nombre de permissions associées.
+Pour chaque groupe il est possible d'associer un certain nombre de permissions.
 
-Il sera alors possible dans la vue de modification d'un utilisateur de l'associer directement à un groupe ce qui lui procurera les permissions correspondantes.
+Ensuite, dans la vue de modification de cet utilisateur, il suffira d'associer un utilisateur à un groupe pour bénéficier des permissions correspondantes.
 
-Certains groupes existent par défaut dans Geotrek (Geotrek-rando, Lecteurs, Outdoor, Rédacteurs, Référents communication, Référents ronçons, Référents sentiers), mais il est bien entendu possible d'en ajouter autant 
-  que souhaité pour pouvoir refléter de la meilleure manière l'organisation de votre territoire.
+Certains groupes existent par défaut dans Geotrek (Geotrek-rando, Lecteurs, Outdoor, Rédacteurs, Référents communication, Référents ronçons, Référents sentiers), mais il est bien entendu possible d'en ajouter d'autres pour refléter l'organisation de votre territoire.
 
 
 Structures
 ----------
 
-Lorsqu'un utilisateur est créé, il est obligatoirement rattaché à une structure. Lors de l'installation, Geotrek créé au moins une structure à laquelle les premiers utilisateurs seront rattachés.
-Il vous est ensuite possible d'ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront ammenés à travailler à vos côté sur Geotrek.
+Chaque utilisateur est obligatoirement rattaché à une structure. Lors de l'installation, Geotrek crée une structure à laquelle les premiers utilisateurs seront rattachés.
+Il est possible d'ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront ammenés à travailler à vos côté sur Geotrek.
 
-Les utilisateurs d'une structure, ne peuvent travailler que sur les objets dans Geotrek liés à leur structure. Ils pourront consulter les objets des autres structures mais n'auront pas le droit de les modifier.
+Les utilisateurs d'une structure ne peuvent travailler que sur les objets dans Geotrek liés à leur structure. Ils pourront consulter les objets des autres structures mais n'auront pas le droit de les modifier.
 
 Exemple : Si on imagine un Geotrek déployé sur l'ensemble du territoire français, il serait alors envisageable d'avoir des structures correspondantes aux régions. Chaque utilisateur sera rattaché à sa région correspondante. 
  Il y aura alors la garantie qu'un utilisateur de Bretagne ne puisse pas modifier les objets saisis par un utilisateur de Normandie.
 
-Cette notion de structures permet de segmenter les périmètres d'action des utilisateurs et de permettre à différentes entités de travailler sur un même Geotrek-Admin tout en garantissant une cohérence des données.
+Cette notion de structures permet de segmenter les périmètres d'action des utilisateurs et de permettre à différentes entités de travailler sur un même Geotrek-Admin, tout en garantissant une cohérence des données.
 
 Deux précisions :
--  Un utilisateur d'une structure pourra tout de même tracer des itinéraires sur des tronçons tracés par une autre structure
+- Un utilisateur d'une structure pourra tout de même tracer des itinéraires sur des tronçons tracés par une autre structure
 - Pour qu'un utilisateur puisse modifier les objets d'une autre structure il y a deux possibilités : soit celui-ci est super-utilisateur, soit il devra posséder la permission "Can by structure" qui permet d'outrepasser la restriction des structures.
 
 
