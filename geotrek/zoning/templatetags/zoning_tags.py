@@ -1,4 +1,4 @@
-from itertools import groupby
+from django.db.models.query import Prefetch
 import json
 
 from django import template
@@ -59,18 +59,16 @@ def restricted_area_types():
 
 @register.simple_tag
 def restricted_areas_by_type():
-    restricted_areas_type = RestrictedAreaType.objects.values_list('id',
-                                                                   'restrictedarea',
-                                                                   'name',
-                                                                   'restrictedarea__name')
-    restricted_areas_by_type = {}
-    for i, group in groupby(restricted_areas_type, lambda x: x[0]):
-        area_list = []
-        for value in group:
-            if value[2]:
-                area_list.append({value[1]: f"{value[2]} - {value[3]}"})
-
-        restricted_areas_by_type[i] = {'areas': area_list}
+    restricted_areas_by_type = {
+        str(type.pk): {
+            'areas': [{
+                str(area.pk): type.name + " - " + area.name
+            } for area in type.restrictedarea_set.all()
+            ]  # We use an array instead of dict because JS parsing would re-order JSON dict
+        }
+        for type in RestrictedAreaType.objects.all().prefetch_related(
+            Prefetch('restrictedarea_set', queryset=RestrictedArea.objects.order_by('name')))
+    }
     return json.dumps(restricted_areas_by_type)
 
 
