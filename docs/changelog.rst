@@ -19,6 +19,8 @@ CHANGELOG
 **Bug fixes**
 
 - Fix api v2 services are published by type
+- Fix form outdoor/trekking when rating scale is used with modification of practice
+- Fix initial value of rating was not shown in trekking form (#3121)
 
 **New features**
 
