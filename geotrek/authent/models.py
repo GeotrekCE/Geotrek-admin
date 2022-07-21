@@ -34,6 +34,14 @@ def default_structure_pk():
     return default_structure().pk
 
 
+class StructureManager(models.Manager):
+    # Use this manager when walking through FK/M2M relationships
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('structure')
+
+
 class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
@@ -63,7 +71,7 @@ class StructureOrNoneRelated(models.Model):
     structure = models.ForeignKey(Structure, on_delete=models.CASCADE,
                                   verbose_name=_("Related structure"), blank=True, null=True)
 
-    objects = models.Manager()
+    objects = StructureManager()
     check_structure_in_forms = True
 
     class Meta:
