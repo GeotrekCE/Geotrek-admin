@@ -77,7 +77,8 @@ describe('Nav reports workflow', () => {
     cy.get("#id_message_sentinel").should("have.value", "")
     cy.get("#id_message_administrators").should("have.value", "")
     // Change assigned user back
-    cy.get("#id_assigned_user").select("")
+    cy.get("#modelfields").scrollTo('bottom').get("#id_assigned_user").should("be.visible")
+    cy.get("#id_assigned_user").select("9")
     // Cannot use selectors for sentinel and supervisor messages anymore
     cy.get("#id_message_sentinel_predefined").should("not.be.visible")
     cy.get("#id_message_sentinel").should("not.be.visible")
