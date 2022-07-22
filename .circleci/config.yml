@@ -34,9 +34,9 @@ jobs:
       - run: |
           BASE_IMAGE_TAG=focal-3.8 make build
           docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-          docker save -o /root/20.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+          docker save -o ./20.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - persist_to_workspace:
-          root: /root
+          root: .
           paths:
             - 20.04.$CIRCLE_WORKFLOW_ID.tar
 
@@ -49,9 +49,9 @@ jobs:
       - run: |
           BASE_IMAGE_TAG=bionic-3.6 make build
           docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-          docker save -o /root/18.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+          docker save -o ./18.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - persist_to_workspace:
-          root: /root
+          root: .
           paths:
             - 18.04.$CIRCLE_WORKFLOW_ID.tar
     resource_class: large
