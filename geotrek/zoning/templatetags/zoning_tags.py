@@ -1,3 +1,4 @@
+from django.db.models.query import Prefetch
 import json
 
 from django import template
@@ -61,11 +62,12 @@ def restricted_areas_by_type():
     restricted_areas_by_type = {
         str(type.pk): {
             'areas': [{
-                str(area.pk): area.area_type.name + " - " + area.name
-            } for area in type.restrictedarea_set.order_by('name')
+                str(area.pk): type.name + " - " + area.name
+            } for area in type.restrictedarea_set.all()
             ]  # We use an array instead of dict because JS parsing would re-order JSON dict
         }
-        for type in RestrictedAreaType.objects.all()
+        for type in RestrictedAreaType.objects.all().prefetch_related(
+            Prefetch('restrictedarea_set', queryset=RestrictedArea.objects.order_by('name')))
     }
     return json.dumps(restricted_areas_by_type)
 
@@ -74,6 +76,6 @@ def restricted_areas_by_type():
 def all_restricted_areas():
     all_restricted_areas = [{
         str(area.pk): area.area_type.name + " - " + area.name
-    } for area in RestrictedArea.objects.order_by('area_type__name', 'name')
+    } for area in RestrictedArea.objects.select_related('area_type').order_by('area_type__name', 'name')
     ]  # We use an array instead of dict because JS parsing would re-order JSON dict
     return json.dumps(all_restricted_areas)
