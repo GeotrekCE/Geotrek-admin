@@ -35,7 +35,9 @@ jobs:
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN"
           --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-      - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run: docker save -o /root/20.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      persist_to_workspace:
+        - /root/20.04.$CIRCLE_WORKFLOW_ID.tar
     resource_class: large
   docker_image_18_04:
     machine:
@@ -47,7 +49,9 @@ jobs:
           --password-stdin
       - run: docker tag geotrek:latest
           geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-      - run: docker push geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+      - run: docker save -o /root/18.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+      persist_to_workspace:
+        - /root/18.04.$CIRCLE_WORKFLOW_ID.tar
     resource_class: large
   docker_test:
     machine:
@@ -55,16 +59,18 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
+      - attach-workspace:
+        - /root/20.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
-      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
-      - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-      - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-          geotrekce/admin:latest
-      - run: docker-compose run web ./manage.py makemigrations --check
-      - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
-      - run: docker-compose run web coverage xml -o var/coverage.xml
+      - run: |
+          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+          docker load -i /root/20.04.$CIRCLE_WORKFLOW_ID.tar
+          docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+          docker-compose run web ./manage.py makemigrations --check
+          docker-compose run web update.sh
+          docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
+          docker-compose run web coverage xml -o var/coverage.xml
       - codecov/upload:
           file: var/coverage.xml
           flags: test
@@ -76,14 +82,16 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
+      - attach-workspace:
+        - /root/18.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
-      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
-      - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-      - run: docker pull geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-      - run: docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-          geotrekce/admin:latest
-      - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
+      - run: |
+          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+          docker load -i <path to image tar file>
+          docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+          docker-compose run web update.sh
+          docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
     resource_class: large
   docker_test_nds:
     machine:
@@ -91,15 +99,17 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
+      - attach-workspace:
+        - /root/20.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
-      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
-      - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-      - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-          geotrekce/admin:latest
-      - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
-      - run: docker-compose run web coverage xml -o var/coverage.xml
+      - run: |
+          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+          docker load -i /root/20.04.$CIRCLE_WORKFLOW_ID.tar
+          docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+          docker-compose run web update.sh
+          docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
+          docker-compose run web coverage xml -o var/coverage.xml
       - codecov/upload:
           file: var/coverage.xml
           flags: test_nds
@@ -111,14 +121,16 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
+      - attach-workspace:
+        - /root/18.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
-      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
-      - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-      - run: docker pull geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-      - run: docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-          geotrekce/admin:latest
-      - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
+      - run: |
+          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+          docker load -i /root/18.04.$CIRCLE_WORKFLOW_ID.tar
+          docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+          docker-compose run web update.sh
+          docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
     resource_class: large
   docker_test_js:
     docker:
@@ -188,16 +200,16 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
+      - attach-workspace:
+        - /root/20.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
-      - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-          geotrekce/admin:$(cat VERSION)
-      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-          geotrekce/admin:latest
-      - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN"
-          --password-stdin
-      - run: docker push geotrekce/admin:$(cat VERSION)
-      - run: docker push geotrekce/admin:latest
+      - run: |
+          docker load -i /root/20.04.$CIRCLE_WORKFLOW_ID.tar
+          docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:$(cat VERSION)
+          docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+          echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+          docker push geotrekce/admin:$(cat VERSION)
+          docker push geotrekce/admin:latest
     resource_class: large
   ubuntu_package:
     docker:
