@@ -143,7 +143,8 @@ jobs:
           at: /tmp/workspace
       - run: |
           docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-          apt-get update -q && apt-get install -q -y npm
+          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+          sudo apt-get update -q && apt-get install -q -y npm
           docker run geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID ./manage.py collectstatic --noinput
           npm install geotrek/jstests
           ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
