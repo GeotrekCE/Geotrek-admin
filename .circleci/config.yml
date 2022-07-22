@@ -227,12 +227,11 @@ jobs:
           command: |
             sudo apt-get update -q && apt-get install -q -y npm
             docker run geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID ./manage.py collectstatic --noinput
-            npm install geotrek/jstests
+            sudo npm install geotrek/jstests
       - run:
           name: Launch tests
-          command: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
+          command: sudo ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
     resource_class: large
-
 
   docker_test_integration:
     machine:
