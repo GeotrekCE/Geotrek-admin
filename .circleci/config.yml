@@ -208,6 +208,14 @@ jobs:
   docker_test_js:
     machine:
       image: ubuntu-2004:202201-02
+    environment:
+      LANG: C.UTF-8
+      ENV: tests
+      SECRET_KEY: foo
+      CUSTOM_SETTINGS_FILE: ""
+      CONVERSION_HOST: localhost
+      CAPTURE_HOST: localhost
+
     steps:
       - checkout
       - attach_workspace:
