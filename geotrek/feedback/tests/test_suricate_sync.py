@@ -232,12 +232,15 @@ class SuricateAPITests(SuricateTests):
         call_command("sync_suricate", verbosity=2)
         r = Report.objects.get(external_uuid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
         r.status = self.programmed_status
+        r.comment = "I was changed"
         r.save()
         r.refresh_from_db()
         self.assertEquals(r.status.identifier, "programmed")
         call_command("sync_suricate", report=0, verbosity=2)
         r.refresh_from_db()
+        # Comment change was overriden, status change was not
         self.assertEquals(r.status.identifier, "programmed")
+        self.assertEquals(r.comment, "Lames cassées")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.ContentFile.__init__")
