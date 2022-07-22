@@ -505,7 +505,9 @@ class Command(BaseCommand):
         }
         if not os.path.exists(settings.TMP_DIR):
             os.mkdir(settings.TMP_DIR)
-        self.tmp_root = tempfile.TemporaryDirectory(dir=settings.TMP_DIR).name
+        if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando')):
+            os.mkdir(os.path.join(settings.TMP_DIR, 'sync_rando'))
+        self.tmp_root = tempfile.TemporaryDirectory(dir=os.path.join(settings.TMP_DIR, 'sync_rando')).name
         try:
             self.sync()
             if self.celery_task:

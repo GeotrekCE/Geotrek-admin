@@ -134,6 +134,8 @@ def launch_sync_rando(*args, **kwargs):
     """
     if not os.path.exists(settings.TMP_DIR):
         os.mkdir(settings.TMP_DIR)
+    if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando')):
+        os.mkdir(os.path.join(settings.TMP_DIR, 'sync_rando'))
     if not os.path.exists(settings.SYNC_RANDO_ROOT):
         os.mkdir(settings.SYNC_RANDO_ROOT)
 
