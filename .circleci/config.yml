@@ -26,7 +26,7 @@ jobs:
       - image: python:3.6
     environment:
       LANG: C.UTF-8
-    working_directory: ./docs
+    working_directory: ~/project/docs
     steps:
       - checkout
       - run:
