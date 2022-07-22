@@ -26,12 +26,12 @@ jobs:
       - image: python:3.6
     environment:
       LANG: C.UTF-8
+    working_directory: ./docs
     steps:
       - checkout
       - run:
           name: Install Sphinx
           command: |
-            cd docs/
             pip install -r ./requirements.txt
       - run:
           name: Build documentation
