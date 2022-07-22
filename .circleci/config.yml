@@ -9,11 +9,18 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
-      - run: pip3 install flake8
-      - run: flake8 --exclude "" --ignore=E501,F821 geotrek/settings
-      - run: flake8 geotrek
-      - run: test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L
-          SRID | wc -l) -eq 0
+      - run:
+          name: Install flake8
+          command: pip3 install flake8
+      - run:
+          name: Lint with flake8
+          command: |
+            flake8 --exclude "" --ignore=E501,F821 geotrek/settings
+            flake8 geotrek
+      - run:
+          name: Check no SRID value in migration files
+          command: test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
+
   doc:
     docker:
       - image: python:3.6
@@ -21,40 +28,56 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
-      - run: |
-          cd docs/
-          pip install -r ./requirements.txt
-          make html
+      - run:
+          name: Install Sphinx
+          command: |
+            cd docs/
+            pip install -r ./requirements.txt
+      - run:
+          name: Build documentation
+          command: |
+            make html
+
 
   docker_image:
     machine:
       image: ubuntu-2004:202201-02
     steps:
       - checkout
-      - run: |
-          BASE_IMAGE_TAG=focal-3.8 make build
-          docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-          docker save -o ./20.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run:
+          name: Build docker image base on Ubuntu 20.04
+          command: BASE_IMAGE_TAG=focal-3.8 make build
+      - run:
+          name: Tag and save docker image
+          command: |
+            docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+            docker save -o ./20.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - persist_to_workspace:
           root: .
           paths:
             - 20.04.*.tar
 
     resource_class: large
+
   docker_image_18_04:
     machine:
       image: ubuntu-2004:202201-02
     steps:
       - checkout
-      - run: |
-          BASE_IMAGE_TAG=bionic-3.6 make build
-          docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-          docker save -o ./18.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+      - run:
+          name: Build docker image base on Ubuntu 18.04
+          command: BASE_IMAGE_TAG=fbionic-3.6 make build
+      - run:
+          name: Tag and save docker image
+          command: |
+            docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+            docker save -o ./18.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - persist_to_workspace:
           root: .
           paths:
             - 18.04.*.tar
     resource_class: large
+
   docker_test:
     machine:
       image: ubuntu-2004:202201-02
@@ -64,20 +87,33 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: |
-          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
-          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-          docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
-          docker-compose run web ./manage.py makemigrations --check
-          docker-compose run web update.sh
-          docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
-          docker-compose run web coverage xml -o var/coverage.xml
+      - run:
+          name: Prepare environment
+          command: |
+            cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+            docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+      - run:
+          name: Load docker image
+          command: |
+            docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
+            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run:
+          name: Check pending migrations
+          command: docker-compose run web ./manage.py makemigrations --check
+      - run:
+          name: Prepare tests
+          command: docker-compose run web update.sh
+      - run:
+          name: Run tests & export coverage
+          command: |
+            docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
+            docker-compose run web coverage xml -o var/coverage.xml
       - codecov/upload:
           file: var/coverage.xml
           flags: test
           when: on_success
     resource_class: large
+
   docker_test_18_04:
     machine:
       image: ubuntu-2004:202201-02
@@ -87,14 +123,25 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: |
-          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
-          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          docker load -i /tmp/workspace/18.04.$CIRCLE_WORKFLOW_ID.tar
-          docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
-          docker-compose run web update.sh
-          docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
+      - run:
+          name: Prepare environment
+          command: |
+            cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+            docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+      - run:
+          name: Load docker image
+          command: |
+            docker load -i /tmp/workspace/18.04.$CIRCLE_WORKFLOW_ID.tar
+            docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run:
+          name: Prepare tests
+          command: docker-compose run web update.sh
+      - run:
+          name: Run tests
+          command: |
+            docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
     resource_class: large
+
   docker_test_nds:
     machine:
       image: ubuntu-2004:202201-02
@@ -104,19 +151,30 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: |
-          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
-          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-          docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
-          docker-compose run web update.sh
-          docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
-          docker-compose run web coverage xml -o var/coverage.xml
+      - run:
+          name: Prepare environment
+          command: |
+            cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+            docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+      - run:
+          name: Load docker image
+          command: |
+            docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
+            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run:
+          name: Prepare tests
+          command: docker-compose run web update.sh
+      - run:
+          name: Run tests & export coverage
+          command: |
+            docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
+            docker-compose run web coverage xml -o var/coverage.xml
       - codecov/upload:
           file: var/coverage.xml
           flags: test_nds
           when: on_success
     resource_class: large
+
   docker_test_nds_18_04:
     machine:
       image: ubuntu-2004:202201-02
@@ -126,14 +184,26 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: |
-          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
-          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          docker load -i /tmp/workspace/18.04.$CIRCLE_WORKFLOW_ID.tar
-          docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
-          docker-compose run web update.sh
-          docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
+      - run:
+          name: Prepare environment
+          command: |
+            cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+            docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+      - run:
+          name: Load docker image
+          command: |
+            docker load -i /tmp/workspace/18.04.$CIRCLE_WORKFLOW_ID.tar
+            docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run:
+          name: Prepare tests
+          command: docker-compose run web update.sh
+      - run:
+          name: Run tests
+          command: |
+            docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
+
     resource_class: large
+
   docker_test_js:
     machine:
       image: ubuntu-2004:202201-02
@@ -141,14 +211,28 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: |
-          docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-          docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          sudo apt-get update -q && apt-get install -q -y npm
-          docker run geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID ./manage.py collectstatic --noinput
-          npm install geotrek/jstests
-          ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
+      - run:
+          name: Prepare environment
+          command: |
+            cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+            docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+      - run:
+          name: Load docker image
+          command: |
+            docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
+            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run:
+          name: Prepare tests
+          command: |
+            sudo apt-get update -q && apt-get install -q -y npm
+            docker run geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID ./manage.py collectstatic --noinput
+            npm install geotrek/jstests
+      - run:
+          name: Launch tests
+          command: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
     resource_class: large
+
+
   docker_test_integration:
     machine:
       image: ubuntu-2004:202201-02
@@ -194,6 +278,7 @@ jobs:
           path: /home/circleci/project/cypress/screenshots/
           destination: cypress-screenshots
     resource_class: large
+
   docker_publish:
     machine:
       image: ubuntu-2004:202201-02
@@ -211,6 +296,7 @@ jobs:
           docker push geotrekce/admin:$(cat VERSION)
           docker push geotrekce/admin:latest
     resource_class: large
+
   ubuntu_package:
     docker:
       - image: ubuntu:focal
@@ -234,6 +320,7 @@ jobs:
           root: /root
           paths: geotrek-admin_*_amd64.deb
     resource_class: large
+
   ubuntu_package_18_04:
     docker:
       - image: ubuntu:bionic
@@ -256,6 +343,7 @@ jobs:
           path: geotrek-admin_*_amd64.deb
           destination: ubuntu-package-18.04
     resource_class: large
+
   ubuntu_publish:
     docker:
       - image: ubuntu:bionic
@@ -273,6 +361,7 @@ jobs:
       - run: ssh -p $SSH_PORT -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST make -C
           /srv/packages
     resource_class: large
+
 workflows:
   version: 2
   all:
