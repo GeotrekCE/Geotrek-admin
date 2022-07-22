@@ -38,7 +38,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - 20.04.$CIRCLE_WORKFLOW_ID.tar
+            - 20.04.*.tar
 
     resource_class: large
   docker_image_18_04:
@@ -53,7 +53,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - 18.04.$CIRCLE_WORKFLOW_ID.tar
+            - 18.04.*.tar
     resource_class: large
   docker_test:
     machine:
