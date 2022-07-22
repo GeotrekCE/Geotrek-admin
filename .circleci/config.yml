@@ -202,11 +202,11 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
-      - attach-workspace:
-        - /root/20.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run: |
-          docker load -i /root/20.04.$CIRCLE_WORKFLOW_ID.tar
+          docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
           docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:$(cat VERSION)
           docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
