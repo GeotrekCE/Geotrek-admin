@@ -66,7 +66,7 @@ jobs:
       - checkout
       - run:
           name: Build docker image base on Ubuntu 18.04
-          command: BASE_IMAGE_TAG=fbionic-3.6 make build
+          command: BASE_IMAGE_TAG=bionic-3.6 make build
       - run:
           name: Tag and save docker image
           command: |
