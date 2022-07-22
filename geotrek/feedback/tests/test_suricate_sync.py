@@ -129,6 +129,7 @@ class SuricateTests(TestCase):
         UserProfileFactory.create(user=cls.user)
         cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
         cls.admin = SuperUserFactory(username="Admin", password="drowssap")
+        cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
 
     def setUp(self):
         self.client.force_login(self.admin)
@@ -143,7 +144,7 @@ class SuricateAPITests(SuricateTests):
         """Test GET requests on Statuses endpoint creates statuses objects"""
         self.build_get_request_patch(mocked_get)
         call_command("sync_suricate", statuses=True)
-        self.assertEqual(ReportStatus.objects.count(), 5)
+        self.assertEqual(ReportStatus.objects.count(), 6)
         mocked_logger.info.assert_called_with("New status - id: classified, label: Classé sans suite")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
@@ -163,7 +164,7 @@ class SuricateAPITests(SuricateTests):
         self.build_get_request_patch(mocked)
         call_command("sync_suricate", activities=True, statuses=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
-        self.assertEqual(ReportStatus.objects.count(), 5)
+        self.assertEqual(ReportStatus.objects.count(), 6)
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @mock.patch("geotrek.feedback.management.commands.sync_suricate.logger")
@@ -221,6 +222,22 @@ class SuricateAPITests(SuricateTests):
         call_command("sync_suricate", report=0, verbosity=2)
         r.refresh_from_db()
         self.assertEquals(r.comment, "Lames cassées")
+
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.logger")
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_alerts_does_not_override_internal_status(self, mocked_get, mocked_logger):
+        # Test sync last report does not override internal status
+        self.build_get_request_patch(mocked_get, cause_JPG_error=True)
+        call_command("sync_suricate", verbosity=2)
+        r = Report.objects.get(external_uuid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
+        r.status = self.programmed_status
+        r.save()
+        r.refresh_from_db()
+        self.assertEquals(r.status.identifier, "programmed")
+        call_command("sync_suricate", report=0, verbosity=2)
+        r.refresh_from_db()
+        self.assertEquals(r.status.identifier, "programmed")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.ContentFile.__init__")
@@ -483,7 +500,6 @@ class SuricateWorkflowTests(SuricateTests):
         SuricateTests.setUpTestData()
         cls.filed_status = ReportStatusFactory(identifier='filed', label="Déposé")
         cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
-        cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
         cls.waiting_status = ReportStatusFactory(identifier='waiting', label="En cours")
         cls.rejected_status = ReportStatusFactory(identifier='rejected', label="Rejeté")
         cls.late_intervention_status = ReportStatusFactory(identifier='late_intervention', label="Intervention en retard")
