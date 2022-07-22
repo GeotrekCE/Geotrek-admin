@@ -234,7 +234,7 @@ jobs:
           name: Prepare tests
           command: |
             sudo apt-get update -q && sudo apt-get install -q -y npm
-            docker run geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID ./manage.py collectstatic --noinput
+            docker-compose run --rm web ./manage.py collectstatic --noinput
             sudo npm install geotrek/jstests
       - run:
           name: Launch tests
