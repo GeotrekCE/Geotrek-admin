@@ -52,7 +52,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('path')
         parser.add_argument('--empty-tmp-folder', dest='empty_tmp_folder', action='store_true', default=False,
-                            help='Empty tmp folders')
+                            help='Empty tmp folder')
         parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
         parser.add_argument('--rando-url', '-r', dest='rando_url', default='http://localhost',
                             help='Base url of public rando site')
@@ -505,13 +505,15 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
+        sync_rando_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_rando')
         if options['empty_tmp_folder']:
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando'))
+            for dir in os.listdir(sync_rando_tmp_dir):
+                shutil.rmtree(os.path.join(sync_rando_tmp_dir, dir))
         if not os.path.exists(settings.TMP_DIR):
             os.mkdir(settings.TMP_DIR)
-        if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando')):
-            os.mkdir(os.path.join(settings.TMP_DIR, 'sync_rando'))
-        self.tmp_root = tempfile.TemporaryDirectory(dir=os.path.join(settings.TMP_DIR, 'sync_rando')).name
+        if not os.path.exists(sync_rando_tmp_dir):
+            os.mkdir(sync_rando_tmp_dir)
+        self.tmp_root = tempfile.TemporaryDirectory(dir=sync_rando_tmp_dir).name
         try:
             self.sync()
             if self.celery_task:

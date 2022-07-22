@@ -38,7 +38,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('path')
         parser.add_argument('--empty-tmp-folder', dest='empty_tmp_folder', action='store_true', default=False,
-                            help='Empty tmp folders')
+                            help='Empty tmp folder')
         parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
         parser.add_argument('--portal', '-P', dest='portal', default=None, help='Filter by portal(s)')
         parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
@@ -504,14 +504,16 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
+        sync_mobile_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_mobile')
+        if options['empty_tmp_folder']:
+            for dir in os.listdir(sync_mobile_tmp_dir):
+                shutil.rmtree(os.path.join(sync_mobile_tmp_dir, dir))
         if not os.path.exists(settings.TMP_DIR):
             os.mkdir(settings.TMP_DIR)
-        if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_mobile')):
-            os.mkdir(os.path.join(settings.TMP_DIR, 'sync_mobile'))
-        if options['empty_tmp_folder']:
-            for dir in os.listdir(os.path.join(settings.TMP_DIR, 'sync_mobile')):
-                shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_mobile', dir))
-        self.tmp_root = tempfile.TemporaryDirectory(dir=os.path.join(settings.TMP_DIR, 'sync_mobile')).name
+        if not os.path.exists(sync_mobile_tmp_dir):
+            os.mkdir(sync_mobile_tmp_dir)
+
+        self.tmp_root = tempfile.TemporaryDirectory(dir=sync_mobile_tmp_dir).name
         try:
             self.sync()
             if self.celery_task:
