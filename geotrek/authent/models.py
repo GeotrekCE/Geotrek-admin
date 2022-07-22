@@ -25,15 +25,6 @@ class Structure(models.Model):
         permissions = (("can_bypass_structure", _("Can bypass structure")),)
 
 
-def default_structure():
-    """ Create default structure if necessary """
-    return Structure.objects.get_or_create(name=settings.DEFAULT_STRUCTURE_NAME)[0]
-
-
-def default_structure_pk():
-    return default_structure().pk
-
-
 class StructureManager(models.Manager):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
