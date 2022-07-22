@@ -76,6 +76,6 @@ def restricted_areas_by_type():
 def all_restricted_areas():
     all_restricted_areas = [{
         str(area.pk): area.area_type.name + " - " + area.name
-    } for area in RestrictedArea.objects.order_by('area_type__name', 'name')
+    } for area in RestrictedArea.objects.select_related('area_type').order_by('area_type__name', 'name')
     ]  # We use an array instead of dict because JS parsing would re-order JSON dict
     return json.dumps(all_restricted_areas)
