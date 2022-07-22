@@ -31,27 +31,29 @@ jobs:
       image: ubuntu-2004:202201-02
     steps:
       - checkout
-      - run: BASE_IMAGE_TAG=focal-3.8 make build
-      - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN"
-          --password-stdin
-      - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-      - run: docker save -o /root/20.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run: |
+          BASE_IMAGE_TAG=focal-3.8 make build
+          docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+          docker save -o /root/20.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       persist_to_workspace:
-        - /root/20.04.$CIRCLE_WORKFLOW_ID.tar
+        root: /root
+        files:
+          - 20.04.$CIRCLE_WORKFLOW_ID.tar
+
     resource_class: large
   docker_image_18_04:
     machine:
       image: ubuntu-2004:202201-02
     steps:
       - checkout
-      - run: BASE_IMAGE_TAG=bionic-3.6 make build
-      - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN"
-          --password-stdin
-      - run: docker tag geotrek:latest
-          geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-      - run: docker save -o /root/18.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+      - run: |
+          BASE_IMAGE_TAG=bionic-3.6 make build
+          docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+          docker save -o /root/18.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       persist_to_workspace:
-        - /root/18.04.$CIRCLE_WORKFLOW_ID.tar
+        root: /root
+        files:
+          - 18.04.$CIRCLE_WORKFLOW_ID.tar
     resource_class: large
   docker_test:
     machine:
@@ -59,13 +61,13 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
-      - attach-workspace:
-        - /root/20.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run: |
           cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
           docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          docker load -i /root/20.04.$CIRCLE_WORKFLOW_ID.tar
+          docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
           docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
           docker-compose run web ./manage.py makemigrations --check
           docker-compose run web update.sh
@@ -82,13 +84,13 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
-      - attach-workspace:
-        - /root/18.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run: |
           cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
           docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          docker load -i <path to image tar file>
+          docker load -i /tmp/workspace/18.04.$CIRCLE_WORKFLOW_ID.tar
           docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
           docker-compose run web update.sh
           docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
@@ -99,13 +101,13 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
-      - attach-workspace:
-        - /root/20.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run: |
           cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
           docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          docker load -i /root/20.04.$CIRCLE_WORKFLOW_ID.tar
+          docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
           docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
           docker-compose run web update.sh
           docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
@@ -121,13 +123,13 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
-      - attach-workspace:
-        - /root/18.04.$CIRCLE_WORKFLOW_ID.tar
       - checkout
+      - attach_workspace:
+          at: /tmp/workspace
       - run: |
           cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
           docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-          docker load -i /root/18.04.$CIRCLE_WORKFLOW_ID.tar
+          docker load -i /tmp/workspace/18.04.$CIRCLE_WORKFLOW_ID.tar
           docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
           docker-compose run web update.sh
           docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
