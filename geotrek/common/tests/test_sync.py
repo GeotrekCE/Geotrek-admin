@@ -415,3 +415,17 @@ class SyncComplexTest(VarTmpTestCase):
         management.call_command('sync_rando', os.path.join('var', 'tmp', 'sync_rando', 'tmp_sync'), url='http://localhost:8000', skip_pdf=True,
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'sync_rando', 'tmp_sync', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
+
+
+class SyncRandoEmptySyncTest(TestCase):
+    @mock.patch('geotrek.common.management.commands.sync_rando.Command.sync', side_effect=ValueError)
+    def test_deletion_tmp_sync_rando(self, mocked):
+        if not os.path.exists(os.path.join('var', 'tmp', 'sync_rando')):
+            os.mkdir(os.path.join('var', 'tmp', 'sync_rando'))
+        if not os.path.exists(os.path.join('var', 'tmp', 'sync_rando', 'other_sync')):
+            os.mkdir(os.path.join('var', 'tmp', 'sync_rando', 'other_sync'))
+
+        with self.assertRaisesRegex(FileNotFoundError, ''):
+            management.call_command('sync_rando', os.path.join('var', 'tmp', 'sync_rando', 'tmp_sync'),
+                                    empty_tmp_folder=True, url='http://localhost:8000')
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'sync_rando', 'other_sync')))

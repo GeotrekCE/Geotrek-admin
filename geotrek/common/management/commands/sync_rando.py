@@ -51,6 +51,8 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('path')
+        parser.add_argument('--empty-tmp-folder', dest='empty_tmp_folder', action='store_true', default=False,
+                            help='Empty tmp folders')
         parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
         parser.add_argument('--rando-url', '-r', dest='rando_url', default='http://localhost',
                             help='Base url of public rando site')
@@ -503,6 +505,8 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
+        if options['empty_tmp_folder']:
+            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando'))
         if not os.path.exists(settings.TMP_DIR):
             os.mkdir(settings.TMP_DIR)
         if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando')):
