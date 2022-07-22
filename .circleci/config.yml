@@ -36,6 +36,7 @@ jobs:
           --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+    resource_class: large
   docker_image_18_04:
     machine:
       image: ubuntu-2004:202201-02
@@ -47,6 +48,7 @@ jobs:
       - run: docker tag geotrek:latest
           geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+    resource_class: large
   docker_test:
     machine:
       image: ubuntu-2004:202201-02
@@ -67,6 +69,7 @@ jobs:
           file: var/coverage.xml
           flags: test
           when: on_success
+    resource_class: large
   docker_test_18_04:
     machine:
       image: ubuntu-2004:202201-02
@@ -81,6 +84,7 @@ jobs:
           geotrekce/admin:latest
       - run: docker-compose run web update.sh
       - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
+    resource_class: large
   docker_test_nds:
     machine:
       image: ubuntu-2004:202201-02
@@ -100,6 +104,7 @@ jobs:
           file: var/coverage.xml
           flags: test_nds
           when: on_success
+    resource_class: large
   docker_test_nds_18_04:
     machine:
       image: ubuntu-2004:202201-02
@@ -114,6 +119,7 @@ jobs:
           geotrekce/admin:latest
       - run: docker-compose run web update.sh
       - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
+    resource_class: large
   docker_test_js:
     docker:
       - image: geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
@@ -131,6 +137,7 @@ jobs:
       - run: /opt/venv/bin/python manage.py collectstatic --noinput
       - run: npm install geotrek/jstests
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
+    resource_class: large
   docker_test_integration:
     machine:
       image: ubuntu-2004:202201-02
@@ -174,7 +181,7 @@ jobs:
       - store_artifacts:
           path: /home/circleci/project/cypress/screenshots/
           destination: cypress-screenshots
-
+    resource_class: large
   docker_publish:
     machine:
       image: ubuntu-2004:202201-02
@@ -191,6 +198,7 @@ jobs:
           --password-stdin
       - run: docker push geotrekce/admin:$(cat VERSION)
       - run: docker push geotrekce/admin:latest
+    resource_class: large
   ubuntu_package:
     docker:
       - image: ubuntu:focal
@@ -213,6 +221,7 @@ jobs:
       - persist_to_workspace:
           root: /root
           paths: geotrek-admin_*_amd64.deb
+    resource_class: large
   ubuntu_package_18_04:
     docker:
       - image: ubuntu:bionic
@@ -234,7 +243,6 @@ jobs:
       - store_artifacts:
           path: geotrek-admin_*_amd64.deb
           destination: ubuntu-package-18.04
-    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: large
   ubuntu_publish:
     docker:
@@ -252,6 +260,7 @@ jobs:
             scp -P $SSH_PORT -o StrictHostKeyChecking=no /tmp/workspace/geotrek-admin_*_amd64.deb $SSH_USER@$SSH_HOST:/srv/packages/incoming/$DEB_COMPONENT/
       - run: ssh -p $SSH_PORT -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST make -C
           /srv/packages
+    resource_class: large
 workflows:
   version: 2
   all:
