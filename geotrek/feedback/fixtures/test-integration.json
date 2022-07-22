@@ -20,6 +20,14 @@
         }
     },
     {
+        "model": "authent.userprofile",
+        "pk": 10,
+        "fields": {
+            "user": 9,
+            "extended_username": "manager du workflow"
+        }
+    },
+    {
         "model": "feedback.reportcategory",
         "pk": 1,
         "fields": {
