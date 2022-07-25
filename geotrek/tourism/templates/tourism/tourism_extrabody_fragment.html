@@ -19,8 +19,8 @@
     MapEntity.i18n['touristiccontent'] = "{% trans "Touristic content" %}";
     MapEntity.i18n['touristicevent'] = "{% trans "Touristic event" %}";
 
-    window.SETTINGS.urls['touristiccontent_layer'] = "{% url "tourism:touristiccontent_layer" %}";
-    window.SETTINGS.urls['touristicevent_layer'] = "{% url "tourism:touristicevent_layer" %}";
+    window.SETTINGS.urls['touristiccontent_layer'] = "{% url "tourism:touristiccontent-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['touristicevent_layer'] = "{% url "tourism:touristicevent-drf-list" format="geojson" %}";
 </script>
 
 {% if modelname == "touristiccontent" %}

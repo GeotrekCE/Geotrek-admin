@@ -213,6 +213,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
+    geometry_types_allowed = ["LINESTRING"]
+
     class Meta:
         verbose_name = _("Trek")
         verbose_name_plural = _("Treks")
@@ -715,24 +717,20 @@ class WebLinkCategory(PictogramMixin):
         return "%s" % self.label
 
 
-class POIManager(NoDeleteManager):
-    def get_queryset(self):
-        return super().get_queryset().select_related('type', 'structure')
-
-
 class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
-
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    geometry_types_allowed = ["POINT"]
 
     class Meta:
         verbose_name = _("POI")
         verbose_name_plural = _("POI")
 
     # Override default manager
-    objects = POIManager()
+    objects = NoDeleteManager()
 
     # Do no check structure when selecting POIs to exclude
     check_structure_in_forms = False
@@ -832,7 +830,6 @@ class POIType(PictogramMixin):
 
 
 class ServiceType(PictogramMixin, PublishableMixin):
-
     practices = models.ManyToManyField('Practice', related_name="services",
                                        blank=True,
                                        verbose_name=_("Practices"))
@@ -848,11 +845,10 @@ class ServiceType(PictogramMixin, PublishableMixin):
 
 class ServiceManager(NoDeleteManager):
     def get_queryset(self):
-        return super().get_queryset().select_related('type', 'structure')
+        return super().get_queryset().select_related('type')
 
 
 class Service(StructureRelated, MapEntityMixin, Topology):
-
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        on_delete=models.CASCADE)
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)

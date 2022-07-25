@@ -1,15 +1,12 @@
 import os
-from unittest import mock
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.db import connection
 from django.test import TestCase, override_settings
 
-from geotrek.common.parsers import Parser
+from ..parsers import Parser
 from ..utils import sql_extent, uniquify, format_coordinates, spatial_reference
 from ..utils.import_celery import create_tmp_destination, subclasses
-from ..utils.postgresql import debug_pg_notices
 
 
 class UtilsTest(TestCase):
@@ -20,20 +17,6 @@ class UtilsTest(TestCase):
 
     def test_uniquify(self):
         self.assertEqual([3, 2, 1], uniquify([3, 3, 2, 1, 3, 1, 2]))
-
-    def test_postgresql_notices(self):
-        def raisenotice():
-            cursor = connection.cursor()
-            cursor.execute("""
-                CREATE OR REPLACE FUNCTION raisenotice() RETURNS boolean AS $$
-                BEGIN
-                RAISE NOTICE 'hello'; RETURN FALSE;
-                END; $$ LANGUAGE plpgsql;
-                SELECT raisenotice();""")
-        raisenotice = debug_pg_notices(raisenotice)
-        with mock.patch('geotrek.common.utils.postgresql.logger') as fake_log:
-            raisenotice()
-            fake_log.debug.assert_called_with('hello')
 
     def test_subclasses(self):
         class_list = subclasses(Parser)

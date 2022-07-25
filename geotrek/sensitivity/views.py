@@ -7,20 +7,22 @@ from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic.detail import BaseDetailView
-from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
+from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityFormat, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
-from geotrek.api.v2.functions import Buffer, GeometryType, Area
+from geotrek.api.v2.functions import Buffer, Area
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.functions import GeometryType
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
 from .models import SensitiveArea, Species
-from .serializers import SensitiveAreaSerializer, SensitiveAreaAPIGeojsonSerializer, SensitiveAreaAPISerializer
-from ..common.mixins.api import APIViewSet
-from ..common.viewsets import GeotrekMapentityViewSet
+from .serializers import SensitiveAreaSerializer, SensitiveAreaAPIGeojsonSerializer, SensitiveAreaAPISerializer, \
+    SensitiveAreaGeojsonSerializer
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking.models import Trek
@@ -29,11 +31,6 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
 
 logger = logging.getLogger(__name__)
-
-
-class SensitiveAreaLayer(MapEntityLayer):
-    queryset = SensitiveArea.objects.existing()
-    properties = ['species', 'radius', 'published']
 
 
 class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
@@ -55,7 +52,7 @@ class SensitiveAreaDetail(MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context['can_edit'] = self.object.same_structure(self.request.user)
         return context
 
 
@@ -102,10 +99,15 @@ class SensitiveAreaDelete(MapEntityDelete):
 class SensitiveAreaViewSet(GeotrekMapentityViewSet):
     model = SensitiveArea
     serializer_class = SensitiveAreaSerializer
+    geojson_serializer_class = SensitiveAreaGeojsonSerializer
     filterset_class = SensitiveAreaFilterSet
 
     def get_queryset(self):
-        return self.model.objects.existing()
+        qs = self.model.objects.existing().select_related('species')
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'species')
+        return qs
 
     def get_columns(self):
         return SensitiveAreaList.mandatory_columns + settings.COLUMNS_LISTS.get('sensitivity_view',

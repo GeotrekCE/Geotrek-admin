@@ -87,7 +87,8 @@ class PhysicalEdgeViewsTest(CommonTest):
         return {
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
-            'physical_type': self.obj.physical_type_display
+            'physical_type': self.obj.physical_type_display,
+            'length_2d': round(self.obj.length, 1),
         }
 
 
@@ -113,6 +114,7 @@ class LandEdgeViewsTest(CommonTest):
             'id': self.obj.pk,
             'land_type': self.obj.land_type_display,
             'length': round(self.obj.length, 1),
+            'length_2d': round(self.obj.length, 1),
         }
 
 
@@ -137,7 +139,8 @@ class CompetenceEdgeViewsTest(CommonTest):
         return {
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
-            'organization': self.obj.organization_display
+            'organization': self.obj.organization_display,
+            'length_2d': round(self.obj.length, 1),
         }
 
 
@@ -162,7 +165,8 @@ class WorkManagementEdgeViewsTest(CommonTest):
         return {
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
-            'organization': self.obj.organization_display
+            'organization': self.obj.organization_display,
+            'length_2d': round(self.obj.length, 1),
         }
 
 
@@ -188,4 +192,5 @@ class SignageManagementEdgeViewsTest(CommonTest):
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
             'organization': self.obj.organization_display,
+            'length_2d': round(self.obj.length, 1),
         }

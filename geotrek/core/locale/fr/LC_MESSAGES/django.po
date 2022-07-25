@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-06-03 09:53+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -37,6 +37,9 @@ msgstr "La ligne a un snapping invalide"
 
 msgid "Valid topology"
 msgstr "Topologie valide"
+
+msgid "Valid geometry"
+msgstr "Géometrie valide"
 
 msgid "length"
 msgstr "Longueur"
@@ -128,6 +131,9 @@ msgstr "Tronçon"
 
 msgid "Paths"
 msgstr "Tronçons"
+
+msgid "You can't delete this path, some topologies are linked with this path"
+msgstr "Vous ne pouvez pas supprimer ce tronçon, des topologies sont liés à ce tronçon"
 
 msgid "Trails"
 msgstr "Sentiers"
@@ -229,6 +235,15 @@ msgstr "Non, retour à la liste"
 msgid "Different topologies are linked with this path"
 msgstr "Différentes Topologies sont liées à ce tronçon"
 
+#, python-format
+msgid ""
+"You can't delete <strong>%(object)s</strong>, some topologies are linked "
+"with this path. Modify these topologies before deleting this path."
+msgstr "Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies sont lié à ce tronçon. Modifié ces topologies avant de supprimer ce tronçon"
+
+msgid "No, back to edit view"
+msgstr "Non, retour à la l'édition"
+
 msgid "GPX"
 msgstr "GPX"
 
@@ -261,6 +276,9 @@ msgstr "Fusionner les tronçons"
 
 msgid "Cancel"
 msgstr "Annuler"
+
+msgid "path"
+msgstr "tronçon"
 
 msgid ""
 "Access to the requested resource is restricted. You have been redirected."

@@ -228,3 +228,16 @@ class DocumentPublicMixin:
         modelname = self.get_model()._meta.object_name.lower()
         context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         return context
+
+
+class CompletenessMixin:
+    """Mixin for completeness fields"""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        modelname = self.get_model()._meta.object_name.lower()
+        if modelname in settings.COMPLETENESS_FIELDS:
+            obj = context['object']
+            completeness_fields = settings.COMPLETENESS_FIELDS[modelname]
+            context['completeness_fields'] = [obj._meta.get_field(field).verbose_name for field in completeness_fields]
+        return context

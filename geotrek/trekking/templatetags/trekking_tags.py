@@ -16,7 +16,7 @@ def trek_practices():
                 for scale in practice.rating_scales.all()
             },
         }
-        for practice in Practice.objects.all()
+        for practice in Practice.objects.all().prefetch_related('rating_scales')
     }
     return json.dumps(practices)
 

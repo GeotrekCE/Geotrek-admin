@@ -653,7 +653,7 @@ It is also possible to use color defined for practice for pictogram by adding in
 CSS can be overriden like html templates: copy them to ``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` folder
 ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.css`` for example.
 
-You can also create a template for each portal.
+**You can also create a template for each portal.**
 
 Add a folder ``portal_{id_portal}`` (portal ids are located in the portal url path ``/admin/common/targetportal/{id_portal}``) in
 ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, as the first template, and add at the top of your file:
@@ -670,6 +670,26 @@ The template for a specific portal will use the modification made on the overrid
 
     This modification is not mandatory, if you have multiple portal and you want to modify the template of only one portal, you create one folder for this specific portal
 
+**You might need to use your own images in the PDF templates.**
+
+Add your own images in ``/opt/geotrek-admin/var/conf/extra_static/images/``.
+
+You can then use these images in your PDF templates with ``{% static 'images/file.jpg' %}``, after adding ``{% load static %}`` at the top of the file.
+
+Example of a customised template (``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``) with a customised logo and URL:
+
+::
+
+    {% extends "trekking/trek_public_pdf.html" %}
+    {% load static %}
+
+    {% block logo %}
+       <img src="{% static 'images/logo-gte.jpg' %}" alt="Grand tour des Ecrins">
+    {% endblock %}
+    {% block url %}
+       <div class="main">Grand tour des Ecrins</div>
+       <div class="geo"><a href="https://www.grand-tour-ecrins.fr">grand-tour-ecrins.fr</a></div>
+    {% endblock url %}
 
 .. note ::
 
@@ -750,7 +770,7 @@ You can also add ``{legend}``.
 
 
 Resizing uploaded pictures
----------------------
+--------------------------
 
 Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
 
@@ -764,6 +784,26 @@ These corresponding height/width parameters can be overriden to select resized i
 
     PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
     PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+
+
+Prohibits usage of big pictures and small width / height
+--------------------------------------------------------
+
+If you want to prohibit the usage of heavy pictures :
+
+::
+
+    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
+
+
+If you want to prohibit the usage of small pictures in pixels :
+
+::
+
+    PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
+    PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
+
+These 3 settings will not also allow downloading images from the parsers
 
 
 Share services between several Geotrek instances
@@ -853,6 +893,26 @@ For each module, use the following syntax to configure fields to hide in the cre
 
 
 Please refer to the "settings detail" section for a complete list of modules and hideable fields.
+
+
+Configure form fields required or needed for review or publication
+-------------------------------------------------------------------
+
+Set 'error_on_publication' to avoid publication without completeness fields
+and 'error_on_review' if you want this fields to be required before sending to review.
+
+::
+
+    COMPLETENESS_LEVEL = 'warning'
+
+For each module, configure fields to be needed or required on review or publication
+
+::
+
+    COMPLETENESS_FIELDS = {
+        'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+        'dive': ['practice', 'difficulty', 'description_teaser'],
+    }
 
 
 ================
@@ -1588,6 +1648,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "uuid",
     ]
     COLUMNS_LISTS["landedge_view"] = [
+        "eid",
         "min_elevation",
         "max_elevation",
         "date_update",
@@ -1595,6 +1656,46 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_insert",
         "owner",
         "agreement",
+        "uuid",
+    ]
+    COLUMNS_LISTS["physicaledge_view"] = [
+        "eid",
+        "date_insert",
+        "date_update",
+        "length",
+        "length_2d",
+        "min_elevation",
+        "max_elevation",
+        "uuid",
+    ]
+    COLUMNS_LISTS["competenceedge_view"] = [
+        "eid",
+        "date_insert",
+        "date_update",
+        "length",
+        "length_2d",
+        "min_elevation",
+        "max_elevation",
+        "uuid",
+    ]
+    COLUMNS_LISTS["signagemanagementedge_export"] = [
+        "eid",
+        "date_insert",
+        "date_update",
+        "length",
+        "length_2d",
+        "min_elevation",
+        "max_elevation",
+        "uuid",
+    ]
+    COLUMNS_LISTS["workmanagementedge_export"] = [
+        "eid",
+        "date_insert",
+        "date_update",
+        "length",
+        "length_2d",
+        "min_elevation",
+        "max_elevation",
         "uuid",
     ]
     COLUMNS_LISTS["infrastructure_view"] = [
@@ -1921,6 +2022,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "uuid",
     ]
     COLUMNS_LISTS["landedge_export"] = [
+        "eid",
         "land_type",
         "owner",
         "agreement",
@@ -1930,6 +2032,75 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "districts",
         "areas",
         "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["physicaledge_export"] = [
+        "eid",
+        "physical_type",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["competenceedge_export"] = [
+        "eid",
+        "organization",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["signagemanagementedge_export"] = [
+        "eid",
+        "organization",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["workmanagementedge_export"] = [
+        "eid",
+        "organization",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
         "ascent",
         "descent",
         "min_elevation",
@@ -2612,6 +2783,23 @@ If false, no mail will be sent to the sender of any feedback on Geotrek-rando we
 
 Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merged.
 It is possible to customize the pdf, with trek_public_booklet_pdf.html.
+
+::
+
+    ALLOW_PATH_DELETION_TOPOLOGY = True
+
+If false, it forbid to delete a path when at least one topology is linked to this path.
+
+
+::
+
+    ALERT_REVIEW = False
+
+If True, it sends a message to managers (MAIL_MANAGERS) whenever an object which can be published has been changed to review mode.
+
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
+
 
 **Custom SQL**
 

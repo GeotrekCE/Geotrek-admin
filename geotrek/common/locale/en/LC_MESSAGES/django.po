@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 09:07+0000\n"
+"POT-Creation-Date: 2022-07-05 12:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,6 +21,9 @@ msgstr ""
 msgid "content type"
 msgstr ""
 
+msgid "Linked content"
+msgstr ""
+
 msgid "Common"
 msgstr ""
 
@@ -30,6 +33,16 @@ msgstr ""
 
 #, python-format
 msgid "max %s"
+msgstr ""
+
+msgid "This field is required to publish object."
+msgstr ""
+
+msgid "This field is required to review object."
+msgstr ""
+
+#, python-format
+msgid "Fields are missing to publish or review object: %(fields)s"
 msgstr ""
 
 #, python-brace-format
@@ -103,6 +116,9 @@ msgid ""
 "regulations which must be known by all visitors."
 msgstr ""
 
+msgid "Merge"
+msgstr ""
+
 msgid "Insertion date"
 msgstr ""
 
@@ -139,10 +155,17 @@ msgstr ""
 msgid "Waiting for publication"
 msgstr ""
 
+#, python-brace-format
+msgid "{obj} need a review"
+msgstr ""
+
 msgid "Pictogram"
 msgstr ""
 
-msgid "Merge"
+msgid "Attachment license"
+msgstr ""
+
+msgid "Attachment licenses"
 msgstr ""
 
 msgid "Slope"
@@ -200,12 +223,6 @@ msgid "Organism"
 msgstr ""
 
 msgid "Organisms"
-msgstr ""
-
-msgid "Attachment license"
-msgstr ""
-
-msgid "Attachment licenses"
 msgstr ""
 
 msgid "Cirkwi tag"
@@ -401,6 +418,11 @@ msgstr ""
 msgid "Photos accessibility"
 msgstr ""
 
+msgid ""
+"You are not allowed to modify attachments on this object, this object is not "
+"from the same structure."
+msgstr ""
+
 msgid "Accessibility type"
 msgstr ""
 
@@ -501,7 +523,14 @@ msgstr ""
 msgid "looks incomplete;"
 msgstr ""
 
+msgid "these fields should be completed:"
+msgstr ""
+
 msgid "has invalid geometry;"
+msgstr ""
+
+#, python-format
+msgid "%(obj)s has changed  state, it needs a review to be published. "
 msgstr ""
 
 msgid "Sync verifications"
@@ -526,11 +555,11 @@ msgid "Sync"
 msgstr ""
 
 #, python-format
-msgid "%s day"
+msgid "%s days"
 msgstr ""
 
 #, python-format
-msgid "%s days"
+msgid "%s day"
 msgstr ""
 
 #, python-format
@@ -592,10 +621,4 @@ msgid "Your attachment was deleted."
 msgstr ""
 
 msgid "You are not allowed to delete this attachment."
-msgstr ""
-
-msgid "Any year"
-msgstr ""
-
-msgid "Any value"
 msgstr ""

@@ -1,17 +1,17 @@
 import csv
 
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
+from mapentity.serializers.commasv import CSVSerializer
+from mapentity.serializers.shapefile import ZipShapeSerializer
+from rest_framework import serializers
+from rest_framework_gis import fields as rest_gis_fields
+from rest_framework_gis.fields import GeometrySerializerMethodField
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import PictogramSerializerMixin, BasePublishableSerializerMixin
-from geotrek.signage import models as signage_models
-
-from mapentity.serializers.commasv import CSVSerializer
-from mapentity.serializers.shapefile import ZipShapeSerializer
-
-from rest_framework import serializers
-from rest_framework_gis import fields as rest_gis_fields
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from . import models as signage_models
 
 
 class SignageTypeSerializer(PictogramSerializerMixin):
@@ -31,6 +31,12 @@ class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, seri
     class Meta:
         model = signage_models.Signage
         fields = "__all__"
+
+
+class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = signage_models.Signage
+        fields = ('id', 'name', 'published')
 
 
 class SignageAPISerializer(BasePublishableSerializerMixin):
@@ -70,6 +76,17 @@ class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = signage_models.Blade
         fields = "__all__"
+
+
+class BladeGeojsonSerializer(MapentityGeojsonModelSerializer):
+    api_geom = GeometrySerializerMethodField()
+
+    def get_api_geom(self, obj):
+        return obj.geom.transform(4326, clone=True)
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = signage_models.Blade
+        fields = ('id', 'number')
 
 
 class BladeAPISerializer(serializers.ModelSerializer):

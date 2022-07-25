@@ -67,4 +67,8 @@ And use the Geotrek-admin command to load it into PostGIS :
 .. note ::
 
     If you only have a ``.tif`` file, you can generate the ``.tfw`` file with the command ``gdal_translate -co "TFW=YES" in.tif out.tif``. 
-	It will generate a new ``.tif`` file with its ``.tfw`` metadata file.
+    It will generate a new ``.tif`` file with its ``.tfw`` metadata file.
+
+.. note ::
+
+   If you want to  update the altimetry of the topologies you need to use the option : --update-altimery

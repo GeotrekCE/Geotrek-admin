@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -13,10 +14,10 @@ from geotrek.common.serializers import (LabelSerializer,
                                         TargetPortalSerializer,
                                         ThemeSerializer,
                                         TranslatedModelSerializer)
-from geotrek.outdoor.models import Course, Site, Practice
 from geotrek.tourism.serializers import InformationDeskSerializer
 from geotrek.trekking.serializers import WebLinkSerializer
-from geotrek.zoning.serializers import ZoningSerializerMixin
+from geotrek.zoning.serializers import ZoningAPISerializerMixin
+from .models import Course, Site, Practice
 
 
 class PracticeSerializer(serializers.ModelSerializer):
@@ -41,7 +42,13 @@ class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class SiteAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
+class SiteGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = Site
+        fields = ["id", "name"]
+
+
+class SiteAPISerializer(PublishableSerializerMixin, ZoningAPISerializerMixin, TranslatedModelSerializer):
     practice = PracticeSerializer()
     structure = StructureSerializer()
     labels = LabelSerializer(many=True)
@@ -60,7 +67,7 @@ class SiteAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, Trans
             'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
             'information_desks', 'web_links', 'type', 'parent', 'children', 'eid',
             'orientation', 'wind', 'ratings'
-        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
+        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
 
 
 class SiteAPIGeojsonSerializer(GeoFeatureModelSerializer, SiteAPISerializer):
@@ -82,7 +89,13 @@ class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CourseAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
+class CourseGeojsonSerializer(MapentityGeojsonModelSerializer):
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = Course
+        fields = ["id", "name"]
+
+
+class CourseAPISerializer(PublishableSerializerMixin, ZoningAPISerializerMixin, TranslatedModelSerializer):
     structure = StructureSerializer()
     points_reference = serializers.SerializerMethodField()
 
@@ -91,7 +104,7 @@ class CourseAPISerializer(PublishableSerializerMixin, ZoningSerializerMixin, Tra
         fields = (
             'id', 'structure', 'name', 'parent_sites', 'description', 'duration', 'advice', 'points_reference',
             'equipment', 'accessibility', 'height', 'eid', 'ratings', 'ratings_description', 'gear', 'type'
-        ) + ZoningSerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
+        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields
 
     def get_points_reference(self, obj):
         if not obj.points_reference:

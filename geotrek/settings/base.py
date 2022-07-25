@@ -206,6 +206,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': (
             os.path.join(VAR_DIR, 'conf', 'extra_templates'),
+            os.path.join(VAR_DIR, 'conf', 'extra_sql'),
             os.path.join(PROJECT_DIR, 'templates'),
         ),
         'APP_DIRS': True,
@@ -282,7 +283,6 @@ PROJECT_APPS += (
 PROJECT_APPS += (
     'crispy_forms',
     'compressor',
-    'djgeojson',
     'django_filters',
     'tinymce',
     'easy_thumbnails',
@@ -314,10 +314,6 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.feedback',
     'geotrek.api',
 )
-
-SERIALIZATION_MODULES = {
-    'geojson': 'djgeojson.serializers'
-}
 
 CACHES = {
     'default': {
@@ -505,10 +501,17 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'course': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
+# Set 'error_on_publication' to avoid publication without completeness fields
+# and 'error_on_review' if you want this fields to be required before sending to review.
+COMPLETENESS_LEVEL = 'warning'
+
+# Set fields required or needed for review or publication, for each model
 COMPLETENESS_FIELDS = {
     'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
     'dive': ['practice', 'difficulty', 'description_teaser'],
 }
+
+ALERT_REVIEW = False
 
 EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.YoutubeBackend',
@@ -765,6 +768,9 @@ THUMBNAIL_COPYRIGHT_FORMAT = ""
 THUMBNAIL_COPYRIGHT_SIZE = 15
 PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
 PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = None
+PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = None
+PAPERCLIP_MAX_BYTES_SIZE_IMAGE = None
 PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = False
 
 ENABLED_MOBILE_FILTERS = [
@@ -833,6 +839,8 @@ USE_X_FORWARDED_HOST = False
 REST_FRAMEWORK = {
     "STRICT_JSON": False,  # allow serialize float NaN values
 }
+
+ALLOW_PATH_DELETION_TOPOLOGY = True
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')

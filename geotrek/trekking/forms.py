@@ -214,6 +214,7 @@ class TrekForm(BaseTrekForm):
 
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+
         for scale in RatingScale.objects.all():
             ratings = None
             if self.instance.pk:
@@ -223,10 +224,11 @@ class TrekForm(BaseTrekForm):
                 label=scale.name,
                 queryset=scale.ratings.all(),
                 required=False,
-                initial=ratings if ratings else None
+                initial=ratings[0] if ratings else None
             )
             right_after_type_index = self.fieldslayout[0][1][0].fields.index('practice') + 1
             self.fieldslayout[0][1][0].insert(right_after_type_index, fieldname)
+
         if self.instance.pk:
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:

@@ -9,6 +9,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, fromstr, LineString, GEOSGeometry
 from django.contrib.postgres.indexes import GistIndex
 from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db.models import ProtectedError
 from django.db.models.query import QuerySet
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -17,9 +18,9 @@ from modelcluster.models import ClusterableModel
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.functions import Length
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
-from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
@@ -106,7 +107,11 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
 
     @classmethod
     def no_draft_latest_updated(cls):
-        return cls.objects.filter(draft=False).latest('date_update').get_date_update()
+        try:
+            latest = cls.objects.filter(draft=False).only('date_update').latest('date_update').get_date_update()
+        except cls.DoesNotExist:
+            latest = None
+        return latest
 
     @property
     def length_2d_display(self):
@@ -228,7 +233,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
             TimeStampedModelMixin.reload(self, fromdb)
         return self
 
-    @debug_pg_notices
     def save(self, *args, **kwargs):
         # If the path was reversed, we have to invert related topologies
         if self.is_reversed:
@@ -243,11 +247,14 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     def delete(self, *args, **kwargs):
         if not settings.TREKKING_TOPOLOGY_ENABLED:
             return super().delete(*args, **kwargs)
-        topologies = list(self.topology_set.filter())
+        topologies = self.topology_set.all()
+        if topologies.exists() and not settings.ALLOW_PATH_DELETION_TOPOLOGY:
+            raise ProtectedError(_("You can't delete this path, some topologies are linked with this path"), self)
+        topologies_list = list(topologies)
         r = super().delete(*args, **kwargs)
         if not Path.objects.exists():
             return r
-        for topology in topologies:
+        for topology in topologies_list:
             if isinstance(topology.geom, Point):
                 closest = self.closest(topology.geom, self)
                 position, offset = closest.interpolate(topology.geom)
@@ -372,6 +379,14 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
         return None
 
 
+class TopologyManager(NoDeleteManager):
+    # Use this manager when walking through FK/M2M relationships
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return super().get_queryset().annotate(length_2d=Length('geom'))
+
+
 class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
                TimeStampedModelMixin, NoDeleteMixin, ClusterableModel):
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
@@ -386,6 +401,9 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
+
+    geometry_types_allowed = ["LINESTRING", "POINT"]
+    objects = TopologyManager()
 
     class Meta:
         verbose_name = _("Topology")
@@ -404,21 +422,13 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
     def paths(self):
         return Path.objects.filter(aggregations__topo_object=self)
 
-    @property
-    def length_2d(self):
-        if self.geom and not self.ispoint():
-            return round(self.geom.length, 1)
-
-        else:
-            return None
-
     @classproperty
     def length_2d_verbose_name(cls):
         return _("2D Length")
 
     @property
     def length_2d_display(self):
-        return self.length_2d
+        return round(self.length_2d, 1)
 
     @classproperty
     def KIND(cls):
@@ -558,7 +568,6 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
         return self
 
-    @debug_pg_notices
     def save(self, *args, **kwargs):
         # HACK: these fields are readonly from the Django point of view
         # but they can be changed at DB level. Since Django write all fields
@@ -840,10 +849,6 @@ class PathAggregation(models.Model):
         return (self.start_position == 0.0 and self.end_position == 1.0
                 or self.start_position == 1.0 and self.end_position == 0.0)
 
-    @debug_pg_notices
-    def save(self, *args, **kwargs):
-        return super().save(*args, **kwargs)
-
     class Meta:
         verbose_name = _("Path aggregation")
         verbose_name_plural = _("Path aggregations")
@@ -945,6 +950,8 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
         verbose_name = _("Trail")

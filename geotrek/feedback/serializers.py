@@ -1,5 +1,7 @@
 from django.contrib.gis.geos import GEOSGeometry
+from django.utils.html import escape
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -21,6 +23,15 @@ class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ReportGeojsonSerializer(MapentityGeojsonModelSerializer):
+    name = rest_serializers.CharField()
+    color = rest_serializers.CharField()
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = feedback_models.Report
+        fields = ["id", "name", "color"]
+
+
 class ReportAPISerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = feedback_models.Report
@@ -34,6 +45,9 @@ class ReportAPISerializer(rest_serializers.ModelSerializer):
 
     def validate_geom(self, value):
         return GEOSGeometry(value, srid=4326)
+
+    def validate_comment(self, value):
+        return escape(value)
 
 
 class ReportAPIGeojsonSerializer(GeoFeatureModelSerializer, ReportAPISerializer):

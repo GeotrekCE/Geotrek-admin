@@ -12,11 +12,12 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    from geotrek.outdoor.models import Course, Site
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
+
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from geotrek.outdoor.models import Course, Site
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -546,6 +547,7 @@ class GeotrekServiceFilter(BaseFilterBackend):
             types_id = types.split(',')
             if ServiceType.objects.filter(id__in=types_id).exists():
                 qs = qs.filter(Q(type__in=types_id))
+        qs = qs.filter(type__published=True)
         return qs
 
     def get_schema_fields(self, view):
@@ -1031,12 +1033,24 @@ class TouristicContentRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPor
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'contents')
 
 
-class TreksAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+class TreksAndSitesAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
         set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristiccontents')
         set_3 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristic_events')
-        return (set_1 | set_2 | set_3).distinct()
+        set_4 = qs.none()
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            set_4 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+        return (set_1 | set_2 | set_3 | set_4).distinct()
+
+
+class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
+        set_2 = qs.none()
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            set_2 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+        return (set_1 | set_2).distinct()
 
 
 class GeotrekRatingScaleFilter(BaseFilterBackend):

@@ -2,11 +2,12 @@ describe('Create path', () => {
   before(() => {
     const username = 'admin'
     const password = 'admin'
+
     cy.loginByCSRF(username, password)
       .then((resp) => {
          expect(resp.status).to.eq(200)
-      })
-  })
+      });
+  });
 
   beforeEach(() => {
     cy.setCookie('django_language', 'en');

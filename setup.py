@@ -33,7 +33,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.1.*',
-        'mapentity==8.0.1',
+        'mapentity==8.1.2',
         'env_file',
         # pinned by requirements.txt
         'python-memcached',
@@ -43,7 +43,9 @@ setup(
         'Pillow',
         'simplekml',
         'pygal',
+        'paperclip',
         'django-extended-choices',
+        'django-modelcluster',
         'django-mptt',
         'geojson',
         'tif2geojson',

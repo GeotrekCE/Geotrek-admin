@@ -1,4 +1,5 @@
-from geotrek.common.tests.factories import LabelFactory
+from geotrek.authent.models import default_structure
+from geotrek.common.tests.factories import LabelFactory, OrganismFactory
 from geotrek.common.models import Theme
 from django.core.files import File
 from django.test import TestCase
@@ -32,3 +33,19 @@ class LabelTest(TestCase):
     def test_str(self):
         label = LabelFactory.create(name="foo")
         self.assertEqual(str(label), "foo")
+
+
+class OrganismTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.organism_with_structure = OrganismFactory.create(structure=default_structure())
+        cls.organism_without_structure = OrganismFactory.create()
+
+    def test_str_with_structure(self):
+        self.assertEqual(
+            f"{self.organism_with_structure}",
+            f"{self.organism_with_structure.organism} ({self.organism_with_structure.structure.name})"
+        )
+
+    def test_str_without_structure(self):
+        self.assertEqual(f"{self.organism_without_structure}", self.organism_without_structure.organism)

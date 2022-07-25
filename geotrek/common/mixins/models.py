@@ -5,9 +5,11 @@ import shutil
 
 from PIL.Image import DecompressionBombError
 from django.conf import settings
+from django.core.mail import mail_managers
 from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
+from django.template.loader import render_to_string
 from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -316,6 +318,17 @@ class PublishableMixin(BasePublishableMixin):
 
     class Meta:
         abstract = True
+
+    def save(self, *args, **kwargs):
+        if (self.pk and self.__class__.objects.get(pk=self.pk).review != self.review and self.review) and settings.ALERT_REVIEW:
+            subject = _("{obj} need a review").format(obj=self)
+            message = render_to_string('common/review_email_message.txt', {"obj": self})
+            try:
+                mail_managers(subject, message, fail_silently=False)
+            except Exception as exc:
+                msg = f'Caught {exc.__class__.__name__}: {exc}'
+                logger.warning(f"Error mail managers didn't work ({msg})")
+        super().save(*args, **kwargs)
 
     @property
     def slug(self):

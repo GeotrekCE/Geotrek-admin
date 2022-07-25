@@ -1,19 +1,17 @@
 import os
 
-from django.views.generic.edit import BaseDetailView
-from django.http import HttpResponse, Http404
-from django.core.exceptions import PermissionDenied
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import caches
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, Http404
+from django.shortcuts import get_object_or_404
 from django.views import static
-
-from mapentity.decorators import view_cache_response_content
+from django.views.generic.edit import BaseDetailView
 from mapentity.views import JSONResponseMixin, LastModifiedMixin
 
 from geotrek.common.permissions import PublicOrReadPermMixin
-
+from geotrek.decorators import cbv_cache_response_content
 from .models import AltimetryMixin
 
 
@@ -52,7 +50,7 @@ class ElevationProfile(LastModifiedMixin, JSONResponseMixin,
         date_update = obj.get_date_update().strftime('%y%m%d%H%M%S%f'),
         return f"altimetry_profile_{obj.pk}_{date_update}"
 
-    @view_cache_response_content()
+    @cbv_cache_response_content()
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -74,7 +72,7 @@ class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,
         date_update = obj.get_date_update().strftime('%y%m%d%H%M%S%f'),
         return f"altimetry_dem_area_{obj.pk}_{date_update}"
 
-    @view_cache_response_content()
+    @cbv_cache_response_content()
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 

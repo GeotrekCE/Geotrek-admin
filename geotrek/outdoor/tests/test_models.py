@@ -1,10 +1,13 @@
-from django.contrib.gis.geos.collections import GeometryCollection
-from geotrek.trekking.tests.factories import POIFactory
-from django.contrib.gis.geos.point import Point
+import json
+
 from django.contrib.gis.geos import Polygon
-from geotrek.common.tests.factories import OrganismFactory
-from geotrek.outdoor.tests.factories import SiteFactory, RatingScaleFactory, SectorFactory
+from django.contrib.gis.geos.collections import GeometryCollection
+from django.contrib.gis.geos.point import Point
 from django.test import TestCase, override_settings
+
+from geotrek.common.tests.factories import OrganismFactory
+from geotrek.outdoor.tests.factories import SiteFactory, RatingScaleFactory, SectorFactory, CourseFactory
+from geotrek.trekking.tests.factories import POIFactory
 
 
 class SiteTest(TestCase):
@@ -128,3 +131,25 @@ class ExcludedPOIsTest(TestCase):
     def test_one_poi_excluded(self):
         self.site.pois_excluded.set([self.poi1])
         self.assertEqual(self.site.pois.count(), 1)
+
+
+class CourseTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.course_without_points_reference = CourseFactory()
+        cls.course_with_points_reference = CourseFactory(points_reference='SRID=2154;MULTIPOINT((575631.94 6373472.27), (576015.10 6372811.10))')
+
+    def test_points_reference_geojson_null(self):
+        """ Course points_reference geojson property should be None if null in database """
+        geojson = self.course_without_points_reference.points_reference_geojson
+        self.assertIsNone(geojson)
+
+    def test_points_reference_geojson_not_null(self):
+        """ Course points_reference geojson property should be reprojected in geojson format if defined in database """
+        geojson_text = self.course_with_points_reference.points_reference_geojson
+        geojson = json.loads(geojson_text)
+        coordinates = geojson['coordinates']
+        self.assertAlmostEqual(coordinates[0][0], 1.43697743457888)
+        self.assertAlmostEqual(coordinates[0][1], 44.449222490604605)
+        self.assertAlmostEqual(coordinates[1][0], 1.441955564370652)
+        self.assertAlmostEqual(coordinates[1][1], 44.443339997352474)

@@ -5,7 +5,7 @@ Edition d'un objet
 Segmentation dynamique
 ======================
 
-Tous les objets sont saisis et stockés relativement aux tronçons, en utilisant la segmentation dynamique (https://makina-corpus.com/blog/metier/2014/la-segmentation-dynamique), sauf les évènements et contenus touristiques, les services et les signalements qui sont indépendants et ont leur propre géométrie.
+Tous les objets sont saisis et stockés relativement aux tronçons, en utilisant la segmentation dynamique (https://makina-corpus.com/sig-webmapping/la-segmentation-dynamique), sauf les évènements et contenus touristiques, les services et les signalements qui sont indépendants et ont leur propre géométrie.
 
 C'est pourquoi, modifier un tronçon peut entrainer des modifications des objets qui lui sont rattachés (signalétique, interventions, itinéraires, POIs...). Supprimer un tronçon, supprime les objets qui lui sont rattachés.
 

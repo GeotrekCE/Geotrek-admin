@@ -1,0 +1,6 @@
+{% extends "mapentity/mapentity_detail.html" %}
+
+{% block attachmentspanel %}
+  {% include 'common/attachment_list.html' with attachment_form_next=object.get_detail_url|add:'?tab=attachments' %}
+{% endblock attachmentspanel %}
+

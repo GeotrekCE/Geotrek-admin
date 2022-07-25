@@ -1,4 +1,4 @@
-{% load i18n geojson_tags outdoor_tags %}
+{% load i18n outdoor_tags %}
 
 {% is_outdoor_enabled as enabled %}
 {% if enabled %}
@@ -8,8 +8,8 @@
     MapEntity.i18n['site'] = "{% trans "Outdoor site" %}";
     MapEntity.i18n['course'] = "{% trans "Outdoor course" %}";
 
-    window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site_layer" %}";
-    window.SETTINGS.urls['course_layer'] = "{% url "outdoor:course_layer" %}";
+    window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['course_layer'] = "{% url "outdoor:course-drf-list" format="geojson" %}";
 </script>
 
 {% if modelname == "site" %}
@@ -29,7 +29,7 @@
             //
             // Points of reference
             (function (map) {
-                var data = {{ object.points_reference|geojsonfeature|safe }};
+                var data = {{ object.points_reference_geojson|safe|default:"null" }};
                 L.geoJson(data, {
                     pointToLayer: (function () {
                         var counter = 1;

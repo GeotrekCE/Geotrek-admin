@@ -1,6 +1,6 @@
 from django.contrib.gis.db.models.functions import GeoFunc
 from django.db.models import Func
-from django.db.models.fields import FloatField, CharField
+from django.db.models.fields import FloatField
 from django.contrib.gis.db.models import GeometryField, PointField
 
 
@@ -9,13 +9,6 @@ def Buffer(geom, radius, num_seg):
     ST_Buffer postgis function
     """
     return Func(geom, radius, num_seg, function='ST_Buffer', output_field=GeometryField())
-
-
-def GeometryType(geom):
-    """
-    GeometryType postgis function
-    """
-    return Func(geom, function='GeometryType', output_field=CharField())
 
 
 class Length3D(Func):

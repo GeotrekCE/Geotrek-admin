@@ -1,16 +1,20 @@
 import math
 from unittest import skipIf
+import os
 
+from django.apps import apps
+from django.template.loader import get_template
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
-from django.db import IntegrityError
-
+from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
+from django.db.models import ProtectedError
 from geotrek.common.utils import dbnow
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
 from geotrek.core.tests.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
-from geotrek.core.models import Path
+from geotrek.core.models import Path, Trail
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -92,6 +96,69 @@ class PathTest(TestCase):
         self.assertAlmostEqual(lat_min, 46.499999999999936)
         self.assertAlmostEqual(lng_max, 3.0013039767202154)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_delete_allow_path_trigger(self):
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        TrailFactory.create(paths=[p1])
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM core_path WHERE id = {p1.pk}")
+        cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")
+        self.assertEqual(Path.objects.count(), 0)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @override_settings(ALLOW_PATH_DELETION_TOPOLOGY=False)
+    def test_delete_protected_allow_path_trigger(self):
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        TrailFactory.create(paths=[p1])
+
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+
+        app = apps.get_app_config('core')
+        sql_file = os.path.normpath(os.path.join(app.path, 'templates', app.label, 'sql', 'post_80_paths_deletion.sql'))
+        template = get_template(sql_file)
+        context_settings = settings.__dict__['_wrapped'].__dict__
+        context = dict(
+            schema_geotrek='public',
+            schema_django='public',
+        )
+        context.update(context_settings)
+        rendered_sql = template.render(context)
+        cur.execute("DROP FUNCTION IF EXISTS path_deletion() CASCADE;")
+        cur.execute(rendered_sql)
+
+        cur.execute(f"DELETE FROM core_path WHERE id = {p1.pk}")
+        cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")
+
+        self.assertEqual(Path.objects.count(), 1)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_delete_protected_allow_path(self):
+        p1 = PathFactory.create()
+        p2 = PathFactory.create()
+        t = TrailFactory.create(paths=[p1, p2])
+
+        # Everything should be all right before delete
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 2)
+
+        p1.delete()
+        t = Trail.objects.get(pk=t.pk)
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 1)
+
+        with override_settings(ALLOW_PATH_DELETION_TOPOLOGY=False):
+            with self.assertRaisesRegex(ProtectedError,
+                                        "You can't delete this path, some topologies are linked with this path"):
+                p2.delete()
+
+        t = Trail.objects.get(pk=t.pk)
+        self.assertFalse(t.deleted)
+        self.assertEqual(t.aggregations.count(), 1)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

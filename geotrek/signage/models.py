@@ -74,6 +74,8 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.CASCADE)
     coordinates_verbose_name = _("Coordinates")
 
+    geometry_types_allowed = ["POINT"]
+
     class Meta:
         verbose_name = _("Signage")
         verbose_name_plural = _("Signages")

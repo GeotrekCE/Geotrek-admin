@@ -1,23 +1,19 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
 from .models import Infrastructure
-from .serializers import InfrastructureSerializer, InfrastructureAPIGeojsonSerializer, InfrastructureAPISerializer
-from ..common.mixins.api import APIViewSet
-from ..common.viewsets import GeotrekMapentityViewSet
-
-
-class InfrastructureLayer(MapEntityLayer):
-    queryset = Infrastructure.objects.existing()
-    properties = ['name', 'published']
+from .serializers import InfrastructureSerializer, InfrastructureAPIGeojsonSerializer, InfrastructureAPISerializer, \
+    InfrastructureGeojsonSerializer
 
 
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
@@ -75,6 +71,7 @@ class InfrastructureDelete(MapEntityDelete):
 class InfrastructureViewSet(GeotrekMapentityViewSet):
     model = Infrastructure
     serializer_class = InfrastructureSerializer
+    geojson_serializer_class = InfrastructureGeojsonSerializer
     filterset_class = InfrastructureFilterSet
 
     def get_columns(self):
@@ -82,7 +79,12 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
                                                                                  InfrastructureList.default_extra_columns)
 
     def get_queryset(self):
-        qs = Infrastructure.objects.existing().select_related('type', 'maintenance_difficulty', 'usage_difficulty')
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name', 'published')
+        else:
+            qs = qs.select_related('type', 'maintenance_difficulty', 'usage_difficulty')
         return qs
 
 

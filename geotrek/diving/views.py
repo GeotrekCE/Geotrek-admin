@@ -5,13 +5,13 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.views.generic import DetailView
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin, MetaMixin
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -21,12 +21,7 @@ from geotrek.trekking.views import FlattenPicturesMixin
 from .filters import DiveFilterSet
 from .forms import DiveForm
 from .models import Dive
-from .serializers import DiveSerializer, DiveAPIGeojsonSerializer, DiveAPISerializer
-
-
-class DiveLayer(MapEntityLayer):
-    properties = ['name', 'published']
-    queryset = Dive.objects.existing()
+from .serializers import DiveSerializer, DiveGeojsonSerializer, DiveAPIGeojsonSerializer, DiveAPISerializer
 
 
 class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
@@ -50,7 +45,7 @@ class DiveFormatList(MapEntityFormat, DiveList):
     ]
 
 
-class DiveDetail(MapEntityDetail):
+class DiveDetail(CompletenessMixin, MapEntityDetail):
     queryset = Dive.objects.existing()
 
     def dispatch(self, *args, **kwargs):
@@ -148,10 +143,16 @@ class DiveMeta(MetaMixin, DetailView):
 class DiveViewSet(GeotrekMapentityViewSet):
     model = Dive
     serializer_class = DiveSerializer
+    geojson_serializer_class = DiveGeojsonSerializer
     filterset_class = DiveFilterSet
 
     def get_queryset(self):
-        return self.model.objects.existing()
+        qs = self.model.objects.existing()
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'name', 'published')
+
+        return qs
 
     def get_columns(self):
         return DiveList.mandatory_columns + settings.COLUMNS_LISTS.get('dive_view',

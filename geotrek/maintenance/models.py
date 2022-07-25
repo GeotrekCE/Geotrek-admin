@@ -75,6 +75,8 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     objects = InterventionManager()
 
+    geometry_types_allowed = ["LINESTRING", "POINT"]
+
     class Meta:
         verbose_name = _("Intervention")
         verbose_name_plural = _("Interventions")

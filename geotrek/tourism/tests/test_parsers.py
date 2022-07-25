@@ -13,11 +13,13 @@ from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFact
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.tests.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
-                                             TouristicContentType2Factory, TouristicEventTypeFactory)
-from geotrek.tourism.models import TouristicContent, TouristicEvent
+                                             TouristicContentType2Factory, TouristicEventTypeFactory,
+                                             InformationDeskTypeFactory)
+from geotrek.tourism.models import InformationDesk, TouristicContent, TouristicEvent
 from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEventApidaeParser, EspritParcParser,
                                      TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
-                                     TouristicContentTourInSoftParser, TouristicEventTourInSoftParser)
+                                     TouristicContentTourInSoftParser, TouristicEventTourInSoftParser,
+                                     InformationDeskApidaeParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
@@ -44,6 +46,10 @@ class EauViveParser(TouristicContentApidaeParser):
     category = "Eau vive"
     type1 = ["Type A", "Type B"]
     type2 = []
+
+
+class TestInformationDeskParser(InformationDeskApidaeParser):
+    type = "Foo"
 
 
 class EspritParc(EspritParcParser):
@@ -606,3 +612,38 @@ class ParserTests(TranslationResetMixin, TestCase):
                                  ['<TargetPortal: Itinérance>',
                                   '<TargetPortal: Other_portal>'],
                                  ordered=False)
+
+    @mock.patch('geotrek.common.parsers.requests.get')
+    def test_create_information_desk_apidae(self, mocked):
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'information_desk.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+
+        InformationDeskTypeFactory.create(label="Foo")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestInformationDeskParser')
+        self.assertEqual(InformationDesk.objects.count(), 2)
+        information_desk = InformationDesk.objects.get(eid=1)
+        self.assertEqual(information_desk.name, 'Foo bar')
+        self.assertEqual(information_desk.description, 'Description')
+
+        with information_desk.photo.open() as f:
+            data = f.read()
+        self.assertEqual(data, b'Fake image')
+
+        mocked.return_value.content = b'Fake other image'
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestInformationDeskParser')
+
+        information_desk.refresh_from_db()
+
+        with information_desk.photo.open() as f:
+            data = f.read()
+        self.assertEqual(data, b'Fake other image')
+
+        information_desk_2 = InformationDesk.objects.get(eid=2)
+        self.assertEqual(information_desk_2.website, None)

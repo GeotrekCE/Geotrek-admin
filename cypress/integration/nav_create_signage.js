@@ -8,6 +8,7 @@ describe('Create signage', () => {
   before(() => {
     const username = 'admin'
     const password = 'admin'
+
     cy.loginByCSRF(username, password)
       .then((resp) => {
          expect(resp.status).to.eq(200)
@@ -22,7 +23,7 @@ describe('Create signage', () => {
   it('Create signage', () => {
     cy.visit('/signage/list')
     cy.server()
-    cy.route('/api/signage/signage.geojson').as('signage')
+    cy.route('/api/signage/drf/signages.geojson').as('signage')
     cy.get("a.btn-success[href='/signage/add/']").contains('Add a new signage').click()
     cy.wait('@signage')
     cy.get("a.pointtopology-control").click()

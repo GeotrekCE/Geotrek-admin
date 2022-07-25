@@ -22,4 +22,4 @@ $(window).on('entity:map', function (e, data) {
             }
         }
     });
-})
+});
