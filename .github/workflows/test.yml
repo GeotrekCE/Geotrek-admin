@@ -205,8 +205,6 @@ jobs:
           path: |
             /home/runner/work/Geotrek-admin/*.deb
 
-
-
   e2e_docker_image:
     name: Tests E2E docker
     runs-on: ubuntu-20.04
@@ -280,8 +278,6 @@ jobs:
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
-
-
 
   e2e_deb_18_04:
     name: Tests E2E 18.04
@@ -463,7 +459,7 @@ jobs:
       - name: Download docker image
         uses: ishworkh/docker-image-artifact-download@v1
         with:
-          image: "screamshotter_ci:latest"
+          image: "geotrek:latest"
       - name: Attach debian packages as release binaries
         uses: skx/github-action-publish-binaries@master
         env:
@@ -477,10 +473,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Publish Docker image (v2 and latest)
         run: |
-          docker tag screamshotter_ci:latest makinacorpus/screamshotter:v2
-          docker push makinacorpus/screamshotter:v2
-          docker tag screamshotter_ci:latest makinacorpus/screamshotter:latest
-          docker push makinacorpus/screamshotter:latest
+          docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
+          docker push geotrek:latest geotrekce/admin:$(cat VERSION)
+          docker tag geotrek:latest geotrekce/admin:latest
+          docker push geotrek:latest geotrekce/admin:latest
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
