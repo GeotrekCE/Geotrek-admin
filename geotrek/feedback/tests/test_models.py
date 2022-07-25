@@ -292,7 +292,7 @@ class TestPendingAPIRequests(SuricateTests):
         messenger = SuricateMessenger(PendingSuricateAPIRequest)
         self.assertRaises(
             Exception,
-            messenger.update_status(uid, self.status.identifier, "a nice and polite message")
+            messenger.update_status(uid, self.status.identifier, "a nice and polite message", "a brief message")
         )
         self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
         report.refresh_from_db()
@@ -308,7 +308,7 @@ class TestPendingAPIRequests(SuricateTests):
         params = json.dumps({
             "id_origin": "geotrek",
             "statut": "waiting",
-            "txt_changestatut": "a nice and polite message",
+            "txt_changestatut": "a brief message",
             "txt_changestatut_sentinelle": "a nice and polite message",
             "check": check,
             "uid_alerte": str(uid)

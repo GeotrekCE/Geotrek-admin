@@ -68,6 +68,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
@@ -87,6 +88,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
@@ -111,6 +113,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
@@ -129,6 +132,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertIn('message_sentinel', keys)
+        self.assertIn('message_administrators', keys)
         self.assertIn('message_sentinel_predefined', keys)
         self.assertIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
@@ -152,6 +156,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
@@ -170,6 +175,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
@@ -315,7 +321,8 @@ class TestSuricateForms(SuricateWorkflowTests):
             'email': 'test@test.fr',
             'geom': self.solved_intervention_report.geom,
             'status': self.resolved_status.pk,
-            'message_sentinel': "Your message"
+            'message_sentinel': "Your message",
+            'message_administrators': "Your message admins"
         }
         form = ReportForm(instance=self.solved_intervention_report, data=data)
         form.save()
@@ -332,7 +339,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_external_uuid, 'statut': 'solved', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_external_uuid, 'statut': 'solved', 'txt_changestatut': 'Your message admins', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
@@ -387,7 +394,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         ).hexdigest()
         mocked_post.assert_called_once_with(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report_1.formatted_external_uuid, 'statut': 'waiting', 'txt_changestatut': 'Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département', 'txt_changestatut_sentinelle': 'Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report_1.formatted_external_uuid, 'statut': 'waiting', 'txt_changestatut': 'Le Signalement ne concerne pas le Département - Relocalisé hors du Département', 'txt_changestatut_sentinelle': 'Le Signalement ne concerne pas le Département - Relocalisé hors du Département', 'check': check},
             auth=('', '')
         )
         mocked_get.assert_called_once_with(

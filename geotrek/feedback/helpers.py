@@ -236,21 +236,18 @@ class SuricateMessenger:
             "wsUnlockAlert", url_params={"uid_alerte": id_alert}
         )
 
-    def update_status(self, id_alert, new_status, message):
+    def update_status(self, id_alert, new_status, message_sentinel="No message", message_admins="No message"):
         """Update status for given report on Suricate Rest API"""
         check = md5(
             (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + str(id_alert)).encode()
         ).hexdigest()
 
-        if not message:
-            message = "No message"
-
         params = {
             "id_origin": self.gestion_manager.ID_ORIGIN,
             "uid_alerte": id_alert,
             "statut": new_status,
-            "txt_changestatut": message,
-            "txt_changestatut_sentinelle": message,
+            "txt_changestatut": message_admins,
+            "txt_changestatut_sentinelle": message_sentinel,
             "check": check,
         }
         self.gestion_manager.post_or_retry_to_suricate("wsUpdateStatus", params)
