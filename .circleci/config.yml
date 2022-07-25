@@ -52,12 +52,12 @@ jobs:
       - run:
           name: Tag and save docker image
           command: |
-            docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-            docker save -o ./20.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+            docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_SHA1
+            docker save -o ./20.04.tar geotrekce/circleci-admin:$CIRCLE_SHA1
       - persist_to_workspace:
           root: .
           paths:
-            - 20.04.*.tar
+            - 20.04.tar
 
     resource_class: large
 
@@ -72,12 +72,12 @@ jobs:
       - run:
           name: Tag and save docker image
           command: |
-            docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
-            docker save -o ./18.04.$CIRCLE_WORKFLOW_ID.tar geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+            docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_SHA1
+            docker save -o ./18.04.tar geotrekce/circleci-admin:18.04-$CIRCLE_SHA1
       - persist_to_workspace:
           root: .
           paths:
-            - 18.04.*.tar
+            - 18.04.tar
     resource_class: large
 
   docker_test:
@@ -97,8 +97,8 @@ jobs:
       - run:
           name: Load docker image
           command: |
-            docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+            docker load -i /tmp/workspace/20.04.tar
+            docker tag geotrekce/circleci-admin:$CIRCLE_SHA1 geotrekce/admin:latest
       - run:
           name: Check pending migrations
           command: docker-compose run web ./manage.py makemigrations --check
@@ -133,8 +133,8 @@ jobs:
       - run:
           name: Load docker image
           command: |
-            docker load -i /tmp/workspace/18.04.$CIRCLE_WORKFLOW_ID.tar
-            docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+            docker load -i /tmp/workspace/18.04.tar
+            docker tag geotrekce/circleci-admin:18.04-$CIRCLE_SHA1 geotrekce/admin:latest
       - run:
           name: Prepare tests
           command: docker-compose run web update.sh
@@ -161,8 +161,8 @@ jobs:
       - run:
           name: Load docker image
           command: |
-            docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+            docker load -i /tmp/workspace/20.04.tar
+            docker tag geotrekce/circleci-admin:$CIRCLE_SHA1 geotrekce/admin:latest
       - run:
           name: Prepare tests
           command: docker-compose run web update.sh
@@ -194,8 +194,8 @@ jobs:
       - run:
           name: Load docker image
           command: |
-            docker load -i /tmp/workspace/18.04.$CIRCLE_WORKFLOW_ID.tar
-            docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+            docker load -i /tmp/workspace/18.04.tar
+            docker tag geotrekce/circleci-admin:18.04-$CIRCLE_SHA1 geotrekce/admin:latest
       - run:
           name: Prepare tests
           command: docker-compose run web update.sh
@@ -229,8 +229,8 @@ jobs:
       - run:
           name: Load docker image
           command: |
-            docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+            docker load -i /tmp/workspace/20.04.tar
+            docker tag geotrekce/circleci-admin:$CIRCLE_SHA1 geotrekce/admin:latest
       - run:
           name: Prepare tests
           command: |
@@ -260,8 +260,8 @@ jobs:
             mkdir -p var/conf/
             cp cypress/custom.py var/conf/custom.py
             docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-            docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+            docker load -i /tmp/workspace/20.04.tar
+            docker tag geotrekce/circleci-admin:$CIRCLE_SHA1 geotrekce/admin:latest
             docker-compose run web update.sh
             sudo apt-get update -q && sudo apt-get install -q -y npm nginx
             mkdir -p var/conf/extra_static
@@ -302,9 +302,9 @@ jobs:
       - run:
           name: Load and tag docker image
           command: |
-            docker load -i /tmp/workspace/20.04.$CIRCLE_WORKFLOW_ID.tar
-            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:$(cat VERSION)
-            docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+            docker load -i /tmp/workspace/20.04.tar
+            docker tag geotrekce/circleci-admin:$CIRCLE_SHA1 geotrekce/admin:$(cat VERSION)
+            docker tag geotrekce/circleci-admin:$CIRCLE_SHA1 geotrekce/admin:latest
       - run:
           name: Push docker image
           command: |
