@@ -59,8 +59,6 @@ jobs:
           paths:
             - 20.04.tar
 
-    resource_class: large
-
   docker_image_18_04:
     machine:
       image: ubuntu-2004:202201-02
@@ -78,7 +76,6 @@ jobs:
           root: .
           paths:
             - 18.04.tar
-    resource_class: large
 
   docker_test:
     machine:
@@ -240,7 +237,6 @@ jobs:
       - run:
           name: Launch tests
           command: sudo ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
-    resource_class: large
 
   docker_test_integration:
     machine:
@@ -311,8 +307,6 @@ jobs:
             echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
             docker push geotrekce/admin:$(cat VERSION)
             docker push geotrekce/admin:latest
-
-    resource_class: large
 
   ubuntu_package:
     docker:
@@ -386,7 +380,6 @@ jobs:
             grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION && export DEB_COMPONENT=main || export DEB_COMPONENT=dev
             scp -P $SSH_PORT -o StrictHostKeyChecking=no /tmp/workspace/geotrek-admin_*_amd64.deb $SSH_USER@$SSH_HOST:/srv/packages/incoming/$DEB_COMPONENT/
             ssh -p $SSH_PORT -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST make -C /srv/packages
-    resource_class: large
 
 workflows:
   version: 2
