@@ -34,6 +34,10 @@ CHANGELOG
 
 - Improve Suricate workflow alert emails
 
+**New ci**
+
+- New common interface github actions
+
 
 2.84.1     (2022-06-21)
 -----------------------
@@ -134,11 +138,6 @@ CHANGELOG
 - Add a git hook to prevent pushing to master.
 - Update to paperclip 2.5.0
 
-**New ci**
-
-- New common interface github actions
-
-- Test
 
 2.82.2  (2022-04-28)
 -----------------------
