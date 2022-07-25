@@ -10,6 +10,12 @@ CHANGELOG
 - Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
 - Use permission bypass_structure on attachments and accessibility attachments (#2899)
 - Add boolean field 'display_in_legend' to Report Status model
+- Add sync_rando / sync_mobile option `empty_tmp_folder` which will force deletion of all directories / files in tmp directory
+- Add setting ``ALERT_REVIEW`` which send mail whenever an object has been changed to review (#2903)
+- Add setting ``PAPERCLIP_MAX_BYTES_SIZE_IMAGE`` unallow usage of huge image (#2902)
+- Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH`` unallow usage of images with small width (#2902)
+- Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT`` unallow usage of images with small height (#2902)
+  These settings will influence the attachments downloaded in parsers
 
 **Documentation**
 
@@ -22,13 +28,9 @@ CHANGELOG
 - Fix form outdoor/trekking when rating scale is used with modification of practice
 - Fix initial value of rating was not shown in trekking form (#3121)
 
-**New features**
+**Minor improvements**
 
-- Add setting ``ALERT_REVIEW`` which send mail whenever an object has been changed to review (#2903)
-- Add setting ``PAPERCLIP_MAX_BYTES_SIZE_IMAGE`` unallow usage of huge image (#2902)
-- Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH`` unallow usage of images with small width (#2902)
-- Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT`` unallow usage of images with small height (#2902)
-  These settings will influence the attachments downloaded in parsers
+- Remove problems of tmp_sync_rando / tmp_sync_mobile which are not removed before new sync_rando / sync_mobile
 
 **Suricate Workflow**  (#2366)
 
