@@ -348,6 +348,7 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
+
       - run:
           name: Prepare release
           command: |
@@ -358,7 +359,7 @@ jobs:
           command: |
             apt-get update -q
             apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libgdal-dev libffi-dev libxml2-dev libxslt1-dev
-        - run:
+      - run:
           name: Build debian package
           command: dpkg-buildpackage -uc -us -b
       - persist_to_workspace:
