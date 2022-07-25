@@ -11,7 +11,7 @@ messages:
 	docker-compose run --rm web ./manage.py makemessages -a --no-location
 
 test:
-	docker-compose -e ENV=tests run web ./manage.py test
+	docker-compose -e ENV=tests run --rm web ./manage.py test
 
 test_nav:
 	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
@@ -28,16 +28,16 @@ test_js: node_modules
 tests: test test_js test_nav
 
 update:
-	docker-compose run web update.sh
+	docker-compose run --rm web update.sh
 
 load_data:
-	docker-compose run web load_data.sh
+	docker-compose run --rm web load_data.sh
 
 load_demo:
-	docker-compose run web ./manage.py loaddata development-pne
+	docker-compose run --rm web ./manage.py loaddata development-pne
 
 load_test_integration:
-	docker-compose run web ./manage.py loaddata test-integration
+	docker-compose run --rm web ./manage.py loaddata test-integration
 
 css:
 	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
