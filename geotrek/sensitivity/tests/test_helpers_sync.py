@@ -2,6 +2,7 @@ from io import StringIO
 import os
 from unittest.mock import patch
 
+from django.conf import settings
 from django.test import TestCase
 
 from geotrek.common.tests.factories import FakeSyncCommand
@@ -20,6 +21,6 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync('en')
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'en', 'sensitiveareas.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'en', 'sensitiveareas',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'sensitiveareas.geojson')))
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'sensitiveareas',
                                                     '{obj.pk}.kml'.format(obj=self.area))))

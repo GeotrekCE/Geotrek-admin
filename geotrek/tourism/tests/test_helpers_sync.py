@@ -50,9 +50,9 @@ class SyncRandoTestCase(TestCase):
         with patch('geotrek.tourism.helpers_sync.SyncRando.sync_event', side_effect=side_effect_sync_event):
             with patch('geotrek.tourism.helpers_sync.SyncRando.sync_content', side_effect=side_effect_sync_content):
                 synchro.sync('en')
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'static', 'tourism',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'static', 'tourism',
                                                     'touristicevent.svg')))
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'en', 'information_desks.geojson')))
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'information_desks.geojson')))
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_portal_source(self, stdout, mock_prepare_event, mock_prepare_content):
@@ -74,16 +74,16 @@ class SyncRandoTestCase(TestCase):
         with patch('geotrek.tourism.helpers_sync.SyncRando.sync_event', side_effect=side_effect_sync_event):
             with patch('geotrek.tourism.helpers_sync.SyncRando.sync_content', side_effect=side_effect_sync_content):
                 synchro.sync('en')
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'static', 'tourism',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'static', 'tourism',
                                                     'touristicevent.svg')))
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'en', 'information_desks.geojson')))
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'information_desks.geojson')))
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_event(self, stdout, mock_prepare_event, mock_prepare_content):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync_event('fr', self.touristic_event)
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'fr', 'touristicevents',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'touristicevents',
                                                     str(self.touristic_event.pk),
                                                     '%s.pdf' % self.touristic_event.slug)))
 
@@ -92,7 +92,7 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync_content('fr', self.touristic_content)
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'fr', 'touristiccontents',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'touristiccontents',
                                                     str(self.touristic_content.pk),
                                                     '%s.pdf' % self.touristic_content.slug)))
 
@@ -101,7 +101,7 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand(portal=self.portal.name, source=[self.source.name])
         synchro = SyncRando(command)
         synchro.sync_event('fr', self.touristic_event)
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'fr', 'touristicevents',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'touristicevents',
                                                     str(self.touristic_event.pk),
                                                     '%s.pdf' % self.touristic_event.slug)))
 
@@ -110,6 +110,6 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand(portal=self.portal.name, source=[self.source.name])
         synchro = SyncRando(command)
         synchro.sync_content('fr', self.touristic_content)
-        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'fr', 'touristiccontents',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'touristiccontents',
                                                     str(self.touristic_content.pk),
                                                     '%s.pdf' % self.touristic_content.slug)))
