@@ -63,3 +63,8 @@ class LabelViewSet(api_viewsets.GeotrekViewSet):
 class OrganismViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.OrganismSerializer
     queryset = common_models.Organism.objects.all()
+
+
+class FileTypeViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.FileTypeSerializer
+    queryset = common_models.FileType.objects.all()

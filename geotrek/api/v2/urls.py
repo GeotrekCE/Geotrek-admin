@@ -14,6 +14,7 @@ router.register('source', api_views.SourceViewSet, basename='source')
 router.register('reservationsystem', api_views.ReservationSystemViewSet, basename='reservationsystem')
 router.register('label', api_views.LabelViewSet, basename='label')
 router.register('organism', api_views.OrganismViewSet, basename='organism')
+router.register('file_type', api_views.FileTypeViewSet, basename='filetype')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:

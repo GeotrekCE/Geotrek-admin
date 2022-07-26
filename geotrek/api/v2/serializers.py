@@ -326,6 +326,12 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'advice', 'filter', 'name', 'pictogram')
 
 
+class FileTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class Meta:
+        model = common_models.FileType
+        fields = ('id', 'structure', 'type')
+
+
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class LabelAccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()

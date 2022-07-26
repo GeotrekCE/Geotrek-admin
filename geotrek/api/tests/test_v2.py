@@ -128,6 +128,8 @@ STRUCTURE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter', 'name', 'pictogram'])
 
+FILETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'structure', 'type'])
+
 INFORMATION_DESK_TYPE_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'label', 'pictogram'
 ])
@@ -323,6 +325,7 @@ class BaseApiTest(TestCase):
         cls.info_desk.save()
         cls.content2.portal.add(cls.portal)
         common_factory.FileTypeFactory.create(type='Topoguide')
+        cls.filetype = common_factory.FileTypeFactory.create(type='Foo')
         cls.sensitivearea = sensitivity_factory.SensitiveAreaFactory()
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
@@ -550,6 +553,12 @@ class BaseApiTest(TestCase):
 
     def get_label_detail(self, id_label, params=None):
         return self.client.get(reverse('apiv2:label-detail', args=(id_label,)), params)
+
+    def get_filetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:filetype-list'), params)
+
+    def get_filetype_detail(self, id_label, params=None):
+        return self.client.get(reverse('apiv2:filetype-detail', args=(id_label,)), params)
 
     def get_informationdesk_list(self, params=None):
         return self.client.get(reverse('apiv2:informationdesk-list'), params)
@@ -1921,6 +1930,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_label_detail(self.label.pk),
             TREK_LABEL_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_filetype_detail(self):
+        self.check_structure_response(
+            self.get_filetype_detail(self.filetype.pk),
+            FILETYPE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_filetype_list(self):
+        self.check_number_elems_response(
+            self.get_filetype_list(),
+            common_models.FileType
         )
 
     def test_informationdesk_list(self):
