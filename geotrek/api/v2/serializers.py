@@ -492,7 +492,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             geo_field = 'geom'
             fields = (
                 'id', 'accessibility', 'description', 'email', 'label_accessibility', 'latitude', 'longitude',
-                'municipality', 'name', 'phone', 'photo_url',
+                'municipality', 'name', 'phone', 'photo_url', 'uuid',
                 'postal_code', 'street', 'type', 'website'
             )
 

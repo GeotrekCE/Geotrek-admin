@@ -25,6 +25,8 @@ ALTER TABLE tourism_informationdesk ALTER COLUMN description SET DEFAULT '';
 ALTER TABLE tourism_informationdesk ALTER COLUMN accessibility SET DEFAULT '';
 -- label_accessibility
 -- geom
+-- eid
+ALTER TABLE tourism_informationdesk ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 
 
 -- TouristicContentCategory

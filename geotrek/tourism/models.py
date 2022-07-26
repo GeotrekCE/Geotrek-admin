@@ -86,6 +86,7 @@ class InformationDesk(models.Model):
     geom = models.PointField(verbose_name=_("Emplacement"),
                              blank=True, null=True,
                              srid=settings.SRID, spatial_index=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     objects = models.Manager()
 

@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 - Add sync_rando / sync_mobile option `empty_tmp_folder` which will force deletion of all directories / files in tmp directory
+- Add information desk uuid (#3189)
 
 **Minor improvements**
 
