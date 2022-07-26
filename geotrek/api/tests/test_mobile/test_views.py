@@ -1,5 +1,4 @@
 import os
-import shutil
 from io import StringIO
 from unittest.mock import patch
 
