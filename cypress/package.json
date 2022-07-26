@@ -1,11 +1,6 @@
 {
-  "name": "geotrek-tests-cypress",
-  "version": "0.0.1",
-  "scripts": {
-    "test": "make test_js"
-  },
   "dependencies": {
-    "cypress": "^9.5.1",
-    "@foreachbe/cypress-tinymce": "^1.0.0"
+    "@foreachbe/cypress-tinymce": "^1.0.0",
+    "cypress": "^9.5.1"
   }
 }

@@ -1,0 +1,32 @@
+name: Linting
+
+on:
+  push:
+
+env:
+  DEBIAN_FRONTEND: noninteractive
+
+jobs:
+  flake8:
+    name: Check code styling
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6  # lint with minimal version supported (3.6 in 18.04)
+
+      - name: Install dependencies
+        run: |
+          pip3 install --upgrade pip
+          pip3 install flake8
+
+      - name: Flake8
+        run: |
+          flake8 geotrek
+
+      - name: Not evaluated values in migration files
+        run: |
+          test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0

@@ -4,12 +4,9 @@
   "integrationFolder": "integration",
   "pluginsFile": false,
   "screenshotsFolder": "screenshots",
-  "videosFolder": "screenshots",
-  "baseUrl": "http://localhost:8000",
+  "videosFolder": "videos",
+  "baseUrl": "http://geotrek.local:8000",
   "video": true,
-  "requestTimeout": 60000,
-  "defaultCommandTimeout": 60000,
-  "pageLoadTimeout": 60000,
-  "responseTimeout": 60000,
+  "requestTimeout": 50000,
   "projectId": "ktpy7v"
 }

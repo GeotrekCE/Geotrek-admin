@@ -1,16 +1,15 @@
+import os
+
+from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.test import TestCase, override_settings
 
+from ..parsers import Parser
 from ..utils import sql_extent, uniquify, format_coordinates, spatial_reference
-from ..utils.import_celery import (create_tmp_destination,
-                                   subclasses,
-                                   )
-
-from geotrek.common.parsers import Parser
+from ..utils.import_celery import create_tmp_destination, subclasses
 
 
 class UtilsTest(TestCase):
-
     def test_sqlextent(self):
         ext = sql_extent(
             "SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")
@@ -34,7 +33,8 @@ class UtilsTest(TestCase):
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(
-            ('/opt/geotrek-admin/var/tmp/bombadil', '/opt/geotrek-admin/var/tmp/bombadil/bombadil'),
+            (os.path.join(settings.TMP_DIR, 'bombadil'),
+             os.path.join(settings.TMP_DIR, 'bombadil', 'bombadil')),
             create_tmp_destination('bombadil')
         )
 

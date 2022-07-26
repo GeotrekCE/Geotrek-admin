@@ -10,8 +10,8 @@ describe('Create path', () => {
   });
 
   beforeEach(() => {
-    Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
     cy.setCookie('django_language', 'en');
+    Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
   });
 
   it('Create path', () => {

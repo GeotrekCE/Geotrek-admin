@@ -1,5 +1,4 @@
 import os
-import shutil
 from io import StringIO
 from unittest.mock import patch
 
@@ -100,13 +99,11 @@ class SyncMobileViewTest(TestCase):
         self.assertNotIn('Sync mobile ended', log)
         self.assertEqual(task.status, "FAILURE")
 
-    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.TMP_DIR, 'tmp_sync'))
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'))
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
     @patch('sys.stdout', new_callable=StringIO)
     def test_launch_sync_rando_no_rando_root(self, mocked_stdout, command):
-        if os.path.exists('tmp'):
-            shutil.rmtree('tmp')
         task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
         self.assertNotIn("Done", log)

@@ -14,6 +14,10 @@ CHANGELOG
 
 - Remove problems of tmp_sync_rando / tmp_sync_mobile which are not removed before new sync_rando / sync_mobile
 
+**New ci**
+
+- New common interface github actions
+
 
 2.85.0     (2022-07-26)
 -----------------------
