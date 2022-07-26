@@ -1,6 +1,5 @@
 from io import StringIO
 import os
-import shutil
 from unittest.mock import patch
 
 from django.test import TestCase
@@ -21,9 +20,5 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync('en')
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'feedback',
+        self.assertTrue(os.path.exists(os.path.join('var', command.tmp_root, 'api', 'en', 'feedback',
                                                     'categories.json')))
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

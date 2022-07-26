@@ -16,5 +16,9 @@
             {% resolved_intervention_info report as resolved_intervention_info %}
             {{ resolved_intervention_info|safe }}
         </script>
+        <script type="application/json" id="workflow_manager">
+            {% workflow_manager as workflow_manager %}
+            {{ workflow_manager|safe }}
+        </script>
     {% endif %}
 {% endblock extrabody %}
