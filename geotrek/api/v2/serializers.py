@@ -274,9 +274,18 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
         )
 
 
+class FileTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = common_models.FileType
+        fields = (
+            'id', 'structure', 'type'
+        )
+
+
 class AttachmentSerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
     type = serializers.SerializerMethodField()
     backend = serializers.SerializerMethodField()
+    filetype = FileTypeSerializer(many=False, source='filetype')
 
     def get_type(self, obj):
         if obj.is_image or obj.attachment_link:
