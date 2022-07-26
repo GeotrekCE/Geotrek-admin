@@ -131,6 +131,8 @@ if [ -f /etc/init.d/nginx ] ; then
 	fi
 fi
 
+rm -rf /opt/geotrek-admin/var/tmp/*
+
 # TODO: geotrek user, crontab, certbot
 
 #DEBHELPER#

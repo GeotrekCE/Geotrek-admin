@@ -7,7 +7,11 @@ CHANGELOG
 
 **New features**
 
--
+- Add sync_rando / sync_mobile option `empty_tmp_folder` which will force deletion of all directories / files in tmp directory
+
+**Minor improvements**
+
+- Remove problems of tmp_sync_rando / tmp_sync_mobile which are not removed before new sync_rando / sync_mobile
 
 
 2.85.0     (2022-07-26)
@@ -34,6 +38,7 @@ CHANGELOG
 - Fix api v2 services are published by type
 - Fix form outdoor/trekking when rating scale is used with modification of practice
 - Fix initial value of rating was not shown in trekking form (#3121)
+
 
 **Suricate Workflow**  (#2366)
 
