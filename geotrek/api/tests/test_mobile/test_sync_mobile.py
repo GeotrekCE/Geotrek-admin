@@ -576,6 +576,8 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
 class SyncMobileEmptySyncTest(TestCase):
     @mock.patch('geotrek.api.management.commands.sync_mobile.Command.sync', side_effect=ValueError)
     def test_deletion_tmp_sync_mobile(self, mocked):
+        if not os.path.exists(settings.TMP_DIR):
+            os.mkdir(settings.TMP_DIR)
         if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_mobile')):
             os.mkdir(os.path.join(settings.TMP_DIR, 'sync_mobile'))
         if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_mobile', 'other_sync')):
