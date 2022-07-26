@@ -293,7 +293,8 @@ class SyncRandoViewTest(TestCase):
                                            'skip_tiles': True, 'skip_pdf': True,
                                            'skip_dem': True, 'skip_profile_png': True})
     def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
-        shutil.rmtree(settings.TMP_DIR)
+        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
+            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
         self.client.login(username='admin', password='super')
         launch_sync_rando.apply()
         response = self.client.post(reverse('common:sync_randos_state'), data={})
