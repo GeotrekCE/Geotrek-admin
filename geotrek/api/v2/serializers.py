@@ -293,7 +293,7 @@ class AttachmentSerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
     class Meta:
         model = common_models.Attachment
         fields = (
-            'backend', 'type'
+            'backend', 'type', 'filetype',
         ) + AttachmentsSerializerMixin.Meta.fields
 
 
