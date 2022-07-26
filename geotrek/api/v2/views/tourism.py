@@ -46,7 +46,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
             .select_related('category', 'reservation_system', 'label_accessibility') \
             .prefetch_related('source', 'themes', 'type1', 'type2',
                               Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license'))
+                                       queryset=Attachment.objects.select_related('license', 'filetype'))
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('name')  # Required for reliable pagination
@@ -94,7 +94,7 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
             .select_related('type') \
             .prefetch_related('themes', 'source', 'portal',
                               Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license'))
+                                       queryset=Attachment.objects.select_related('license', 'filetype'))
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('name')  # Required for reliable pagination

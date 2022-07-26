@@ -10,6 +10,7 @@ CHANGELOG
 - Add sync_rando / sync_mobile option `empty_tmp_folder` which will force deletion of all directories / files in tmp directory
 - Add information desk uuid (#3189)
 - Add setting ``ALERT_DRAFT`` which send mail whenever a path has been changed to draft (#2904)
+- Add filetype attachments api v2 (#3189)
 
 **Minor improvements**
 
