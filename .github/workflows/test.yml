@@ -490,5 +490,5 @@ jobs:
             export DEB_COMPONENT=main
           fi
           echo "${{ github.ref }} : Publishing as $DEB_COMPONENT package"
-          scp -P ${{ secrets.SSH_PORT }} /home/runner/work/screamshotter/screamshotter/screamshotter_*_amd64.deb ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/packages/incoming/$DEB_COMPONENT/
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make -C /srv/packages
+          scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no /home/runner/work/Geotrek-admin/Geotrek-admin/geotrek-admin_*_amd64.deb ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/packages/incoming/$DEB_COMPONENT/
+          ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make -C /srv/packages
