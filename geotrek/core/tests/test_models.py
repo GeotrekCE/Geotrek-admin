@@ -209,9 +209,8 @@ class TrailTest(TestCase):
 class TrailTestDisplay(TestCase):
     def test_trails_certifications_display(self):
         t1 = TrailFactory.create()
-        certif_1 = CertificationTrailFactory.create(trail=t1)
-        certif_2 = CertificationTrailFactory.create(trail=t1)
-        self.assertEqual(t1.certifications_display, f'{certif_2}, {certif_1}')
+        certif = CertificationTrailFactory.create(trail=t1)
+        self.assertEqual(t1.certifications_display, f'{certif}')
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
