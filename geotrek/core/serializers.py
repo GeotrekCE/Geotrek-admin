@@ -28,10 +28,6 @@ class PathGeojsonSerializer(MapentityGeojsonModelSerializer):
         model = Path
         fields = ["id", "name", "draft"]
 
-class CertificationTrailListingField(serializers.RelatedField):
-    def to_representation(self, value):
-        return 'ouais'
-
 
 class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     length = serializers.FloatField(source='length_display')
