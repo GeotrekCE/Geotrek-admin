@@ -18,6 +18,10 @@ CHANGELOG
 
 - New common interface github actions
 
+**Bug fixes**
+
+- Set relevant max zoom level for OpenTopoMap in the default config
+
 
 2.85.0     (2022-07-26)
 -----------------------
