@@ -133,11 +133,12 @@ jobs:
     - name: Unit test
       run: |
         coverage run ./manage.py test -v 3
+        coverage xml -o coverage.xml
 
-    - name: Coverage upload
-      run: |
-        pip install codecov
-        codecov
+    - uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:
     name: Build docker image
