@@ -969,6 +969,10 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
                                                                  self,
                                                                  self)
 
+    @property
+    def certifications_display(self):
+        return ', '.join([str(n) for n in self.certifications.all()])
+
     @classmethod
     def path_trails(cls, path):
         trails = cls.objects.existing().filter(aggregations__path=path)

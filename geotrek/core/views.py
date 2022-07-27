@@ -355,7 +355,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'comments', 'departure', 'arrival',
-        'date_insert', 'date_update',
+        'certifications', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 

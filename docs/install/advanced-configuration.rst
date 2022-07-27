@@ -2008,6 +2008,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "comments",
         "departure",
         "arrival",
+        "certifications",
         "date_insert",
         "date_update",
         "cities",
