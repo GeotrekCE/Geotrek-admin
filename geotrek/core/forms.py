@@ -113,9 +113,9 @@ class TrailForm(TopologyForm):
         Div(
             'structure',
             'name',
-            'category',
             'departure',
             'arrival',
+            'category',
             'comments',
             Fieldset(_("Certifications")),
         )

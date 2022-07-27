@@ -13,14 +13,14 @@
             <th>{{ trail|verbose:"name" }}</th>
             <td>{{ trail.name }}</td>
         </tr><tr>
-            <th>{{ trail|verbose:"category" }}</th>
-            <td>{{ trail.category }}</td>
-        </tr><tr>
             <th>{{ trail|verbose:"departure" }}</th>
             <td>{{ trail.departure }}</td>
         </tr><tr>
             <th>{{ trail|verbose:"arrival" }}</th>
             <td>{{ trail.arrival }}</td>
+        </tr><tr>
+            <th>{{ trail|verbose:"category" }}</th>
+            <td>{{ trail.category|default:""  }}</td>
         </tr><tr>
             <th>{{ trail|verbose:"certifications" }}</th>
             <td>

@@ -1637,6 +1637,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
     COLUMNS_LISTS["trail_view"] = [
         "departure",
         "arrival",
+        "category",
         "length",
         "structure",
         "min_elevation",
@@ -2008,6 +2009,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "comments",
         "departure",
         "arrival",
+        "category",
         "certifications",
         "date_insert",
         "date_update",
@@ -2553,7 +2555,8 @@ An exhaustive list of form fields hideable in each module.
     HIDDEN_FORM_FIELDS["trail"] = [
             "departure",
             "arrival",
-            "comments"
+            "comments",
+            "category",
         ],
     HIDDEN_FORM_FIELDS["landedge"] = [
             "owner",
