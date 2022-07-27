@@ -363,7 +363,7 @@ class InterventionViewsTest(CommonTest):
         """ % (PathFactory.create().pk, PathFactory.create().pk, PathFactory.create().pk)
         response = self.client.post(Intervention.get_add_url(), good_data)
         self.assertEqual(response.status_code, 302)
-        response = self.client.get(response.headers['location'][1])
+        response = self.client.get(response._headers['location'][1])
         self.assertTrue('object' in response.context)
         intervention = response.context['object']
         self.assertFalse(intervention.stake is None)
@@ -619,7 +619,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         self.assertIn('MultiLineString', geom_types)
 
         for layer in layers.values():
-            self.assertEqual(layer.srs.srid, 2154)
+            self.assertIn('RGF93', layer.srs.name)
             self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
                 'global_cos', 'interventi', 'comments',
