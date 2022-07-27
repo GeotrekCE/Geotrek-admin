@@ -134,10 +134,10 @@ jobs:
       run: |
         coverage run ./manage.py test -v 3
 
-    - name: Coverage upload
-      run: |
-        pip install codecov
-        codecov
+    - uses: codecov/codecov-action@v3
+      with:
+        files: ./var/.coverage
+        fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:
     name: Build docker image
