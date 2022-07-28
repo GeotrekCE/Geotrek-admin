@@ -362,6 +362,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
 
     def get_queryset(self):
         return super().get_queryset() \
+            .select_related('category') \
             .prefetch_related(Prefetch('certifications',
                                        queryset=CertificationTrail.objects.select_related(
                                            'certification_label',
@@ -403,12 +404,12 @@ class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 
 
-class TrailCreate(CreateFromTopologyMixin, MapEntityCreate):
+class TrailCreate(CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
     model = Trail
     form_class = TrailForm
 
 
-class TrailUpdate(MapEntityUpdate):
+class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
     queryset = Trail.objects.existing()
     form_class = TrailForm
 
