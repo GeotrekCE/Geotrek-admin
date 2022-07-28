@@ -801,6 +801,11 @@ class TrailViewsTest(CommonTest):
         new_trail = Trail.objects.get(pk=new_pk)
         self.assertIn(trail, new_trail.trails.all())
 
+    def test_perfs_export_csv(self):
+        self.modelfactory.create()
+        with self.assertNumQueries(10):
+            self.client.get(self.model.get_format_list_url() + '?format=csv')
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):

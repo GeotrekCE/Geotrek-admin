@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
 from django.core.cache import caches
-from django.db.models import Sum
+from django.db.models import Sum, Prefetch
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
@@ -33,7 +33,7 @@ from geotrek.common.viewsets import GeotrekMapentityViewSet
 from . import graph as graph_lib
 from .filters import PathFilterSet, TrailFilterSet
 from .forms import PathForm, TrailForm, CertificationTrailFormSet
-from .models import AltimetryMixin, Path, Trail, Topology
+from .models import AltimetryMixin, Path, Trail, Topology, CertificationTrail
 from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
 
 logger = logging.getLogger(__name__)
@@ -361,7 +361,11 @@ class TrailFormatList(MapEntityFormat, TrailList):
 
     def get_queryset(self):
         return super().get_queryset() \
-            .prefetch_related('certifications')
+            .prefetch_related(Prefetch('certifications',
+                                       queryset=CertificationTrail.objects.select_related(
+                                           'certification_label',
+                                           'certification_status'
+                                       )))
 
 
 class TrailDetail(MapEntityDetail):
@@ -398,12 +402,12 @@ class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 
 
-class TrailCreate(CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
+class TrailCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trail
     form_class = TrailForm
 
 
-class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
+class TrailUpdate(MapEntityUpdate):
     queryset = Trail.objects.existing()
     form_class = TrailForm
 
