@@ -113,7 +113,7 @@ class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zo
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
     certification_labels = ModelMultipleChoiceFilter(
-        method="filter_certification_label",
+        field_name="certifications__certification_label",
         label=_("Certification labels"),
         queryset=CertificationLabel.objects.all(),
     )
@@ -122,12 +122,6 @@ class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zo
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + \
             ['name', 'departure', 'arrival', 'certification_labels', 'comments']
-
-    def filter_certification_label(self, qs, name, values):
-        """Method filter trails in certification label"""
-        if not values:
-            return qs
-        return qs.filter(certifications__certification_label__in=values)
 
 
 class TopologyFilterTrail(TopologyFilter):
