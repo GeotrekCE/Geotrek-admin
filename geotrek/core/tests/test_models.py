@@ -110,8 +110,8 @@ class PathTest(TestCase):
         p1.save()
         self.assertEqual(len(mail.outbox), 1)
 
-    @override_settings(ALERT_REVIEW=True)
-    @mock.patch('geotrek.common.mixins.models.mail_managers')
+    @override_settings(ALERT_DRAFT=True)
+    @mock.patch('geotrek.core.models.mail_managers')
     def test_status_draft_fail_mail(self, mock_mail):
         mock_mail.side_effect = Exception("Test")
         p1 = PathFactory.create()

@@ -244,8 +244,8 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                 aggr.save()
             self._is_reversed = False
 
-        # If draft is True, send email to managers
-        if (self.pk and self.__class__.objects.get(pk=self.pk).draft != self.draft and self.draft) \
+        # If draft is set from False to True, and setting ALERT_DRAFT is True, send email to managers
+        if (self.pk and self.draft and self.__class__.objects.get(pk=self.pk).draft != self.draft) \
                 and settings.ALERT_DRAFT:
             subject = _("{obj} has been set to draft").format(obj=self)
             message = render_to_string('core/draft_email_message.txt', {"obj": self})
