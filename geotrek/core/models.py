@@ -1037,11 +1037,11 @@ class CertificationTrail(StructureOrNoneRelated):
                               verbose_name=_("Trail"))
     certification_label = models.ForeignKey("core.CertificationLabel",
                                             related_name='certifications',
-                                            on_delete=models.CASCADE,
+                                            on_delete=models.PROTECT,
                                             verbose_name=_("Certification label"))
     certification_status = models.ForeignKey("core.CertificationStatus",
                                              related_name='certifications',
-                                             on_delete=models.CASCADE,
+                                             on_delete=models.PROTECT,
                                              verbose_name=_("Certification status"))
 
     class Meta:
