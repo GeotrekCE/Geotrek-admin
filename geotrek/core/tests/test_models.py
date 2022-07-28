@@ -8,6 +8,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
+from django.core import mail
 from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 from django.db.models import ProtectedError
 from geotrek.common.utils import dbnow
@@ -99,6 +100,15 @@ class PathTest(TestCase):
         self.assertAlmostEqual(lat_min, 46.499999999999936)
         self.assertAlmostEqual(lng_max, 3.0013039767202154)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
+
+    @override_settings(ALERT_DRAFT=True)
+    def test_status_draft_alert(self):
+        p1 = PathFactory.create()
+        p1.save()
+        self.assertEqual(len(mail.outbox), 0)
+        p1.draft = True
+        p1.save()
+        self.assertEqual(len(mail.outbox), 1)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_delete_allow_path_trigger(self):
