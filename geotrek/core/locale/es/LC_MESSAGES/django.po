@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-26 09:00+0000\n"
+"POT-Creation-Date: 2022-08-02 07:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,6 +50,9 @@ msgid "Departure"
 msgstr ""
 
 msgid "Arrival"
+msgstr ""
+
+msgid "Certification labels"
 msgstr ""
 
 msgid "Trail"
@@ -129,6 +132,10 @@ msgid "Path"
 msgstr ""
 
 msgid "Paths"
+msgstr ""
+
+#, python-brace-format
+msgid "{obj} has been set to draft"
 msgstr ""
 
 msgid "You can't delete this path, some topologies are linked with this path"
@@ -224,9 +231,6 @@ msgstr ""
 msgid "Certification label"
 msgstr ""
 
-msgid "Certification labels"
-msgstr ""
-
 msgid "Certification status"
 msgstr ""
 
@@ -243,6 +247,10 @@ msgid "No information"
 msgstr ""
 
 msgid "Add a new trail"
+msgstr ""
+
+#, python-format
+msgid "%(obj)s has changed state to draft. "
 msgstr ""
 
 #, python-format
