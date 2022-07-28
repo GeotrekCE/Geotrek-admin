@@ -32,7 +32,6 @@ class PathGeojsonSerializer(MapentityGeojsonModelSerializer):
 class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     length = serializers.FloatField(source='length_display')
     name = serializers.CharField(source='name_display')
-    certifications = serializers.CharField(source='certifications_display')
 
     class Meta:
         model = Trail
