@@ -8,9 +8,11 @@ from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, fromstr, LineString, GEOSGeometry
 from django.contrib.postgres.indexes import GistIndex
+from django.core.mail import mail_managers
 from django.db import connection, connections, DEFAULT_DB_ALIAS
 from django.db.models import ProtectedError
 from django.db.models.query import QuerySet
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
@@ -241,6 +243,17 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                 aggr.end_position = 1 - aggr.end_position
                 aggr.save()
             self._is_reversed = False
+
+        # If draft is True, send email to managers
+        if (self.pk and self.__class__.objects.get(pk=self.pk).draft != self.draft and self.draft) \
+                and settings.ALERT_DRAFT:
+            subject = _("{obj} has been set to draft").format(obj=self)
+            message = render_to_string('core/draft_email_message.txt', {"obj": self})
+            try:
+                mail_managers(subject, message, fail_silently=False)
+            except Exception as exc:
+                msg = f'Caught {exc.__class__.__name__}: {exc}'
+                logger.warning(f"Error mail managers didn't work ({msg})")
         super().save(*args, **kwargs)
         self.reload()
 
