@@ -16,6 +16,7 @@ Welcome to Geotrek's documentation!
     usage/static-pages.rst
     usage/configuration-ttw.rst
     usage/externals-apis.rst
+    usage/qgis.rst
     faq.rst
 
 .. toctree::
