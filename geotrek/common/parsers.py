@@ -630,69 +630,94 @@ class AttachmentParserMixin:
                 return response.content
             return None
 
-    def save_attachments(self, src, val):
-        updated = False
-        attachments_to_delete = list(Attachment.objects.attachments_for_object(self.obj))
+    def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
+        found = False
+        for attachment in attachments_to_delete:
+            upload_name, ext = os.path.splitext(attachment_upload(attachment, kwargs.get('name')))
+            existing_name = attachment.attachment_file.name
+            if re.search(r"^{name}(_[a-zA-Z0-9]{{7}})?{ext}$".format(
+                    name=upload_name, ext=ext), existing_name
+            ) and not self.has_size_changed(kwargs.get('url'), attachment):
+                found = True
+                attachments_to_delete.remove(attachment)
+                if kwargs.get('author') != attachment.author or kwargs.get('legend') != attachment.legend:
+                    attachment.author = kwargs.get('author')
+                    attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+                    attachment.save()
+                    updated = True
+                break
+        return found, updated
+
+    def generate_content_attachment(self, attachment, parsed_url, url, updated, name):
+        if (parsed_url.scheme in ('http', 'https') and self.download_attachments) or parsed_url.scheme == 'ftp':
+            content = self.download_attachment(url)
+            if content is None:
+                return False, updated
+            f = ContentFile(content)
+            if settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < f.size:
+                logger.warning(
+                    _(f'{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is too large'))
+                return False, updated
+            try:
+                image = Image.open(BytesIO(content))
+                if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > image.width:
+                    logger.warning(
+                        _(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not wide enough"))
+                    return False, updated
+                if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > image.height:
+                    logger.warning(
+                        _(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not tall enough"))
+                    return False, updated
+            except UnidentifiedImageError:
+                pass
+            attachment.attachment_file.save(name, f, save=False)
+        else:
+            attachment.attachment_link = url
+        return True, updated
+
+    def remove_attachments(self, attachments_to_delete):
+        if self.delete_attachments:
+            for att in attachments_to_delete:
+                att.delete()
+
+    def generate_attachment(self, **kwargs):
+        attachment = Attachment()
+        attachment.content_object = self.obj
+        attachment.filetype = self.filetype
+        attachment.creator = self.creator
+        attachment.author = kwargs.get('author')
+        attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+        return attachment
+
+    def generate_attachments(self, src, val, attachments_to_delete, updated):
+        attachments = []
         for url, legend, author in self.filter_attachments(src, val):
             url = self.base_url + url
             legend = legend or ""
             author = author or ""
             basename, ext = os.path.splitext(os.path.basename(url))
             name = '%s%s' % (basename[:128], ext)
-            found = False
-            for attachment in attachments_to_delete:
-                upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
-                existing_name = attachment.attachment_file.name
-                if re.search(r"^{name}(_[a-zA-Z0-9]{{7}})?{ext}$".format(
-                        name=upload_name, ext=ext), existing_name
-                ) and not self.has_size_changed(url, attachment):
-                    found = True
-                    attachments_to_delete.remove(attachment)
-                    if author != attachment.author or legend != attachment.legend:
-                        attachment.author = author
-                        attachment.legend = textwrap.shorten(legend, width=127)
-                        attachment.save()
-                        updated = True
-                    break
+            found, updated = self.check_attachment_updated(attachments_to_delete, updated, name=name, url=url,
+                                                           legend=legend, author=author)
             if found:
                 continue
 
             parsed_url = urlparse(url)
-
-            attachment = Attachment()
-            attachment.content_object = self.obj
-            attachment.filetype = self.filetype
-            attachment.creator = self.creator
-            attachment.author = author
-            attachment.legend = textwrap.shorten(legend, width=127)
-
-            if (parsed_url.scheme in ('http', 'https') and self.download_attachments) or parsed_url.scheme == 'ftp':
-                content = self.download_attachment(url)
-                if content is None:
-                    continue
-                f = ContentFile(content)
-                if settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < f.size:
-                    logger.warning(_(f'{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is too large'))
-                    return updated
-                try:
-                    image = Image.open(BytesIO(content))
-                    if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > image.width:
-                        logger.warning(_(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not wide enough"))
-                        return updated
-                    if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > image.height:
-                        logger.warning(_(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not tall enough"))
-                        return updated
-                except UnidentifiedImageError:
-                    pass
-                attachment.attachment_file.save(name, f, save=False)
-            else:
-                attachment.attachment_link = url
-            attachment.save()
+            attachment = self.generate_attachment(author=author, legend=legend)
+            save, updated = self.generate_content_attachment(attachment, parsed_url, url, updated, name)
+            if not save:
+                continue
+            attachments.append(attachment)
             updated = True
+        return updated, attachments
 
-        if self.delete_attachments:
-            for att in attachments_to_delete:
-                att.delete()
+    def save_attachments(self, src, val):
+        updated = False
+        attachments_to_delete = list(Attachment.objects.attachments_for_object(self.obj))
+        updated, attachments = self.generate_attachments(src, val, attachments_to_delete, updated)
+        Attachment.objects.bulk_create(attachments)
+
+        self.remove_attachments(attachments_to_delete)
         return updated
 
 
