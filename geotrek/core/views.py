@@ -362,7 +362,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
 
     def get_queryset(self):
         return super().get_queryset() \
-            .select_related('category') \
+            .select_related('category__structure') \
             .prefetch_related(Prefetch('certifications',
                                        queryset=CertificationTrail.objects.select_related(
                                            'certification_label',
