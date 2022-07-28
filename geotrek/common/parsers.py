@@ -1,4 +1,5 @@
 from io import BytesIO
+import json
 import os
 import re
 import requests
@@ -16,11 +17,14 @@ from ftplib import FTP
 from os.path import dirname
 from urllib.parse import urlparse
 
+from django.contrib.gis.geos import GEOSGeometry, WKBWriter
+from django.core.management import call_command
 from django.db import models, connection
 from django.db.utils import DatabaseError
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, Polygon
+from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -865,3 +869,97 @@ class OpenSystemParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+
+class GeotrekParser(AttachmentParserMixin, Parser):
+    model = None
+    next_url = ''
+    url = None
+    separator = None
+    delete = True
+    eid = 'eid'
+    constant_fields = {}
+    url_categories = {}
+    replace_fields = {}
+    m2m_replace_fields = {}
+    categories_keys_api_v2 = {}
+    non_fields = {
+        'attachments': "attachments",
+    }
+    field_options = {
+        'geom': {'required': True},
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and
+                           not f.name == 'id')
+        self.m2m_fields = {
+            f.name: f.name
+            for f in self.model._meta.many_to_many
+        }
+        for key, value in self.replace_fields.items():
+            self.fields[key] = value
+
+        for key, value in self.m2m_replace_fields.items():
+            self.m2m_fields[key] = value
+        self.translated_fields = [field for field in get_translated_fields(self.model)]
+        for category in self.url_categories.keys():
+            route = self.url_categories[category]
+            response = self.request_or_retry(f"{self.url}{route}", )  # params=params)
+            self.field_options.setdefault(category, {})
+            if self.categories_keys_api_v2.get(category):
+                if category in self.translated_fields:
+
+                    self.field_options[category]["mapping"] = {
+                        r["id"]: r[self.categories_keys_api_v2[category]][settings.MODELTRANSLATION_DEFAULT_LANGUAGE] for r in response.json()['results']
+                    }
+                else:
+                    self.field_options[category]["mapping"] = {
+                        r["id"]: r[self.categories_keys_api_v2[category]]
+                        for r in response.json()['results']
+                    }
+            else:
+                raise ImproperlyConfigured(f"{category} is not configured in categories_keys_api_v2")
+        self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
+        print(self.field_options)
+
+    def filter_attachments(self, src, val):
+        return [(subval.get('url'), subval.get('legend'), subval.get('author')) for subval in val]
+
+    def apply_filter(self, dst, src, val):
+        val = super().apply_filter(dst, src, val)
+        if dst in self.translated_fields:
+            if isinstance(val, dict):
+                val = val.get(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
+        return val
+
+    def normalize_field_name(self, name):
+        return name
+
+    @property
+    def items(self):
+        return self.root['results']
+
+    def filter_geom(self, src, val):
+        geom = GEOSGeometry(json.dumps(val))
+        geom.transform(settings.SRID)
+        geom = WKBWriter().write(geom)
+        geom = GEOSGeometry(geom)
+        return geom
+
+    def next_row(self):
+        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        bbox.srid = settings.SRID
+        bbox.transform(4326)  # WGS84
+        while self.next_url:
+            params = {
+                'in_bbox': ','.join([str(coord) for coord in bbox.extent]),
+            }
+            response = self.request_or_retry(self.next_url, params=params)
+            self.root = response.json()
+            self.nb = int(self.root['count'])
+
+            for row in self.items:
+                yield row
+            self.next_url = self.root['next']
