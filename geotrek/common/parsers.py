@@ -353,12 +353,16 @@ class Parser:
                     found = True
                     break
             if not found:
-                self.add_warning(_("Bad value '{val}' for field {src}. Should contain {values}").format(val=val, src=src, separator=self.separator, values=', '.join(mapping.keys())))
+                values = [str(key) for key in mapping.keys()]
+                self.add_warning(_("Bad value '{val}' for field {src}. Should contain {values}").format(val=str(val), src=src, separator=self.separator, values=values))
                 return None
         else:
             if mapping is not None:
-                if val not in mapping.keys():
-                    self.add_warning(_("Bad value '{val}' for field {src}. Should be {values}").format(val=val, src=src, separator=self.separator, values=', '.join(mapping.keys())))
+                if val and val not in mapping.keys():
+                    values = [str(key) for key in mapping.keys()]
+                    self.add_warning(_("Bad value '{val}' for field {src}. Should be {values}").format(val=str(val), src=src, separator=self.separator, values=values))
+                    return None
+                if not val:
                     return None
                 val = mapping[val]
         return val
@@ -388,7 +392,8 @@ class Parser:
             val = val.split(self.separator)
         dst = []
         for subval in val:
-            subval = subval.strip()
+            if isinstance(subval, str):
+                subval = subval.strip()
             subval = self.get_mapping(src, subval, mapping, partial)
             if subval is None:
                 continue
@@ -449,7 +454,7 @@ class Parser:
         if filename:
             self.filename = filename
         if not self.url and not self.filename:
-            raise GlobalImportError(_("Filename is required"))
+            raise GlobalImportError(_("Filename or url is required"))
         if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_("File does not exists at: {filename}").format(filename=self.filename))
         self.start()
