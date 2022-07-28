@@ -14,7 +14,7 @@ from django.utils.translation import gettext as _
 from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    TourInSoftParser)
+                                    TourInSoftParser, GeotrekParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 
@@ -888,3 +888,154 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
 
 class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
     version_tourinsoft = 3
+
+
+class GeotrekTouristicContentParser(GeotrekParser):
+    url = None
+    model = TouristicContent
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry",
+    }
+
+    m2m_replace_fields = {
+        "type1": "types",
+        "type2": "types"
+    }
+
+    url_categories = {
+        "category": "/api/v2/touristiccontent_category/",
+        "themes": "/api/v2/theme/",
+    }
+
+    categories_keys_api_v2 = {
+        'category': 'label',
+        'themes': 'label',
+    }
+
+    natural_keys = {
+        'category': 'label',
+        'themes': 'label',
+        'type1': 'label',
+        'type2': 'label'
+    }
+
+    field_options = {
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        response = self.request_or_retry(f"{self.url}/api/v2/touristiccontent_category/", )
+        self.field_options.setdefault("type1", {})
+        self.field_options.setdefault("type2", {})
+        self.field_options["type1"]["mapping"] = {}
+        self.field_options["type2"]["mapping"] = {}
+        for r in response.json()['results']:
+            for type_category in r['types']:
+                if type_category["id"] % 10 == 1:
+                    self.field_options['type1']["mapping"][type_category["id"]] = type_category["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+                if type_category["id"] % 10 == 2:
+                    self.field_options['type2']["mapping"][type_category["id"]] = type_category["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+
+    def next_row(self):
+        self.next_url = f"{self.url}/api/v2/touristiccontent"
+        return super().next_row()
+
+    def filter_type1(self, src, val):
+        type1_result = []
+        for key in val.keys():
+            if int(key) % 10 == 1:
+                type1_result.append(int(key))
+        return self.apply_filter('type1', src, type1_result)
+
+    def filter_type2(self, src, val):
+        type2_result = []
+        for key in val.keys():
+            if int(key) % 10 == 2:
+                type2_result.append(int(key))
+        return self.apply_filter('type2', src, type2_result)
+
+
+class GeotrekTouristicEventParser(GeotrekParser):
+    url = None
+    model = TouristicEvent
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry"
+    }
+    url_categories = {
+        "type": "/api/v2/touristicevent_type/",
+    }
+    categories_keys_api_v2 = {
+        'type': 'type',
+    }
+    natural_keys = {
+        'type': 'type',
+    }
+
+    field_options = {
+        "type": {"create": True}
+    }
+
+    def next_row(self):
+        self.next_url = f"{self.url}/api/v2/touristicevent"
+        return super().next_row()
+
+
+class GeotrekInformationDeskParser(GeotrekParser):
+    url = None
+    model = InformationDesk
+    constant_fields = {}
+    replace_fields = {
+        "eid": ["uuid", "id"],
+        "geom": ["latitude", "longitude"],
+        "photo": "photo_url"
+    }
+    url_categories = {}
+    categories_keys_api_v2 = {}
+    natural_keys = {
+        'type': 'label',
+    }
+
+    field_options = {
+        "type": {"create": True}
+    }
+
+    def next_row(self):
+        self.next_url = f"{self.url}/api/v2/informationdesk"
+        return super().next_row()
+
+    def filter_eid(self, src, val):
+        uuid, id_iddesk = val
+        final_value = uuid
+        if not uuid:
+            final_value = id_iddesk
+        return final_value
+
+    def filter_geom(self, src, val):
+        lat, lng = val
+        return Point(lat, lng, srid=settings.API_SRID).transform(settings.SRID, clone=True)
+
+    def filter_type(self, src, val):
+        return self.apply_filter('type', src, val["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE])
+
+    def filter_photo(self, src, val):
+        if not val:
+            return None
+        content = self.download_attachment(val)
+        if content is None:
+            return None
+        f = ContentFile(content)
+        basename, ext = os.path.splitext(os.path.basename(val))
+        name = '%s%s' % (basename[:128], ext)
+        file = UploadedFile(f, name=name)
+        return file
