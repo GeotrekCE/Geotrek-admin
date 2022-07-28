@@ -359,6 +359,10 @@ class TrailFormatList(MapEntityFormat, TrailList):
         'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
+    def get_queryset(self):
+        return super().get_queryset() \
+            .prefetch_related('certifications')
+
 
 class TrailDetail(MapEntityDetail):
     queryset = Trail.objects.existing()
