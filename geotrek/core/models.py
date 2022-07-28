@@ -1005,6 +1005,9 @@ class CertificationLabel(StructureOrNoneRelated):
         verbose_name = _("Certification label")
         verbose_name_plural = _("Certification labels")
         ordering = ['label']
+        unique_together = (
+            ('label', 'structure'),
+        )
 
 
 class CertificationStatus(StructureOrNoneRelated):
