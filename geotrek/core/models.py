@@ -946,15 +946,13 @@ class Network(StructureOrNoneRelated):
 class Trail(MapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Name"), max_length=64)
-
     category = models.ForeignKey(
         "TrailCategory",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name=_("Category"),
     )
-
     departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64)
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
@@ -1014,6 +1012,9 @@ class TrailCategory(StructureOrNoneRelated):
         verbose_name = _("Trail category")
         verbose_name_plural = _("Trail categories")
         ordering = ['label']
+        unique_together = (
+            ('label', 'structure'),
+        )
 
 
 class CertificationLabel(StructureOrNoneRelated):
