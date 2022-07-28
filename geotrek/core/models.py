@@ -1047,7 +1047,9 @@ class CertificationTrail(StructureOrNoneRelated):
     class Meta:
         verbose_name = _("Certification")
         verbose_name_plural = _("Certifications")
-        unique_together = ['trail', 'certification_label', 'certification_status']
+        unique_together = (
+            ('trail', 'certification_label', 'certification_status'),
+        )
 
     def __str__(self):
         return f"{self.certification_label} / {self.certification_status}"
