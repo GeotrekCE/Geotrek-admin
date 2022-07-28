@@ -1,8 +1,10 @@
-from django.contrib.gis.geos import Point
+import json
+from django.conf import settings
+from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils.translation import gettext as _
 
-from geotrek.common.parsers import ShapeParser, AttachmentParserMixin
-from geotrek.trekking.models import Trek
+from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser
+from geotrek.trekking.models import POI, Service, Trek
 
 
 class DurationParserMixin:
@@ -60,3 +62,105 @@ class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
             self.add_warning(_("Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.geom_type))
             return None
         return val
+
+
+class GeotrekTrekParser(GeotrekParser):
+    url = None
+    model = Trek
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    replace_fields = {
+        "eid": "uuid",
+        "eid2": "second_external_id",
+        "geom": "geometry"
+    }
+    url_categories = {
+        "difficulty": "/api/v2/trek_difficulty/",
+        "practice": "/api/v2/trek_practice/",
+        "route": "/api/v2/trek_route/",
+        "themes": "/api/v2/theme/",
+        "accessibilities": "/api/v2/trek_accessibility/",
+        "networks": "/api/v2/trek_network/"
+    }
+    categories_keys_api_v2 = {
+        'difficulty': 'label',
+        'route': 'route',
+        'themes': 'label',
+        'practice': 'name',
+        'accessibilities': 'name',
+        'networks': 'label'
+    }
+    natural_keys = {
+        'difficulty': 'difficulty',
+        'route': 'route',
+        'themes': 'label',
+        'practice': 'name',
+        'accessibilities': 'name',
+        'networks': 'network',
+    }
+
+    def next_row(self):
+        self.next_url = f"{self.url}/api/v2/trek"
+        return super().next_row()
+
+    def filter_parking_location(self, src, val):
+        if val:
+            return Point(val[0], val[1], srid=settings.API_SRID)
+
+    def filter_points_reference(self, src, val):
+        if val:
+            geom = GEOSGeometry(json.dumps(val))
+            return geom.transform(settings.SRID, clone=True)
+
+
+class GeotrekServiceParser(GeotrekParser):
+    url = None
+    model = Service
+    constant_fields = {
+        'deleted': False,
+    }
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry"
+    }
+    url_categories = {
+        "type": "/api/v2/service_type/",
+    }
+    categories_keys_api_v2 = {
+        'type': 'name',
+    }
+    natural_keys = {
+        'type': 'name'
+    }
+
+    def next_row(self):
+        self.next_url = f"{self.url}/api/v2/service"
+        return super().next_row()
+
+
+class GeotrekPOIParser(GeotrekParser):
+    url = None
+    model = POI
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry"
+    }
+    url_categories = {
+        "type": "/api/v2/poi_type/",
+    }
+    categories_keys_api_v2 = {
+        'type': 'label',
+    }
+    natural_keys = {
+        'type': 'label',
+    }
+
+    def next_row(self):
+        self.next_url = f"{self.url}/api/v2/poi"
+        return super().next_row()
