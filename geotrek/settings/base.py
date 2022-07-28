@@ -436,7 +436,9 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 LEAFLET_CONFIG = {
     'SRID': 3857,
     'TILES': [
-        ('OpenTopoMap', 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 'Données: © Contributeurs OpenStreetMap, SRTM | Affichage: © OpenTopoMap (CC-BY-SA)'),
+        ('OpenTopoMap', 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+         {'attribution': 'Données: © Contributeurs OpenStreetMap, SRTM | Affichage: © OpenTopoMap (CC-BY-SA)',
+          'maxZoom': 17}),
         ('OSM', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© Contributeurs OpenStreetMap'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
