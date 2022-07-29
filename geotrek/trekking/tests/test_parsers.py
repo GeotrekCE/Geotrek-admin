@@ -10,8 +10,8 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.common.models import Theme, FileType
-from geotrek.trekking.models import POI, Trek, DifficultyLevel, Route
-from geotrek.trekking.parsers import TrekParser, GeotrekPOIParser, GeotrekTrekParser
+from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
+from geotrek.trekking.parsers import TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser
 
 
 class TrekParserFilterDurationTests(TestCase):
@@ -152,6 +152,14 @@ class TestGeotrekPOIParser(GeotrekPOIParser):
     }
 
 
+class TestGeotrekServiceParser(GeotrekServiceParser):
+    url = "https://test.fr"
+
+    field_options = {
+        'type': {'create': True, },
+    }
+
+
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class TrekGeotrekParserTests(TestCase):
     @classmethod
@@ -217,3 +225,35 @@ class POIGeotrekParserTests(TestCase):
         poi = POI.objects.all().first()
         self.assertEqual(poi.name, "Pic des Trois Seigneurs")
         self.assertEqual(str(poi.type), 'Sommet')
+
+
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class ServiceGeotrekParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['service_type.json', 'service.json']
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekServiceParser', verbosity=0)
+        self.assertEqual(Service.objects.count(), 2)
+        service = Service.objects.all().first()
+        self.assertEqual(str(service.type), 'Eau potable')
