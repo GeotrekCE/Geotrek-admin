@@ -474,10 +474,15 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Publish Docker image (v2 and latest)
         run: |
+          if [[ "${{ github.ref }}" == *"dev"* ]]; then
+            export DOCKER_TAG=dev
+          else
+            export DOCKER_TAG=latest
+          fi
           docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
           docker push geotrek:latest geotrekce/admin:$(cat VERSION)
-          docker tag geotrek:latest geotrekce/admin:latest
-          docker push geotrek:latest geotrekce/admin:latest
+          docker tag geotrek:latest geotrekce/admin:$DOCKER_TAG
+          docker push geotrek:latest geotrekce/admin:$DOCKER_TAG
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
