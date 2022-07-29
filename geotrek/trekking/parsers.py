@@ -78,9 +78,9 @@ class GeotrekTrekParser(GeotrekParser):
     }
     url_categories = {
         "difficulty": "/api/v2/trek_difficulty/",
-        "practice": "/api/v2/trek_practice/",
         "route": "/api/v2/trek_route/",
         "themes": "/api/v2/theme/",
+        "practice": "/api/v2/trek_practice/",
         "accessibilities": "/api/v2/trek_accessibility/",
         "networks": "/api/v2/trek_network/"
     }

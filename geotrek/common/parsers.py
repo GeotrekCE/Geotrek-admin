@@ -948,7 +948,6 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             else:
                 raise ImproperlyConfigured(f"{category} is not configured in categories_keys_api_v2")
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
-        print(self.field_options)
 
     def filter_attachments(self, src, val):
         return [(subval.get('url'), subval.get('legend'), subval.get('author')) for subval in val]
