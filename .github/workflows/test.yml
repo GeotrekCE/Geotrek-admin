@@ -448,7 +448,7 @@ jobs:
   deploy:
     name: Publish (on release only)
     runs-on: ubuntu-18.04
-    needs: [ e2e_docker_image, e2e_deb_18_04, e2e_deb_20_04 ]
+    needs: [ test, e2e_docker_image, e2e_deb_18_04, e2e_deb_20_04 ]
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     steps:
       - uses: actions/checkout@v3
