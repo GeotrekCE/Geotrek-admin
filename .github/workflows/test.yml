@@ -480,11 +480,10 @@ jobs:
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
             export DOCKER_TAG=dev
           else
+            docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
+            docker push geotrek:latest geotrekce/admin:$(cat VERSION)
             export DOCKER_TAG=latest
           fi
-          docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
-          docker push geotrek:latest geotrekce/admin:$(cat VERSION)
-          docker tag geotrek:latest geotrekce/admin:$DOCKER_TAG
           docker push geotrek:latest geotrekce/admin:$DOCKER_TAG
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
