@@ -937,10 +937,12 @@ class GeotrekTouristicContentParser(GeotrekParser):
         self.field_options["type2"]["mapping"] = {}
         for r in response.json()['results']:
             for type_category in r['types']:
-                if type_category["id"] % 10 == 1:
-                    self.field_options['type1']["mapping"][type_category["id"]] = type_category["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
-                if type_category["id"] % 10 == 2:
-                    self.field_options['type2']["mapping"][type_category["id"]] = type_category["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+                label_lang = type_category["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+                id_category = type_category["id"]
+                if id_category % 10 == 1:
+                    self.field_options['type1']["mapping"][id_category] = label_lang if label_lang else None
+                if id_category % 10 == 2:
+                    self.field_options['type2']["mapping"][id_category] = label_lang if label_lang else None
 
     def next_row(self):
         self.next_url = f"{self.url}/api/v2/touristiccontent"

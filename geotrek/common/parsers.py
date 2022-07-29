@@ -934,16 +934,17 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             response = self.request_or_retry(f"{self.url}{route}", )  # params=params)
             self.field_options.setdefault(category, {})
             if self.categories_keys_api_v2.get(category):
-                if category in self.translated_fields:
-
-                    self.field_options[category]["mapping"] = {
-                        r["id"]: r[self.categories_keys_api_v2[category]][settings.MODELTRANSLATION_DEFAULT_LANGUAGE] for r in response.json()['results']
-                    }
-                else:
-                    self.field_options[category]["mapping"] = {
-                        r["id"]: r[self.categories_keys_api_v2[category]]
-                        for r in response.json()['results']
-                    }
+                self.field_options[category]["mapping"] = {}
+                results = response.json()['results']
+                for result in results:
+                    id_result = result['id']
+                    label = result[self.categories_keys_api_v2[category]]
+                    if isinstance(result[self.categories_keys_api_v2[category]], dict):
+                        if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
+                            self.field_options[category]["mapping"][id_result] = label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+                    else:
+                        if label:
+                            self.field_options[category]["mapping"][id_result] = label
             else:
                 raise ImproperlyConfigured(f"{category} is not configured in categories_keys_api_v2")
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
