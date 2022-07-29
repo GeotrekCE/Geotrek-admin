@@ -65,7 +65,7 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -144,7 +144,7 @@ jobs:
     name: Build docker image
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
@@ -161,7 +161,7 @@ jobs:
       runs-on: ubuntu-latest
       container: ubuntu:bionic
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3
         - name: Prepare debian 18.04 versioning
           run: |
             grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
@@ -185,7 +185,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:focal
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Prepare debian 20.04 versioning
         run: |
           sed -i 's/+dev/.ubuntu20.04~dev'$GITHUB_RUN_ID'/' debian/changelog
@@ -223,7 +223,7 @@ jobs:
         options: >-
           --health-cmd pg_isready
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Download image
         uses: ishworkh/docker-image-artifact-download@v1
         with:
@@ -303,7 +303,7 @@ jobs:
           --health-cmd pg_isready
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v2
         with:
           name: debian-18-04
@@ -385,7 +385,7 @@ jobs:
           --health-cmd pg_isready
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/download-artifact@v2
         with:
           name: debian-20-04
@@ -449,6 +449,7 @@ jobs:
     needs: [ e2e_docker_image, e2e_deb_18_04, e2e_deb_20_04 ]
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     steps:
+      - uses: actions/checkout@v3
       - name: Download 18.04 debian artifact
         uses: actions/download-artifact@v2
         with:
