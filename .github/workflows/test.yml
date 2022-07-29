@@ -481,10 +481,11 @@ jobs:
             export DOCKER_TAG=dev
           else
             docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
-            docker push geotrek:latest geotrekce/admin:$(cat VERSION)
+            docker push geotrekce/admin:$(cat VERSION)
             export DOCKER_TAG=latest
           fi
-          docker push geotrek:latest geotrekce/admin:$DOCKER_TAG
+          docker tag geotrek:latest geotrekce/admin:$DOCKER_TAG
+          docker push geotrekce/admin:$DOCKER_TAG
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
