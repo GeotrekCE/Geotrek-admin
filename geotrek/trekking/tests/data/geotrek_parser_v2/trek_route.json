@@ -5,7 +5,7 @@
   "results": [
     {
       "id": 1,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/route-loop.svg",
+      "pictogram": "https://foo.fr/media/upload/route-loop.svg",
       "route": {
         "fr": "Boucle",
         "en": null,
@@ -15,7 +15,7 @@
     },
     {
       "id": 2,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/route-return.svg",
+      "pictogram": "https://foo.fr/media/upload/route-return.svg",
       "route": {
         "fr": "Aller-retour",
         "en": null,
@@ -25,7 +25,7 @@
     },
     {
       "id": 3,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/route-cross.svg",
+      "pictogram": "https://foo.fr/media/upload/route-cross.svg",
       "route": {
         "fr": "Traversée",
         "en": null,

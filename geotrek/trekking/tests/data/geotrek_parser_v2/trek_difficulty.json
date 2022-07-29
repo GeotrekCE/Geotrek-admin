@@ -12,7 +12,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/difficulty-1.svg"
+      "pictogram": "https://foo.fr/media/upload/difficulty-1.svg"
     },
     {
       "id": 2,
@@ -23,7 +23,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/difficulty-2.svg"
+      "pictogram": "https://foo.fr/media/upload/difficulty-2.svg"
     },
     {
       "id": 3,
@@ -34,7 +34,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/difficulty-3.svg"
+      "pictogram": "https://foo.fr/media/upload/difficulty-3.svg"
     },
     {
       "id": 4,
@@ -45,7 +45,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/difficulty-4.svg"
+      "pictogram": "https://foo.fr/media/upload/difficulty-4.svg"
     },
     {
       "id": 5,
@@ -56,7 +56,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/difficulty-5.svg"
+      "pictogram": "https://foo.fr/media/upload/difficulty-5.svg"
     }
   ]
 }

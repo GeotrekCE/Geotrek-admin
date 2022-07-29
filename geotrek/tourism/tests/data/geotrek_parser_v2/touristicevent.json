@@ -52,10 +52,10 @@
       "organizer": "",
       "participant_number": "",
       "pdf": {
-        "fr": "https://demo-admin.geotrek.fr/api/fr/touristicevents/3/autrefois-le-couserans.pdf",
-        "en": "https://demo-admin.geotrek.fr/api/en/touristicevents/3/autrefois-le-couserans.pdf",
-        "es": "https://demo-admin.geotrek.fr/api/es/touristicevents/3/autrefois-le-couserans.pdf",
-        "it": "https://demo-admin.geotrek.fr/api/it/touristicevents/3/autrefois-le-couserans.pdf"
+        "fr": "https://foo.fr/api/fr/touristicevents/3/autrefois-le-couserans.pdf",
+        "en": "https://foo.fr/api/en/touristicevents/3/autrefois-le-couserans.pdf",
+        "es": "https://foo.fr/api/es/touristicevents/3/autrefois-le-couserans.pdf",
+        "it": "https://foo.fr/api/it/touristicevents/3/autrefois-le-couserans.pdf"
       },
       "portal": [],
       "practical_info": {
@@ -72,7 +72,7 @@
       "themes": [],
       "type": 6,
       "update_datetime": "2016-03-16T16:50:37.409679+01:00",
-      "url": "https://demo-admin.geotrek.fr/api/v2/touristicevent/3/",
+      "url": "https://foo.fr/api/v2/touristicevent/3/",
       "uuid": "7382c443-8206-4ef2-bf43-f471cdc5073d",
       "website": "http://www.autrefois-le-couserans.com/"
     },
@@ -127,10 +127,10 @@
       "organizer": "Mr Test",
       "participant_number": "12",
       "pdf": {
-        "fr": "https://demo-admin.geotrek.fr/api/fr/touristicevents/1/festival-du-test.pdf",
-        "en": "https://demo-admin.geotrek.fr/api/en/touristicevents/1/festival-du-test.pdf",
-        "es": "https://demo-admin.geotrek.fr/api/es/touristicevents/1/festival-du-test.pdf",
-        "it": "https://demo-admin.geotrek.fr/api/it/touristicevents/1/festival-du-test.pdf"
+        "fr": "https://foo.fr/api/fr/touristicevents/1/festival-du-test.pdf",
+        "en": "https://foo.fr/api/en/touristicevents/1/festival-du-test.pdf",
+        "es": "https://foo.fr/api/es/touristicevents/1/festival-du-test.pdf",
+        "it": "https://foo.fr/api/it/touristicevents/1/festival-du-test.pdf"
       },
       "portal": [],
       "practical_info": {
@@ -152,7 +152,7 @@
       ],
       "type": 6,
       "update_datetime": "2016-03-16T16:50:09.774431+01:00",
-      "url": "https://demo-admin.geotrek.fr/api/v2/touristicevent/1/",
+      "url": "https://foo.fr/api/v2/touristicevent/1/",
       "uuid": "20fb113f-07f7-4deb-94b4-8445c85d5598",
       "website": "http://test.fr/"
     }

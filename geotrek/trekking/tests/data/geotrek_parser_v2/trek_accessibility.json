@@ -11,7 +11,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/accessibility-wheelchair.png"
+      "pictogram": "https://foo.fr/media/upload/accessibility-wheelchair.png"
     },
     {
       "id": 2,
@@ -21,7 +21,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/accessibility-troller.png"
+      "pictogram": "https://foo.fr/media/upload/accessibility-troller.png"
     },
     {
       "id": 3,
@@ -31,7 +31,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/accessibility-joelette.png"
+      "pictogram": "https://foo.fr/media/upload/accessibility-joelette.png"
     }
   ]
 }

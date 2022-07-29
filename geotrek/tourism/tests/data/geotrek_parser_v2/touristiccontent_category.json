@@ -12,7 +12,7 @@
         "it": null
       },
       "order": 20,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/touristiccontent-accommodation.svg",
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-accommodation.svg",
       "types": [
         {
           "id": 101,
@@ -66,7 +66,7 @@
         "it": null
       },
       "order": 13,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/touristiccontent-outdoor.svg",
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-outdoor.svg",
       "types": [
         {
           "id": 201,
@@ -120,7 +120,7 @@
         "it": null
       },
       "order": 28,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/touristiccontent-visits.svg",
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-visits.svg",
       "types": [
         {
           "id": 301,
@@ -205,7 +205,7 @@
         "it": null
       },
       "order": 30,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/touristiccontent-restaurants.svg",
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-restaurants.svg",
       "types": [
         {
           "id": 501,
@@ -249,7 +249,7 @@
         "it": null
       },
       "order": 25,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/touristiccontent-destination.svg",
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-destination.svg",
       "types": [
         {
           "id": 701,
@@ -303,7 +303,7 @@
         "it": null
       },
       "order": 40,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/touristiccontent-museum.svg",
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-museum.svg",
       "types": [
         {
           "id": 801,
@@ -357,7 +357,7 @@
         "it": null
       },
       "order": 12,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/touristiccontent-sites_2.svg",
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-sites_2.svg",
       "types": [
         {
           "id": 901,

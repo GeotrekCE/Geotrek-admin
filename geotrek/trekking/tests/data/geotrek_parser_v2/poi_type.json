@@ -11,7 +11,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-archeology.png"
+      "pictogram": "https://foo.fr/media/upload/poi-archeology.png"
     },
     {
       "id": 11,
@@ -21,7 +21,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-architecture.png"
+      "pictogram": "https://foo.fr/media/upload/poi-architecture.png"
     },
     {
       "id": 16,
@@ -31,7 +31,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/POIE_point_attache.png"
+      "pictogram": "https://foo.fr/media/upload/POIE_point_attache.png"
     },
     {
       "id": 15,
@@ -41,7 +41,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-pass.png"
+      "pictogram": "https://foo.fr/media/upload/poi-pass.png"
     },
     {
       "id": 3,
@@ -51,7 +51,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-fauna.png"
+      "pictogram": "https://foo.fr/media/upload/poi-fauna.png"
     },
     {
       "id": 2,
@@ -61,7 +61,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-flora.png"
+      "pictogram": "https://foo.fr/media/upload/poi-flora.png"
     },
     {
       "id": 8,
@@ -71,7 +71,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-geology.png"
+      "pictogram": "https://foo.fr/media/upload/poi-geology.png"
     },
     {
       "id": 12,
@@ -81,7 +81,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-glacier.png"
+      "pictogram": "https://foo.fr/media/upload/poi-glacier.png"
     },
     {
       "id": 10,
@@ -91,7 +91,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-history.png"
+      "pictogram": "https://foo.fr/media/upload/poi-history.png"
     },
     {
       "id": 6,
@@ -101,7 +101,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-lake.png"
+      "pictogram": "https://foo.fr/media/upload/poi-lake.png"
     },
     {
       "id": 14,
@@ -111,7 +111,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-pastoral.png"
+      "pictogram": "https://foo.fr/media/upload/poi-pastoral.png"
     },
     {
       "id": 1,
@@ -121,7 +121,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-patrimony.png"
+      "pictogram": "https://foo.fr/media/upload/poi-patrimony.png"
     },
     {
       "id": 4,
@@ -131,7 +131,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-panorama.png"
+      "pictogram": "https://foo.fr/media/upload/poi-panorama.png"
     },
     {
       "id": 5,
@@ -141,7 +141,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-refuge.png"
+      "pictogram": "https://foo.fr/media/upload/poi-refuge.png"
     },
     {
       "id": 13,
@@ -151,7 +151,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-knowhow.png"
+      "pictogram": "https://foo.fr/media/upload/poi-knowhow.png"
     },
     {
       "id": 7,
@@ -161,7 +161,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/poi-peak.png"
+      "pictogram": "https://foo.fr/media/upload/poi-peak.png"
     }
   ]
 }

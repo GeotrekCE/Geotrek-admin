@@ -11,7 +11,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-fauna.png"
+      "pictogram": "https://foo.fr/media/upload/theme-fauna.png"
     },
     {
       "id": 2,
@@ -21,7 +21,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-flora.png"
+      "pictogram": "https://foo.fr/media/upload/theme-flora.png"
     },
     {
       "id": 4,
@@ -31,7 +31,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-panorama.png"
+      "pictogram": "https://foo.fr/media/upload/theme-panorama.png"
     },
     {
       "id": 5,
@@ -41,7 +41,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-architecture.png"
+      "pictogram": "https://foo.fr/media/upload/theme-architecture.png"
     },
     {
       "id": 6,
@@ -51,7 +51,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-pastoral.png"
+      "pictogram": "https://foo.fr/media/upload/theme-pastoral.png"
     },
     {
       "id": 7,
@@ -61,7 +61,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-geology.png"
+      "pictogram": "https://foo.fr/media/upload/theme-geology.png"
     },
     {
       "id": 8,
@@ -71,7 +71,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-lake.png"
+      "pictogram": "https://foo.fr/media/upload/theme-lake.png"
     },
     {
       "id": 9,
@@ -81,7 +81,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-peak.png"
+      "pictogram": "https://foo.fr/media/upload/theme-peak.png"
     },
     {
       "id": 10,
@@ -91,7 +91,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-refugee.png"
+      "pictogram": "https://foo.fr/media/upload/theme-refugee.png"
     },
     {
       "id": 11,
@@ -101,7 +101,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/theme-history.png"
+      "pictogram": "https://foo.fr/media/upload/theme-history.png"
     }
   ]
 }

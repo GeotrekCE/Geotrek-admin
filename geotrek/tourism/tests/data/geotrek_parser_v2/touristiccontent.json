@@ -17,10 +17,10 @@
           "type": "image",
           "author": "Wikimedia Common",
           "license": null,
-          "thumbnail": "https://demo-admin.geotrek.fr/media/paperclip/tourism_touristiccontent/10/anes-01.jpg.400x0_q85.jpg",
+          "thumbnail": "https://foo.fr/media/paperclip/tourism_touristiccontent/10/anes-01.jpg.400x0_q85.jpg",
           "legend": "Ânes",
           "title": "anes-01",
-          "url": "https://demo-admin.geotrek.fr/media/paperclip/tourism_touristiccontent/10/anes-01.jpg",
+          "url": "https://foo.fr/media/paperclip/tourism_touristiccontent/10/anes-01.jpg",
           "uuid": "1f9887b3-dc75-46a3-a93e-e2c1a8ef7105"
         },
         {
@@ -28,10 +28,10 @@
           "type": "image",
           "author": "Wikimedia Commons",
           "license": null,
-          "thumbnail": "https://demo-admin.geotrek.fr/media/paperclip/tourism_touristiccontent/10/anes-02.jpg.400x0_q85.jpg",
+          "thumbnail": "https://foo.fr/media/paperclip/tourism_touristiccontent/10/anes-02.jpg.400x0_q85.jpg",
           "legend": "Ânes",
           "title": "anes-02",
-          "url": "https://demo-admin.geotrek.fr/media/paperclip/tourism_touristiccontent/10/anes-02.jpg",
+          "url": "https://foo.fr/media/paperclip/tourism_touristiccontent/10/anes-02.jpg",
           "uuid": "36d83840-ed78-4d2e-9937-d259930f053e"
         },
         {
@@ -75,7 +75,7 @@
         "es": "",
         "it": null
       },
-      "url": "https://demo-admin.geotrek.fr/api/v2/touristiccontent/10/",
+      "url": "https://foo.fr/api/v2/touristiccontent/10/",
       "cities": [
         "09231"
       ],
@@ -88,10 +88,10 @@
         "it": null
       },
       "pdf": {
-        "fr": "https://demo-admin.geotrek.fr/api/fr/touristiccontents/10/baladane.pdf",
-        "en": "https://demo-admin.geotrek.fr/api/en/touristiccontents/10/baladane.pdf",
-        "es": "https://demo-admin.geotrek.fr/api/es/touristiccontents/10/baladane.pdf",
-        "it": "https://demo-admin.geotrek.fr/api/it/touristiccontents/10/baladane.pdf"
+        "fr": "https://foo.fr/api/fr/touristiccontents/10/baladane.pdf",
+        "en": "https://foo.fr/api/en/touristiccontents/10/baladane.pdf",
+        "es": "https://foo.fr/api/es/touristiccontents/10/baladane.pdf",
+        "it": "https://foo.fr/api/it/touristiccontents/10/baladane.pdf"
       },
       "portal": [],
       "published": true,
@@ -155,7 +155,7 @@
         "es": "",
         "it": ""
       },
-      "url": "https://demo-admin.geotrek.fr/api/v2/touristiccontent/22/",
+      "url": "https://foo.fr/api/v2/touristiccontent/22/",
       "cities": [
         "09322"
       ],
@@ -168,10 +168,10 @@
         "it": ""
       },
       "pdf": {
-        "fr": "https://demo-admin.geotrek.fr/api/fr/touristiccontents/22/bar-a-requin.pdf",
-        "en": "https://demo-admin.geotrek.fr/api/en/touristiccontents/22/bar-a-requin.pdf",
-        "es": "https://demo-admin.geotrek.fr/api/es/touristiccontents/22/bar-a-requin.pdf",
-        "it": "https://demo-admin.geotrek.fr/api/it/touristiccontents/22/bar-a-requin.pdf"
+        "fr": "https://foo.fr/api/fr/touristiccontents/22/bar-a-requin.pdf",
+        "en": "https://foo.fr/api/en/touristiccontents/22/bar-a-requin.pdf",
+        "es": "https://foo.fr/api/es/touristiccontents/22/bar-a-requin.pdf",
+        "it": "https://foo.fr/api/it/touristiccontents/22/bar-a-requin.pdf"
       },
       "portal": [],
       "published": true,

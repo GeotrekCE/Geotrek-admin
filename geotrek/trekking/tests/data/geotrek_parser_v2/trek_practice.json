@@ -12,7 +12,7 @@
         "it": null
       },
       "order": 3,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/practice-mountainbike.svg"
+      "pictogram": "https://foo.fr/media/upload/practice-mountainbike.svg"
     },
     {
       "id": 3,
@@ -23,7 +23,7 @@
         "it": null
       },
       "order": 4,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/practice-horse.svg"
+      "pictogram": "https://foo.fr/media/upload/practice-horse.svg"
     },
     {
       "id": 4,
@@ -34,7 +34,7 @@
         "it": null
       },
       "order": 1,
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/practice-foot.svg"
+      "pictogram": "https://foo.fr/media/upload/practice-foot.svg"
     }
   ]
 }

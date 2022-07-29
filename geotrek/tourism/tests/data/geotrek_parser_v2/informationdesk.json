@@ -29,7 +29,7 @@
         "it": null
       },
       "phone": "09 64 46 55 12",
-      "photo_url": "https://demo-admin.geotrek.fr/media/upload/office-seix.jpg.150x150_q85.jpg",
+      "photo_url": "https://foo.fr/media/upload/office-seix.jpg.150x150_q85.jpg",
       "postal_code": "09140",
       "street": "33 Place Champ de Mars",
       "type": {
@@ -40,7 +40,7 @@
           "es": null,
           "it": null
         },
-        "pictogram": "https://demo-admin.geotrek.fr/media/upload/desktype-info.svg"
+        "pictogram": "https://foo.fr/media/upload/desktype-info.svg"
       },
       "website": "https://www.google.fr/maps/place/Office+Tourisme/@42.8772264,1.207959,15z/data=!4m2!3m1!1s0x12a8caa4377c469d:0xf8f00e9b653bb18f"
     },
@@ -81,7 +81,7 @@
           "es": null,
           "it": null
         },
-        "pictogram": "https://demo-admin.geotrek.fr/media/upload/desktype-info.svg"
+        "pictogram": "https://foo.fr/media/upload/desktype-info.svg"
       },
       "website": null
     }

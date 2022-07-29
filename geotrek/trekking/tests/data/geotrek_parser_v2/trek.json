@@ -83,10 +83,10 @@
           "type": "image",
           "author": "Grégory Tonon",
           "license": null,
-          "thumbnail": "https://demo-admin.geotrek.fr/media/paperclip/trekking_trek/2/1024px-les_pyrenees_depuis_le_pic_des_3_seigneurs.jpg.400x0_q85.jpg",
+          "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/2/1024px-les_pyrenees_depuis_le_pic_des_3_seigneurs.jpg.400x0_q85.jpg",
           "legend": "Vue sur la chaîne des Pyrénées, depuis le pics des 3 Seigneurs",
           "title": "1024px-Les_Pyrénées_depuis_le_pic_des_3_Seigneurs",
-          "url": "https://demo-admin.geotrek.fr/media/paperclip/trekking_trek/2/1024px-les_pyrenees_depuis_le_pic_des_3_seigneurs.jpg",
+          "url": "https://foo.fr/media/paperclip/trekking_trek/2/1024px-les_pyrenees_depuis_le_pic_des_3_seigneurs.jpg",
           "uuid": "8c62ae5f-9533-4de6-a863-3e33cd42d16c"
         },
         {
@@ -108,7 +108,7 @@
           "thumbnail": "",
           "legend": "",
           "title": "file_example_MP3_700KB",
-          "url": "https://demo-admin.geotrek.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3",
+          "url": "https://foo.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3",
           "uuid": "529e754b-e5a8-4fe7-944d-161b4900a62e"
         }
       ],
@@ -134,7 +134,7 @@
       ],
       "descent": -777,
       "description": {
-        "fr": "<a href=\"https://demo-admin.geotrek.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3\">https://demo-admin.geotrek.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3</a>",
+        "fr": "<a href=\"https://foo.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3\">https://foo.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3</a>",
         "en": "",
         "es": "",
         "it": ""
@@ -153,8 +153,8 @@
         "it": ""
       },
       "duration": 24.0,
-      "elevation_area_url": "https://demo-admin.geotrek.fr/api/v2/trek/2/dem/",
-      "elevation_svg_url": "https://demo-admin.geotrek.fr/api/v2/trek/2/profile/?language=fr&format=svg",
+      "elevation_area_url": "https://foo.fr/api/v2/trek/2/dem/",
+      "elevation_svg_url": "https://foo.fr/api/v2/trek/2/profile/?language=fr&format=svg",
       "external_id": null,
       "gear": {
         "fr": "Il faut de la corde",
@@ -2072,13 +2072,13 @@
           ]
         ]
       },
-      "gpx": "https://demo-admin.geotrek.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.gpx",
+      "gpx": "https://foo.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.gpx",
       "information_desks": [
         2,
         1,
         3
       ],
-      "kml": "https://demo-admin.geotrek.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.kml",
+      "kml": "https://foo.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.kml",
       "labels": [
         1,
         2,
@@ -2104,10 +2104,10 @@
         42.8063269
       ],
       "pdf": {
-        "fr": "https://demo-admin.geotrek.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
-        "en": "https://demo-admin.geotrek.fr/api/en/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
-        "es": "https://demo-admin.geotrek.fr/api/es/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
-        "it": "https://demo-admin.geotrek.fr/api/it/treks/2/boucle-du-pic-des-trois-seigneurs.pdf"
+        "fr": "https://foo.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
+        "en": "https://foo.fr/api/en/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
+        "es": "https://foo.fr/api/es/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
+        "it": "https://foo.fr/api/it/treks/2/boucle-du-pic-des-trois-seigneurs.pdf"
       },
       "points_reference": {
         "type": "MultiPoint",
@@ -2171,7 +2171,7 @@
         4
       ],
       "update_datetime": "2022-05-16T12:10:59.927409Z",
-      "url": "https://demo-admin.geotrek.fr/api/v2/trek/2/",
+      "url": "https://foo.fr/api/v2/trek/2/",
       "uuid": "9e70b294-1134-4c50-9c56-d722720cacf1",
       "web_links": [
         {
@@ -2190,7 +2190,7 @@
               "it": null
             },
             "id": 4,
-            "pictogram": "https://demo-admin.geotrek.fr/media/upload/weblink-book.png"
+            "pictogram": "https://foo.fr/media/upload/weblink-book.png"
           }
         },
         {
@@ -2209,7 +2209,7 @@
               "it": null
             },
             "id": 4,
-            "pictogram": "https://demo-admin.geotrek.fr/media/upload/weblink-book.png"
+            "pictogram": "https://foo.fr/media/upload/weblink-book.png"
           }
         },
         {
@@ -2228,7 +2228,7 @@
               "it": null
             },
             "id": 4,
-            "pictogram": "https://demo-admin.geotrek.fr/media/upload/weblink-book.png"
+            "pictogram": "https://foo.fr/media/upload/weblink-book.png"
           }
         }
       ]
@@ -2291,7 +2291,7 @@
         "es": "",
         "it": ""
       },
-      "altimetric_profile": "https://demo-admin.geotrek.fr/api/v2/trek/10443/profile/",
+      "altimetric_profile": "https://foo.fr/api/v2/trek/10443/profile/",
       "ambiance": {
         "fr": "Test ambiance",
         "en": "",
@@ -2311,10 +2311,10 @@
           "type": "image",
           "author": "Samrong01 - CC BY-SA 4.0",
           "license": null,
-          "thumbnail": "https://demo-admin.geotrek.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG.400x0_q85.jpg",
+          "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG.400x0_q85.jpg",
           "legend": "Arrien-en-Bethmale, vue du village",
           "title": "",
-          "url": "https://demo-admin.geotrek.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG",
+          "url": "https://foo.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG",
           "uuid": "8605f89a-48fa-40ba-a9b0-9a48e5b0f310"
         }
       ],
@@ -2357,8 +2357,8 @@
         "it": ""
       },
       "duration": 2.0,
-      "elevation_area_url": "https://demo-admin.geotrek.fr/api/v2/trek/10443/dem/",
-      "elevation_svg_url": "https://demo-admin.geotrek.fr/api/v2/trek/10443/profile/?language=fr&format=svg",
+      "elevation_area_url": "https://foo.fr/api/v2/trek/10443/dem/",
+      "elevation_svg_url": "https://foo.fr/api/v2/trek/10443/profile/?language=fr&format=svg",
       "external_id": null,
       "gear": {
         "fr": "",
@@ -3016,9 +3016,9 @@
           ]
         ]
       },
-      "gpx": "https://demo-admin.geotrek.fr/api/fr/treks/10443/de-bethmale-au-col-de-la-core.gpx",
+      "gpx": "https://foo.fr/api/fr/treks/10443/de-bethmale-au-col-de-la-core.gpx",
       "information_desks": [],
-      "kml": "https://demo-admin.geotrek.fr/api/fr/treks/10443/de-bethmale-au-col-de-la-core.kml",
+      "kml": "https://foo.fr/api/fr/treks/10443/de-bethmale-au-col-de-la-core.kml",
       "labels": [],
       "length_2d": 3063.4,
       "length_3d": 3245.4,
@@ -3039,10 +3039,10 @@
       ],
       "parking_location": null,
       "pdf": {
-        "fr": "https://demo-admin.geotrek.fr/api/fr/treks/10443/de-bethmale-au-col-de-la-core.pdf",
-        "en": "https://demo-admin.geotrek.fr/api/en/treks/10443/de-bethmale-au-col-de-la-core.pdf",
-        "es": "https://demo-admin.geotrek.fr/api/es/treks/10443/de-bethmale-au-col-de-la-core.pdf",
-        "it": "https://demo-admin.geotrek.fr/api/it/treks/10443/de-bethmale-au-col-de-la-core.pdf"
+        "fr": "https://foo.fr/api/fr/treks/10443/de-bethmale-au-col-de-la-core.pdf",
+        "en": "https://foo.fr/api/en/treks/10443/de-bethmale-au-col-de-la-core.pdf",
+        "es": "https://foo.fr/api/es/treks/10443/de-bethmale-au-col-de-la-core.pdf",
+        "it": "https://foo.fr/api/it/treks/10443/de-bethmale-au-col-de-la-core.pdf"
       },
       "points_reference": null,
       "portal": [],
@@ -3077,7 +3077,7 @@
       "structure": 3,
       "themes": [],
       "update_datetime": "2022-07-26T08:18:06.997582Z",
-      "url": "https://demo-admin.geotrek.fr/api/v2/trek/10443/",
+      "url": "https://foo.fr/api/v2/trek/10443/",
       "uuid": "1ba24605-aff2-4b16-bf30-6de1ebfb2a12",
       "web_links": []
     }

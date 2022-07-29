@@ -11,7 +11,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/network-PR.svg"
+      "pictogram": "https://foo.fr/media/upload/network-PR.svg"
     },
     {
       "id": 4,
@@ -21,7 +21,7 @@
         "es": null,
         "it": null
       },
-      "pictogram": "https://demo-admin.geotrek.fr/media/upload/network-VTT.svg"
+      "pictogram": "https://foo.fr/media/upload/network-VTT.svg"
     }
   ]
 }
