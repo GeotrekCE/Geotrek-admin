@@ -19,7 +19,8 @@ from geotrek.tourism.models import InformationDesk, TouristicContent, TouristicE
 from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEventApidaeParser, EspritParcParser,
                                      TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
                                      TouristicContentTourInSoftParser, TouristicEventTourInSoftParser,
-                                     InformationDeskApidaeParser)
+                                     InformationDeskApidaeParser, GeotrekTouristicContentParser,
+                                     GeotrekTouristicEventParser, GeotrekInformationDeskParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
@@ -647,3 +648,130 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         information_desk_2 = InformationDesk.objects.get(eid=2)
         self.assertEqual(information_desk_2.website, None)
+
+
+class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
+    url = "https://test.fr"
+
+    field_options = {
+        "category": {'create': True},
+        'themes': {'create': True},
+        'type1': {'create': True},
+        'type2': {'create': True}
+    }
+
+
+class TestGeotrekTouristicEventParser(GeotrekTouristicEventParser):
+    url = "https://test.fr"
+
+    field_options = {
+        'type': {'create': True, },
+    }
+
+
+class TestGeotrekInformationDeskParser(GeotrekInformationDeskParser):
+    url = "https://test.fr"
+
+    field_options = {
+        'type': {'create': True, },
+    }
+
+
+class TouristicContentGeotrekParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['touristiccontent_category.json',
+                                'touristiccontent_themes.json',
+                                'touristiccontent_category.json',
+                                'touristiccontent.json']
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekTouristicContentParser', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        touristic_content = TouristicContent.objects.all().first()
+        self.assertEqual(str(touristic_content.category), 'Sorties')
+        self.assertEqual(str(touristic_content.name), "Balad'âne")
+
+
+class TouristicEventGeotrekParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['touristicevent_type.json',
+                                'touristicevent.json']
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekTouristicEventParser', verbosity=0)
+        self.assertEqual(TouristicEvent.objects.count(), 2)
+        touristic_event = TouristicEvent.objects.all().first()
+        self.assertEqual(str(touristic_event.type), 'Spectacle')
+        self.assertEqual(str(touristic_event.name), "Autrefois le Couserans")
+
+
+class InformationDeskGeotrekParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['informationdesk.json', ]
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekInformationDeskParser', verbosity=0)
+        self.assertEqual(InformationDesk.objects.count(), 2)
+        information_desk = InformationDesk.objects.all().first()
+        self.assertEqual(str(information_desk.type), "Relais d'information")
+        self.assertEqual(str(information_desk.name), "Foo")
