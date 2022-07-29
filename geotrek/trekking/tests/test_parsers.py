@@ -7,10 +7,11 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
 from django.core.management import call_command
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from geotrek.common.models import Theme, FileType
-from geotrek.trekking.models import Trek, DifficultyLevel, Route
-from geotrek.trekking.parsers import TrekParser, GeotrekTrekParser
+from geotrek.trekking.models import POI, Trek, DifficultyLevel, Route
+from geotrek.trekking.parsers import TrekParser, GeotrekPOIParser, GeotrekTrekParser
 
 
 class TrekParserFilterDurationTests(TestCase):
@@ -143,12 +144,18 @@ class TestGeotrekTrekParser(GeotrekTrekParser):
     }
 
 
+class TestGeotrekPOIParser(GeotrekPOIParser):
+    url = "https://test.fr"
+
+    field_options = {
+        'type': {'create': True, },
+    }
+
+
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class TrekGeotrekParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.difficulty = DifficultyLevel.objects.create(difficulty="Facile")
-        cls.route = Route.objects.create(route="Boucle")
         cls.filetype = FileType.objects.create(type="Photographie")
 
     @mock.patch('requests.get')
@@ -177,3 +184,36 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(trek.name, "Loop of the pic of 3 lords")
         self.assertEqual(str(trek.difficulty), 'Very easy')
         self.assertEqual(str(trek.practice), 'Horse')
+
+
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class POIGeotrekParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['poi_type.json', 'poi.json']
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekPOIParser', verbosity=0)
+        self.assertEqual(POI.objects.count(), 2)
+        poi = POI.objects.all().first()
+        self.assertEqual(poi.name, "Pic des Trois Seigneurs")
+        self.assertEqual(str(poi.type), 'Sommet')
