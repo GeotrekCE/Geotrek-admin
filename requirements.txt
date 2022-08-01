@@ -20,9 +20,10 @@ billiard==3.6.4.0
     # via celery
 btrees==4.10.0
     # via zodb
-cairocffi==1.1.0
+cairocffi==0.9.0
     # via
     #   cairosvg
+    #   geotrek (setup.py)
     #   mapentity
     #   weasyprint
 cairosvg==2.5.2

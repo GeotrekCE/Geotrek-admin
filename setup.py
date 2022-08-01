@@ -34,6 +34,8 @@ setup(
     install_requires=[
         'Django==3.2.*',
         'mapentity==8.2.1',
+        'cairosvg',
+        'cairocffi==0.9.0',  # Latest version dh-virtualenv can handle to build the .deb package
         'env_file',
         # pinned by requirements.txt
         'pymemcache',
@@ -59,7 +61,7 @@ setup(
         'django-colorfield',
         'Fiona',
         "weasyprint==52.5",  # newer version required libpango (not available in bionic)
-        'django-weasyprint<2.0.0', # 2.10 require weasyprint > 53
+        'django-weasyprint<2.0.0',  # 2.10 require weasyprint > 53
         # prod,
         'gunicorn',
         'sentry-sdk',
