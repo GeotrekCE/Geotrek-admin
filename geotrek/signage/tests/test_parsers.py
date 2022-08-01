@@ -53,4 +53,5 @@ class SignageGeotrekParserTests(TestCase):
         self.assertEqual(str(signage.name), 'test gard')
         self.assertEqual(str(signage.type), 'Limite Cœur')
         self.assertEqual(str(signage.sealing), 'Socle béton')
-        self.assertEqual(str(signage.geom.ewkt), 'SRID=2154;POINT (572941.1308660918 6189000.155980503)')
+        self.assertAlmostEqual(signage.geom.x, 572941.1308660918, places=5)
+        self.assertAlmostEqual(signage.geom.y, 6189000.155980503, places=5)

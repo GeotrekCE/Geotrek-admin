@@ -195,6 +195,8 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(trek.name, "Loop of the pic of 3 lords")
         self.assertEqual(str(trek.difficulty), 'Very easy')
         self.assertEqual(str(trek.practice), 'Horse')
+        self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
+        self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
@@ -228,6 +230,8 @@ class POIGeotrekParserTests(TestCase):
         poi = POI.objects.all().first()
         self.assertEqual(poi.name, "Pic des Trois Seigneurs")
         self.assertEqual(str(poi.type), 'Sommet')
+        self.assertAlmostEqual(poi.geom.x, 572298.7056448072, places=5)
+        self.assertAlmostEqual(poi.geom.y, 6193580.839504813, places=5)
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
@@ -260,3 +264,5 @@ class ServiceGeotrekParserTests(TestCase):
         self.assertEqual(Service.objects.count(), 2)
         service = Service.objects.all().first()
         self.assertEqual(str(service.type), 'Eau potable')
+        self.assertAlmostEqual(service.geom.x, 572096.2266745908, places=5)
+        self.assertAlmostEqual(service.geom.y, 6192330.15779677, places=5)

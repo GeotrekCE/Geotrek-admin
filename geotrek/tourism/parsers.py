@@ -1025,7 +1025,7 @@ class GeotrekInformationDeskParser(GeotrekParser):
 
     def filter_geom(self, src, val):
         lat, lng = val
-        return Point(lat, lng, srid=settings.API_SRID).transform(settings.SRID, clone=True)
+        return Point(lng, lat, srid=settings.API_SRID).transform(settings.SRID, clone=True)
 
     def filter_type(self, src, val):
         return self.apply_filter('type', src, val["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE])

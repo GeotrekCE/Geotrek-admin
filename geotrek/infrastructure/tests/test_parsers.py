@@ -51,4 +51,5 @@ class InfrastructureGeotrekParserTests(TestCase):
         infrastructure = Infrastructure.objects.all().first()
         self.assertEqual(str(infrastructure.name), 'Table pic-nique')
         self.assertEqual(str(infrastructure.type), 'Table')
-        self.assertEqual(str(infrastructure.geom.ewkt), 'SRID=2154;POINT (565008.6693905985 6188246.533542466)')
+        self.assertAlmostEqual(infrastructure.geom.x, 565008.6693905985, places=5)
+        self.assertAlmostEqual(infrastructure.geom.y, 6188246.533542466, places=5)

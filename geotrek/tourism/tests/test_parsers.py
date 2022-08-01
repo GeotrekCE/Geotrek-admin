@@ -713,6 +713,8 @@ class TouristicContentGeotrekParserTests(TestCase):
         touristic_content = TouristicContent.objects.all().first()
         self.assertEqual(str(touristic_content.category), 'Sorties')
         self.assertEqual(str(touristic_content.name), "Balad'âne")
+        self.assertAlmostEqual(touristic_content.geom.x, 568112.6362873032, places=5)
+        self.assertAlmostEqual(touristic_content.geom.y, 6196929.676669887, places=5)
 
 
 class TouristicEventGeotrekParserTests(TestCase):
@@ -746,6 +748,8 @@ class TouristicEventGeotrekParserTests(TestCase):
         touristic_event = TouristicEvent.objects.all().first()
         self.assertEqual(str(touristic_event.type), 'Spectacle')
         self.assertEqual(str(touristic_event.name), "Autrefois le Couserans")
+        self.assertAlmostEqual(touristic_event.geom.x, 548907.5259389633, places=5)
+        self.assertAlmostEqual(touristic_event.geom.y, 6208918.713349126, places=5)
 
 
 class InformationDeskGeotrekParserTests(TestCase):
@@ -778,3 +782,5 @@ class InformationDeskGeotrekParserTests(TestCase):
         information_desk = InformationDesk.objects.all().first()
         self.assertEqual(str(information_desk.type), "Relais d'information")
         self.assertEqual(str(information_desk.name), "Foo")
+        self.assertAlmostEqual(information_desk.geom.x, 573013.9272605104, places=5)
+        self.assertAlmostEqual(information_desk.geom.y, 6276967.321705549, places=5)
