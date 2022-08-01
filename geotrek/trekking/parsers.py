@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils.translation import gettext as _
 
 from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser
-from geotrek.trekking.models import POI, Service, Trek
+from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek
 
 
 class DurationParserMixin:
@@ -113,6 +113,29 @@ class GeotrekTrekParser(GeotrekParser):
         if val:
             geom = GEOSGeometry(json.dumps(val))
             return geom.transform(settings.SRID, clone=True)
+
+    def end(self):
+        super().end()
+        self.next_url = f"{self.url}/api/v2/trek"
+        params = {
+            'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
+            'fields': ['children', 'id', 'uuid']
+        }
+        response = self.request_or_retry(f"{self.next_url}", params=params)
+        results = response.json()['results']
+        final_children = {}
+        for result in results:
+            final_children[result['id']] = {'uuid': result['uuid'], 'children': result['children']}
+
+        for key, value in final_children.items():
+            if value['children']:
+                trek_parent_instance = Trek.objects.get(eid=value['uuid'])
+                order = 0
+                for child in value['children']:
+                    trek_child_uuid = final_children.get(child)['uuid']
+                    trek_child_instance = Trek.objects.get(eid=trek_child_uuid)
+                    OrderedTrekChild.objects.create(parent=trek_parent_instance, child=trek_child_instance, order=order)
+                    order += 1
 
 
 class GeotrekServiceParser(GeotrekParser):

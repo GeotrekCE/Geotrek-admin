@@ -163,6 +163,7 @@ class TestGeotrekServiceParser(GeotrekServiceParser):
     }
 
 
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class TrekGeotrekParserTests(TestCase):
     @classmethod
@@ -174,7 +175,7 @@ class TrekGeotrekParserTests(TestCase):
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek.json']
+                                'trek_accessibility.json', 'trek_network.json', 'trek.json', 'trek_children.json']
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -190,13 +191,14 @@ class TrekGeotrekParserTests(TestCase):
         mocked_head.return_value.status_code = 200
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
-        self.assertEqual(Trek.objects.count(), 2)
+        self.assertEqual(Trek.objects.count(), 5)
         trek = Trek.objects.all().first()
-        self.assertEqual(trek.name, "Loop of the pic of 3 lords")
-        self.assertEqual(str(trek.difficulty), 'Very easy')
-        self.assertEqual(str(trek.practice), 'Horse')
+        self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(str(trek.difficulty), 'Très facile')
+        self.assertEqual(str(trek.practice), 'Cheval')
         self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
         self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
+        self.assertEqual(trek.children.first().name, "Foo")
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')

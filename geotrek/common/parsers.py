@@ -901,7 +901,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     url = None
     separator = None
     delete = True
-    eid = 'eid'
+    eid = 'uuid'
     constant_fields = {}
     url_categories = {}
     replace_fields = {}
@@ -913,9 +913,13 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     field_options = {
         'geom': {'required': True},
     }
+    bbox = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        self.bbox.srid = settings.SRID
+        self.bbox.transform(4326)  # WGS84
         self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not f.name == 'id')
         self.m2m_fields = {
             f.name: f.name
@@ -929,7 +933,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.translated_fields = [field for field in get_translated_fields(self.model)]
         for category in self.url_categories.keys():
             route = self.url_categories[category]
-            response = self.request_or_retry(f"{self.url}{route}", )  # params=params)
+            response = self.request_or_retry(f"{self.url}{route}")
             self.field_options.setdefault(category, {})
             if self.categories_keys_api_v2.get(category):
                 self.field_options[category]["mapping"] = {}
@@ -972,12 +976,9 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         return geom
 
     def next_row(self):
-        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
-        bbox.srid = settings.SRID
-        bbox.transform(4326)  # WGS84
         while self.next_url:
             params = {
-                'in_bbox': ','.join([str(coord) for coord in bbox.extent]),
+                'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
             }
             response = self.request_or_retry(self.next_url, params=params)
             self.root = response.json()
