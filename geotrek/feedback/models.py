@@ -224,7 +224,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     @property
     def color(self):
         default = settings.MAPENTITY_CONFIG.get('MAP_STYLES', {}).get("detail", {}).get("color", "#ffff00")
-        if not(settings.ENABLE_REPORT_COLORS_PER_STATUS) or self.status is None or self.status.color is None:
+        if not (settings.ENABLE_REPORT_COLORS_PER_STATUS) or self.status is None or self.status.color is None:
             return default
         else:
             return self.status.color
@@ -531,7 +531,7 @@ class TimerEvent(models.Model):
         return (timezone.now() > self.deadline) and (self.report.status.identifier == self.step.identifier)
 
     def notify_if_needed(self):
-        if not(self.notification_sent) and self.is_linked_report_late():
+        if not (self.notification_sent) and self.is_linked_report_late():
             self.report.notify_late_report(self.step.identifier)
             late_status = ReportStatus.objects.get(identifier=STATUS_WHEN_REPORT_IS_LATE[self.step.identifier])
             self.report.status = late_status
