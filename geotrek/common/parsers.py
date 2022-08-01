@@ -18,7 +18,6 @@ from os.path import dirname
 from urllib.parse import urlparse
 
 from django.contrib.gis.geos import GEOSGeometry, WKBWriter
-from django.core.management import call_command
 from django.db import models, connection
 from django.db.utils import DatabaseError
 from django.contrib.auth import get_user_model
@@ -917,8 +916,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and
-                           not f.name == 'id')
+        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not f.name == 'id')
         self.m2m_fields = {
             f.name: f.name
             for f in self.model._meta.many_to_many
