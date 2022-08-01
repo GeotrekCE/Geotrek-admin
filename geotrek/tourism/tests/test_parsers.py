@@ -763,6 +763,7 @@ class InformationDeskGeotrekParserTests(TestCase):
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['informationdesk.json', ]
+        self.mock_content_time = 0
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -771,11 +772,19 @@ class InformationDeskGeotrekParserTests(TestCase):
             with open(filename, 'r') as f:
                 return json.load(f)
 
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 200
+            if self.mock_content_time > 0:
+                response._content = None
+            else:
+                response._content = b''
+            self.mock_content_time += 1
+            response.json = mocked_json
+            return response
+
         # Mock GET
-        mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
-        mocked_get.return_value.content = b''
-        mocked_head.return_value.status_code = 200
+        mocked_get.side_effect = mocked_requests_get
 
         call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekInformationDeskParser', verbosity=0)
         self.assertEqual(InformationDesk.objects.count(), 2)
