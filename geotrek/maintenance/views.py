@@ -140,12 +140,12 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
         if kwargs['can_delete']:
             intervention = self.get_object()
             # Disallow deletion if this intervention is part of Suricate Workflow at the moment
-            not_workflow = not(settings.SURICATE_WORKFLOW_ENABLED)
+            not_workflow = not (settings.SURICATE_WORKFLOW_ENABLED)
             is_report = intervention.target and intervention.target.__class__.__name__ == "Report"
             report_is_closed = False
             if is_report:
                 report_is_closed = (intervention.target.status.identifier == 'solved')
-            kwargs["can_delete"] = not_workflow or not(is_report) or report_is_closed
+            kwargs["can_delete"] = not_workflow or not (is_report) or report_is_closed
         return kwargs
 
 

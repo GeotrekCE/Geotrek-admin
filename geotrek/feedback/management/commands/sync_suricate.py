@@ -66,6 +66,6 @@ class Command(BaseCommand):
                 if options["statuses"] or has_no_params:
                     parser.get_statuses()
                 if has_no_params:
-                    parser.get_alerts(verbosity=verbosity, should_notify=not(no_notification))
+                    parser.get_alerts(verbosity=verbosity, should_notify=not (no_notification))
         else:
             logger.error("To use this command, please activate setting SURICATE_MANAGEMENT_ENABLED or SURICATE_WORKFLOW_ENABLED.")
