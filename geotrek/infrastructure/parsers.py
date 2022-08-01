@@ -10,7 +10,8 @@ class GeotrekInfrastructureParser(GeotrekParser):
         "deleted": False
     }
     replace_fields = {
-        "eid": "uuid"
+        "eid": "uuid",
+        "geom": "geometry"
     }
     url_categories = {
         'condition': '/api/v2/infrastructure_condition/',
@@ -23,10 +24,6 @@ class GeotrekInfrastructureParser(GeotrekParser):
     natural_keys = {
         'condition': 'label',
         'type': 'label'
-    }
-
-    field_options = {
-        "type": {"create": True}
     }
 
     def next_row(self):

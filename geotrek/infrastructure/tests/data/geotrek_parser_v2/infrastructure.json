@@ -1,0 +1,75 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2898,
+      "accessibility": {
+        "fr": "",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "attachments": [
+        {
+          "backend": "",
+          "type": "image",
+          "author": "gutard",
+          "license": null,
+          "thumbnail": "https://foo.fr/media/paperclip/infrastructure_baseinfrastructure/2898/belgique.png.400x0_q85.jpg",
+          "legend": "",
+          "title": "belgique",
+          "url": "https://foo.fr/media/paperclip/infrastructure_baseinfrastructure/2898/belgique.png",
+          "uuid": "20888c5a-0f33-4e22-8999-5fef740a5439"
+        }
+      ],
+      "condition": null,
+      "description": "",
+      "eid": null,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.35208,
+          42.781068,
+          840.0
+        ]
+      },
+      "name": "Table pic-nique",
+      "implantation_year": null,
+      "maintenance_difficulty": null,
+      "structure": "MC",
+      "type": 81,
+      "usage_difficulty": null,
+      "uuid": "93747e51-757e-4b39-9c3b-41bb228a7455"
+    },
+    {
+      "id": 8385,
+      "accessibility": {
+        "fr": "",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "attachments": [],
+      "condition": null,
+      "description": "Une belle description",
+      "eid": null,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.1090391,
+          42.7838115,
+          1550.0
+        ]
+      },
+      "name": "Cabane d'Aula",
+      "implantation_year": null,
+      "maintenance_difficulty": null,
+      "structure": "DEMO",
+      "type": 45,
+      "usage_difficulty": null,
+      "uuid": "f7d10e86-5bf0-47a5-934e-63dcca8bf9c5"
+    }
+  ]
+}

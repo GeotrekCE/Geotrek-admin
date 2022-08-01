@@ -10,7 +10,8 @@ class GeotrekSignageParser(GeotrekParser):
         "deleted": False
     }
     replace_fields = {
-        "eid": "uuid"
+        "eid": "uuid",
+        "geom": "geometry"
     }
     url_categories = {
         'sealing': '/api/v2/signage_sealing/',
@@ -26,10 +27,6 @@ class GeotrekSignageParser(GeotrekParser):
         'condition': 'label',
         'sealing': 'label',
         'type': 'label'
-    }
-
-    field_options = {
-        "type": {"create": True}
     }
 
     def next_row(self):
