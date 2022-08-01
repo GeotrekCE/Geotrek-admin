@@ -656,8 +656,9 @@ class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
     field_options = {
         "category": {'create': True},
         'themes': {'create': True},
-        'type1': {'create': True},
-        'type2': {'create': True}
+        'type1': {'create': True, 'fk': 'category'},
+        'type2': {'create': True, 'fk': 'category'},
+        'geom': {'required': True},
     }
 
 
@@ -666,6 +667,7 @@ class TestGeotrekTouristicEventParser(GeotrekTouristicEventParser):
 
     field_options = {
         'type': {'create': True, },
+        'geom': {'required': True},
     }
 
 
@@ -674,6 +676,7 @@ class TestGeotrekInformationDeskParser(GeotrekInformationDeskParser):
 
     field_options = {
         'type': {'create': True, },
+        'geom': {'required': True},
     }
 
 

@@ -17,6 +17,7 @@ class TestGeotrekInfrastructureParser(GeotrekInfrastructureParser):
     field_options = {
         'condition': {'create': True, },
         'type': {'create': True},
+        'geom': {'required': True},
     }
 
 

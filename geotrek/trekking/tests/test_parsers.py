@@ -141,6 +141,7 @@ class TestGeotrekTrekParser(GeotrekTrekParser):
         'practice': {'create': True},
         'accessibilities': {'create': True},
         'networks': {'create': True},
+        'geom': {'required': True},
     }
 
 
@@ -149,6 +150,7 @@ class TestGeotrekPOIParser(GeotrekPOIParser):
 
     field_options = {
         'type': {'create': True, },
+        'geom': {'required': True},
     }
 
 
@@ -157,6 +159,7 @@ class TestGeotrekServiceParser(GeotrekServiceParser):
 
     field_options = {
         'type': {'create': True, },
+        'geom': {'required': True},
     }
 
 

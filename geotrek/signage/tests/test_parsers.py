@@ -18,6 +18,7 @@ class TestGeotrekSignageParser(GeotrekSignageParser):
         'sealing': {'create': True, },
         'condition': {'create': True, },
         'type': {'create': True},
+        'geom': {'required': True}
     }
 
 

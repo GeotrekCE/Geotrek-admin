@@ -926,6 +926,9 @@ class GeotrekTouristicContentParser(GeotrekParser):
     }
 
     field_options = {
+        'type1': {'fk': 'category'},
+        'type2': {'fk': 'category'},
+        'geom': {'required': True},
     }
 
     def __init__(self, *args, **kwargs):
@@ -984,10 +987,6 @@ class GeotrekTouristicEventParser(GeotrekParser):
         'type': 'type',
     }
 
-    field_options = {
-        "type": {"create": True}
-    }
-
     def next_row(self):
         self.next_url = f"{self.url}/api/v2/touristicevent"
         return super().next_row()
@@ -1009,7 +1008,8 @@ class GeotrekInformationDeskParser(GeotrekParser):
     }
 
     field_options = {
-        "type": {"create": True}
+        "type": {"create": True},
+        'geom': {'required': True},
     }
 
     def next_row(self):
