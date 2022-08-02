@@ -758,12 +758,12 @@ class InformationDeskGeotrekParserTests(TestCase):
         cls.filetype = FileType.objects.create(type="Photographie")
 
     @mock.patch('requests.get')
-    @mock.patch('requests.head')
+    @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachment')
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
-    def test_create(self, mocked_head, mocked_get):
+    def test_create(self, mocked_download_attachment, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['informationdesk.json', ]
-        self.mock_content_time = 0
+        self.mock_download = 0
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -772,24 +772,21 @@ class InformationDeskGeotrekParserTests(TestCase):
             with open(filename, 'r') as f:
                 return json.load(f)
 
-        def mocked_requests_get(*args, **kwargs):
-            response = requests.Response()
-            response.status_code = 200
-            if self.mock_content_time > 0:
-                response._content = None
-            else:
-                response._content = b''
-            self.mock_content_time += 1
-            response.json = mocked_json
-            return response
+        def mocked_download(*args, **kwargs):
+            if self.mock_download > 0:
+                return None
+            self.mock_download += 1
+            return b''
 
         # Mock GET
-        mocked_get.side_effect = mocked_requests_get
-
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_download_attachment.side_effect = mocked_download
         call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekInformationDeskParser', verbosity=0)
-        self.assertEqual(InformationDesk.objects.count(), 2)
+        self.assertEqual(InformationDesk.objects.count(), 3)
         information_desk = InformationDesk.objects.all().first()
         self.assertEqual(str(information_desk.type), "Relais d'information")
         self.assertEqual(str(information_desk.name), "Foo")
         self.assertAlmostEqual(information_desk.geom.x, 573013.9272605104, places=5)
         self.assertAlmostEqual(information_desk.geom.y, 6276967.321705549, places=5)
+        self.assertEqual(str(information_desk.photo), '')
