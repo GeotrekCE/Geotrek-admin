@@ -513,6 +513,7 @@ COMPLETENESS_FIELDS = {
     'dive': ['practice', 'difficulty', 'description_teaser'],
 }
 
+ALERT_DRAFT = False
 ALERT_REVIEW = False
 
 EMBED_VIDEO_BACKENDS = (
