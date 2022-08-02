@@ -9,6 +9,7 @@ import urllib
 
 from django.test import TestCase
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db.utils import DatabaseError
@@ -20,7 +21,7 @@ from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import (
     ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
-    TourismSystemParser, OpenSystemParser,
+    TourismSystemParser, OpenSystemParser, GeotrekParser
 )
 from geotrek.common.utils.testdata import get_dummy_img
 
@@ -310,6 +311,26 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(mocked_get.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
 
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_attachment_not_updated_partially_changed(self, mocked_head, mocked_get):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 0}
+        filename_no_legend = os.path.join(os.path.dirname(__file__), 'data', 'attachment_no_legend.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename_no_legend, verbosity=0)
+        attachment = Attachment.objects.get()
+        self.assertEqual(attachment.legend, '')
+        self.assertEqual(attachment.author, '')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'attachment.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentLegendParser', filename, verbosity=0)
+        self.assertEqual(mocked_get.call_count, 1)
+        self.assertEqual(Attachment.objects.count(), 1)
+        attachment.refresh_from_db()
+        self.assertEqual(attachment.legend, 'legend')
+        self.assertEqual(attachment.author, 'name')
+
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch('requests.get')
     @mock.patch('requests.head')
@@ -451,3 +472,20 @@ class OpenSystemParserTest(TestCase):
         parser = TestOpenSystemParser()
         parser.parse()
         self.assertEqual(mocked_get.call_count, 1)
+
+
+class GeotrekTrekTestParser(GeotrekParser):
+    url = "https://test.fr"
+    model = Trek
+    url_categories = {
+        'foo_field': 'test'
+    }
+
+
+class GeotrekParserTest(TestCase):
+    def setUp(self, *args, **kwargs):
+        self.filetype = FileType.objects.create(type="Photographie")
+
+    def test_improperly_configurated_categories(self):
+        with self.assertRaisesRegex(ImproperlyConfigured, 'foo_field is not configured in categories_keys_api_v2'):
+            call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestParser', verbosity=2)

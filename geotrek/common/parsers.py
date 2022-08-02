@@ -932,10 +932,10 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             self.m2m_fields[key] = value
         self.translated_fields = [field for field in get_translated_fields(self.model)]
         for category in self.url_categories.keys():
-            route = self.url_categories[category]
-            response = self.request_or_retry(f"{self.url}{route}")
-            self.field_options.setdefault(category, {})
             if self.categories_keys_api_v2.get(category):
+                route = self.url_categories[category]
+                response = self.request_or_retry(f"{self.url}{route}")
+                self.field_options.setdefault(category, {})
                 self.field_options[category]["mapping"] = {}
                 results = response.json()['results']
                 for result in results:
