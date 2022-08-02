@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('parser', help='Parser class name in var/conf/parsers.py (or dotted syntax in python path)')
-        parser.add_argument('filename', nargs="?")
+        parser.add_argument('filename', nargs="?", help='Optional file which will be use to feed database')
         parser.add_argument('-l', dest='limit', type=int, help='Limit number of lines to import')
         parser.add_argument('--encoding', '-e', default='utf8')
 
