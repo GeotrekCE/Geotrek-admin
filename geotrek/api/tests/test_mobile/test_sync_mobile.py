@@ -569,19 +569,3 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertIn('Done', output.getvalue())
-
-
-class SyncMobileEmptySyncTest(TestCase):
-    @mock.patch('geotrek.api.management.commands.sync_mobile.Command.sync', side_effect=ValueError)
-    def test_deletion_tmp_sync_mobile(self, mocked):
-        if not os.path.exists(settings.TMP_DIR):
-            os.mkdir(settings.TMP_DIR)
-        if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_mobile')):
-            os.mkdir(os.path.join(settings.TMP_DIR, 'sync_mobile'))
-        if not os.path.exists(os.path.join(settings.TMP_DIR, 'sync_mobile', 'other_sync')):
-            os.mkdir(os.path.join(settings.TMP_DIR, 'sync_mobile', 'other_sync'))
-
-        with self.assertRaisesRegex(FileNotFoundError, ''):
-            management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'),
-                                    empty_tmp_folder=True, url='http://localhost:8000')
-        self.assertFalse(os.path.exists(os.path.join(settings.TMP_DIR, 'sync_mobile', 'other_sync')))
