@@ -997,7 +997,7 @@ class GeotrekInformationDeskParser(GeotrekParser):
     model = InformationDesk
     constant_fields = {}
     replace_fields = {
-        "eid": ["uuid", "id"],
+        "uuid": ["uuid", "id"],
         "geom": ["latitude", "longitude"],
         "photo": "photo_url"
     }
@@ -1016,7 +1016,7 @@ class GeotrekInformationDeskParser(GeotrekParser):
         self.next_url = f"{self.url}/api/v2/informationdesk"
         return super().next_row()
 
-    def filter_eid(self, src, val):
+    def filter_uuid(self, src, val):
         uuid, id_iddesk = val
         final_value = uuid
         if not uuid:
