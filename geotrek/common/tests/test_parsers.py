@@ -3,6 +3,7 @@ from unittest import mock
 from shutil import rmtree
 from tempfile import mkdtemp
 from io import StringIO
+import requests
 from requests import Response
 import urllib
 
@@ -297,6 +298,25 @@ class AttachmentParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
 
         self.assertEqual(mocked_get.call_count, 1)
+
+    @mock.patch('requests.get')
+    def test_attachment_no_content(self, mocked):
+        """
+        It will always take the one without structure first
+        """
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 200
+            response._content = None
+            return response
+
+        # Mock GET
+        mocked.side_effect = mocked_requests_get
+        structure = StructureFactory.create(name="Structure")
+        FileType.objects.create(type="Photographie", structure=structure)
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+        self.assertEqual(Attachment.objects.count(), 0)
 
 
 class TourInSoftParserTests(TestCase):
