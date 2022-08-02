@@ -363,7 +363,7 @@ class Parser:
             if mapping is not None:
                 if val and val not in mapping.keys():
                     values = [str(key) for key in mapping.keys()]
-                    self.add_warning(_("Bad value '{val}' for field {src}. Should be {values}").format(val=str(val), src=src, separator=self.separator, values=values))
+                    self.add_warning(_("Bad value '{val}' for field {src}. Should be in {values}").format(val=str(val), src=src, separator=self.separator, values=values))
                     return None
                 if not val:
                     return None

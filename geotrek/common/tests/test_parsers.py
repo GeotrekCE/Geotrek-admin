@@ -36,6 +36,37 @@ class OrganismEidParser(ExcelParser):
     eid = 'organism'
 
 
+class StructureExcelParser(ExcelParser):
+    model = Organism
+    fields = {
+        'organism': 'nOm',
+        'structure': 'structure'
+    }
+    eid = 'organism'
+
+
+class OrganismNoMappingNoPartialParser(StructureExcelParser):
+    field_options = {
+        "structure": {"mapping": {"foo": "bar", "": "boo"}}
+    }
+    natural_keys = {
+        "structure": "name"
+    }
+
+
+class OrganismNoMappingPartialParser(StructureExcelParser):
+    field_options = {
+        "structure": {"mapping": {"foo": "bar"}, "partial": True}
+    }
+    natural_keys = {
+        "structure": "name"
+    }
+
+
+class OrganismNoNaturalKeysParser(StructureExcelParser):
+    warn_on_missing_fields = True
+
+
 class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {'attachments': 'photo'}
 
@@ -126,6 +157,24 @@ class ParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismEidParser', filename, verbosity=2, stdout=output)
         self.assertIn('foo bar', output.getvalue())
+
+    def test_fk_not_in_natural_keys(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism5.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismNoNaturalKeysParser', filename, verbosity=2, stdout=output)
+        self.assertIn("Destination field 'structure' not in natural keys configuration", output.getvalue())
+
+    def test_no_mapping_not_partial(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism5.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismNoMappingNoPartialParser', filename, verbosity=2, stdout=output)
+        self.assertIn("Bad value 'Structure' for field STRUCTURE. Should be in ['foo', '']", output.getvalue())
+
+    def test_no_mapping_partial(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism5.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismNoMappingPartialParser', filename, verbosity=2, stdout=output)
+        self.assertIn("Bad value 'Structure' for field STRUCTURE. Should contain ['foo']", output.getvalue())
 
 
 @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
