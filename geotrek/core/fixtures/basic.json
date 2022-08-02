@@ -259,5 +259,21 @@
             "structure": null,
             "label": "Rejetée"
         }
+    },
+    {
+        "model": "core.trailcategory",
+        "pk": 1,
+        "fields": {
+            "structure": null,
+            "label": "Labellisation"
+        }
+    },
+    {
+        "model": "core.trailcategory",
+        "pk": 2,
+        "fields": {
+            "structure": null,
+            "label": "Entretien régulier"
+        }
     }
 ]

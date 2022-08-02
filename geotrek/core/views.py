@@ -354,13 +354,15 @@ class TrailList(CustomColumnsMixin, MapEntityList):
 class TrailFormatList(MapEntityFormat, TrailList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'structure', 'name', 'comments', 'departure', 'arrival',
+        'structure', 'name', 'comments',
+        'departure', 'arrival', 'category',
         'certifications', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
     def get_queryset(self):
         return super().get_queryset() \
+            .select_related('category__structure') \
             .prefetch_related(Prefetch('certifications',
                                        queryset=CertificationTrail.objects.select_related(
                                            'certification_label',
@@ -402,12 +404,12 @@ class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 
 
-class TrailCreate(CreateFromTopologyMixin, MapEntityCreate):
+class TrailCreate(CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
     model = Trail
     form_class = TrailForm
 
 
-class TrailUpdate(MapEntityUpdate):
+class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
     queryset = Trail.objects.existing()
     form_class = TrailForm
 

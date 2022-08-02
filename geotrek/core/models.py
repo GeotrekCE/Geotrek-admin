@@ -946,6 +946,13 @@ class Network(StructureOrNoneRelated):
 class Trail(MapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Name"), max_length=64)
+    category = models.ForeignKey(
+        "TrailCategory",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Category"),
+    )
     departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64)
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
@@ -990,6 +997,24 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
+
+
+class TrailCategory(StructureOrNoneRelated):
+    """Trail category"""
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+    class Meta:
+        verbose_name = _("Trail category")
+        verbose_name_plural = _("Trail categories")
+        ordering = ['label']
+        unique_together = (
+            ('label', 'structure'),
+        )
 
 
 class CertificationLabel(StructureOrNoneRelated):

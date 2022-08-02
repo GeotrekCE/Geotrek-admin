@@ -14,7 +14,7 @@ from geotrek.common.utils import dbnow
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
 from geotrek.core.tests.factories import (
-    ComfortFactory, PathFactory, StakeFactory, TrailFactory,
+    ComfortFactory, PathFactory, StakeFactory, TrailFactory, TrailCategoryFactory,
     CertificationLabelFactory, CertificationStatusFactory, CertificationTrailFactory
 )
 from geotrek.core.models import Path, Trail
@@ -319,6 +319,18 @@ class ComfortTest(TestCase):
     def test_name_without_structure(self):
         comfort = ComfortFactory.create(comfort="comfort")
         self.assertEqual("comfort", str(comfort))
+
+
+class TrailCategory(TestCase):
+    """Test trail category model"""
+    def test_trail_category_name_with_structure(self):
+        structure = StructureFactory.create(name="structure")
+        trail_category = TrailCategoryFactory.create(label="My category", structure=structure)
+        self.assertEqual("My category (structure)", str(trail_category))
+
+    def test_trail_category_name_without_structure(self):
+        trail_category = TrailCategoryFactory.create(label="My category")
+        self.assertEqual("My category", str(trail_category))
 
 
 class CertificationTest(TestCase):

@@ -121,7 +121,7 @@ class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zo
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['name', 'departure', 'arrival', 'certification_labels', 'comments']
+            ['name', 'category', 'departure', 'arrival', 'certification_labels', 'comments']
 
 
 class TopologyFilterTrail(TopologyFilter):

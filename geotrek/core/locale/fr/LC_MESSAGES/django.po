@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-19 14:31+0000\n"
+"POT-Creation-Date: 2022-07-26 08:47+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -215,6 +215,15 @@ msgstr "Usage"
 msgid "Network"
 msgstr "Réseau"
 
+msgid "Category"
+msgstr "Categorie"
+
+msgid "Trail category"
+msgstr "Categorie de sentier"
+
+msgid "Trail categories"
+msgstr "Categories de sentier"
+
 msgid "Certification label"
 msgstr "Labellisation"
 
@@ -298,6 +307,15 @@ msgstr "Annuler"
 
 msgid "No certification"
 msgstr "Aucune labellisation"
+
+msgid "Add"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "This field is required."
+msgstr ""
 
 msgid ""
 "Access to the requested resource is restricted. You have been redirected."
