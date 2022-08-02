@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.db.models import Count, F, Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import BooleanFilter, CharFilter, FilterSet
+from django_filters import BooleanFilter, CharFilter, FilterSet, ModelMultipleChoiceFilter
 
-from .models import Topology, Path, Trail
+from .models import Topology, Path, Trail, CertificationLabel
 
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -107,15 +107,21 @@ class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureR
 
 
 class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
+    """Trail filter set"""
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
+    certification_labels = ModelMultipleChoiceFilter(
+        field_name="certifications__certification_label",
+        label=_("Certification labels"),
+        queryset=CertificationLabel.objects.all(),
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['name', 'departure', 'arrival', 'comments']
+            ['name', 'departure', 'arrival', 'certification_labels', 'comments']
 
 
 class TopologyFilterTrail(TopologyFilter):

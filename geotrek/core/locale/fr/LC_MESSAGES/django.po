@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-03 09:53+0000\n"
+"POT-Creation-Date: 2022-07-19 14:31+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -41,9 +41,6 @@ msgstr "Topologie valide"
 msgid "Valid geometry"
 msgstr "Géometrie valide"
 
-msgid "length"
-msgstr "Longueur"
-
 msgid "Name"
 msgstr "Nom"
 
@@ -73,6 +70,9 @@ msgstr "La géométrie est non simple"
 
 msgid "Geometry overlaps another."
 msgstr "La géométrie en superpose une autre"
+
+msgid "Certifications"
+msgstr "Labellisations"
 
 msgid "Validity"
 msgstr "Validité"
@@ -133,7 +133,9 @@ msgid "Paths"
 msgstr "Tronçons"
 
 msgid "You can't delete this path, some topologies are linked with this path"
-msgstr "Vous ne pouvez pas supprimer ce tronçon, des topologies sont liés à ce tronçon"
+msgstr ""
+"Vous ne pouvez pas supprimer ce tronçon, des topologies sont liés à ce "
+"tronçon"
 
 msgid "Trails"
 msgstr "Sentiers"
@@ -213,6 +215,21 @@ msgstr "Usage"
 msgid "Network"
 msgstr "Réseau"
 
+msgid "Certification label"
+msgstr "Labellisation"
+
+msgid "Certification labels"
+msgstr "Labellisations"
+
+msgid "Certification status"
+msgstr "Statut de labellisation"
+
+msgid "Certification statuses"
+msgstr "Statuts de labellisation"
+
+msgid "Certification"
+msgstr "Labellisation"
+
 msgid "Management"
 msgstr "Gestion"
 
@@ -239,7 +256,9 @@ msgstr "Différentes Topologies sont liées à ce tronçon"
 msgid ""
 "You can't delete <strong>%(object)s</strong>, some topologies are linked "
 "with this path. Modify these topologies before deleting this path."
-msgstr "Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies sont lié à ce tronçon. Modifié ces topologies avant de supprimer ce tronçon"
+msgstr ""
+"Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies "
+"sont lié à ce tronçon. Modifié ces topologies avant de supprimer ce tronçon"
 
 msgid "No, back to edit view"
 msgstr "Non, retour à la l'édition"
@@ -277,8 +296,8 @@ msgstr "Fusionner les tronçons"
 msgid "Cancel"
 msgstr "Annuler"
 
-msgid "path"
-msgstr "tronçon"
+msgid "No certification"
+msgstr "Aucune labellisation"
 
 msgid ""
 "Access to the requested resource is restricted. You have been redirected."
@@ -290,6 +309,9 @@ msgid ""
 msgstr ""
 "L'accès à cette ressource est restreint selon la structure. Vous avez été "
 "redirigé."
+
+msgid "path"
+msgstr "tronçon"
 
 msgid "You should select two paths"
 msgstr "Vous devez sélectionner 2 tronçons"

@@ -182,3 +182,26 @@ class TrailFactory(TopologyFactory):
     departure = factory.Sequence(lambda n: "Departure %s" % n)
     arrival = factory.Sequence(lambda n: "Arrival %s" % n)
     comments = factory.Sequence(lambda n: "Comments %s" % n)
+
+
+class CertificationLabelFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.CertificationLabel
+
+    label = factory.Sequence(lambda n: "My certification label %s" % n)
+
+
+class CertificationStatusFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.CertificationStatus
+
+    label = factory.Sequence(lambda n: "My certification status %s" % n)
+
+
+class CertificationTrailFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.CertificationTrail
+
+    trail = factory.SubFactory(TrailFactory)
+    certification_label = factory.SubFactory(CertificationLabelFactory)
+    certification_status = factory.SubFactory(CertificationStatusFactory)

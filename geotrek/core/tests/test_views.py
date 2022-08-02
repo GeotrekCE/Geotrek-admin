@@ -739,7 +739,12 @@ class TrailViewsTest(CommonTest):
             'name': 't',
             'departure': 'Below',
             'arrival': 'Above',
-            'comments': 'No comment'
+            'comments': 'No comment',
+
+            'certifications-TOTAL_FORMS': '0',
+            'certifications-INITIAL_FORMS': '0',
+            'certifications-MAX_NUM_FORMS': '1000',
+            'certifications-MIN_NUM_FORMS': '',
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
@@ -747,6 +752,14 @@ class TrailViewsTest(CommonTest):
         else:
             good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
         return good_data
+
+    def get_bad_data(self):
+        return {
+            'name': '',
+            'certifications-TOTAL_FORMS': '0',
+            'certifications-INITIAL_FORMS': '1',
+            'certifications-MAX_NUM_FORMS': '0',
+        }, _('This field is required.')
 
     def test_detail_page(self):
         trail = TrailFactory()
@@ -787,6 +800,11 @@ class TrailViewsTest(CommonTest):
         new_pk = int(m.group(1))
         new_trail = Trail.objects.get(pk=new_pk)
         self.assertIn(trail, new_trail.trails.all())
+
+    def test_perfs_export_csv(self):
+        self.modelfactory.create()
+        with self.assertNumQueries(10):
+            self.client.get(self.model.get_format_list_url() + '?format=csv')
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

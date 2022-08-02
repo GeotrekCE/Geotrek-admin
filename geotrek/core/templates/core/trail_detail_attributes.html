@@ -19,6 +19,15 @@
             <th>{{ trail|verbose:"arrival" }}</th>
             <td>{{ trail.arrival }}</td>
         </tr><tr>
+            <th>{{ trail|verbose:"certifications" }}</th>
+            <td>
+            {% for certification in trail.certifications.all %}
+                {{ certification }}</br>
+            {% empty %}
+                  {% trans "No certification" %}
+            {% endfor %}
+            </td>
+        </tr><tr>
             <th>{{ trail|verbose:"comments" }}</th>
             <td>{{ trail.comments|safe|linebreaks }}</td>
         </tr>

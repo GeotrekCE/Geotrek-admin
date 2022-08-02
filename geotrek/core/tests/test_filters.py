@@ -4,10 +4,14 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.land.tests.test_filters import LandFiltersTest
 
-from geotrek.core.tests.factories import PathFactory, TrailFactory
-from geotrek.core.filters import PathFilterSet, TopologyFilter
+from geotrek.core.tests.factories import (
+    PathFactory, TrailFactory,
+    CertificationTrailFactory, CertificationLabelFactory
+)
+from geotrek.core.filters import PathFilterSet, TopologyFilter, TrailFilterSet
 from geotrek.core.models import Topology
 
 from geotrek.trekking.tests.factories import TrekFactory
@@ -134,3 +138,32 @@ class ValidGeometryFilterNDSTest(TestCase):
         qs = TrekFilterSet(data=data).qs
         self.assertIn(trek_empty, qs)
         self.assertEqual(qs.count(), 1)
+
+
+class TrailFilterTestCase(TestCase):
+    """Test trail filters"""
+
+    def setUp(self):
+        self.structure = StructureFactory.create(name="structure")
+        self.trail1 = TrailFactory.create(
+            structure=self.structure,
+        )
+        self.trail2 = TrailFactory.create(
+            structure=self.structure,
+        )
+        self.certification_label_1 = CertificationLabelFactory.create()
+        self.certification_label_2 = CertificationLabelFactory.create()
+        self.certification_trail_1 = CertificationTrailFactory.create(
+            trail=self.trail1,
+            certification_label=self.certification_label_1
+        )
+        self.certification_trail_2 = CertificationTrailFactory.create(
+            trail=self.trail2,
+            certification_label=self.certification_label_2
+        )
+        self.filterset_class = TrailFilterSet
+
+    def test_filter_trail_on_certification_label(self):
+        """Test trail filter on certification label"""
+        filterset = self.filterset_class({'certification_labels': [self.certification_label_1]})
+        self.assertEqual(filterset.qs.count(), 1)

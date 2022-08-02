@@ -951,6 +951,7 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
+    certifications_verbose_name = _("Certifications")
     geometry_types_allowed = ["LINESTRING"]
 
     class Meta:
@@ -967,6 +968,10 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
                                                                  self.get_detail_url(),
                                                                  self,
                                                                  self)
+
+    @property
+    def certifications_display(self):
+        return ', '.join([str(n) for n in self.certifications.all()])
 
     @classmethod
     def path_trails(cls, path):
@@ -985,6 +990,69 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
+
+
+class CertificationLabel(StructureOrNoneRelated):
+    """Certification label model"""
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+    class Meta:
+        verbose_name = _("Certification label")
+        verbose_name_plural = _("Certification labels")
+        ordering = ['label']
+        unique_together = (
+            ('label', 'structure'),
+        )
+
+
+class CertificationStatus(StructureOrNoneRelated):
+    """Certification status model"""
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+    class Meta:
+        verbose_name = _("Certification status")
+        verbose_name_plural = _("Certification statuses")
+        ordering = ['label']
+        unique_together = (
+            ('label', 'structure'),
+        )
+
+
+class CertificationTrail(StructureOrNoneRelated):
+    """Certification trail model"""
+
+    trail = models.ForeignKey("core.Trail",
+                              related_name='certifications',
+                              on_delete=models.CASCADE,
+                              verbose_name=_("Trail"))
+    certification_label = models.ForeignKey("core.CertificationLabel",
+                                            related_name='certifications',
+                                            on_delete=models.PROTECT,
+                                            verbose_name=_("Certification label"))
+    certification_status = models.ForeignKey("core.CertificationStatus",
+                                             related_name='certifications',
+                                             on_delete=models.PROTECT,
+                                             verbose_name=_("Certification status"))
+
+    class Meta:
+        verbose_name = _("Certification")
+        verbose_name_plural = _("Certifications")
+        unique_together = (
+            ('trail', 'certification_label', 'certification_status'),
+        )
+
+    def __str__(self):
+        return f"{self.certification_label} / {self.certification_status}"
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _("Trails"))

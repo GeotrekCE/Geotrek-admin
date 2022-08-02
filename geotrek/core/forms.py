@@ -1,9 +1,13 @@
 from django.utils.translation import gettext_lazy as _
 from django import forms
+from django.forms.models import inlineformset_factory
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Div, Fieldset, Layout
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.widgets import LineTopologyWidget
-from geotrek.core.models import Path, Trail
+from geotrek.core.models import Path, Trail, CertificationTrail
 from geotrek.core.fields import TopologyField, SnappedLineStringField
 
 
@@ -104,6 +108,18 @@ class PathForm(CommonForm):
 
 
 class TrailForm(TopologyForm):
+
+    fieldslayout = [
+        Div(
+            'structure',
+            'name',
+            'departure',
+            'arrival',
+            'comments',
+            Fieldset(_("Certifications")),
+        )
+    ]
+
     class Meta(CommonForm.Meta):
         model = Trail
         fields = CommonForm.Meta.fields + ['structure', 'name', 'departure', 'arrival', 'comments']
@@ -113,3 +129,24 @@ class TrailForm(TopologyForm):
         modifiable = self.fields['topology'].widget.modifiable
         self.fields['topology'].widget = LineTopologyWidget()
         self.fields['topology'].widget.modifiable = modifiable
+
+
+class CertificationTrailForm(forms.ModelForm):
+
+    class Meta:
+        model = CertificationTrail
+        fields = ('id', 'certification_label', 'certification_status')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout('id', 'certification_label', 'certification_status')
+
+
+CertificationTrailFormSet = inlineformset_factory(
+    Trail,
+    CertificationTrail,
+    form=CertificationTrailForm,
+    extra=1
+)
