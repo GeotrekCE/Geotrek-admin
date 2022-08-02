@@ -219,14 +219,13 @@ class SyncRandoFailTest(VarTmpTestCase):
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (This is a test)", output.getvalue())
 
-    @override_settings(MEDIA_URL=9)
-    def test_bad_settings(self):
+    @mock.patch('geotrek.common.management.commands.sync_rando.Command.sync', side_effect=Exception('This is an exception'))
+    def test_error_sync(self, mocked):
         output = StringIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaisesRegex(AttributeError, "'int' object has no attribute 'strip'"):
+        with self.assertRaisesRegex(Exception, "This is an exception"):
             management.call_command('sync_rando', os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
-        self.assertIn("failed (Cannot mix str and non-str arguments)", output.getvalue())
 
     def test_sync_fail_src_file_not_exist(self):
         output = StringIO()

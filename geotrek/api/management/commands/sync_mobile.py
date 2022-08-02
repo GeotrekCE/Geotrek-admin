@@ -528,7 +528,6 @@ class Command(BaseCommand):
                 )
             self.rename_root()
         except Exception:
-            shutil.rmtree(self.tmp_root)
             raise
 
         done_message = 'Done'

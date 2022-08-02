@@ -166,14 +166,12 @@ class SyncMobileFailTest(VarTmpTestCase):
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO())
         self.assertFalse(os.path.exists(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync', 'nolang', 'media', 'trekking_trek')))
 
-    @override_settings(MEDIA_URL=9)
-    def test_bad_settings(self):
+    @mock.patch('geotrek.api.management.commands.sync_mobile.Command.sync', side_effect=Exception('This is an exception'))
+    def test_error_sync(self, mocked):
         output = StringIO()
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaisesRegex(AttributeError, "'int' object has no attribute 'strip'"):
+        with self.assertRaisesRegex(Exception, "This is an exception"):
             management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=StringIO())
-            self.assertIn("Exception raised in callable attribute", output.getvalue())
 
     @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
     def test_response_view_exception(self, mocke):
