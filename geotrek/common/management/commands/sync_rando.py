@@ -513,8 +513,8 @@ class Command(BaseCommand):
             os.mkdir(settings.TMP_DIR)
         if not os.path.exists(sync_rando_tmp_dir):
             os.mkdir(sync_rando_tmp_dir)
-        self.tmp_root = tempfile.TemporaryDirectory(dir=sync_rando_tmp_dir).name
-        try:
+        with tempfile.TemporaryDirectory(dir=sync_rando_tmp_dir) as tmp_dir:
+            self.tmp_root = tmp_dir
             self.sync()
             if self.celery_task:
                 self.celery_task.update_state(
@@ -527,8 +527,6 @@ class Command(BaseCommand):
                     }
                 )
             self.rename_root()
-        except Exception:
-            raise
 
         done_message = 'Done'
         if self.successfull:
