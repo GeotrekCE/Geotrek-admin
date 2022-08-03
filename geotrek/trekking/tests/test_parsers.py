@@ -142,6 +142,7 @@ class TestGeotrekTrekParser(GeotrekTrekParser):
         'accessibilities': {'create': True},
         'networks': {'create': True},
         'geom': {'required': True},
+        'labels': {'create': True},
     }
 
 
@@ -175,7 +176,7 @@ class TrekGeotrekParserTests(TestCase):
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek.json', 'trek_children.json']
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek.json', 'trek_children.json', ]
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -199,6 +200,8 @@ class TrekGeotrekParserTests(TestCase):
         self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
         self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
         self.assertEqual(trek.children.first().name, "Foo")
+        self.assertEqual(trek.labels.count(), 3)
+        self.assertEqual(trek.labels.first().name, "Chien autorisé")
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')

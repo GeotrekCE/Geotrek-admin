@@ -82,7 +82,8 @@ class GeotrekTrekParser(GeotrekParser):
         "themes": "/api/v2/theme/",
         "practice": "/api/v2/trek_practice/",
         "accessibilities": "/api/v2/trek_accessibility/",
-        "networks": "/api/v2/trek_network/"
+        "networks": "/api/v2/trek_network/",
+        'labels': '/api/v2/label/'
     }
     categories_keys_api_v2 = {
         'difficulty': 'label',
@@ -90,7 +91,8 @@ class GeotrekTrekParser(GeotrekParser):
         'themes': 'label',
         'practice': 'name',
         'accessibilities': 'name',
-        'networks': 'label'
+        'networks': 'label',
+        'labels': 'name'
     }
     natural_keys = {
         'difficulty': 'difficulty',
@@ -99,6 +101,7 @@ class GeotrekTrekParser(GeotrekParser):
         'practice': 'name',
         'accessibilities': 'name',
         'networks': 'network',
+        'labels': 'name'
     }
 
     def next_row(self):
