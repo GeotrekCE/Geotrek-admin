@@ -896,6 +896,12 @@ class OpenSystemParser(Parser):
 
 
 class GeotrekParser(AttachmentParserMixin, Parser):
+    """
+    url_categories: url of the categories in api v2 (example: 'category': '/api/v2/touristiccontent_category/')
+    replace_fields: Replace fields which have not the same name in the api v2 compare to models (geom => geometry in api v2)
+    m2m_replace_fields: Replace m2m fields which have not the same name in the api v2 compare to models (geom => geometry in api v2)
+    categories_keys_api_v2: Key in the route of the category (example: /api/v2/touristiccontent_category/) corresponding to the model field
+    """
     model = None
     next_url = ''
     url = None
@@ -925,12 +931,14 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             f.name: f.name
             for f in self.model._meta.many_to_many
         }
+        # Replace automatics fields and m2m_fields generated above
         for key, value in self.replace_fields.items():
             self.fields[key] = value
 
         for key, value in self.m2m_replace_fields.items():
             self.m2m_fields[key] = value
         self.translated_fields = [field for field in get_translated_fields(self.model)]
+        # Generate a mapping dictionnary between id and the correspondant label
         for category in self.url_categories.keys():
             if self.categories_keys_api_v2.get(category):
                 route = self.url_categories[category]
@@ -938,6 +946,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 self.field_options.setdefault(category, {})
                 self.field_options[category]["mapping"] = {}
                 results = response.json()['results']
+                # for element in category url map the id with its label
                 for result in results:
                     id_result = result['id']
                     label = result[self.categories_keys_api_v2[category]]
