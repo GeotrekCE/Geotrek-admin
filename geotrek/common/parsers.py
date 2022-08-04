@@ -928,7 +928,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
         self.bbox.transform(4326)  # WGS84
-        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not f.name == 'id')
+        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if
+                           not isinstance(f, TranslationField) and not f.name == 'id')
         self.m2m_fields = {
             f.name: f.name
             for f in self.model._meta.many_to_many

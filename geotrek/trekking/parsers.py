@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils.translation import gettext as _
 
-from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser
+from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek
 
 
@@ -120,27 +120,30 @@ class GeotrekTrekParser(GeotrekParser):
     def end(self):
         super().end()
         self.next_url = f"{self.url}/api/v2/trek"
-        params = {
-            'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-            'fields': ['children', 'id']
-        }
-        response = self.request_or_retry(f"{self.next_url}", params=params)
-        results = response.json()['results']
-        final_children = {}
-        for result in results:
-            final_children[result['id']] = result['children']
+        try:
+            params = {
+                'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
+                'fields': ['children', 'id']
+            }
+            response = self.request_or_retry(f"{self.next_url}", params=params)
+            results = response.json()['results']
+            final_children = {}
+            for result in results:
+                final_children[result['id']] = result['children']
 
-        for key, value in final_children.items():
-            if value:
-                trek_parent_instance = Trek.objects.filter(eid=f"{self.eid_prefix}{key}")
-                if not trek_parent_instance:
-                    return
-                order = 0
-                for child in value:
-                    trek_child_instance = Trek.objects.get(eid=f"{self.eid_prefix}{child}")
-                    OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0], child=trek_child_instance,
-                                                           order=order)
-                    order += 1
+            for key, value in final_children.items():
+                if value:
+                    trek_parent_instance = Trek.objects.filter(eid=f"{self.eid_prefix}{key}")
+                    if not trek_parent_instance:
+                        return
+                    order = 0
+                    for child in value:
+                        trek_child_instance = Trek.objects.get(eid=f"{self.eid_prefix}{child}")
+                        OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0], child=trek_child_instance,
+                                                               order=order)
+                        order += 1
+        except Exception as e:
+            self.add_warning(_(f"An error occured in children generation : {e}"))
 
 
 class GeotrekServiceParser(GeotrekParser):
