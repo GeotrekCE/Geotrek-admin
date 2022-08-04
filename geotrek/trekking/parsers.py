@@ -72,7 +72,7 @@ class GeotrekTrekParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "uuid",
+        "eid": "id",
         "eid2": "second_external_id",
         "geom": "geometry"
     }
@@ -122,23 +122,22 @@ class GeotrekTrekParser(GeotrekParser):
         self.next_url = f"{self.url}/api/v2/trek"
         params = {
             'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-            'fields': ['children', 'id', 'uuid']
+            'fields': ['children', 'id']
         }
         response = self.request_or_retry(f"{self.next_url}", params=params)
         results = response.json()['results']
         final_children = {}
         for result in results:
-            final_children[result['id']] = {'uuid': result['uuid'], 'children': result['children']}
+            final_children[result['id']] = result['children']
 
         for key, value in final_children.items():
-            if value['children']:
-                trek_parent_instance = Trek.objects.filter(eid=value['uuid'])
+            if value:
+                trek_parent_instance = Trek.objects.filter(eid=f"{self.eid_prefix}{key}")
                 if not trek_parent_instance:
                     return
                 order = 0
-                for child in value['children']:
-                    trek_child_uuid = final_children.get(child)['uuid']
-                    trek_child_instance = Trek.objects.get(eid=trek_child_uuid)
+                for child in value:
+                    trek_child_instance = Trek.objects.get(eid=f"{self.eid_prefix}{child}")
                     OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0], child=trek_child_instance,
                                                            order=order)
                     order += 1
@@ -151,7 +150,7 @@ class GeotrekServiceParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "uuid",
+        "eid": "id",
         "geom": "geometry"
     }
     url_categories = {
@@ -177,7 +176,7 @@ class GeotrekPOIParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "uuid",
+        "eid": "id",
         "geom": "geometry"
     }
     url_categories = {

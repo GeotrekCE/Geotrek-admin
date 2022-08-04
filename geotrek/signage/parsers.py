@@ -10,7 +10,7 @@ class GeotrekSignageParser(GeotrekParser):
         "deleted": False
     }
     replace_fields = {
-        "eid": "uuid",
+        "eid": "id",
         "geom": "geometry"
     }
     url_categories = {

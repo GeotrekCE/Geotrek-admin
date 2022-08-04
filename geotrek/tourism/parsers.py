@@ -899,7 +899,7 @@ class GeotrekTouristicContentParser(GeotrekParser):
     }
 
     replace_fields = {
-        "eid": "uuid",
+        "eid": "id",
         "geom": "geometry",
     }
 
@@ -974,7 +974,7 @@ class GeotrekTouristicEventParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "uuid",
+        "eid": "id",
         "geom": "geometry"
     }
     url_categories = {

@@ -246,7 +246,7 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(trek.children.first().name, "Foo")
         self.assertEqual(trek.labels.count(), 3)
         self.assertEqual(trek.labels.first().name, "Chien autorisé")
-        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=2)
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=0)
         self.assertEqual(Trek.objects.count(), 6)
 
 

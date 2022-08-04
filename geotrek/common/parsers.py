@@ -908,7 +908,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     url = None
     separator = None
     delete = True
-    eid = 'uuid'
+    eid = 'eid'
     constant_fields = {}
     url_categories = {}
     replace_fields = {}
