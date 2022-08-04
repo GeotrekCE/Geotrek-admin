@@ -902,6 +902,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     m2m_replace_fields: Replace m2m fields which have not the same name in the api v2 compare to models (geom => geometry in api v2)
     categories_keys_api_v2: Key in the route of the category (example: /api/v2/touristiccontent_category/) corresponding to the model field
     eid_prefix: Prefix of your eid which allow to differentiate multiple GeotrekParser
+    portals_filter: Portals which will be use for filter in api v2 (default: No portal filter)
     """
     model = None
     next_url = ''
@@ -922,14 +923,16 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     }
     bbox = None
     eid_prefix = ''
+    portals_filter = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, url=None, portals_filter=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
         self.bbox.transform(4326)  # WGS84
-        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if
-                           not isinstance(f, TranslationField) and not f.name == 'id')
+        self.portals_filter = portals_filter
+        self.url = url if url else self.url
+        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not f.name == 'id')
         self.m2m_fields = {
             f.name: f.name
             for f in self.model._meta.many_to_many
@@ -1001,8 +1004,10 @@ class GeotrekParser(AttachmentParserMixin, Parser):
 
     def next_row(self):
         while self.next_url:
+            portals = self.portals_filter
             params = {
                 'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
+                'portals': ','.join(portals) if portals else ''
             }
             response = self.request_or_retry(self.next_url, params=params)
             self.root = response.json()

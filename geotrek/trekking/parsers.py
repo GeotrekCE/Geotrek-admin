@@ -123,7 +123,7 @@ class GeotrekTrekParser(GeotrekParser):
         try:
             params = {
                 'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-                'fields': ['children', 'id']
+                'fields': 'children,id'
             }
             response = self.request_or_retry(f"{self.next_url}", params=params)
             results = response.json()['results']
@@ -138,8 +138,13 @@ class GeotrekTrekParser(GeotrekParser):
                         return
                     order = 0
                     for child in value:
-                        trek_child_instance = Trek.objects.get(eid=f"{self.eid_prefix}{child}")
-                        OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0], child=trek_child_instance,
+                        try:
+                            trek_child_instance = Trek.objects.get(eid=f"{self.eid_prefix}{child}")
+                        except Trek.DoesNotExist:
+                            self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].pk}"))
+                            continue
+                        OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0],
+                                                               child=trek_child_instance,
                                                                order=order)
                         order += 1
         except Exception as e:
