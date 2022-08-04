@@ -3,6 +3,8 @@ from geotrek.signage.models import Signage
 
 
 class GeotrekSignageParser(GeotrekParser):
+    """Geotrek parser for Signage"""
+
     url = None
     model = Signage
     constant_fields = {

@@ -65,6 +65,8 @@ class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
 
 
 class GeotrekTrekParser(GeotrekParser):
+    """Geotrek parser for Trek"""
+
     url = None
     model = Trek
     constant_fields = {
@@ -118,6 +120,7 @@ class GeotrekTrekParser(GeotrekParser):
             return geom.transform(settings.SRID, clone=True)
 
     def end(self):
+        """Add children after all treks imported are created in database."""
         super().end()
         self.next_url = f"{self.url}/api/v2/trek"
         try:
@@ -152,6 +155,8 @@ class GeotrekTrekParser(GeotrekParser):
 
 
 class GeotrekServiceParser(GeotrekParser):
+    """Geotrek parser for Service"""
+
     url = None
     model = Service
     constant_fields = {
@@ -177,6 +182,8 @@ class GeotrekServiceParser(GeotrekParser):
 
 
 class GeotrekPOIParser(GeotrekParser):
+    """Geotrek parser for GeotrekPOI"""
+
     url = None
     model = POI
     constant_fields = {

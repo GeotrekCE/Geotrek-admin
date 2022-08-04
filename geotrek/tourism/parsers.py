@@ -891,6 +891,8 @@ class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
 
 
 class GeotrekTouristicContentParser(GeotrekParser):
+    """Geotrek parser for TouristicContent"""
+
     url = None
     model = TouristicContent
     constant_fields = {
@@ -932,6 +934,7 @@ class GeotrekTouristicContentParser(GeotrekParser):
     }
 
     def __init__(self, *args, **kwargs):
+        """Initialize parser with mapping for type1 and type2"""
         super().__init__(*args, **kwargs)
         response = self.request_or_retry(f"{self.url}/api/v2/touristiccontent_category/", )
         self.field_options.setdefault("type1", {})
@@ -967,6 +970,8 @@ class GeotrekTouristicContentParser(GeotrekParser):
 
 
 class GeotrekTouristicEventParser(GeotrekParser):
+    """Geotrek parser for TouristicEvent"""
+
     url = None
     model = TouristicEvent
     constant_fields = {
@@ -993,6 +998,7 @@ class GeotrekTouristicEventParser(GeotrekParser):
 
 
 class GeotrekInformationDeskParser(GeotrekParser):
+    """Geotrek parser for InformationDesk"""
     url = None
     model = InformationDesk
     constant_fields = {}

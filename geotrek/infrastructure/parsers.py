@@ -3,6 +3,8 @@ from geotrek.infrastructure.models import Infrastructure
 
 
 class GeotrekInfrastructureParser(GeotrekParser):
+    """Geotrek parser for Infrastructure"""
+
     url = None
     model = Infrastructure
     constant_fields = {

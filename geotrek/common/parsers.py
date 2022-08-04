@@ -944,7 +944,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         for key, value in self.m2m_replace_fields.items():
             self.m2m_fields[key] = value
         self.translated_fields = [field for field in get_translated_fields(self.model)]
-        # Generate a mapping dictionnary between id and the correspondant label
+        # Generate a mapping dictionnary between id and the related label
         for category in self.url_categories.keys():
             if self.categories_keys_api_v2.get(category):
                 route = self.url_categories[category]
@@ -1003,6 +1003,10 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         return geom
 
     def next_row(self):
+        """Returns next row.
+        Geotrek API is paginated, run until "next" is empty
+        :returns row
+        """
         while self.next_url:
             portals = self.portals_filter
             params = {
@@ -1015,4 +1019,5 @@ class GeotrekParser(AttachmentParserMixin, Parser):
 
             for row in self.items:
                 yield row
+
             self.next_url = self.root['next']
