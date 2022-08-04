@@ -69,7 +69,11 @@ Il est aussi possible de les exporter, de leur attacher des fichiers (images, PD
 La signalétique
 ===============
 
-Ils sont construits de la même manière que les aménagements et sont actuellement stockés dans la même table (``gestion.a_t_amenagement`` avec ``gestion.a_b_amenagement.type = S``). Ils ont donc les mêmes informations et fonctionnalités.
+Centralise les informations sur la signalétique d'accueil, d'information et d'orientation des randonneurs. Permet de localiser, décrire l'implantation, et gérer les fichiers concernant la signalétique (BAT, maquettes, photos, etc.).
+
+Pour une signalétique, il est possible de définir chaque lame et chaque ligne de lame. L'image ci-dessous montre un exemple de correspondance entre une signalétique terrain et sa saisie dans Geotrek.
+
+.. image :: /images/user-manual/signage.png
 
 Les interventions
 =================
