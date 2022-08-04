@@ -1,4 +1,5 @@
 import logging
+import re
 
 from django.conf import settings
 from django.db.models import Subquery, OuterRef, Sum
@@ -22,6 +23,14 @@ from .serializers import (InterventionSerializer, ProjectSerializer,
 logger = logging.getLogger(__name__)
 
 
+ANNOTATION_FORBIDDEN_CHARS = re.compile(r"['`\"\]\[;\s]|--|/\*|\*/")
+REPLACEMENT_CHAR = "_"
+
+
+def _normalize_annotation_column_name(col_name):
+    return ANNOTATION_FORBIDDEN_CHARS.sub(repl=REPLACEMENT_CHAR, string=col_name)
+
+
 class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
@@ -33,7 +42,7 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
 class InterventionFormatList(MapEntityFormat, InterventionList):
 
     def build_cost_column_name(cls, job_name):
-        return f"{_('Cost')} {job_name}"
+        return _normalize_annotation_column_name(f"{_('Cost')} {job_name}")
 
     def get_queryset(self):
         """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
