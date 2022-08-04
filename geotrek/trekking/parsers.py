@@ -132,12 +132,15 @@ class GeotrekTrekParser(GeotrekParser):
 
         for key, value in final_children.items():
             if value['children']:
-                trek_parent_instance = Trek.objects.get(eid=value['uuid'])
+                trek_parent_instance = Trek.objects.filter(eid=value['uuid'])
+                if not trek_parent_instance:
+                    return
                 order = 0
                 for child in value['children']:
                     trek_child_uuid = final_children.get(child)['uuid']
                     trek_child_instance = Trek.objects.get(eid=trek_child_uuid)
-                    OrderedTrekChild.objects.create(parent=trek_parent_instance, child=trek_child_instance, order=order)
+                    OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0], child=trek_child_instance,
+                                                           order=order)
                     order += 1
 
 

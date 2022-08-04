@@ -901,6 +901,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     replace_fields: Replace fields which have not the same name in the api v2 compare to models (geom => geometry in api v2)
     m2m_replace_fields: Replace m2m fields which have not the same name in the api v2 compare to models (geom => geometry in api v2)
     categories_keys_api_v2: Key in the route of the category (example: /api/v2/touristiccontent_category/) corresponding to the model field
+    eid_prefix: Prefix of your eid which allow to differentiate multiple GeotrekParser
     """
     model = None
     next_url = ''
@@ -920,6 +921,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         'geom': {'required': True},
     }
     bbox = None
+    eid_prefix = ''
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -959,6 +961,18 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             else:
                 raise ImproperlyConfigured(f"{category} is not configured in categories_keys_api_v2")
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
+
+    def start(self):
+        super().start()
+        kwargs = self.get_to_delete_kwargs()
+        kwargs['eid__startswith'] = self.eid_prefix
+        if kwargs is None:
+            self.to_delete = set()
+        else:
+            self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
+
+    def filter_eid(self, src, val):
+        return f'{self.eid_prefix}{val}'
 
     def filter_attachments(self, src, val):
         return [(subval.get('url'), subval.get('legend'), subval.get('author')) for subval in val]

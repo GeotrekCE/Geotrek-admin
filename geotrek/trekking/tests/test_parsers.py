@@ -146,6 +146,15 @@ class TestGeotrekTrekParser(GeotrekTrekParser):
     }
 
 
+class TestGeotrek2TrekParser(GeotrekTrekParser):
+    url = "https://test.fr"
+
+    field_options = {
+        'geom': {'required': True},
+    }
+    eid_prefix = 'geotrek2'
+
+
 class TestGeotrekPOIParser(GeotrekPOIParser):
     url = "https://test.fr"
 
@@ -202,6 +211,43 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(trek.children.first().name, "Foo")
         self.assertEqual(trek.labels.count(), 3)
         self.assertEqual(trek.labels.first().name, "Chien autorisé")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_create_multiple(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek.json',
+                                'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
+                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
+                                'trek_2.json', 'trek_children.json', ]
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 5)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(str(trek.difficulty), 'Très facile')
+        self.assertEqual(str(trek.practice), 'Cheval')
+        self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
+        self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
+        self.assertEqual(trek.children.first().name, "Foo")
+        self.assertEqual(trek.labels.count(), 3)
+        self.assertEqual(trek.labels.first().name, "Chien autorisé")
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=2)
+        self.assertEqual(Trek.objects.count(), 6)
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
