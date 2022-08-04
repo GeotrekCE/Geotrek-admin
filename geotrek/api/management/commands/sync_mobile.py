@@ -461,10 +461,9 @@ class Command(BaseCommand):
         if os.path.exists(self.dst_root):
             tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_mobile')
             os.rename(self.dst_root, tmp_root2)
-            os.rename(self.tmp_root, self.dst_root)
             shutil.rmtree(tmp_root2)
-        else:
-            os.rename(self.tmp_root, self.dst_root)
+        os.rename(self.tmp_root, self.dst_root)
+        os.mkdir(self.tmp_root)  # Recreate otherwise python3.6 will complain it does not find the tmp dir at cleanup.
 
     def handle(self, *args, **options):
         self.successfull = True
