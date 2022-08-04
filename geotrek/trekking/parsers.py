@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils.translation import gettext as _
 
-from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError
+from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek
 
 
