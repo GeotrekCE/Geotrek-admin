@@ -141,7 +141,7 @@ class GeotrekTrekParser(GeotrekParser):
                         try:
                             trek_child_instance = Trek.objects.get(eid=f"{self.eid_prefix}{child}")
                         except Trek.DoesNotExist:
-                            self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].pk}"))
+                            self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name}"))
                             continue
                         OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0],
                                                                child=trek_child_instance,
