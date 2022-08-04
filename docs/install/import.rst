@@ -199,6 +199,12 @@ Import data from a remote Geotrek instance
 ==========================================
 
 Importing from a Geotrek instance works the same way as from SIT.
+A usecase for this is to aggregate data from several Geotrek-admin instance.
+
+.. danger::
+    Importing data from a remote Geotrek instance does not work with dynamic segmentation, your instance where you import data
+    must have dynamic segmentation disabled.
+
 
 For example, to import treks from another instance,
 edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
@@ -224,6 +230,8 @@ Then run in command line
 ::
 
     sudo geotrek import DemoGeotrekTrekParser
+
+Treks are now imported into your own instance.
 
 
 Import data from a file
