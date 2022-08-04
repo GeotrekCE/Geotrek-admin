@@ -172,13 +172,13 @@ Geotrek permet de configurer un ou plusieurs portails. Ce terme est utilisé pou
 
 Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un seul Geotrek-Admin. Grâce à leur distinction sous forme de portail, il sera alors aisé de choisir sur quel Geotrek-Rando on souhaite faire apparaitre une information.
 
-Avec l'apparition du widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser ce comportement pour ditinguer les contenus présent dans un widget ou dans un autre.
+Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour ditinguer les contenus à afficher dans un widget ou dans un autre.
 
 Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface d'administration sur la section "Portails cibles".
 
 |image11|
 
-Une fois le portail configuré, il est possible pour certains objets de choisir de le publier sur un ou plusieurs portails. C'est le cas des itinéraires, des contenus et évènements touristiques, ainsi que de spages statiques. Pour cela il suffit de sélectionner la valeur souhaitée dans le champ "portail" lorsuqu'on édite l'objet.
+Il est possible de choisir de publier sur un ou plusieurs portails les objets suivants : itinéraires, contenus et évènements touristiques, pages statiques. Pour cela il suffit de sélectionner la valeur souhaitée dans le champ "portail" à l'édition de l'objet.
 
 
 Pictogrammes

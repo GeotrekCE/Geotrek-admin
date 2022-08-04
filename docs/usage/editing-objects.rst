@@ -5,7 +5,7 @@ Edition d'un objet
 Segmentation dynamique
 ======================
 
-Certains objets sont saisis et stockés relativement aux tronçons, en utilisant la segmentation dynamique (https://makina-corpus.com/sig-webmapping/la-segmentation-dynamique). Il s'agit des objets suivants : sentiers, statuts, amménagements, intrventions, itinéraires et POI. Tous les autres objets sont indépendants et ont leur propre géométrie.
+Certains objets sont saisis et stockés relativement aux tronçons, en utilisant `la segmentation dynamique <https://makina-corpus.com/sig-webmapping/la-segmentation-dynamique>`_. Il s'agit des objets suivants : sentiers, statuts, amménagements, interventions, itinéraires et POI. Tous les autres objets sont indépendants et ont leur propre géométrie.
 
 C'est pourquoi, modifier un tronçon peut entrainer des modifications des objets qui lui sont rattachés (interventions, itinéraires, POIs...). Supprimer un tronçon, supprime les objets qui lui sont rattachés par segmentation dynamique.
 
@@ -17,7 +17,8 @@ Les objets ponctuels ne sont associés qu'à un seul tronçon, sauf dans le cas 
 
 Chaque évènement dispose néanmoins d'une géométrie calculée à partir de leur segmentation dynamique pour faciliter leur affichage dans Geotrek ou dans QGIS. Il ne faut néanmoins pas modifier directement ces géométries, elles sont calculées automatiquement quand on modifie l'évènement d'un objet.
 
-A noter aussi que des vues dans les différents schémas permettent d'accéder aux objets de manière plus lisibles et simplifiée (``v_interventions`` par exemple).
+.. notes::
+    Des vues SQL sont disponibles pour accéder aux objets de manière plus lisible et simplifiée (``v_interventions`` par exemple).
 
 Snapping - Aimantage - Accrochage
 =================================
