@@ -195,6 +195,37 @@ Start import from Geotrek-admin UI
 Open the top right menu and clic on ``imports``.
 
 
+Import data from a remote Geotrek instance
+==========================================
+
+Importing from a Geotrek instance works the same way as from SIT.
+
+For example, to import treks from another instance,
+edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+
+::
+
+    class DemoGeotrekTrekParser(BaseGeotrekTrekParser):
+        url = "https://remote-geotrek-admin.net"  # replace url with remote instance url
+        delete = False
+        field_options = {
+            'difficulty': {'create': True, },
+            'route': {'create': True, },
+            'themes': {'create': True},
+            'practice': {'create': True},
+            'accessibilities': {'create': True},
+            'networks': {'create': True},
+            'geom': {'required': True},
+            'labels': {'create': True},
+        }
+
+Then run in command line
+
+::
+
+    sudo geotrek import DemoGeotrekTrekParser
+
+
 Import data from a file
 =======================
 
