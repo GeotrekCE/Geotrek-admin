@@ -461,10 +461,9 @@ class Command(BaseCommand):
         if os.path.exists(self.dst_root):
             tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_mobile')
             os.rename(self.dst_root, tmp_root2)
-            os.rename(self.tmp_root, self.dst_root)
             shutil.rmtree(tmp_root2)
-        else:
-            os.rename(self.tmp_root, self.dst_root)
+        os.rename(self.tmp_root, self.dst_root)
+        os.mkdir(self.tmp_root)  # Recreate otherwise python3.6 will complain it does not find the tmp dir at cleanup.
 
     def handle(self, *args, **options):
         self.successfull = True
@@ -513,8 +512,8 @@ class Command(BaseCommand):
         if not os.path.exists(sync_mobile_tmp_dir):
             os.mkdir(sync_mobile_tmp_dir)
 
-        self.tmp_root = tempfile.TemporaryDirectory(dir=sync_mobile_tmp_dir).name
-        try:
+        with tempfile.TemporaryDirectory(dir=sync_mobile_tmp_dir) as tmp_dir:
+            self.tmp_root = tmp_dir
             self.sync()
             if self.celery_task:
                 self.celery_task.update_state(
@@ -527,9 +526,6 @@ class Command(BaseCommand):
                     }
                 )
             self.rename_root()
-        except Exception:
-            shutil.rmtree(self.tmp_root)
-            raise
 
         done_message = 'Done'
         if self.successfull:
