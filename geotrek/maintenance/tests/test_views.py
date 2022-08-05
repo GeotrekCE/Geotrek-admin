@@ -619,7 +619,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         self.assertIn('MultiLineString', geom_types)
 
         for layer in layers.values():
-            self.assertIn('RGF93', layer.srs.name)
+            self.assertRegex(layer.srs.name, "RGF.*93")
             self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
                 'global_cos', 'interventi', 'comments',
