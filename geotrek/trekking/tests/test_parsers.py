@@ -10,7 +10,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from geotrek.common.models import Theme, FileType
+from geotrek.common.models import Theme, FileType, Attachment
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser
 
@@ -212,6 +212,8 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(trek.children.first().name, "Foo")
         self.assertEqual(trek.labels.count(), 3)
         self.assertEqual(trek.labels.first().name, "Chien autorisé")
+        self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
+        self.assertEqual(Attachment.objects.get(object_id=trek.pk, license__isnull=False).license.label, "License")
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')

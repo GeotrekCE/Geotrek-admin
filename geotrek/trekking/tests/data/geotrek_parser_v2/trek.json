@@ -82,7 +82,7 @@
           "backend": "",
           "type": "image",
           "author": "Grégory Tonon",
-          "license": null,
+          "license": "License",
           "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/2/1024px-les_pyrenees_depuis_le_pic_des_3_seigneurs.jpg.400x0_q85.jpg",
           "legend": "Vue sur la chaîne des Pyrénées, depuis le pics des 3 Seigneurs",
           "title": "1024px-Les_Pyrénées_depuis_le_pic_des_3_Seigneurs",

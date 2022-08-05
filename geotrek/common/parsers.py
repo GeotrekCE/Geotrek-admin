@@ -34,8 +34,9 @@ from django.conf import settings
 from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
-from geotrek.common.models import FileType, Attachment
+from geotrek.common.models import FileType, Attachment, License
 from geotrek.common.utils.translation import get_translated_fields
+
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.fields import TranslationField
@@ -1037,6 +1038,39 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 return key
         return label
 
+    def generate_attachments(self, src, val, attachments_to_delete, updated):
+        attachments = []
+        for url, legend, author, license in self.filter_attachments(src, val):
+            url = self.base_url + url
+            legend = legend or ""
+            author = author or ""
+            license = License.objects.get_or_create(label=license)[0] if license else None
+            basename, ext = os.path.splitext(os.path.basename(url))
+            name = '%s%s' % (basename[:128], ext)
+            found, updated = self.check_attachment_updated(attachments_to_delete, updated, name=name, url=url,
+                                                           legend=legend, author=author)
+            if found:
+                continue
+
+            parsed_url = urlparse(url)
+            attachment = self.generate_attachment(author=author, legend=legend, license=license)
+            save, updated = self.generate_content_attachment(attachment, parsed_url, url, updated, name)
+            if not save:
+                continue
+            attachments.append(attachment)
+            updated = True
+        return updated, attachments
+
+    def generate_attachment(self, **kwargs):
+        attachment = Attachment()
+        attachment.content_object = self.obj
+        attachment.filetype = self.filetype
+        attachment.creator = self.creator
+        attachment.author = kwargs.get('author')
+        attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+        attachment.license = kwargs.get('license')
+        return attachment
+
     def start(self):
         super().start()
         kwargs = self.get_to_delete_kwargs()
@@ -1050,7 +1084,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         return f'{self.eid_prefix}{val}'
 
     def filter_attachments(self, src, val):
-        return [(subval.get('url'), subval.get('legend'), subval.get('author')) for subval in val]
+        return [(subval.get('url'), subval.get('legend'), subval.get('author'), subval.get('license')) for subval in val]
 
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
