@@ -165,6 +165,22 @@ Deux précisions :
 - Pour qu'un utilisateur puisse modifier les objets d'une autre structure il y a deux possibilités : soit celui-ci est super-utilisateur, soit il devra posséder la permission "Can by structure" qui permet d'outrepasser la restriction des structures.
 
 
+Configuration des portails
+==========================
+
+Geotrek permet de configurer un ou plusieurs portails. Ce terme est utilisé pour référencer un site grand public sur lequel seront visibles les objets publiés de Geotrek.
+
+Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un seul Geotrek-Admin. Grâce à leur distinction sous forme de portail, il sera alors aisé de choisir sur quel Geotrek-Rando on souhaite faire apparaitre une information.
+
+Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour ditinguer les contenus à afficher dans un widget ou dans un autre.
+
+Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface d'administration sur la section "Portails cibles".
+
+|image11|
+
+Il est possible de choisir de publier sur un ou plusieurs portails les objets suivants : itinéraires, contenus et évènements touristiques, pages statiques. Pour cela il suffit de sélectionner la valeur souhaitée dans le champ "portail" à l'édition de l'objet.
+
+
 Pictogrammes
 ============
 
@@ -195,4 +211,5 @@ Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes son
 .. |image7| image:: /images/admin/django-admin-categorie-contenu-touristique.png
 .. |image8| image:: /images/admin/contenu-touristique-categorie-sous-type.png
 .. |image9| image:: /images/admin/django-admin-params-users.png
-.. |image9| image:: /images/admin/django-admin-user-right.png
+.. |image10| image:: /images/admin/django-admin-user-right.png
+.. |image11| image:: /images/admin/portals.png

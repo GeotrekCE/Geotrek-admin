@@ -199,7 +199,7 @@ msgid ""
 "Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84)."
 "Example: 1.15,46.1,1.56,47.6."
 msgstr ""
-"Filter par une enveloppe formatée telle que W-lng,S-lat,E-lng,N-lat (WGS84). "
+"Filtrer par une enveloppe formatée telle que W-lng,S-lat,E-lng,N-lat (WGS84). "
 "Exemple : 1.15,46.1,1.56,47.6."
 
 msgid "Distance"
