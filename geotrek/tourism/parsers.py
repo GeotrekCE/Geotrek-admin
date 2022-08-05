@@ -911,8 +911,8 @@ class GeotrekTouristicContentParser(GeotrekParser):
     }
 
     url_categories = {
-        "category": "/api/v2/touristiccontent_category/",
-        "themes": "/api/v2/theme/",
+        "category": "touristiccontent_category",
+        "themes": "theme",
     }
 
     categories_keys_api_v2 = {
@@ -983,7 +983,7 @@ class GeotrekTouristicEventParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
-        "type": "/api/v2/touristicevent_type/",
+        "type": "touristicevent_type",
     }
     categories_keys_api_v2 = {
         'type': 'type',
@@ -1003,7 +1003,7 @@ class GeotrekInformationDeskParser(GeotrekParser):
     model = InformationDesk
     constant_fields = {}
     replace_fields = {
-        "uuid": ["uuid", "id"],
+        "eid": "id",
         "geom": ["latitude", "longitude"],
         "photo": "photo_url"
     }

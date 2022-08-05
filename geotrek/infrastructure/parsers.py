@@ -16,8 +16,8 @@ class GeotrekInfrastructureParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
-        'condition': '/api/v2/infrastructure_condition/',
-        'type': '/api/v2/infrastructure_type/',
+        'condition': 'infrastructure_condition',
+        'type': 'infrastructure_type',
     }
     categories_keys_api_v2 = {
         'condition': 'label',

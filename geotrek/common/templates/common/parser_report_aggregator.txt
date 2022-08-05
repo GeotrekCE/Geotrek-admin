@@ -1,0 +1,8 @@
+{% for key, value in report.items %}
+{{ key }} :
+______________________________________________
+{% for model, report_by_model in value.items %}
+{{ model }} :
+{% include "common/parser_report.txt" with nb_success=report_by_model.nb_success nb_created=report_by_model.nb_created nb_deleted=report_by_model.nb_deleted nb_updated=report_by_model.nb_updated nb_lines=report_by_model.nb_lines nb_unmodified=report_by_model.nb_unmodified warnings=report_by_model.warnings %}
+{% endfor %}
+{% endfor %}

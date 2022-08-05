@@ -16,9 +16,9 @@ class GeotrekSignageParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
-        'sealing': '/api/v2/signage_sealing/',
-        'condition': '/api/v2/infrastructure_condition/',
-        'type': '/api/v2/signage_type/',
+        'sealing': 'signage_sealing',
+        'condition': 'infrastructure_condition',
+        'type': 'signage_type',
     }
     categories_keys_api_v2 = {
         'condition': 'label',

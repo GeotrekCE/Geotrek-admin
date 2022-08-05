@@ -1,4 +1,5 @@
 from io import BytesIO
+import importlib
 import json
 import os
 import re
@@ -895,6 +896,64 @@ class OpenSystemParser(Parser):
         return name
 
 
+class GeotrekAggregatorParser:
+    filename = None
+    url = None
+
+    mapping_model_parser = {
+        "Trek": ("geotrek.trekking.parsers", "GeotrekTrekParser"),
+        "POI": ("geotrek.trekking.parsers", "GeotrekPOIParser"),
+        "Service": ("geotrek.trekking.parsers", "GeotrekServiceParser"),
+        "InformationDesk": ("geotrek.tourism.parsers", "GeotrekInformationDeskParser"),
+        "TouristicContent": ("geotrek.tourism.parsers", "GeotrekTouristicContentParser"),
+        "TouristicEvent": ("geotrek.tourism.parsers", "GeotrekTouristicEventParser"),
+    }
+
+    def __init__(self, progress_cb=None, user=None, encoding='utf8'):
+        self.progress_cb = progress_cb
+        self.user = user
+        self.encoding = encoding
+        self.line = 0
+        self.nb_success = 0
+        self.nb_created = 0
+        self.nb_updated = 0
+        self.nb_unmodified = 0
+        self.progress_cb = progress_cb
+        self.warnings = {}
+        self.report_by_api_v2_by_type = {}
+
+    def parse(self, filename=None, limit=None):
+        if not os.path.exists(filename):
+            raise ImportError(_("This file doesn't exist"))
+        with open(filename, mode='r') as f:
+            json_aggregator = json.load(f)
+
+        for key, datas in json_aggregator.items():
+            self.report_by_api_v2_by_type[key] = {}
+            if not datas.get('data_to_import'):
+                raise
+            for model in datas['data_to_import']:
+                module_name, class_name = self.mapping_model_parser[model]
+                module = importlib.import_module(module_name)
+                parser = getattr(module, class_name)
+                Parser = parser(eid_prefix=key, url=datas['url'], portals_filter=datas['portals'],
+                                mapping=datas['mapping'])
+                Parser.parse()
+                self.report_by_api_v2_by_type[key][model] = {
+                    'nb_lines': Parser.line,
+                    'nb_success': Parser.nb_success,
+                    'nb_created': Parser.nb_created,
+                    'nb_updated': Parser.nb_updated,
+                    'nb_deleted': len(Parser.to_delete) if Parser.delete else None,
+                    'nb_unmodified': Parser.nb_unmodified,
+                    'warnings': Parser.warnings
+                }
+
+    def report(self, output_format='txt'):
+        context = {'report': self.report_by_api_v2_by_type}
+        return render_to_string('common/parser_report_aggregator.{output_format}'.format(output_format=output_format), context)
+
+
 class GeotrekParser(AttachmentParserMixin, Parser):
     """
     url_categories: url of the categories in api v2 (example: 'category': '/api/v2/touristiccontent_category/')
@@ -903,6 +962,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     categories_keys_api_v2: Key in the route of the category (example: /api/v2/touristiccontent_category/) corresponding to the model field
     eid_prefix: Prefix of your eid which allow to differentiate multiple GeotrekParser
     portals_filter: Portals which will be use for filter in api v2 (default: No portal filter)
+    mapping: Mapping between values in categories (example: /api/v2/touristiccontent_category/) and final values
+        Can be use when you want to change a value from the api/v2
     """
     model = None
     next_url = ''
@@ -924,15 +985,18 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     bbox = None
     eid_prefix = ''
     portals_filter = None
+    mapping = {}
 
-    def __init__(self, url=None, portals_filter=None, *args, **kwargs):
+    def __init__(self, eid_prefix=None, mapping=None, portals_filter=None, url=None,  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
         self.bbox.transform(4326)  # WGS84
         self.portals_filter = portals_filter
         self.url = url if url else self.url
-        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not f.name == 'id')
+        self.mapping = mapping if mapping else self.mapping
+        self.eid_prefix = eid_prefix if eid_prefix else self.eid_prefix
+        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not (f.name == 'id' or f.name == 'uuid'))
         self.m2m_fields = {
             f.name: f.name
             for f in self.model._meta.many_to_many
@@ -945,10 +1009,9 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             self.m2m_fields[key] = value
         self.translated_fields = [field for field in get_translated_fields(self.model)]
         # Generate a mapping dictionnary between id and the related label
-        for category in self.url_categories.keys():
+        for category, route in self.url_categories.items():
             if self.categories_keys_api_v2.get(category):
-                route = self.url_categories[category]
-                response = self.request_or_retry(f"{self.url}{route}")
+                response = self.request_or_retry(f"{self.url}/api/v2/{route}")
                 self.field_options.setdefault(category, {})
                 self.field_options[category]["mapping"] = {}
                 results = response.json()['results']
@@ -958,13 +1021,19 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                     label = result[self.categories_keys_api_v2[category]]
                     if isinstance(result[self.categories_keys_api_v2[category]], dict):
                         if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
-                            self.field_options[category]["mapping"][id_result] = label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+                            self.field_options[category]["mapping"][id_result] = self.replace_mapping(label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE], route)
                     else:
                         if label:
-                            self.field_options[category]["mapping"][id_result] = label
+                            self.field_options[category]["mapping"][id_result] = self.replace_mapping(label, category)
             else:
                 raise ImproperlyConfigured(f"{category} is not configured in categories_keys_api_v2")
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
+
+    def replace_mapping(self, label, route):
+        for key, list_map in self.mapping.get(route, {}).items():
+            if label in list_map:
+                return key
+        return label
 
     def start(self):
         super().start()
@@ -1007,12 +1076,12 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         Geotrek API is paginated, run until "next" is empty
         :returns row
         """
+        portals = self.portals_filter
+        params = {
+            'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
+            'portals': ','.join(portals) if portals else ''
+        }
         while self.next_url:
-            portals = self.portals_filter
-            params = {
-                'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-                'portals': ','.join(portals) if portals else ''
-            }
             response = self.request_or_retry(self.next_url, params=params)
             self.root = response.json()
             self.nb = int(self.root['count'])
