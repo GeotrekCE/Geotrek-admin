@@ -945,14 +945,14 @@ class GeotrekTouristicContentParser(GeotrekParser):
             for type_category in r['types']:
                 label_lang = type_category["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
                 id_category = type_category["id"]
+                if self.create_categories:
+                    self.field_options['type1']["create"] = True
+                    self.field_options['type2']["create"] = True
                 if id_category % 10 == 1:
-                    self.field_options['type1']["mapping"][id_category] = label_lang if label_lang else None
+                    self.field_options['type1']["mapping"][id_category] = self.replace_mapping(label_lang, 'type1') if label_lang else None
                 if id_category % 10 == 2:
-                    self.field_options['type2']["mapping"][id_category] = label_lang if label_lang else None
-
-    def next_row(self):
+                    self.field_options['type2']["mapping"][id_category] = self.replace_mapping(label_lang, 'type2') if label_lang else None
         self.next_url = f"{self.url}/api/v2/touristiccontent"
-        return super().next_row()
 
     def filter_type1(self, src, val):
         type1_result = []
@@ -992,9 +992,9 @@ class GeotrekTouristicEventParser(GeotrekParser):
         'type': 'type',
     }
 
-    def next_row(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/touristicevent"
-        return super().next_row()
 
 
 class GeotrekInformationDeskParser(GeotrekParser):
@@ -1018,9 +1018,9 @@ class GeotrekInformationDeskParser(GeotrekParser):
         'geom': {'required': True},
     }
 
-    def next_row(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/informationdesk"
-        return super().next_row()
 
     def filter_uuid(self, src, val):
         uuid, id_iddesk = val

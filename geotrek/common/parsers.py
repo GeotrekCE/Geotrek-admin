@@ -940,7 +940,7 @@ class GeotrekAggregatorParser:
                 module = importlib.import_module(module_name)
                 parser = getattr(module, class_name)
                 Parser = parser(eid_prefix=key, url=datas['url'], portals_filter=datas['portals'],
-                                mapping=datas['mapping'])
+                                mapping=datas['mapping'], create_categories=datas['create'])
                 Parser.parse()
                 self.report_by_api_v2_by_type[key][model] = {
                     'nb_lines': Parser.line,
@@ -967,6 +967,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     portals_filter: Portals which will be use for filter in api v2 (default: No portal filter)
     mapping: Mapping between values in categories (example: /api/v2/touristiccontent_category/) and final values
         Can be use when you want to change a value from the api/v2
+    create_categories: Create all categories during importation
     """
     model = None
     next_url = ''
@@ -989,8 +990,9 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     eid_prefix = ''
     portals_filter = None
     mapping = {}
+    create_categories = False
 
-    def __init__(self, eid_prefix=None, mapping=None, portals_filter=None, url=None,  *args, **kwargs):
+    def __init__(self, create_categories=None, eid_prefix=None, mapping=None, portals_filter=None, url=None,  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
@@ -999,6 +1001,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.url = url if url else self.url
         self.mapping = mapping if mapping else self.mapping
         self.eid_prefix = eid_prefix if eid_prefix else self.eid_prefix
+        self.create_categories = create_categories if create_categories else self.create_categories
         self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not (f.name == 'id' or f.name == 'uuid'))
         self.m2m_fields = {
             f.name: f.name
@@ -1017,6 +1020,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 response = self.request_or_retry(f"{self.url}/api/v2/{route}")
                 self.field_options.setdefault(category, {})
                 self.field_options[category]["mapping"] = {}
+                if self.create_categories:
+                    self.field_options[category]["create"] = True
                 results = response.json()['results']
                 # for element in category url map the id with its label
                 for result in results:
@@ -1075,10 +1080,16 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         super().start()
         kwargs = self.get_to_delete_kwargs()
         kwargs['eid__startswith'] = self.eid_prefix
+        params = {
+            'fields': 'id',
+            'page_size': 10000
+        }
+        response = self.request_or_retry(self.next_url, params=params)
+        ids = [element['id'] for element in response.json()['results']]
         if kwargs is None:
             self.to_delete = set()
         else:
-            self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
+            self.to_delete = set(self.model.objects.filter(**kwargs).exclude(eid__in=ids).values_list('pk', flat=True))
 
     def filter_eid(self, src, val):
         return f'{self.eid_prefix}{val}'
@@ -1115,7 +1126,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         portals = self.portals_filter
         params = {
             'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-            'portals': ','.join(portals) if portals else ''
+            'portals': ','.join(portals) if portals else '',
+            'updated_after': self.model.objects.latest('date_update').date_update.strftime('%Y-%m-%d') if self.model.objects.exists() and 'date_update' in self.model._meta.get_fields() else None
         }
         while self.next_url:
             response = self.request_or_retry(self.next_url, params=params)

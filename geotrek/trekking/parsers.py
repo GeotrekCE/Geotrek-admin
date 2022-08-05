@@ -106,9 +106,9 @@ class GeotrekTrekParser(GeotrekParser):
         'labels': 'name'
     }
 
-    def next_row(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/trek"
-        return super().next_row()
 
     def filter_parking_location(self, src, val):
         if val:
@@ -176,9 +176,9 @@ class GeotrekServiceParser(GeotrekParser):
         'type': 'name'
     }
 
-    def next_row(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/service"
-        return super().next_row()
 
 
 class GeotrekPOIParser(GeotrekParser):
@@ -204,6 +204,6 @@ class GeotrekPOIParser(GeotrekParser):
         'type': 'label',
     }
 
-    def next_row(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/poi"
-        return super().next_row()

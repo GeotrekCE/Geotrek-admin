@@ -31,6 +31,6 @@ class GeotrekSignageParser(GeotrekParser):
         'type': 'label'
     }
 
-    def next_row(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/signage"
-        return super().next_row()
