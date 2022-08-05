@@ -907,6 +907,8 @@ class GeotrekAggregatorParser:
         "InformationDesk": ("geotrek.tourism.parsers", "GeotrekInformationDeskParser"),
         "TouristicContent": ("geotrek.tourism.parsers", "GeotrekTouristicContentParser"),
         "TouristicEvent": ("geotrek.tourism.parsers", "GeotrekTouristicEventParser"),
+        "Signage": ("geotrek.signage.parsers", "GeotrekSignageParser"),
+        "Infrastructure": ("geotrek.infrastructure.parsers", "GeotrekInfrastructureParser"),
     }
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
