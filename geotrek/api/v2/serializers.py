@@ -274,18 +274,16 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
         )
 
 
-class FileTypeSerializer(serializers.ModelSerializer):
+class FileTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.FileType
-        fields = (
-            'id', 'structure', 'type'
-        )
+        fields = ('id', 'structure', 'type')
 
 
 class AttachmentSerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
     type = serializers.SerializerMethodField()
     backend = serializers.SerializerMethodField()
-    filetype = FileTypeSerializer(many=False, source='filetype')
+    filetype = FileTypeSerializer(many=False)
 
     def get_type(self, obj):
         if obj.is_image or obj.attachment_link:
@@ -333,12 +331,6 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.Label
         fields = ('id', 'advice', 'filter', 'name', 'pictogram')
-
-
-class FileTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    class Meta:
-        model = common_models.FileType
-        fields = ('id', 'structure', 'type')
 
 
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
