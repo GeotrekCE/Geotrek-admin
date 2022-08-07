@@ -302,7 +302,7 @@ class TrekGeotrekParserTests(TestCase):
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2,
                      stdout=output)
-        self.assertIn("An error occured in children generation : KeyError('children')", output.getvalue())
+        self.assertIn("An error occured in children generation : KeyError('children'", output.getvalue())
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
