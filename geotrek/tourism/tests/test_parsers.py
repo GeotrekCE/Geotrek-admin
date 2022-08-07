@@ -693,6 +693,7 @@ class TouristicContentGeotrekParserTests(TestCase):
         self.mock_json_order = ['touristiccontent_category.json',
                                 'touristiccontent_themes.json',
                                 'touristiccontent_category.json',
+                                'touristiccontent_ids.json',
                                 'touristiccontent.json']
 
         def mocked_json():
@@ -728,6 +729,7 @@ class TouristicEventGeotrekParserTests(TestCase):
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['touristicevent_type.json',
+                                'touristicevent_ids.json',
                                 'touristicevent.json']
 
         def mocked_json():
@@ -762,7 +764,8 @@ class InformationDeskGeotrekParserTests(TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_download_attachment, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['informationdesk.json', ]
+        self.mock_json_order = ['informationdesk_ids.json',
+                                'informationdesk.json', ]
         self.mock_download = 0
 
         def mocked_json():

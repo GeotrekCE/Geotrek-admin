@@ -31,7 +31,8 @@ class InfrastructureGeotrekParserTests(TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['infrastructure_condition.json', 'infrastructure_type.json', 'infrastructure.json', ]
+        self.mock_json_order = ['infrastructure_condition.json', 'infrastructure_type.json', 'infrastructure_ids.json',
+                                'infrastructure.json', ]
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',

@@ -186,7 +186,8 @@ class TrekGeotrekParserTests(TestCase):
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek.json', 'trek_children.json', ]
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
+                                'trek.json', 'trek_children.json', ]
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -220,10 +221,10 @@ class TrekGeotrekParserTests(TestCase):
     def test_create_multiple(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek.json',
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json', 'trek.json',
                                 'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
                                 'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
-                                'trek_2.json', 'trek_children.json', ]
+                                'trek_ids.json', 'trek_2.json', 'trek_children.json', ]
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -257,8 +258,8 @@ class TrekGeotrekParserTests(TestCase):
     def test_children_do_not_exist(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek.json',
-                                'trek_children_do_not_exist.json', ]
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
+                                'trek.json', 'trek_children_do_not_exist.json', ]
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -282,8 +283,8 @@ class TrekGeotrekParserTests(TestCase):
     def test_wrong_children_error(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek.json',
-                                'trek_wrong_children.json', ]
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
+                                'trek.json', 'trek_wrong_children.json', ]
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -315,7 +316,7 @@ class POIGeotrekParserTests(TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['poi_type.json', 'poi.json']
+        self.mock_json_order = ['poi_type.json', 'poi_ids.json', 'poi.json']
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -350,7 +351,7 @@ class ServiceGeotrekParserTests(TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['service_type.json', 'service.json']
+        self.mock_json_order = ['service_type.json', 'service_ids.json', 'service.json']
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
