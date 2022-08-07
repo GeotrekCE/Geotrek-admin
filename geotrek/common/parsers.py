@@ -992,7 +992,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     mapping = {}
     create_categories = False
 
-    def __init__(self, create_categories=None, eid_prefix=None, mapping=None, portals_filter=None, url=None,  *args, **kwargs):
+    def __init__(self, create_categories=None, eid_prefix=None, mapping=None, portals_filter=None, url=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
