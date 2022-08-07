@@ -11,7 +11,10 @@ messages:
 	docker-compose run --rm web ./manage.py makemessages -a --no-location
 
 test:
-	docker-compose -e ENV=tests run web ./manage.py test
+	docker-compose run -e ENV=tests --rm web ./manage.py test
+
+test_nds:
+	docker-compose run -e ENV=tests_nds --rm web ./manage.py test
 
 test_nav:
 	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
