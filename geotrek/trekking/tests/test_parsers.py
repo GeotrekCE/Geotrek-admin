@@ -206,6 +206,7 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(Trek.objects.count(), 5)
         trek = Trek.objects.all().first()
         self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.name_it, "Foo bar")
         self.assertEqual(str(trek.difficulty), 'Très facile')
         self.assertEqual(str(trek.practice), 'Cheval')
         self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
@@ -243,6 +244,7 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(Trek.objects.count(), 5)
         trek = Trek.objects.all().first()
         self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.name_en, "Boucle du Pic des Trois Seigneurs")
         self.assertEqual(str(trek.difficulty), 'Très facile')
         self.assertEqual(str(trek.practice), 'Cheval')
         self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
@@ -313,7 +315,7 @@ class POIGeotrekParserTests(TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['poi_type.json', 'poi_ids.json', 'poi.json']
@@ -334,8 +336,11 @@ class POIGeotrekParserTests(TestCase):
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekPOIParser', verbosity=0)
         self.assertEqual(POI.objects.count(), 2)
         poi = POI.objects.all().first()
-        self.assertEqual(poi.name, "Pic des Trois Seigneurs")
-        self.assertEqual(str(poi.type), 'Sommet')
+        self.assertEqual(poi.name, "Peak of the Three Lords")
+        self.assertEqual(poi.name_fr, "Pic des Trois Seigneurs")
+        self.assertEqual(poi.name_en, "Peak of the Three Lords")
+        self.assertEqual(poi.name_it, "Picco dei Tre Signori")
+        self.assertEqual(str(poi.type), 'Peak')
         self.assertAlmostEqual(poi.geom.x, 572298.7056448072, places=5)
         self.assertAlmostEqual(poi.geom.y, 6193580.839504813, places=5)
 

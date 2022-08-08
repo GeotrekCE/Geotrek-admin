@@ -1121,6 +1121,9 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         val = super().apply_filter(dst, src, val)
         if dst in self.translated_fields:
             if isinstance(val, dict):
+                for key, final_value in val.items():
+                    if key in settings.MODELTRANSLATION_LANGUAGES:
+                        self.set_value(f'{dst}_{key}', src, final_value)
                 val = val.get(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
         return val
 
