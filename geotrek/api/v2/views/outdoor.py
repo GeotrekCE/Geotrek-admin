@@ -24,7 +24,7 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
         return outdoor_models.Site.objects \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .prefetch_related(Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license'))) \
+                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))) \
             .order_by('name')  # Required for reliable pagination
 
 
@@ -92,5 +92,5 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
         return outdoor_models.Course.objects \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .prefetch_related(Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license'))) \
+                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))) \
             .order_by('name')  # Required for reliable pagination

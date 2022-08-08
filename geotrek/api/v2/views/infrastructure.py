@@ -19,7 +19,7 @@ class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .prefetch_related('topo_object__aggregations',
                           Prefetch('attachments',
-                                   queryset=Attachment.objects.select_related('license'))) \
+                                   queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))) \
         .order_by('pk')
 
 
