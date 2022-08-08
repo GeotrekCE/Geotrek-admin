@@ -1037,7 +1037,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 self.field_options[category]["mapping"] = {}
                 if self.create_categories:
                     self.field_options[category]["create"] = True
-                results = response.json()['results']
+                results = response.json().get('results', [])
                 # for element in category url map the id with its label
                 for result in results:
                     id_result = result['id']
@@ -1100,7 +1100,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             'page_size': 10000
         }
         response = self.request_or_retry(self.next_url, params=params)
-        ids = [element['id'] for element in response.json()['results']]
+        ids = [element['id'] for element in response.json().get('results', [])]
         if kwargs is None:
             self.to_delete = set()
         else:
