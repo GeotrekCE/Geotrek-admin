@@ -1022,13 +1022,6 @@ class GeotrekInformationDeskParser(GeotrekParser):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/informationdesk"
 
-    def filter_uuid(self, src, val):
-        uuid, id_iddesk = val
-        final_value = uuid
-        if not uuid:
-            final_value = id_iddesk
-        return final_value
-
     def filter_geom(self, src, val):
         lat, lng = val
         return Point(lng, lat, srid=settings.API_SRID).transform(settings.SRID, clone=True)
