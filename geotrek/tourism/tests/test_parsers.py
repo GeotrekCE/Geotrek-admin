@@ -716,6 +716,7 @@ class TouristicContentGeotrekParserTests(TestCase):
         self.assertEqual(str(touristic_content.name), "Balad'âne")
         self.assertAlmostEqual(touristic_content.geom.x, 568112.6362873032, places=5)
         self.assertAlmostEqual(touristic_content.geom.y, 6196929.676669887, places=5)
+        self.assertEqual(Attachment.objects.count(), 3)
 
 
 class TouristicEventGeotrekParserTests(TestCase):
@@ -779,7 +780,7 @@ class InformationDeskGeotrekParserTests(TestCase):
             if self.mock_download > 0:
                 return None
             self.mock_download += 1
-            return b''
+            return b'boo'
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -793,3 +794,4 @@ class InformationDeskGeotrekParserTests(TestCase):
         self.assertAlmostEqual(information_desk.geom.x, 573013.9272605104, places=5)
         self.assertAlmostEqual(information_desk.geom.y, 6276967.321705549, places=5)
         self.assertEqual(str(information_desk.photo), '')
+        self.assertEqual(InformationDesk.objects.exclude(photo='').first().photo.read(), b'boo')
