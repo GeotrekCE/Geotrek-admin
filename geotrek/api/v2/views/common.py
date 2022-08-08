@@ -67,4 +67,4 @@ class OrganismViewSet(api_viewsets.GeotrekViewSet):
 
 class FileTypeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.FileTypeSerializer
-    queryset = common_models.FileType.objects.all()
+    queryset = common_models.FileType.objects.select_related('structure')
