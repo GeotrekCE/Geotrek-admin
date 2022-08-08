@@ -3,6 +3,7 @@ from unittest import mock, skipIf
 from shutil import rmtree
 from tempfile import mkdtemp
 from io import StringIO
+import json
 import requests
 from requests import Response
 import urllib
