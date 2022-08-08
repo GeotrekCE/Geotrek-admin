@@ -134,7 +134,7 @@ class TrekParserTests(TestCase):
 
 class TestGeotrekTrekParser(GeotrekTrekParser):
     url = "https://test.fr"
-
+    eid_prefix = 'geotrek1'
     field_options = {
         'difficulty': {'create': True, },
         'route': {'create': True, },
@@ -225,7 +225,7 @@ class TrekGeotrekParserTests(TestCase):
                                 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json', 'trek.json',
                                 'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
                                 'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
-                                'trek_ids.json', 'trek_2.json', 'trek_children.json', ]
+                                'trek_ids_2.json', 'trek_2.json', 'trek_children.json', ]
 
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
@@ -305,6 +305,47 @@ class TrekGeotrekParserTests(TestCase):
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2,
                      stdout=output)
         self.assertIn("An error occured in children generation : KeyError('children'", output.getvalue())
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_updated(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json', 'trek.json',
+                                'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
+                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
+                                'trek_ids_2.json', 'trek_2.json', 'trek_children.json', ]
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 5)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.name_en, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(str(trek.difficulty), 'Très facile')
+        self.assertEqual(str(trek.practice), 'Cheval')
+        self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
+        self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
+        self.assertEqual(trek.children.first().name, "Foo")
+        self.assertEqual(trek.labels.count(), 3)
+        self.assertEqual(trek.labels.first().name, "Chien autorisé")
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
+        # Trek 2 is still in ids (trek_ids_2) => it's not removed
+        self.assertEqual(Trek.objects.count(), 2)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
