@@ -503,24 +503,24 @@ class GeotrekParserTest(TestCase):
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     @mock.patch('geotrek.common.parsers.importlib.import_module', return_value=mock.MagicMock())
+    @mock.patch('django.template.loader.render_to_string')
     @mock.patch('requests.get')
-    def test_geotrek_aggregator_parser(self, mocked_get, mocked_import_module):
+    def test_geotrek_aggregator_parser(self, mocked_get, mocked_render, mocked_import_module):
         def mocked_json():
             return {}
+
+        def side_effect_render(file, context):
+            return 'Render'
 
         mocked_get.json = mocked_json
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = b''
+        mocked_render.side_effect = side_effect_render
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2', 'config_aggregator.json')
         call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
                      stdout=output)
-        string_parser = output.getvalue()
-
-        self.assertIn('URL_1 :', string_parser)
-        self.assertIn('URL_2 :', string_parser)
-        self.assertIn('URL_3 :', string_parser)
-
+        self.assertEqual(output.getvalue(), 'Render\n')
         # "VTT", "Vélo"
         # "Trek", "Service", "POI"
         # "POI", "InformationDesk", "TouristicContent"
