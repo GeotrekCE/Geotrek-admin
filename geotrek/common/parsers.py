@@ -958,8 +958,10 @@ class GeotrekAggregatorParser:
                         key_warning = _("Geotrek-admin")
                         self.add_warning(key_warning, warning)
                     else:
-                        Parser = parser(eid_prefix=key, url=datas['url'], portals_filter=datas.get('portals'),
-                                        mapping=datas.get('mapping'), create_categories=datas.get('create'))
+                        Parser = parser(progress_cb=self.progress_cb, eid_prefix=key, url=datas['url'],
+                                        portals_filter=datas.get('portals'), mapping=datas.get('mapping'),
+                                        create_categories=datas.get('create'))
+                        self.progress_cb(0, 0, f'{model} ({key})')
                         Parser.parse()
 
                 self.report_by_api_v2_by_type[key][model] = {
