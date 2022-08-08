@@ -501,6 +501,7 @@ class GeotrekParserTest(TestCase):
         self.assertIn("POIs can't be imported with dynamic segmentation", string_parser)
         self.assertIn("Treks can't be imported with dynamic segmentation", string_parser)
 
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     @mock.patch('geotrek.common.parsers.importlib.import_module', return_value=mock.MagicMock())
     @mock.patch('requests.get')
     def test_geotrek_aggregator_parser(self, mocked_get, mocked_import_module):
@@ -524,3 +525,13 @@ class GeotrekParserTest(TestCase):
         # "Trek", "Service", "POI"
         # "POI", "InformationDesk", "TouristicContent"
         self.assertEqual(8, mocked_import_module.call_count)
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_geotrek_aggregator_parser_no_url(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2', 'config_aggregator_no_url.json')
+        call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
+                     stdout=output)
+        string_parser = output.getvalue()
+
+        self.assertIn('URL_1 has no url', string_parser)

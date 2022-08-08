@@ -947,16 +947,16 @@ class GeotrekAggregatorParser:
                     if model in self.invalid_model_topology:
                         warning = f"{model}s can't be imported with dynamic segmentation"
                         logger.warning(warning)
-                        key = _(f"Model {model}")
-                        self.add_warning(key, warning)
+                        key_warning = _(f"Model {model}")
+                        self.add_warning(key_warning, warning)
                 else:
                     module_name, class_name = self.mapping_model_parser[model]
                     module = importlib.import_module(module_name)
                     parser = getattr(module, class_name)
                     if 'url' not in datas:
                         warning = f"{key} has no url"
-                        key = _("Geotrek-admin")
-                        self.add_warning(key, warning)
+                        key_warning = _("Geotrek-admin")
+                        self.add_warning(key_warning, warning)
                     else:
                         Parser = parser(eid_prefix=key, url=datas['url'], portals_filter=datas.get('portals'),
                                         mapping=datas.get('mapping'), create_categories=datas.get('create'))
