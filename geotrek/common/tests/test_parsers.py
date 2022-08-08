@@ -17,7 +17,7 @@ from django.test.utils import override_settings
 from django.template.exceptions import TemplateDoesNotExist
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.trekking.models import Trek
+from geotrek.trekking.models import POI, Trek
 from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import (
     ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
@@ -505,7 +505,7 @@ class GeotrekParserTest(TestCase):
     @mock.patch('geotrek.common.parsers.importlib.import_module', return_value=mock.MagicMock())
     @mock.patch('django.template.loader.render_to_string')
     @mock.patch('requests.get')
-    def test_geotrek_aggregator_parser(self, mocked_get, mocked_render, mocked_import_module):
+    def test_geotrek_aggregator_parser_multiple_admin(self, mocked_get, mocked_render, mocked_import_module):
         def mocked_json():
             return {}
 
@@ -517,10 +517,13 @@ class GeotrekParserTest(TestCase):
         mocked_get.return_value.content = b''
         mocked_render.side_effect = side_effect_render
         output = StringIO()
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2', 'config_aggregator.json')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                'config_aggregator_multiple_admin.json')
         call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
                      stdout=output)
-        self.assertEqual(output.getvalue(), 'Render\n')
+        stdout_parser = output.getvalue()
+        self.assertIn('Render\n', stdout_parser)
+        self.assertIn('0000: Trek (URL_1) (00%)', stdout_parser)
         # "VTT", "Vélo"
         # "Trek", "Service", "POI"
         # "POI", "InformationDesk", "TouristicContent"
@@ -535,3 +538,48 @@ class GeotrekParserTest(TestCase):
         string_parser = output.getvalue()
 
         self.assertIn('URL_1 has no url', string_parser)
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_geotrek_aggregator_parser(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['trek_difficulty.json',
+                                'trek_route.json',
+                                'trek_theme.json',
+                                'trek_practice.json',
+                                'trek_accessibility.json',
+                                'trek_network.json',
+                                'trek_label.json',
+                                'trek_ids.json',
+                                'trek.json',
+                                'trek_children.json',
+                                'poi_type.json',
+                                'poi_ids.json',
+                                'poi.json']
+
+        def mocked_json():
+            filename = os.path.join('geotrek', 'trekking', 'tests', 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2', 'config_aggregator.json')
+        call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
+                     stdout=output)
+        string_parser = output.getvalue()
+        self.assertIn('0000: Trek (URL_1) (00%)', string_parser)
+        self.assertIn('0000: POI (URL_1) (00%)', string_parser)
+        self.assertIn('5/5 lines imported.', string_parser)
+        self.assertIn('2/2 lines imported.', string_parser)
+        self.assertEqual(Trek.objects.count(), 5)
+        self.assertEqual(POI.objects.count(), 2)
