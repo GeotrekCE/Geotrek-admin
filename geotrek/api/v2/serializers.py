@@ -1190,7 +1190,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
             model = infrastructure_models.InfrastructureType
             fields = ('id', 'label', 'pictogram', 'structure', 'type')
 
-    class InfrastructureSerializer(serializers.ModelSerializer):
+    class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         structure = serializers.CharField(source='structure.name')
         accessibility = serializers.SerializerMethodField()
