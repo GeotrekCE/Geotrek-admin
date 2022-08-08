@@ -912,6 +912,8 @@ class GeotrekAggregatorParser:
         "Infrastructure": ("geotrek.infrastructure.parsers", "GeotrekInfrastructureParser"),
     }
 
+    invalid_model_topology = ['Trek', 'POI', 'Service', 'Signage', 'Infrastructure']
+
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.progress_cb = progress_cb
         self.user = user
@@ -925,6 +927,11 @@ class GeotrekAggregatorParser:
         self.warnings = {}
         self.report_by_api_v2_by_type = {}
 
+    def add_warning(self, msg, model):
+        key = _(f"Model {model}")
+        warnings = self.warnings.setdefault(key, [])
+        warnings.append(msg)
+
     def parse(self, filename=None, limit=None):
         if not os.path.exists(filename):
             raise ImportError(_("This file doesn't exist"))
@@ -936,20 +943,28 @@ class GeotrekAggregatorParser:
             if not datas.get('data_to_import'):
                 raise
             for model in datas['data_to_import']:
-                module_name, class_name = self.mapping_model_parser[model]
-                module = importlib.import_module(module_name)
-                parser = getattr(module, class_name)
-                Parser = parser(eid_prefix=key, url=datas['url'], portals_filter=datas['portals'],
-                                mapping=datas['mapping'], create_categories=datas['create'])
-                Parser.parse()
+                if settings.TREKKING_TOPOLOGY_ENABLED:
+                    if model in self.invalid_model_topology:
+                        warning = f"{model}s can't be imported with dynamic segmentation"
+                        logger.warning(warning)
+                        self.add_warning(warning, model)
+                        Parser = None
+                else:
+                    module_name, class_name = self.mapping_model_parser[model]
+                    module = importlib.import_module(module_name)
+                    parser = getattr(module, class_name)
+                    Parser = parser(eid_prefix=key, url=datas['url'], portals_filter=datas['portals'],
+                                    mapping=datas['mapping'], create_categories=datas['create'])
+                    Parser.parse()
+
                 self.report_by_api_v2_by_type[key][model] = {
-                    'nb_lines': Parser.line,
-                    'nb_success': Parser.nb_success,
-                    'nb_created': Parser.nb_created,
-                    'nb_updated': Parser.nb_updated,
-                    'nb_deleted': len(Parser.to_delete) if Parser.delete else None,
-                    'nb_unmodified': Parser.nb_unmodified,
-                    'warnings': Parser.warnings
+                    'nb_lines': Parser.line if Parser else 0,
+                    'nb_success': Parser.nb_success if Parser else 0,
+                    'nb_created': Parser.nb_created if Parser else 0,
+                    'nb_updated': Parser.nb_updated if Parser else 0,
+                    'nb_deleted': len(Parser.to_delete) if Parser and Parser.delete else None,
+                    'nb_unmodified': Parser.nb_unmodified if Parser else 0,
+                    'warnings': Parser.warnings if Parser else self.warnings
                 }
 
     def report(self, output_format='txt'):

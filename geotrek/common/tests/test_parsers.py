@@ -1,5 +1,5 @@
 import os
-from unittest import mock
+from unittest import mock, skipIf
 from shutil import rmtree
 from tempfile import mkdtemp
 from io import StringIO
@@ -489,3 +489,14 @@ class GeotrekParserTest(TestCase):
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, 'foo_field is not configured in categories_keys_api_v2'):
             call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestParser', verbosity=2)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_geotrek_aggregator_parser_model_dynamic_segmentation(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2', 'config_aggregator_ds.json')
+        call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
+                     stdout=output)
+        string_parser = output.getvalue()
+        self.assertIn("Services can't be imported with dynamic segmentation", string_parser)
+        self.assertIn("POIs can't be imported with dynamic segmentation", string_parser)
+        self.assertIn("Treks can't be imported with dynamic segmentation", string_parser)
