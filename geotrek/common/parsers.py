@@ -927,8 +927,7 @@ class GeotrekAggregatorParser:
         self.warnings = {}
         self.report_by_api_v2_by_type = {}
 
-    def add_warning(self, msg, model):
-        key = _(f"Model {model}")
+    def add_warning(self, key, msg):
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 
@@ -943,19 +942,25 @@ class GeotrekAggregatorParser:
             if not datas.get('data_to_import'):
                 raise
             for model in datas['data_to_import']:
+                Parser = None
                 if settings.TREKKING_TOPOLOGY_ENABLED:
                     if model in self.invalid_model_topology:
                         warning = f"{model}s can't be imported with dynamic segmentation"
                         logger.warning(warning)
-                        self.add_warning(warning, model)
-                        Parser = None
+                        key = _(f"Model {model}")
+                        self.add_warning(key, warning)
                 else:
                     module_name, class_name = self.mapping_model_parser[model]
                     module = importlib.import_module(module_name)
                     parser = getattr(module, class_name)
-                    Parser = parser(eid_prefix=key, url=datas['url'], portals_filter=datas['portals'],
-                                    mapping=datas['mapping'], create_categories=datas['create'])
-                    Parser.parse()
+                    if 'url' not in datas:
+                        warning = f"{key} has no url"
+                        key = _("Geotrek-admin")
+                        self.add_warning(key, warning)
+                    else:
+                        Parser = parser(eid_prefix=key, url=datas['url'], portals_filter=datas.get('portals'),
+                                        mapping=datas.get('mapping'), create_categories=datas.get('create'))
+                        Parser.parse()
 
                 self.report_by_api_v2_by_type[key][model] = {
                     'nb_lines': Parser.line if Parser else 0,
