@@ -962,7 +962,7 @@ class GeotrekAggregatorParser:
                     else:
                         Parser = parser(progress_cb=self.progress_cb, eid_prefix=key, url=datas['url'],
                                         portals_filter=datas.get('portals'), mapping=datas.get('mapping'),
-                                        create_categories=datas.get('create'))
+                                        create_categories=datas.get('create'), all_datas=datas.get('all_datas'))
                         self.progress_cb(0, 0, f'{model} ({key})')
                         Parser.parse()
 
@@ -992,6 +992,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     mapping: Mapping between values in categories (example: /api/v2/touristiccontent_category/) and final values
         Can be use when you want to change a value from the api/v2
     create_categories: Create all categories during importation
+    all_datas: Import all datas and do not use updated_after filter
     """
     model = None
     next_url = ''
@@ -1015,8 +1016,9 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     portals_filter = None
     mapping = {}
     create_categories = False
+    all_datas = False
 
-    def __init__(self, create_categories=None, eid_prefix=None, mapping=None, portals_filter=None, url=None, *args, **kwargs):
+    def __init__(self, all_datas=None, create_categories=None, eid_prefix=None, mapping=None, portals_filter=None, url=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
@@ -1025,6 +1027,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.url = url if url else self.url
         self.mapping = mapping if mapping else self.mapping
         self.eid_prefix = eid_prefix if eid_prefix else self.eid_prefix
+        self.all_datas = all_datas if all_datas else self.all_datas
         self.create_categories = create_categories if create_categories else self.create_categories
         self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not (f.name == 'id' or f.name == 'uuid'))
         self.m2m_fields = {
@@ -1149,9 +1152,10 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         """
         portals = self.portals_filter
         updated_after = None
-        if self.model.objects.filter(eid__startswith=self.eid_prefix).exists() and 'date_update' in [field.name for
-                                                                                                     field in
-                                                                                                     self.model._meta.get_fields()]:
+
+        if not self.all_datas and self.model.objects.filter(eid__startswith=self.eid_prefix).exists() and 'date_update' in [field.name for
+                                                                                                                            field in
+                                                                                                                            self.model._meta.get_fields()]:
             updated_after = self.model.objects.filter(eid__startswith=self.eid_prefix).latest('date_update').date_update.strftime('%Y-%m-%d')
 
         while self.next_url:
