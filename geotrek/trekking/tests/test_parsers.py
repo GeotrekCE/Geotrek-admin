@@ -217,6 +217,78 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
         self.assertEqual(Attachment.objects.get(object_id=trek.pk, license__isnull=False).license.label, "License")
 
+    @override_settings(PAPERCLIP_MAX_BYTES_SIZE_IMAGE=1)
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_create_attachment_max_size(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
+                                'trek.json', 'trek_children.json', ]
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b'11'
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 5)
+        self.assertEqual(Attachment.objects.count(), 0)
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_update_attachment(self, mocked_head, mocked_get):
+
+        class MockResponse:
+            mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
+                               'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
+                               'trek.json', 'trek_children.json', ]
+            mock_time = 0
+            a = 0
+
+            def __init__(self, status_code):
+                self.status_code = status_code
+
+            def json(self):
+                if len(self.mock_json_order) <= self.mock_time:
+                    self.mock_time = 0
+                filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                        self.mock_json_order[self.mock_time])
+
+                self.mock_time += 1
+                with open(filename, 'r') as f:
+                    return json.load(f)
+
+            @property
+            def content(self):
+                # We change content of attachment every time
+                self.a += 1
+                return bytes(f'{self.a}', 'utf-8')
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value = MockResponse(200)
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 5)
+        trek = Trek.objects.all().first()
+        self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
+        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'11')
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 5)
+        trek.refresh_from_db()
+        self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
+        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'13')
+
     @mock.patch('requests.get')
     @mock.patch('requests.head')
     def test_create_multiple(self, mocked_head, mocked_get):
