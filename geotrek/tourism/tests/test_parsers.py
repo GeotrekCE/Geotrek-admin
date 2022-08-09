@@ -662,6 +662,11 @@ class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
     }
 
 
+class TestGeotrekTouristicContentCreateCategoriesParser(GeotrekTouristicContentParser):
+    url = "https://test.fr"
+    create_categories = True
+
+
 class TestGeotrekTouristicEventParser(GeotrekTouristicEventParser):
     url = "https://test.fr"
 
@@ -689,6 +694,40 @@ class TouristicContentGeotrekParserTests(TestCase):
     @mock.patch('requests.head')
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['touristiccontent_category.json',
+                                'touristiccontent_themes.json',
+                                'touristiccontent_category.json',
+                                'touristiccontent_ids.json',
+                                'touristiccontent.json']
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time])
+            self.mock_time += 1
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekTouristicContentCreateCategoriesParser', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        touristic_content = TouristicContent.objects.all().first()
+        self.assertEqual(str(touristic_content.category), 'Sorties')
+        self.assertEqual(str(touristic_content.type1.first()), 'Ane')
+        self.assertEqual(str(touristic_content.name), "Balad'âne")
+        self.assertAlmostEqual(touristic_content.geom.x, 568112.6362873032, places=5)
+        self.assertAlmostEqual(touristic_content.geom.y, 6196929.676669887, places=5)
+        self.assertEqual(Attachment.objects.count(), 3)
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create_create_categories(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['touristiccontent_category.json',
                                 'touristiccontent_themes.json',

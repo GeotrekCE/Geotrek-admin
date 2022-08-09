@@ -943,29 +943,34 @@ class GeotrekTouristicContentParser(GeotrekParser):
         self.field_options["type2"]["mapping"] = {}
         for r in response.json()['results']:
             for type_category in r['types']:
-                label_lang = type_category["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+                values = type_category["values"]
                 id_category = type_category["id"]
                 if self.create_categories:
                     self.field_options['type1']["create"] = True
                     self.field_options['type2']["create"] = True
-                if id_category % 10 == 1:
-                    self.field_options['type1']["mapping"][id_category] = self.replace_mapping(label_lang, 'type1') if label_lang else None
-                if id_category % 10 == 2:
-                    self.field_options['type2']["mapping"][id_category] = self.replace_mapping(label_lang, 'type2') if label_lang else None
+                for value in values:
+                    if id_category % 10 == 1:
+                        self.field_options['type1']["mapping"][value['id']] = self.replace_mapping(
+                            value['label'][settings.MODELTRANSLATION_DEFAULT_LANGUAGE], 'type1'
+                        )
+                    if id_category % 10 == 2:
+                        self.field_options['type2']["mapping"][value['id']] = self.replace_mapping(
+                            value['label'][settings.MODELTRANSLATION_DEFAULT_LANGUAGE], 'type2'
+                        )
         self.next_url = f"{self.url}/api/v2/touristiccontent"
 
     def filter_type1(self, src, val):
         type1_result = []
-        for key in val.keys():
+        for key, value in val.items():
             if int(key) % 10 == 1:
-                type1_result.append(int(key))
+                type1_result.extend(value)
         return self.apply_filter('type1', src, type1_result)
 
     def filter_type2(self, src, val):
         type2_result = []
-        for key in val.keys():
+        for key, value in val.items():
             if int(key) % 10 == 2:
-                type2_result.append(int(key))
+                type2_result.extend(value)
         return self.apply_filter('type2', src, type2_result)
 
 
