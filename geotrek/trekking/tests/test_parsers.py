@@ -217,6 +217,57 @@ class TrekGeotrekParserTests(TestCase):
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
         self.assertEqual(Attachment.objects.get(object_id=trek.pk, license__isnull=False).license.label, "License")
 
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_create_multiple_page(self, mocked_head, mocked_get):
+        class MockResponse:
+            mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
+                               'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
+                               'trek.json', 'trek_children.json', ]
+            mock_time = 0
+            a = 0
+            total_mock_response = 1
+
+            def __init__(self, status_code):
+                self.status_code = status_code
+
+            def json(self):
+                if len(self.mock_json_order) <= self.mock_time:
+                    self.mock_time = 0
+                    self.total_mock_response += 1
+                filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                        self.mock_json_order[self.mock_time])
+                self.mock_time += 1
+                with open(filename, 'r') as f:
+                    data_json = json.load(f)
+                    if self.total_mock_response == 1 and self.mock_json_order[self.mock_time] == 'test.json':
+                        data_json['count'] = 10
+                        data_json['next'] = "foo"
+                    return data_json
+
+            @property
+            def content(self):
+                return b''
+
+        # Mock GET
+        mocked_get.return_value = MockResponse(200)
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2)
+        self.assertEqual(Trek.objects.count(), 5)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.name_it, "Foo bar")
+        self.assertEqual(str(trek.difficulty), 'Très facile')
+        self.assertEqual(str(trek.practice), 'Cheval')
+        self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
+        self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
+        self.assertEqual(trek.children.first().name, "Foo")
+        self.assertEqual(trek.labels.count(), 3)
+        self.assertEqual(trek.labels.first().name, "Chien autorisé")
+        self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
+        self.assertEqual(Attachment.objects.get(object_id=trek.pk, license__isnull=False).license.label, "License")
+
     @override_settings(PAPERCLIP_MAX_BYTES_SIZE_IMAGE=1)
     @mock.patch('requests.get')
     @mock.patch('requests.head')
