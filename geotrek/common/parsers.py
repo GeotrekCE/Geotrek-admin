@@ -1149,10 +1149,16 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         :returns row
         """
         portals = self.portals_filter
+        updated_after = None
+        if self.model.objects.filter(eid__startswith=self.eid_prefix).exists() and 'date_update' in [field.name for
+                                                                                                     field in
+                                                                                                     self.model._meta.get_fields()]:
+            updated_after = self.model.objects.filter(eid__startswith=self.eid_prefix).latest('date_update').date_update.strftime('%Y-%m-%d')
+
         params = {
             'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
             'portals': ','.join(portals) if portals else '',
-            'updated_after': self.model.objects.latest('date_update').date_update.strftime('%Y-%m-%d') if self.model.objects.exists() and 'date_update' in self.model._meta.get_fields() else None
+            'updated_after': updated_after
         }
         while self.next_url:
             response = self.request_or_retry(self.next_url, params=params)
