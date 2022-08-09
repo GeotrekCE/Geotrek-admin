@@ -355,14 +355,6 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
             )
         )
 
-    def clean_zipfile(self):
-        z = self.cleaned_data['zipfile']
-        if not is_zipfile(z):
-            raise forms.ValidationError(
-                _("File must be of ZIP type."), code='invalid')
-        # Reset position for further use.
-        z.seek(0)
-
 
 class SyncRandoForm(forms.Form):
     """

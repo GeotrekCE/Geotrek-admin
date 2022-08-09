@@ -27,6 +27,7 @@ class DurationParserMixin:
 
 
 class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
+    label = _("Trek parser")
     model = Trek
     simplify_tolerance = 2
     eid = 'name'

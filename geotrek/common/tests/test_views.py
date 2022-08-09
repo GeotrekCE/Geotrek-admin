@@ -165,7 +165,8 @@ class ViewsImportTest(TestCase):
             self.assertEqual(response_real.status_code, 200)
             self.assertNotContains(response_real, "File must be of ZIP type.")
 
-    def test_import_from_file_bad_file(self):
+    @mock.patch('geotrek.common.tasks.import_datas.delay')
+    def test_import_from_file_bad_file(self, mocked):
         self.user.is_superuser = True
         self.user.save()
 
@@ -184,7 +185,7 @@ class ViewsImportTest(TestCase):
             }
         )
         self.assertEqual(response_fake.status_code, 200)
-        self.assertContains(response_fake, "File must be of ZIP type.", 1)
+        self.assertEqual(mocked.call_count, 1)
 
         Parser.label = None
 

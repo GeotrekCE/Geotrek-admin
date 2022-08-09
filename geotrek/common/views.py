@@ -4,7 +4,7 @@ import mimetypes
 import os
 import re
 from datetime import timedelta
-from zipfile import ZipFile
+from zipfile import is_zipfile, ZipFile
 
 import redis
 from django.apps import apps
@@ -180,14 +180,21 @@ class UserArgMixin:
 
 def import_file(uploaded, parser, encoding, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
-    with open(destination_file, 'wb+') as f:
-        f.write(uploaded.file.read())
-        zfile = ZipFile(f)
-        for name in zfile.namelist():
-            zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
-            if name.endswith('shp'):
-                import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
-                                   module=parser.__module__, encoding=encoding, user=user_pk)
+    if is_zipfile(uploaded.file):
+        uploaded.file.seek(0)
+        with open(destination_file, 'wb+') as f:
+            f.write(uploaded.file.read())
+
+            zfile = ZipFile(f)
+            for name in zfile.namelist():
+                zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
+                if name.endswith('shp'):
+                    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
+                                       module=parser.__module__, encoding=encoding, user=user_pk)
+    else:
+        uploaded.file.seek(0)
+        import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, str(uploaded.name))),
+                           module=parser.__module__, encoding=encoding, user=user_pk)
 
 
 @login_required
