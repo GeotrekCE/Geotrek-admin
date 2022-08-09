@@ -22,7 +22,7 @@ from geotrek.trekking.models import POI, Trek
 from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import (
     ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
-    TourismSystemParser, OpenSystemParser, GeotrekParser
+    TourismSystemParser, OpenSystemParser, GeotrekParser, GeotrekAggregatorParser
 )
 from geotrek.common.utils.testdata import get_dummy_img
 
@@ -483,6 +483,10 @@ class GeotrekTrekTestParser(GeotrekParser):
     }
 
 
+class GeotrekAggregatorTestParser(GeotrekAggregatorParser):
+    pass
+
+
 class GeotrekParserTest(TestCase):
     def setUp(self, *args, **kwargs):
         self.filetype = FileType.objects.create(type="Photographie")
@@ -490,6 +494,44 @@ class GeotrekParserTest(TestCase):
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, 'foo_field is not configured in categories_keys_api_v2'):
             call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestParser', verbosity=2)
+
+
+class GeotrekAggregatorParserTest(TestCase):
+    def setUp(self, *args, **kwargs):
+        self.filetype = FileType.objects.create(type="Photographie")
+
+    def test_geotrek_aggregator_no_file(self):
+        with self.assertRaisesRegex(CommandError, "File does not exists at: config_aggregator_does_not_exist.json"):
+            call_command('import', 'geotrek.common.tests.test_parsers.GeotrekAggregatorTestParser',
+                         'config_aggregator_does_not_exist.json', verbosity=0)
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @mock.patch('geotrek.common.parsers.importlib.import_module', return_value=mock.MagicMock())
+    @mock.patch('django.template.loader.render_to_string')
+    @mock.patch('requests.get')
+    def test_geotrek_aggregator_no_data_to_import(self, mocked_get, mocked_render, mocked_import_module):
+        def mocked_json():
+            return {}
+
+        def side_effect_render(file, context):
+            return 'Render'
+
+        mocked_get.json = mocked_json
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = b''
+        mocked_render.side_effect = side_effect_render
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
+                                'config_aggregator_no_data_to_import.json')
+        call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
+                     stdout=output)
+        stdout_parser = output.getvalue()
+        self.assertIn('Render\n', stdout_parser)
+        self.assertIn('0000: Trek (URL_1) (00%)', stdout_parser)
+        self.assertIn('0000: InformationDesk (URL_1) (00%)', stdout_parser)
+        self.assertIn('0000: Trek (URL_1) (00%)', stdout_parser)
+        # Trek, POI, Service, InformationDesk, TouristicContent, TouristicEvent, Signage, Infrastructure
+        self.assertEqual(8, mocked_import_module.call_count)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_geotrek_aggregator_parser_model_dynamic_segmentation(self):
