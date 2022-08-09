@@ -1154,12 +1154,12 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                                                                                                      self.model._meta.get_fields()]:
             updated_after = self.model.objects.filter(eid__startswith=self.eid_prefix).latest('date_update').date_update.strftime('%Y-%m-%d')
 
-        params = {
-            'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-            'portals': ','.join(portals) if portals else '',
-            'updated_after': updated_after
-        }
         while self.next_url:
+            params = {
+                'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
+                'portals': ','.join(portals) if portals else '',
+                'updated_after': updated_after
+            }
             response = self.request_or_retry(self.next_url, params=params)
             self.root = response.json()
             self.nb = int(self.root['count'])
