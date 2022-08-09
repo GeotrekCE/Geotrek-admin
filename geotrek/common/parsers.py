@@ -932,16 +932,18 @@ class GeotrekAggregatorParser:
         warnings.append(msg)
 
     def parse(self, filename=None, limit=None):
+        filename = filename if filename else self.filename
         if not os.path.exists(filename):
-            raise ImportError(_("This file doesn't exist"))
+            raise GlobalImportError(_(f"File does not exists at: {filename}"))
         with open(filename, mode='r') as f:
             json_aggregator = json.load(f)
 
         for key, datas in json_aggregator.items():
             self.report_by_api_v2_by_type[key] = {}
-            if not datas.get('data_to_import'):
-                raise
-            for model in datas['data_to_import']:
+            models_to_import = datas.get('data_to_import')
+            if not models_to_import:
+                models_to_import = self.mapping_model_parser.keys()
+            for model in models_to_import:
                 Parser = None
                 if settings.TREKKING_TOPOLOGY_ENABLED:
                     if model in self.invalid_model_topology:
