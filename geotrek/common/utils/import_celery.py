@@ -33,7 +33,7 @@ def create_tmp_destination(name):
 parsers_module = None
 
 
-def discover_available_parsers(user):
+def discover_available_parsers(request):
     global parsers_module
     choices = []
     choices_url = []
@@ -50,15 +50,21 @@ def discover_available_parsers(user):
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
         if cls.__module__.startswith('parsers') or cls.__module__.startswith('geotrek'):
-            if not cls.label or not cls.model:
+            lang = request.LANGUAGE_CODE
+            label_lang = getattr(cls, f'label_{lang}', None)
+            if label_lang:
+                label = label_lang
+            else:
+                label = cls.label
+            if not label or not cls.model:
                 continue
             codename = '{}.import_{}'.format(cls.model._meta.app_label, cls.model._meta.model_name)
-            if not user.has_perm(codename):
+            if not request.user.has_perm(codename):
                 continue
             if not getattr(cls, 'url', None) and not getattr(cls, 'base_url', None):
-                choices.append((index, cls.label))
+                choices.append((index, label))
             else:
-                choices_url.append((index, cls.label))
+                choices_url.append((index, label))
 
     choices = sorted(choices, key=lambda x: x[1])
     choices_url = sorted(choices_url, key=lambda x: x[1])

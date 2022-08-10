@@ -203,11 +203,9 @@ def import_view(request):
     Gets the existing declared parsers for the current project.
     This view handles only the file based import parsers.
     """
-    choices = []
-    choices_url = []
     render_dict = {}
 
-    choices, choices_url, classes = discover_available_parsers(request.user)
+    choices, choices_url, classes = discover_available_parsers(request)
     choices_suricate = [("everything", _("Reports"))]
 
     form = ImportDatasetFormWithFile(choices, prefix="with-file")

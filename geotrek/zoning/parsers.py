@@ -10,6 +10,7 @@ class CityParser(ShapeParser):
     model = City
     eid = 'code'
     label = 'Cities'
+    label_fr = 'Communes'
     fields = {
         'code': 'insee',
         'name': 'nom',
