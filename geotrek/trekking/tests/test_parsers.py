@@ -223,26 +223,24 @@ class TrekGeotrekParserTests(TestCase):
         class MockResponse:
             mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
-                               'trek.json', 'trek_children.json', ]
+                               'trek.json', 'trek_children.json', 'trek.json']
             mock_time = 0
-            a = 0
             total_mock_response = 1
 
             def __init__(self, status_code):
                 self.status_code = status_code
 
             def json(self):
-                if len(self.mock_json_order) <= self.mock_time:
-                    self.mock_time = 0
-                    self.total_mock_response += 1
                 filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
                                         self.mock_json_order[self.mock_time])
-                self.mock_time += 1
                 with open(filename, 'r') as f:
                     data_json = json.load(f)
-                    if self.total_mock_response == 1 and self.mock_json_order[self.mock_time] == 'test.json':
+                    if self.mock_json_order[self.mock_time] == 'trek.json':
                         data_json['count'] = 10
-                        data_json['next'] = "foo"
+                        if self.total_mock_response == 1:
+                            self.total_mock_response += 1
+                            data_json['next'] = "foo"
+                    self.mock_time += 1
                     return data_json
 
             @property
@@ -253,7 +251,7 @@ class TrekGeotrekParserTests(TestCase):
         mocked_get.return_value = MockResponse(200)
         mocked_head.return_value.status_code = 200
 
-        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2)
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
         self.assertEqual(Trek.objects.count(), 5)
         trek = Trek.objects.all().first()
         self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
