@@ -73,6 +73,10 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {'attachments': 'photo'}
 
 
+class WarnAttachmentParser(AttachmentParser):
+    warn_on_missing_fields = True
+
+
 class AttachmentLegendParser(AttachmentParser):
 
     def filter_attachments(self, src, val):
@@ -200,6 +204,18 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.attachment_file.name, 'paperclip/common_organism/{pk}/titi.png'.format(pk=organism.pk))
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
+
+    @mock.patch('requests.get')
+    def test_attachment_connection_error(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.side_effect = requests.exceptions.ConnectionError("Error connection")
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        output = StringIO()
+        output_3 = StringIO()
+        call_command('import', 'geotrek.common.tests.test_parsers.WarnAttachmentParser', filename, verbosity=2,
+                     stdout=output, stderr=output_3)
+        self.assertFalse(Attachment.objects.exists())
+        self.assertIn("Failed to load attachment: Error connection", output.getvalue())
 
     @mock.patch('requests.get')
     @override_settings(PAPERCLIP_MAX_BYTES_SIZE_IMAGE=20)
@@ -332,6 +348,21 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.legend, 'legend')
         self.assertEqual(attachment.author, 'name')
 
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_attachment_updated_file_not_found(self, mocked_head, mocked_get):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+        mocked_head.return_value.headers = {'content-length': 0}
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+        attachment = Attachment.objects.get()
+        os.remove(attachment.attachment_file.path)
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+        self.assertEqual(mocked_get.call_count, 2)
+        self.assertEqual(Attachment.objects.count(), 1)
+
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch('requests.get')
     @mock.patch('requests.head')
@@ -363,11 +394,12 @@ class AttachmentParserTests(TestCase):
     @mock.patch('geotrek.common.parsers.urlparse')
     def test_attachment_download_fail(self, mocked_urlparse, mocked_get):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
-        mocked_get.side_effect = DownloadImportError()
+        mocked_get.side_effect = DownloadImportError("DownloadImportError")
         mocked_urlparse.return_value = urllib.parse.urlparse('ftp://test.url.com/organism.xls')
-
-        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
-
+        output = StringIO()
+        call_command('import', 'geotrek.common.tests.test_parsers.WarnAttachmentParser', filename, verbosity=2,
+                     stdout=output)
+        self.assertIn("Failed to load attachment: DownloadImportError", output.getvalue())
         self.assertEqual(mocked_get.call_count, 1)
 
     @mock.patch('requests.get')
