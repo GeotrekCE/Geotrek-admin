@@ -604,10 +604,13 @@ class AttachmentParserMixin:
         if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
             try:
                 response = self.request_or_retry(url, verb='head')
-            except DownloadImportError as e:
+            except (requests.exceptions.ConnectionError, DownloadImportError) as e:
                 raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
             size = response.headers.get('content-length')
-            return size is not None and int(size) != attachment.attachment_file.size
+            try:
+                return size is not None and int(size) != attachment.attachment_file.size
+            except FileNotFoundError:
+                pass
 
         return True
 
@@ -616,14 +619,14 @@ class AttachmentParserMixin:
         if parsed_url.scheme == 'ftp':
             try:
                 response = self.request_or_retry(url)
-            except DownloadImportError as e:
+            except (DownloadImportError, requests.exceptions.ConnectionError) as e:
                 raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
             return response.read()
         else:
             if self.download_attachments:
                 try:
                     response = self.request_or_retry(url)
-                except DownloadImportError as e:
+                except (DownloadImportError, requests.exceptions.ConnectionError) as e:
                     raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
                 if response.status_code != requests.codes.ok:
                     self.add_warning(_("Failed to download '{url}'").format(url=url))
