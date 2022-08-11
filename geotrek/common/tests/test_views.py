@@ -141,6 +141,13 @@ class ViewsImportTest(TestCase):
         url = reverse('common:import_dataset')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Cities')
+
+    def test_import_form_access_other_language(self):
+        url = reverse('common:import_dataset')
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='fr')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Communes')
 
     def test_import_update_access(self):
         url = reverse('common:import_update_json')
