@@ -180,21 +180,19 @@ class UserArgMixin:
 
 def import_file(uploaded, parser, encoding, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
-    if is_zipfile(uploaded.file):
-        uploaded.file.seek(0)
-        with open(destination_file, 'wb+') as f:
-            f.write(uploaded.file.read())
-
+    with open(destination_file, 'wb+') as f:
+        f.write(uploaded.file.read())
+        if is_zipfile(uploaded.file):
+            uploaded.file.seek(0)
             zfile = ZipFile(f)
             for name in zfile.namelist():
                 zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
                 if name.endswith('shp'):
                     import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
                                        module=parser.__module__, encoding=encoding, user=user_pk)
-    else:
-        uploaded.file.seek(0)
-        import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, str(uploaded.name))),
-                           module=parser.__module__, encoding=encoding, user=user_pk)
+                    return
+    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, str(uploaded.name))),
+                       module=parser.__module__, encoding=encoding, user=user_pk)
 
 
 @login_required
@@ -219,7 +217,7 @@ def import_view(request):
                 choices, request.POST, request.FILES, prefix="with-file")
 
             if form.is_valid():
-                uploaded = request.FILES['with-file-zipfile']
+                uploaded = request.FILES['with-file-file']
                 parser = classes[int(form['parser'].value())]
                 encoding = form.cleaned_data['encoding']
                 try:

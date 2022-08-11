@@ -326,7 +326,7 @@ class ImportSuricateForm(forms.Form):
 
 
 class ImportDatasetFormWithFile(ImportDatasetForm):
-    zipfile = forms.FileField(
+    file = forms.FileField(
         label=_('File'),
         required=True,
         widget=forms.FileInput
