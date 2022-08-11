@@ -27,6 +27,8 @@ class DurationParserMixin:
 
 
 class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
+    label = "Import trek"
+    label_fr = "Import itinéraires"
     model = Trek
     simplify_tolerance = 2
     eid = 'name'

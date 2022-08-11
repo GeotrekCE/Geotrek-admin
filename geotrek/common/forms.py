@@ -1,4 +1,3 @@
-from zipfile import is_zipfile
 from copy import deepcopy
 
 from django import forms
@@ -327,7 +326,7 @@ class ImportSuricateForm(forms.Form):
 
 
 class ImportDatasetFormWithFile(ImportDatasetForm):
-    zipfile = forms.FileField(
+    file = forms.FileField(
         label=_('File'),
         required=True,
         widget=forms.FileInput
@@ -354,14 +353,6 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
                 css_class='file-attachment-form',
             )
         )
-
-    def clean_zipfile(self):
-        z = self.cleaned_data['zipfile']
-        if not is_zipfile(z):
-            raise forms.ValidationError(
-                _("File must be of ZIP type."), code='invalid')
-        # Reset position for further use.
-        z.seek(0)
 
 
 class SyncRandoForm(forms.Form):

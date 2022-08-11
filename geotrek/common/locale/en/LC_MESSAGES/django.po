@@ -69,9 +69,6 @@ msgstr ""
 msgid "Data to import from local file"
 msgstr ""
 
-msgid "File must be of ZIP type."
-msgstr ""
-
 msgid "Launch Sync"
 msgstr ""
 

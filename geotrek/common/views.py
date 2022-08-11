@@ -4,7 +4,7 @@ import mimetypes
 import os
 import re
 from datetime import timedelta
-from zipfile import ZipFile
+from zipfile import is_zipfile, ZipFile
 
 import redis
 from django.apps import apps
@@ -182,12 +182,17 @@ def import_file(uploaded, parser, encoding, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
     with open(destination_file, 'wb+') as f:
         f.write(uploaded.file.read())
-        zfile = ZipFile(f)
-        for name in zfile.namelist():
-            zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
-            if name.endswith('shp'):
-                import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
-                                   module=parser.__module__, encoding=encoding, user=user_pk)
+        if is_zipfile(uploaded.file):
+            uploaded.file.seek(0)
+            zfile = ZipFile(f)
+            for name in zfile.namelist():
+                zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
+                if name.endswith('shp'):
+                    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
+                                       module=parser.__module__, encoding=encoding, user=user_pk)
+                    return
+    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, str(uploaded.name))),
+                       module=parser.__module__, encoding=encoding, user=user_pk)
 
 
 @login_required
@@ -196,11 +201,9 @@ def import_view(request):
     Gets the existing declared parsers for the current project.
     This view handles only the file based import parsers.
     """
-    choices = []
-    choices_url = []
     render_dict = {}
 
-    choices, choices_url, classes = discover_available_parsers(request.user)
+    choices, choices_url, classes = discover_available_parsers(request)
     choices_suricate = [("everything", _("Reports"))]
 
     form = ImportDatasetFormWithFile(choices, prefix="with-file")
@@ -214,7 +217,7 @@ def import_view(request):
                 choices, request.POST, request.FILES, prefix="with-file")
 
             if form.is_valid():
-                uploaded = request.FILES['with-file-zipfile']
+                uploaded = request.FILES['with-file-file']
                 parser = classes[int(form['parser'].value())]
                 encoding = form.cleaned_data['encoding']
                 try:

@@ -11,6 +11,7 @@ CHANGELOG
 - Add information desk uuid (#3189)
 - Add setting ``ALERT_DRAFT`` which send mail whenever a path has been changed to draft (#2904)
 - Add file type to attachments in API v2 (#3189)
+- Add possibility to use different type of file with import form
 
 **Minor improvements**
 

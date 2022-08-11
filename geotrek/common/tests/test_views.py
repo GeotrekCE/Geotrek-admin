@@ -15,10 +15,12 @@ from mapentity.tests.factories import UserFactory, SuperUserFactory
 from mapentity.views.generic import MapEntityList
 
 from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.models import FileType
 from geotrek.common.parsers import Parser
-from geotrek.common.tasks import launch_sync_rando
+from geotrek.common.tasks import launch_sync_rando, import_datas
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.core.models import Path
+from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
 
 
@@ -141,13 +143,20 @@ class ViewsImportTest(TestCase):
         url = reverse('common:import_dataset')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Cities')
+
+    def test_import_form_access_other_language(self):
+        url = reverse('common:import_dataset')
+        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='fr')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Communes')
 
     def test_import_update_access(self):
         url = reverse('common:import_update_json')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    def test_import_from_file_good_file(self):
+    def test_import_from_file_good_zip_file(self):
         self.user.is_superuser = True
         self.user.save()
 
@@ -158,14 +167,37 @@ class ViewsImportTest(TestCase):
                 url, {
                     'upload-file': 'Upload',
                     'with-file-parser': '1',
-                    'with-file-zipfile': real_archive,
+                    'with-file-file': real_archive,
                     'with-file-encoding': 'UTF-8'
                 }
             )
             self.assertEqual(response_real.status_code, 200)
             self.assertNotContains(response_real, "File must be of ZIP type.")
 
-    def test_import_from_file_bad_file(self):
+    @mock.patch('geotrek.common.tasks.current_task')
+    @mock.patch('geotrek.common.tasks.import_datas.delay')
+    def test_import_from_file_good_geojson_file(self, mocked, mocked_current_task):
+        self.user.is_superuser = True
+        self.user.save()
+        FileType.objects.create(type="Photographie")
+        mocked.side_effect = import_datas
+        mocked_current_task.request.id = '1'
+        with open('geotrek/common/tests/data/test.geojson', 'rb') as geojson:
+            url = reverse('common:import_dataset')
+
+            response_real = self.client.post(
+                url, {
+                    'upload-file': 'Upload',
+                    'with-file-parser': '4',
+                    'with-file-file': geojson,
+                    'with-file-encoding': 'UTF-8'
+                }
+            )
+            self.assertEqual(response_real.status_code, 200)
+        self.assertEqual(Trek.objects.count(), 1)
+
+    @mock.patch('geotrek.common.tasks.import_datas.delay')
+    def test_import_from_file_bad_file(self, mocked):
         self.user.is_superuser = True
         self.user.save()
 
@@ -179,12 +211,12 @@ class ViewsImportTest(TestCase):
             url, {
                 'upload-file': 'Upload',
                 'with-file-parser': '1',
-                'with-file-zipfile': fake_archive,
+                'with-file-file': fake_archive,
                 'with-file-encoding': 'UTF-8'
             }
         )
         self.assertEqual(response_fake.status_code, 200)
-        self.assertContains(response_fake, "File must be of ZIP type.", 1)
+        self.assertEqual(mocked.call_count, 1)
 
         Parser.label = None
 
@@ -199,7 +231,7 @@ class ViewsImportTest(TestCase):
             url, {
                 'upload-file': 'Upload',
                 'with-file-parser': '1',
-                'with-file-zipfile': real_archive,
+                'with-file-file': real_archive,
                 'with-file-encoding': 'UTF-8'
             }
         )
