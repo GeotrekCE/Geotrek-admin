@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.common.models import FileType
+from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.parsers import GeotrekInfrastructureParser
 
@@ -21,7 +22,9 @@ class TestGeotrekInfrastructureParser(GeotrekInfrastructureParser):
     }
 
 
-class InfrastructureGeotrekParserTests(TestCase):
+class InfrastructureGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = 'infrastructure'
+
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
@@ -34,16 +37,9 @@ class InfrastructureGeotrekParserTests(TestCase):
         self.mock_json_order = ['infrastructure_condition.json', 'infrastructure_type.json', 'infrastructure_ids.json',
                                 'infrastructure.json', ]
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 

@@ -9,6 +9,7 @@ from django.test import TestCase, override_settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
+from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
@@ -685,7 +686,9 @@ class TestGeotrekInformationDeskParser(GeotrekInformationDeskParser):
     }
 
 
-class TouristicContentGeotrekParserTests(TestCase):
+class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "tourism"
+
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
@@ -701,16 +704,9 @@ class TouristicContentGeotrekParserTests(TestCase):
                                 'touristiccontent_ids.json',
                                 'touristiccontent.json']
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
@@ -735,16 +731,9 @@ class TouristicContentGeotrekParserTests(TestCase):
                                 'touristiccontent_ids.json',
                                 'touristiccontent.json']
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
@@ -758,7 +747,9 @@ class TouristicContentGeotrekParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 3)
 
 
-class TouristicEventGeotrekParserTests(TestCase):
+class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "tourism"
+
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
@@ -772,16 +763,9 @@ class TouristicEventGeotrekParserTests(TestCase):
                                 'touristicevent_ids.json',
                                 'touristicevent.json']
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
@@ -794,7 +778,8 @@ class TouristicEventGeotrekParserTests(TestCase):
         self.assertAlmostEqual(touristic_event.geom.y, 6208918.713349126, places=5)
 
 
-class InformationDeskGeotrekParserTests(TestCase):
+class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "tourism"
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
@@ -808,13 +793,6 @@ class InformationDeskGeotrekParserTests(TestCase):
                                 'informationdesk.json', ]
         self.mock_download = 0
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         def mocked_download(*args, **kwargs):
             if self.mock_download > 0:
                 return None
@@ -823,7 +801,7 @@ class InformationDeskGeotrekParserTests(TestCase):
 
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_download_attachment.side_effect = mocked_download
         call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekInformationDeskParser', verbosity=0)
         self.assertEqual(InformationDesk.objects.count(), 3)

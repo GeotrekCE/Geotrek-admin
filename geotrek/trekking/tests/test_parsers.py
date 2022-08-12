@@ -11,6 +11,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.common.models import Theme, FileType, Attachment
+from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser
 
@@ -176,7 +177,9 @@ class TestGeotrekServiceParser(GeotrekServiceParser):
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-class TrekGeotrekParserTests(TestCase):
+class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = 'trekking'
+
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
@@ -189,16 +192,9 @@ class TrekGeotrekParserTests(TestCase):
                                 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
                                 'trek.json', 'trek_children.json', ]
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
@@ -275,16 +271,9 @@ class TrekGeotrekParserTests(TestCase):
                                 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
                                 'trek.json', 'trek_children.json', ]
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b'11'
         mocked_head.return_value.status_code = 200
 
@@ -348,16 +337,9 @@ class TrekGeotrekParserTests(TestCase):
                                 'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
                                 'trek_ids_2.json', 'trek_2.json', 'trek_children.json', ]
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
@@ -384,16 +366,9 @@ class TrekGeotrekParserTests(TestCase):
                                 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
                                 'trek.json', 'trek_children_do_not_exist.json', ]
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
         output = StringIO()
@@ -409,16 +384,9 @@ class TrekGeotrekParserTests(TestCase):
                                 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
                                 'trek.json', 'trek_wrong_children.json', ]
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
         output = StringIO()
@@ -437,16 +405,9 @@ class TrekGeotrekParserTests(TestCase):
                                 'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
                                 'trek_ids_2.json', 'trek_2.json', 'trek_children.json', ]
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
@@ -470,7 +431,9 @@ class TrekGeotrekParserTests(TestCase):
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-class POIGeotrekParserTests(TestCase):
+class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "trekking"
+
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
@@ -482,16 +445,9 @@ class POIGeotrekParserTests(TestCase):
         self.mock_time = 0
         self.mock_json_order = ['poi_type.json', 'poi_ids.json', 'poi.json']
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
@@ -508,7 +464,9 @@ class POIGeotrekParserTests(TestCase):
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-class ServiceGeotrekParserTests(TestCase):
+class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "trekking"
+
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
@@ -520,16 +478,9 @@ class ServiceGeotrekParserTests(TestCase):
         self.mock_time = 0
         self.mock_json_order = ['service_type.json', 'service_ids.json', 'service.json']
 
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 

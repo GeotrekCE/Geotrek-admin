@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.common.models import FileType
+from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.signage.models import Signage
 from geotrek.signage.parsers import GeotrekSignageParser
 
@@ -22,7 +23,9 @@ class TestGeotrekSignageParser(GeotrekSignageParser):
     }
 
 
-class SignageGeotrekParserTests(TestCase):
+class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "signage"
+
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
@@ -34,17 +37,9 @@ class SignageGeotrekParserTests(TestCase):
         self.mock_time = 0
         self.mock_json_order = ['signage_sealing.json', 'signage_condition.json', 'signage_type.json', 'signage_ids.json',
                                 'signage.json', ]
-
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 

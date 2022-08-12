@@ -3,7 +3,6 @@ from unittest import mock, skipIf
 from shutil import rmtree
 from tempfile import mkdtemp
 from io import StringIO
-import json
 import requests
 from requests import Response
 import urllib
@@ -20,6 +19,7 @@ from django.template.exceptions import TemplateDoesNotExist
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.common.models import Organism, FileType, Attachment
+from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.parsers import (
     ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
     TourismSystemParser, OpenSystemParser, GeotrekParser, GeotrekAggregatorParser
@@ -528,7 +528,7 @@ class GeotrekParserTest(TestCase):
             call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestParser', verbosity=2)
 
 
-class GeotrekAggregatorParserTest(TestCase):
+class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     def setUp(self, *args, **kwargs):
         self.filetype = FileType.objects.create(type="Photographie")
 
@@ -619,6 +619,7 @@ class GeotrekAggregatorParserTest(TestCase):
     @mock.patch('requests.head')
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_geotrek_aggregator_parser(self, mocked_head, mocked_get):
+        self.app_label = 'trekking'
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json',
                                 'trek_route.json',
@@ -634,16 +635,9 @@ class GeotrekAggregatorParserTest(TestCase):
                                 'poi_ids.json',
                                 'poi.json']
 
-        def mocked_json():
-            filename = os.path.join('geotrek', 'trekking', 'tests', 'data', 'geotrek_parser_v2',
-                                    self.mock_json_order[self.mock_time])
-            self.mock_time += 1
-            with open(filename, 'r') as f:
-                return json.load(f)
-
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = mocked_json
+        mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
