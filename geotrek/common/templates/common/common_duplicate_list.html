@@ -1,0 +1,78 @@
+{% extends "mapentity/mapentity_list.html" %}
+{% load static i18n leaflet_tags compress mapentity_tags %}
+
+
+{% block extrahead %}
+
+{% csrf_token %}
+{{ test }}
+<script type="text/javascript">
+
+        $(function(){
+
+   	        $('#btn-confirm').click(function() {
+   	        	$('#confirm-duplicate .modal-body h4').html($('#wait_lightbox').html());
+   	                $('#btn-confirm').hide();
+
+   	        	$.post("{% url 'signage:signage-drf-duplicate-object' %}",
+	                $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
+
+	                function(response){
+	    		        $('#btn-confirm').show();
+
+	                    if(response.error){
+	            	        $('#confirm-merge .modal-body h4').html(response.error);
+	            	        $('#btn-confirm').hide();
+	                    }
+	                    else {
+	           	            location.reload();
+	                    }
+	                }
+                );
+   	        });
+
+        });
+
+    </script>
+
+{% endblock %}
+
+
+
+{% block mainactions %}
+  {{ block.super }}
+
+  {% if can_add %}
+    <div class="btn-group btn-danger mr-2">
+      <a class="btn btn-primary" href="#"><i class="bi bi-gear-fill"></i> Actions</a>
+      <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+      <ul class="dropdown-menu">
+        <li class="dropdown-item">
+          <a href="#confirm-duplicate" id="btn-duplicate" role="button" data-toggle="modal">
+            <i class="bi bi-bezier"></i> {% trans "Duplicate" %}</a>
+        </li>
+      </ul>
+    </div>
+  {% endif %}
+
+  <div class="modal fade" id="confirm-duplicate" tabindex="-1" role="dialog" aria-labelledby="confirm-duplicateLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4>{% trans "Duplicate" %}</h4>
+        </div>
+        <div class="modal-body">
+          <h4></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            {% trans "Cancel" %}
+          </button>
+          <button type="button" id="btn-confirm" class="btn btn-success success">
+            {% trans "Duplicate" %}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock mainactions %}

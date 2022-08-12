@@ -10,12 +10,18 @@ from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 from django.views import static
 from mapentity import views as mapentity_views
+from mapentity import models as mapentity_models
+from mapentity.decorators import view_permission_required
 from mapentity.helpers import suffix_for
 from pdfimpose import PageList
 
 from geotrek.common.models import TargetPortal, FileType, Attachment
 from geotrek.common.utils import logger
 from geotrek.common.utils.portals import smart_get_template_by_portal
+
+from rest_framework.decorators import action
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 
 
 class CustomColumnsMixin:
@@ -250,4 +256,31 @@ class CompletenessMixin:
             obj = context['object']
             completeness_fields = settings.COMPLETENESS_FIELDS[modelname]
             context['completeness_fields'] = [obj._meta.get_field(field).verbose_name for field in completeness_fields]
+        return context
+
+
+class DuplicateMixin:
+    @action(methods=['POST'], detail=False, renderer_classes=[JSONRenderer])
+    def duplicate_object(self, request, *args, **kwargs):
+        ids_duplicate = request.POST.getlist(f'{self.model._meta.model_name}[]')
+        objects = self.model.objects.filter(pk__in=ids_duplicate)
+
+        if not all([obj.same_structure(request.user) for obj in objects]):
+            raise Exception(f'''{_("You don't have the right to duplicate these ")}{self.model._meta.verbose_name_plural}''')
+
+        for obj in objects:
+            new_obj = self.model.objects.get(pk=obj.pk)
+            new_obj.pk = None
+            new_obj.name = f"{obj.name} {_('copy')}"
+            
+            obj.duplicate()
+        response = {'success': _("Paths merged successfully")}
+        return Response(response)
+
+
+class DuplicateListMixin:
+    def get_context_data(self):
+        context = super().get_context_data()
+        model = self.get_model()
+        context['duplicate_object'] = f'{model._meta.app_label}:{model._meta.model_name}-drf-duplicate-object'
         return context

@@ -21,6 +21,7 @@ class SignageTypeSerializer(PictogramSerializerMixin):
 
 
 class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     name = serializers.CharField(source='name_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
     type = serializers.CharField(source='type_display')

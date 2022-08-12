@@ -8,7 +8,7 @@ from django.conf import settings
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, TimeStampedModelMixin
+from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, CheckBoxActionMixin, TimeStampedModelMixin
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
 
@@ -55,7 +55,7 @@ class SignageType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogr
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
 
 
-class Signage(MapEntityMixin, BaseInfrastructure):
+class Signage(CheckBoxActionMixin, MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = SignageGISManager()
     code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=False, default='')

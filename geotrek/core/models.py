@@ -19,7 +19,7 @@ from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
+from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, CheckBoxActionMixin
 from geotrek.common.utils import classproperty, sqlfunction, uniquify, simplify_coords
 from geotrek.core.managers import PathManager, PathInvisibleManager, TopologyManager, PathAggregationManager, \
     TrailManager
@@ -30,7 +30,7 @@ from mapentity.serializers import plain_text
 logger = logging.getLogger(__name__)
 
 
-class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated, ClusterableModel):
     """ Path model. Spatial indexes disabled because managed in Meta.indexes """
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
@@ -301,19 +301,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     @classmethod
     def get_create_label(cls):
         return _("Add a new path")
-
-    @property
-    def checkbox(self):
-        return '<input type="checkbox" name="{}[]" value="{}" />'.format('path',
-                                                                         self.pk)
-
-    @classproperty
-    def checkbox_verbose_name(cls):
-        return _("Action")
-
-    @property
-    def checkbox_display(self):
-        return self.checkbox
 
     def topologies_by_path(self, default_dict):
         if 'geotrek.core' in settings.INSTALLED_APPS:

@@ -10,7 +10,7 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateListMixin, DuplicateMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from .filters import SignageFilterSet, BladeFilterSet
@@ -29,10 +29,10 @@ class LineMixin(FormsetMixin):
     formset_class = LineFormset
 
 
-class SignageList(CustomColumnsMixin, MapEntityList):
+class SignageList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['code', 'type', 'condition']
     searchable_columns = ['id', 'name', 'code']
 
@@ -82,7 +82,7 @@ class SignageDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class SignageViewSet(GeotrekMapentityViewSet):
+class SignageViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = Signage
     serializer_class = SignageSerializer
     geojson_serializer_class = SignageGeojsonSerializer
