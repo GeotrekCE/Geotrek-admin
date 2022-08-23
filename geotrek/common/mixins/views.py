@@ -265,7 +265,7 @@ class DuplicateMixin:
         ids_duplicate = request.POST.getlist(f'{self.model._meta.model_name}[]')
         objects = self.model.objects.filter(pk__in=ids_duplicate)
 
-        if not all([obj.same_structure(request.user) for obj in objects]):
+        if not all([obj.same_structure(request.user) for obj in objects if hasattr(obj, 'same_structure')]):
             raise Exception(f'''{_("You don't have the right to duplicate these ")}{self.model._meta.verbose_name_plural}''')
 
         for obj in objects:
