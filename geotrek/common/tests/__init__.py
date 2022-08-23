@@ -57,6 +57,29 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertEqual(response.status_code, 200)
 
     @mock.patch('mapentity.helpers.requests')
+    def test_duplicate_object(self, mock_requests):
+        if self.model is None or not hasattr(self.model, 'duplicate'):
+            return
+
+        obj_1 = self.modelfactory.create()
+        obj_1.refresh_from_db()
+        obj_2 = self.modelfactory.create()
+        obj_2.refresh_from_db()
+        response = self.client.post(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}-drf-duplicate-object'),
+            {f'{self.model._meta.model_name}[]': [obj_1.pk, obj_2.pk]})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.model.objects.count(), 4)
+        if 'name' in [field.name for field in self.model._meta.get_fields()]:
+            self.assertEqual(self.model.objects.filter(name__endswith='(copy)').count(), 2)
+        for field in self.model._meta.get_fields():
+            fields_name_different = ['id', 'uuid', 'date_insert', 'date_update', 'name', 'name_en']
+            if not field.related_model and field.name not in fields_name_different:
+                self.assertEqual(str(getattr(obj_2, field.name)), str(getattr(self.model.objects.last(), field.name)))
+        obj_3 = self.modelfactory.create()
+
+    @mock.patch('mapentity.helpers.requests')
     def test_document_public_export(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
