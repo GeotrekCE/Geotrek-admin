@@ -5,7 +5,7 @@
 {% block extrahead %}
 
 {% csrf_token %}
-{{ test }}
+
 <script type="text/javascript">
 
         $(function(){
@@ -14,7 +14,7 @@
    	        	$('#confirm-duplicate .modal-body h4').html($('#wait_lightbox').html());
    	                $('#btn-confirm').hide();
 
-   	        	$.post("{% url 'signage:signage-drf-duplicate-object' %}",
+                    $.post("{% url duplicate_object %}",
 	                $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
 
 	                function(response){

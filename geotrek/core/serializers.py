@@ -30,6 +30,7 @@ class PathGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     length = serializers.FloatField(source='length_display')
     name = serializers.CharField(source='name_display')
     category = serializers.SlugRelatedField('label', read_only=True)

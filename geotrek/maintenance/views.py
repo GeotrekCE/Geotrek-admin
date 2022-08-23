@@ -11,7 +11,7 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, Ma
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateListMixin, DuplicateMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, ProjectForm,
@@ -31,12 +31,13 @@ def _normalize_annotation_column_name(col_name):
     return ANNOTATION_FORBIDDEN_CHARS.sub(repl=REPLACEMENT_CHAR, string=col_name)
 
 
-class InterventionList(CustomColumnsMixin, MapEntityList):
+class InterventionList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['checkbox']
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
@@ -168,7 +169,7 @@ class InterventionDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class InterventionViewSet(GeotrekMapentityViewSet):
+class InterventionViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = Intervention
     serializer_class = InterventionSerializer
     geojson_serializer_class = InterventionGeojsonSerializer

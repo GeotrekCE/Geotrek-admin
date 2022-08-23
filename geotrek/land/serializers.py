@@ -6,6 +6,7 @@ from geotrek.land.models import LandEdge, PhysicalEdge, CompetenceEdge, SignageM
 
 
 class LandEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     land_type = serializers.CharField(source='land_type_display')
     length = serializers.FloatField(source='length_display')
     length_2d = serializers.FloatField(source='length_2d_display')
@@ -25,6 +26,7 @@ class LandEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     physical_type = serializers.CharField(source='physical_type_display')
     length = serializers.FloatField(source='length_display')
     length_2d = serializers.FloatField(source='length_2d_display')
@@ -44,6 +46,7 @@ class PhysicalEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
     length_2d = serializers.FloatField(source='length_2d_display')
@@ -63,6 +66,7 @@ class CompetenceEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
     length_2d = serializers.FloatField(source='length_2d_display')
@@ -82,6 +86,7 @@ class SignageManagementEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class WorkManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     organization = serializers.CharField(source='organization_display')
     length = serializers.FloatField(source='length_display')
     length_2d = serializers.FloatField(source='length_2d_display')

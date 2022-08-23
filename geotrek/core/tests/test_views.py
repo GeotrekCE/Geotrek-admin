@@ -714,7 +714,7 @@ class TrailViewsTest(CommonTest):
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
     extra_column_list = ['length', 'eid', 'departure', 'arrival']
-    expected_column_list_extra = ['id', 'name', 'length', 'eid', 'departure', 'arrival']
+    expected_column_list_extra = ['id', 'checkbox', 'name', 'length', 'eid', 'departure', 'arrival']
     expected_column_formatlist_extra = ['id', 'length', 'eid', 'departure', 'arrival']
 
     def get_expected_json_attrs(self):
@@ -731,7 +731,8 @@ class TrailViewsTest(CommonTest):
             'departure': self.obj.departure,
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
-            'name': self.obj.name_display
+            'name': self.obj.name_display,
+            'checkbox': self.obj.checkbox_display
         }
 
     def get_good_data(self):

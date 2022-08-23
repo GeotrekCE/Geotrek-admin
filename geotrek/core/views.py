@@ -26,7 +26,7 @@ from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateListMixin
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -341,12 +341,13 @@ class CertificationTrailMixin(FormsetMixin):
     formset_class = CertificationTrailFormSet
 
 
-class TrailList(CustomColumnsMixin, MapEntityList):
+class TrailList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['departure', 'arrival', 'length']
     searchable_columns = ['id', 'name', 'departure', 'arrival', ]
+    unorderable_columns = ['checkbox']
 
 
 class TrailFormatList(MapEntityFormat, TrailList):
@@ -424,7 +425,7 @@ class TrailDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class TrailViewSet(GeotrekMapentityViewSet):
+class TrailViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = Trail
     serializer_class = TrailSerializer
     geojson_serializer_class = TrailGeojsonSerializer

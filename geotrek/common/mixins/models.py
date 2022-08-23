@@ -2,12 +2,15 @@ import datetime
 import hashlib
 import os
 import shutil
+import uuid
 
 from PIL.Image import DecompressionBombError
 from django.conf import settings
 from django.core.mail import mail_managers
 from django.db import models
-from django.db.models import Q, Max, Count
+from django.db.models import Q,  Max, Count
+from django.db.models.deletion import Collector
+from django.db.models.fields.related import ForeignKey
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.formats import date_format
@@ -432,3 +435,65 @@ class AddPropertyMixin:
             raise AttributeError("%s has already an attribute %s" % (cls, name))
         setattr(cls, name, property(func))
         setattr(cls, '%s_verbose_name' % name, verbose_name)
+
+
+class DuplicateModelMixin(CheckBoxActionMixin):
+    def duplicate(self):
+        """
+        Duplicate all related objects of obj setting
+        field to value. If one of the duplicate
+        objects has an FK to another duplicate object
+        update that as well. Return the duplicate copy
+        of obj.
+        duplicate_order is a list of models which specify how
+        the duplicate objects are saved. For complex objects
+        this can matter. Check to save if objects are being
+        saved correctly and if not just pass in related objects
+        in the order that they should be saved.
+        """
+        from geotrek.core.models import Topology
+
+        collector = Collector(using='default')
+        collector.collect([self])
+        collector.sort()
+        related_models = [key for key in collector.data.keys() if key is not Topology]
+        data_snapshot = {}
+
+        for key in collector.data.keys():
+            if key is not Topology:
+                data_snapshot.update(
+                    {key: dict(zip([item.pk for item in collector.data[key] if isinstance(item, Topology)],
+                                   [item for item in collector.data[key] if isinstance(item, Topology)]))})
+        # Sometimes it's good enough just to save in reverse deletion order.
+        duplicate_order = reversed(related_models)
+        for model in duplicate_order:
+            if model is Topology:
+                continue
+            # Find all FKs on model that point to a related_model.
+            fks = []
+            for f in model._meta.fields:
+                if isinstance(f, ForeignKey) and f.remote_field.related_model in related_models:
+                    fks.append(f)
+            # Replace each `sub_obj` with a duplicate.
+            if model not in collector.data:
+                continue
+            sub_objects = collector.data[model]
+            for obj in sub_objects:
+                for fk in fks:
+                    fk_value = getattr(obj, "%s_id" % fk.name)
+                    # If this FK has been duplicated then point to the duplicate.
+                    fk_rel_to = data_snapshot[fk.remote_field.related_model]
+                    if fk_value in fk_rel_to and fk.name != 'topo_object' and not isinstance(obj, fk.remote_field.related_model):
+                        dupe_obj = fk_rel_to[fk_value]
+                        setattr(obj, fk.name, dupe_obj)
+                # Duplicate the object and save it.
+                obj.id = None
+                obj.pk = None
+                obj.uuid = uuid.uuid4()
+                if 'name' in [field.name for field in self.__class__._meta.get_fields()]:
+                    obj.name = f'{self.name} (copy)'
+                obj.save()
+                obj.refresh_from_db()
+                if issubclass(self.__class__, Topology) and settings.TREKKING_TOPOLOGY_ENABLED:
+                    new_topology = Topology.objects.create()
+                    new_topology.mutate(self.topo_object, delete=False)

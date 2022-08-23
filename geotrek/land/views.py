@@ -3,7 +3,7 @@ from django.contrib.gis.db.models.functions import Transform
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateListMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -18,14 +18,16 @@ from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceE
     SignageManagementEdgeGeojsonSerializer
 
 
-class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
+class PhysicalEdgeList(DuplicateListMixin, CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
     queryset = PhysicalEdge.objects.existing()
     filterform = PhysicalEdgeFilterSet
-    mandatory_columns = ['id', 'physical_type']
+    mandatory_columns = ['id', 'checkbox', 'physical_type']
     default_extra_columns = ['length', 'length_2d']
+    unorderable_columns = ['checkbox']
 
 
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
+    mandatory_columns = ['id', 'physical_type']
     default_extra_columns = [
         'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',
@@ -54,7 +56,7 @@ class PhysicalEdgeDelete(MapEntityDelete):
     model = PhysicalEdge
 
 
-class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
+class PhysicalEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = PhysicalEdge
     serializer_class = PhysicalEdgeSerializer
     geojson_serializer_class = PhysicalEdgeGeojsonSerializer
@@ -72,11 +74,12 @@ class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer('geom', 'geom_3d')
 
 
-class LandEdgeList(CustomColumnsMixin, MapEntityList):
+class LandEdgeList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = LandEdge.objects.existing()
     filterform = LandEdgeFilterSet
-    mandatory_columns = ['id', 'land_type']
+    mandatory_columns = ['id', 'checkbox', 'land_type']
     default_extra_columns = ['length', 'length_2d']
+    unorderable_columns = ['checkbox']
 
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
@@ -109,7 +112,7 @@ class LandEdgeDelete(MapEntityDelete):
     model = LandEdge
 
 
-class LandEdgeViewSet(GeotrekMapentityViewSet):
+class LandEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = LandEdge
     serializer_class = LandEdgeSerializer
     geojson_serializer_class = LandEdgeGeojsonSerializer
@@ -125,14 +128,16 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer('geom', 'geom_3d')
 
 
-class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
+class CompetenceEdgeList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = CompetenceEdge.objects.existing()
     filterform = CompetenceEdgeFilterSet
-    mandatory_columns = ['id', 'organization']
+    mandatory_columns = ['id', 'checkbox', 'organization']
     default_extra_columns = ['length', 'length_2d']
+    unorderable_columns = ['checkbox']
 
 
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid', 'length_2d'
@@ -161,7 +166,7 @@ class CompetenceEdgeDelete(MapEntityDelete):
     model = CompetenceEdge
 
 
-class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
+class CompetenceEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = CompetenceEdge
     serializer_class = CompetenceEdgeSerializer
     geojson_serializer_class = CompetenceEdgeGeojsonSerializer
@@ -177,14 +182,16 @@ class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer('geom', 'geom_3d')
 
 
-class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
+class WorkManagementEdgeList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = WorkManagementEdge.objects.existing()
     filterform = WorkManagementEdgeFilterSet
-    mandatory_columns = ['id', 'organization']
+    mandatory_columns = ['id', 'checkbox', 'organization']
     default_extra_columns = ['length', 'length_2d']
+    unorderable_columns = ['checkbox']
 
 
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
@@ -212,7 +219,7 @@ class WorkManagementEdgeDelete(MapEntityDelete):
     model = WorkManagementEdge
 
 
-class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
+class WorkManagementEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = WorkManagementEdge
     serializer_class = WorkManagementEdgeSerializer
     geojson_serializer_class = WorkManagementEdgeGeojsonSerializer
@@ -228,14 +235,16 @@ class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer('geom', 'geom_3d')
 
 
-class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
+class SignageManagementEdgeList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = SignageManagementEdge.objects.existing()
     filterform = SignageManagementEdgeFilterSet
-    mandatory_columns = ['id', 'organization']
+    mandatory_columns = ['id', 'checkbox', 'organization']
     default_extra_columns = ['length', 'length_2d']
+    unorderable_columns = ['checkbox']
 
 
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
@@ -263,7 +272,7 @@ class SignageManagementEdgeDelete(MapEntityDelete):
     model = SignageManagementEdge
 
 
-class SignageManagementEdgeViewSet(GeotrekMapentityViewSet):
+class SignageManagementEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = SignageManagementEdge
     serializer_class = SignageManagementEdgeSerializer
     geojson_serializer_class = SignageManagementEdgeGeojsonSerializer

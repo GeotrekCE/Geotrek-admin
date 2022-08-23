@@ -10,7 +10,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (NoDeleteMixin, TimeStampedModelMixin,
                                           PublishableMixin, PicturesMixin, AddPropertyMixin,
-                                          PictogramMixin, OptionalPictogramMixin)
+                                          PictogramMixin, OptionalPictogramMixin, DuplicateModelMixin)
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting, format_coordinates, spatial_reference
 from geotrek.core.models import Topology
@@ -99,8 +99,8 @@ class Level(OptionalPictogramMixin):
         super().save(*args, **kwargs)
 
 
-class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin, PicturesMixin):
+class Dive(DuplicateModelMixin, ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMixin,
+           MapEntityMixin, StructureRelated, TimeStampedModelMixin, PicturesMixin):
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
                                           help_text=_("A brief summary"))
     description = models.TextField(verbose_name=_("Description"), blank=True,

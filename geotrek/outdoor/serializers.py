@@ -33,6 +33,7 @@ class SiteTypeSerializer(serializers.ModelSerializer):
 
 
 class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     name = serializers.CharField(source='name_display')
     super_practices = serializers.CharField(source='super_practices_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
@@ -80,6 +81,7 @@ class SiteAPIGeojsonSerializer(GeoFeatureModelSerializer, SiteAPISerializer):
 
 
 class CourseSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
     parent_sites = serializers.CharField(source='parent_sites_display')
     name = serializers.CharField(source='name_display')

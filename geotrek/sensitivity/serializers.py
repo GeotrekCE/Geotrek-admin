@@ -29,6 +29,7 @@ class SpeciesSerializer(TranslatedModelSerializer, PictogramSerializerMixin):
 
 
 class SensitiveAreaSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
+    checkbox = rest_serializers.CharField(source='checkbox_display')
     category = rest_serializers.CharField(source='category_display')
     structure = rest_serializers.SlugRelatedField('name', read_only=True)
     species = rest_serializers.CharField(source='species_display')

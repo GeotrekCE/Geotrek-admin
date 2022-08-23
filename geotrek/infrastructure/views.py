@@ -5,7 +5,7 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, Ma
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateListMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -16,12 +16,13 @@ from .serializers import InfrastructureSerializer, InfrastructureAPIGeojsonSeria
     InfrastructureGeojsonSerializer
 
 
-class InfrastructureList(CustomColumnsMixin, MapEntityList):
+class InfrastructureList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['type', 'condition', 'cities']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['checkbox']
 
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
@@ -68,7 +69,7 @@ class InfrastructureDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class InfrastructureViewSet(GeotrekMapentityViewSet):
+class InfrastructureViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = Infrastructure
     serializer_class = InfrastructureSerializer
     geojson_serializer_class = InfrastructureGeojsonSerializer

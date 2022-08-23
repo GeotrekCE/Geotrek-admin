@@ -6,6 +6,7 @@ from .models import Intervention, Project
 
 
 class InterventionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    checkbox = serializers.CharField(source='checkbox_display')
     name = serializers.CharField(source='name_display')
     stake = serializers.SlugRelatedField(slug_field='stake', read_only=True)
     status = serializers.SlugRelatedField(slug_field='status', read_only=True)

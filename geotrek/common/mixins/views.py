@@ -269,10 +269,6 @@ class DuplicateMixin:
             raise Exception(f'''{_("You don't have the right to duplicate these ")}{self.model._meta.verbose_name_plural}''')
 
         for obj in objects:
-            new_obj = self.model.objects.get(pk=obj.pk)
-            new_obj.pk = None
-            new_obj.name = f"{obj.name} {_('copy')}"
-            
             obj.duplicate()
         response = {'success': _("Paths merged successfully")}
         return Response(response)

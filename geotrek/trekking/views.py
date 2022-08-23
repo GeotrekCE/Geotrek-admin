@@ -19,7 +19,8 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
+from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin, DuplicateMixin,
+                                         DuplicateListMixin)
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
@@ -54,12 +55,12 @@ class FlattenPicturesMixin:
         return qs
 
 
-class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
+class TrekList(DuplicateListMixin, CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = TrekFilterSet
     queryset = Trek.objects.existing()
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
-    unorderable_columns = ['thumbnail']
+    unorderable_columns = ['thumbnail', 'checkbox']
     searchable_columns = ['id', 'name', 'departure', 'arrival']
 
 
@@ -235,7 +236,7 @@ class TrekMeta(MetaMixin, DetailView):
     template_name = 'trekking/trek_meta.html'
 
 
-class TrekViewSet(GeotrekMapentityViewSet):
+class TrekViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = Trek
     serializer_class = TrekSerializer
     geojson_serializer_class = TrekGeojsonSerializer
@@ -281,12 +282,12 @@ class TrekAPIViewSet(APIViewSet):
         return qs
 
 
-class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
+class POIList(DuplicateListMixin, CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
     filterform = POIFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id',  'checkbox', 'name']
     default_extra_columns = ['type', 'thumbnail']
-    unorderable_columns = ['thumbnail']
+    unorderable_columns = ['thumbnail', 'checkbox']
     searchable_columns = ['id', 'name', ]
 
 
@@ -378,7 +379,7 @@ class WebLinkCreatePopup(CreateView):
         """ % (escape(form.instance._get_pk_val()), escape(form.instance)))
 
 
-class POIViewSet(GeotrekMapentityViewSet):
+class POIViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = POI
     serializer_class = POISerializer
     geojson_serializer_class = POIGeojsonSerializer
@@ -444,12 +445,13 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
         return trek.infrastructures.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class ServiceList(CustomColumnsMixin, MapEntityList):
+class ServiceList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = Service.objects.existing()
     filterform = ServiceFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = []
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['checkbox']
 
 
 class ServiceFormatList(MapEntityFormat, ServiceList):
@@ -490,7 +492,7 @@ class ServiceDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class ServiceViewSet(GeotrekMapentityViewSet):
+class ServiceViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = Service
     serializer_class = ServiceSerializer
     geojson_serializer_class = ServiceGeojsonSerializer

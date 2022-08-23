@@ -35,6 +35,7 @@ class SignageList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['code', 'type', 'condition']
     searchable_columns = ['id', 'name', 'code']
+    unorderable_columns = ['checkbox']
 
 
 class SignageFormatList(MapEntityFormat, SignageList):

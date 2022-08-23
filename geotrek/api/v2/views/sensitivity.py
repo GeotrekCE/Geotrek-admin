@@ -6,11 +6,12 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
 from geotrek.common.functions import GeometryType, Buffer, Area
+from geotrek.common.mixins.views import DuplicateMixin
 from geotrek.sensitivity import models as sensitivity_models
 from ..filters import GeotrekQueryParamsFilter, GeotrekQueryParamsDimensionFilter, GeotrekInBBoxFilter, GeotrekSensitiveAreaFilter, NearbyContentFilter, UpdateOrCreateDateFilter
 
 
-class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
+class SensitiveAreaViewSet(DuplicateMixin, api_viewsets.GeotrekGeometricViewset):
     filter_backends = (
         DjangoFilterBackend,
         GeotrekQueryParamsFilter,
@@ -51,7 +52,7 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
         return queryset.defer('geom')
 
 
-class SportPracticeViewSet(api_viewsets.GeotrekViewSet):
+class SportPracticeViewSet(DuplicateMixin, api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.SportPracticeSerializer
 
     def get_queryset(self):
@@ -60,7 +61,7 @@ class SportPracticeViewSet(api_viewsets.GeotrekViewSet):
         return queryset
 
 
-class SpeciesViewSet(api_viewsets.GeotrekViewSet):
+class SpeciesViewSet(DuplicateMixin, api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.SpeciesSerializer
 
     def get_queryset(self):

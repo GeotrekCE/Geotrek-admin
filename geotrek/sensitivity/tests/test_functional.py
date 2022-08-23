@@ -43,7 +43,8 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
         return {
             'category': self.obj.category_display,
             'id': self.obj.pk,
-            'species': self.obj.species_display
+            'species': self.obj.species_display,
+            'checkbox': self.obj.checkbox_display,
         }
 
     def setUp(self):
@@ -68,7 +69,7 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
             return
         with override_settings(COLUMNS_LISTS={'sensitivity_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'species', 'description', 'contact'])
+                             ['id', 'checkbox', 'species', 'description', 'contact'])
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns
@@ -114,6 +115,7 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
             'category': self.obj.category_display,
             'id': self.obj.pk,
             'species': self.obj.species_display,
+            'checkbox': self.obj.checkbox_display,
         }
 
     def setUp(self):
@@ -182,7 +184,7 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
             return
         with override_settings(COLUMNS_LISTS={'sensitivity_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'species', 'description', 'contact'])
+                             ['id', 'checkbox', 'species', 'description', 'contact'])
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns

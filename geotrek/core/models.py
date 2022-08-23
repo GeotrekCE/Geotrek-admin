@@ -19,10 +19,13 @@ from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, CheckBoxActionMixin
-from geotrek.common.utils import classproperty, sqlfunction, uniquify, simplify_coords
+from geotrek.common.functions import Length
 from geotrek.core.managers import PathManager, PathInvisibleManager, TopologyManager, PathAggregationManager, \
     TrailManager
+from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,
+                                          CheckBoxActionMixin, DuplicateModelMixin)
+from geotrek.common.utils import classproperty, sqlfunction, simplify_coords, uniquify
+
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
@@ -355,7 +358,7 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEnti
         return None
 
 
-class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
+class Topology(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
                TimeStampedModelMixin, NoDeleteMixin, ClusterableModel):
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
@@ -485,16 +488,17 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
             select={'ordering': ordering}, order_by=('ordering',))
         return queryset
 
-    def mutate(self, other):
+    def mutate(self, other, delete=True):
         """
         Take alls attributes of the other topology specified and
         save them into this one. Optionnally deletes the other.
         """
         self.offset = other.offset
         self.save(update_fields=['offset'])
-        PathAggregation.objects.filter(topo_object=self).delete()
-        # The previous operation has put deleted = True (in triggers)
-        # and NULL in geom (see update_geometry_of_topology:: IF t_count = 0)
+        if delete:
+            PathAggregation.objects.filter(topo_object=self).delete()
+            # The previous operation has put deleted = True (in triggers)
+            # and NULL in geom (see update_geometry_of_topology:: IF t_count = 0)
         self.deleted = False
         self.geom = other.geom
         self.save(update_fields=['deleted', 'geom'])

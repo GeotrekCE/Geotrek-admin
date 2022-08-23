@@ -13,7 +13,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin,
-                                          TimeStampedModelMixin)
+                                          TimeStampedModelMixin, DuplicateModelMixin)
 from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
@@ -111,8 +111,8 @@ class CourseType(TimeStampedModelMixin, models.Model):
         return self.name
 
 
-class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
+class Site(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin,
+           MapEntityMixin, StructureRelated, AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -337,8 +337,8 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin,
-             AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
+class Course(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin,
+             StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     parent_sites = models.ManyToManyField(Site, related_name="children_courses", verbose_name=_("Sites"))
     description = models.TextField(verbose_name=_("Description"), blank=True,

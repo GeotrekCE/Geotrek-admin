@@ -48,6 +48,7 @@ class CloseDiveSerializer(TranslatedModelSerializer):
 
 
 class DiveSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
+    checkbox = rest_serializers.CharField(source='checkbox_display')
     name = rest_serializers.CharField(source='name_display')
     thumbnail = rest_serializers.CharField(source='thumbnail_display')
     levels = rest_serializers.CharField(source='levels_display')

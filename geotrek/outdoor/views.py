@@ -7,7 +7,7 @@ from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, 
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, DuplicateListMixin, DuplicateMixin)
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SiteFilterSet, CourseFilterSet
@@ -18,12 +18,13 @@ from .serializers import SiteSerializer, CourseSerializer, CourseAPISerializer, 
     CourseGeojsonSerializer
 
 
-class SiteList(CustomColumnsMixin, MapEntityList):
+class SiteList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = Site.objects.all()
     filterform = SiteFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['super_practices', 'date_update']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['checkbox']
 
 
 class SiteDetail(CompletenessMixin, MapEntityDetail):
@@ -107,7 +108,7 @@ class SiteFormatList(MapEntityFormat, SiteList):
     ]
 
 
-class SiteViewSet(GeotrekMapentityViewSet):
+class SiteViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = Site
     serializer_class = SiteSerializer
     geojson_serializer_class = SiteGeojsonSerializer
@@ -136,12 +137,13 @@ class SiteAPIViewSet(APIViewSet):
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class CourseList(CustomColumnsMixin, MapEntityList):
+class CourseList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
     filterform = CourseFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['parent_sites', 'date_update']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['checkbox']
 
 
 class CourseDetail(CompletenessMixin, MapEntityDetail):
@@ -223,7 +225,7 @@ class CourseFormatList(MapEntityFormat, CourseList):
     ]
 
 
-class CourseViewSet(GeotrekMapentityViewSet):
+class CourseViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = Course
     serializer_class = CourseSerializer
     geojson_serializer_class = CourseGeojsonSerializer

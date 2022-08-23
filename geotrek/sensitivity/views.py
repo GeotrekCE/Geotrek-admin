@@ -14,7 +14,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import GeometryType, Buffer, Area
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateListMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SensitiveAreaFilterSet
@@ -32,11 +32,12 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 logger = logging.getLogger(__name__)
 
 
-class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
+class SensitiveAreaList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = SensitiveArea.objects.existing()
     filterform = SensitiveAreaFilterSet
-    mandatory_columns = ['id', 'species']
+    mandatory_columns = ['id', 'checkbox', 'species']
     default_extra_columns = ['category']
+    unorderable_columns = ['checkbox']
 
 
 class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
@@ -95,7 +96,7 @@ class SensitiveAreaDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class SensitiveAreaViewSet(GeotrekMapentityViewSet):
+class SensitiveAreaViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = SensitiveArea
     serializer_class = SensitiveAreaSerializer
     geojson_serializer_class = SensitiveAreaGeojsonSerializer

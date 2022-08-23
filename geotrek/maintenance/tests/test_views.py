@@ -45,7 +45,7 @@ class InterventionViewsTest(CommonTest):
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
     extra_column_list = ['heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
-    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
+    expected_column_list_extra = ['id', 'checkbox', 'name', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
     expected_column_formatlist_extra = ['id', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
 
     def get_bad_data(self):
@@ -104,7 +104,8 @@ class InterventionViewsTest(CommonTest):
             'stake': self.obj.stake.stake,
             'status': self.obj.status.status,
             'type': self.obj.type.type,
-            'target': self.obj.target_display
+            'target': self.obj.target_display,
+            'checkbox': self.obj.checkbox_display
         }
 
     def test_creation_form_on_signage(self):

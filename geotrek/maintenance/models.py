@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
+from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, DuplicateModelMixin
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
@@ -23,7 +23,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
-class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+class Intervention(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     target_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)

@@ -12,7 +12,8 @@ from django.utils.translation import pgettext_lazy, gettext_lazy as _
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
+from geotrek.common.mixins.models import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin,
+                                          AddPropertyMixin, DuplicateModelMixin)
 from geotrek.common.utils import intersecting, classproperty, simplify_coords
 from geotrek.sensitivity.managers import SensitiveAreaManager
 
@@ -72,7 +73,7 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
         return ", ".join([str(practice) for practice in self.practices.all()])
 
 
-class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
+class SensitiveArea(DuplicateModelMixin, MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
     geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)

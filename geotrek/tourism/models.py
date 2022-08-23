@@ -16,7 +16,7 @@ from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
-                                          PicturesMixin, PublishableMixin, TimeStampedModelMixin)
+                                          PicturesMixin, PublishableMixin, TimeStampedModelMixin, DuplicateModelMixin)
 from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import Topology
@@ -222,8 +222,8 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _("Second list types")
 
 
-class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-                       TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
+class TouristicContent(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin,
+                       StructureRelated, TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
@@ -358,8 +358,8 @@ class TouristicEventPlace(TimeStampedModelMixin):
         return self.name
 
 
-class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-                     PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
+class TouristicEvent(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin,
+                     StructureRelated, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
     """
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,

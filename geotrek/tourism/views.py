@@ -19,7 +19,8 @@ from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
+from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin, DuplicateMixin,
+                                         DuplicateListMixin)
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -39,12 +40,13 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 logger = logging.getLogger(__name__)
 
 
-class TouristicContentList(CustomColumnsMixin, MapEntityList):
+class TouristicContentList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['category']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['checkbox']
 
     @property
     def categories_list(self):
@@ -153,7 +155,7 @@ class TouristicContentMeta(MetaMixin, DetailView):
     template_name = 'tourism/touristiccontent_meta.html'
 
 
-class TouristicContentViewSet(GeotrekMapentityViewSet):
+class TouristicContentViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = TouristicContent
     serializer_class = TouristicContentSerializer
     geojson_serializer_class = TouristicContentGeojsonSerializer
@@ -187,12 +189,13 @@ class TouristicContentAPIViewSet(APIViewSet):
         return qs
 
 
-class TouristicEventList(CustomColumnsMixin, MapEntityList):
+class TouristicEventList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['type', 'begin_date', 'end_date']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['checkbox']
 
 
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
@@ -292,7 +295,7 @@ class TouristicEventMeta(MetaMixin, DetailView):
     template_name = 'tourism/touristicevent_meta.html'
 
 
-class TouristicEventViewSet(GeotrekMapentityViewSet):
+class TouristicEventViewSet(DuplicateMixin, GeotrekMapentityViewSet):
     model = TouristicEvent
     serializer_class = TouristicEventSerializer
     geojson_serializer_class = TouristicEventGeojsonSerializer
