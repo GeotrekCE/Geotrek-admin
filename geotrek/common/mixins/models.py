@@ -10,7 +10,6 @@ from django.core.mail import mail_managers
 from django.db import models
 from django.db.models import Q,  Max, Count
 from django.db.models.deletion import Collector
-from django.db.models.fields.related import ForeignKey
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.formats import date_format
