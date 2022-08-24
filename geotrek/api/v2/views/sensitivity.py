@@ -52,7 +52,7 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
         return queryset.defer('geom')
 
 
-class SportPracticeViewSet(DuplicateMixin, api_viewsets.GeotrekViewSet):
+class SportPracticeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.SportPracticeSerializer
 
     def get_queryset(self):
@@ -61,7 +61,7 @@ class SportPracticeViewSet(DuplicateMixin, api_viewsets.GeotrekViewSet):
         return queryset
 
 
-class SpeciesViewSet(DuplicateMixin, api_viewsets.GeotrekViewSet):
+class SpeciesViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.SpeciesSerializer
 
     def get_queryset(self):
