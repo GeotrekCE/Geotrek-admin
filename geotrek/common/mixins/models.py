@@ -467,23 +467,19 @@ class DuplicateModelMixin(CheckBoxActionMixin):
         # Sometimes it's good enough just to save in reverse deletion order.
         duplicate_order = reversed(related_models)
         for model in duplicate_order:
-            if model is Topology:
-                continue
             # Find all FKs on model that point to a related_model.
             fks = []
             for f in model._meta.fields:
                 if isinstance(f, ForeignKey) and f.remote_field.related_model in related_models:
                     fks.append(f)
             # Replace each `sub_obj` with a duplicate.
-            if model not in collector.data:
-                continue
             sub_objects = collector.data[model]
             for obj in sub_objects:
                 for fk in fks:
                     fk_value = getattr(obj, "%s_id" % fk.name)
                     # If this FK has been duplicated then point to the duplicate.
                     fk_rel_to = data_snapshot[fk.remote_field.related_model]
-                    if fk_value in fk_rel_to and fk.name != 'topo_object' and not isinstance(obj, fk.remote_field.related_model):
+                    if fk_value in fk_rel_to:
                         dupe_obj = fk_rel_to[fk_value]
                         setattr(obj, fk.name, dupe_obj)
                 # Duplicate the object and save it.
