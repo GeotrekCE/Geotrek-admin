@@ -260,15 +260,27 @@ class CompletenessMixin:
 class DuplicateMixin:
     @action(methods=['POST'], detail=False, renderer_classes=[JSONRenderer])
     def duplicate_object(self, request, *args, **kwargs):
-        ids_duplicate = request.POST.getlist(f'{self.model._meta.model_name}[]')
-        objects = self.model.objects.filter(pk__in=ids_duplicate)
-
-        if not all([obj.same_structure(request.user) for obj in objects if hasattr(obj, 'same_structure')]):
-            raise Exception(f'''{_("You don't have the right to duplicate these ")}{self.model._meta.verbose_name_plural}''')
-
-        for obj in objects:
-            obj.duplicate()
-        response = {'success': _("Paths merged successfully")}
+        try:
+            model_name = self.model._meta.model_name
+            app_name = self.model._meta.app_label
+            ids_duplicate = request.POST.getlist(f'{model_name}[]')
+            objects = self.model.objects.filter(pk__in=ids_duplicate)
+            if not request.user.has_perm(f'{app_name}.change_{model_name}'):
+                raise Exception(f'''{_("You don't have the right to duplicate these ")}{self.model._meta.verbose_name_plural}''')
+            errors_obj = []
+            for obj in objects:
+                if hasattr(obj, 'same_structure') and not (obj.same_structure(request.user) and request.user.has_perm('authent.can_bypass_structure')):
+                    errors_obj.append(str(obj.pk))
+                else:
+                    obj.duplicate()
+            if errors_obj:
+                raise Exception(
+                    f'''{_("You don't have the right to duplicate these ")}
+                        {self.model._meta.verbose_name_plural} id : {", ".join(errors_obj)},
+                        this object is not from the same structure.''')
+            response = {'success': _("Duplicated successfully")}
+        except Exception as exc:
+            response = {'error': '%s' % exc, }
         return Response(response)
 
 

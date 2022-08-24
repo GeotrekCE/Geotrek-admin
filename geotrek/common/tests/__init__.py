@@ -57,8 +57,28 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertEqual(response.status_code, 200)
 
     @mock.patch('mapentity.helpers.requests')
-    def test_duplicate_object(self, mock_requests):
+    def test_duplicate_object_no_create_permission(self, mock_requests):
         if self.model is None or not hasattr(self.model, 'duplicate'):
+            return
+
+        obj_1 = self.modelfactory.create()
+        user = UserFactory.create(password='booh')
+        for perm in Permission.objects.exclude(codename=f'change_{self.model._meta.model_name}'):
+            user.user_permissions.add(perm)
+        perm = Permission.objects.get(codename=f'read_{self.model._meta.model_name}')
+        user.user_permissions.add(perm)
+        self.client.login(username=user.username, password='booh')
+
+        response = self.client.post(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}-drf-duplicate-object'),
+            {f'{self.model._meta.model_name}[]': [obj_1.pk, ]})
+        self.assertEqual(response.json()['error'], f"You don't have the right to duplicate these {self.model._meta.verbose_name_plural}")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.model.objects.count(), 1)
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_duplicate_object_without_structure(self, mock_requests):
+        if self.model is None or not hasattr(self.model, 'duplicate') or hasattr(self.model, 'structure'):
             return
 
         obj_1 = self.modelfactory.create()
@@ -70,6 +90,34 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
             {f'{self.model._meta.model_name}[]': [obj_1.pk, obj_2.pk]})
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.model.objects.count(), 4)
+        if 'name' in [field.name for field in self.model._meta.get_fields()]:
+            self.assertEqual(self.model.objects.filter(name__endswith='(copy)').count(), 2)
+        for field in self.model._meta.get_fields():
+            fields_name_different = ['id', 'uuid', 'date_insert', 'date_update', 'name', 'name_en']
+            if not field.related_model and field.name not in fields_name_different:
+                self.assertEqual(str(getattr(obj_2, field.name)), str(getattr(self.model.objects.last(), field.name)))
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_duplicate_object_with_structure(self, mock_requests):
+        if self.model is None or not hasattr(self.model, 'duplicate') or not hasattr(self.model, 'structure'):
+            return
+
+        obj_1 = self.modelfactory.create()
+        obj_1.refresh_from_db()
+        structure = StructureFactory.create()
+        obj_2 = self.modelfactory.create(structure=structure)
+        obj_2.refresh_from_db()
+        response = self.client.post(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}-drf-duplicate-object'),
+            {f'{self.model._meta.model_name}[]': [obj_1.pk, obj_2.pk]})
+        self.assertEqual(self.model.objects.count(), 2)
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+        self.assertEqual(response.status_code, 200)
+        self.client.post(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}-drf-duplicate-object'),
+            {f'{self.model._meta.model_name}[]': [obj_1.pk, obj_2.pk]})
         self.assertEqual(self.model.objects.count(), 4)
         if 'name' in [field.name for field in self.model._meta.get_fields()]:
             self.assertEqual(self.model.objects.filter(name__endswith='(copy)').count(), 2)

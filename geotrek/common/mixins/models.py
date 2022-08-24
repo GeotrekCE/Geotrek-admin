@@ -443,13 +443,7 @@ class DuplicateModelMixin(CheckBoxActionMixin):
         Duplicate all related objects of obj setting
         field to value. If one of the duplicate
         objects has an FK to another duplicate object
-        update that as well. Return the duplicate copy
-        of obj.
-        duplicate_order is a list of models which specify how
-        the duplicate objects are saved. For complex objects
-        this can matter. Check to save if objects are being
-        saved correctly and if not just pass in related objects
-        in the order that they should be saved.
+        does not update that as well.
         """
         from geotrek.core.models import Topology
 
@@ -457,31 +451,12 @@ class DuplicateModelMixin(CheckBoxActionMixin):
         collector.collect([self])
         collector.sort()
         related_models = [key for key in collector.data.keys() if key is not Topology]
-        data_snapshot = {}
-
-        for key in collector.data.keys():
-            if key is not Topology:
-                data_snapshot.update(
-                    {key: dict(zip([item.pk for item in collector.data[key] if isinstance(item, Topology)],
-                                   [item for item in collector.data[key] if isinstance(item, Topology)]))})
         # Sometimes it's good enough just to save in reverse deletion order.
         duplicate_order = reversed(related_models)
         for model in duplicate_order:
-            # Find all FKs on model that point to a related_model.
-            fks = []
-            for f in model._meta.fields:
-                if isinstance(f, ForeignKey) and f.remote_field.related_model in related_models:
-                    fks.append(f)
             # Replace each `sub_obj` with a duplicate.
             sub_objects = collector.data[model]
             for obj in sub_objects:
-                for fk in fks:
-                    fk_value = getattr(obj, "%s_id" % fk.name)
-                    # If this FK has been duplicated then point to the duplicate.
-                    fk_rel_to = data_snapshot[fk.remote_field.related_model]
-                    if fk_value in fk_rel_to:
-                        dupe_obj = fk_rel_to[fk_value]
-                        setattr(obj, fk.name, dupe_obj)
                 # Duplicate the object and save it.
                 obj.id = None
                 obj.pk = None
