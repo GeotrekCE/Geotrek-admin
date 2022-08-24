@@ -285,7 +285,7 @@ class TrekAPIViewSet(APIViewSet):
 class POIList(DuplicateListMixin, CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
     filterform = POIFilterSet
-    mandatory_columns = ['id',  'checkbox', 'name']
+    mandatory_columns = ['id', 'checkbox', 'name']
     default_extra_columns = ['type', 'thumbnail']
     unorderable_columns = ['thumbnail', 'checkbox']
     searchable_columns = ['id', 'name', ]

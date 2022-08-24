@@ -8,7 +8,8 @@ from django.conf import settings
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, CheckBoxActionMixin, TimeStampedModelMixin
+from geotrek.common.mixins.models import AddPropertyMixin, CheckBoxActionMixin, OptionalPictogramMixin, TimeStampedModelMixin
+
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
 

@@ -9,8 +9,6 @@ from django.utils import translation
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 from django.views import static
-from mapentity import views as mapentity_views
-from mapentity import models as mapentity_models
 from mapentity.decorators import view_permission_required
 from mapentity.helpers import suffix_for
 from pdfimpose import PageList

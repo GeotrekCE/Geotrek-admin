@@ -77,7 +77,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
             fields_name_different = ['id', 'uuid', 'date_insert', 'date_update', 'name', 'name_en']
             if not field.related_model and field.name not in fields_name_different:
                 self.assertEqual(str(getattr(obj_2, field.name)), str(getattr(self.model.objects.last(), field.name)))
-        obj_3 = self.modelfactory.create()
 
     @mock.patch('mapentity.helpers.requests')
     def test_document_public_export(self, mock_requests):

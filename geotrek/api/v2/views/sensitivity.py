@@ -11,7 +11,7 @@ from geotrek.sensitivity import models as sensitivity_models
 from ..filters import GeotrekQueryParamsFilter, GeotrekQueryParamsDimensionFilter, GeotrekInBBoxFilter, GeotrekSensitiveAreaFilter, NearbyContentFilter, UpdateOrCreateDateFilter
 
 
-class SensitiveAreaViewSet(DuplicateMixin, api_viewsets.GeotrekGeometricViewset):
+class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = (
         DjangoFilterBackend,
         GeotrekQueryParamsFilter,
