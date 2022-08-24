@@ -61,7 +61,7 @@ msgid "Identifier"
 msgstr "Identifiant"
 
 msgid "Tag"
-msgstr "Étiquette"
+msgstr "Clé"
 
 msgid "Last updated in Suricate"
 msgstr "Modifié dans Suricate"
