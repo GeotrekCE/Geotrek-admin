@@ -12,6 +12,8 @@ CHANGELOG
 - Add setting ``ALERT_DRAFT`` which send mail whenever a path has been changed to draft (#2904)
 - Add file type to attachments in API v2 (#3189)
 - Add possibility to use different type of file with import form
+- Add setting MAX_CHARACTERS for rich text fields with Mapentity 8.2.0 (#2901)
+- Set map resizable with Mapentity 8.2.0 (#3162)
 
 **Minor improvements**
 
@@ -25,6 +27,10 @@ CHANGELOG
 
 - Set relevant max zoom level for OpenTopoMap in the default config
 - Fix fields filter for infrastructure
+
+**Maintenance**
+
+- Upgrade mapentity to 8.2.0
 
 
 2.85.0     (2022-07-26)
