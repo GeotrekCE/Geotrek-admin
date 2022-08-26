@@ -19,6 +19,7 @@ CHANGELOG
 
 - Remove problems of tmp_sync_rando / tmp_sync_mobile which are not removed before new sync_rando / sync_mobile
 - Change translation for Tag in Feedback module
+- Change concatenation of null value for multiples values from '*' to '_' on sql views
 
 **New ci**
 
