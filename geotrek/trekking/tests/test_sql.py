@@ -14,7 +14,7 @@ class SQLViewsTest(TestCase):
         label_2 = LabelFactory.create()
         trek.labels.add(label_1, label_2)
         with connection.cursor() as cur:
-            cur.execute(f"""SELECT * FROM v_treks""")
+            cur.execute("SELECT * FROM v_treks")
             datas = dictfetchall(cur)
 
         sql_trek_dict = datas[0]
