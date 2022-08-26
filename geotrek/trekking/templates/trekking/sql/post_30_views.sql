@@ -57,7 +57,7 @@ SELECT a.id,
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
-       TRUNC(a.duration) || ' days' AS "Duration",
+       a.duration AS "Duration",
        CASE
            WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
            WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
