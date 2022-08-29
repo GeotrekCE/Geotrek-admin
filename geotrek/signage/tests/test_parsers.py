@@ -1,6 +1,4 @@
 from unittest import mock
-import json
-import os
 
 from django.core.management import call_command
 from django.test import TestCase

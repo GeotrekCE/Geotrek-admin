@@ -780,6 +780,7 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
 class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     app_label = "tourism"
+
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
