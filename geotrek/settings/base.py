@@ -406,7 +406,8 @@ MAPENTITY_CONFIG = {
                      'arrowColor': 'black', 'arrowSize': 10},
         }
     },
-    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg)$'
+    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg)$',
+    'MAX_CHARACTERS': None,
 }
 
 MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
@@ -648,7 +649,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
     "toolbar": "bold italic forecolor | bullist numlist link image media | "
                "undo redo | "
-               "removeformat | code",
+               "removeformat | code | wordcount | help",
     "paste_as_text": True
 }
 
