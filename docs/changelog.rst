@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Show direction on lines with setting ``DIRECTION_ON_LINES_ENABLED`` in signage detail
+- Add mobile nginx configuration directly on Geotrek-admin
 
 **Bug fixes**
 
