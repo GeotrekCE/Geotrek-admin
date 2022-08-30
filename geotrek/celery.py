@@ -5,10 +5,19 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geotrek.settings')
 
 app = Celery('geotrek')
-
-# Using a string here means the worker will not have to
-# pickle the object when using Windows.
-app.config_from_object('geotrek.settings.celery')
+app.conf.update(
+    enable_utc=False,
+    accept_content=['json'],
+    broker_url='redis://{}:{}/{}'.format(os.getenv('REDIS_HOST', 'localhost'),
+                                         os.getenv('REDIS_PORT', '6379'),
+                                         os.getenv('REDIS_DB', '0'), ),
+    task_serializer='json',
+    result_serializer='json',
+    result_expires=5,
+    task_time_limit=10800,
+    task_soft_time_limit=21600,
+    result_backend='django-db',
+)
 app.autodiscover_tasks()
 
 

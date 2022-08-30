@@ -55,8 +55,8 @@ setup(
         'drf-yasg',
         'xlrd',
         'landez',
-        'celery[redis]==4.*',  # need to update configuration
-        'django-celery-results==2.0.*',  # need to update celery
+        'celery[redis]',
+        'django-celery-results==2.2.*',  # Latest version supporting python3.6
         'drf-extensions',
         'django-colorfield',
         'Fiona',
