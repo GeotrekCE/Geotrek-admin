@@ -33,7 +33,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.2.*',
-        'mapentity==8.3.0',
+        'mapentity',
         'cairosvg',
         'cairocffi',
         'env_file',
