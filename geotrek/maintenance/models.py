@@ -385,7 +385,7 @@ class ManDay(models.Model):
         return str(self.nb_days)
 
 
-class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
+class Project(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
               StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)

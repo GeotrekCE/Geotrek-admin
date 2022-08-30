@@ -1,0 +1,15 @@
+{% extends "common/common_detail.html" %}
+
+{% load i18n %}
+
+{% block buttons_edition %}
+  <div class="btn-group ml-auto" role="group">
+    {% if can_edit %}
+      <a class="btn btn-success ml-auto" href="{% url duplicate_object %}"><i class="bi bi-files"></i> {% trans "Duplicate" %}</a>
+      <a class="btn btn-primary ml-auto" href="{{ object.get_update_url }}"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</a>
+    {% else %}
+      <span class="btn disabled ml-auto" href="#"><i class="bi bi-files"></i> {% trans "Duplicate" %}</span>
+      <span class="btn disabled ml-auto" href="#"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</span>
+    {% endif %}
+  </div>
+{% endblock %}

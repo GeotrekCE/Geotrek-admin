@@ -7,7 +7,7 @@ from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, 
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, DuplicateListMixin, DuplicateMixin)
+from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin)
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SiteFilterSet, CourseFilterSet
@@ -18,7 +18,7 @@ from .serializers import SiteSerializer, CourseSerializer, CourseAPISerializer, 
     CourseGeojsonSerializer
 
 
-class SiteList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class SiteList(CustomColumnsMixin, MapEntityList):
     queryset = Site.objects.all()
     filterform = SiteFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -27,7 +27,7 @@ class SiteList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     unorderable_columns = ['checkbox']
 
 
-class SiteDetail(CompletenessMixin, MapEntityDetail):
+class SiteDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
     queryset = Site.objects.all()
 
     def get_context_data(self, *args, **kwargs):
@@ -137,7 +137,7 @@ class SiteAPIViewSet(APIViewSet):
         return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class CourseList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class CourseList(CustomColumnsMixin, MapEntityList):
     queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
     filterform = CourseFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -146,7 +146,7 @@ class CourseList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
     unorderable_columns = ['checkbox']
 
 
-class CourseDetail(CompletenessMixin, MapEntityDetail):
+class CourseDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
     queryset = Course.objects.prefetch_related('type').all()
 
     def get_context_data(self, *args, **kwargs):

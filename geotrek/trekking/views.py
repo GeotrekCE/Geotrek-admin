@@ -20,7 +20,7 @@ from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin, DuplicateMixin,
-                                         DuplicateListMixin)
+                                         DuplicateDetailMixin)
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
@@ -55,7 +55,7 @@ class FlattenPicturesMixin:
         return qs
 
 
-class TrekList(DuplicateListMixin, CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
+class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = TrekFilterSet
     queryset = Trek.objects.existing()
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -100,7 +100,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         return response
 
 
-class TrekDetail(CompletenessMixin, MapEntityDetail):
+class TrekDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
     queryset = Trek.objects.existing().select_related('topo_object')
 
     @property
@@ -282,7 +282,7 @@ class TrekAPIViewSet(APIViewSet):
         return qs
 
 
-class POIList(DuplicateListMixin, CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
+class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
     filterform = POIFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -329,7 +329,7 @@ class POIFormatList(MapEntityFormat, POIList):
             yield poi
 
 
-class POIDetail(CompletenessMixin, MapEntityDetail):
+class POIDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
     queryset = POI.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -445,7 +445,7 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
         return trek.infrastructures.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class ServiceList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class ServiceList(CustomColumnsMixin, MapEntityList):
     queryset = Service.objects.existing()
     filterform = ServiceFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -461,7 +461,7 @@ class ServiceFormatList(MapEntityFormat, ServiceList):
     ] + AltimetryMixin.COLUMNS
 
 
-class ServiceDetail(MapEntityDetail):
+class ServiceDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = Service.objects.existing()
 
     def get_context_data(self, *args, **kwargs):

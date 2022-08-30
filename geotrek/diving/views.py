@@ -11,8 +11,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin, DuplicateListMixin,
-                                         DuplicateMixin)
+from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin, DuplicateMixin)
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -25,7 +24,7 @@ from .models import Dive
 from .serializers import DiveSerializer, DiveGeojsonSerializer, DiveAPIGeojsonSerializer, DiveAPISerializer
 
 
-class DiveList(DuplicateListMixin, CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
+class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = DiveFilterSet
     queryset = Dive.objects.existing()
     mandatory_columns = ['id', 'checkbox', 'name']

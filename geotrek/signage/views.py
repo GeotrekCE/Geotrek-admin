@@ -10,7 +10,7 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateListMixin, DuplicateMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from .filters import SignageFilterSet, BladeFilterSet
@@ -29,7 +29,7 @@ class LineMixin(FormsetMixin):
     formset_class = LineFormset
 
 
-class SignageList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class SignageList(CustomColumnsMixin, MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -48,7 +48,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
     ] + AltimetryMixin.COLUMNS
 
 
-class SignageDetail(MapEntityDetail):
+class SignageDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = Signage.objects.existing()
 
     def get_context_data(self, *args, **kwargs):

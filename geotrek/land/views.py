@@ -3,7 +3,7 @@ from django.contrib.gis.db.models.functions import Transform
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateListMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateDetailMixin, DuplicateMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -18,7 +18,7 @@ from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceE
     SignageManagementEdgeGeojsonSerializer
 
 
-class PhysicalEdgeList(DuplicateListMixin, CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
+class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
     queryset = PhysicalEdge.objects.existing()
     filterform = PhysicalEdgeFilterSet
     mandatory_columns = ['id', 'checkbox', 'physical_type']
@@ -34,7 +34,7 @@ class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
     ] + AltimetryMixin.COLUMNS
 
 
-class PhysicalEdgeDetail(MapEntityDetail):
+class PhysicalEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = PhysicalEdge.objects.existing()
 
 
@@ -74,7 +74,7 @@ class PhysicalEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
         return qs.defer('geom', 'geom_3d')
 
 
-class LandEdgeList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class LandEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = LandEdge.objects.existing()
     filterform = LandEdgeFilterSet
     mandatory_columns = ['id', 'checkbox', 'land_type']
@@ -90,7 +90,7 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     ] + AltimetryMixin.COLUMNS
 
 
-class LandEdgeDetail(MapEntityDetail):
+class LandEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = LandEdge.objects.existing()
 
 
@@ -128,7 +128,7 @@ class LandEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
         return qs.defer('geom', 'geom_3d')
 
 
-class CompetenceEdgeList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = CompetenceEdge.objects.existing()
     filterform = CompetenceEdgeFilterSet
     mandatory_columns = ['id', 'checkbox', 'organization']
@@ -144,7 +144,7 @@ class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
     ] + AltimetryMixin.COLUMNS
 
 
-class CompetenceEdgeDetail(MapEntityDetail):
+class CompetenceEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = CompetenceEdge.objects.existing()
 
 
@@ -182,7 +182,7 @@ class CompetenceEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
         return qs.defer('geom', 'geom_3d')
 
 
-class WorkManagementEdgeList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = WorkManagementEdge.objects.existing()
     filterform = WorkManagementEdgeFilterSet
     mandatory_columns = ['id', 'checkbox', 'organization']
@@ -197,7 +197,7 @@ class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
     ] + AltimetryMixin.COLUMNS
 
 
-class WorkManagementEdgeDetail(MapEntityDetail):
+class WorkManagementEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = WorkManagementEdge.objects.existing()
 
 
@@ -235,7 +235,7 @@ class WorkManagementEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
         return qs.defer('geom', 'geom_3d')
 
 
-class SignageManagementEdgeList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = SignageManagementEdge.objects.existing()
     filterform = SignageManagementEdgeFilterSet
     mandatory_columns = ['id', 'checkbox', 'organization']
@@ -250,7 +250,7 @@ class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList
     ] + AltimetryMixin.COLUMNS
 
 
-class SignageManagementEdgeDetail(MapEntityDetail):
+class SignageManagementEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = SignageManagementEdge.objects.existing()
 
 

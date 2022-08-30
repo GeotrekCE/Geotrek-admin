@@ -26,7 +26,7 @@ from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateListMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DupicateDetailMixin
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -341,7 +341,7 @@ class CertificationTrailMixin(FormsetMixin):
     formset_class = CertificationTrailFormSet
 
 
-class TrailList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -369,7 +369,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
                                        )))
 
 
-class TrailDetail(MapEntityDetail):
+class TrailDetail(DupicateDetailMixin, MapEntityDetail):
     queryset = Trail.objects.existing()
 
     def get_context_data(self, *args, **kwargs):

@@ -19,8 +19,8 @@ from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin, DuplicateMixin,
-                                         DuplicateListMixin)
+from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin,
+                                         DuplicateMixin, DuplicateDetailMixin)
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -40,7 +40,7 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 logger = logging.getLogger(__name__)
 
 
-class TouristicContentList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class TouristicContentList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -64,7 +64,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     ]
 
 
-class TouristicContentDetail(CompletenessMixin, MapEntityDetail):
+class TouristicContentDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -189,7 +189,7 @@ class TouristicContentAPIViewSet(APIViewSet):
         return qs
 
 
-class TouristicEventList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class TouristicEventList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -217,7 +217,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         return qs.annotate(total_participants=Sum('participants__count'))
 
 
-class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
+class TouristicEventDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
     queryset = TouristicEvent.objects.existing().select_related('place', 'cancellation_reason').prefetch_related('participants')
 
     def get_context_data(self, *args, **kwargs):

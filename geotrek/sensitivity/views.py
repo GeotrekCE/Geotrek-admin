@@ -14,7 +14,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import GeometryType, Buffer, Area
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateListMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SensitiveAreaFilterSet
@@ -32,7 +32,7 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 logger = logging.getLogger(__name__)
 
 
-class SensitiveAreaList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
     queryset = SensitiveArea.objects.existing()
     filterform = SensitiveAreaFilterSet
     mandatory_columns = ['id', 'checkbox', 'species']
@@ -47,7 +47,7 @@ class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
     ]
 
 
-class SensitiveAreaDetail(MapEntityDetail):
+class SensitiveAreaDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = SensitiveArea.objects.existing()
 
     def get_context_data(self, *args, **kwargs):

@@ -284,9 +284,9 @@ class DuplicateMixin:
         return Response(response)
 
 
-class DuplicateListMixin:
-    def get_context_data(self):
-        context = super().get_context_data()
-        model = self.get_model()
-        context['duplicate_object'] = f'{model._meta.app_label}:{model._meta.model_name}-drf-duplicate-object'
+class DuplicateDetailMixin:
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        object = self.get_object()
+        context['duplicate_object'] = f'{object._meta.app_label}:{object._meta.model_name}-drf-duplicate-object'
         return context

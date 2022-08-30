@@ -5,7 +5,7 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, Ma
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateListMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -16,7 +16,7 @@ from .serializers import InfrastructureSerializer, InfrastructureAPIGeojsonSeria
     InfrastructureGeojsonSerializer
 
 
-class InfrastructureList(DuplicateListMixin, CustomColumnsMixin, MapEntityList):
+class InfrastructureList(CustomColumnsMixin, MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilterSet
     mandatory_columns = ['id', 'checkbox', 'name']
@@ -34,7 +34,7 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     ] + AltimetryMixin.COLUMNS
 
 
-class InfrastructureDetail(MapEntityDetail):
+class InfrastructureDetail(DuplicateDetailMixin, MapEntityDetail):
     queryset = Infrastructure.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
