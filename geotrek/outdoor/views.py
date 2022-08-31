@@ -21,10 +21,9 @@ from .serializers import SiteSerializer, CourseSerializer, CourseAPISerializer, 
 class SiteList(CustomColumnsMixin, MapEntityList):
     queryset = Site.objects.all()
     filterform = SiteFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['super_practices', 'date_update']
     searchable_columns = ['id', 'name']
-    unorderable_columns = ['checkbox']
 
 
 class SiteDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
@@ -140,10 +139,9 @@ class SiteAPIViewSet(APIViewSet):
 class CourseList(CustomColumnsMixin, MapEntityList):
     queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
     filterform = CourseFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['parent_sites', 'date_update']
     searchable_columns = ['id', 'name']
-    unorderable_columns = ['checkbox']
 
 
 class CourseDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):

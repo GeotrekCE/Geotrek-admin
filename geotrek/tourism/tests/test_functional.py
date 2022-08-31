@@ -113,8 +113,7 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
         return {
             'category': self.obj.category.label,
             'id': self.obj.pk,
-            'name': self.obj.name_display,
-            'checkbox': self.obj.checkbox_display,
+            'name': self.obj.name_display
         }
 
     def get_bad_data(self):
@@ -153,7 +152,7 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
             return
         with override_settings(COLUMNS_LISTS={'touristic_content_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'checkbox', 'name', 'type1', 'type2', 'eid'])
+                             ['id', 'name', 'type1', 'type2', 'eid'])
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns
@@ -251,8 +250,7 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             'end_date': '22/02/2202',
             'id': self.obj.pk,
             'name': self.obj.name_display,
-            'type': self.obj.type.type,
-            'checkbox': self.obj.checkbox_display,
+            'type': self.obj.type.type
         }
 
     def get_bad_data(self):
@@ -292,7 +290,7 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             return
         with override_settings(COLUMNS_LISTS={'touristic_event_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'checkbox', 'name', 'type', 'eid', 'themes'])
+                             ['id', 'name', 'type', 'eid', 'themes'])
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns

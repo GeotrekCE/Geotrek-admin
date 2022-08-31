@@ -28,9 +28,9 @@ from .serializers import DiveSerializer, DiveGeojsonSerializer, DiveAPIGeojsonSe
 class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = DiveFilterSet
     queryset = Dive.objects.existing()
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['levels', 'thumbnail']
-    unorderable_columns = ['checkbox', 'thumbnail']
+    unorderable_columns = ['thumbnail']
     searchable_columns = ['id', 'name']
 
 

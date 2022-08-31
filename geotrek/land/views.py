@@ -21,9 +21,8 @@ from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceE
 class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
     queryset = PhysicalEdge.objects.existing()
     filterform = PhysicalEdgeFilterSet
-    mandatory_columns = ['id', 'checkbox', 'physical_type']
+    mandatory_columns = ['id', 'physical_type']
     default_extra_columns = ['length', 'length_2d']
-    unorderable_columns = ['checkbox']
 
 
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
@@ -77,9 +76,8 @@ class PhysicalEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
 class LandEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = LandEdge.objects.existing()
     filterform = LandEdgeFilterSet
-    mandatory_columns = ['id', 'checkbox', 'land_type']
+    mandatory_columns = ['id', 'land_type']
     default_extra_columns = ['length', 'length_2d']
-    unorderable_columns = ['checkbox']
 
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
@@ -131,9 +129,8 @@ class LandEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
 class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = CompetenceEdge.objects.existing()
     filterform = CompetenceEdgeFilterSet
-    mandatory_columns = ['id', 'checkbox', 'organization']
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length', 'length_2d']
-    unorderable_columns = ['checkbox']
 
 
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
@@ -185,9 +182,8 @@ class CompetenceEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
 class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = WorkManagementEdge.objects.existing()
     filterform = WorkManagementEdgeFilterSet
-    mandatory_columns = ['id', 'checkbox', 'organization']
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length', 'length_2d']
-    unorderable_columns = ['checkbox']
 
 
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
@@ -238,9 +234,8 @@ class WorkManagementEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
 class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = SignageManagementEdge.objects.existing()
     filterform = SignageManagementEdgeFilterSet
-    mandatory_columns = ['id', 'checkbox', 'organization']
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length', 'length_2d']
-    unorderable_columns = ['checkbox']
 
 
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):

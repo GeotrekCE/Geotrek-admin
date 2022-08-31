@@ -86,7 +86,6 @@ class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedMod
 
 
 class TouristicContentSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
-    checkbox = rest_serializers.CharField(source='checkbox_display')
     name = rest_serializers.CharField(source='name_display')
     structure = rest_serializers.SlugRelatedField('name', read_only=True)
     themes = rest_serializers.CharField(source='themes_display')
@@ -161,7 +160,6 @@ class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSeri
 
 
 class TouristicEventSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
-    checkbox = rest_serializers.CharField(source='checkbox_display')
     name = rest_serializers.CharField(source='name_display')
     type = rest_serializers.SlugRelatedField('type', read_only=True)
     structure = rest_serializers.SlugRelatedField('name', read_only=True)

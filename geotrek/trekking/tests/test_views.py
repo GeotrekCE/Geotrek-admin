@@ -25,8 +25,8 @@ from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
-from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
-                                            RecordSourceFactory, TargetPortalFactory)
+from geotrek.common.tests.factories import (AttachmentFactory, AttachmentAccessibilityFactory,
+                                            ThemeFactory, LabelFactory,  RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure
@@ -53,7 +53,7 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
     extra_column_list = ['type', 'eid']
-    expected_column_list_extra = ['id', 'checkbox', 'name', 'type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
@@ -92,7 +92,6 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_datatables_attrs(self):
         return {
             'id': self.obj.pk,
-            'checkbox': self.obj.checkbox_display,
             'name': self.obj.name_display,
             'thumbnail': 'None',
             'type': self.obj.type.label
@@ -222,7 +221,7 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
     extra_column_list = ['type', 'eid']
-    expected_column_list_extra = ['id', 'checkbox', 'name', 'type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'name', 'type', 'eid']
     length = 141.42135623731
 
@@ -344,7 +343,6 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
             'id': self.obj.pk,
             'name': self.obj.name_display,
             'thumbnail': 'None',
-            'checkbox': self.obj.checkbox_display
         }
 
     def get_bad_data(self):
@@ -1440,7 +1438,7 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
     extra_column_list = ['type', 'eid']
-    expected_column_list_extra = ['id', 'checkbox', 'name', 'type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
@@ -1460,7 +1458,6 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
         return {
             'id': self.obj.pk,
             'name': self.obj.name_display,
-            'checkbox': self.obj.checkbox_display
         }
 
     def get_good_data(self):

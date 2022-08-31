@@ -58,9 +58,9 @@ class FlattenPicturesMixin:
 class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     filterform = TrekFilterSet
     queryset = Trek.objects.existing()
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
-    unorderable_columns = ['thumbnail', 'checkbox']
+    unorderable_columns = ['thumbnail']
     searchable_columns = ['id', 'name', 'departure', 'arrival']
 
 
@@ -285,9 +285,9 @@ class TrekAPIViewSet(APIViewSet):
 class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
     filterform = POIFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'thumbnail']
-    unorderable_columns = ['thumbnail', 'checkbox']
+    unorderable_columns = ['thumbnail']
     searchable_columns = ['id', 'name', ]
 
 
@@ -448,10 +448,9 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
 class ServiceList(CustomColumnsMixin, MapEntityList):
     queryset = Service.objects.existing()
     filterform = ServiceFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = []
     searchable_columns = ['id', 'name']
-    unorderable_columns = ['checkbox']
 
 
 class ServiceFormatList(MapEntityFormat, ServiceList):

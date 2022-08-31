@@ -142,7 +142,6 @@ class TrekRelationshipSerializer(serializers.ModelSerializer):
 
 
 class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    checkbox = serializers.CharField(source='checkbox_display')
     length_2d = serializers.ReadOnlyField()
     name = serializers.CharField(source='name_display')
     difficulty = serializers.SlugRelatedField('difficulty', read_only=True)
@@ -342,7 +341,6 @@ class ClosePOISerializer(TranslatedModelSerializer):
 
 
 class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    checkbox = serializers.CharField(source='checkbox_display')
     name = serializers.CharField(source='name_display')
     type = serializers.CharField(source='type_display')
     thumbnail = serializers.CharField(source='thumbnail_display')
@@ -389,7 +387,6 @@ class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer)
 
 
 class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    checkbox = serializers.CharField(source='checkbox_display')
     name = serializers.CharField(source='name_display')
     type = serializers.CharField(source='type_display')
 

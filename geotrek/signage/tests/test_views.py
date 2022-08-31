@@ -328,7 +328,7 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
     extra_column_list = ['type', 'eid']
-    expected_column_list_extra = ['id', 'checkbox', 'name', 'type', 'eid']
+    expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
 
     def get_expected_json_attrs(self):
@@ -361,8 +361,7 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
             'condition': self.obj.condition.label,
             'id': self.obj.pk,
             'name': self.obj.name_display,
-            'type': self.obj.type.label,
-            'checkbox': self.obj.checkbox_display,
+            'type': self.obj.type.label
         }
 
     def get_good_data(self):

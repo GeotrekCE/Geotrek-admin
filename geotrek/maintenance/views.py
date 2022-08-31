@@ -34,10 +34,9 @@ def _normalize_annotation_column_name(col_name):
 class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
     searchable_columns = ['id', 'name']
-    unorderable_columns = ['checkbox']
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):

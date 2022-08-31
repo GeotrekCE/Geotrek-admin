@@ -344,10 +344,9 @@ class CertificationTrailMixin(FormsetMixin):
 class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['departure', 'arrival', 'length']
     searchable_columns = ['id', 'name', 'departure', 'arrival', ]
-    unorderable_columns = ['checkbox']
 
 
 class TrailFormatList(MapEntityFormat, TrailList):

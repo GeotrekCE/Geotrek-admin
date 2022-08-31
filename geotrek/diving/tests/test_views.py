@@ -19,7 +19,7 @@ class DiveViewsTests(GeotrekAPITestCase, CommonTest):
         'coordinates': [-1.3630812, -5.9838563],
     }
     extra_column_list = ['depth', 'advice']
-    expected_column_list_extra = ['id', 'checkbox', 'name', 'depth', 'advice']
+    expected_column_list_extra = ['id', 'name', 'depth', 'advice']
     expected_column_formatlist_extra = ['id', 'depth', 'advice']
 
     def get_expected_json_attrs(self):
@@ -85,7 +85,6 @@ class DiveViewsTests(GeotrekAPITestCase, CommonTest):
             'levels': self.obj.levels_display,
             'name': self.obj.name_display,
             'thumbnail': 'None',
-            'checkbox': self.obj.checkbox_display
         }
 
     def get_bad_data(self):

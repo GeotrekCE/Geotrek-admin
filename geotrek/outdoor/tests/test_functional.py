@@ -84,7 +84,6 @@ class SiteViewsTests(GeotrekAPITestCase, CommonTest):
         return {
             'date_update': '17/03/2020 00:00:00',
             'id': self.obj.pk,
-            'checkbox': self.obj.checkbox_display,
             'name': self.obj.name_display,
             'super_practices': self.obj.super_practices_display
         }
@@ -95,7 +94,7 @@ class SiteViewsTests(GeotrekAPITestCase, CommonTest):
             return
         with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'checkbox', 'name', 'orientation', 'ratings', 'period'])
+                             ['id', 'name', 'orientation', 'ratings', 'period'])
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns
@@ -157,7 +156,6 @@ class CourseViewsTests(GeotrekAPITestCase, CommonTest):
         return {
             'date_update': '17/03/2020 00:00:00',
             'id': self.obj.pk,
-            'checkbox': self.obj.checkbox_display,
             'name': self.obj.name_display,
             'parent_sites': self.obj.parent_sites_display,
         }
@@ -182,7 +180,7 @@ class CourseViewsTests(GeotrekAPITestCase, CommonTest):
             return
         with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'checkbox', 'name', 'equipment', 'ratings', 'eid'])
+                             ['id', 'name', 'equipment', 'ratings', 'eid'])
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns

@@ -32,10 +32,9 @@ class LineMixin(FormsetMixin):
 class SignageList(CustomColumnsMixin, MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['code', 'type', 'condition']
     searchable_columns = ['id', 'name', 'code']
-    unorderable_columns = ['checkbox']
 
 
 class SignageFormatList(MapEntityFormat, SignageList):

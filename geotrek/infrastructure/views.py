@@ -19,10 +19,9 @@ from .serializers import InfrastructureSerializer, InfrastructureAPIGeojsonSeria
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
     queryset = Infrastructure.objects.existing()
     filterform = InfrastructureFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'condition', 'cities']
     searchable_columns = ['id', 'name']
-    unorderable_columns = ['checkbox']
 
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):

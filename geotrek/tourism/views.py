@@ -43,10 +43,9 @@ logger = logging.getLogger(__name__)
 class TouristicContentList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicContent.objects.existing()
     filterform = TouristicContentFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['category']
     searchable_columns = ['id', 'name']
-    unorderable_columns = ['checkbox']
 
     @property
     def categories_list(self):
@@ -192,10 +191,9 @@ class TouristicContentAPIViewSet(APIViewSet):
 class TouristicEventList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicEvent.objects.existing()
     filterform = TouristicEventFilterSet
-    mandatory_columns = ['id', 'checkbox', 'name']
+    mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'begin_date', 'end_date']
     searchable_columns = ['id', 'name']
-    unorderable_columns = ['checkbox']
 
 
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):

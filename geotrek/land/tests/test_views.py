@@ -73,7 +73,7 @@ class PhysicalEdgeViewsTest(CommonTest):
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
     extra_column_list = ['eid']
-    expected_column_list_extra = ['id', 'checkbox', 'physical_type', 'eid']
+    expected_column_list_extra = ['id', 'physical_type', 'eid']
     expected_column_formatlist_extra = ['id', 'physical_type', 'eid']
 
     def get_good_data(self):
@@ -88,8 +88,7 @@ class PhysicalEdgeViewsTest(CommonTest):
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
             'physical_type': self.obj.physical_type_display,
-            'length_2d': round(self.obj.length, 1),
-            'checkbox': self.obj.checkbox_display
+            'length_2d': round(self.obj.length, 1)
         }
 
 
@@ -100,7 +99,7 @@ class LandEdgeViewsTest(CommonTest):
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
     extra_column_list = ['owner', 'agreement']
-    expected_column_list_extra = ['id', 'checkbox', 'land_type', 'owner', 'agreement']
+    expected_column_list_extra = ['id', 'land_type', 'owner', 'agreement']
     expected_column_formatlist_extra = ['id', 'owner', 'agreement']
 
     def get_good_data(self):
@@ -115,8 +114,7 @@ class LandEdgeViewsTest(CommonTest):
             'id': self.obj.pk,
             'land_type': self.obj.land_type_display,
             'length': round(self.obj.length, 1),
-            'length_2d': round(self.obj.length, 1),
-            'checkbox': self.obj.checkbox_display
+            'length_2d': round(self.obj.length, 1)
         }
 
 
@@ -127,7 +125,7 @@ class CompetenceEdgeViewsTest(CommonTest):
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
     extra_column_list = ['eid']
-    expected_column_list_extra = ['id', 'checkbox', 'organization', 'eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
     expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
@@ -142,8 +140,7 @@ class CompetenceEdgeViewsTest(CommonTest):
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
             'organization': self.obj.organization_display,
-            'length_2d': round(self.obj.length, 1),
-            'checkbox': self.obj.checkbox_display
+            'length_2d': round(self.obj.length, 1)
         }
 
 
@@ -154,7 +151,7 @@ class WorkManagementEdgeViewsTest(CommonTest):
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
     extra_column_list = ['eid']
-    expected_column_list_extra = ['id', 'checkbox', 'organization', 'eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
     expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
@@ -169,8 +166,7 @@ class WorkManagementEdgeViewsTest(CommonTest):
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
             'organization': self.obj.organization_display,
-            'length_2d': round(self.obj.length, 1),
-            'checkbox': self.obj.checkbox_display
+            'length_2d': round(self.obj.length, 1)
         }
 
 
@@ -181,7 +177,7 @@ class SignageManagementEdgeViewsTest(CommonTest):
     userfactory = PathManagerFactory
     get_expected_json_attrs = None  # Disable API tests
     extra_column_list = ['eid']
-    expected_column_list_extra = ['id', 'checkbox', 'organization', 'eid']
+    expected_column_list_extra = ['id', 'organization', 'eid']
     expected_column_formatlist_extra = ['id', 'organization', 'eid']
 
     def get_good_data(self):
@@ -196,6 +192,5 @@ class SignageManagementEdgeViewsTest(CommonTest):
             'id': self.obj.pk,
             'length': round(self.obj.length, 1),
             'organization': self.obj.organization_display,
-            'length_2d': round(self.obj.length, 1),
-            'checkbox': self.obj.checkbox_display
+            'length_2d': round(self.obj.length, 1)
         }

@@ -16,7 +16,6 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
 
 
 class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    checkbox = serializers.CharField(source='checkbox_display')
     name = serializers.CharField(source='name_display')
     type = serializers.CharField(source='type_display')
     condition = serializers.SlugRelatedField('label', read_only=True)
