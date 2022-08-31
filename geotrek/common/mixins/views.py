@@ -3,7 +3,8 @@ from io import BytesIO
 from urllib.parse import urljoin
 
 from django.conf import settings
-from django.http import HttpResponseNotFound, HttpResponse
+from django.contrib import messages
+from django.http import HttpResponseNotFound, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.functional import classproperty
@@ -13,13 +14,13 @@ from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for
 from pdfimpose import PageList
 
+from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import TargetPortal, FileType, Attachment
 from geotrek.common.utils import logger
 from geotrek.common.utils.portals import smart_get_template_by_portal
 
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
 
 
 class CustomColumnsMixin:
@@ -258,30 +259,25 @@ class CompletenessMixin:
 
 
 class DuplicateMixin:
-    @action(methods=['POST'], detail=False, renderer_classes=[JSONRenderer])
+    @action(methods=['GET'], detail=False, url_path=r'duplicate_object/(?P<obj_pk>\w+)',
+            renderer_classes=[JSONRenderer])
     def duplicate_object(self, request, *args, **kwargs):
+        obj_pk = kwargs.get('obj_pk')
         try:
             model_name = self.model._meta.model_name
             app_name = self.model._meta.app_label
-            ids_duplicate = request.POST.getlist(f'{model_name}[]')
-            objects = self.model.objects.filter(pk__in=ids_duplicate)
+            obj = self.model.objects.get(pk=obj_pk)
             if not request.user.has_perm(f'{app_name}.change_{model_name}'):
-                raise Exception(f'''{_("You don't have the right to duplicate these ")}{self.model._meta.verbose_name_plural}''')
-            errors_obj = []
-            for obj in objects:
-                if hasattr(obj, 'same_structure') and not (obj.same_structure(request.user) and request.user.has_perm('authent.can_bypass_structure')):
-                    errors_obj.append(str(obj.pk))
-                else:
-                    obj.duplicate()
-            if errors_obj:
-                raise Exception(
-                    f'''{_("You don't have the right to duplicate these ")}
-                        {self.model._meta.verbose_name_plural} id : {", ".join(errors_obj)},
-                        this object is not from the same structure.''')
-            response = {'success': _("Duplicated successfully")}
+                raise Exception(_(f"You don't have the right to duplicate this {self.model._meta.verbose_name}"))
+            if hasattr(obj, 'same_structure') and not (obj.same_structure(request.user) and request.user.has_perm('authent.can_bypass_structure')):
+                raise Exception(_(f"You don't have the right to duplicate this. "
+                                  f"This object is not from the same structure."))
+            else:
+                obj.duplicate()
+                messages.success(request, _(f"{self.model._meta.verbose_name} has been duplicated successfully"))
         except Exception as exc:
-            response = {'error': '%s' % exc, }
-        return Response(response)
+            messages.error(request, exc)
+        return HttpResponseRedirect(obj.get_detail_url())
 
 
 class DuplicateDetailMixin:
