@@ -25,8 +25,8 @@ from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
-from geotrek.common.tests.factories import (AttachmentFactory, AttachmentAccessibilityFactory,
-                                            ThemeFactory, LabelFactory,  RecordSourceFactory, TargetPortalFactory)
+from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory, RecordSourceFactory,
+                                            TargetPortalFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure

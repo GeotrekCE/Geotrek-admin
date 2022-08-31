@@ -79,4 +79,3 @@ def clone_object(obj, attrs={}):
     for accessibility_attachment in AccessibilityAttachment.objects.filter(object_id=obj.pk):
         clone_attachment(accessibility_attachment, clone, 'attachment_accessibility_file')
     return clone
-

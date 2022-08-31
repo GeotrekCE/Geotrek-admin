@@ -269,8 +269,8 @@ class DuplicateMixin:
             if not request.user.has_perm(f'{app_name}.change_{model_name}'):
                 raise Exception(_(f"You don't have the right to duplicate this {self.model._meta.verbose_name}"))
             if hasattr(obj, 'same_structure') and not (obj.same_structure(request.user) and request.user.has_perm('authent.can_bypass_structure')):
-                raise Exception(_(f"You don't have the right to duplicate this. "
-                                  f"This object is not from the same structure."))
+                raise Exception(_("You don't have the right to duplicate this. "
+                                  "This object is not from the same structure."))
             else:
                 obj = obj.duplicate()
                 messages.success(request, _(f"{self.model._meta.verbose_name} has been duplicated successfully"))

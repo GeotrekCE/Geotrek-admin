@@ -98,7 +98,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         )
 
         self.assertEqual(response_duplicate.status_code, 302)
-        response = self.client.get(response_duplicate['location'])
+        self.client.get(response_duplicate['location'])
         self.assertEqual(self.model.objects.count(), 2)
         if 'name' in [field.name for field in self.model._meta.get_fields()]:
             self.assertEqual(self.model.objects.filter(name__endswith='(copy)').count(), 2)
@@ -132,6 +132,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertEqual(msg[0],
                          "You don't have the right to duplicate this. This object is not from the same structure.")
         self.assertEqual(self.model.objects.count(), 1)
+
         perm = Permission.objects.get(codename='can_bypass_structure')
         self.user.user_permissions.add(perm)
         response = self.client.get(
