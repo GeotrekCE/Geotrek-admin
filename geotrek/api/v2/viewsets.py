@@ -20,7 +20,7 @@ class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [renderers.JSONRenderer, ]
-    lookup_value_regex = '\d+'
+    lookup_value_regex = r'\d+'
 
     def get_serializer_context(self):
         return {
