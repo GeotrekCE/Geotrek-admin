@@ -14,7 +14,6 @@ from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for
 from pdfimpose import PageList
 
-from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import TargetPortal, FileType, Attachment
 from geotrek.common.utils import logger
 from geotrek.common.utils.portals import smart_get_template_by_portal
@@ -273,7 +272,7 @@ class DuplicateMixin:
                 raise Exception(_(f"You don't have the right to duplicate this. "
                                   f"This object is not from the same structure."))
             else:
-                obj.duplicate()
+                obj = obj.duplicate()
                 messages.success(request, _(f"{self.model._meta.verbose_name} has been duplicated successfully"))
         except Exception as exc:
             messages.error(request, exc)

@@ -2,14 +2,13 @@ import datetime
 import hashlib
 import os
 import shutil
-import uuid
 
 from PIL.Image import DecompressionBombError
 from django.conf import settings
 from django.core.mail import mail_managers
 from django.db import models
 from django.db.models import Q,  Max, Count
-from django.db.models.deletion import Collector
+
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.formats import date_format
@@ -436,34 +435,7 @@ class AddPropertyMixin:
         setattr(cls, '%s_verbose_name' % name, verbose_name)
 
 
-class DuplicateModelMixin(CheckBoxActionMixin):
+class DuplicateModelMixin(object):
     def duplicate(self):
-        """
-        Duplicate all related objects of obj setting
-        field to value. If one of the duplicate
-        objects has an FK to another duplicate object
-        does not update that as well.
-        """
-        from geotrek.core.models import Topology
-
-        collector = Collector(using='default')
-        collector.collect([self])
-        collector.sort()
-        related_models = [key for key in collector.data.keys() if key is not Topology]
-        # Sometimes it's good enough just to save in reverse deletion order.
-        duplicate_order = reversed(related_models)
-        for model in duplicate_order:
-            # Replace each `sub_obj` with a duplicate.
-            sub_objects = collector.data[model]
-            for obj in sub_objects:
-                # Duplicate the object and save it.
-                obj.id = None
-                obj.pk = None
-                obj.uuid = uuid.uuid4()
-                if 'name' in [field.name for field in self.__class__._meta.get_fields()]:
-                    obj.name = f'{self.name} (copy)'
-                obj.save()
-                obj.refresh_from_db()
-                if issubclass(self.__class__, Topology) and settings.TREKKING_TOPOLOGY_ENABLED:
-                    new_topology = Topology.objects.create()
-                    new_topology.mutate(self.topo_object, delete=False)
+        from geotrek.common.utils.helpers import clone_object
+        return clone_object(self)

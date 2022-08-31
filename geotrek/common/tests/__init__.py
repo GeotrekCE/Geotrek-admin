@@ -16,7 +16,9 @@ from django.urls.exceptions import NoReverseMatch
 # Workaround https://code.djangoproject.com/ticket/22865
 from freezegun import freeze_time
 
-from geotrek.common.models import FileType  # NOQA
+from geotrek.common.models import Attachment, AccessibilityAttachment, FileType  # NOQA
+from geotrek.common.tests.factories import AttachmentFactory, AttachmentAccessibilityFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.registry import app_settings
@@ -112,6 +114,14 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         structure = StructureFactory.create()
         obj_1 = self.modelfactory.create(structure=structure)
         obj_1.refresh_from_db()
+        AttachmentFactory.create(content_object=obj_1,
+                                 attachment_file=get_dummy_uploaded_image())
+
+        attachments_accessibility = 'attachments_accessibility' in [field.name for field in obj_1._meta.get_fields()]
+
+        if attachments_accessibility:
+            AttachmentAccessibilityFactory.create(content_object=obj_1,
+                                                  attachment_accessibility_file=get_dummy_uploaded_image())
 
         response_duplicate = self.client.get(
             reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}-drf-duplicate-object',
@@ -129,7 +139,12 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
                     kwargs={"obj_pk": obj_1.pk})
         )
         msg = [str(message) for message in messages.get_messages(response.wsgi_request)]
-
+        self.assertEqual(self.model.objects.count(), 2)
+        self.assertEqual(Attachment.objects.filter(object_id=obj_1.pk).count(), 1)
+        self.assertEqual(Attachment.objects.filter(object_id=self.model.objects.last().pk).count(), 1)
+        if attachments_accessibility:
+            self.assertEqual(AccessibilityAttachment.objects.filter(object_id=obj_1.pk).count(), 1)
+            self.assertEqual(AccessibilityAttachment.objects.filter(object_id=self.model.objects.last().pk).count(), 1)
         self.assertEqual(msg[1],
                          f"{self.model._meta.verbose_name} has been duplicated successfully")
         self.assertEqual(response_duplicate.status_code, 302)
