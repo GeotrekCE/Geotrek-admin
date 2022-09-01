@@ -207,6 +207,19 @@ For instance with SERVER_NAME=geotrek.local (default value)
 		'url': 'http://geotrek.local:8000'
 	}
 
+Setup to use screamshotter-related features locally
+---------------------------------------------------
+
+Use the domain defined in SERVER_NAME in your .env to reach your local geotrek admin web instance. By default the address is `http://geotrek.local:8000`.
+
+Update the `/etc/hosts` on your machine to resolve `geotrek.local` on `127.0.0.1`.
+
+::
+
+	$ cat /etc/hosts
+	127.0.0.1	geotrek.local
+	127.0.0.1	localhost
+
 Database reset
 --------------
 
