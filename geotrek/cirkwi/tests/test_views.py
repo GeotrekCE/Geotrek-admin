@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 
 from django.utils.timezone import utc, make_aware
 
-from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
+from geotrek.common.tests.factories import AttachmentFactory, RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
 
 from geotrek.authent.tests.factories import StructureFactory
@@ -26,6 +26,12 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         cls.trek.date_insert = cls.creation
         cls.trek.save()
         TrekFactory.create(published=False, paths=[cls.path])
+        portal_1 = TargetPortalFactory()
+        portal_2 = TargetPortalFactory()
+        source_1 = RecordSourceFactory()
+        source_2 = RecordSourceFactory()
+        cls.trek.portal.set([portal_1, portal_2])
+        cls.trek.source.set([source_1, source_2])
         POIFactory.create(published=False, paths=[cls.path])
 
     def setUp(self):
@@ -69,6 +75,21 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
             '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
+            '<tracking_information>'
+            '<portals>'
+            '<portal id="3" nom="Target Portal 2">'
+            '</portal>'
+            '<portal id="4" nom="Target Portal 3">'
+            '</portal>'
+            '</portals>'
+            '<sources>'
+            '<source id="1" nom="Record source 0">'
+            '</source>'
+            '<source id="2" nom="Record source 1">'
+            '</source>'
+            '</sources>'
+            '<structure id="4" nom="My structure"></structure>'
+            '</tracking_information>'
             '<pois>'
             '<poi date_creation="1388534400" date_modification="{poi_date_update}" id_poi="{poi_pk}">'
             '<informations>'
@@ -165,6 +186,21 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
             '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
+            '<tracking_information>'
+            '<portals>'
+            '<portal id="3" nom="Target Portal 2">'
+            '</portal>'
+            '<portal id="4" nom="Target Portal 3">'
+            '</portal>'
+            '</portals>'
+            '<sources>'
+            '<source id="1" nom="Record source 0">'
+            '</source>'
+            '<source id="2" nom="Record source 1">'
+            '</source>'
+            '</sources>'
+            '<structure id="4" nom="My structure"></structure>'
+            '</tracking_information>'
             '</circuit>'
             '</circuits>'.format(**attrs))
 

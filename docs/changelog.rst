@@ -21,6 +21,7 @@ CHANGELOG
 - Change translation for Tag in Feedback module
 - Change concatenation of null value for multiples values from '*' to '_' on sql views
 - Prevent "Internal Error" on API v2 when wrong url parameter is provided
+- Add 'source', 'portal' and 'structure' to Cirkwi trek exports (#3220)
 
 **New ci**
 
