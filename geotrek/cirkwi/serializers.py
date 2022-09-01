@@ -163,6 +163,14 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                 self.serialize_field('tag_public', '', {'id': str(tag.eid), 'nom': tag.name})
             self.xml.endElement('tags_publics')
 
+    def serialize_labels(self, trek):
+        for label in trek.labels.all():
+            value = plain_text(label.advice)
+            self.xml.startElement('information_complementaire', {})
+            self.serialize_field('titre', label.name)
+            self.serialize_field('description', value)
+            self.xml.endElement('information_complementaire')
+
     # TODO: parking location (POI?), points_reference
     def serialize(self, treks):
         self.xml.startDocument()
@@ -185,6 +193,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                     self.xml.startElement('informations_complementaires', {})
                     for name in self.ADDITIONNAL_INFO:
                         self.serialize_additionnal_info(trek, name)
+                    self.serialize_labels(trek)
                     self.xml.endElement('informations_complementaires')
                 self.serialize_tags(trek)
                 self.xml.endElement('information')
