@@ -26,12 +26,12 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         cls.trek.date_insert = cls.creation
         cls.trek.save()
         TrekFactory.create(published=False, paths=[cls.path])
-        portal_1 = TargetPortalFactory()
-        portal_2 = TargetPortalFactory()
-        source_1 = RecordSourceFactory()
-        source_2 = RecordSourceFactory()
-        cls.trek.portal.set([portal_1, portal_2])
-        cls.trek.source.set([source_1, source_2])
+        cls.portal_1 = TargetPortalFactory()
+        cls.portal_2 = TargetPortalFactory()
+        cls.source_1 = RecordSourceFactory()
+        cls.source_2 = RecordSourceFactory()
+        cls.trek.portal.set([cls.portal_1, cls.portal_2])
+        cls.trek.source.set([cls.source_1, cls.source_2])
         POIFactory.create(published=False, paths=[cls.path])
 
     def setUp(self):
@@ -77,18 +77,18 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
             '<tracking_information>'
             '<portals>'
-            '<portal id="3" nom="Target Portal 2">'
+            f'<portal id="{self.portal_1.pk}" nom="{self.portal_1.name}">'
             '</portal>'
-            '<portal id="4" nom="Target Portal 3">'
+            f'<portal id="{self.portal_2.pk}" nom="{self.portal_2.name}">'
             '</portal>'
             '</portals>'
             '<sources>'
-            '<source id="1" nom="Record source 0">'
+            f'<source id="{self.source_1.pk}" nom="{self.source_1.name}">'
             '</source>'
-            '<source id="2" nom="Record source 1">'
+            f'<source id="{self.source_2.pk}" nom="{self.source_2.name}">'
             '</source>'
             '</sources>'
-            '<structure id="4" nom="My structure"></structure>'
+            f'<structure id="{self.trek.structure.pk}" nom="My structure"></structure>'
             '</tracking_information>'
             '<pois>'
             '<poi date_creation="1388534400" date_modification="{poi_date_update}" id_poi="{poi_pk}">'
@@ -188,18 +188,18 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
             '<tracking_information>'
             '<portals>'
-            '<portal id="3" nom="Target Portal 2">'
+            f'<portal id="{self.portal_1.pk}" nom="{self.portal_1.name}">'
             '</portal>'
-            '<portal id="4" nom="Target Portal 3">'
+            f'<portal id="{self.portal_2.pk}" nom="{self.portal_2.name}">'
             '</portal>'
             '</portals>'
             '<sources>'
-            '<source id="1" nom="Record source 0">'
+            f'<source id="{self.source_1.pk}" nom="{self.source_1.name}">'
             '</source>'
-            '<source id="2" nom="Record source 1">'
+            f'<source id="{self.source_2.pk}" nom="{self.source_2.name}">'
             '</source>'
             '</sources>'
-            '<structure id="4" nom="My structure"></structure>'
+            f'<structure id="{self.trek.structure.pk}" nom="My structure"></structure>'
             '</tracking_information>'
             '</circuit>'
             '</circuits>'.format(**attrs))
