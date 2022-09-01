@@ -13,7 +13,7 @@ CHANGELOG
 - Add file type to attachments in API v2 (#3189)
 - Add possibility to use different type of file with import form
 - Add setting MAX_CHARACTERS for rich text fields with Mapentity 8.2.1 (#2901)
-- Set map resizable with Mapentity 8.2.1 (#3162, #3164)
+- Set map resizable with Mapentity 8.2.1 (#3162)
 
 **Minor improvements**
 
@@ -21,7 +21,7 @@ CHANGELOG
 - Change translation for Tag in Feedback module
 - Change concatenation of null value for multiples values from '*' to '_' on sql views
 - Prevent "Internal Error" on API v2 when wrong url parameter is provided
-- Add 'source', 'portal', 'labels' and 'structure' to Cirkwi trek exports (#3220)
+- Add 'source', 'portal', 'labels' and 'structure' to Cirkwi trek exports (#3220, #3164)
 
 **New ci**
 
