@@ -13,7 +13,7 @@ CHANGELOG
 - Add file type to attachments in API v2 (#3189)
 - Add possibility to use different type of file with import form
 - Add setting MAX_CHARACTERS for rich text fields with Mapentity 8.2.1 (#2901)
-- Set map resizable with Mapentity 8.2.1 (#3162)
+- Set map resizable with Mapentity 8.2.1 (#3162, #3164)
 
 **Minor improvements**
 
