@@ -38,3 +38,7 @@ MIDDLEWARE += (  # NoQA: F821
 
 LOGGING['loggers']['geotrek']['level'] = 'DEBUG'  # NoQA: F821
 LOGGING['loggers']['']['level'] = 'DEBUG'  # NoQA: F821
+
+SYNC_RANDO_OPTIONS = {
+    'url': 'http://geotrek.local:8000'  # Mandatory for dev mode. Must point to the same domain than SERVER_NAME in .env
+}
