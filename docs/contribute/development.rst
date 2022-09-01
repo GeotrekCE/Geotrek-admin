@@ -192,6 +192,33 @@ Launch tests
 
 Pictures of the problem and videos are generated in cypress/videos and cypress/screenshots
 
+Setup to run rando synchronization locally
+------------------------------------------
+
+(sync rando is only relevant for an admin paired with geotrek rando v2)
+
+In your django settings you must set the 'url' key of SYNC_RANDO_OPTIONS to use the same domain as defined by SERVER_NAME in your .env.
+
+For instance with SERVER_NAME=geotrek.local (default value)
+
+::
+
+	SYNC_RANDO_OPTIONS = {
+		'url': 'http://geotrek.local:8000'
+	}
+
+Setup to use screamshotter-related features locally
+---------------------------------------------------
+
+Use the domain defined in SERVER_NAME in your .env to reach your local geotrek admin web instance. By default the address is `http://geotrek.local:8000`.
+
+Update the `/etc/hosts` on your machine to resolve `geotrek.local` on `127.0.0.1`.
+
+::
+
+	$ cat /etc/hosts
+	127.0.0.1	geotrek.local
+	127.0.0.1	localhost
 
 Database reset
 --------------

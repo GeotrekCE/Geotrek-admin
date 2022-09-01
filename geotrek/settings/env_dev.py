@@ -9,7 +9,7 @@ import os
 # We change 'var/extra_locale' to 'geotrek/locale'
 
 if 'makemessages' in sys.argv:
-    LOCALE_PATHS = (os.path.join(PROJECT_DIR, 'locale'),)
+    LOCALE_PATHS = (os.path.join(PROJECT_DIR, 'locale'),)  # NoQA: F821
 
 DEBUG = True
 
@@ -23,18 +23,22 @@ INSTALLED_APPS = (
     'django_extensions',
     'debug_toolbar',
     'drf_yasg',
-) + INSTALLED_APPS
+) + INSTALLED_APPS  # NoQA: F821
 
 INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()
 
 ALLOWED_HOSTS = ['*']
 
-MIDDLEWARE += (
+MIDDLEWARE += (  # NoQA: F821
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 #
 # Use some default tiles
 # ..........................
 
-LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
-LOGGING['loggers']['']['level'] = 'DEBUG'
+LOGGING['loggers']['geotrek']['level'] = 'DEBUG'  # NoQA: F821
+LOGGING['loggers']['']['level'] = 'DEBUG'  # NoQA: F821
+
+SYNC_RANDO_OPTIONS = {
+    'url': 'http://geotrek.local:8000'  # Mandatory for dev mode. Must point to the same domain than SERVER_NAME in .env
+}
