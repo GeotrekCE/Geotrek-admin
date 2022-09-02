@@ -19,8 +19,7 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin, DuplicateMixin,
-                                         DuplicateDetailMixin)
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
@@ -100,7 +99,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         return response
 
 
-class TrekDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
+class TrekDetail(CompletenessMixin, MapEntityDetail):
     queryset = Trek.objects.existing().select_related('topo_object')
 
     @property
@@ -236,7 +235,7 @@ class TrekMeta(MetaMixin, DetailView):
     template_name = 'trekking/trek_meta.html'
 
 
-class TrekViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class TrekViewSet(GeotrekMapentityViewSet):
     model = Trek
     serializer_class = TrekSerializer
     geojson_serializer_class = TrekGeojsonSerializer
@@ -329,7 +328,7 @@ class POIFormatList(MapEntityFormat, POIList):
             yield poi
 
 
-class POIDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
+class POIDetail(CompletenessMixin, MapEntityDetail):
     queryset = POI.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -379,7 +378,7 @@ class WebLinkCreatePopup(CreateView):
         """ % (escape(form.instance._get_pk_val()), escape(form.instance)))
 
 
-class POIViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class POIViewSet(GeotrekMapentityViewSet):
     model = POI
     serializer_class = POISerializer
     geojson_serializer_class = POIGeojsonSerializer
@@ -460,7 +459,7 @@ class ServiceFormatList(MapEntityFormat, ServiceList):
     ] + AltimetryMixin.COLUMNS
 
 
-class ServiceDetail(DuplicateDetailMixin, MapEntityDetail):
+class ServiceDetail(MapEntityDetail):
     queryset = Service.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -491,7 +490,7 @@ class ServiceDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class ServiceViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class ServiceViewSet(GeotrekMapentityViewSet):
     model = Service
     serializer_class = ServiceSerializer
     geojson_serializer_class = ServiceGeojsonSerializer

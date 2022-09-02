@@ -10,7 +10,7 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from .filters import SignageFilterSet, BladeFilterSet
@@ -47,7 +47,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
     ] + AltimetryMixin.COLUMNS
 
 
-class SignageDetail(DuplicateDetailMixin, MapEntityDetail):
+class SignageDetail(MapEntityDetail):
     queryset = Signage.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -82,7 +82,7 @@ class SignageDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class SignageViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class SignageViewSet(GeotrekMapentityViewSet):
     model = Signage
     serializer_class = SignageSerializer
     geojson_serializer_class = SignageGeojsonSerializer

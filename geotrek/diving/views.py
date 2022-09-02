@@ -11,8 +11,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin, DuplicateMixin,
-                                         DuplicateDetailMixin)
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -46,7 +45,7 @@ class DiveFormatList(MapEntityFormat, DiveList):
     ]
 
 
-class DiveDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
+class DiveDetail(CompletenessMixin, MapEntityDetail):
     queryset = Dive.objects.existing()
 
     def dispatch(self, *args, **kwargs):
@@ -141,7 +140,7 @@ class DiveMeta(MetaMixin, DetailView):
     template_name = 'diving/dive_meta.html'
 
 
-class DiveViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class DiveViewSet(GeotrekMapentityViewSet):
     model = Dive
     serializer_class = DiveSerializer
     geojson_serializer_class = DiveGeojsonSerializer

@@ -19,8 +19,7 @@ from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, MetaMixin,
-                                         DuplicateMixin, DuplicateDetailMixin)
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -63,7 +62,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     ]
 
 
-class TouristicContentDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
+class TouristicContentDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -154,7 +153,7 @@ class TouristicContentMeta(MetaMixin, DetailView):
     template_name = 'tourism/touristiccontent_meta.html'
 
 
-class TouristicContentViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class TouristicContentViewSet(GeotrekMapentityViewSet):
     model = TouristicContent
     serializer_class = TouristicContentSerializer
     geojson_serializer_class = TouristicContentGeojsonSerializer
@@ -215,7 +214,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         return qs.annotate(total_participants=Sum('participants__count'))
 
 
-class TouristicEventDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
+class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicEvent.objects.existing().select_related('place', 'cancellation_reason').prefetch_related('participants')
 
     def get_context_data(self, *args, **kwargs):
@@ -293,7 +292,7 @@ class TouristicEventMeta(MetaMixin, DetailView):
     template_name = 'tourism/touristicevent_meta.html'
 
 
-class TouristicEventViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class TouristicEventViewSet(GeotrekMapentityViewSet):
     model = TouristicEvent
     serializer_class = TouristicEventSerializer
     geojson_serializer_class = TouristicEventGeojsonSerializer

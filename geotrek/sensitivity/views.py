@@ -14,7 +14,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import GeometryType, Buffer, Area
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SensitiveAreaFilterSet
@@ -46,7 +46,7 @@ class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
     ]
 
 
-class SensitiveAreaDetail(DuplicateDetailMixin, MapEntityDetail):
+class SensitiveAreaDetail(MapEntityDetail):
     queryset = SensitiveArea.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -95,7 +95,7 @@ class SensitiveAreaDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class SensitiveAreaViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class SensitiveAreaViewSet(GeotrekMapentityViewSet):
     model = SensitiveArea
     serializer_class = SensitiveAreaSerializer
     geojson_serializer_class = SensitiveAreaGeojsonSerializer

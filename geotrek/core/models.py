@@ -23,17 +23,15 @@ from geotrek.common.functions import Length
 from geotrek.core.managers import PathManager, PathInvisibleManager, TopologyManager, PathAggregationManager, \
     TrailManager
 from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,
-                                          CheckBoxActionMixin, DuplicateModelMixin)
-from geotrek.common.utils import classproperty, sqlfunction, simplify_coords, uniquify
-
+                                          CheckBoxActionMixin, GeotrekMapEntityMixin)
+from geotrek.common.utils import classproperty, simplify_coords, sqlfunction, uniquify
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 logger = logging.getLogger(__name__)
 
 
-class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated, ClusterableModel):
     """ Path model. Spatial indexes disabled because managed in Meta.indexes """
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
@@ -116,7 +114,7 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEnti
     class Meta:
         verbose_name = _("Path")
         verbose_name_plural = _("Paths")
-        permissions = MapEntityMixin._meta.permissions + [
+        permissions = GeotrekMapEntityMixin._meta.permissions + [
             ("add_draft_path", "Can add draft Path"),
             ("change_draft_path", "Can change draft Path"),
             ("delete_draft_path", "Can delete draft Path"),
@@ -358,7 +356,7 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEnti
         return None
 
 
-class Topology(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
+class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
                TimeStampedModelMixin, NoDeleteMixin, ClusterableModel):
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
@@ -912,7 +910,7 @@ class Network(StructureOrNoneRelated):
         return self.network
 
 
-class Trail(MapEntityMixin, Topology, StructureRelated):
+class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Name"), max_length=64)
     category = models.ForeignKey(

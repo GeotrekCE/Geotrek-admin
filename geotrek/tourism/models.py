@@ -16,14 +16,14 @@ from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
-                                          PicturesMixin, PublishableMixin, TimeStampedModelMixin, DuplicateModelMixin)
+                                          PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import Topology
 from geotrek.tourism.managers import TouristicContentTypeFilteringManager, TouristicContentType1Manager, \
     TouristicContentType2Manager, TouristicContentManager, TouristicEventManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-from mapentity.models import MapEntityMixin
+
 from mapentity.serializers import plain_text
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -222,7 +222,7 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _("Second list types")
 
 
-class TouristicContent(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin,
+class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
                        StructureRelated, TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
@@ -358,7 +358,7 @@ class TouristicEventPlace(TimeStampedModelMixin):
         return self.name
 
 
-class TouristicEvent(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin,
+class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
                      StructureRelated, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
     """

@@ -12,8 +12,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin,
-                                          TimeStampedModelMixin, DuplicateModelMixin)
+from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
@@ -26,7 +25,6 @@ from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-from mapentity.models import MapEntityMixin
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -111,8 +109,8 @@ class CourseType(TimeStampedModelMixin, models.Model):
         return self.name
 
 
-class Site(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin,
-           MapEntityMixin, StructureRelated, AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
+class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin,
+           StructureRelated, AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -337,7 +335,7 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin,
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
              StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     parent_sites = models.ManyToManyField(Site, related_name="children_courses", verbose_name=_("Sites"))

@@ -7,7 +7,7 @@ from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, 
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import (CompletenessMixin, CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin)
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SiteFilterSet, CourseFilterSet
@@ -26,7 +26,7 @@ class SiteList(CustomColumnsMixin, MapEntityList):
     searchable_columns = ['id', 'name']
 
 
-class SiteDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
+class SiteDetail(CompletenessMixin, MapEntityDetail):
     queryset = Site.objects.all()
 
     def get_context_data(self, *args, **kwargs):
@@ -107,7 +107,7 @@ class SiteFormatList(MapEntityFormat, SiteList):
     ]
 
 
-class SiteViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class SiteViewSet(GeotrekMapentityViewSet):
     model = Site
     serializer_class = SiteSerializer
     geojson_serializer_class = SiteGeojsonSerializer
@@ -144,7 +144,7 @@ class CourseList(CustomColumnsMixin, MapEntityList):
     searchable_columns = ['id', 'name']
 
 
-class CourseDetail(DuplicateDetailMixin, CompletenessMixin, MapEntityDetail):
+class CourseDetail(CompletenessMixin, MapEntityDetail):
     queryset = Course.objects.prefetch_related('type').all()
 
     def get_context_data(self, *args, **kwargs):
@@ -223,7 +223,7 @@ class CourseFormatList(MapEntityFormat, CourseList):
     ]
 
 
-class CourseViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class CourseViewSet(GeotrekMapentityViewSet):
     model = Course
     serializer_class = CourseSerializer
     geojson_serializer_class = CourseGeojsonSerializer

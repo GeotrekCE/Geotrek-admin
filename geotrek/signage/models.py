@@ -5,11 +5,8 @@ from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from django.conf import settings
 
-from mapentity.models import MapEntityMixin
-
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import AddPropertyMixin, CheckBoxActionMixin, OptionalPictogramMixin, TimeStampedModelMixin
-
+from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, GeotrekMapEntityMixin, TimeStampedModelMixin
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
 
@@ -56,7 +53,7 @@ class SignageType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogr
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
 
 
-class Signage(CheckBoxActionMixin, MapEntityMixin, BaseInfrastructure):
+class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = SignageGISManager()
     code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=False, default='')
@@ -171,7 +168,7 @@ class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
         return self.label
 
 
-class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
+class Blade(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)

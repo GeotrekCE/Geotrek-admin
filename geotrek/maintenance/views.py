@@ -11,7 +11,7 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, Ma
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, ProjectForm,
@@ -106,7 +106,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
     ] + AltimetryMixin.COLUMNS
 
 
-class InterventionDetail(DuplicateDetailMixin, MapEntityDetail):
+class InterventionDetail(MapEntityDetail):
     queryset = Intervention.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -168,7 +168,7 @@ class InterventionDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class InterventionViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class InterventionViewSet(GeotrekMapentityViewSet):
     model = Intervention
     serializer_class = InterventionSerializer
     geojson_serializer_class = InterventionGeojsonSerializer
@@ -204,7 +204,7 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
     ]
 
 
-class ProjectDetail(DuplicateDetailMixin, MapEntityDetail):
+class ProjectDetail(MapEntityDetail):
     queryset = Project.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -245,7 +245,7 @@ class ProjectDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class ProjectViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class ProjectViewSet(GeotrekMapentityViewSet):
     model = Project
     serializer_class = ProjectSerializer
     geojson_serializer_class = ProjectGeojsonSerializer

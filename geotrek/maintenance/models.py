@@ -11,19 +11,19 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, DuplicateModelMixin
+from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, GeotrekMapEntityMixin
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-from mapentity.models import MapEntityMixin
+
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
-class Intervention(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     target_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
@@ -385,7 +385,7 @@ class ManDay(models.Model):
         return str(self.nb_days)
 
 
-class Project(DuplicateModelMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
+class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, TimeStampedModelMixin,
               StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)

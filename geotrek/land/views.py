@@ -3,7 +3,7 @@ from django.contrib.gis.db.models.functions import Transform
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateDetailMixin, DuplicateMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -33,7 +33,7 @@ class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
     ] + AltimetryMixin.COLUMNS
 
 
-class PhysicalEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
+class PhysicalEdgeDetail(MapEntityDetail):
     queryset = PhysicalEdge.objects.existing()
 
 
@@ -55,7 +55,7 @@ class PhysicalEdgeDelete(MapEntityDelete):
     model = PhysicalEdge
 
 
-class PhysicalEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
     model = PhysicalEdge
     serializer_class = PhysicalEdgeSerializer
     geojson_serializer_class = PhysicalEdgeGeojsonSerializer
@@ -88,7 +88,7 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     ] + AltimetryMixin.COLUMNS
 
 
-class LandEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
+class LandEdgeDetail(MapEntityDetail):
     queryset = LandEdge.objects.existing()
 
 
@@ -110,7 +110,7 @@ class LandEdgeDelete(MapEntityDelete):
     model = LandEdge
 
 
-class LandEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class LandEdgeViewSet(GeotrekMapentityViewSet):
     model = LandEdge
     serializer_class = LandEdgeSerializer
     geojson_serializer_class = LandEdgeGeojsonSerializer
@@ -141,7 +141,7 @@ class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
     ] + AltimetryMixin.COLUMNS
 
 
-class CompetenceEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
+class CompetenceEdgeDetail(MapEntityDetail):
     queryset = CompetenceEdge.objects.existing()
 
 
@@ -163,7 +163,7 @@ class CompetenceEdgeDelete(MapEntityDelete):
     model = CompetenceEdge
 
 
-class CompetenceEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
     model = CompetenceEdge
     serializer_class = CompetenceEdgeSerializer
     geojson_serializer_class = CompetenceEdgeGeojsonSerializer
@@ -193,7 +193,7 @@ class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
     ] + AltimetryMixin.COLUMNS
 
 
-class WorkManagementEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
+class WorkManagementEdgeDetail(MapEntityDetail):
     queryset = WorkManagementEdge.objects.existing()
 
 
@@ -215,7 +215,7 @@ class WorkManagementEdgeDelete(MapEntityDelete):
     model = WorkManagementEdge
 
 
-class WorkManagementEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
     model = WorkManagementEdge
     serializer_class = WorkManagementEdgeSerializer
     geojson_serializer_class = WorkManagementEdgeGeojsonSerializer
@@ -245,7 +245,7 @@ class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList
     ] + AltimetryMixin.COLUMNS
 
 
-class SignageManagementEdgeDetail(DuplicateDetailMixin, MapEntityDetail):
+class SignageManagementEdgeDetail(MapEntityDetail):
     queryset = SignageManagementEdge.objects.existing()
 
 
@@ -267,7 +267,7 @@ class SignageManagementEdgeDelete(MapEntityDelete):
     model = SignageManagementEdge
 
 
-class SignageManagementEdgeViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class SignageManagementEdgeViewSet(GeotrekMapentityViewSet):
     model = SignageManagementEdge
     serializer_class = SignageManagementEdgeSerializer
     geojson_serializer_class = SignageManagementEdgeGeojsonSerializer

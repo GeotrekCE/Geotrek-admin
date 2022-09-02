@@ -26,7 +26,7 @@ from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -368,7 +368,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
                                        )))
 
 
-class TrailDetail(DuplicateDetailMixin, MapEntityDetail):
+class TrailDetail(MapEntityDetail):
     queryset = Trail.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -424,7 +424,7 @@ class TrailDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class TrailViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class TrailViewSet(GeotrekMapentityViewSet):
     model = Trail
     serializer_class = TrailSerializer
     geojson_serializer_class = TrailGeojsonSerializer

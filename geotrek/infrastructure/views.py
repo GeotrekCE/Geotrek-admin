@@ -5,7 +5,7 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, Ma
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CustomColumnsMixin, DuplicateMixin, DuplicateDetailMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -33,7 +33,7 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     ] + AltimetryMixin.COLUMNS
 
 
-class InfrastructureDetail(DuplicateDetailMixin, MapEntityDetail):
+class InfrastructureDetail(MapEntityDetail):
     queryset = Infrastructure.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -68,7 +68,7 @@ class InfrastructureDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class InfrastructureViewSet(DuplicateMixin, GeotrekMapentityViewSet):
+class InfrastructureViewSet(GeotrekMapentityViewSet):
     model = Infrastructure
     serializer_class = InfrastructureSerializer
     geojson_serializer_class = InfrastructureGeojsonSerializer

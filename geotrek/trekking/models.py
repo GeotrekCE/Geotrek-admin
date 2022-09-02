@@ -13,14 +13,14 @@ from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
 
 import simplekml
-from mapentity.models import MapEntityMixin
+
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology
-from geotrek.common.utils import intersecting, classproperty, simplify_coords
+from geotrek.core.models import Path, Topology, simplify_coords
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
-    TimeStampedModelMixin
+    TimeStampedModelMixin, GeotrekMapEntityMixin
 from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 
@@ -103,7 +103,7 @@ class Rating(RatingMixin):
         ordering = ('order', 'name')
 
 
-class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
+class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     departure = models.CharField(verbose_name=_("Departure"), max_length=128, blank=True,
                                  help_text=_("Departure description"))
@@ -693,7 +693,7 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
         return "%s" % self.label
 
 
-class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
+class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
@@ -819,7 +819,7 @@ class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
         return self.name
 
 
-class Service(StructureRelated, MapEntityMixin, Topology):
+class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        on_delete=models.CASCADE)
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)
