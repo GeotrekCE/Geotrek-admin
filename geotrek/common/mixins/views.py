@@ -255,33 +255,3 @@ class CompletenessMixin:
             completeness_fields = settings.COMPLETENESS_FIELDS[modelname]
             context['completeness_fields'] = [obj._meta.get_field(field).verbose_name for field in completeness_fields]
         return context
-
-
-class DuplicateMixin:
-    @action(methods=['GET'], detail=False, url_path=r'duplicate_object/(?P<obj_pk>\w+)',
-            renderer_classes=[JSONRenderer])
-    def duplicate_object(self, request, *args, **kwargs):
-        obj_pk = kwargs.get('obj_pk')
-        try:
-            model_name = self.model._meta.model_name
-            app_name = self.model._meta.app_label
-            obj = self.model.objects.get(pk=obj_pk)
-            if not request.user.has_perm(f'{app_name}.change_{model_name}'):
-                raise Exception(_(f"You don't have the right to duplicate this {self.model._meta.verbose_name}"))
-            if hasattr(obj, 'same_structure') and not (obj.same_structure(request.user) and request.user.has_perm('authent.can_bypass_structure')):
-                raise Exception(_("You don't have the right to duplicate this. "
-                                  "This object is not from the same structure."))
-            else:
-                obj = obj.duplicate()
-                messages.success(request, _(f"{self.model._meta.verbose_name} has been duplicated successfully"))
-        except Exception as exc:
-            messages.error(request, exc)
-        return HttpResponseRedirect(obj.get_detail_url())
-
-
-class DuplicateDetailMixin:
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        object = self.get_object()
-        context['duplicate_object'] = f'{object._meta.app_label}:{object._meta.model_name}-drf-duplicate-object'
-        return context
