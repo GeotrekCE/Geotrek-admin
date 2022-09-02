@@ -2,6 +2,7 @@ import datetime
 import hashlib
 import os
 import shutil
+import uuid
 
 from PIL.Image import DecompressionBombError
 from django.conf import settings
@@ -21,6 +22,8 @@ from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
+
+from mapentity.models import MapEntityMixin
 
 
 class CheckBoxActionMixin:
@@ -435,7 +438,12 @@ class AddPropertyMixin:
         setattr(cls, '%s_verbose_name' % name, verbose_name)
 
 
-class DuplicateModelMixin(object):
-    def duplicate(self):
-        from geotrek.common.utils.helpers import clone_object
-        return clone_object(self)
+class GeotrekMapEntityMixin(MapEntityMixin):
+    class Meta:
+        abstract = True
+
+    def duplicate(self, **kwargs):
+        clone = super(MapEntityMixin, self).duplicate(attachments={"uuid": uuid.uuid4},
+                                                      avoid_fields=["aggregations"],
+                                                      uuid=uuid.uuid4())
+        return clone
