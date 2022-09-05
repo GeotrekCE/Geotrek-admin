@@ -1,8 +1,8 @@
-geotrek-admin (2.85.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.86.0) RELEASED; urgency=medium
 
-  *
+  * New package release
 
- -- Timothee de Montety <timothee.montety@gmail.com>  Tue, 26 Jul 2022 10:34:10 +0100
+ -- Célia Prat <celia.prat@makina-corpus.com>  Mon, 05 Sep 2022 16:15:16 +0200
 
 geotrek-admin (2.85.0) RELEASED; urgency=medium
 
