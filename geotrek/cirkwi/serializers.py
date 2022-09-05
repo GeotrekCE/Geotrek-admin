@@ -111,6 +111,25 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
         self.serialize_field('description', value)
         self.xml.endElement('information_complementaire')
 
+    def serialize_tracking_info(self, trek):
+        attrs = {}
+        self.xml.startElement('portals', {})
+        for portal in trek.portal.all():
+            attrs['id'] = str(portal.pk)
+            attrs['nom'] = portal.name
+            self.serialize_field('portal', '', attrs)
+        self.xml.endElement('portals')
+        self.xml.startElement('sources', {})
+        for source in trek.source.all():
+            attrs['id'] = str(source.pk)
+            attrs['nom'] = source.name
+            self.serialize_field('source', '', attrs)
+        self.xml.endElement('sources')
+        if trek.structure:
+            attrs['id'] = str(trek.structure.pk)
+            attrs['nom'] = trek.structure.name
+            self.serialize_field('structure', '', attrs)
+
     def serialize_locomotions(self, trek):
         attrs = {}
         if trek.practice and trek.practice.cirkwi:
@@ -144,6 +163,14 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                 self.serialize_field('tag_public', '', {'id': str(tag.eid), 'nom': tag.name})
             self.xml.endElement('tags_publics')
 
+    def serialize_labels(self, trek):
+        for label in trek.labels.all():
+            value = plain_text(label.advice)
+            self.xml.startElement('information_complementaire', {})
+            self.serialize_field('titre', label.name)
+            self.serialize_field('description', value)
+            self.xml.endElement('information_complementaire')
+
     # TODO: parking location (POI?), points_reference
     def serialize(self, treks):
         self.xml.startDocument()
@@ -166,6 +193,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                     self.xml.startElement('informations_complementaires', {})
                     for name in self.ADDITIONNAL_INFO:
                         self.serialize_additionnal_info(trek, name)
+                    self.serialize_labels(trek)
                     self.xml.endElement('informations_complementaires')
                 self.serialize_tags(trek)
                 self.xml.endElement('information')
@@ -176,11 +204,13 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             kml_url = reverse('trekking:trek_kml_detail',
                               kwargs={'lang': get_language(), 'pk': trek.pk, 'slug': trek.slug})
             self.serialize_field('fichier_trace', '', {'url': self.request.build_absolute_uri(kml_url)})
-            if not self.exclude_pois:
-                if trek.published_pois:
-                    self.xml.startElement('pois', {})
-                    self.serialize_pois(trek.published_pois.annotate(transformed_geom=Transform('geom', 4326)))
-                    self.xml.endElement('pois')
+            self.xml.startElement('tracking_information', {})
+            self.serialize_tracking_info(trek)
+            self.xml.endElement('tracking_information')
+            if not self.exclude_pois and trek.published_pois:
+                self.xml.startElement('pois', {})
+                self.serialize_pois(trek.published_pois.annotate(transformed_geom=Transform('geom', 4326)))
+                self.xml.endElement('pois')
             self.xml.endElement('circuit')
         self.xml.endElement('circuits')
         self.xml.endDocument()
