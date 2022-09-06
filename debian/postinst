@@ -36,7 +36,7 @@ export CONVERSION_PORT="6543"
 export CAPTURE_HOST="localhost"
 export CAPTURE_PORT="8000"
 export NGINX_PORT="80"
-export MEMCACHED_HOST="localhost"
+export MEMCACHED_HOST="127.0.0.1"
 export MEMCACHED_PORT="11211"
 
 # Create geotrek user (only on a new install)
