@@ -36,11 +36,11 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-22.04, ubuntu-20.04]
         tests-env: ['tests', 'tests_nds']
         include:
-          - os: ubuntu-18.04
-            python-version: 3.6  # default python version in 18.04
+          - os: ubuntu-22.04
+            python-version: 3.10  # default python version in 22.04
           - os: ubuntu-20.04
             python-version: 3.8  # default python version in 20.04
 
@@ -158,21 +158,21 @@ jobs:
         with:
           image: "geotrek:latest"
 
-  build_deb_18_04:
-      name: Build 18.04 package
+  build_deb_22_04:
+      name: Build 22.04 package
       runs-on: ubuntu-latest
-      container: ubuntu:bionic
+      container: ubuntu:jammy
       steps:
         - uses: actions/checkout@v3
-        - name: Prepare debian 18.04 versioning
+        - name: Prepare debian 22.04 versioning
           run: |
-            grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-            sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) bionic;/' debian/changelog
+            grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu22.04~dev'$GITHUB_RUN_ID'/' debian/changelog
+            sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu22.04\2) jammy;/' debian/changelog
         - name: Install build dependencies
           run: |
             apt-get -q update
             apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
-        - name: Building package debian 18.04
+        - name: Building package debian 22.04
           run: |
             dpkg-buildpackage -uc -us -b
         - name: Archive package artifact
@@ -282,10 +282,10 @@ jobs:
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
-  e2e_deb_18_04:
-    name: Tests E2E 18.04
-    runs-on: ubuntu-18.04
-    needs: [ build_deb_18_04 ]
+  e2e_deb_22_04:
+    name: Tests E2E 22.04
+    runs-on: ubuntu-22.04
+    needs: [ build_deb_122_04 ]
 
     env:
       CYPRESS_BASE_URL: http://geotrek.local
@@ -358,7 +358,7 @@ jobs:
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: cypress-18.04
+          name: cypress-22.04
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
@@ -447,15 +447,15 @@ jobs:
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
   deploy:
     name: Publish (on release only)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: [ test, e2e_docker_image, e2e_deb_18_04, e2e_deb_20_04 ]
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     steps:
       - uses: actions/checkout@v3
-      - name: Download 18.04 debian artifact
+      - name: Download 22.04 debian artifact
         uses: actions/download-artifact@v2
         with:
-          name: debian-18-04
+          name: debian-22-04
       - name: Download 20.04 debian artifact
         uses: actions/download-artifact@v2
         with:
