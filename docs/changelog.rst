@@ -9,6 +9,12 @@ CHANGELOG
 
 - Disable debug log in debian package post installation script.
 
+**Maintenance**
+
+- Upgrade dependencies. The detail for the main dependencies:
+  + django to 3.2.13
+  + celery[redis] to 5.1.2
+
 
 2.86.0 (2022-09-05)
 -----------------------
