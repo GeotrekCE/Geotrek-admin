@@ -838,7 +838,7 @@ with open(env_settings_file, 'r') as f:
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
 if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
-        print("Read custom configuration from {}".format(env_settings_file))
+        print("Read custom configuration from {}".format(custom_settings_file))
         exec(f.read())
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
