@@ -5,6 +5,10 @@ CHANGELOG
 2.86.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Disable debug log in debian package post installation script.
+
 
 2.86.0 (2022-09-05)
 -----------------------
