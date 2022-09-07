@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
-from django_filters.filters import ModelMultipleChoiceFilter
+from django_filters.filters import ModelMultipleChoiceFilter, ChoiceFilter
 import django_filters.rest_framework
 from django.db.models import Q
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -23,12 +23,24 @@ class TypeFilter(ModelMultipleChoiceFilter):
 class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     type1 = TypeFilter(queryset=TouristicContentType1.objects.all())
     type2 = TypeFilter(queryset=TouristicContentType2.objects.all())
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=list(
+            map(
+                lambda x: (x, x),  # Create list of tupples [('Provider1, 'Provider1'), ('Provider2, 'Provider2')] for distinct and not empty providers
+                TouristicContent.objects.exclude(provider__exact='').values_list('provider', flat=True).distinct()
+            )
+        )
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'category', 'type1', 'type2', 'themes',
             'approved', 'source', 'portal', 'reservation_system',
+            'provider'
         ]
 
 
@@ -72,12 +84,23 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     after = AfterFilter(label=_("After"))
     before = BeforeFilter(label=_("Before"))
     completed = CompletedFilter(label=_("Completed"))
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=list(
+            map(
+                lambda x: (x, x),  # Create list of tupples [('Provider1, 'Provider1'), ('Provider2, 'Provider2')] for distinct and not empty providers
+                TouristicEvent.objects.exclude(provider__exact='').values_list('provider', flat=True).distinct()
+            )
+        )
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'type', 'themes', 'after',
-            'before', 'approved', 'source', 'portal'
+            'before', 'approved', 'source', 'portal', 'provider'
         ]
 
 
