@@ -40,9 +40,9 @@ jobs:
         tests-env: ['tests', 'tests_nds']
         include:
           - os: ubuntu-22.04
-            python-version: 3.10  # default python version in 22.04
+            python-version: '3.10'  # default python version in 22.04
           - os: ubuntu-20.04
-            python-version: 3.8  # default python version in 20.04
+            python-version: '3.8'  # default python version in 20.04
 
     env:
       ENV: ${{ matrix.tests-env }}
