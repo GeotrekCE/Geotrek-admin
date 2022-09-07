@@ -9,6 +9,10 @@ CHANGELOG
 
 - Disable debug log in debian package post installation script.
 
+**Bug fixes**
+
+- Fix Site creation form is initialized with parent Site
+
 
 2.86.0 (2022-09-05)
 -----------------------
