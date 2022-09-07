@@ -5,9 +5,9 @@
 :master: |master-status| |master-coverage| |master-e2e| |master-rtd|
 
 .. |master-status| image::
-    https://circleci.com/gh/GeotrekCE/Geotrek-admin.svg?style=shield
-    :alt: Build Status
-    :target: https://circleci.com/gh/GeotrekCE/Geotrek-admin
+    https://github.com/GeotrekCE/Geotrek-admin/actions/workflows/test.yml/badge.svg
+    :alt: CI Status
+    :target: https://github.com/GeotrekCE/Geotrek-admin/actions/workflows/test.yml
 
 .. |master-coverage| image::
     https://codecov.io/gh/GeotrekCE/Geotrek-admin/branch/master/graph/badge.svg
