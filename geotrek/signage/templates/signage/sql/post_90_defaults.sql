@@ -26,6 +26,9 @@ ALTER TABLE infrastructure_infrastructure ALTER COLUMN description SET DEFAULT '
 ALTER TABLE infrastructure_infrastructure ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure
+ALTER TABLE infrastructure_infrastructure ALTER COLUMN provider SET DEFAULT '';
+
+
 
 -- Direction
 ------------
