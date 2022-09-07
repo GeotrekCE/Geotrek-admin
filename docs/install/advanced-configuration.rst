@@ -1818,6 +1818,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "reservation_id",
         "portal",
         "uuid",
+        "eid",
+        "eid2",
+        "provider"
     ]
     COLUMNS_LISTS["poi_view"] = [
         "structure",
@@ -2289,6 +2292,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["poi_export"] = [
         "structure",

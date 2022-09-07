@@ -5,6 +5,11 @@ CHANGELOG
 2.86.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add `provider` field to Trek, POI, Service (#3189)
+
+
 **Minor improvements**
 
 - Disable debug log in debian package post installation script.

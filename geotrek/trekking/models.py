@@ -202,6 +202,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                     verbose_name=_("Labels"),
                                     blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
     eid2 = models.CharField(verbose_name=_("Second external id"), max_length=1024, blank=True, null=True)
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
                                            blank=True)
@@ -722,6 +723,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
 
     geometry_types_allowed = ["POINT"]
 
@@ -853,6 +855,7 @@ class Service(StructureRelated, MapEntityMixin, Topology):
                                        on_delete=models.CASCADE)
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
 
     class Meta:
         verbose_name = _("Service")
