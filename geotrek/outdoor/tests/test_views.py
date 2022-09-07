@@ -4,10 +4,13 @@ from django.contrib.gis.geos.collections import MultiPoint
 from django.contrib.gis.geos.point import Point
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
+from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
-from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
+from geotrek.common.tests.factories import (RecordSourceFactory,
+                                            TargetPortalFactory)
 from geotrek.outdoor import views as course_views
+from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
 from geotrek.trekking.tests.factories import POIFactory
 
@@ -60,6 +63,15 @@ class SiteCustomViewTests(TestCase):
         view.kwargs[view.pk_url_kwarg] = site.pk
         context = view.get_context_data()
         self.assertEqual(len(context['pois']), 1)
+
+    def test_init_form_with_parent_site(self):
+        user = SuperUserFactory()
+        self.client.force_login(user)
+        parent = SiteFactory(name="Parent name")
+        response = self.client.get(reverse('outdoor:site_add'), {'parent_sites': parent.pk}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        selected = f"<option value=\"{parent.pk}\" selected> {parent.name}</option>"
+        self.assertContains(response, selected)
 
 
 class CourseCustomViewTests(TestCase):
