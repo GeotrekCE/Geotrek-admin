@@ -118,18 +118,15 @@ if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 fi
 
 echo "Reload" >&2
-journalctl | grep nginx >&2
 # Reload nginx
 if [ -f /etc/init.d/nginx ] ; then
 	if which invoke-rc.d > /dev/null ; then
 		if invoke-rc.d nginx status > /dev/null 2>&1 ; then
 			invoke-rc.d nginx reload 3>/dev/null || true
-			invoke-rc.d nginx status
 		fi
 	else
 		if /etc/init.d/nginx status > /dev/null 2>&1 ; then
 			/etc/init.d/nginx reload 3>/dev/null || true
-			/etc/init.d/nginx status
 		fi
 	fi
 fi
