@@ -59,6 +59,7 @@ class LabelAccessibility(PictogramMixin):
 
 class InformationDesk(models.Model):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
     name = models.CharField(verbose_name=_("Title"), max_length=256)
     type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.CASCADE,
                              related_name='desks')
@@ -313,6 +314,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                             on_delete=models.CASCADE, related_name='contents', blank=True,
                                             null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
                                            on_delete=models.CASCADE, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
@@ -426,6 +428,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     blank=True, related_name='touristicevents',
                                     verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 

@@ -368,3 +368,6 @@ msgstr "Date"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
+
+msgid "Provider"
+msgstr "Fournisseur"

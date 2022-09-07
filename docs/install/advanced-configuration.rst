@@ -1881,6 +1881,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["touristic_event_view"] = [
         "structure",
@@ -1908,6 +1910,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["feedback_view"] = [
         "email",
@@ -2387,6 +2391,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["touristic_event_export"] = [
         "structure",
@@ -2423,6 +2428,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["feedback_export"] = [
         "email",

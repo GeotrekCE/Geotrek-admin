@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-- Add `provider` field to Trek, POI, Service, Signage, Infrastructure (#3189)
+- Add `provider` field to Trek, POI, Service, Signage, Infrastructure, TouristicContent, TouristicEvent, InformationDesk (#3189)
 
 
 **Minor improvements**
