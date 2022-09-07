@@ -285,7 +285,7 @@ jobs:
   e2e_deb_22_04:
     name: Tests E2E 22.04
     runs-on: ubuntu-22.04
-    needs: [ build_deb_122_04 ]
+    needs: [ build_deb_22_04 ]
 
     env:
       CYPRESS_BASE_URL: http://geotrek.local
@@ -448,7 +448,7 @@ jobs:
   deploy:
     name: Publish (on release only)
     runs-on: ubuntu-20.04
-    needs: [ test, e2e_docker_image, e2e_deb_18_04, e2e_deb_20_04 ]
+    needs: [ test, e2e_docker_image, e2e_deb_20_04, e2e_deb_20_04 ]
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     steps:
       - uses: actions/checkout@v3
