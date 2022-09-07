@@ -227,7 +227,7 @@ Data only:
 
 ::
 
-   docker-compose run web ./manage.py flush
+   docker-compose run web ./manage.py sqlflush
 
 Restore existing Database
 -------------------------
@@ -236,7 +236,7 @@ Assuming a dump of your database is located in your project directory:
 
 ::
 
-   docker-compose run --rm web pg_restore -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek/<path_to_backup>.dump
+   docker-compose run --rm web pg_restore --clean --no-owner -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek-admin/<path_to_backup>.dump
 
 Restore your ``./var/conf/`` project files, and data files into ``./var/media``.
 
