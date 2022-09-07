@@ -8,6 +8,7 @@ CHANGELOG
 **Minor improvements**
 
 - Disable debug log in debian package post installation script.
+- Improve and fix error logging, now errors and warnings are logged to var/geotrek.log and console.
 
 
 2.86.0 (2022-09-05)

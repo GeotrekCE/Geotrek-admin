@@ -696,7 +696,7 @@ CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -708,49 +708,29 @@ LOGGING = {
         },
     },
     'handlers': {
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'log_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'simple',
+            'filename': os.path.join(VAR_DIR, 'log', 'geotrek.log'),
+            'when': 'midnight',
+            'backupCount': 30,
+        },
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'logging.NullHandler'
-        },
-        'console': {
-            'level': 'WARNING',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'class': 'django.utils.log.AdminEmailHandler',
         },
     },
     'loggers': {
-        'django.db.backends': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.request': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'geotrek': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'mapentity': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
         '': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
+            'handlers': ['console'],
         },
-    }
+    },
 }
 
 BLADE_ENABLED = True
@@ -851,12 +831,14 @@ ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
 env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(ENV))
 with open(env_settings_file, 'r') as f:
+    print("Read env configuration from {}".format(env_settings_file))
     exec(f.read())
 
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
 if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
+        print("Read custom configuration from {}".format(custom_settings_file))
         exec(f.read())
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
