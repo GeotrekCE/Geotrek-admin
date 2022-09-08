@@ -68,6 +68,6 @@ class ServiceFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         )
     )
 
-    class Meta:
+    class Meta(StructureRelatedFilterSet.Meta):
         model = Service
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'provider']

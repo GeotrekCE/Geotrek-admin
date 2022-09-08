@@ -9,6 +9,9 @@ CHANGELOG
 
 - Add `provider` field to Trek, POI, Service, Signage, Infrastructure, TouristicContent, TouristicEvent, InformationDesk (#3189)
 
+**Bug fixes**
+
+- Fix filtering on Services List does not filter
 
 **Minor improvements**
 
