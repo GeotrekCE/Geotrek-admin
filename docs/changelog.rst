@@ -15,6 +15,12 @@ CHANGELOG
   + django to 3.2.13
   + celery[redis] to 5.1.2
 
+** Warning
+
+- You will need to delete your cache after this release upgrade.
+  - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
+  - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
+
 
 2.86.0 (2022-09-05)
 -----------------------
