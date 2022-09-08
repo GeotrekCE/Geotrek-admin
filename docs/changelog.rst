@@ -10,6 +10,10 @@ CHANGELOG
 - Disable debug log in debian package post installation script.
 - Improve and fix error logging, now errors and warnings are logged to var/geotrek.log and console.
 
+**Bug fixes**
+
+- Fix Site creation form is initialized with parent Site
+
 
 2.86.0 (2022-09-05)
 -----------------------

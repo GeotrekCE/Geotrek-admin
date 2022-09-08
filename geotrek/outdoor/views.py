@@ -41,7 +41,7 @@ class SiteCreate(MapEntityCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['site'] = self.request.GET.get('site')
+        kwargs['site'] = self.request.GET.get('parent_sites')
         return kwargs
 
 
