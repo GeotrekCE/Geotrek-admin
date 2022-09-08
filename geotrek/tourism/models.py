@@ -14,6 +14,7 @@ from easy_thumbnails.files import get_thumbnailer
 from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
                                           PicturesMixin, PublishableMixin, TimeStampedModelMixin)
 from geotrek.common.models import ReservationSystem, Theme
@@ -275,6 +276,13 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _("Second list types")
 
 
+class TouristicContentManager(NoDeleteManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                        TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
@@ -322,6 +330,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     approved = models.BooleanField(verbose_name=_("Approved"), default=False,
                                    help_text=_("Indicates whether the content has a label or brand"))
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    objects = TouristicContentManager()
 
     class Meta:
         verbose_name = _("Touristic content")
@@ -387,6 +396,13 @@ class TouristicEventType(OptionalPictogramMixin):
         return self.type
 
 
+class TouristicEventManager(NoDeleteManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().order_by('provider').exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
@@ -431,7 +447,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-
+    objects = TouristicEventManager()
     id_prefix = 'E'
 
     class Meta:

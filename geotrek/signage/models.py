@@ -63,6 +63,11 @@ class SignageGISManager(NoDeleteManager):
             .values_list('implantation_year', 'implantation_year')
         return choices
 
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
 
 class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """

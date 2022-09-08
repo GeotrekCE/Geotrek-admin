@@ -13,12 +13,7 @@ class TrekFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zon
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=list(
-            map(
-                lambda x: (x, x),  # Create list of tupples [('Provider1, 'Provider1'), ('Provider2, 'Provider2')] for distinct and not empty providers
-                Trek.objects.exclude(provider__exact='').values_list('provider', flat=True).distinct()
-            )
-        )
+        choices=Trek.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -40,12 +35,7 @@ class POIFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFilter
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=list(
-            map(
-                lambda x: (x, x),  # Create list of tupples [('Provider1, 'Provider1'), ('Provider2, 'Provider2')] for distinct and not empty providers
-                POI.objects.exclude(provider__exact='').values_list('provider', flat=True).distinct()
-            )
-        )
+        choices=POI.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -60,12 +50,7 @@ class ServiceFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=list(
-            map(
-                lambda x: (x, x),  # Create list of tupples [('Provider1, 'Provider1'), ('Provider2, 'Provider2')] for distinct and not empty providers
-                Service.objects.exclude(provider__exact='').values_list('provider', flat=True).distinct()
-            )
-        )
+        choices=Service.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

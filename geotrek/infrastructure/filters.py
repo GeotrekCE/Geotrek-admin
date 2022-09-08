@@ -24,12 +24,7 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=list(
-            map(
-                lambda x: (x, x),  # Create list of tupples [('Provider1, 'Provider1'), ('Provider2, 'Provider2')] for distinct and not empty providers
-                Infrastructure.objects.exclude(provider__exact='').values_list('provider', flat=True).distinct()
-            )
-        )
+        choices=Infrastructure.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

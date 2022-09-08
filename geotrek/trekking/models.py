@@ -17,7 +17,7 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology, simplify_coords
+from geotrek.core.models import Path, Topology, TopologyManager, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin
 from geotrek.common.mixins.managers import NoDeleteManager
@@ -109,6 +109,13 @@ class Rating(RatingMixin):
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
         ordering = ('order', 'name')
+
+
+class TrekManager(TopologyManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().order_by('provider').distinct('provider') \
+            .exclude(provider__exact='').values_list('provider', 'provider')
+        return providers
 
 
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
@@ -215,6 +222,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
     geometry_types_allowed = ["LINESTRING"]
+    objects = TrekManager()
 
     class Meta:
         verbose_name = _("Trek")
@@ -718,6 +726,13 @@ class WebLinkCategory(PictogramMixin):
         return "%s" % self.label
 
 
+class POIManager(NoDeleteManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
@@ -732,7 +747,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         verbose_name_plural = _("POI")
 
     # Override default manager
-    objects = NoDeleteManager()
+    objects = POIManager()
 
     # Do no check structure when selecting POIs to exclude
     check_structure_in_forms = False
@@ -848,6 +863,11 @@ class ServiceType(PictogramMixin, PublishableMixin):
 class ServiceManager(NoDeleteManager):
     def get_queryset(self):
         return super().get_queryset().select_related('type')
+
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
 
 
 class Service(StructureRelated, MapEntityMixin, Topology):

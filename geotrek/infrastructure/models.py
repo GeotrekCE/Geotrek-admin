@@ -149,6 +149,11 @@ class InfrastructureGISManager(NoDeleteManager):
             .values_list('implantation_year', 'implantation_year')
         return all_years
 
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
 
 class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
