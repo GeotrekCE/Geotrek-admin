@@ -8,7 +8,6 @@ omit =
     */test_runner*
     */test_global*
     wsgi.py
-    docs/*
 data_file = var/.coverage
 
 [report]
