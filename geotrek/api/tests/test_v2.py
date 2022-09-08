@@ -66,7 +66,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'external_id', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
-    'portal', 'practice', 'previous', 'public_transport', 'published', 'ratings', 'ratings_description',
+    'portal', 'practice', 'previous', 'public_transport', 'provider', 'published', 'ratings', 'ratings_description',
     'reservation_system', 'reservation_id', 'route', 'second_external_id', 'source', 'structure',
     'themes', 'update_datetime', 'url', 'uuid', 'web_links'
 ])
@@ -77,7 +77,7 @@ TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + [
 
 POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id',
-    'name', 'attachments', 'published', 'type', 'type_label', 'type_pictogram',
+    'name', 'attachments', 'published', 'provider', 'type', 'type_label', 'type_pictogram',
     'update_datetime', 'url', 'uuid'
 ])
 
@@ -92,7 +92,7 @@ TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
     'accessibility', 'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
     'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'label_accessibility', 'name', 'pdf',
-    'portal', 'practical_info', 'published', 'reservation_id', 'reservation_system',
+    'portal', 'practical_info', 'provider', 'published', 'reservation_id', 'reservation_system',
     'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'uuid', 'website',
 ])
 
@@ -136,7 +136,7 @@ INFORMATION_DESK_TYPE_PROPERTIES_JSON_STRUCTURE = sorted([
 
 INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'description', 'email', 'label_accessibility', 'latitude', 'longitude',
-    'municipality', 'name', 'phone', 'photo_url', 'uuid',
+    'municipality', 'name', 'phone', 'photo_url', 'provider', 'uuid',
     'postal_code', 'street', 'type', 'website'
 ])
 
@@ -181,7 +181,7 @@ COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 ORGANISM_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 SERVICE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'eid', 'geometry', 'structure', 'type', 'uuid'
+    'id', 'eid', 'geometry', 'provider', 'structure', 'type', 'uuid'
 ])
 
 SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -190,7 +190,7 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 
 INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'attachments', 'condition', 'description', 'eid', 'geometry',
-    'implantation_year', 'maintenance_difficulty', 'name', 'structure',
+    'implantation_year', 'maintenance_difficulty', 'name', 'provider', 'structure',
     'type', 'usage_difficulty', 'uuid'
 ])
 
@@ -214,7 +214,7 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
     'meeting_point', 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
-    'practical_info', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
+    'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
     'type', 'update_datetime', 'url', 'uuid', 'website'
 ])
 
@@ -225,7 +225,7 @@ TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 SIGNAGE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
     'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
-    'structure', 'type', 'uuid'
+    'provider', 'structure', 'type', 'uuid'
 ])
 
 SIGNAGE_TYPE_DETAIL_JSON_STRUCTURE = sorted([

@@ -181,7 +181,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Service
-            fields = ('id', 'eid', 'geometry', 'structure', 'type', 'uuid')
+            fields = ('id', 'eid', 'geometry', 'provider', 'structure', 'type', 'uuid')
 
 
 class ReservationSystemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -424,7 +424,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'id', 'accessibility', 'attachments', 'approved', 'category', 'description',
                 'description_teaser', 'departure_city', 'geometry', 'label_accessibility',
                 'practical_info', 'url', 'cities', 'create_datetime',
-                'external_id', 'name', 'pdf', 'portal', 'published',
+                'external_id', 'name', 'pdf', 'portal', 'provider', 'published',
                 'source', 'structure', 'themes',
                 'update_datetime', 'types', 'contact', 'email',
                 'website', 'reservation_system', 'reservation_id', 'uuid'
@@ -461,7 +461,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'cities', 'contact', 'create_datetime', 'description', 'description_teaser',
                 'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
                 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
-                'practical_info', 'published', 'source', 'speaker', 'structure',
+                'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
                 'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website'
             )
 
@@ -500,7 +500,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'accessibility', 'description', 'email', 'label_accessibility', 'latitude', 'longitude',
                 'municipality', 'name', 'phone', 'photo_url', 'uuid',
-                'postal_code', 'street', 'type', 'website'
+                'postal_code', 'provider', 'street', 'type', 'website'
             )
 
 
@@ -699,7 +699,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
                 'max_elevation', 'min_elevation', 'name', 'networks', 'next',
                 'parents', 'parking_location', 'pdf', 'points_reference',
-                'portal', 'practice', 'ratings', 'ratings_description', 'previous', 'public_transport',
+                'portal', 'practice', 'provider', 'ratings', 'ratings_description', 'previous', 'public_transport',
                 'published', 'reservation_system', 'reservation_id', 'route', 'second_external_id',
                 'source', 'structure', 'themes', 'update_datetime', 'url', 'uuid', 'web_links'
             )
@@ -764,9 +764,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.POI
             fields = (
                 'id', 'description', 'external_id',
-                'geometry', 'name', 'attachments', 'published', 'type',
+                'geometry', 'name', 'attachments', 'provider', 'published', 'type',
                 'type_label', 'type_pictogram', 'url', 'uuid',
-                'create_datetime', 'update_datetime',
+                'create_datetime', 'update_datetime'
             )
 
     class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -1209,7 +1209,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
         class Meta:
             model = infrastructure_models.Infrastructure
             fields = ('id', 'accessibility', 'attachments', 'condition', 'description', 'eid', 'geometry', 'name',
-                      'implantation_year', 'maintenance_difficulty', 'structure', 'type', 'usage_difficulty', 'uuid')
+                      'implantation_year', 'maintenance_difficulty', 'provider', 'structure', 'type', 'usage_difficulty', 'uuid')
 
     class InfrastructureConditionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
@@ -1254,7 +1254,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
         class Meta:
             model = signage_models.Signage
             fields = ('id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
-                      'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
+                      'geometry', 'implantation_year', 'name', 'printed_elevation', 'provider', 'sealing',
                       'structure', 'type', 'uuid')
 
     class SignageTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
