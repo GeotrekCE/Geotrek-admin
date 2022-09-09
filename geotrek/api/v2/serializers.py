@@ -1055,7 +1055,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
                 'description_teaser', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
-                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice',
+                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice', 'provider'
                 'ratings', 'sector', 'source', 'structure', 'themes',
                 'type', 'url', 'uuid', 'courses', 'web_links', 'wind',
             )
@@ -1115,7 +1115,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'accessibility', 'advice', 'attachments', 'children', 'cities', 'description', 'duration', 'eid',
                 'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
-                'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'ratings', 'ratings_description',
+                'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'provider', 'ratings', 'ratings_description',
                 'sites', 'structure', 'type', 'url', 'uuid'
             )
 

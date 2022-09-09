@@ -8,7 +8,7 @@ CHANGELOG
 **New features**
 
 - Add `provider` field to Trek, POI, Service, Signage, Infrastructure, TouristicContent, TouristicEvent, InformationDesk,
-  Path, Trail (#3189)
+  Path, Trail, Course, Site (#3189)
 - Add parser using api v2 (InformationDesk, TouristicContent, TouristicEvent, POI, Trek, Service, Signage, Infrastructure)
 - Add aggregator parser with a conductor using json file
 
