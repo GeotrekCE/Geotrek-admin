@@ -518,7 +518,7 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
             model = core_models.Path
             fields = (
                 'id', 'comments', 'geometry', 'length_2d', 'length_3d',
-                'name', 'url', 'uuid'
+                'name', 'provider', 'url', 'uuid'
             )
 
 
