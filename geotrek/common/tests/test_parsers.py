@@ -522,7 +522,7 @@ class GeotrekTrekTestParser(GeotrekParser):
 class GeotrekTrekTestProviderParser(GeotrekTrekParser):
     url = "https://test.fr"
     provider = "Provider1"
-    delete = True 
+    delete = True
     url_categories = {}
 
 
