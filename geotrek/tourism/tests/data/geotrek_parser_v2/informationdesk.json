@@ -30,6 +30,7 @@
       },
       "phone": "09 64 46 55 12",
       "photo_url": "https://foo.fr/media/upload/office-seix.jpg.150x150_q85.jpg",
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02016",
       "postal_code": "09140",
       "street": "33 Place Champ de Mars",
       "type": {
@@ -71,6 +72,7 @@
       },
       "phone": null,
       "photo_url": "https://foo.fr/media/upload/office-seix.jpg.150x150_q85.jpg",
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02014",
       "postal_code": "31300",
       "street": "52 rue Jacques Babinet",
       "type": {
@@ -112,6 +114,7 @@
       },
       "phone": null,
       "photo_url": "",
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02015",
       "postal_code": null,
       "street": null,
       "type": {
