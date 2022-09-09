@@ -845,7 +845,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'contact', 'create_datetime', 'description', 'elevation',
                 'geometry', 'info_url', 'kml_url', 'name', 'period',
-                'practices', 'published', 'species_id', 'structure',
+                'practices', 'published', 'species_id', 'provider', 'structure',
                 'update_datetime', 'url'
             )
 
@@ -1055,7 +1055,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
                 'description_teaser', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
-                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice', 'provider'
+                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice', 'provider',
                 'ratings', 'sector', 'source', 'structure', 'themes',
                 'type', 'url', 'uuid', 'courses', 'web_links', 'wind',
             )
