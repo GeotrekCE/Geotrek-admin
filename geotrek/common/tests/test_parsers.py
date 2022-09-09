@@ -1,30 +1,34 @@
+import json
 import os
-from unittest import mock, skipIf
+import urllib
+from io import StringIO
 from shutil import rmtree
 from tempfile import mkdtemp
-from io import StringIO
-import requests
-from requests import Response
-import urllib
+from unittest import mock, skipIf
 
-from django.test import TestCase
+import requests
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db.utils import DatabaseError
-from django.test.utils import override_settings
 from django.template.exceptions import TemplateDoesNotExist
+from django.test import TestCase
+from django.test.utils import override_settings
+from requests import Response
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.trekking.models import POI, Trek
-from geotrek.common.models import Organism, FileType, Attachment
+from geotrek.common.models import Attachment, FileType, Organism
+from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
+                                    ExcelParser, GeotrekAggregatorParser,
+                                    GeotrekParser, OpenSystemParser,
+                                    TourInSoftParser, TourismSystemParser,
+                                    ValueImportError)
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
-from geotrek.common.parsers import (
-    ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
-    TourismSystemParser, OpenSystemParser, GeotrekParser, GeotrekAggregatorParser
-)
 from geotrek.common.utils.testdata import get_dummy_img
+from geotrek.trekking.models import POI, Trek
+from geotrek.trekking.parsers import GeotrekTrekParser
+from geotrek.trekking.tests.factories import TrekFactory
 
 
 class OrganismParser(ExcelParser):
@@ -515,6 +519,20 @@ class GeotrekTrekTestParser(GeotrekParser):
     }
 
 
+class GeotrekTrekTestProviderParser(GeotrekTrekParser):
+    url = "https://test.fr"
+    provider = "Provider1"
+    delete = True 
+    url_categories = {}
+
+
+class GeotrekTrekTestNoProviderParser(GeotrekTrekParser):
+    url = "https://test.fr"
+    model = Trek
+    delete = True
+    url_categories = {}
+
+
 class GeotrekAggregatorTestParser(GeotrekAggregatorParser):
     pass
 
@@ -526,6 +544,42 @@ class GeotrekParserTest(TestCase):
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, 'foo_field is not configured in categories_keys_api_v2'):
             call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestParser', verbosity=2)
+
+    def mock_json(self):
+        filename = os.path.join('geotrek', 'common', 'tests', 'data', 'geotrek_parser_v2', 'treks.json')
+        with open(filename, 'r') as f:
+            return json.load(f)
+
+    @mock.patch('requests.get')
+    def test_delete_according_to_provider(self, mocked_get):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        self.assertEqual(Trek.objects.count(), 0)
+        call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 1)
+        t = Trek.objects.first()
+        self.assertEqual(t.provider, "Provider1")
+        #self.assertEqual(t.uuid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
+        TrekFactory(provider="Provider1", name="I should be deleted", eid="1234")
+        t2 = TrekFactory(provider="Provider2", name="I should not be deleted", eid="1236")
+        t3 = TrekFactory(provider="", name="I should not be deleted", eid="12374")
+        call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
+        self.assertEqual([t.pk, t2.pk, t3.pk], list(Trek.objects.values_list('pk', flat=True)))
+
+    @mock.patch('requests.get')
+    def test_delete_according_to_no_provider(self, mocked_get):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        self.assertEqual(Trek.objects.count(), 0)
+        call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestNoProviderParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 1)
+        t = Trek.objects.first()
+        self.assertEqual(t.provider, "")
+        #self.assertEqual(t.uuid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
+        t1 = TrekFactory(provider="Provider1", name="I should not be deleted", eid="1234")
+        TrekFactory(provider="", name="I should be deleted", eid="12374")
+        call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestNoProviderParser', verbosity=0)
+        self.assertEqual([t.pk, t1.pk], list(Trek.objects.values_list('pk', flat=True)))
 
 
 class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
