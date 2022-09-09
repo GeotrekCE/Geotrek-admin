@@ -172,10 +172,10 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(7):
             self.client.get(self.model.get_datatablelist_url())
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             self.client.get(self.model.get_format_list_url())
 
     def test_list_in_csv(self):
