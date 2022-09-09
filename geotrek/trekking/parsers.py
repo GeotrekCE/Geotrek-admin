@@ -74,7 +74,7 @@ class GeotrekTrekParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "eid2": "second_external_id",
         "geom": "geometry"
     }
@@ -163,7 +163,7 @@ class GeotrekServiceParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "geom": "geometry"
     }
     url_categories = {
@@ -191,7 +191,7 @@ class GeotrekPOIParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "geom": "geometry"
     }
     url_categories = {

@@ -528,7 +528,6 @@ class GeotrekTrekTestProviderParser(GeotrekTrekParser):
 
 class GeotrekTrekTestNoProviderParser(GeotrekTrekParser):
     url = "https://test.fr"
-    model = Trek
     delete = True
     url_categories = {}
 
@@ -558,6 +557,8 @@ class GeotrekParserTest(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
         self.assertEqual(Trek.objects.count(), 1)
         t = Trek.objects.first()
+        self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
+        self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(t.provider, "Provider1")
         TrekFactory(provider="Provider1", name="I should be deleted", eid="1234")
         t2 = TrekFactory(provider="Provider2", name="I should not be deleted", eid="1236")
@@ -574,6 +575,8 @@ class GeotrekParserTest(TestCase):
         self.assertEqual(Trek.objects.count(), 1)
         t = Trek.objects.first()
         self.assertEqual(t.provider, "")
+        self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
+        self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         t1 = TrekFactory(provider="Provider1", name="I should not be deleted", eid="1234")
         TrekFactory(provider="", name="I should be deleted", eid="12374")
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestNoProviderParser', verbosity=0)

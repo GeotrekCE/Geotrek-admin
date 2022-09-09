@@ -1039,7 +1039,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.eid_prefix = eid_prefix if eid_prefix else self.eid_prefix
         self.all_datas = all_datas if all_datas else self.all_datas
         self.create_categories = create_categories if create_categories else self.create_categories
-        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not (f.name == 'id' or f.name == 'uuid'))
+        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not f.name == 'id')
         self.m2m_fields = {
             f.name: f.name
             for f in self.model._meta.many_to_many

@@ -901,7 +901,7 @@ class GeotrekTouristicContentParser(GeotrekParser):
     }
 
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "geom": "geometry",
     }
 
@@ -984,7 +984,7 @@ class GeotrekTouristicEventParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "geom": "geometry"
     }
     url_categories = {
@@ -1008,7 +1008,7 @@ class GeotrekInformationDeskParser(GeotrekParser):
     model = InformationDesk
     constant_fields = {}
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "geom": ["latitude", "longitude"],
         "photo": "photo_url"
     }
