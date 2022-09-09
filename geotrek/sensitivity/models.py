@@ -81,6 +81,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     description = models.TextField(verbose_name=_("Description"), blank=True)
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
 
     class Meta:
         verbose_name = _("Sensitive area")
