@@ -175,7 +175,7 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         with self.assertNumQueries(7):
             self.client.get(self.model.get_datatablelist_url())
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             self.client.get(self.model.get_format_list_url())
 
     def test_list_in_csv(self):
