@@ -84,7 +84,7 @@ defusedxml==0.7.1
     # via cairosvg
 deprecated==1.2.13
     # via redis
-django==3.2.13
+django==3.2.15
     # via
     #   django-appconf
     #   django-appypod
@@ -204,9 +204,7 @@ kombu==5.1.0
 landez==2.5.0
     # via geotrek (setup.py)
 lxml==4.8.0
-    # via
-    #   mapentity
-    #   svglib
+    # via mapentity
 mapentity==8.2.1
     # via geotrek (setup.py)
 markupsafe==2.0.1

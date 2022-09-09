@@ -12,7 +12,7 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade dependencies. The detail for the main dependencies:
-  + django to 3.2.13
+  + django to 3.2.15
   + celery[redis] to 5.1.2
 
 ** Warning
