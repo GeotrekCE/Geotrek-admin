@@ -96,6 +96,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             "name": self.species.name,
             "period": [False, False, False, False, False, True, True, False, False, False, False, False],
             'practices': [p.pk for p in self.species.practices.all()],
+            'provider': '',
             'structure': 'My structure',
             'published': True,
         }
