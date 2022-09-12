@@ -219,7 +219,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         class MockResponse:
             mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
-                               'trek.json', 'trek_children.json', 'trek.json']
+                               'trek.json', 'trek_children.json', 'trek_children.json']
             mock_time = 0
             total_mock_response = 1
 
@@ -393,7 +393,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2,
                      stdout=output)
-        self.assertIn("An error occured in children generation : KeyError('children'", output.getvalue())
+        self.assertIn("An error occured in children generation : KeyError('steps'", output.getvalue())
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')

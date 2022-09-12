@@ -1117,13 +1117,13 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         super().start()
         kwargs = self.get_to_delete_kwargs()
         kwargs['eid__startswith'] = self.eid_prefix
+        json_id_key = self.replace_fields.get('eid', 'id')
         params = {
-            'fields': 'id',
+            'fields': json_id_key,
             'page_size': 10000
         }
-        json_key = self.replace_fields.get('eid', 'id')
         response = self.request_or_retry(self.next_url, params=params)
-        ids = [f"{self.eid_prefix}{element[json_key]}" for element in response.json().get('results', [])]
+        ids = [f"{self.eid_prefix}{element[json_id_key]}" for element in response.json().get('results', [])]
         self.to_delete = set(self.model.objects.filter(**kwargs).exclude(eid__in=ids).values_list('pk', flat=True))
 
     def filter_eid(self, src, val):

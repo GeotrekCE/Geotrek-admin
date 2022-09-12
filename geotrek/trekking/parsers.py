@@ -122,17 +122,17 @@ class GeotrekTrekParser(GeotrekParser):
     def end(self):
         """Add children after all treks imported are created in database."""
         super().end()
-        self.next_url = f"{self.url}/api/v2/trek"
+        self.next_url = f"{self.url}/api/v2/tour"
         try:
             params = {
                 'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-                'fields': 'children,id'
+                'fields': 'steps,uuid'
             }
             response = self.request_or_retry(f"{self.next_url}", params=params)
             results = response.json()['results']
             final_children = {}
             for result in results:
-                final_children[result['id']] = result['children']
+                final_children[result['uuid']] = [step['uuid'] for step in result['steps']]
 
             for key, value in final_children.items():
                 if value:
