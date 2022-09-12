@@ -77,7 +77,7 @@ class Parser:
     warn_on_missing_objects = False
     separator = '+'
     eid = None
-    provider = ""
+    provider = None
     fields = None
     m2m_fields = {}
     constant_fields = {}
@@ -266,7 +266,7 @@ class Parser:
             self.add_warning(str(warnings))
             return
         if operation == "created":
-            if hasattr(self.model, 'provider') and self.provider and not self.obj.provider:
+            if hasattr(self.model, 'provider') and self.provider is not None and not self.obj.provider: 
                 self.obj.provider = self.provider
             self.obj.save()
         else:
@@ -310,7 +310,8 @@ class Parser:
                 self.add_warning(str(warnings))
                 return
             objects = self.model.objects.filter(**eid_kwargs)
-            if hasattr(self.model, 'provider'):
+            print(eid_kwargs)
+            if hasattr(self.model, 'provider') and self.provider is not None:
                 objects = objects.filter(provider__exact=self.provider)
         if len(objects) == 0 and self.update_only:
             if self.warn_on_missing_objects:
@@ -447,7 +448,7 @@ class Parser:
                 kwargs[dst] = field.remote_field.model.objects.get(**filters)
             except field.remote_field.model.DoesNotExist:
                 return None
-        if hasattr(self.model, 'provider'):
+        if hasattr(self.model, 'provider') and self.provider is not None:
             kwargs['provider__exact'] = self.provider
         return kwargs
 
