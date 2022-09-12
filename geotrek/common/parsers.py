@@ -266,7 +266,7 @@ class Parser:
             self.add_warning(str(warnings))
             return
         if operation == "created":
-            if hasattr(self.model, 'provider') and self.provider is not None and not self.obj.provider: 
+            if hasattr(self.model, 'provider') and self.provider is not None and not self.obj.provider:
                 self.obj.provider = self.provider
             self.obj.save()
         else:
