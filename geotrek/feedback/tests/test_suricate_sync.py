@@ -190,7 +190,7 @@ class SuricateAPITests(SuricateTests):
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
         self.assertIn("New reports have been imported from Suricate", sent_mail.body)
-        self.assertIn("Please consult your reports in Geotrek-Admin", sent_mail.body)
+        self.assertIn("Please consult your reports in Geotrek", sent_mail.body)
         for report in Report.objects.all():
             self.assertIn(report.full_url, sent_mail.body)
         r = Report.objects.all()[0]

@@ -13,6 +13,11 @@ def suricate_management_enabled():
 
 
 @register.simple_tag
+def app_title():
+    return settings.TITLE
+
+
+@register.simple_tag
 def suricate_workflow_enabled():
     return settings.SURICATE_WORKFLOW_ENABLED
 
