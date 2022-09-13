@@ -15,7 +15,6 @@ from django.db.models.query_utils import Q
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.formats import date_format
-from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from mapentity.models import MapEntityMixin
 
