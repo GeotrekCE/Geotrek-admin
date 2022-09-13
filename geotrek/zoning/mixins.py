@@ -1,40 +1,42 @@
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from .models import RestrictedArea, District, City
+
 from geotrek.common.utils import intersecting, uniquify
+from .models import RestrictedArea, District, City
 
 
 class ZoningPropertiesMixin:
     areas_verbose_name = _("Restricted areas")
 
-    @property
+    @cached_property
     def zoning_property(self):
         return self
 
-    @property
+    @cached_property
     def areas(self):
-        return uniquify(intersecting(RestrictedArea, self.zoning_property, distance=0))
+        return uniquify(intersecting(RestrictedArea, self.zoning_property, distance=0, defer=('geom',)))
 
-    @property
+    @cached_property
     def districts(self):
-        return uniquify(intersecting(District, self.zoning_property, distance=0))
+        return uniquify(intersecting(District, self.zoning_property, distance=0, defer=('geom',)))
 
-    @property
+    @cached_property
     def cities(self):
-        return uniquify(intersecting(City, self.zoning_property, distance=0))
+        return uniquify(intersecting(City, self.zoning_property, distance=0, defer=('geom',)))
 
-    @property
+    @cached_property
     def published_areas(self):
         if not hasattr(self, 'published'):
             return self.areas
         return [area for area in self.areas if area.published]
 
-    @property
+    @cached_property
     def published_districts(self):
         if not hasattr(self, 'published'):
             return self.districts
         return [district for district in self.districts if district.published]
 
-    @property
+    @cached_property
     def published_cities(self):
         if not hasattr(self, 'published'):
             return self.cities

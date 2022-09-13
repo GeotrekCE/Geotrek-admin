@@ -1,13 +1,17 @@
 import logging
 
+from django.conf import settings
+from django.contrib.gis.db.models.functions import LineLocatePoint, Intersection
+from django.contrib.gis.gdal import SpatialReference
+from django.contrib.gis.measure import Distance
 from django.db import connection
-from django.db.models import Func
+from django.db.models import Exists, OuterRef
 from django.db.models.base import ModelBase
+from django.db.models.expressions import Func
 from django.utils.timezone import utc
 from django.utils.translation import pgettext
-from django.conf import settings
-from django.contrib.gis.measure import Distance
-from django.contrib.gis.gdal import SpatialReference
+
+from geotrek.common.functions import DumpGeom, StartPoint
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +90,7 @@ def uniquify(values):
     return unique
 
 
-def intersecting(qs, obj, distance=None, ordering=True, field='geom'):
+def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None):
     """
     Small helper to filter all model instances by geometry intersection
     """
@@ -101,16 +105,17 @@ def intersecting(qs, obj, distance=None, ordering=True, field='geom'):
     if distance:
         qs = qs.filter(**{'{}__dwithin'.format(field): (obj.geom, Distance(m=distance))})
     else:
-        qs = qs.filter(**{'{}__intersects'.format(field): obj.geom})
+        qs = qs.filter(Exists(obj._meta.model.objects.filter(geom__intersects=OuterRef('geom'), pk=obj.pk)))
         if obj.geom.geom_type == 'LineString' and ordering:
-            # FIXME: move transform from DRF viewset to DRF itself and remove transform here
-            ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt
-            qs = qs.extra(select={'ordering': 'ST_LineLocatePoint(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
-            qs = qs.extra(order_by=['ordering'])
+            qs = qs.order_by(LineLocatePoint(obj.geom,
+                                             StartPoint(DumpGeom(Intersection(obj.geom,
+                                                                              'geom')))))
 
     if obj.__class__ == qs.model:
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
+    if defer:
+        qs = qs.defer(*defer)
     return qs
 
 
