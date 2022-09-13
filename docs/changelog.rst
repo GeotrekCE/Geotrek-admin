@@ -40,6 +40,7 @@ CHANGELOG
 - Add possibility to use different type of file with import form
 - Add setting MAX_CHARACTERS for rich text fields with Mapentity 8.2.1 (#2901)
 - Set map resizable with Mapentity 8.2.1 (#3162)
+- Add Category, certification label and status fields on trails (#2900 & 3152)
 
 **Minor improvements**
 
@@ -68,8 +69,6 @@ CHANGELOG
 
 **New features**
 
-- Add category field on trail model
-- Add certification label and status fields on trails (#2900)
 - Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
 - Use permission bypass_structure on attachments and accessibility attachments (#2899)
 - Add boolean field 'display_in_legend' to Report Status model
