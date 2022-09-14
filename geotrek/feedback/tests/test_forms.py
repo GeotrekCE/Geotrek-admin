@@ -19,7 +19,7 @@ from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import TimerEvent, WorkflowDistrict, WorkflowManager
-from geotrek.feedback.tests.factories import PredefinedEmailFactory, ReportFactory
+from geotrek.feedback.tests.factories import PredefinedEmailFactory, ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SuricateWorkflowTests, test_for_management_and_workflow_modes,
     test_for_report_and_basic_modes, test_for_workflow_mode, test_for_management_mode)
@@ -43,6 +43,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, external_uuid=uuid.uuid4())
         cls.predefined_email_1 = PredefinedEmailFactory()
         cls.predefined_email_2 = PredefinedEmailFactory()
+        cls.status_no_timer = ReportStatusFactory(identifier='notimer', label="No timer", timer_days=0)
+        cls.status_timer_6 = ReportStatusFactory(identifier='timer6', label="Timer 6", timer_days=6)
+        cls.status_timer_3 = ReportStatusFactory(identifier='timer3', label="Timer 3", timer_days=3)
         cls.other_user = UserFactory()
         UserProfileFactory.create(user=cls.other_user, extended_username="Communauté des Communes des Communautés Communataires")
         cls.district = DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
@@ -425,3 +428,53 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         self.filed_report_2.refresh_from_db()
         self.assertEqual(self.filed_report_2.status, self.rejected_status)
+
+    @test_for_report_and_basic_modes
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_timer_creation(self, mocked_post):
+        # Relocate report inside of main district
+        new_geom = Point(0, 0, srid=2154)
+        data = {
+            'commment': "We have important news",
+            'status': self.status_timer_3.pk,
+            'email': 'test@test.fr',
+            'geom': new_geom,
+            'uses_timers': True
+        }
+        # Test Timer is created when report is created
+        form = ReportForm(data=data)
+        report = form.save()
+        print(report.status)
+        self.assertEqual(TimerEvent.objects.count(), 1)
+        self.assertEqual(TimerEvent.objects.first().step.identifier, "timer3")
+        data = {
+            'commment': "We have important news",
+            'status': self.status_timer_6.pk,
+            'email': 'test@test.fr',
+            'geom': new_geom,
+            'uses_timers': True
+        }
+        form = ReportForm(instance=report, data=data)
+        form.save()
+        # Test Timers are updated when report is updated
+        self.assertEqual(TimerEvent.objects.count(), 2)
+        for timer in TimerEvent.objects.all():
+            if timer.is_obsolete():
+                timer.delete()
+        self.assertEqual(TimerEvent.objects.count(), 1)
+        self.assertEqual(TimerEvent.objects.first().step.identifier, "timer6")
+        # Test Timer is removed if unecessary
+        data = {
+            'commment': "We have important news",
+            'status': self.status_no_timer.pk,
+            'email': 'test@test.fr',
+            'geom': new_geom,
+            'uses_timers': True
+        }
+        form = ReportForm(instance=report, data=data)
+        form.save()
+        self.assertEqual(TimerEvent.objects.count(), 1)
+        for timer in TimerEvent.objects.all():
+            if timer.is_obsolete():
+                timer.delete()
+        self.assertEqual(TimerEvent.objects.count(), 0)
