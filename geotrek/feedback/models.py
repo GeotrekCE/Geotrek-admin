@@ -334,7 +334,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         if settings.SURICATE_WORKFLOW_ENABLED:
             message = render_to_string(f"feedback/late_{status_id}_email.txt", {"report": self})
         else:
-            message = render_to_string(f"feedback/late_report_email.txt", {"report": self})
+            message = render_to_string("feedback/late_report_email.txt", {"report": self})
         self.try_send_email(subject, message)
 
     def lock_in_suricate(self):

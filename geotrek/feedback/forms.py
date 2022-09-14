@@ -1,5 +1,4 @@
 from django import forms
-from django.forms import CheckboxInput
 from crispy_forms.layout import Div
 from django.conf import settings
 from django.forms.fields import CharField
@@ -115,7 +114,7 @@ class ReportForm(CommonForm):
     def save(self, *args, **kwargs):
         creation = not self.instance.pk
         report = super().save(self, *args, **kwargs)
-        if not(creation) and settings.SURICATE_WORKFLOW_ENABLED:
+        if (not creation) and settings.SURICATE_WORKFLOW_ENABLED:
             if self.old_status.identifier in ['filed'] and report.assigned_user and report.assigned_user != WorkflowManager.objects.first().user:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
