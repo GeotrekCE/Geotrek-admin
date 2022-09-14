@@ -72,7 +72,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
         self.assertFalse(form.errors)
 
     @test_for_report_and_basic_modes
@@ -92,7 +92,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
         self.assertFalse(form.errors)  # assert form is valid
 
     @test_for_workflow_mode
@@ -160,7 +160,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
 
     @test_for_management_mode
     def test_update_form_specifics_2_management(self):
@@ -179,7 +179,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")

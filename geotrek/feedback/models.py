@@ -295,14 +295,15 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def try_send_email(self, subject, message):
         try:
-            success = send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email], fail_silently=False)
+            recipient = [self.assigned_user.email] if self.assigned_user else [x[1] for x in settings.MANAGERS]
+            success = send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient, fail_silently=False)
         except Exception as e:
             success = 0  # 0 mails successfully sent
             logger.error("Email could not be sent to report's assigned user.")
             logger.exception(e)  # This sends an email to admins :)
             # Save failed email to database
             PendingEmail.objects.create(
-                recipient=self.assigned_user.email,
+                recipient=recipient[0],
                 subject=subject,
                 message=message,
                 error_message=e.args,
@@ -310,7 +311,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             )
         finally:
             if success == 1:
-                self.attach_email(message, self.assigned_user.email)
+                self.attach_email(message, recipient[0])
 
     @property
     def formatted_external_uuid(self):
@@ -330,7 +331,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def notify_late_report(self, status_id):
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('Late report processing')}"
-        message = render_to_string(f"feedback/late_{status_id}_email.txt", {"report": self})
+        if settings.SURICATE_WORKFLOW_ENABLED:
+            message = render_to_string(f"feedback/late_{status_id}_email.txt", {"report": self})
+        else:
+            message = render_to_string(f"feedback/late_report_email.txt", {"report": self})
         self.try_send_email(subject, message)
 
     def lock_in_suricate(self):
@@ -457,6 +461,8 @@ class ReportStatus(models.Model):
     color = ColorField(verbose_name=_("Color"), default='#444444')
     display_in_legend = models.BooleanField(verbose_name=_("Display in legend"), default=True,
                                             help_text=_("Whether or not this status should be displayed in legend"))
+    timer_days = models.IntegerField(verbose_name=_("Timer days"), default=0,
+                                     help_text=_("How many days to wait before sending an email alert to the assigned user for a report that has this status and enabled timers. 0 days disables the alerts"))
 
     class Meta:
         verbose_name = _("Status")
@@ -517,12 +523,12 @@ class TimerEvent(models.Model):
     notification_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.report.uses_timers:
+        days_nb = self.step.timer_days
+        if self.report.uses_timers and days_nb > 0:
             if not self.pk:
-                days_nb = settings.SURICATE_WORKFLOW_SETTINGS.get(f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS", 30)
                 self.deadline = self.date_event + timedelta(days=days_nb)
             super().save(*args, **kwargs)
-        # Don't save if report doesn't use timers
+        # Don't save if report doesn't use timers or timers are set to 0 days for this status
 
     def is_linked_report_late(self):
         # Deadline is over and report status still hasn't changed
@@ -531,16 +537,18 @@ class TimerEvent(models.Model):
     def notify_if_needed(self):
         if not (self.notification_sent) and self.is_linked_report_late():
             self.report.notify_late_report(self.step.identifier)
-            late_status = ReportStatus.objects.get(identifier=STATUS_WHEN_REPORT_IS_LATE[self.step.identifier])
-            self.report.status = late_status
-            self.report.save()
+            if settings.SURICATE_WORKFLOW_ENABLED:
+                late_status = ReportStatus.objects.get(identifier=STATUS_WHEN_REPORT_IS_LATE[self.step.identifier])
+                self.report.status = late_status
+                self.report.save()
             self.notification_sent = True
             self.save()
 
     def is_obsolete(self):
         obsolete_notified = (timezone.now() > self.deadline) and self.notification_sent  # Notification sent by timer
         obsolete_unused = self.report.status.identifier != self.step.identifier  # Report status changed, therefore it was dealt with in time
-        return obsolete_notified or obsolete_unused
+        timer_disabled = not self.report.uses_timers
+        return obsolete_notified or obsolete_unused or timer_disabled
 
 
 class PendingEmail(models.Model):

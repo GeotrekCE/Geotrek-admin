@@ -311,3 +311,18 @@ msgstr "Un email de notification n'a pas pu être envoyé. Contactez un administ
 
 msgid "Extended username"
 msgstr "Dénomination complète"
+
+msgid "Timer days"
+msgstr "Durée du compte à rebours"
+
+msgid "How many days to wait before sending an email alert to the assigned user for a report that has this status and enabled timers. 0 days disables the alerts"
+msgstr "Nombre de jours à attendre avant d'envoyer un email d'alerte au gestionnaire d'un signalement qui a ce statut et la coche d'activation des comptes à rebours. La valeur 0 désactive les alertes"
+
+msgid "Report has had status"
+msgstr "le signalement est au statut"
+
+msgid "for"
+msgstr "depuis"
+
+msgid "days."
+msgstr "jours."

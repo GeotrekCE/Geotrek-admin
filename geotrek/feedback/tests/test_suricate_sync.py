@@ -39,8 +39,6 @@ SURICATE_MANAGEMENT_SETTINGS = {
 }
 
 SURICATE_WORKFLOW_SETTINGS = {
-    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 6,
-    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 7,
     "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département"
 }
 
@@ -129,7 +127,7 @@ class SuricateTests(TestCase):
         UserProfileFactory.create(user=cls.user)
         cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
         cls.admin = SuperUserFactory(username="Admin", password="drowssap")
-        cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
+        cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé", timer_days=7)
 
     def setUp(self):
         self.client.force_login(self.admin)
@@ -503,7 +501,7 @@ class SuricateWorkflowTests(SuricateTests):
         SuricateTests.setUpTestData()
         cls.filed_status = ReportStatusFactory(identifier='filed', label="Déposé")
         cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
-        cls.waiting_status = ReportStatusFactory(identifier='waiting', label="En cours")
+        cls.waiting_status = ReportStatusFactory(identifier='waiting', label="En cours", timer_days=6)
         cls.rejected_status = ReportStatusFactory(identifier='rejected', label="Rejeté")
         cls.late_intervention_status = ReportStatusFactory(identifier='late_intervention', label="Intervention en retard")
         cls.late_resolution_status = ReportStatusFactory(identifier='late_resolution', label="Resolution en retard")
