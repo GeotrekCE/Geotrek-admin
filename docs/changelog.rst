@@ -13,6 +13,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix Site creation form is initialized with parent Site
+- Fix memory leak and optimize SQL queries on zoning intersections
 
 **Maintenance**
 

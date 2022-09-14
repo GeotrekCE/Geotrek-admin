@@ -1,3 +1,4 @@
+from django.contrib.gis.db.models import PointField
 from django.db.models import CharField, FloatField
 from django.contrib.gis.db.models.functions import GeoFunc, GeomOutputGeoFunc
 
@@ -15,3 +16,14 @@ class GeometryType(GeoFunc):
     """ GeometryType postgis function """
     output_field = CharField()
     function = 'GeometryType'
+
+
+class DumpGeom(GeomOutputGeoFunc):
+    """ ST_Dump postgis function returning only geometry. """
+    function = 'ST_Dump'
+    template = '(%(function)s(%(expressions)s))."geom"'  # ST_DUMP return tuple as (path, geom). Keep geom only.
+
+
+class StartPoint(GeoFunc):
+    """ ST_StartPoint postgis function """
+    output_field = PointField()

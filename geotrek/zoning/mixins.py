@@ -1,6 +1,7 @@
 from django.utils.translation import gettext_lazy as _
-from .models import RestrictedArea, District, City
+
 from geotrek.common.utils import intersecting, uniquify
+from .models import RestrictedArea, District, City
 
 
 class ZoningPropertiesMixin:
@@ -12,15 +13,15 @@ class ZoningPropertiesMixin:
 
     @property
     def areas(self):
-        return uniquify(intersecting(RestrictedArea, self.zoning_property, distance=0))
+        return uniquify(intersecting(RestrictedArea, self.zoning_property, distance=0, defer=('geom',)))
 
     @property
     def districts(self):
-        return uniquify(intersecting(District, self.zoning_property, distance=0))
+        return uniquify(intersecting(District, self.zoning_property, distance=0, defer=('geom',)))
 
     @property
     def cities(self):
-        return uniquify(intersecting(City, self.zoning_property, distance=0))
+        return uniquify(intersecting(City, self.zoning_property, distance=0, defer=('geom',)))
 
     @property
     def published_areas(self):

@@ -6,7 +6,8 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from geotrek.api.mobile.serializers import trekking as api_serializers_trekking
 from geotrek.api.mobile.serializers import tourism as api_serializers_tourism
 
-from geotrek.api.v2.functions import StartPoint, EndPoint
+from geotrek.api.v2.functions import EndPoint
+from geotrek.common.functions import StartPoint
 from geotrek.trekking import models as trekking_models
 
 from rest_framework_extensions.mixins import DetailSerializerMixin
