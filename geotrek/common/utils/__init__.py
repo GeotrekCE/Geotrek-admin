@@ -5,7 +5,6 @@ from django.contrib.gis.db.models.functions import LineLocatePoint, Intersection
 from django.contrib.gis.gdal import SpatialReference
 from django.contrib.gis.measure import Distance
 from django.db import connection
-from django.db.models import Exists, OuterRef
 from django.db.models.base import ModelBase
 from django.db.models.expressions import Func
 from django.utils.timezone import utc
@@ -55,9 +54,7 @@ def dbnow():
 
 
 def sql_extent(sql):
-    """ Given a SQL query that returns a BOX(), returns
-    tuple (xmin, ymin, xmax, ymax)
-    """
+    """ Given a SQL query that returns a BOX(), returns tuple (xmin, ymin, xmax, ymax) """
     cursor = connection.cursor()
     cursor.execute(sql)
     result = cursor.fetchall()
@@ -68,9 +65,7 @@ def sql_extent(sql):
 
 
 def sqlfunction(function, *args):
-    """
-    Executes the SQL function with the specified args, and returns the result.
-    """
+    """ Executes the SQL function with the specified args, and returns the result. """
     sql = '%s(%s)' % (function, ','.join(args))
     logger.debug(sql)
     cursor = connection.cursor()
@@ -91,9 +86,7 @@ def uniquify(values):
 
 
 def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None):
-    """
-    Small helper to filter all model instances by geometry intersection
-    """
+    """ Small helper to filter all model instances by geometry intersection """
     if isinstance(qs, ModelBase):
         qs = qs.objects
         if hasattr(qs, 'existing'):
