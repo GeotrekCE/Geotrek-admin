@@ -105,7 +105,7 @@ def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None
     if distance:
         qs = qs.filter(**{'{}__dwithin'.format(field): (obj.geom, Distance(m=distance))})
     else:
-        qs = qs.filter(Exists(obj._meta.model.objects.filter(geom__intersects=OuterRef(field), pk=obj.pk)))
+        qs = qs.filter(**{'{}__intersects'.format(field): obj.geom})
         if obj.geom.geom_type == 'LineString' and ordering:
             qs = qs.order_by(LineLocatePoint(obj.geom,
                                              StartPoint(DumpGeom(Intersection(obj.geom,
