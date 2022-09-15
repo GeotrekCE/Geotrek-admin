@@ -136,13 +136,13 @@ class GeotrekTrekParser(GeotrekParser):
 
             for key, value in final_children.items():
                 if value:
-                    trek_parent_instance = Trek.objects.filter(eid=f"{self.eid_prefix}{key}")
+                    trek_parent_instance = Trek.objects.filter(eid=key)
                     if not trek_parent_instance:
                         return
                     order = 0
                     for child in value:
                         try:
-                            trek_child_instance = Trek.objects.get(eid=f"{self.eid_prefix}{child}")
+                            trek_child_instance = Trek.objects.get(eid=child)
                         except Trek.DoesNotExist:
                             self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name}"))
                             continue

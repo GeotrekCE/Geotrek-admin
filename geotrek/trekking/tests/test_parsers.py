@@ -135,7 +135,7 @@ class TrekParserTests(TestCase):
 
 class TestGeotrekTrekParser(GeotrekTrekParser):
     url = "https://test.fr"
-    eid_prefix = 'geotrek1'
+    provider = 'geotrek1'
     field_options = {
         'difficulty': {'create': True, },
         'route': {'create': True, },
@@ -154,7 +154,7 @@ class TestGeotrek2TrekParser(GeotrekTrekParser):
     field_options = {
         'geom': {'required': True},
     }
-    eid_prefix = 'geotrek2'
+    provider = 'geotrek2'
 
 
 class TestGeotrekPOIParser(GeotrekPOIParser):
