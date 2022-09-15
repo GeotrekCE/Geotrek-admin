@@ -374,7 +374,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         output = StringIO()
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2,
                      stdout=output)
-        self.assertIn("One trek has not be generated for Boucle du Pic des Trois Seigneurs", output.getvalue())
+        self.assertIn("One trek has not be generated for Boucle du Pic des Trois Seigneurs : could not find trek with UUID c9567576-2934-43ab-666e-e13d02c671a9,\n", output.getvalue())
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
