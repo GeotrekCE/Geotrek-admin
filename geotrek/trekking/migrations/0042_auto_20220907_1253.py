@@ -13,16 +13,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='poi',
             name='provider',
-            field=models.CharField(blank=True, max_length=1024, verbose_name='Provider'),
+            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
         ),
         migrations.AddField(
             model_name='service',
             name='provider',
-            field=models.CharField(blank=True, max_length=1024, verbose_name='Provider'),
+            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
         ),
         migrations.AddField(
             model_name='trek',
             name='provider',
-            field=models.CharField(blank=True, max_length=1024, verbose_name='Provider'),
+            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
         ),
     ]

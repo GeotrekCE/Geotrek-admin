@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='path',
             name='provider',
-            field=models.CharField(blank=True, max_length=1024, verbose_name='Provider'),
+            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
         ),
         migrations.AddField(
             model_name='trail',
             name='provider',
-            field=models.CharField(blank=True, max_length=1024, verbose_name='Provider'),
+            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
         ),
     ]

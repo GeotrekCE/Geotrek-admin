@@ -179,7 +179,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
-    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
@@ -373,7 +373,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True, verbose_name=_("Ratings"))
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
-    provider = models.CharField(verbose_name=_("Provider"), max_length=1024, blank=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
