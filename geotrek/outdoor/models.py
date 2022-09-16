@@ -26,6 +26,7 @@ from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
+from modeltranslation.manager import MultilingualManager
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -110,6 +111,13 @@ class CourseType(models.Model):
         return self.name
 
 
+class SiteManager(MultilingualManager):
+    def provider_choices(self):
+        providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
@@ -176,6 +184,8 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
+
+    objects = SiteManager()
 
     class Meta:
         verbose_name = _("Outdoor site")
@@ -338,6 +348,13 @@ class OrderedCourseChild(models.Model):
         )
 
 
+class CourseManager(MultilingualManager):
+    def provider_choices(self):
+        providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin,
              AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
@@ -366,6 +383,8 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
+
+    objects = CourseManager()
 
     class Meta:
         verbose_name = _("Outdoor course")

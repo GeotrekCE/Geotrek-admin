@@ -47,6 +47,11 @@ class PathManager(models.Manager):
         """
         return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
 
+    def provider_choices(self):
+        providers = self.get_queryset().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
 
 class PathInvisibleManager(models.Manager):
     use_for_related_fields = True
@@ -957,6 +962,13 @@ class Network(StructureOrNoneRelated):
         return self.network
 
 
+class TrailManager(TopologyManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='').order_by('provider') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class Trail(MapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Name"), max_length=64)
@@ -975,6 +987,8 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
 
     certifications_verbose_name = _("Certifications")
     geometry_types_allowed = ["LINESTRING"]
+
+    objects = TrailManager()
 
     class Meta:
         verbose_name = _("Trail")
