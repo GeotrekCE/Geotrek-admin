@@ -5,10 +5,10 @@ from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
-from django.db.models import Q
+from django.db.models import Q, Manager
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
@@ -26,7 +26,6 @@ from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
-from modeltranslation.manager import MultilingualManager
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -111,7 +110,7 @@ class CourseType(models.Model):
         return self.name
 
 
-class SiteManager(MultilingualManager):
+class SiteManager(TreeManager):
     def provider_choices(self):
         providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
             .distinct('provider').values_list('provider', 'provider')
@@ -348,7 +347,7 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class CourseManager(MultilingualManager):
+class CourseManager(Manager):
     def provider_choices(self):
         providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
             .distinct('provider').values_list('provider', 'provider')
