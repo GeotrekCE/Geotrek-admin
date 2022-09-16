@@ -185,15 +185,13 @@ Be aware that, when enabling Suricate Management mode, Suricate becomes the mast
 This mode allows to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Management mode as well.
 You can find a detailled explanation on the workflow here : https://github.com/GeotrekCE/Geotrek-admin/issues/2366#issuecomment-1113435035
 
-- Set your settings in ``custom.py`` (timers are used to define after how long a report's processing is considered late):
+- Set your settings in ``custom.py`` :
 
 .. code-block :: python
 
     SURICATE_WORKFLOW_ENABLED = True
 
     SURICATE_WORKFLOW_SETTINGS = {
-        "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
-        "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
         "SURICATE_RELOCATED_REPORT_MESSAGE": "This report is not located in Workflow responsiblity area."
     }
 
@@ -227,6 +225,24 @@ Display reports with status defined colors
     ENABLE_REPORT_COLORS_PER_STATUS = True
  
 Go to the Admin Site and select colors to display for each status (`/admin/feedback/reportstatus/`).
+
+
+Use timers to receive alerts for your reports
+~~~~~~~~~~~~~~~~
+
+It is possible to enable receiving email alerts for reports that have remained in the same status for too long.
+For instance, I can create two report statuses "To program" with timer days set to 10 and "Programmed" with timer days set to 0.
+If a report has had status "To program" for 10 days, an email alert will be sent. If its status is changed to "Programmed" within these 10 days, this will cancel the alert.
+The email alert will be sent to the assigned user for this report, or to managers (setting `MANAGERS`) if there is no assigned user.
+
+To enable the alerts :
+- Go to the Admin Site and set "Timer days" to some integer other than 0 in relevant statuses (`/admin/feedback/reportstatus/`)
+- Select the "Uses timers" checkbox on reports that you wish to receive alerts for (in report update form)
+- Make sure to run this commands daily to send email alerts and clear obsolete timers (thanks to `cron` for instance) :
+
+.. code-block :: python
+
+    geotrek check_timers
 
 
 Anonymize feedback reports

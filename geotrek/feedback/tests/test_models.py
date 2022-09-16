@@ -74,6 +74,7 @@ class TestTimerEventClass(SuricateWorkflowTests):
         TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report_no_timers)
         self.assertEqual(TimerEvent.objects.filter(report=self.waiting_report_no_timers.pk).count(), 0)
 
+    @test_for_workflow_mode
     @freeze_time("2099-07-04")
     def test_events_notify(self):
         # Assert before notification

@@ -9,6 +9,7 @@ CHANGELOG
 
 - Disable debug log in debian package post installation script.
 - Improve and fix error logging, now errors and warnings are logged to var/geotrek.log and console.
+- Allow configuring email alerts for late reports (generalized from Suricate Workflow #2366)
 
 **Bug fixes**
 
@@ -26,6 +27,11 @@ CHANGELOG
 - You will need to delete your cache after this release upgrade.
   - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
   - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
+
+**Suricate Workflow**  (#2366)
+
+- Do not unlock reports when resolving them
+- Improve Suricate workflow alert emails
 
 
 2.86.0 (2022-09-05)

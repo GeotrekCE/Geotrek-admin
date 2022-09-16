@@ -225,8 +225,8 @@ msgstr "Geotrek : signalement d'un problème"
 msgid "New reports have been imported from Suricate."
 msgstr "De nouveaux signalements ont été importés depuis Suricate."
 
-msgid "Please consult your reports in Geotrek-Admin."
-msgstr "Consultez vos signalements dans Geotrek-Admin."
+msgid "Please consult your reports in"
+msgstr "Consultez vos signalements sur"
 
 msgid ""
 "Hello,\n"
@@ -249,17 +249,20 @@ msgstr ""
 "L'équipe Geotrek\n"
 "http://www.geotrek.fr"
 
-msgid "You have been assigned a report on Geotrek"
-msgstr "Un signalement vous a été assigné sur Geotrek"
+msgid "You have been assigned a report on"
+msgstr "Un signalement vous a été assigné sur"
 
 msgid "Message from the manager"
 msgstr "Message du responsable"
 
-msgid "A report on Geotrek has to be marked as resolved, since the corresponding intervention was completed"
-msgstr "Un signalement sur Geotrek est à clôturer suite à la résolution de l'intervention associée"
+msgid "A report on"
+msgstr "Un signalement sur"
 
-msgid "A report's processing is late on Geotrek"
-msgstr "Le traitement d'un Signalement est en retard sur Geotrek"
+msgid "has to be marked as resolved, since the corresponding intervention was completed"
+msgstr "est à clôturer suite à la résolution de l'intervention associée"
+
+msgid "A report's processing is late on"
+msgstr "Le traitement d'un Signalement est en retard sur"
 
 msgid "The corresponding intervention must be resolved."
 msgstr "L'intervention associée doit être cloturée."
@@ -308,3 +311,18 @@ msgstr "Un email de notification n'a pas pu être envoyé. Contactez un administ
 
 msgid "Extended username"
 msgstr "Dénomination complète"
+
+msgid "Timer days"
+msgstr "Durée du compte à rebours"
+
+msgid "How many days to wait before sending an email alert to the assigned user for a report that has this status and enabled timers. 0 days disables the alerts"
+msgstr "Nombre de jours à attendre avant d'envoyer un email d'alerte au gestionnaire d'un signalement qui a ce statut et la coche d'activation des comptes à rebours. La valeur 0 désactive les alertes"
+
+msgid "Report has had status"
+msgstr "le signalement est au statut"
+
+msgid "for"
+msgstr "depuis"
+
+msgid "days."
+msgstr "jours."

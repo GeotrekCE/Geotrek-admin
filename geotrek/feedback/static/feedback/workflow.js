@@ -58,14 +58,12 @@ function display_predefined_email_in_email_field() {
     var resolved_intervention_info = JSON.parse($('#resolved_intervention_info').text());
     var selected = $('#id_message_sentinel_predefined').val() || null;
     if (selected == null) {
-        $('#id_message_supervisor').val("");
         $('#id_message_sentinel').val("");
         $('#id_message_administrators').val("");
     } else {
         text = predefined_emails[selected]["text"];
         text = text.replace(/##supervisor##/g, resolved_intervention_info["username"]);
         text = text.replace(/##intervention_date##/g, resolved_intervention_info["date"]);
-        $('#id_message_supervisor').val(text);
         $('#id_message_sentinel').val(text);
         $('#id_message_administrators').val(text);
     }

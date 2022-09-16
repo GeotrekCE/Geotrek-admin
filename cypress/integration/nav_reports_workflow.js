@@ -66,12 +66,11 @@ describe('Nav reports workflow', () => {
     cy.get("#id_message_sentinel_predefined").select("2")
     cy.get("#id_message_sentinel").should("have.value", "Faire attention a la marche")
     cy.get("#id_message_administrators").should("have.value", "Faire attention a la marche")
-    cy.get("#id_message_supervisor").should("have.value", "Faire attention a la marche")
+    cy.get("#id_message_supervisor").should("have.value", "")
     // Select another predefined email
     cy.get("#id_message_sentinel_predefined").select("3")
     cy.get("#id_message_sentinel").should("have.value", "Ce probleme n'en sera bientot plus un")
     cy.get("#id_message_administrators").should("have.value", "Ce probleme n'en sera bientot plus un")
-    cy.get("#id_message_supervisor").should("have.value", "Ce probleme n'en sera bientot plus un")
     // Remove predefined email
     cy.get("#id_message_sentinel_predefined").select("")
     cy.get("#id_message_sentinel").should("have.value", "")
