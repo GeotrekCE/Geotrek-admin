@@ -117,6 +117,7 @@ if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 		cd $dir > /dev/null
 		cp -r * /opt/geotrek-admin/var/media/upload/
 	done
+	chown --recursive geotrek:geotrek /opt/geotrek-admin/var/media/upload/*
 fi
 
 echo "Reload" >&2

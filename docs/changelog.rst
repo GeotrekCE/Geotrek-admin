@@ -6,7 +6,9 @@ CHANGELOG
 2.87.1+dev (XXXX-XX-XX)
 -----------------------
 
--
+**Bug fixes**
+
+- Fix PermissionError during sync-rando on fresh install from .deb package
 
 
 2.87.1 (2022-09-20)
