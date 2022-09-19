@@ -10,6 +10,7 @@ from django.core.management import call_command
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
+from geotrek.authent.tests.factories import StructureFactory
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from geotrek.common.models import AccessibilityAttachment, Attachment
@@ -46,7 +47,7 @@ class EntityAttachmentTestCase(TestCase):
             return {'paperclip.add_attachment': False}.get(p, True)
         cls.user = UserFactory()
         cls.user.has_perm = mock.MagicMock(side_effect=user_perms)
-        cls.object = TrekFactory.create()
+        cls.object = TrekFactory.create(structure=StructureFactory(name="Another structure"))
         call_command('update_permissions_mapentity', verbosity=0)
 
     def createRequest(self):
