@@ -45,7 +45,20 @@
             <td>{% if path.source %}{{ path.source }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
-        </tr><tr>
+        </tr>
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if path.eid %}{{ path.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if path.provider %}{{ path.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{{ path|verbose:"stake" }}</th>
             <td>{% if path.stake %}{{ path.stake }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}

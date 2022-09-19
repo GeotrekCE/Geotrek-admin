@@ -65,6 +65,9 @@ class DownloadImportError(ImportError):
 
 
 class Parser:
+    """
+    provider: Allow to differentiate multiple GeotrekParser for the same model
+    """
     label = None
     model = None
     filename = None
@@ -77,6 +80,7 @@ class Parser:
     warn_on_missing_objects = False
     separator = '+'
     eid = None
+    provider = None
     fields = None
     m2m_fields = {}
     constant_fields = {}
@@ -265,6 +269,8 @@ class Parser:
             self.add_warning(str(warnings))
             return
         if operation == "created":
+            if hasattr(self.model, 'provider') and self.provider is not None and not self.obj.provider:
+                self.obj.provider = self.provider
             self.obj.save()
         else:
             self.obj.save(update_fields=update_fields)
@@ -307,6 +313,8 @@ class Parser:
                 self.add_warning(str(warnings))
                 return
             objects = self.model.objects.filter(**eid_kwargs)
+            if hasattr(self.model, 'provider') and self.provider is not None:
+                objects = objects.filter(provider__exact=self.provider)
         if len(objects) == 0 and self.update_only:
             if self.warn_on_missing_objects:
                 self.add_warning(_("Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
@@ -442,6 +450,8 @@ class Parser:
                 kwargs[dst] = field.remote_field.model.objects.get(**filters)
             except field.remote_field.model.DoesNotExist:
                 return None
+        if hasattr(self.model, 'provider') and self.provider is not None:
+            kwargs['provider__exact'] = self.provider
         return kwargs
 
     def start(self):
@@ -963,7 +973,7 @@ class GeotrekAggregatorParser:
                         key_warning = _("Geotrek-admin")
                         self.add_warning(key_warning, warning)
                     else:
-                        Parser = parser(progress_cb=self.progress_cb, eid_prefix=key, url=datas['url'],
+                        Parser = parser(progress_cb=self.progress_cb, provider=key, url=datas['url'],
                                         portals_filter=datas.get('portals'), mapping=datas.get('mapping'),
                                         create_categories=datas.get('create'), all_datas=datas.get('all_datas'))
                         self.progress_cb(0, 0, f'{model} ({key})')
@@ -990,7 +1000,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     replace_fields: Replace fields which have not the same name in the api v2 compare to models (geom => geometry in api v2)
     m2m_replace_fields: Replace m2m fields which have not the same name in the api v2 compare to models (geom => geometry in api v2)
     categories_keys_api_v2: Key in the route of the category (example: /api/v2/touristiccontent_category/) corresponding to the model field
-    eid_prefix: Prefix of your eid which allow to differentiate multiple GeotrekParser
+    provider: Allow to differentiate multiple GeotrekParser for the same model
     portals_filter: Portals which will be use for filter in api v2 (default: No portal filter)
     mapping: Mapping between values in categories (example: /api/v2/touristiccontent_category/) and final values
         Can be use when you want to change a value from the api/v2
@@ -1015,13 +1025,13 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         'geom': {'required': True},
     }
     bbox = None
-    eid_prefix = ''
     portals_filter = None
     mapping = {}
     create_categories = False
     all_datas = False
+    provider = None
 
-    def __init__(self, all_datas=None, create_categories=None, eid_prefix=None, mapping=None, portals_filter=None, url=None, *args, **kwargs):
+    def __init__(self, all_datas=None, create_categories=None, provider=None, mapping=None, portals_filter=None, url=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
@@ -1029,10 +1039,10 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.portals_filter = portals_filter
         self.url = url if url else self.url
         self.mapping = mapping if mapping else self.mapping
-        self.eid_prefix = eid_prefix if eid_prefix else self.eid_prefix
+        self.provider = provider if provider else self.provider
         self.all_datas = all_datas if all_datas else self.all_datas
         self.create_categories = create_categories if create_categories else self.create_categories
-        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and not (f.name == 'id' or f.name == 'uuid'))
+        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and f.name != 'id')
         self.m2m_fields = {
             f.name: f.name
             for f in self.model._meta.many_to_many
@@ -1109,17 +1119,14 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     def start(self):
         super().start()
         kwargs = self.get_to_delete_kwargs()
-        kwargs['eid__startswith'] = self.eid_prefix
+        json_id_key = self.replace_fields.get('eid', 'id')
         params = {
-            'fields': 'id',
+            'fields': json_id_key,
             'page_size': 10000
         }
         response = self.request_or_retry(self.next_url, params=params)
-        ids = [f"{self.eid_prefix}{element['id']}" for element in response.json().get('results', [])]
+        ids = [f"{element[json_id_key]}" for element in response.json().get('results', [])]
         self.to_delete = set(self.model.objects.filter(**kwargs).exclude(eid__in=ids).values_list('pk', flat=True))
-
-    def filter_eid(self, src, val):
-        return f'{self.eid_prefix}{val}'
 
     def filter_attachments(self, src, val):
         return [(subval.get('url'), subval.get('legend'), subval.get('author'), subval.get('license')) for subval in val]
@@ -1156,10 +1163,9 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         portals = self.portals_filter
         updated_after = None
 
-        if not self.all_datas and self.model.objects.filter(eid__startswith=self.eid_prefix).exists() and 'date_update' in [field.name for
-                                                                                                                            field in
-                                                                                                                            self.model._meta.get_fields()]:
-            updated_after = self.model.objects.filter(eid__startswith=self.eid_prefix).latest('date_update').date_update.strftime('%Y-%m-%d')
+        available_fields = [field.name for field in self.model._meta.get_fields()]
+        if not self.all_datas and self.model.objects.filter(provider__exact=self.provider).exists() and 'date_update' in available_fields:
+            updated_after = self.model.objects.filter(provider__exact=self.provider).latest('date_update').date_update.strftime('%Y-%m-%d')
         params = {
             'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
             'portals': ','.join(portals) if portals else '',

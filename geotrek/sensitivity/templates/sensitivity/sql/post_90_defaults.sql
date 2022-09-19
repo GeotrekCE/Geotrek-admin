@@ -38,4 +38,5 @@ ALTER TABLE sensitivity_sensitivearea ALTER COLUMN contact SET DEFAULT '';
 -- structure
 ALTER TABLE maintenance_project ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE maintenance_project ALTER COLUMN date_update SET DEFAULT now();
+ALTER TABLE sensitivity_sensitivearea ALTER COLUMN provider SET DEFAULT '';
 -- deleted

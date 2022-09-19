@@ -135,7 +135,7 @@ class TrekParserTests(TestCase):
 
 class TestGeotrekTrekParser(GeotrekTrekParser):
     url = "https://test.fr"
-    eid_prefix = 'geotrek1'
+    provider = 'geotrek1'
     field_options = {
         'difficulty': {'create': True, },
         'route': {'create': True, },
@@ -154,7 +154,7 @@ class TestGeotrek2TrekParser(GeotrekTrekParser):
     field_options = {
         'geom': {'required': True},
     }
-    eid_prefix = 'geotrek2'
+    provider = 'geotrek2'
 
 
 class TestGeotrekPOIParser(GeotrekPOIParser):
@@ -219,7 +219,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         class MockResponse:
             mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json',
-                               'trek.json', 'trek_children.json', 'trek.json']
+                               'trek.json', 'trek_children.json', 'trek_children.json']
             mock_time = 0
             total_mock_response = 1
 
@@ -374,7 +374,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         output = StringIO()
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2,
                      stdout=output)
-        self.assertIn("One trek has not be generated for Boucle du Pic des Trois Seigneurs", output.getvalue())
+        self.assertIn("One trek has not be generated for Boucle du Pic des Trois Seigneurs : could not find trek with UUID c9567576-2934-43ab-666e-e13d02c671a9,\n", output.getvalue())
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
@@ -393,7 +393,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2,
                      stdout=output)
-        self.assertIn("An error occured in children generation : KeyError('children'", output.getvalue())
+        self.assertIn("An error occured in children generation : KeyError('steps'", output.getvalue())
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')

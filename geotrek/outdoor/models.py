@@ -5,10 +5,10 @@ from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
-from django.db.models import Q
+from django.db.models import Q, Manager
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import MPTTModel, TreeForeignKey, TreeManager
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
@@ -110,6 +110,13 @@ class CourseType(models.Model):
         return self.name
 
 
+class SiteManager(TreeManager):
+    def provider_choices(self):
+        providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
@@ -171,10 +178,13 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
+
+    objects = SiteManager()
 
     class Meta:
         verbose_name = _("Outdoor site")
@@ -337,6 +347,13 @@ class OrderedCourseChild(models.Model):
         )
 
 
+class CourseManager(Manager):
+    def provider_choices(self):
+        providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin,
              AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
@@ -355,6 +372,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True, verbose_name=_("Ratings"))
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
@@ -364,6 +382,8 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
+
+    objects = CourseManager()
 
     class Meta:
         verbose_name = _("Outdoor course")

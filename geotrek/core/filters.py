@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db.models import Count, F, Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import BooleanFilter, CharFilter, FilterSet, ModelMultipleChoiceFilter
+from django_filters import BooleanFilter, CharFilter, FilterSet, ModelMultipleChoiceFilter, ChoiceFilter
 
 from .models import Topology, Path, Trail, CertificationLabel
 
@@ -99,11 +99,17 @@ class TopologyFilter(RightFilter):
 class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=Path.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['valid', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
+            ['valid', 'networks', 'usages', 'comfort', 'stake', 'draft', 'provider']
 
 
 class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
@@ -117,11 +123,17 @@ class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zo
         label=_("Certification labels"),
         queryset=CertificationLabel.objects.all(),
     )
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=Trail.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['name', 'category', 'departure', 'arrival', 'certification_labels', 'comments']
+            ['name', 'category', 'departure', 'arrival', 'certification_labels', 'comments', 'provider']
 
 
 class TopologyFilterTrail(TopologyFilter):

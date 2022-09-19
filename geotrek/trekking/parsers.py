@@ -74,7 +74,7 @@ class GeotrekTrekParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "eid2": "second_external_id",
         "geom": "geometry"
     }
@@ -122,29 +122,29 @@ class GeotrekTrekParser(GeotrekParser):
     def end(self):
         """Add children after all treks imported are created in database."""
         super().end()
-        self.next_url = f"{self.url}/api/v2/trek"
+        self.next_url = f"{self.url}/api/v2/tour"
         try:
             params = {
                 'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-                'fields': 'children,id'
+                'fields': 'steps,uuid'
             }
             response = self.request_or_retry(f"{self.next_url}", params=params)
             results = response.json()['results']
             final_children = {}
             for result in results:
-                final_children[result['id']] = result['children']
+                final_children[result['uuid']] = [step['uuid'] for step in result['steps']]
 
             for key, value in final_children.items():
                 if value:
-                    trek_parent_instance = Trek.objects.filter(eid=f"{self.eid_prefix}{key}")
+                    trek_parent_instance = Trek.objects.filter(eid=key)
                     if not trek_parent_instance:
                         return
                     order = 0
                     for child in value:
                         try:
-                            trek_child_instance = Trek.objects.get(eid=f"{self.eid_prefix}{child}")
+                            trek_child_instance = Trek.objects.get(eid=child)
                         except Trek.DoesNotExist:
-                            self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name}"))
+                            self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name} : could not find trek with UUID {child}"))
                             continue
                         OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0],
                                                                child=trek_child_instance,
@@ -163,7 +163,7 @@ class GeotrekServiceParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "geom": "geometry"
     }
     url_categories = {
@@ -191,7 +191,7 @@ class GeotrekPOIParser(GeotrekParser):
         'deleted': False,
     }
     replace_fields = {
-        "eid": "id",
+        "eid": "uuid",
         "geom": "geometry"
     }
     url_categories = {

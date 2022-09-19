@@ -71,6 +71,9 @@ msgstr "Novembre"
 msgid "Decembre"
 msgstr "Décembre"
 
+msgid "Provider"
+msgstr "Fournisseur"
+
 msgid "Sport practices"
 msgstr "Pratiques sportives"
 

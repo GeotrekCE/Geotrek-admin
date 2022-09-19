@@ -1701,6 +1701,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["workmanagementedge_export"] = [
         "eid",
@@ -1726,6 +1727,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "maintenance_difficulty",
         "published",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["signage_view"] = [
         "code",
@@ -1818,6 +1821,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "reservation_id",
         "portal",
         "uuid",
+        "eid",
+        "eid2",
+        "provider"
     ]
     COLUMNS_LISTS["poi_view"] = [
         "structure",
@@ -1875,6 +1881,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["touristic_event_view"] = [
         "structure",
@@ -1902,6 +1910,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["feedback_view"] = [
         "email",
@@ -2147,6 +2157,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "usage_difficulty",
         "maintenance_difficulty"
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["signage_export"] = [
         "structure",
@@ -2173,6 +2185,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["intervention_export"] = [
         "name",
@@ -2289,6 +2303,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["poi_export"] = [
         "structure",
@@ -2376,6 +2391,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["touristic_event_export"] = [
         "structure",
@@ -2412,6 +2428,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["feedback_export"] = [
         "email",

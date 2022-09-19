@@ -161,3 +161,6 @@ msgstr "Ajouter"
 
 msgid "meters"
 msgstr "mètres"
+
+msgid "Provider"
+msgstr "Fournisseur"

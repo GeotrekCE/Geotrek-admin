@@ -147,6 +147,9 @@ msgstr "A bref résumé (info bulle sur la carte)"
 msgid "Description"
 msgstr "Description"
 
+msgid "Provider"
+msgstr "Fournisseur"
+
 msgid "Complete description"
 msgstr "Description complète"
 

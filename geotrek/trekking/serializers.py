@@ -363,7 +363,7 @@ class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Zoni
     structure = StructureSerializer()
 
     class Meta:
-        model = trekking_models.Trek
+        model = trekking_models.POI
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = (
             'id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure'

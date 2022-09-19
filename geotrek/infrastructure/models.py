@@ -99,6 +99,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                   on_delete=models.SET_NULL)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     class Meta:
         abstract = True
@@ -147,6 +148,11 @@ class InfrastructureGISManager(NoDeleteManager):
             .order_by('-implantation_year').distinct('implantation_year') \
             .values_list('implantation_year', 'implantation_year')
         return all_years
+
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
 
 
 class Infrastructure(MapEntityMixin, BaseInfrastructure):
