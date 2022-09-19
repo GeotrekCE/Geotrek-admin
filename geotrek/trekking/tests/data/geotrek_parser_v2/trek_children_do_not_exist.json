@@ -29,6 +29,14 @@
     {
       "uuid": "b2aea892-5e6e-4daa-a750-7d2ee52d3fe1",
       "steps": []
+    },
+    {
+      "uuid": "b2aea666-5e6e-4daa-a750-7d2ee52d3fe1",
+      "steps": [
+        {
+          "uuid": "c9567576-2934-43ab-979e-e13d02c671a9"
+        }
+      ]
     }
   ]
 }

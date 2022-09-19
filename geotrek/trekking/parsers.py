@@ -138,6 +138,7 @@ class GeotrekTrekParser(GeotrekParser):
                 if value:
                     trek_parent_instance = Trek.objects.filter(eid=key)
                     if not trek_parent_instance:
+                        self.add_warning(_(f"Trying to retrieve children for missing trek : could not find trek with UUID {key}"))
                         return
                     order = 0
                     for child in value:
