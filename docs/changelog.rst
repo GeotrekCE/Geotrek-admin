@@ -15,6 +15,7 @@ CHANGELOG
 
 - Fix Site creation form is initialized with parent Site
 - Fix memory leak and optimize SQL queries on zoning intersections
+- Fix error message should not be displayed on attachments from the same structure as user
 
 **Maintenance**
 
