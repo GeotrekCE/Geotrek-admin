@@ -19,14 +19,14 @@ ALTER TABLE signage_signage ALTER COLUMN code SET DEFAULT '';
 --type
 -- topo_object
 -- name
-ALTER TABLE infrastructure_infrastructure ALTER COLUMN description SET DEFAULT '';
+ALTER TABLE signage_signage ALTER COLUMN description SET DEFAULT '';
 -- condition
 -- implantation_year
 -- eid
-ALTER TABLE infrastructure_infrastructure ALTER COLUMN published SET DEFAULT FALSE;
+ALTER TABLE signage_signage ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure
-ALTER TABLE infrastructure_infrastructure ALTER COLUMN provider SET DEFAULT '';
+ALTER TABLE signage_signage ALTER COLUMN provider SET DEFAULT '';
 
 
 
