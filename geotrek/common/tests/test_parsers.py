@@ -564,7 +564,7 @@ class GeotrekParserTest(TestCase):
         t2 = TrekFactory(provider="Provider2", name="I should not be deleted", eid="1236")
         t3 = TrekFactory(provider="", name="I should not be deleted", eid="12374")
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
-        self.assertEqual([t.pk, t2.pk, t3.pk], list(Trek.objects.values_list('pk', flat=True)))
+        self.assertListEqual([t.pk, t2.pk, t3.pk], list(Trek.objects.values_list('pk', flat=True)))
 
     @mock.patch('requests.get')
     def test_delete_according_to_no_provider(self, mocked_get):
