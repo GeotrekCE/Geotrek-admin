@@ -1,0 +1,62 @@
+{
+  "count": 5,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "cirkwi_level": 1,
+      "label": {
+        "fr": "Très facile",
+        "en": "Very easy",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/difficulty-1.svg"
+    },
+    {
+      "id": 2,
+      "cirkwi_level": 2,
+      "label": {
+        "fr": "Facile",
+        "en": "Easy",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/difficulty-2.svg"
+    },
+    {
+      "id": 3,
+      "cirkwi_level": 3,
+      "label": {
+        "fr": "Intermédiaire",
+        "en": "Medium",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/difficulty-3.svg"
+    },
+    {
+      "id": 4,
+      "cirkwi_level": 4,
+      "label": {
+        "fr": "Difficile",
+        "en": "Hard",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/difficulty-4.svg"
+    },
+    {
+      "id": 5,
+      "cirkwi_level": 5,
+      "label": {
+        "fr": "Très difficile",
+        "en": "Very hard",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/difficulty-5.svg"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "pictogram": "https://foo.fr/media/upload/route-loop.svg",
+      "route": {
+        "fr": "Boucle",
+        "en": null,
+        "es": null,
+        "it": null
+      }
+    },
+    {
+      "id": 2,
+      "pictogram": "https://foo.fr/media/upload/route-return.svg",
+      "route": {
+        "fr": "Aller-retour",
+        "en": null,
+        "es": null,
+        "it": null
+      }
+    },
+    {
+      "id": 3,
+      "pictogram": "https://foo.fr/media/upload/route-cross.svg",
+      "route": {
+        "fr": "Traversée",
+        "en": null,
+        "es": null,
+        "it": null
+      }
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 """
 
 import datetime
+from geotrek.common.mixins.managers import NoDeleteManager
 import simplekml
 
 from django.conf import settings
@@ -72,6 +73,13 @@ class Species(OptionalPictogramMixin):
         return ", ".join([str(practice) for practice in self.practices.all()])
 
 
+class SensitiveAreaManager(NoDeleteManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
@@ -81,6 +89,9 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     description = models.TextField(verbose_name=_("Description"), blank=True)
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
+
+    objects = SensitiveAreaManager()
 
     class Meta:
         verbose_name = _("Sensitive area")

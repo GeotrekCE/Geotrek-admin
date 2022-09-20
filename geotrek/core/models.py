@@ -47,6 +47,11 @@ class PathManager(models.Manager):
         """
         return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
 
+    def provider_choices(self):
+        providers = self.get_queryset().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
 
 class PathInvisibleManager(models.Manager):
     use_for_related_fields = True
@@ -91,6 +96,7 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                                       blank=True, related_name="paths",
                                       verbose_name=_("Networks"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
@@ -956,6 +962,13 @@ class Network(StructureOrNoneRelated):
         return self.network
 
 
+class TrailManager(TopologyManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='').order_by('provider') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class Trail(MapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Name"), max_length=64)
@@ -970,9 +983,12 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     certifications_verbose_name = _("Certifications")
     geometry_types_allowed = ["LINESTRING"]
+
+    objects = TrailManager()
 
     class Meta:
         verbose_name = _("Trail")

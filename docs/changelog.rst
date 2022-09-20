@@ -5,6 +5,17 @@ CHANGELOG
 2.86.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add `provider` field to Trek, POI, Service, Signage, Infrastructure, TouristicContent, TouristicEvent, InformationDesk,
+  Path, Trail, Course, Site, SensitiveArea (#3189)
+- Add parser using api v2 (InformationDesk, TouristicContent, TouristicEvent, POI, Trek, Service, Signage, Infrastructure)
+- Add aggregator parser with a conductor using json file
+
+**Bug fixes**
+
+- Fix filtering on Services List does not filter
+
 **Minor improvements**
 
 - Disable debug log in debian package post installation script.

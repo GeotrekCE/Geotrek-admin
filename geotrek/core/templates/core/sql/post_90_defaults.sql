@@ -25,6 +25,8 @@ ALTER TABLE core_path ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE core_path ALTER COLUMN slope SET DEFAULT 0.0;
 ALTER TABLE core_path ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE core_path ALTER COLUMN date_update SET DEFAULT now();
+ALTER TABLE core_path ALTER COLUMN provider SET DEFAULT '';
+
 -- structure
 
 
@@ -91,4 +93,6 @@ ALTER TABLE core_trail ALTER COLUMN departure SET DEFAULT '';
 ALTER TABLE core_trail ALTER COLUMN arrival SET DEFAULT '';
 ALTER TABLE core_trail ALTER COLUMN comments SET DEFAULT '';
 ALTER TABLE core_trail ALTER COLUMN eid SET DEFAULT '';
+ALTER TABLE core_trail ALTER COLUMN provider SET DEFAULT '';
+
 -- structure

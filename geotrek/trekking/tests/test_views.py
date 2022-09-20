@@ -172,10 +172,10 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             self.client.get(self.model.get_datatablelist_url())
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(11):
             self.client.get(self.model.get_format_list_url())
 
     def test_list_in_csv(self):
@@ -1479,11 +1479,11 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
         DistrictFactory.build_batch(10)
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             self.client.get(self.model.get_datatablelist_url())
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) list
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(8):
             self.client.get(self.model.get_format_list_url())
 
     def test_services_on_treks_do_not_exist(self):

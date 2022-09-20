@@ -1,0 +1,167 @@
+{
+  "count": 16,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 9,
+      "label": {
+        "fr": "Archéologie",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-archeology.png"
+    },
+    {
+      "id": 11,
+      "label": {
+        "fr": "Architecture",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-architecture.png"
+    },
+    {
+      "id": 16,
+      "label": {
+        "fr": "Barre attache",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/POIE_point_attache.png"
+    },
+    {
+      "id": 15,
+      "label": {
+        "fr": "Col",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-pass.png"
+    },
+    {
+      "id": 3,
+      "label": {
+        "fr": "Faune",
+        "en": "Fauna",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-fauna.png"
+    },
+    {
+      "id": 2,
+      "label": {
+        "fr": "Flore",
+        "en": "Flora",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-flora.png"
+    },
+    {
+      "id": 8,
+      "label": {
+        "fr": "Géologie",
+        "en": "Geology",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-geology.png"
+    },
+    {
+      "id": 12,
+      "label": {
+        "fr": "Glacier",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-glacier.png"
+    },
+    {
+      "id": 10,
+      "label": {
+        "fr": "Histoire",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-history.png"
+    },
+    {
+      "id": 6,
+      "label": {
+        "fr": "Lac",
+        "en": "Lake",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-lake.png"
+    },
+    {
+      "id": 14,
+      "label": {
+        "fr": "Pastoralisme",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-pastoral.png"
+    },
+    {
+      "id": 1,
+      "label": {
+        "fr": "Petit patrimoine",
+        "en": "Small patrimony",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-patrimony.png"
+    },
+    {
+      "id": 4,
+      "label": {
+        "fr": "Point de vue",
+        "en": "Panorama",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-panorama.png"
+    },
+    {
+      "id": 5,
+      "label": {
+        "fr": "Refuge",
+        "en": "Refuge",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-refuge.png"
+    },
+    {
+      "id": 13,
+      "label": {
+        "fr": "Savoir-faire",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-knowhow.png"
+    },
+    {
+      "id": 7,
+      "label": {
+        "fr": "Sommet",
+        "en": "Peak",
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/poi-peak.png"
+    }
+  ]
+}

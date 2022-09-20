@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
-from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter
+from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.core.filters import ValidTopologyFilterSet, TopologyFilterTrail
@@ -20,12 +20,18 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
     maintenance_difficulty = ModelMultipleChoiceFilter(queryset=InfrastructureMaintenanceDifficultyLevel.objects.all(), label=_("Maintenance difficulty"))
     usage_difficulty = ModelMultipleChoiceFilter(queryset=InfrastructureUsageDifficultyLevel.objects.all(), label=_("Usage difficulty"))
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=Infrastructure.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
         fields = StructureRelatedFilterSet.Meta.fields + [
             'category', 'type', 'condition', 'implantation_year',
-            'intervention_year', 'published'
+            'intervention_year', 'published', 'provider'
         ]
 
     def filter_intervention_year(self, qs, name, value):

@@ -14,7 +14,7 @@ from django.utils.translation import gettext as _
 from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    TourInSoftParser)
+                                    TourInSoftParser, GeotrekParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 
@@ -888,3 +888,160 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
 
 class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
     version_tourinsoft = 3
+
+
+class GeotrekTouristicContentParser(GeotrekParser):
+    """Geotrek parser for TouristicContent"""
+
+    url = None
+    model = TouristicContent
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry",
+    }
+
+    m2m_replace_fields = {
+        "type1": "types",
+        "type2": "types"
+    }
+
+    url_categories = {
+        "category": "touristiccontent_category",
+        "themes": "theme",
+    }
+
+    categories_keys_api_v2 = {
+        'category': 'label',
+        'themes': 'label',
+    }
+
+    natural_keys = {
+        'category': 'label',
+        'themes': 'label',
+        'type1': 'label',
+        'type2': 'label'
+    }
+
+    field_options = {
+        'type1': {'fk': 'category'},
+        'type2': {'fk': 'category'},
+        'geom': {'required': True},
+    }
+
+    def __init__(self, *args, **kwargs):
+        """Initialize parser with mapping for type1 and type2"""
+        super().__init__(*args, **kwargs)
+        response = self.request_or_retry(f"{self.url}/api/v2/touristiccontent_category/", )
+        self.field_options.setdefault("type1", {})
+        self.field_options.setdefault("type2", {})
+        self.field_options["type1"]["mapping"] = {}
+        self.field_options["type2"]["mapping"] = {}
+        for r in response.json()['results']:
+            for type_category in r['types']:
+                values = type_category["values"]
+                id_category = type_category["id"]
+                if self.create_categories:
+                    self.field_options['type1']["create"] = True
+                    self.field_options['type2']["create"] = True
+                for value in values:
+                    if id_category % 10 == 1:
+                        self.field_options['type1']["mapping"][value['id']] = self.replace_mapping(
+                            value['label'][settings.MODELTRANSLATION_DEFAULT_LANGUAGE], 'type1'
+                        )
+                    if id_category % 10 == 2:
+                        self.field_options['type2']["mapping"][value['id']] = self.replace_mapping(
+                            value['label'][settings.MODELTRANSLATION_DEFAULT_LANGUAGE], 'type2'
+                        )
+        self.next_url = f"{self.url}/api/v2/touristiccontent"
+
+    def filter_type1(self, src, val):
+        type1_result = []
+        for key, value in val.items():
+            if int(key) % 10 == 1:
+                type1_result.extend(value)
+        return self.apply_filter('type1', src, type1_result)
+
+    def filter_type2(self, src, val):
+        type2_result = []
+        for key, value in val.items():
+            if int(key) % 10 == 2:
+                type2_result.extend(value)
+        return self.apply_filter('type2', src, type2_result)
+
+
+class GeotrekTouristicEventParser(GeotrekParser):
+    """Geotrek parser for TouristicEvent"""
+
+    url = None
+    model = TouristicEvent
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry"
+    }
+    url_categories = {
+        "type": "touristicevent_type",
+    }
+    categories_keys_api_v2 = {
+        'type': 'type',
+    }
+    natural_keys = {
+        'type': 'type',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.next_url = f"{self.url}/api/v2/touristicevent"
+
+
+class GeotrekInformationDeskParser(GeotrekParser):
+    """Geotrek parser for InformationDesk"""
+    url = None
+    model = InformationDesk
+    constant_fields = {}
+    replace_fields = {
+        "eid": "uuid",
+        "geom": ["latitude", "longitude"],
+        "photo": "photo_url"
+    }
+    url_categories = {}
+    categories_keys_api_v2 = {}
+    natural_keys = {
+        'type': 'label',
+    }
+
+    field_options = {
+        "type": {"create": True},
+        'geom': {'required': True},
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.next_url = f"{self.url}/api/v2/informationdesk"
+
+    def filter_geom(self, src, val):
+        lat, lng = val
+        return Point(lng, lat, srid=settings.API_SRID).transform(settings.SRID, clone=True)
+
+    def filter_type(self, src, val):
+        return self.apply_filter('type', src, val["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE])
+
+    def filter_photo(self, src, val):
+        if not val:
+            return None
+        content = self.download_attachment(val)
+        if content is None:
+            return None
+        f = ContentFile(content)
+        basename, ext = os.path.splitext(os.path.basename(val))
+        name = '%s%s' % (basename[:128], ext)
+        file = UploadedFile(f, name=name)
+        return file

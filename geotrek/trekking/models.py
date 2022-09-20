@@ -17,7 +17,7 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology, simplify_coords
+from geotrek.core.models import Path, Topology, TopologyManager, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin
 from geotrek.common.mixins.managers import NoDeleteManager
@@ -111,6 +111,13 @@ class Rating(RatingMixin):
         ordering = ('order', 'name')
 
 
+class TrekManager(TopologyManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().order_by('provider').distinct('provider') \
+            .exclude(provider__exact='').values_list('provider', 'provider')
+        return providers
+
+
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     departure = models.CharField(verbose_name=_("Departure"), max_length=128, blank=True,
@@ -202,6 +209,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
                                     verbose_name=_("Labels"),
                                     blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     eid2 = models.CharField(verbose_name=_("Second external id"), max_length=1024, blank=True, null=True)
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
                                            blank=True)
@@ -214,6 +222,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
     geometry_types_allowed = ["LINESTRING"]
+    objects = TrekManager()
 
     class Meta:
         verbose_name = _("Trek")
@@ -717,11 +726,19 @@ class WebLinkCategory(PictogramMixin):
         return "%s" % self.label
 
 
+class POIManager(NoDeleteManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     geometry_types_allowed = ["POINT"]
 
@@ -730,7 +747,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         verbose_name_plural = _("POI")
 
     # Override default manager
-    objects = NoDeleteManager()
+    objects = POIManager()
 
     # Do no check structure when selecting POIs to exclude
     check_structure_in_forms = False
@@ -847,12 +864,18 @@ class ServiceManager(NoDeleteManager):
     def get_queryset(self):
         return super().get_queryset().select_related('type')
 
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
 
 class Service(StructureRelated, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        on_delete=models.CASCADE)
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     class Meta:
         verbose_name = _("Service")

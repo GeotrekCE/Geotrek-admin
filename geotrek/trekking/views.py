@@ -500,6 +500,7 @@ class ServiceViewSet(GeotrekMapentityViewSet):
     model = Service
     serializer_class = ServiceSerializer
     geojson_serializer_class = ServiceGeojsonSerializer
+    filterset_class = ServiceFilterSet
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related('type')

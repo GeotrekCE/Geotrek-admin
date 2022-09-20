@@ -181,6 +181,12 @@
             </td>
         </tr>
         <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if trek.provider %}{{ trek.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "Second external id" %}</th>
             <td>{% if trek.eid2 %}{{ trek.eid2|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}

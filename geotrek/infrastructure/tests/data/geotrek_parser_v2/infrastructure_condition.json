@@ -1,0 +1,32 @@
+{
+  "count": 5,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 6,
+      "label": "Neuf",
+      "structure": null
+    },
+    {
+      "id": 7,
+      "label": "Bon état",
+      "structure": null
+    },
+    {
+      "id": 8,
+      "label": "Dégradé",
+      "structure": null
+    },
+    {
+      "id": 9,
+      "label": "En ruines",
+      "structure": null
+    },
+    {
+      "id": 10,
+      "label": "Tagué",
+      "structure": null
+    }
+  ]
+}

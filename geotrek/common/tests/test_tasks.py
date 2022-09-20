@@ -39,7 +39,7 @@ class TasksTest(TestCase):
     def test_import_datas_from_web_other_exception(self):
         self.assertRaisesMessage(
             GlobalImportError,
-            'Filename is required',
+            'Filename or url is required',
             import_datas_from_web,
             name='OrganismParser',
             module='geotrek.common.tests.test_tasks'

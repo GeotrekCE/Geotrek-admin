@@ -14,6 +14,7 @@ from easy_thumbnails.files import get_thumbnailer
 from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
                                           PicturesMixin, PublishableMixin, TimeStampedModelMixin)
 from geotrek.common.models import ReservationSystem, Theme
@@ -59,6 +60,7 @@ class LabelAccessibility(PictogramMixin):
 
 class InformationDesk(models.Model):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     name = models.CharField(verbose_name=_("Title"), max_length=256)
     type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.CASCADE,
                              related_name='desks')
@@ -274,6 +276,13 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _("Second list types")
 
 
+class TouristicContentManager(NoDeleteManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                        TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
@@ -313,6 +322,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                             on_delete=models.CASCADE, related_name='contents', blank=True,
                                             null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
                                            on_delete=models.CASCADE, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
@@ -320,6 +330,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     approved = models.BooleanField(verbose_name=_("Approved"), default=False,
                                    help_text=_("Indicates whether the content has a label or brand"))
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    objects = TouristicContentManager()
 
     class Meta:
         verbose_name = _("Touristic content")
@@ -385,6 +396,13 @@ class TouristicEventType(OptionalPictogramMixin):
         return self.type
 
 
+class TouristicEventManager(NoDeleteManager):
+    def provider_choices(self):
+        providers = self.get_queryset().existing().order_by('provider').exclude(provider__exact='') \
+            .distinct('provider').values_list('provider', 'provider')
+        return providers
+
+
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
@@ -426,9 +444,10 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     blank=True, related_name='touristicevents',
                                     verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-
+    objects = TouristicEventManager()
     id_prefix = 'E'
 
     class Meta:

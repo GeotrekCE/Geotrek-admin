@@ -1,0 +1,27 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2,
+      "label": {
+        "fr": "PR",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/network-PR.svg"
+    },
+    {
+      "id": 4,
+      "label": {
+        "fr": "VTT",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/network-VTT.svg"
+    }
+  ]
+}

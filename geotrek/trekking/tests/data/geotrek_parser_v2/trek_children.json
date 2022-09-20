@@ -1,0 +1,31 @@
+{
+  "count": 5,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "uuid": "9e70b294-1134-4c50-9c56-d722720cacf1",
+      "steps": [
+        {
+          "uuid": "c9567576-2934-43ab-979e-e13d02c671a9"
+        }
+      ]
+    },
+    {
+      "uuid": "1ba24605-aff2-4b16-bf30-6de1ebfb2a12",
+      "steps": []
+    },
+    {
+      "uuid": "6761143f-9244-41d0-b1af-21114408f769",
+      "steps": []
+    },
+    {
+      "uuid": "c9567576-2934-43ab-979e-e13d02c671a9",
+      "steps": []
+    },
+    {
+      "uuid": "b2aea892-5e6e-4daa-a750-7d2ee52d3fe1",
+      "steps": []
+    }
+  ]
+}

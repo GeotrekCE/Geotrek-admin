@@ -61,6 +61,7 @@ ALTER TABLE trekking_trek ALTER COLUMN accessibility_infrastructure SET DEFAULT 
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_signage SET DEFAULT '';
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_slope SET DEFAULT '';
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_width SET DEFAULT '';
+ALTER TABLE trekking_trek ALTER COLUMN provider SET DEFAULT '';
 -- route
 -- difficulty
 -- web_links
@@ -147,6 +148,8 @@ ALTER TABLE trekking_poi ALTER COLUMN description SET DEFAULT '';
 -- name
 ALTER TABLE trekking_poi ALTER COLUMN review SET DEFAULT FALSE;
 ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
+ALTER TABLE trekking_poi ALTER COLUMN provider SET DEFAULT '';
+
 -- publication_date
 
 
@@ -173,3 +176,4 @@ ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
 -- type
 --eid
 --structure
+ALTER TABLE trekking_service ALTER COLUMN provider SET DEFAULT '';

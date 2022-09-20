@@ -1,0 +1,39 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": {
+        "fr": "Eau potable",
+        "en": "Drinking water",
+        "es": null,
+        "it": null
+      },
+      "practices": [
+        4,
+        2,
+        1,
+        3
+      ],
+      "pictogram": "https://foo.fr/media/upload/drinking_water.svg"
+    },
+    {
+      "id": 2,
+      "name": {
+        "fr": "Descente pentue",
+        "en": "Steep descent",
+        "es": null,
+        "it": null
+      },
+      "practices": [
+        4,
+        2,
+        1,
+        3
+      ],
+      "pictogram": "https://foo.fr/media/upload/steep_descent.svg"
+    }
+  ]
+}

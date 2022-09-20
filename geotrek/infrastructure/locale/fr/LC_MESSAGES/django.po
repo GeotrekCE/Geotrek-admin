@@ -117,3 +117,6 @@ msgstr "Aucun(e)"
 
 msgid "Add a new infrastructure"
 msgstr "Ajouter un aménagement"
+
+msgid "Provider"
+msgstr "Fournisseur"

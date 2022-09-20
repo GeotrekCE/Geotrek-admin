@@ -1,0 +1,17 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 6,
+      "pictogram": null,
+      "type": {
+        "fr": "Spectacle",
+        "en": "Show",
+        "es": null,
+        "it": null
+      }
+    }
+  ]
+}
