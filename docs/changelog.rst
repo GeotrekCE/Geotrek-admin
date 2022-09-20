@@ -5,6 +5,10 @@ CHANGELOG
 2.87.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix acces rights on files after synchronization
+
 
 2.87.0 (2022-09-20)
 -----------------------
