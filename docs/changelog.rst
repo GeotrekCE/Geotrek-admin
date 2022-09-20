@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.86.0+dev (XXXX-XX-XX)
+2.87.0 (2022-09-20)
 -----------------------
 
 **New features**
@@ -12,9 +12,6 @@ CHANGELOG
 - Add parser using api v2 (InformationDesk, TouristicContent, TouristicEvent, POI, Trek, Service, Signage, Infrastructure)
 - Add aggregator parser with a conductor using json file
 
-**Bug fixes**
-
-- Fix filtering on Services List does not filter
 
 **Minor improvements**
 
@@ -24,6 +21,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix filtering on Services List does not filter
 - Fix Site creation form is initialized with parent Site
 - Fix memory leak and optimize SQL queries on zoning intersections
 - Fix error message should not be displayed on attachments from the same structure as user
@@ -58,6 +56,7 @@ CHANGELOG
 - Add possibility to use different type of file with import form
 - Add setting MAX_CHARACTERS for rich text fields with Mapentity 8.2.1 (#2901)
 - Set map resizable with Mapentity 8.2.1 (#3162)
+- Add Category, certification label and status fields on trails (#2900 & #3152)
 
 **Minor improvements**
 
@@ -86,8 +85,6 @@ CHANGELOG
 
 **New features**
 
-- Add category field on trail model
-- Add certification label and status fields on trails (#2900)
 - Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
 - Use permission bypass_structure on attachments and accessibility attachments (#2899)
 - Add boolean field 'display_in_legend' to Report Status model
