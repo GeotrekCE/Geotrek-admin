@@ -1,3 +1,9 @@
+geotrek-admin (2.87.1+dev) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>  Tue, 20 Sep 2022 19:45:24 +0200
+
 geotrek-admin (2.87.1) RELEASED; urgency=medium
 
   * New package release
