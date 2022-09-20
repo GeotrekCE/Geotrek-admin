@@ -448,7 +448,7 @@ class Command(BaseCommand):
             os.rename(self.dst_root, tmp_root2)
             shutil.rmtree(tmp_root2)
         os.rename(self.tmp_root, self.dst_root)
-        os.chmod('var', stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+        os.chmod(self.dst_root, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
         os.mkdir(self.tmp_root)  # Recreate otherwise python3.6 will complain it does not find the tmp dir at cleanup.
 
     def handle(self, *args, **options):
