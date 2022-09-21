@@ -19,7 +19,7 @@ Database
 
 .. code-block:: bash
 
-    sudo -u postgres pg_dump -Fc geotrekdb > `date +%Y%m%d%H%M`-database.backup
+    sudo -u postgres pg_dump --no-acl --no-owner -Fc geotrekdb > `date +%Y%m%d%H%M`-database.backup
 
 Media files
 
@@ -64,6 +64,9 @@ Restore backup:
 
     sudo -u postgres pg_restore -d geotrekdb 20200510-geotrekdb.backup
 
+If errors occurs on restore, try to add ``--clean`` option.
+
+If errors persists, rename your database and recreate a fresh one, then restore.
 
 Extract media and configuration files:
 
