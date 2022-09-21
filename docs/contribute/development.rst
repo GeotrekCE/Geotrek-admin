@@ -72,8 +72,8 @@ On master branch:
 * Run ``dch -v <version>+dev --no-force-save-on-release`` and save
 * Commit with message 'Back to development'
 * Push branch and tag
-* When pushing a release tag 'x.y.z', CircleCI will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 * Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
+* When create a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 
 
 Developement
@@ -236,7 +236,7 @@ Data only:
 
 ::
 
-   docker-compose run web ./manage.py sqlflush
+   docker-compose run web ./manage.py flush
 
 Restore existing Database
 -------------------------
