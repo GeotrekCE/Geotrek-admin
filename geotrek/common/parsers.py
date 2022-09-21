@@ -66,7 +66,7 @@ class DownloadImportError(ImportError):
 
 class Parser:
     """
-    provider: Allow to differentiate multiple GeotrekParser for the same model
+    provider: Allow to differentiate multiple Parser for the same model
     """
     label = None
     model = None

@@ -50,6 +50,23 @@ class EauViveParser(TouristicContentApidaeParser):
     type2 = []
 
 
+class Provider1Parser(TouristicContentApidaeParser):
+    category = "Eau vive"
+    provider = "Provider1"
+    delete = True
+
+
+class Provider2Parser(TouristicContentApidaeParser):
+    category = "Eau vive"
+    provider = "Provider2"
+    delete = True
+
+
+class NoProviderParser(TouristicContentApidaeParser):
+    category = "Eau vive"
+    delete = True
+
+
 class TestInformationDeskParser(InformationDeskApidaeParser):
     type = "Foo"
 
@@ -129,6 +146,37 @@ class ParserTests(TranslationResetMixin, TestCase):
         with self.assertRaises(CommandError):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
         self.assertTrue(mocked.called)
+
+    @mock.patch('geotrek.common.parsers.requests.get')
+    @override_settings(PARSER_RETRY_SLEEP_TIME=0)
+    @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachments', False)
+    def test_create_content_by_provider(self, mocked):
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        def mocked_json2():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent2.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        TouristicContentCategoryFactory(label="Eau vive")
+        FileType.objects.create(type="Photographie")
+
+        # Parser with provider creates objects with provider
+        call_command('import', 'geotrek.tourism.tests.test_parsers.Provider1Parser')
+        self.assertEqual(TouristicContent.objects.count(), 1)
+        self.assertEqual(TouristicContent.objects.first().provider, "Provider1")
+        mocked.return_value.json = mocked_json2
+        # Parser with provider does not delete other providers' objects
+        call_command('import', 'geotrek.tourism.tests.test_parsers.Provider2Parser')
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        call_command('import', 'geotrek.tourism.tests.test_parsers.NoProviderParser')
+        # Parser with no provider behaves as if all objects are to handle (based on eid only)
+        self.assertEqual(TouristicContent.objects.count(), 1)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
