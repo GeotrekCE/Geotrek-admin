@@ -75,7 +75,7 @@ Then set up appropriate values:
 * ``label`` at your convenience,
 * ``api_key``, ``project_id`` and ``selection_id`` according to your APIDAE (ex-SITRA) configuration
 * ``category``, ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go
-* You can add ``delete = True`` in your class if you want to delete objects in Geotrek databases that has been deleted in your Apidae selection. It will only delete objects that match with your class settings (category, types, portal...)
+* You can add ``delete = True`` in your class if you want to delete objects in Geotrek databases that has been deleted in your Apidae selection. It will only delete objects that match with your class settings (category, types, portal, provider...)
 * You can also use the class ``HebergementParser`` if you only import accomodations
 * See https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py for details about Parsers
 
@@ -147,7 +147,7 @@ You can start imports from "Import" menu or from command line. You can override 
 file.
 
 
-Multiples import
+Multiple imports :
 ----------------
 
 When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values in many to many relationship case.
@@ -173,6 +173,49 @@ Then your object in both portals will have as portal: ``portal_1, portal_2``
 * Here in this example whenever you import the first parser ``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields`` is not filled. Then, be careful to import parsers in the right order or add the param ``m2m_aggregate_fields`` on all parsers.
 
 If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
+
+
+Importing from multiple sources with deletion :
+----------------
+
+When importing data for the same model using two (or more) different sources, the ``provider`` field should be used to differenciate between sources, allowing to enable object deletion with ``delete = True`` without causing the last parser to delete objects created by preceeding parsers.
+
+In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will each import their objects, set the ``provider`` field on these objects, and only delete objects that disappeared from their respective source since last parsing.
+
+::
+
+    class Provider_1Parser(XXXXParser):
+        delete = True
+        provider = "provider_1"
+
+    class Provider_2Parser(XXXParser):
+        delete = True
+        provider = "provider_2"
+
+
+.. danger::
+    It is recommended to use ``provider`` from the first import - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser. 
+
+
+.. danger::
+    If a parser does not have a ``provider`` value, it will not take providers into account, meaning that it could delete objects from preceeding parsers even if these other parsers do have a ``provider`` themselves.
+
+
+The following example would cause ``NoProviderParser`` to delete objects from ``Provider_2Parser`` and ``Provider_1Parser``.
+
+::
+
+    class Provider_1Parser(XXXXParser):
+        delete = True
+        provider = "provider_1"
+
+    class Provider_2Parser(XXXParser):
+        delete = True
+        provider = "provider_2"
+
+    class NoProviderParser(XXXParser):
+        delete = True
+        provider = None       (default)
 
 
 Start import from command line
