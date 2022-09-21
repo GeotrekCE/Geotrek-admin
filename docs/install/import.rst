@@ -147,7 +147,7 @@ You can start imports from "Import" menu or from command line. You can override 
 file.
 
 
-Multiple imports :
+Multiple imports
 ----------------
 
 When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values in many to many relationship case.
@@ -175,7 +175,7 @@ Then your object in both portals will have as portal: ``portal_1, portal_2``
 If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
 
 
-Importing from multiple sources with deletion :
+Importing from multiple sources with deletion
 ----------------
 
 When importing data for the same model using two (or more) different sources, the ``provider`` field should be used to differenciate between sources, allowing to enable object deletion with ``delete = True`` without causing the last parser to delete objects created by preceeding parsers.
