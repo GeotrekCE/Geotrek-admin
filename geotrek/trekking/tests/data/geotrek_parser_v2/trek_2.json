@@ -102,9 +102,9 @@
       },
       "description_teaser": {
         "fr": "Chapeau",
-        "en": "",
-        "es": "",
-        "it": ""
+        "en": "Cap",
+        "es": "Sombrero",
+        "it": "Cappello"
       },
       "difficulty": 3,
       "disabled_infrastructure": {
