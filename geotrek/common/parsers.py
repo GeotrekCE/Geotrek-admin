@@ -115,8 +115,11 @@ class Parser:
                 f.name: force_str(f.verbose_name)
                 for f in self.model._meta.many_to_many
             }
-        default_language = self.default_language if self.default_language else settings.MODELTRANSLATION_DEFAULT_LANGUAGE
-        translation.activate(default_language)
+
+        if self.default_language and self.default_language in settings.MODELTRANSLATION_LANGUAGES:
+            translation.activate(self.default_language)
+        else:
+            translation.activate(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
 
     def normalize_field_name(self, name):
         return name.upper()
