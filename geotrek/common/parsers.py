@@ -1154,7 +1154,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 for key, final_value in val.items():
                     if key in settings.MODELTRANSLATION_LANGUAGES:
                         self.set_value(f'{dst}_{key}', src, final_value)
-                val = val.get(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
+                val = val.get(translation.get_language())
         return val
 
     def normalize_field_name(self, name):

@@ -522,6 +522,7 @@ class GeotrekTrekTestParser(GeotrekParser):
 class GeotrekTrekTestProviderParser(GeotrekTrekParser):
     url = "https://test.fr"
     provider = "Provider1"
+    default_language = "fr"
     delete = True
     url_categories = {}
 
@@ -560,6 +561,9 @@ class GeotrekParserTest(TestCase):
         self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(t.provider, "Provider1")
+        self.assertEqual(t.description_teaser, "Chapeau")
+        self.assertEqual(t.description_teaser_fr, "Chapeau")
+        self.assertEqual(t.description_teaser_en, "Header")
         TrekFactory(provider="Provider1", name="I should be deleted", eid="1234")
         t2 = TrekFactory(provider="Provider2", name="I should not be deleted", eid="1236")
         t3 = TrekFactory(provider="", name="I should not be deleted", eid="12374")
