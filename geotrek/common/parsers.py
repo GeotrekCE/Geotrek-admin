@@ -223,7 +223,7 @@ class Parser:
             if isinstance(old, str):
                 val = val or ""
             if old != val:
-                """ /!\ TODO we need to add checks here for translated fields :
+                """ TODO we need to add checks here for translated fields :
                 this only compares old 'name' with new 'name' but it should compare
                     - old 'name_en' with new 'name_en',
                     - old 'name_fr' with new 'name_fr'...

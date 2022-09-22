@@ -401,7 +401,6 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(trek.name, "Loop of the pic of 3 lords")
         self.assertEqual(trek.name_en, "Loop of the pic of 3 lords")
         self.assertEqual(trek.name_fr, "Boucle du Pic des Trois Seigneurs")
-        #self.assertEqual(str(trek.difficulty.difficulty_fr), 'Très facile')
         self.assertEqual(str(trek.difficulty), 'Very easy')
         self.assertEqual(str(trek.difficulty.difficulty_en), 'Very easy')
         self.assertEqual(str(trek.practice), 'Horse')
