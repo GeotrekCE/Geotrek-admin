@@ -67,6 +67,7 @@ class DownloadImportError(ImportError):
 class Parser:
     """
     provider: Allow to differentiate multiple Parser for the same model
+    default_language: Allow to define which language this parser will populate by default
     """
     label = None
     model = None
@@ -89,6 +90,7 @@ class Parser:
     non_fields = {}
     natural_keys = {}
     field_options = {}
+    default_language = None
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -113,7 +115,8 @@ class Parser:
                 f.name: force_str(f.verbose_name)
                 for f in self.model._meta.many_to_many
             }
-        translation.activate(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
+        default_language = self.default_language if self.default_language else settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        translation.activate(default_language)
 
     def normalize_field_name(self, name):
         return name.upper()

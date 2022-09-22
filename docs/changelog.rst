@@ -6,8 +6,14 @@ CHANGELOG
 2.87.1+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add `default_language` attribute to Parsers to specify which language to update
+
 **Bug fixes**
 
+- Fix `provider` is not used properly when parsing TouristicContents
+- Improve Aggregator translation management
 - Fix PermissionError during sync-rando on fresh install from .deb package
 
 
