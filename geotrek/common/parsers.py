@@ -701,6 +701,7 @@ class AttachmentParserMixin:
             except UnidentifiedImageError:
                 pass
             attachment.attachment_file.save(name, f, save=False)
+            attachment.is_image = attachment.is_an_image()
         else:
             attachment.attachment_link = url
         return True, updated

@@ -10,6 +10,10 @@ CHANGELOG
 
 - Add `default_language` attribute to Parsers to specify which language to update
 
+**Minor improvements**
+
+- Ensure attachments from parsers have generated thumbnails 
+
 **Bug fixes**
 
 - Fix `provider` is not used properly when parsing TouristicContents

@@ -207,6 +207,7 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.content_object, organism)
         self.assertEqual(attachment.attachment_file.name, 'paperclip/common_organism/{pk}/titi.png'.format(pk=organism.pk))
         self.assertEqual(attachment.filetype, self.filetype)
+        self.assertTrue(attachment.is_image)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
     @mock.patch('requests.get')
