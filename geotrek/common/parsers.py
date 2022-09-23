@@ -701,6 +701,7 @@ class AttachmentParserMixin:
             except UnidentifiedImageError:
                 pass
             attachment.attachment_file.save(name, f, save=False)
+            attachment.is_image = attachment.is_an_image()
         else:
             attachment.attachment_link = url
         return True, updated
@@ -746,7 +747,9 @@ class AttachmentParserMixin:
         attachments_to_delete = list(Attachment.objects.attachments_for_object(self.obj))
         updated, attachments = self.generate_attachments(src, val, attachments_to_delete, updated)
         Attachment.objects.bulk_create(attachments)
-
+        # TODO : attachments from parsers should be resized
+        #  See https://github.com/makinacorpus/django-paperclip/blob/master/paperclip/models.py#L124
+        # `bulk_create` does not call this `save` method
         self.remove_attachments(attachments_to_delete)
         return updated
 
