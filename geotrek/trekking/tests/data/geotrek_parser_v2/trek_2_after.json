@@ -101,10 +101,10 @@
         "it": ""
       },
       "description_teaser": {
-        "fr": "Chapeau",
-        "en": "Cap",
-        "es": "Sombrero",
-        "it": "Cappello"
+        "fr": "Chapeau 2",
+        "en": "Cap 2",
+        "es": "Sombrero 2",
+        "it": "Cappello 2"
       },
       "difficulty": 3,
       "disabled_infrastructure": {

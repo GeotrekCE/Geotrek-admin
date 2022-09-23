@@ -14,7 +14,7 @@
       "filter": true,
       "name": {
         "fr": "Chien autorisé",
-        "en": "Is in the midst of the park",
+        "en": "Dogs are great",
         "es": "En coeur de parc",
         "it": "Nel cuore del parco"
       },
@@ -31,7 +31,7 @@
       "filter": true,
       "name": {
         "fr": "En coeur de parc",
-        "en": null,
+        "en": "Is in the midst of the park",
         "es": null,
         "it": null
       },
@@ -48,7 +48,7 @@
       "filter": true,
       "name": {
         "fr": "Information Patou",
-        "en": null,
+        "en": "Patou",
         "es": null,
         "it": null
       },

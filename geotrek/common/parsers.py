@@ -66,7 +66,8 @@ class DownloadImportError(ImportError):
 
 class Parser:
     """
-    provider: Allow to differentiate multiple GeotrekParser for the same model
+    provider: Allow to differentiate multiple Parser for the same model
+    default_language: Allow to define which language this parser will populate by default
     """
     label = None
     model = None
@@ -89,6 +90,7 @@ class Parser:
     non_fields = {}
     natural_keys = {}
     field_options = {}
+    default_language = None
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -113,6 +115,11 @@ class Parser:
                 f.name: force_str(f.verbose_name)
                 for f in self.model._meta.many_to_many
             }
+
+        if self.default_language and self.default_language in settings.MODELTRANSLATION_LANGUAGES:
+            translation.activate(self.default_language)
+        else:
+            translation.activate(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
 
     def normalize_field_name(self, name):
         return name.upper()
@@ -202,24 +209,33 @@ class Parser:
 
     def parse_real_field(self, dst, src, val):
         """Returns True if modified"""
+        if hasattr(self.obj, dst):
+            if dst in self.m2m_fields or dst in self.m2m_constant_fields:
+                old = set(getattr(self.obj, dst).all())
+            else:
+                old = getattr(self.obj, dst)
         if hasattr(self, 'filter_{0}'.format(dst)):
             val = getattr(self, 'filter_{0}'.format(dst))(src, val)
         else:
             val = self.apply_filter(dst, src, val)
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
-                old = set(getattr(self.obj, dst).all())
                 val = set(val)
                 if dst in self.m2m_aggregate_fields:
                     val = val | old
-            else:
-                old = getattr(self.obj, dst)
             if isinstance(old, float) and isinstance(val, float):
                 old = round(old, 10)
                 val = round(val, 10)
             if isinstance(old, str):
                 val = val or ""
             if old != val:
+                """ TODO we need to add checks here for translated fields :
+                this only compares old 'name' with new 'name' but it should compare
+                    - old 'name_en' with new 'name_en',
+                    - old 'name_fr' with new 'name_fr'...
+                and return "True" if any of them have changed
+                At the moment, translations are only updated if the default language has changed
+                """
                 self.set_value(dst, src, val)
                 return True
             else:
@@ -243,8 +259,8 @@ class Parser:
         if modified:
             updated.append(dst)
             if dst in self.translated_fields:
-                lang = translation.get_language()
-                updated.append('{field}_{lang}'.format(field=dst, lang=lang))
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    updated.append('{field}_{lang}'.format(field=dst, lang=lang))
 
     def parse_fields(self, row, fields, non_field=False):
         updated = []
@@ -1138,7 +1154,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 for key, final_value in val.items():
                     if key in settings.MODELTRANSLATION_LANGUAGES:
                         self.set_value(f'{dst}_{key}', src, final_value)
-                val = val.get(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
+                val = val.get(translation.get_language())
         return val
 
     def normalize_field_name(self, name):

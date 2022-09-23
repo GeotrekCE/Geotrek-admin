@@ -329,13 +329,16 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    def test_create_multiple(self, mocked_head, mocked_get):
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create_multiple_fr(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
                                 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json', 'trek.json',
                                 'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
                                 'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
-                                'trek_ids_2.json', 'trek_2.json', 'trek_children.json', ]
+                                'trek_ids_2.json', 'trek_2.json', 'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
+                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
+                                'trek_ids_2.json', 'trek_2_after.json', 'trek_children.json', ]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -347,7 +350,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(Trek.objects.count(), 5)
         trek = Trek.objects.all().first()
         self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
-        self.assertEqual(trek.name_en, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.name_en, "Loop of the pic of 3 lords")
+        self.assertEqual(trek.name_fr, "Boucle du Pic des Trois Seigneurs")
         self.assertEqual(str(trek.difficulty), 'Très facile')
         self.assertEqual(str(trek.practice), 'Cheval')
         self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
@@ -357,6 +361,70 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(trek.labels.first().name, "Chien autorisé")
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=0)
         self.assertEqual(Trek.objects.count(), 6)
+        trek = Trek.objects.get(name_fr="Étangs du Picot")
+        self.assertEqual(trek.description_teaser_fr, "Chapeau")
+        self.assertEqual(trek.description_teaser_it, "Cappello")
+        self.assertEqual(trek.description_teaser_es, "Sombrero")
+        self.assertEqual(trek.description_teaser_en, "Cap")
+        self.assertEqual(trek.description_teaser, "Chapeau")
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=0)
+        trek.refresh_from_db()
+        self.assertEqual(Trek.objects.count(), 6)
+        self.assertEqual(trek.description_teaser_fr, "Chapeau 2")
+        self.assertEqual(trek.description_teaser_it, "Cappello 2")
+        self.assertEqual(trek.description_teaser_es, "Sombrero 2")
+        self.assertEqual(trek.description_teaser_en, "Cap 2")
+        self.assertEqual(trek.description_teaser, "Chapeau 2")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en")
+    def test_create_multiple_en(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
+                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'trek_ids.json', 'trek.json',
+                                'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
+                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
+                                'trek_ids_2.json', 'trek_2.json', 'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
+                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json',
+                                'trek_ids_2.json', 'trek_2_after.json', 'trek_children.json', ]
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 5)
+        trek = Trek.objects.get(name_fr="Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.name, "Loop of the pic of 3 lords")
+        self.assertEqual(trek.name_en, "Loop of the pic of 3 lords")
+        self.assertEqual(trek.name_fr, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(str(trek.difficulty), 'Very easy')
+        self.assertEqual(str(trek.difficulty.difficulty_en), 'Very easy')
+        self.assertEqual(str(trek.practice), 'Horse')
+        self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
+        self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
+        self.assertEqual(trek.children.first().name, "Bar")
+        self.assertEqual(trek.labels.count(), 3)
+        self.assertEqual(trek.labels.first().name, "Dogs are great")
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=0)
+        self.assertEqual(Trek.objects.count(), 6)
+        trek = Trek.objects.get(name_fr="Étangs du Picot")
+        self.assertEqual(trek.description_teaser_fr, "Chapeau")
+        self.assertEqual(trek.description_teaser_it, "Cappello")
+        self.assertEqual(trek.description_teaser_es, "Sombrero")
+        self.assertEqual(trek.description_teaser_en, "Cap")
+        self.assertEqual(trek.description_teaser, "Cap")
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=0)
+        trek.refresh_from_db()
+        self.assertEqual(Trek.objects.count(), 6)
+        self.assertEqual(trek.description_teaser_fr, "Chapeau 2")
+        self.assertEqual(trek.description_teaser_it, "Cappello 2")
+        self.assertEqual(trek.description_teaser_es, "Sombrero 2")
+        self.assertEqual(trek.description_teaser_en, "Cap 2")
+        self.assertEqual(trek.description_teaser, "Cap 2")
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
@@ -398,6 +466,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_updated(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
@@ -416,7 +485,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(Trek.objects.count(), 5)
         trek = Trek.objects.all().first()
         self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
-        self.assertEqual(trek.name_en, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.name_fr, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.name_en, "Loop of the pic of 3 lords")
         self.assertEqual(str(trek.difficulty), 'Très facile')
         self.assertEqual(str(trek.practice), 'Cheval')
         self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
