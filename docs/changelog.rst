@@ -110,6 +110,12 @@ CHANGELOG
 
 - Upgrade mapentity to 8.2.1
 
+**/!\ Regression /!\**
+
+- System permissions on files output by `sync_rando` and `sync_mobile` commands were inadvertently changed to more restricted
+  with no reading allowed by group or other. This may cause trouble if your deployment relies on those permissions.
+  The original broader permissions have been restored with `v2.87.1`.
+
 
 2.85.0     (2022-07-26)
 -----------------------
