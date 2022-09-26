@@ -58,12 +58,14 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade dependencies. The detail for the main dependencies:
-  + django to 3.2.15
-  + celery[redis] to 5.1.2
 
-** Warning
+  - django to 3.2.15
+  - celery[redis] to 5.1.2
+
+**Warning**
 
 - You will need to delete your cache after this release upgrade.
+
   - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
   - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
 
