@@ -1,4 +1,5 @@
-[{
+[
+{
     "pk": 1,
     "model": "tourism.informationdesktype",
     "fields": {
@@ -875,6 +876,20 @@
         "label": "Nombre d'inscrits",
         "label_en": "Few participants",
         "label_fr": "Nombre d'inscrits"
+    }
+},
+{
+    "model": "tourism.touristiceventparticipantcategory",
+    "fields": {
+        "label": "Adultes",
+        "order": 1
+    }
+},
+{
+    "model": "tourism.touristiceventparticipantcategory",
+    "fields": {
+        "label": "Enfants",
+        "order": 2
     }
 }
 ]

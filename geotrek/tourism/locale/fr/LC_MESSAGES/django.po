@@ -402,3 +402,21 @@ msgstr "La date de début n'est pas renseignée"
 
 msgid "Boolean indicating if Event is cancelled"
 msgstr "Booléen indiquant si l'évènement est annulé"
+
+msgid "Event"
+msgstr "Évènement"
+
+msgid "Assessment"
+msgstr "Évaluation"
+
+msgid "Participant category"
+msgstr "Classe de participants"
+
+msgid "Participant categories"
+msgstr "Classes de participants"
+
+msgid "Number"
+msgstr "Nombre"
+
+msgid "Number of participants"
+msgstr "Nombre de participants"

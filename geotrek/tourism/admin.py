@@ -65,20 +65,14 @@ class TouristicContentCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
     ]
     merge_field = 'label'
 
-
-if settings.TOURISM_ENABLED:
-    admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
-
-
 class TouristicEventTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('type', 'pictogram_img')
     search_fields = ('type',)
     merge_field = 'type'
 
 
-if settings.TOURISM_ENABLED:
-    admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
-
+class TouristicEventParticipantCategoryAdmin(admin.ModelAdmin):
+    list_display = ('label', 'order')
 
 class CancellationReasonAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label',)
@@ -87,4 +81,7 @@ class CancellationReasonAdmin(MergeActionMixin, TabbedTranslationAdmin):
 
 
 if settings.TOURISM_ENABLED:
+    admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
+    admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
+    admin.site.register(tourism_models.TouristicEventParticipantCategory, TouristicEventParticipantCategoryAdmin)
     admin.site.register(tourism_models.CancellationReason, CancellationReasonAdmin)
