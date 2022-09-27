@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix TouristicEvent with no end dates are not returned in APIv2
+- Add `is_cancelled` and `cancellation_reason` to TouristicEvents
 
 2.87.2 (2022-09-23)
 -----------------------

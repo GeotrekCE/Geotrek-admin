@@ -509,6 +509,13 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
                 qs = qs.filter(
                     Q(end_date__gte=dates_after) | Q(end_date__isnull=True) & Q(begin_date__gte=dates_after)
                 )
+            is_cancelled = request.GET.get('is_cancelled')
+            if is_cancelled:
+                try:
+                    # Allow to filter with many values for exemple for True : yes, true, t, True ...
+                    qs = qs.filter(is_cancelled=bool(strtobool(is_cancelled)))
+                except ValueError:
+                    return qs.none()
         return self._filter_queryset(request, qs, view)
 
     def get_schema_fields(self, view):
@@ -540,7 +547,14 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
                     title=_("Dates after"),
                     description=_("Filter events happening after or during date, format YYYY-MM-DD")
                 )
-            )
+            ),
+            Field(
+                name='is_cancelled', required=False, location='query', schema=coreschema.Boolean(
+                    title=_("Is cancelled"),
+                    description=_("Filter events according to cancelled status (True/False)"),
+
+                )
+            ),
         )
 
 

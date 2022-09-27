@@ -43,6 +43,12 @@ msgstr "Ne plus afficher toutes les difficultés"
 msgid "Show all lengths"
 msgstr "Afficher toutes les distances"
 
+msgid "Is cancelled"
+msgstr "Est annulé"
+
+msgid "Filter events according to cancelled status (True/False)"
+msgstr "Filter les évenements selon leur statut d'annulation (True/False)"
+
 msgid "Hide all lengths"
 msgstr "Ne plus afficher toutes les distances"
 

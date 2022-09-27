@@ -92,7 +92,15 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"approved" }}</th>
-            <td>{{ object.approved|yesno:_("yes,no") }}</td>
+            <td>{{ object.approved|yesno:_("Yes,No") }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"is_cancelled" }}</th>
+            <td>{{ object.is_cancelled|yesno:_("Yes,No") }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"cancellation_reason" }}</th>
+            <td>{{ object.cancellation_reason|safe }}</td>
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>

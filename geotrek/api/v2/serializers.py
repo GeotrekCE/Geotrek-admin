@@ -465,7 +465,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
                 'meeting_time', 'name', 'organizer', 'bookable', 'participant_number', 'pdf', 'portal',
                 'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
-                'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website'
+                'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website',
+                'is_cancelled', 'cancellation_reason'
             )
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
