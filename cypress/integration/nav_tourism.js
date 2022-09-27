@@ -1,9 +1,3 @@
-Cypress.on('uncaught:exception', (err, runnable) => {
-    // returning false here prevents Cypress from
-    // failing the test
-    return false
-})
-
 describe('Create tourism event', () => {
   before(() => {
     const username = 'admin'
@@ -11,7 +5,7 @@ describe('Create tourism event', () => {
 
     cy.loginByCSRF(username, password)
       .then((resp) => {
-         expect(resp.status).to.eq(200)
+        expect(resp.status).to.eq(200)
       })
   })
 
@@ -21,14 +15,13 @@ describe('Create tourism event', () => {
   });
 
   it('Should dynamicly show/hidde participant number', () => {
-    cy.visit('/touristicevent/add/');
+    cy.visit('/touristicevent/add/').get("#modelfields").scrollTo('bottom');
     // check initially hidden
     cy.get('#div_id_participant_number').should("not.be.visible");
-
     // check toggle hide/show
-    cy.get('#id_bookable').check({force: true});
+    cy.get('#id_bookable').check({ force: true });
     cy.get('#div_id_participant_number').should("be.visible");
-    cy.get('#id_bookable').uncheck({force: true});
+    cy.get('#id_bookable').uncheck({ force: true });
     cy.get('#div_id_participant_number').should("not.be.visible");
   })
 })

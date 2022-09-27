@@ -67,14 +67,12 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         placeholder_text_multiple: tr("Choose value(s)")
     });
 
-    
     if(data.modelname == 'touristicevent') {
         $('#div_id_participant_number').prop("hidden", !$('#id_bookable').is(":checked"));
         $('#id_bookable').change(function() {
             $('#div_id_participant_number').prop("hidden", !this.checked);
 
         })
-
     }
 
     if (data.modelname != 'touristiccontent')
@@ -98,10 +96,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
             $('.leaflet-draw-toolbar a.leaflet-draw-draw-' + controls[geometry_type]).show();
         }
     });
-
     $('#id_category').trigger('change');
-
-
 });
 
 
