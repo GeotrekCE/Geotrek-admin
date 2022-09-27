@@ -88,3 +88,10 @@ class CancellationReasonAdmin(MergeActionMixin, TabbedTranslationAdmin):
 
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.CancellationReason, CancellationReasonAdmin)
+
+class TouristicEventPlaceAdmin(LeafletGeoAdmin):
+    list_display = ('name',)
+    list_filter = ('name',)
+    search_fields = ('name',)
+
+admin.site.register(tourism_models.TouristicEventPlace, TouristicEventPlaceAdmin)

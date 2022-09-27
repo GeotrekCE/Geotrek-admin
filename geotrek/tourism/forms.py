@@ -59,6 +59,7 @@ class TouristicEventForm(CommonForm):
         Div(
             'structure',
             'name',
+            'place',
             'review',
             'published',
             'description_teaser',
@@ -92,7 +93,7 @@ class TouristicEventForm(CommonForm):
     ]
 
     class Meta:
-        fields = ['name', 'review', 'published', 'description_teaser', 'description',
+        fields = ['name', 'place', 'review', 'published', 'description_teaser', 'description',
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
                   'start_time', 'end_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'participant_number', 'booking', 'target_audience',

@@ -414,6 +414,21 @@ class TouristicEventManager(NoDeleteManager):
             .distinct('provider').values_list('provider', 'provider')
         return providers
 
+class TouristicEventPlace(models.Model):
+    name = models.CharField(null=False, max_length=256)
+    #TO CHECK  spatial index = False et création d'un index plus bas
+    geom = models.PointField(srid=settings.SRID, spatial_index=False)
+
+    class Meta:
+        verbose_name = _("Place")
+        verbose_name_plural = _("Places")
+        ordering = ['name']
+        indexes = [
+            GistIndex(name='place_geom_gist_idx', fields=['geom']),
+        ]
+
+    def __str__(self):
+        return self.name
 
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
@@ -465,6 +480,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     cancelled = models.BooleanField(default=False, verbose_name=_("Cancelled"), help_text=_("Boolean indicating if Event is cancelled"))
     cancellation_reason = models.ForeignKey(CancellationReason, verbose_name=_("Cancellation reason"), related_name="touristic_events", null=True, blank=True, on_delete=models.PROTECT)
     objects = TouristicEventManager()
+    place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Place"), on_delete=models.PROTECT, null=True)
     id_prefix = 'E'
 
     class Meta:
