@@ -30,12 +30,5 @@ describe('Create tourism event', () => {
     cy.get('#div_id_participant_number').should("be.visible");
     cy.get('#id_bookable').uncheck({force: true});
     cy.get('#div_id_participant_number').should("not.be.visible");
-
-
-
-
-
-
   })
-
 })
