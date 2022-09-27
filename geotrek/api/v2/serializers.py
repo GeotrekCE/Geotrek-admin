@@ -445,7 +445,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
-        end_date = serializers.DateField()
+        end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
 
         def get_type(self, obj):
@@ -453,6 +453,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             if obj_type:
                 return obj_type.pk
             return None
+
+        def get_end_date(self, obj):
+            return obj.end_date or obj.begin_date
 
         class Meta:
             model = tourism_models.TouristicEvent
