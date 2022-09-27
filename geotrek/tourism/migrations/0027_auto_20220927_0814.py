@@ -5,7 +5,7 @@ from django.db.models import F
 import datetime
 
 
-def update_begin_end_date(apps, schema_editor):
+def update_begin_date(apps, schema_editor):
     TouristicEvent = apps.get_model('tourism', 'TouristicEvent')
 
     TouristicEvent.objects.filter(
@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(update_begin_end_date, reverse_code=migrations.RunPython.noop)
+        migrations.RunPython(update_begin_date, reverse_code=migrations.RunPython.noop)
     ]

@@ -7,7 +7,7 @@ CHANGELOG
 
 
 **Minor improvements**
-- Set begin_date, end_date not null for touristic event
+- Set begin_date not null for touristic events
 
 2.87.2 (2022-09-23)
 -----------------------
