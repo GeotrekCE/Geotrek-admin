@@ -213,7 +213,7 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
-    'meeting_point', 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
+    'meeting_point', 'meeting_time', 'name', 'organizer', 'bookable', 'participant_number', 'pdf', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
     'type', 'update_datetime', 'url', 'uuid', 'website'
 ])
@@ -2910,6 +2910,7 @@ class TouristicEventTestCase(BaseApiTest):
             accessibility="HA",
             target_audience="De 4 à 121 ans",
             published=True,
+            bookable=True,
             type=cls.touristic_event_type,
             meeting_time=datetime.time(11, 20),
         )
@@ -2918,6 +2919,7 @@ class TouristicEventTestCase(BaseApiTest):
             name_fr="expo",
             geom=Point(5.77802, 2.047482, srid=4326),
             published=True,
+            bookable=False
         )
         cls.touristic_event2.portal.set([common_factory.TargetPortalFactory()])
         cls.path = core_factory.PathFactory.create(geom=LineString((0.77802, 43.047482), (0.77803, 43.047483), srid=4326))
@@ -2994,6 +2996,14 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristic_event_type_filters(self):
         response = self.get_touristicevent_list({'types': self.touristic_event_type.pk})
         self.assertEqual(response.json().get("count"), 1)
+    
+    def test_touristic_event_bookable(self):
+        response = self.get_touristicevent_list({'bookable': 'true'})
+        self.assertEqual(response.json().get("count"), 1)
+        response = self.get_touristicevent_list({'bookable': 'false'})
+        self.assertEqual(response.json().get("count"), 1)
+
+
 
 
 class TouristicEventTypeTestCase(BaseApiTest):

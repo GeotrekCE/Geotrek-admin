@@ -203,7 +203,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
     default_extra_columns = [
         'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
         'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
-        'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
+        'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility', 'bookable',
         'participant_number', 'booking', 'target_audience', 'practical_info',
         'date_insert', 'date_update', 'source', 'portal',
         'review', 'published', 'publication_date',
