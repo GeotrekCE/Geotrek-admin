@@ -15,9 +15,4 @@ class Migration(migrations.Migration):
             name='begin_date',
             field=models.DateField(verbose_name='Begin date'),
         ),
-        migrations.AlterField(
-            model_name='touristicevent',
-            name='end_date',
-            field=models.DateField(verbose_name='End date'),
-        ),
     ]

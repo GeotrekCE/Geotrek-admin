@@ -13,12 +13,7 @@ def update_begin_end_date(apps, schema_editor):
         ).update(
             begin_date = datetime.date(1970, 1 , 1)
         )
-
-    TouristicEvent.objects.filter(
-            end_date__isnull = True
-        ).update(
-            end_date = F('begin_date')
-        )
+ 
 
 
 class Migration(migrations.Migration):

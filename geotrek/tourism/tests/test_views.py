@@ -513,17 +513,18 @@ class TouristicEventViewSetTest(TestCase):
     def test_touristic_events_with_enddate_filter(self):
         """
         Relative date: 2020-01-01
+        5 events with no end date
         5 events with end date after relative date
         7 events with end date before relative date
                  ->  only events with no end or end in after relative date must be included
         """
-
+        TouristicEventFactory.create_batch(5, end_date=None, published=True)
         TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
         TouristicEventFactory.create_batch(7, end_date=datetime.strptime('2010-05-10', '%Y-%m-%d'), published=True)
         response = self.client.get('/api/en/touristicevents.geojson', data={'ends_after': '2020-01-01'})
         geojson = response.json()
 
-        self.assertEqual(len(geojson['features']), 5)
+        self.assertEqual(len(geojson['features']), 10)
 
 
 class TouristicCategoryViewTest(TestCase):

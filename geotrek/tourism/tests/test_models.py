@@ -125,6 +125,11 @@ class TourismRelations(TestCase):
 
 
 class TouristicEventModelTest(TestCase):
+    def test_dates_display_no_end_date(self):
+        date = datetime.datetime(year=2000, month=1, day=12)
+        event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=None)
+        self.assertEqual('starting from 01/12/2000', event.dates_display)
+
     def test_dates_display_same_date(self):
         date = datetime.datetime(year=2000, month=1, day=12)
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=date)

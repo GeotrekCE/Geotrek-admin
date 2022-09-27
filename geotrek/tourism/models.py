@@ -417,7 +417,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     help_text=_("Main theme(s)"))
     geom = models.PointField(verbose_name=_("Location"), srid=settings.SRID)
     begin_date = models.DateField(blank=False, null=False, verbose_name=_("Begin date"))
-    end_date = models.DateField(blank=False, null=False, verbose_name=_("End date"))
+    end_date = models.DateField(blank=True, null=True, verbose_name=_("End date"))
     duration = models.CharField(verbose_name=_("Duration"), max_length=64, blank=True,
                                 help_text=_("3 days, season, ..."))
     meeting_point = models.CharField(verbose_name=_("Meeting point"), max_length=256, blank=True,
@@ -469,7 +469,10 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
 
     @property
     def dates_display(self):
-        if self.begin_date == self.end_date:
+        if not self.end_date:
+            return _("starting from {begin}").format(
+                begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'))
+        elif self.begin_date == self.end_date:
             return date_format(self.begin_date, 'SHORT_DATE_FORMAT')
         else:
             return _("from {begin} to {end}").format(
