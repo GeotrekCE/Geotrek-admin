@@ -88,6 +88,7 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
     )
     filterset_fields = ["bookable"]  # TODO find a way to overide automatic Swagger doc to add a description for this filter
     serializer_class = api_serializers.TouristicEventSerializer
+    filterset_fields = ["is_cancelled"]
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))

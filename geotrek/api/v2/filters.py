@@ -547,14 +547,7 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
                     title=_("Dates after"),
                     description=_("Filter events happening after or during date, format YYYY-MM-DD")
                 )
-            ),
-            Field(
-                name='is_cancelled', required=False, location='query', schema=coreschema.Boolean(
-                    title=_("Is cancelled"),
-                    description=_("Filter events according to cancelled status (True/False)"),
-
-                )
-            ),
+            )
         )
 
 
