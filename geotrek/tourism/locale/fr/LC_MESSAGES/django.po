@@ -255,8 +255,11 @@ msgstr "Lieu de RDV"
 msgid "Where exactly ?"
 msgstr "Où exactement ?"
 
-msgid "Meeting time"
-msgstr "Heure de RDV"
+msgid "Start time"
+msgstr "Heure de début"
+
+msgid "End time"
+msgstr "Heure de fin"
 
 msgid "11:00, 23:30"
 msgstr "11:00, 23:30"

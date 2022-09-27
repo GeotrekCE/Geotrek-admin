@@ -66,7 +66,8 @@ class TouristicEventForm(CommonForm):
             'end_date',
             'duration',
             'meeting_point',
-            'meeting_time',
+            'start_time',
+            'end_time',
             'contact',
             'email',
             'website',
@@ -88,7 +89,7 @@ class TouristicEventForm(CommonForm):
     class Meta:
         fields = ['name', 'review', 'published', 'description_teaser', 'description',
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
-                  'meeting_time', 'contact', 'email', 'website', 'organizer', 'speaker',
+                  'start_time', 'end_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'participant_number', 'booking', 'target_audience',
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure']
         model = TouristicEvent
@@ -97,7 +98,8 @@ class TouristicEventForm(CommonForm):
         super().__init__(*args, **kwargs)
         self.fields['begin_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
         self.fields['end_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
-        self.fields['meeting_time'].widget.attrs['placeholder'] = _('HH:MM')
+        self.fields['start_time'].widget.attrs['placeholder'] = _('HH:MM')
+        self.fields['end_time'].widget.attrs['placeholder'] = _('HH:MM')
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''

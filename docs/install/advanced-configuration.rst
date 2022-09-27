@@ -113,7 +113,7 @@ Geotrek reports can work together with Suricate API, using one of 4 modes. Proce
 
 **1** - No Suricate (default)
 
-This mode sends no report data to Suricate. 
+This mode sends no report data to Suricate.
 
 To initialize Report form, load lists for categories, activities, statuses and problem magnitude:
 
@@ -202,7 +202,7 @@ You can find a detailled explanation on the workflow here : https://github.com/G
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
 
-- Go to the Admin Site and 
+- Go to the Admin Site and
     - select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
     - select a district as Workflow District (`/admin/feedback/workflowdistrict/`). This zone defines the area of reponsibility for reports. Reports relocated outside of the district will be excluded from workflow.
     - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
@@ -223,7 +223,7 @@ Display reports with status defined colors
 .. code-block :: python
 
     ENABLE_REPORT_COLORS_PER_STATUS = True
- 
+
 Go to the Admin Site and select colors to display for each status (`/admin/feedback/reportstatus/`).
 
 
@@ -1906,7 +1906,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "description_teaser",
         "description",
         "meeting_point",
-        "meeting_time",
+        "start_time",
+        "end_time",
         "duration",
         "begin_date",
         "contact",
@@ -2421,7 +2422,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "end_date",
         "duration",
         "meeting_point",
-        "meeting_time",
+        "start_time",
+        "end_time",
         "contact",
         "email",
         "website",
@@ -2747,7 +2749,8 @@ An exhaustive list of form fields hideable in each module.
             'end_date',
             'duration',
             'meeting_point',
-            'meeting_time',
+            'start_time',
+            'end_time',
             'contact',
             'email',
             'website',

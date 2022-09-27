@@ -4,6 +4,10 @@ CHANGELOG
 
 2.87.2+dev (XXXX-XX-XX)
 -----------------------
+ 
+**Minor improvements** 
+- Rename metting_time to start_time
+- Add field end_time 
 
 2.87.2 (2022-09-23)
 -----------------------
