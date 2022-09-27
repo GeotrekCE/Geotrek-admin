@@ -1,0 +1,12 @@
+{% load crispy_forms_tags %}
+
+<fieldset class="formset">
+    {% if legend %}<legend>{{ legend }}</legend>{% endif %}
+    {{ formset.management_form }}
+    {% for form in formset.forms %}
+        <div class="form-row inline controls controls-row {{ form.prefix }}">
+        {% if form.instance.pk %} {{ form.DELETE }} {% endif %}
+        {% crispy form %}
+        </div>
+    {% endfor %}
+</fieldset>
