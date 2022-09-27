@@ -447,6 +447,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    bookable = models.BooleanField(verbose_name=_("Bookable"), default=False)
     objects = TouristicEventManager()
     id_prefix = 'E'
 
