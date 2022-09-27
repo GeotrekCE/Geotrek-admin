@@ -71,7 +71,6 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         $('#div_id_participant_number').prop("hidden", !$('#id_bookable').is(":checked"));
         $('#id_bookable').change(function() {
             $('#div_id_participant_number').prop("hidden", !this.checked);
-
         })
     }
 
