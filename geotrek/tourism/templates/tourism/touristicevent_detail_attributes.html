@@ -124,6 +124,10 @@
         </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
+        <tr>
+            <th>{{ object|verbose:"bookable" }}</th>
+            <td>{{ object.bookable|yesno:_("yes,no") }}</td>
+        </tr>
     </table>
 
     {{ block.super }}
