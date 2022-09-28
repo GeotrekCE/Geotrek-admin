@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.utils.translation import gettext_lazy as _
+from mapentity.widgets import MapWidget
 
 from .models import TouristicContent, TouristicEvent
 from geotrek.common.forms import CommonForm
@@ -51,6 +52,9 @@ class TouristicContentForm(CommonForm):
         for f in ['themes', 'type1', 'type2', 'source', 'portal']:
             self.fields[f].help_text = ''
 
+class PlacesMapWidget(MapWidget):
+    geometry_field_class = 'PlaceGeometryField'
+
 
 class TouristicEventForm(CommonForm):
     geomfields = ['geom']
@@ -100,6 +104,7 @@ class TouristicEventForm(CommonForm):
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
                   'cancelled', 'cancellation_reason']
         model = TouristicEvent
+        widgets = {'geom': PlacesMapWidget()}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
