@@ -101,3 +101,11 @@ class TouristicEventForm(CommonForm):
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
+
+    def clean(self, *args, **kwargs):
+        data = super().clean(*args, **kwargs)
+
+        if data.get("end_date") and data.get("end_date") < data.get("begin_date"):
+            self.add_error('end_date', _('Error date start > end'))
+
+        return data
