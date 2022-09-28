@@ -17,18 +17,7 @@
         });
     </script>
 
-    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
-        {% crispy form %}
-        <fieldset class="formset">
-            {{ relationship_formset.management_form }}
-            {% for relationship_form in relationship_formset.forms %}
-                <div class="form-row inline controls controls-row {{ relationship_from.prefix }}">
-                {% if relationship_form.instance.pk %}{{ relationship_form.DELETE }}{% endif %}
-                {% crispy relationship_form %}
-                </div>
-            {% endfor %}
-        </fieldset>
-    </form>
+    {% crispy form %}
 {% endblock mainform %}
 
 
@@ -44,9 +33,6 @@
         MapEntity.i18n['Delete the parking location'] = "{% trans "Delete the parking location" %}";
 
         $(document).ready(function() {
-            // TODO: do this with crispyforms !
-            $("fieldset.formset").detach().appendTo('#mainform fieldset');
-
             $('.form-row.inline').formset({
                 prefix: '{{ relationship_formset.prefix }}',
                 keepFieldValues: "[name='csrfmiddlewaretoken']",

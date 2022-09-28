@@ -9,11 +9,12 @@ from django import forms
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
-from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
+from crispy_forms.layout import Layout, Submit, HTML, Div
 from leaflet.forms.widgets import LeafletWidget
 from mapentity.forms import TranslatedModelForm
 from mapentity.widgets import SelectMultipleWithPop
 
+from geotrek.common.layouts import Formset
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
@@ -152,7 +153,7 @@ class TrekForm(BaseTrekForm):
                     'reservation_id',
                     'pois_excluded',
                     'hidden_ordered_children',
-                    Fieldset(_("Related treks"),),
+                    Formset('relationship_formset', legend=_("Related treks")),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
                 ),
