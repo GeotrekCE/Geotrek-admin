@@ -5,9 +5,13 @@ CHANGELOG
 2.87.2+dev (XXXX-XX-XX)
 -----------------------
 
-
 **Minor improvements**
-- Set begin_date not null for touristic events
+
+- Set `begin_date` not null for TouristicEvents (#3127)
+
+**Bug fixes**
+
+- Fix TouristicEvent with no end dates are not returned in APIv2
 
 2.87.2 (2022-09-23)
 -----------------------
