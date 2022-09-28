@@ -16,7 +16,7 @@ def update_begin_date(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tourism', '0026_auto_20220907_1400'),
+        ('tourism', '0027_touristicevent_bookable'),
     ]
 
     operations = [
