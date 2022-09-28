@@ -3002,14 +3002,12 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristic_event_type_filters(self):
         response = self.get_touristicevent_list({'types': self.touristic_event_type.pk})
         self.assertEqual(response.json().get("count"), 1)
-    
+
     def test_touristic_event_bookable(self):
         response = self.get_touristicevent_list({'bookable': 'true'})
         self.assertEqual(response.json().get("count"), 1)
         response = self.get_touristicevent_list({'bookable': 'false'})
         self.assertEqual(response.json().get("count"), 1)
-
-
 
 
 class TouristicEventTypeTestCase(BaseApiTest):
