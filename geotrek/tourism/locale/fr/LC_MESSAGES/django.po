@@ -374,3 +374,8 @@ msgstr "Valeur de géométrie invalide"
 
 msgid "Provider"
 msgstr "Fournisseur"
+
+
+msgid "Filter events on bookable boolean : true/false exepected"
+msgstr "Filtre les evenement sur le booléen 'bookable' : true/false attendu"
+

@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext as _
+from django_filters import rest_framework as filters
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
@@ -482,6 +483,16 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
 
         )
 
+
+class TouristicEventFilterSet(filters.FilterSet):
+    bookable = filters.BooleanFilter(
+        field_name=_("Bookable"), 
+        help_text=_("Filter events on bookable boolean : true/false exepected")
+    )
+
+    class Meta:
+        model = TouristicEvent
+        fields = ['bookable']
 
 class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
