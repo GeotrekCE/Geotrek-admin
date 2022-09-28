@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tourism', '0027_touristicevent_bookable'),
+        ('tourism', '0029_auto_20220927_0901'),
     ]
 
     operations = [
