@@ -3,9 +3,10 @@ from django import forms
 from django.forms.models import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Div, Fieldset, Layout
+from crispy_forms.layout import Div, Layout
 
 from geotrek.common.forms import CommonForm
+from geotrek.common.layouts import Formset
 from geotrek.core.widgets import LineTopologyWidget
 from geotrek.core.models import Path, Trail, CertificationTrail
 from geotrek.core.fields import TopologyField, SnappedLineStringField
@@ -117,7 +118,7 @@ class TrailForm(TopologyForm):
             'arrival',
             'category',
             'comments',
-            Fieldset(_("Certifications")),
+            Formset('certification_formset', legend=_("Certifications")),
         )
     ]
 
