@@ -535,14 +535,6 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
                     title=_("Dates after"),
                     description=_("Filter events happening after or during date, format YYYY-MM-DD")
                 )
-            ), Field(
-                name='bookable',
-                required=False,
-                location='query',
-                schema=coreschema.String(
-                    title=_("Bookable"),
-                    description=_("Filter events on bookable boolean")
-                )
             )
         )
 

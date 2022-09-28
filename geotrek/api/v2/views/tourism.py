@@ -86,7 +86,7 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
     )
-    filterset_fields = ["bookable"]
+    filterset_fields = ["bookable"]  # TODO find a way to overide automatic Swagger doc to add a description for this filter
     serializer_class = api_serializers.TouristicEventSerializer
 
     def get_queryset(self):
