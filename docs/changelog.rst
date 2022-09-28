@@ -5,6 +5,10 @@ CHANGELOG
 2.87.2+dev (XXXX-XX-XX)
 -----------------------
 
+
+**Minor improvements**
+- Test begin date is before end date
+
 2.87.2 (2022-09-23)
 -----------------------
 
@@ -14,7 +18,7 @@ CHANGELOG
 
 **Minor improvements**
 
-- Ensure attachments from parsers have generated thumbnails 
+- Ensure attachments from parsers have generated thumbnails
 
 **Bug fixes**
 
