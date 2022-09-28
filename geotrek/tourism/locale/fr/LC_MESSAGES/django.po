@@ -386,3 +386,6 @@ msgstr "Valeur de géométrie invalide"
 
 msgid "Provider"
 msgstr "Fournisseur"
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr "Booléen indiquant si l'évènement est annulé"
