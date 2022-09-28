@@ -1928,6 +1928,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "uuid",
         "eid",
         "provider",
+        "bookable",
         "is_cancelled",
         "cancellation_reason"
     ]
@@ -2446,7 +2447,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
-        "provider"
+        "provider",
+        "bookable",
         "is_cancelled",
         "cancellation_reason"
     ]
@@ -2766,6 +2768,7 @@ An exhaustive list of form fields hideable in each module.
             'source',
             'portal',
             'eid',
+            "bookable",
             'is_cancelled',
             'cancellation_reason'
         ],
