@@ -374,3 +374,9 @@ msgstr "Valeur de géométrie invalide"
 
 msgid "Provider"
 msgstr "Fournisseur"
+
+msgid "Start time is after end time"
+msgstr "L'heure de début est après l'heure de fin"
+
+msgid "Start time is unset"
+msgstr "La date de début n'est pas renseignée"

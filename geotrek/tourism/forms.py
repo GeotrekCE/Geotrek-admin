@@ -1,3 +1,8 @@
+from datetime import datetime
+
+
+from datetime import datetime
+
 from django.utils.translation import gettext_lazy as _
 
 from .models import TouristicContent, TouristicEvent
@@ -103,3 +108,23 @@ class TouristicEventForm(CommonForm):
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
+
+    def clean(self, *args, **kwargs):
+        clean_data = super().clean(*args, **kwargs)
+        start_time = clean_data.get('start_time')
+        end_time = clean_data.get('end_time') 
+        if not start_time and not end_time:
+            pass
+        elif not start_time and end_time:
+            self.add_error('start_time', 'Start time is unset')
+        elif not end_time:
+            pass
+        elif not clean_data.get('end_date'):
+            if start_time > end_time:
+                self.add_error('end_time', _('Start time is after end time'))
+        else: 
+            begin = datetime.combine(clean_data.get('begin_date') ,start_time)
+            end = datetime.combine(clean_data.get('end_date'), end_time)
+            if begin > end:
+                self.add_error('end_time', _('Start time is after end time'))
+
