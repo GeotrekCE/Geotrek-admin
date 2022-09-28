@@ -2952,6 +2952,10 @@ class TouristicEventTestCase(BaseApiTest):
         response = self.get_touristicevent_list()
         # Only two because past events are filter by default
         self.assertEqual(response.json().get("count"), 2)
+        # Event with no end date is returned with begin date as end date
+        self.assertEqual(response.json().get("results")[0]['end_date'], "2022-02-20")
+        # Event with end date returns right end date
+        self.assertEqual(response.json().get("results")[1]['end_date'], "2202-02-22")
 
     def test_touristic_event_dates_filters_1(self):
         response = self.get_touristicevent_list({'dates_before': '2200-01-01', 'dates_after': '1970-01-01'})
