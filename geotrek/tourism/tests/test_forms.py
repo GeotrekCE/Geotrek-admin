@@ -17,4 +17,5 @@ class PathFormTest(TestCase):
                 'end_date': '2022-01-10',
             }
         )
-        self.assertFalse(form1.is_valid(), str(form1.errors))
+        self.assertFalse(form1.is_valid())
+        self.assertIn("Start date is after end date", str(form1.errors))
