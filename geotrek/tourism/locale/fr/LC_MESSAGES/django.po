@@ -20,6 +20,10 @@ msgstr ""
 "X-Generator: Weblate 4.0.1\n"
 "Project-Id-Verésion: PACKAGE VERSION\n"
 
+
+msgid "Start date is after end date"
+msgstr "La date de début est après la date de fin"
+
 msgid "Tourism"
 msgstr "Tourisme"
 
