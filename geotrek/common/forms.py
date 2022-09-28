@@ -58,6 +58,16 @@ class CommonForm(MapEntityForm):
         'ReportForm': 'report',
     }
 
+    def replace_orig_fields(self):
+        model = self._meta.model
+        codeperm = '%s.publish_%s' % (
+            model._meta.app_label, model._meta.model_name)
+        if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
+            self.fields.pop('published')
+        if 'review' in self.fields and self.instance and self.instance.any_published:
+            self.fields.pop('review')
+        super().replace_orig_fields()
+
     def deep_remove(self, fieldslayout, name):
         if isinstance(fieldslayout, list):
             for field in fieldslayout:
@@ -65,19 +75,19 @@ class CommonForm(MapEntityForm):
         elif hasattr(fieldslayout, 'fields'):
             if name in fieldslayout.fields:
                 fieldslayout.fields.remove(name)
-                self.fields.pop(name)
             for field in fieldslayout.fields:
                 self.deep_remove(field, name)
 
-    def replace_orig_fields(self):
+    def get_fieldslayout(self):
+        fieldslayout = deepcopy(super().get_fieldslayout())
         model = self._meta.model
         codeperm = '%s.publish_%s' % (
             model._meta.app_label, model._meta.model_name)
-        if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
-            self.deep_remove(self.fieldslayout, 'published')
-        if 'review' in self.fields and self.instance and self.instance.any_published:
-            self.deep_remove(self.fieldslayout, 'review')
-        super().replace_orig_fields()
+        if 'published' in self.orig_fields and self.user and not self.user.has_perm(codeperm):
+            self.deep_remove(fieldslayout, 'published')
+        if 'review' in self.orig_fields and self.instance and self.instance.any_published:
+            self.deep_remove(fieldslayout, 'review')
+        return fieldslayout
 
     def filter_related_field(self, name, field):
         if not isinstance(field, forms.models.ModelChoiceField):
@@ -106,7 +116,6 @@ class CommonForm(MapEntityForm):
             logger.warning("No value set in MAP_SETTINGS dictonary for form class " + self.__class__.__name__)
         self.hidden_fields = settings.HIDDEN_FORM_FIELDS.get(settings_key, [])
 
-        self.fieldslayout = deepcopy(self.fieldslayout)
         super().__init__(*args, **kwargs)
         self.fields = self.fields.copy()
         self.update = kwargs.get("instance") is not None

@@ -45,4 +45,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+CRISPY_FAIL_SILENTLY = False
+
 # TEST_RUNNER = 'geotrek.test_runner.TestRunner'
