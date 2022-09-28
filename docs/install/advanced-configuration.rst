@@ -2743,7 +2743,6 @@ An exhaustive list of form fields hideable in each module.
             'description_teaser',
             'description',
             'themes',
-            'begin_date',
             'end_date',
             'duration',
             'meeting_point',

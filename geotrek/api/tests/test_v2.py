@@ -2937,38 +2937,44 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event4 = tourism_factory.TouristicEventFactory(
             deleted=True
         )
+        cls.touristic_event5 = tourism_factory.TouristicEventFactory(
+            end_date=None,
+            published=True,
+            name="No end date",
+            begin_date='2022-02-20'
+        )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
     def test_touristic_event_list(self):
         response = self.get_touristicevent_list()
-        self.assertEqual(response.json().get("count"), 2)
+        self.assertEqual(response.json().get("count"), 3)
 
     @freeze_time("2022-02-02")
     def test_touristic_event_list_2(self):
         response = self.get_touristicevent_list()
-        # Only one because past events are filter by default
-        self.assertEqual(response.json().get("count"), 1)
+        # Only two because past events are filter by default
+        self.assertEqual(response.json().get("count"), 2)
+        # Event with no end date is returned with begin date as end date
+        self.assertEqual(response.json().get("results")[0]['end_date'], "2022-02-20")
+        # Event with end date returns right end date
+        self.assertEqual(response.json().get("results")[1]['end_date'], "2202-02-22")
 
     def test_touristic_event_dates_filters_1(self):
-        response = self.get_touristicevent_list()
-        self.assertEqual(response.json().get("count"), 2)
+        response = self.get_touristicevent_list({'dates_before': '2200-01-01', 'dates_after': '1970-01-01'})
+        self.assertEqual(response.json().get("count"), 3)
 
     def test_touristic_event_dates_filters_2(self):
-        response = self.get_touristicevent_list({'dates_before': '2200-01-01', 'dates_after': '1970-01-01'})
-        self.assertEqual(response.json().get("count"), 2)
-
-    def test_touristic_event_dates_filters_3(self):
         response = self.get_touristicevent_list({'dates_before': '2021-09-01', 'dates_after': '1970-01-01'})
         self.assertEqual(response.json().get("count"), 2)
 
-    def test_touristic_event_dates_filters_4(self):
+    def test_touristic_event_dates_filters_3(self):
         response = self.get_touristicevent_list({'dates_after': '2021-07-03'})
-        self.assertEqual(response.json().get("count"), 2)
+        self.assertEqual(response.json().get("count"), 3)
 
-    def test_touristic_event_dates_filters_5(self):
+    def test_touristic_event_dates_filters_4(self):
         response = self.get_touristicevent_list({'dates_after': '2021-07-04'})
         # Event 1 finishes on 3rd of july
-        self.assertEqual(response.json().get("count"), 1)
+        self.assertEqual(response.json().get("count"), 2)
 
     def test_touristic_event_detail(self):
         response = self.get_touristicevent_detail(self.touristic_event1.pk)

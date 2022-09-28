@@ -125,11 +125,6 @@ class TourismRelations(TestCase):
 
 
 class TouristicEventModelTest(TestCase):
-    def test_dates_display_no_begin_date(self):
-        date = datetime.datetime(year=2000, month=1, day=12)
-        event = tourism_factories.TouristicEventFactory(begin_date=None, end_date=date)
-        self.assertEqual('up to 01/12/2000', event.dates_display)
-
     def test_dates_display_no_end_date(self):
         date = datetime.datetime(year=2000, month=1, day=12)
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=None)
@@ -139,10 +134,6 @@ class TouristicEventModelTest(TestCase):
         date = datetime.datetime(year=2000, month=1, day=12)
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=date)
         self.assertEqual('01/12/2000', event.dates_display)
-
-    def test_dates_display_no_end_begin_date(self):
-        event = tourism_factories.TouristicEventFactory(begin_date=None, end_date=None)
-        self.assertEqual('', event.dates_display)
 
     def test_dates_display_end_begin_date_different(self):
         date_1 = datetime.datetime(year=2000, month=1, day=12)
