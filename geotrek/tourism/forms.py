@@ -112,19 +112,20 @@ class TouristicEventForm(CommonForm):
     def clean(self, *args, **kwargs):
         clean_data = super().clean(*args, **kwargs)
         start_time = clean_data.get('start_time')
-        end_time = clean_data.get('end_time') 
+        end_time = clean_data.get('end_time')
         if not start_time and not end_time:
             pass
         elif not start_time and end_time:
-            self.add_error('start_time', 'Start time is unset')
+            self.add_error('start_time', _('Start time is unset'))
         elif not end_time:
             pass
         elif not clean_data.get('end_date'):
             if start_time > end_time:
                 self.add_error('end_time', _('Start time is after end time'))
-        else: 
-            begin = datetime.combine(clean_data.get('begin_date') ,start_time)
+        else:
+            begin = datetime.combine(clean_data.get('begin_date'), start_time)
             end = datetime.combine(clean_data.get('end_date'), end_time)
             if begin > end:
                 self.add_error('end_time', _('Start time is after end time'))
 
+        return clean_data
