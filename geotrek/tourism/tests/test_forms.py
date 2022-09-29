@@ -61,3 +61,13 @@ class PathFormTest(TestCase):
         )
         self.assertFalse(form.is_valid())
         self.assertIn("Start time is after end time", str(form.errors))
+
+        # No end time
+        form = TouristicEventForm(
+            user=user,
+            data={
+                **data,
+                **{'start_time': '10:30'}
+            }
+        )
+        self.assertTrue(form.is_valid())
