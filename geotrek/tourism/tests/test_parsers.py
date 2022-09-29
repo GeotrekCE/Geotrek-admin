@@ -388,6 +388,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(round(event.geom.x), 922920)
         self.assertEqual(round(event.geom.y), 6357103)
         self.assertEqual(event.practical_info[:38], "<b>Ouverture:</b><br>Mardi 6 août 2019")
+        self.assertIn("<b>Capacité totale:</b><br>100 participants<br>", event.practical_info)
         self.assertIn("><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
                       event.practical_info)
         self.assertIn("<b>Ouverture:</b><br>Mardi 6 août 2019 de 9h à midi.<br>", event.practical_info)

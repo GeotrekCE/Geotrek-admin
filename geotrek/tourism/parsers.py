@@ -374,6 +374,12 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         ] if line]
         return '<br>'.join(lines)
 
+    def filter_capacity(self, src, val):
+        if val.isnumeric():
+            return int(val)
+        else:
+            return None
+
     def filter_email(self, src, val):
         return self._filter_comm(val, 204, multiple=False)
 
