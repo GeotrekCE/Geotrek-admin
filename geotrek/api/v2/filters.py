@@ -573,7 +573,7 @@ class GeotrekTouristicEventTypeFilter(BaseFilterBackend):
         return qs
 
     def get_schema_fields(self, view):
-        return ( 
+        return (
             Field(
                 name='dates_before',
                 required=False,
@@ -991,7 +991,6 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
         :param related_name: the related_name used to fetch the related object in the filter method
         :param optional_query: optional query Q to add to the filter method (used by portal filter)
         """
-        print(related_name)
         qs = queryset
         q = Q()
         # check if the model of the queryset published field is translated
