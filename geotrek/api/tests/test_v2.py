@@ -2942,7 +2942,8 @@ class TouristicEventTestCase(BaseApiTest):
             end_date=None,
             published=True,
             name="No end date",
-            begin_date='2022-02-20'
+            begin_date='2022-02-20',
+            bookable=False
         )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
@@ -3011,10 +3012,10 @@ class TouristicEventTestCase(BaseApiTest):
         self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_bookable(self):
-        response = self.get_touristicevent_list({'bookable': 'true'})
+        response = self.get_touristicevent_list({'bookable': 'True'})
         self.assertEqual(response.json().get("count"), 1)
-        response = self.get_touristicevent_list({'bookable': 'false'})
-        self.assertEqual(response.json().get("count"), 1)
+        response = self.get_touristicevent_list({'bookable': 'False'})
+        self.assertEqual(response.json().get("count"), 2)
 
 
 class TouristicEventTypeTestCase(BaseApiTest):
