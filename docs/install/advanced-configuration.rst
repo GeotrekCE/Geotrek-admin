@@ -1927,7 +1927,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_insert",
         "uuid",
         "eid",
-        "provider"
+        "provider",
+        "bookable",
+        "cancelled",
+        "cancellation_reason"
     ]
     COLUMNS_LISTS["feedback_view"] = [
         "email",
@@ -2444,7 +2447,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
-        "provider"
+        "provider",
+        "bookable",
+        "cancelled",
+        "cancellation_reason"
     ]
     COLUMNS_LISTS["feedback_export"] = [
         "email",
@@ -2762,6 +2768,9 @@ An exhaustive list of form fields hideable in each module.
             'source',
             'portal',
             'eid',
+            "bookable",
+            'cancelled',
+            'cancellation_reason'
         ],
     HIDDEN_FORM_FIELDS["report"] = [
             "email",
