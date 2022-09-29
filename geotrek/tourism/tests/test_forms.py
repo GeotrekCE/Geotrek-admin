@@ -15,7 +15,7 @@ class PathFormTest(TestCase):
         }
         user = UserFactory()
 
-        # No start no end time 
+        # No start no end time
         form = TouristicEventForm(
             user=user,
             data=data

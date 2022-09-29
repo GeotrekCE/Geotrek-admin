@@ -434,9 +434,9 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     meeting_point = models.CharField(verbose_name=_("Meeting point"), max_length=256, blank=True,
                                      help_text=_("Where exactly ?"))
     start_time = models.TimeField(verbose_name=_("Start time"), blank=True, null=True,
-                                    help_text=_("11:00, 23:30"))
+                                  help_text=_("11:00, 23:30"))
     end_time = models.TimeField(verbose_name=_("End time"), blank=True, null=True,
-                                    help_text=_("11:00, 23:30"))
+                                help_text=_("11:00, 23:30"))
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     email = models.EmailField(verbose_name=_("Email"), max_length=256,
                               blank=True, null=True)
@@ -510,7 +510,6 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     @property
     def meta_description(self):
         return plain_text(self.description_teaser or self.description)[:500]
-
 
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
