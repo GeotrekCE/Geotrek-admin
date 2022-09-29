@@ -213,7 +213,7 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
-    'meeting_point', 'meeting_time', 'name', 'organizer', 'bookable', 'participant_number', 'pdf', 'portal',
+    'meeting_point', 'start_time', 'end_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
     'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason'
 ])
@@ -2912,7 +2912,8 @@ class TouristicEventTestCase(BaseApiTest):
             published=True,
             bookable=True,
             type=cls.touristic_event_type,
-            meeting_time=datetime.time(11, 20),
+            start_time=datetime.time(11, 20),
+            end_time=datetime.time(12, 20),
             cancelled=True
         )
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])

@@ -253,7 +253,7 @@ msgstr "Punto d'incontro"
 msgid "Where exactly ?"
 msgstr ""
 
-msgid "Meeting time"
+msgid "Start time"
 msgstr "Orario della riunione"
 
 msgid "11:00, 23:30"

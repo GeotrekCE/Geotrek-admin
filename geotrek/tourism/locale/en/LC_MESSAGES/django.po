@@ -256,7 +256,10 @@ msgstr ""
 msgid "Where exactly ?"
 msgstr ""
 
-msgid "Meeting time"
+msgid "Start time"
+msgstr ""
+
+msgid "End time"
 msgstr ""
 
 msgid "11:00, 23:30"
