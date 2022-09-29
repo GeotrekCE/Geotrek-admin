@@ -6,10 +6,6 @@ CHANGELOG
 -----------------------
  
 **Minor improvements** 
-- Rename metting_time to start_time
-- Add field end_time 
-
-**Minor improvements**
 
 - Set `begin_date` not null for TouristicEvents (#3127)
 
@@ -19,8 +15,11 @@ CHANGELOG
 
 **New features**
 
-- Add `cancelled` and `cancellation_reason` to TouristicEvents
-- Add `bookable` and `cancellation_reason` to TouristicEvents
+- Add fields `end_time`, `cancelled`, `cancellation_reason`, `bookable` to TouristicEvents
+
+**Breaking change**
+
+- Rename `meeting_time` to `start_time` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `start_time` instead of `meeting_time`
 
 
 2.87.2 (2022-09-23)
