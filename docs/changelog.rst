@@ -7,7 +7,7 @@ CHANGELOG
  
 **Minor improvements** 
 
-- Test begin date is before end date
+- Check `begin date`` is before `end date` in TouristicEvent forms
 - Set `begin_date` not null for TouristicEvents (#3127)
 
 **Bug fixes**
