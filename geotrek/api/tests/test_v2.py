@@ -3021,16 +3021,36 @@ class TouristicEventTestCase(BaseApiTest):
 class TouristicEventTypeTestCase(BaseApiTest):
     @classmethod
     def setUpTestData(cls):
+        import datetime
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory(type_fr="Cool", type_en="af")
+        cls.touristic_event_type2 = tourism_factory.TouristicEventTypeFactory(type_fr="CoolBefore", type_en="af")
         cls.touristic_event = tourism_factory.TouristicEventFactory(
             published=True,
+            begin_date='2200-01-01',
+            end_date='2200-01-01',
             type=cls.touristic_event_type
+        ) 
+        cls.touristic_event2 = tourism_factory.TouristicEventFactory(
+            published=True,
+            begin_date='2000-01-01',
+            end_date='2000-01-01',
+            type=cls.touristic_event_type2
         )
 
     def test_touristic_event_type_list(self):
         response = self.get_touristiceventtype_list()
         self.assertEqual(response.json().get("count"), 1)
         self.assertEqual(len(response.json().get("results")), 1)
+
+    def test_touristic_event_type_list_before(self):
+        response = self.get_touristiceventtype_list({'dates_before': '2200-01-02'})
+        self.assertEqual(response.json().get("count"), 2)
+        self.assertEqual(len(response.json().get("results")), 2)
+
+    def test_touristic_event_type_list_after(self):
+        response = self.get_touristiceventtype_list({'dates_after': '1999-01-01'})
+        self.assertEqual(response.json().get("count"), 2)
+        self.assertEqual(len(response.json().get("results")), 2)
 
     def test_touristic_event_type_detail(self):
         response = self.get_touristiceventtype_detail(self.touristic_event_type.pk)

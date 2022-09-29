@@ -544,6 +544,56 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
         )
 
 
+class GeotrekTouristicEventTypeFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        # Don't filter on detail view
+        if 'pk' not in view.kwargs:
+            dates_before = request.GET.get('dates_before')
+            if dates_before:
+                dates_before = datetime.strptime(dates_before, "%Y-%m-%d").date()
+                qs = qs.filter(Q(touristicevent__begin_date__lte=dates_before))
+            
+            dates_after = request.GET.get('dates_after')
+            if dates_after:
+                dates_after = datetime.strptime(dates_after, "%Y-%m-%d").date()
+                qs = qs.filter(
+                    Q(touristicevent__end_date__gte=dates_after) |
+                    Q(touristicevent__end_date__isnull=True) &
+                    Q(touristicevent__begin_date__gte=dates_after)
+                )
+            if not dates_after and not dates_before:
+                # Filter out past events by default
+                dates_after = date.today()
+                qs = qs.filter(
+                    Q(touristicevent__end_date__gte=dates_after) |
+                    Q(touristicevent__end_date__isnull=True) &
+                    Q(touristicevent__begin_date__gte=dates_after)
+                )
+        return qs
+
+    def get_schema_fields(self, view):
+        return ( 
+            Field(
+                name='dates_before',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Dates before"),
+                    description=_("Filter events type of events happening before or during date, format YYYY-MM-DD")
+                )
+            ), Field(
+                name='dates_after',
+                required=False,
+                location='query',
+                schema=coreschema.String(
+                    title=_("Dates after"),
+                    description=_("Filter events type of events happening after or during date, format YYYY-MM-DD")
+                )
+            )
+        )
+
+
 class GeotrekServiceFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
@@ -941,6 +991,7 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
         :param related_name: the related_name used to fetch the related object in the filter method
         :param optional_query: optional query Q to add to the filter method (used by portal filter)
         """
+        print(related_name)
         qs = queryset
         q = Q()
         # check if the model of the queryset published field is translated

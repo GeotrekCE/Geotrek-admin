@@ -75,7 +75,9 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicEventTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TouristicEventRelatedPortalFilter, )
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.TouristicEventRelatedPortalFilter, api_filters.GeotrekTouristicEventTypeFilter
+    )
     serializer_class = api_serializers.TouristicEventTypeSerializer
     queryset = tourism_models.TouristicEventType.objects.order_by('pk')  # Required for reliable pagination
 

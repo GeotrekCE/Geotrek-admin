@@ -9,6 +9,10 @@ CHANGELOG
 
 - Test begin date is before end date
 - Set `begin_date` not null for TouristicEvents (#3127)
+- API v2 : Change behaviour of touristicevent_type route (same as touristicevent): 
+  - dates_before return only types of published events before the specified date
+  - dates_after return only types of published events after the specified date
+  - without params return only types of published events after the current date
 
 **Bug fixes**
 
