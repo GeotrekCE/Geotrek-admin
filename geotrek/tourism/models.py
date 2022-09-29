@@ -480,7 +480,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     cancelled = models.BooleanField(default=False, verbose_name=_("Cancelled"), help_text=_("Boolean indicating if Event is cancelled"))
     cancellation_reason = models.ForeignKey(CancellationReason, verbose_name=_("Cancellation reason"), related_name="touristic_events", null=True, blank=True, on_delete=models.PROTECT)
     objects = TouristicEventManager()
-    place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Place"), on_delete=models.PROTECT, null=True)
+    place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Place"), on_delete=models.PROTECT, null=True, blank=True)
     id_prefix = 'E'
 
     class Meta:
