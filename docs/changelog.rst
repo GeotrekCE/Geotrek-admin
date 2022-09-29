@@ -7,6 +7,7 @@ CHANGELOG
  
 **Minor improvements** 
 
+- Test begin date is before end date
 - Set `begin_date` not null for TouristicEvents (#3127)
 
 **Bug fixes**
