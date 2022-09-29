@@ -27,7 +27,7 @@ def clean_participants_number(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tourism', '0030_auto_20220928_1526'),
+        ('tourism', '0031_auto_20220928_1526'),
     ]
 
     operations = [
