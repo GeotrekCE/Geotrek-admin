@@ -7,11 +7,22 @@ CHANGELOG
 
 **Minor improvements**
 
+- Test begin date is before end date
 - Set `begin_date` not null for TouristicEvents (#3127)
 
 **Bug fixes**
 
 - Fix TouristicEvent with no end dates are not returned in APIv2
+
+**New features**
+
+- Add `cancelled` and `cancellation_reason` to TouristicEvents
+- Add `bookable` and `cancellation_reason` to TouristicEvents
+
+**Breaking change**
+
+- Rename `participant_number` to `capacity` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `capacity` instead of `participant_number`
+
 
 2.87.2 (2022-09-23)
 -----------------------

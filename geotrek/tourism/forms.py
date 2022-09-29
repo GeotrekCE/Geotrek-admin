@@ -78,6 +78,8 @@ class TouristicEventForm(CommonForm):
             'target_audience',
             'practical_info',
             'approved',
+            'cancelled',
+            'cancellation_reason',
             'source',
             'portal',
             'eid',
@@ -91,7 +93,8 @@ class TouristicEventForm(CommonForm):
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
                   'meeting_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'capacity', 'booking', 'target_audience',
-                  'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable']
+                  'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
+                  'cancelled', 'cancellation_reason']
         model = TouristicEvent
 
     def __init__(self, *args, **kwargs):
@@ -102,3 +105,11 @@ class TouristicEventForm(CommonForm):
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
+
+    def clean(self, *args, **kwargs):
+        data = super().clean(*args, **kwargs)
+
+        if data.get("end_date") and data.get("end_date") < data.get("begin_date"):
+            self.add_error('end_date', _('Start date is after end date'))
+
+        return data

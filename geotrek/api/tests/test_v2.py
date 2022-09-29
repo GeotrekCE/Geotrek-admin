@@ -215,7 +215,7 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
     'meeting_point', 'meeting_time', 'name', 'organizer', 'bookable', 'capacity', 'pdf', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
-    'type', 'update_datetime', 'url', 'uuid', 'website'
+    'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason'
 ])
 
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -2913,6 +2913,7 @@ class TouristicEventTestCase(BaseApiTest):
             bookable=True,
             type=cls.touristic_event_type,
             meeting_time=datetime.time(11, 20),
+            cancelled=True
         )
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
         cls.touristic_event2 = tourism_factory.TouristicEventFactory(
@@ -2941,7 +2942,8 @@ class TouristicEventTestCase(BaseApiTest):
             end_date=None,
             published=True,
             name="No end date",
-            begin_date='2022-02-20'
+            begin_date='2022-02-20',
+            bookable=False
         )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
@@ -2976,6 +2978,12 @@ class TouristicEventTestCase(BaseApiTest):
         # Event 1 finishes on 3rd of july
         self.assertEqual(response.json().get("count"), 2)
 
+    def test_touristic_event_cancelled_filter(self):
+        response = self.get_touristicevent_list({'cancelled': 'True'})
+        self.assertEqual(response.json().get("count"), 1)
+        response = self.get_touristicevent_list({'cancelled': 'False'})
+        self.assertEqual(response.json().get("count"), 2)
+
     def test_touristic_event_detail(self):
         response = self.get_touristicevent_detail(self.touristic_event1.pk)
         self.check_structure_response(response, TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE)
@@ -3004,10 +3012,10 @@ class TouristicEventTestCase(BaseApiTest):
         self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_bookable(self):
-        response = self.get_touristicevent_list({'bookable': 'true'})
+        response = self.get_touristicevent_list({'bookable': 'True'})
         self.assertEqual(response.json().get("count"), 1)
-        response = self.get_touristicevent_list({'bookable': 'false'})
-        self.assertEqual(response.json().get("count"), 1)
+        response = self.get_touristicevent_list({'bookable': 'False'})
+        self.assertEqual(response.json().get("count"), 2)
 
 
 class TouristicEventTypeTestCase(BaseApiTest):
