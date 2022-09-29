@@ -500,10 +500,15 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
             dates_after = request.GET.get('dates_after')
             if dates_after:
                 dates_after = datetime.strptime(dates_after, "%Y-%m-%d").date()
-            else:
+                qs = qs.filter(
+                    Q(end_date__gte=dates_after) | Q(end_date__isnull=True) & Q(begin_date__gte=dates_after)
+                )
+            if not dates_after and not dates_before:
                 # Filter out past events by default
                 dates_after = date.today()
-            qs = qs.filter(Q(end_date__gte=dates_after))
+                qs = qs.filter(
+                    Q(end_date__gte=dates_after) | Q(end_date__isnull=True) & Q(begin_date__gte=dates_after)
+                )
         return self._filter_queryset(request, qs, view)
 
     def get_schema_fields(self, view):

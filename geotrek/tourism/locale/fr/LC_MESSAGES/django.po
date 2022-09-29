@@ -121,6 +121,9 @@ msgstr "Tout"
 msgid "First list label"
 msgstr "Nom de la première liste"
 
+msgid "Bookable"
+msgstr "Réservable"
+
 msgid "Second list label"
 msgstr "Nom de la deuxième liste"
 
