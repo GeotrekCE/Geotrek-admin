@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='touristicevent',
-            name='is_cancelled',
+            name='cancelled',
             field=models.BooleanField(default=False, help_text='Boolean indicating if Event is cancelled', verbose_name='Cancelled'),
         ),
         migrations.AddField(

@@ -87,7 +87,7 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.UpdateOrCreateDateFilter,
     )
     serializer_class = api_serializers.TouristicEventSerializer
-    filterset_fields = ["is_cancelled", "bookable"]
+    filterset_fields = ["cancelled", "bookable"]
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))

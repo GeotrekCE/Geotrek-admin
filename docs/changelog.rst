@@ -15,7 +15,7 @@ CHANGELOG
 
 **New features**
 
-- Add `is_cancelled` and `cancellation_reason` to TouristicEvents
+- Add `cancelled` and `cancellation_reason` to TouristicEvents
 - Add `bookable` and `cancellation_reason` to TouristicEvents
 
 

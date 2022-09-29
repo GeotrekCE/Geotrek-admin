@@ -154,5 +154,5 @@ class TouristicContentModelTest(TestCase):
 class TouristicEventCancellationReasonModelTest(TestCase):
     def tests_cancellation_reason_label(self):
         reason = tourism_factories.CancellationReasonFactory(label="Arson")
-        event = tourism_factories.TouristicEventFactory(is_cancelled=True, cancellation_reason=reason)
+        event = tourism_factories.TouristicEventFactory(cancelled=True, cancellation_reason=reason)
         self.assertEqual(str(event.cancellation_reason), "Arson")

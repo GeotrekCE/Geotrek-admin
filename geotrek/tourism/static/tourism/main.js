@@ -72,8 +72,8 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         $('#id_bookable').change(function() {
             $('#div_id_participant_number').prop("hidden", !this.checked);
         })
-        $('#div_id_cancellation_reason').prop("hidden", !$('#id_is_cancelled').is(":checked"));
-        $('#id_is_cancelled').change(function () {
+        $('#div_id_cancellation_reason').prop("hidden", !$('#id_cancelled').is(":checked"));
+        $('#id_cancelled').change(function () {
             $('#div_id_cancellation_reason').prop("hidden", !this.checked);
         })
     }

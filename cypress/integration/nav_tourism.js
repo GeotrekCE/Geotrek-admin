@@ -29,9 +29,9 @@ describe('Create tourism event', () => {
     // check initially hidden
     cy.get('#div_id_cancellation_reason').should("not.be.visible");
     // check toggle hide/show
-    cy.get('#id_is_cancelled').check({ force: true });
+    cy.get('#id_cancelled').check({ force: true });
     cy.get('#div_id_cancellation_reason').should("be.visible");
-    cy.get('#id_is_cancelled').uncheck({ force: true });
+    cy.get('#id_cancelled').uncheck({ force: true });
     cy.get('#div_id_cancellation_reason').should("not.be.visible");
   })
 })

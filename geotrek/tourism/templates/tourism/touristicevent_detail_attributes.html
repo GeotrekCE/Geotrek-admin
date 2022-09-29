@@ -95,8 +95,8 @@
             <td>{{ object.approved|yesno:_("Yes,No") }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"is_cancelled" }}</th>
-            <td>{{ object.is_cancelled|yesno:_("Yes,No") }}</td>
+            <th>{{ object|verbose:"cancelled" }}</th>
+            <td>{{ object.cancelled|yesno:_("Yes,No") }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"cancellation_reason" }}</th>

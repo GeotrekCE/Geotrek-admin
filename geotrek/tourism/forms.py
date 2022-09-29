@@ -78,7 +78,7 @@ class TouristicEventForm(CommonForm):
             'target_audience',
             'practical_info',
             'approved',
-            'is_cancelled',
+            'cancelled',
             'cancellation_reason',
             'source',
             'portal',
@@ -94,7 +94,7 @@ class TouristicEventForm(CommonForm):
                   'meeting_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'participant_number', 'booking', 'target_audience',
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
-                  'is_cancelled', 'cancellation_reason']
+                  'cancelled', 'cancellation_reason']
         model = TouristicEvent
 
     def __init__(self, *args, **kwargs):
