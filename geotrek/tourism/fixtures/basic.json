@@ -836,5 +836,45 @@
         "type_en": "Show",
         "type_fr": "Spectacle"
     }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Autre",
+        "label_en": "Other",
+        "label_fr": "Other"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "M\u00e9t\u00e9o",
+        "label_en": "Weather",
+        "label_fr": "Météo"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Animateur indisponible",
+        "label_en": "Host unavailable",
+        "label_fr": "Animateur indisponible"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Incendie",
+        "label_en": "Fire",
+        "label_fr": "Incendie"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Nombre d'inscrits",
+        "label_en": "Few participants",
+        "label_fr": "Nombre d'inscrits"
+    }
 }
 ]

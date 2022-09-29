@@ -397,6 +397,17 @@ class TouristicEventType(OptionalPictogramMixin):
         return self.type
 
 
+class CancellationReason(models.Model):
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Cancellation reason")
+        verbose_name_plural = _("Cancellation reasons")
+
+    def __str__(self):
+        return self.label
+
+
 class TouristicEventManager(NoDeleteManager):
     def provider_choices(self):
         providers = self.get_queryset().existing().order_by('provider').exclude(provider__exact='') \
@@ -449,6 +460,8 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     bookable = models.BooleanField(verbose_name=_("Bookable"), default=False)
+    cancelled = models.BooleanField(default=False, verbose_name=_("Cancelled"), help_text=_("Boolean indicating if Event is cancelled"))
+    cancellation_reason = models.ForeignKey(CancellationReason, verbose_name=_("Cancellation reason"), related_name="touristic_events", null=True, blank=True, on_delete=models.PROTECT)
     objects = TouristicEventManager()
     id_prefix = 'E'
 

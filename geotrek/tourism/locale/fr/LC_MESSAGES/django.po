@@ -62,6 +62,15 @@ msgstr "Type"
 msgid "Description"
 msgstr "Description"
 
+msgid "Cancelled"
+msgstr "Annulé"
+
+msgid "Cancellation reason"
+msgstr "Cause d'annulation"
+
+msgid "Cancellation reasons"
+msgstr "Causes d'annulation"
+
 msgid "Brief description"
 msgstr "Brève description"
 
@@ -348,6 +357,9 @@ msgstr "Aucun(e)"
 msgid "yes,no"
 msgstr "oui,non"
 
+msgid "Yes,No"
+msgstr "Oui,Non"
+
 msgid "Thumbnail"
 msgstr "Aperçu"
 
@@ -374,3 +386,6 @@ msgstr "Valeur de géométrie invalide"
 
 msgid "Provider"
 msgstr "Fournisseur"
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr "Booléen indiquant si l'évènement est annulé"

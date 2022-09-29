@@ -215,7 +215,7 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
     'meeting_point', 'meeting_time', 'name', 'organizer', 'bookable', 'participant_number', 'pdf', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
-    'type', 'update_datetime', 'url', 'uuid', 'website'
+    'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason'
 ])
 
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -2913,6 +2913,7 @@ class TouristicEventTestCase(BaseApiTest):
             bookable=True,
             type=cls.touristic_event_type,
             meeting_time=datetime.time(11, 20),
+            cancelled=True
         )
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
         cls.touristic_event2 = tourism_factory.TouristicEventFactory(
@@ -2975,6 +2976,12 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristic_event_dates_filters_4(self):
         response = self.get_touristicevent_list({'dates_after': '2021-07-04'})
         # Event 1 finishes on 3rd of july
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_cancelled_filter(self):
+        response = self.get_touristicevent_list({'cancelled': 'True'})
+        self.assertEqual(response.json().get("count"), 1)
+        response = self.get_touristicevent_list({'cancelled': 'False'})
         self.assertEqual(response.json().get("count"), 2)
 
     def test_touristic_event_detail(self):
