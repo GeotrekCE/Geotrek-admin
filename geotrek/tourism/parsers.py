@@ -378,6 +378,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         if val.isnumeric():
             return int(val)
         else:
+            self.add_warning(f"Field {src} can't populate capacity field value: '{val}' isn't numeric")
             return None
 
     def filter_email(self, src, val):
