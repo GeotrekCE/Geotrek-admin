@@ -518,7 +518,6 @@ class TouristicEventViewSetTest(TestCase):
         7 events with end date before relative date
                  ->  only events with no end or end in after relative date must be included
         """
-
         TouristicEventFactory.create_batch(5, end_date=None, published=True)
         TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
         TouristicEventFactory.create_batch(7, end_date=datetime.strptime('2010-05-10', '%Y-%m-%d'), published=True)

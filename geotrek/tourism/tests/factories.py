@@ -72,6 +72,13 @@ class TouristicContentType2Factory(factory.django.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('touristiccontent-type2.png')
 
 
+class CancellationReasonFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.CancellationReason
+
+    label = factory.Sequence("Cancellation reason {0}".format)
+
+
 class TouristicContentFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.TouristicContent

@@ -84,9 +84,10 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.GeotrekTouristicEventFilter,
         api_filters.NearbyContentFilter,
-        api_filters.UpdateOrCreateDateFilter
+        api_filters.UpdateOrCreateDateFilter,
     )
     serializer_class = api_serializers.TouristicEventSerializer
+    filterset_fields = ["cancelled", "bookable"]
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))

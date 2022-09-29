@@ -257,6 +257,8 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             'structure': StructureFactory.create().pk,
             'name_en': 'test',
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
+            'begin_date': '2002-02-20',
+            'end_date': '2002-02-20'
         }
 
     @patch('mapentity.helpers.requests')

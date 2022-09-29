@@ -78,3 +78,13 @@ class TouristicEventTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
 
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
+
+
+class CancellationReasonAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('label',)
+    search_fields = ('label',)
+    merge_field = 'label'
+
+
+if settings.TOURISM_ENABLED:
+    admin.site.register(tourism_models.CancellationReason, CancellationReasonAdmin)

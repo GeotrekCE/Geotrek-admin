@@ -37,7 +37,7 @@ class TouristicContentForm(CommonForm):
             'portal',
             'eid',
             'reservation_system',
-            'reservation_id'
+            'reservation_id',
         )
     ]
 
@@ -80,14 +80,17 @@ class TouristicEventForm(CommonForm):
             'speaker',
             'type',
             'accessibility',
-            'participant_number',
             'booking',
             'target_audience',
             'practical_info',
             'approved',
+            'cancelled',
+            'cancellation_reason',
             'source',
             'portal',
             'eid',
+            'bookable',
+            'participant_number',
         )
     ]
 
@@ -96,7 +99,8 @@ class TouristicEventForm(CommonForm):
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
                   'start_time', 'end_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'participant_number', 'booking', 'target_audience',
-                  'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure']
+                  'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
+                  'cancelled', 'cancellation_reason']
         model = TouristicEvent
 
     def __init__(self, *args, **kwargs):

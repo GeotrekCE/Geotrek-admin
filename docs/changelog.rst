@@ -9,6 +9,20 @@ CHANGELOG
 - Rename metting_time to start_time
 - Add field end_time 
 
+**Minor improvements**
+
+- Set `begin_date` not null for TouristicEvents (#3127)
+
+**Bug fixes**
+
+- Fix TouristicEvent with no end dates are not returned in APIv2
+
+**New features**
+
+- Add `cancelled` and `cancellation_reason` to TouristicEvents
+- Add `bookable` and `cancellation_reason` to TouristicEvents
+
+
 2.87.2 (2022-09-23)
 -----------------------
 
@@ -18,7 +32,7 @@ CHANGELOG
 
 **Minor improvements**
 
-- Ensure attachments from parsers have generated thumbnails 
+- Ensure attachments from parsers have generated thumbnails
 
 **Bug fixes**
 

@@ -62,6 +62,15 @@ msgstr "Type"
 msgid "Description"
 msgstr "Description"
 
+msgid "Cancelled"
+msgstr "Annulé"
+
+msgid "Cancellation reason"
+msgstr "Cause d'annulation"
+
+msgid "Cancellation reasons"
+msgstr "Causes d'annulation"
+
 msgid "Brief description"
 msgstr "Brève description"
 
@@ -116,6 +125,9 @@ msgstr "Tout"
 
 msgid "First list label"
 msgstr "Nom de la première liste"
+
+msgid "Bookable"
+msgstr "Réservable"
 
 msgid "Second list label"
 msgstr "Nom de la deuxième liste"
@@ -348,6 +360,9 @@ msgstr "Aucun(e)"
 msgid "yes,no"
 msgstr "oui,non"
 
+msgid "Yes,No"
+msgstr "Oui,Non"
+
 msgid "Thumbnail"
 msgstr "Aperçu"
 
@@ -380,3 +395,6 @@ msgstr "L'heure de début est après l'heure de fin"
 
 msgid "Start time is unset"
 msgstr "La date de début n'est pas renseignée"
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr "Booléen indiquant si l'évènement est annulé"

@@ -445,7 +445,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
-        end_date = serializers.DateField()
+        end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
 
         def get_type(self, obj):
@@ -453,6 +453,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             if obj_type:
                 return obj_type.pk
             return None
+
+        def get_end_date(self, obj):
+            return obj.end_date or obj.begin_date
 
         class Meta:
             model = tourism_models.TouristicEvent
@@ -462,7 +465,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
                 'start_time',  'end_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
                 'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
-                'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website'
+                'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website',
+                'cancelled', 'cancellation_reason'
             )
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
