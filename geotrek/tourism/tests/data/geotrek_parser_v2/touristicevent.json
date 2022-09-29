@@ -50,7 +50,7 @@
         "it": null
       },
       "organizer": "",
-      "participant_number": "",
+      "capacity": 0,
       "pdf": {
         "fr": "https://foo.fr/api/fr/touristicevents/3/autrefois-le-couserans.pdf",
         "en": "https://foo.fr/api/en/touristicevents/3/autrefois-le-couserans.pdf",
@@ -125,7 +125,7 @@
         "it": null
       },
       "organizer": "Mr Test",
-      "participant_number": "12",
+      "capacity": 12,
       "pdf": {
         "fr": "https://foo.fr/api/fr/touristicevents/1/festival-du-test.pdf",
         "en": "https://foo.fr/api/en/touristicevents/1/festival-du-test.pdf",

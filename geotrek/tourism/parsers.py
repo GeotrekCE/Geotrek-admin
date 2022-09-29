@@ -284,7 +284,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'website': 'informations.moyensCommunication',
         'organizer': 'informations.structureGestion.nom.libelleFr',
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
-        'participant_number': 'informationsFeteEtManifestation.nbParticipantsAttendu',
+        'capacity': 'informationsFeteEtManifestation.nbParticipantsAttendu',
         'practical_info': (
             'ouverture.periodeEnClair.libelleFr',
             'informationsFeteEtManifestation.nbParticipantsAttendu',

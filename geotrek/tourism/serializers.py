@@ -207,7 +207,7 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
             'begin_date', 'end_date', 'duration', 'meeting_point',
             'meeting_time', 'contact', 'email', 'website', 'structure',
             'organizer', 'speaker', 'type', 'accessibility',
-            'participant_number', 'booking', 'target_audience',
+            'capacity', 'booking', 'target_audience',
             'practical_info', 'touristic_contents', 'touristic_events',
             'treks', 'pois', 'type1', 'category', 'source', 'portal', 'approved'
         ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \

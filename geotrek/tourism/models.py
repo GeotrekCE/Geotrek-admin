@@ -434,7 +434,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
     type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.CASCADE)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
-    participant_number = models.IntegerField(verbose_name=_("Number of participants"), blank=True, default=0)
+    capacity = models.IntegerField(verbose_name=_("Capacity"), blank=True, null=True)
     booking = models.TextField(verbose_name=_("Booking"), blank=True)
     target_audience = models.CharField(verbose_name=_("Target audience"), max_length=128, blank=True, null=True)
     practical_info = models.TextField(verbose_name=_("Practical info"), blank=True,

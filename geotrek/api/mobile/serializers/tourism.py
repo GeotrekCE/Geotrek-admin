@@ -58,7 +58,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                       'begin_date', 'end_date', 'duration', 'meeting_point',
                       'meeting_time', 'contact', 'email', 'website',
                       'organizer', 'speaker', 'type', 'accessibility',
-                      'participant_number', 'booking', 'target_audience',
+                      'capacity', 'booking', 'target_audience',
                       'practical_info', 'approved', 'geometry')
 
     class InformationDeskSerializer(rest_serializers.ModelSerializer):

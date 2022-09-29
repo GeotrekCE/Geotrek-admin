@@ -270,7 +270,7 @@ msgstr "Organisateur"
 msgid "Speaker"
 msgstr "Intervenant"
 
-msgid "Number of participants"
+msgid "Capacity"
 msgstr "Nombre de places"
 
 msgid "Booking"

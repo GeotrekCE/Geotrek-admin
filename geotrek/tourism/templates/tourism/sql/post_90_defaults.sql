@@ -106,7 +106,7 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN organizer SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN speaker SET DEFAULT '';
 -- type
 ALTER TABLE tourism_touristicevent ALTER COLUMN accessibility SET DEFAULT '';
-ALTER TABLE tourism_touristicevent ALTER COLUMN participant_number SET DEFAULT '';
+--capacity
 ALTER TABLE tourism_touristicevent ALTER COLUMN bookable SET DEFAULT FALSE;
 ALTER TABLE tourism_touristicevent ALTER COLUMN booking SET DEFAULT '';
 -- target_audience
