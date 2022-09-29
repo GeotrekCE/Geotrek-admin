@@ -2914,7 +2914,8 @@ class TouristicEventTestCase(BaseApiTest):
             type=cls.touristic_event_type,
             start_time=datetime.time(11, 20),
             end_time=datetime.time(12, 20),
-            cancelled=True
+            cancelled=True,
+            cancellation_reason=tourism_factory.CancellationReasonFactory(label_en="Fire", label_fr="Incendie")
         )
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
         cls.touristic_event2 = tourism_factory.TouristicEventFactory(
@@ -2982,6 +2983,9 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristic_event_cancelled_filter(self):
         response = self.get_touristicevent_list({'cancelled': 'True'})
         self.assertEqual(response.json().get("count"), 1)
+        self.assertTrue(response.json().get("results")[0].get("cancelled"))
+        self.assertEqual(response.json().get("results")[0].get("cancellation_reason").get('en'), "Fire")
+        self.assertEqual(response.json().get("results")[0].get("cancellation_reason").get('fr'), "Incendie")
         response = self.get_touristicevent_list({'cancelled': 'False'})
         self.assertEqual(response.json().get("count"), 2)
 
