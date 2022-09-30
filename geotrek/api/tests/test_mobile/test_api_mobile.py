@@ -50,7 +50,7 @@ POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 TOURISTIC_EVENT_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'name', 'description_teaser', 'description', 'themes', 'pictures', 'begin_date', 'end_date', 'duration',
     'start_time', 'contact', 'email', 'website', 'organizer', 'speaker', 'type', 'accessibility', 'meeting_point',
-    'participant_number', 'booking', 'target_audience', 'practical_info', 'approved',
+    'capacity', 'booking', 'target_audience', 'practical_info', 'approved',
 ])
 
 TOURISTIC_CONTENT_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([

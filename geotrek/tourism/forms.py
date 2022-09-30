@@ -82,7 +82,6 @@ class TouristicEventForm(CommonForm):
             'speaker',
             'type',
             'accessibility',
-            'booking',
             'target_audience',
             'practical_info',
             'approved',
@@ -92,7 +91,11 @@ class TouristicEventForm(CommonForm):
             'portal',
             'eid',
             'bookable',
-            'participant_number',
+            Div(
+                'booking',
+                css_id="booking_widget"
+            ),
+            'capacity',
         )
     ]
 
@@ -100,7 +103,7 @@ class TouristicEventForm(CommonForm):
         fields = ['name', 'place', 'review', 'published', 'description_teaser', 'description',
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
                   'start_time', 'end_time', 'contact', 'email', 'website', 'organizer', 'speaker',
-                  'type', 'accessibility', 'participant_number', 'booking', 'target_audience',
+                  'type', 'accessibility', 'capacity', 'booking', 'target_audience',
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
                   'cancelled', 'cancellation_reason']
         model = TouristicEvent
