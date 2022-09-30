@@ -1,11 +1,8 @@
 from datetime import datetime
 
-from crispy_forms.helper import FormHelper
-from django import forms
-from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
-from crispy_forms.layout import Layout, Div, HTML, Fieldset
+from crispy_forms.layout import Div, HTML, Fieldset
 
 from .models import (TouristicContent, TouristicEvent, TouristicEventParticipantCount,
                      TouristicEventParticipantCategory)
@@ -142,7 +139,7 @@ class TouristicEventForm(CommonForm):
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
-        participants_count = { p.category.pk: p.count for p in self.instance.participants.all() }
+        participants_count = {p.category.pk: p.count for p in self.instance.participants.all()}
         categories = TouristicEventParticipantCategory.objects.all()
         if not categories:
             self.fieldslayout[0][1][1][0].append(HTML(_("Please add a participant category in admin interface in order to complete the number of participants.")))

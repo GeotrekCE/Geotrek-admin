@@ -65,6 +65,7 @@ class TouristicContentCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
     ]
     merge_field = 'label'
 
+
 class TouristicEventTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('type', 'pictogram_img')
     search_fields = ('type',)
@@ -73,6 +74,7 @@ class TouristicEventTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
 
 class TouristicEventParticipantCategoryAdmin(admin.ModelAdmin):
     list_display = ('label', 'order')
+
 
 class CancellationReasonAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ('label',)

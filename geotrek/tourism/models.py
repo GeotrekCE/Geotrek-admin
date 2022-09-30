@@ -1,5 +1,4 @@
 import logging
-from operator import attrgetter
 import os
 import uuid
 
