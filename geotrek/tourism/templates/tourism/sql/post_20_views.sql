@@ -199,9 +199,17 @@ SELECT a.id,
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% endfor %}
-       a.participant_number AS "Number of participants",
+       a.capacity AS "Capacity",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.target_audience_{{ lang }} AS "Target audience {{ lang }}",
+       {% endfor %}
+        CASE
+            WHEN a.bookable IS FALSE THEN 'No'
+            WHEN a.bookable IS TRUE THEN 'Yes'
+        END AS "Bookable {{ lang }}",
+       a.cancelled AS "Canceled", 
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+        cr.label_{{ lang }} AS "Cancellation reason {{ lang }}",
        {% endfor %}
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
@@ -209,6 +217,7 @@ SELECT a.id,
 FROM public.tourism_touristicevent a
 LEFT JOIN public.tourism_touristiceventtype b ON a.type_id = b.id
 LEFT JOIN public.authent_structure c ON a.structure_id = c.id
+LEFT JOIN public.tourism_cancellationreason cr ON a.cancellation_reason_id = cr.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
             a.id
