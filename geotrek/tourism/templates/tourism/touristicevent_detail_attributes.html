@@ -134,6 +134,28 @@
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ object.thumbnail.url }}"></td>
         </tr>
+        <tr>
+            <th>{% trans "Participants" %}</th>
+            <td>
+                {% for participant in object.participants.all %}
+                    {% if forloop.first %}
+                    <table>
+                    <thead>
+                    <th>{% trans "Category" %}</th><th>{% trans "Number" %}</th>
+                    </thead>
+                    <tbody>
+                    {% endif %}
+                    <tr><td>{{ participant.category }}</td><td>{{ participant.count }}</td></tr>
+                    {% if forloop.last %}
+                    <tr class="total"><td>{% trans "Total" %}<td>{{ object.participants_total }}</td></tr>
+                    </tbody>
+                    </table>
+                    {% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
         <tr>

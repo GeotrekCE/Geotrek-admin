@@ -1,3 +1,5 @@
+from random import randint
+
 from django.contrib.gis.geos import Point
 
 import factory
@@ -167,3 +169,19 @@ class TouristicEventFactory(factory.django.DjangoModelFactory):
                     obj.themes.add(theme)
             else:
                 obj.themes.add(ThemeFactory.create())
+
+
+class TouristicEventParticipantCategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.TouristicEventParticipantCategory
+
+    label = factory.Iterator(["Adults", "Children"])
+
+
+class TouristicEventParticipantCountFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.TouristicEventParticipantCount
+
+    category = factory.SubFactory(TouristicEventParticipantCategoryFactory)
+    event = factory.SubFactory(TouristicEventFactory)
+    count = factory.LazyFunction(lambda: randint(10, 20))
