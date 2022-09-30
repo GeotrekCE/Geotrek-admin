@@ -87,8 +87,8 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     )
     place = ChoiceFilter(
         field_name='place',
-        empty_label=_("Place"),
-        label=_("Place"),
+        empty_label=_("Event place"),
+        label=_("Event place"),
         choices=TouristicEventPlace.objects.all().values_list('pk', 'name')
     )
 

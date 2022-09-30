@@ -402,8 +402,9 @@ msgstr "La date de début n'est pas renseignée"
 
 msgid "Boolean indicating if Event is cancelled"
 msgstr "Booléen indiquant si l'évènement est annulé"
-msgid "Place"
+
+msgid "Event place"
 msgstr "Lieu d'evenement"
 
-msgid "Places"
+msgid "Event places"
 msgstr "Lieux d'evenement"
