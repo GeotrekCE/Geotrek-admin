@@ -7,6 +7,7 @@ from django.db.models import F
 from django.urls import reverse
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
+
 from drf_dynamic_fields import DynamicFieldsMixin
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
@@ -448,6 +449,12 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
         cancellation_reason = serializers.SerializerMethodField()
+        meeting_time = serializers.TimeField(
+            source='start_time',
+            allow_null=True,
+            read_only=True,
+            label="DO NOT USE ANYMORE, will be removed in a few months. Old start_time field"
+        )
 
         def get_cancellation_reason(self, obj):
             if not obj.cancellation_reason:
@@ -472,7 +479,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'start_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
                 'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
                 'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website',
-                'cancelled', 'cancellation_reason'
+                'cancelled', 'cancellation_reason', 'meeting_time'
             )
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

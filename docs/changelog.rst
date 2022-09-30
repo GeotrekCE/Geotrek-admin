@@ -20,7 +20,7 @@ CHANGELOG
 
 **Breaking change**
 
-- Rename `meeting_time` to `start_time` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `start_time` instead of `meeting_time`
+- Rename `meeting_time` to `start_time` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `start_time` instead of `meeting_time`. The field is still available in api v2 for compatibility but will be remove in few month
 
 **Breaking change**
 
