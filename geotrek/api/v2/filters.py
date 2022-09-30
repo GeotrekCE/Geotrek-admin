@@ -6,7 +6,7 @@ from coreapi.document import Field
 from django.conf import settings
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
