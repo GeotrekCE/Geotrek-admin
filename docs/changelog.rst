@@ -58,12 +58,14 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade dependencies. The detail for the main dependencies:
-  + django to 3.2.15
-  + celery[redis] to 5.1.2
 
-** Warning
+  - django to 3.2.15
+  - celery[redis] to 5.1.2
+
+**Warning**
 
 - You will need to delete your cache after this release upgrade.
+
   - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
   - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
 
@@ -107,6 +109,12 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade mapentity to 8.2.1
+
+**/!\ Regression /!\**
+
+- System permissions on files output by `sync_rando` and `sync_mobile` commands were inadvertently changed to more restricted
+  with no reading allowed by group or other. This may cause trouble if your deployment relies on those permissions.
+  The original broader permissions have been restored with `v2.87.1`.
 
 
 2.85.0     (2022-07-26)
