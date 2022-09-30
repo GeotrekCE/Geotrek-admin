@@ -18,7 +18,7 @@ from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.v2.functions import Length3D
-from geotrek.api.v2.mixins import PDFSerializerMixin
+from geotrek.api.v2.mixins import PDFSerializerMixin, LegacyFieldMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
@@ -442,19 +442,17 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             city = zoning_models.City.objects.all().filter(geom__contains=obj.geom).first()
             return city.code if city else None
 
-    class TouristicEventSerializer(TouristicModelSerializer):
+    class TouristicEventSerializer(LegacyFieldMixin, TouristicModelSerializer):
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
         end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
         cancellation_reason = serializers.SerializerMethodField()
-        meeting_time = serializers.TimeField(
-            source='start_time',
-            allow_null=True,
-            read_only=True,
-            label="DO NOT USE ANYMORE, will be removed in a few months. Old start_time field"
-        )
+      
+        legacy_mapping = {
+            'meeting_time': 'start_time'
+        }
 
         def get_cancellation_reason(self, obj):
             if not obj.cancellation_reason:
@@ -479,7 +477,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'start_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
                 'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
                 'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website',
-                'cancelled', 'cancellation_reason', 'meeting_time'
+                'cancelled', 'cancellation_reason'
             )
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

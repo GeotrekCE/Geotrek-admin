@@ -216,8 +216,6 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'meeting_point', 'start_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
     'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason', 
-    # LEGACY TO REMOVE
-    'meeting_time'
 ])
 
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -3023,6 +3021,15 @@ class TouristicEventTestCase(BaseApiTest):
         self.assertEqual(response.json().get("count"), 1)
         response = self.get_touristicevent_list({'bookable': 'False'})
         self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_legacy(self):
+        response = self.get_touristicevent_list({'fields': 'meeting_time'})
+        self.assertEqual(sorted(response.json().get('features')[0].get('properties').keys()),
+                            ['meeting_time'])
+
+        response = self.get_touristicevent_list({'fields': 'meeting_time,start_time'})
+        self.assertEqual(sorted(response.json().get('features')[0].get('properties').keys()),
+                            ['meeting_time', 'start_time'])
 
 
 class TouristicEventTypeTestCase(BaseApiTest):

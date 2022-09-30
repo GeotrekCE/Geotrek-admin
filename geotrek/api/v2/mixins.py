@@ -32,3 +32,22 @@ class PDFSerializerMixin:
             for language in settings.MODELTRANSLATION_LANGUAGES:
                 data[language] = self._get_pdf_url_lang(obj, language, portal)
         return data
+
+
+class LegacyFieldMixin:
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        if not getattr(self, 'legacy_mapping'):
+            return representation
+
+        if not self.context.get('request').query_params.get('fields', None):
+            return representation
+
+        field_list = self.context.get('request').query_params['fields'].split(',')
+        legacy_field = [f for f in field_list if f in self.legacy_mapping.keys()]
+
+        for field in legacy_field:
+            representation[field] = getattr(instance, self.legacy_mapping[field])
+        return representation
