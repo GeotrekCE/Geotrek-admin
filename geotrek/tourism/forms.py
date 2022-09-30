@@ -77,7 +77,6 @@ class TouristicEventForm(CommonForm):
             'speaker',
             'type',
             'accessibility',
-            'booking',
             'target_audience',
             'practical_info',
             'approved',
@@ -87,6 +86,10 @@ class TouristicEventForm(CommonForm):
             'portal',
             'eid',
             'bookable',
+            Div(
+                'booking',
+                css_id="booking_widget"
+            ),
             'capacity',
         )
     ]

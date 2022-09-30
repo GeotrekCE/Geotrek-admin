@@ -24,4 +24,14 @@ describe('Create tourism event', () => {
     cy.get('#id_cancelled').uncheck({ force: true });
     cy.get('#div_id_cancellation_reason').should("not.be.visible");
   })
+
+  it('Should dynamicly show/hidde reservation text box', () => {
+    // check initially hidden
+    cy.get('#booking_widget').should("not.be.visible");
+    // check toggle hide/show
+    cy.get('#id_bookable').check({ force: true });
+    cy.get('#booking_widget').should("be.visible");
+    cy.get('#id_bookable').uncheck({ force: true });
+    cy.get('#booking_widget').should("not.be.visible");
+  })
 })
