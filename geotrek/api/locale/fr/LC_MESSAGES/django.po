@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-16 09:23+0000\n"
+"POT-Creation-Date: 2022-09-30 11:49+0000\n"
 "PO-Revision-Date: 2020-10-20 16:33+0000\n"
 "Last-Translator: Bastien Potiron <bastien.potiron@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -42,12 +42,6 @@ msgstr "Ne plus afficher toutes les difficultés"
 
 msgid "Show all lengths"
 msgstr "Afficher toutes les distances"
-
-msgid "Is cancelled"
-msgstr "Est annulé"
-
-msgid "Filter events according to cancelled status (True/False)"
-msgstr "Filter les évenements selon leur statut d'annulation (True/False)"
 
 msgid "Hide all lengths"
 msgstr "Ne plus afficher toutes les distances"
@@ -205,8 +199,8 @@ msgid ""
 "Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84)."
 "Example: 1.15,46.1,1.56,47.6."
 msgstr ""
-"Filtrer par une enveloppe formatée telle que W-lng,S-lat,E-lng,N-lat (WGS84). "
-"Exemple : 1.15,46.1,1.56,47.6."
+"Filtrer par une enveloppe formatée telle que W-lng,S-lat,E-lng,N-lat "
+"(WGS84). Exemple : 1.15,46.1,1.56,47.6."
 
 msgid "Distance"
 msgstr "Distance"
@@ -388,6 +382,12 @@ msgstr "Catégories"
 
 msgid "Filter by one or more category id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de catégorie, séparés par des virgules."
+
+msgid "Filter events on bookable boolean : true/false expected"
+msgstr "Filtre les évènements réservables : true/false attendu"
+
+msgid "Filter events on cancelled boolean : true/false expected"
+msgstr "Filtre sur les évènements annulés : true/false attendu"
 
 msgid "Dates before"
 msgstr ""
@@ -597,8 +597,8 @@ msgstr ""
 msgid ""
 "Filter by one or more target (all, mobile, hidden or web), comma-separated."
 msgstr ""
-"Filtrez par une ou plusieurs cibles (all, mobile, hidden or web), "
-"séparées par des virgules."
+"Filtrez par une ou plusieurs cibles (all, mobile, hidden or web), séparées "
+"par des virgules."
 
 msgid "Sources"
 msgstr ""
@@ -618,3 +618,9 @@ msgstr ""
 
 msgid "Altimetry data not available"
 msgstr "Données altimétriques non disponibles"
+
+#~ msgid "Is cancelled"
+#~ msgstr "Est annulé"
+
+#~ msgid "Filter events according to cancelled status (True/False)"
+#~ msgstr "Filter les évenements selon leur statut d'annulation (True/False)"

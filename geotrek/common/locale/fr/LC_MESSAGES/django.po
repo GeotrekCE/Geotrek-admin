@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-09 16:30+0000\n"
+"POT-Creation-Date: 2022-09-30 11:49+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -88,6 +88,15 @@ msgstr "Annuler"
 
 msgid "Update attachment"
 msgstr "Modifier le fichier"
+
+msgid "The uploaded file is too large"
+msgstr "Le fichier sélectionné est trop lourd"
+
+msgid "The uploaded file is not wide enough"
+msgstr "L'image sélectionnée n'est pas assez large"
+
+msgid "The uploaded file is not tall enough"
+msgstr "L'image sélectionnée n'est pas assez haute"
 
 msgid "Global tiles syncing ..."
 msgstr "Synchro des tuiles globales..."
@@ -378,8 +387,9 @@ msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 "Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
 
-#, python-brace-format
-msgid "Bad value '{val}' for field {src}. Should be {values}"
+#, fuzzy, python-brace-format
+#| msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr ""
 "Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être {values}"
 
@@ -394,7 +404,9 @@ msgstr ""
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
 msgstr "{model} '{val}' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
 
-msgid "Filename is required"
+#, fuzzy
+#| msgid "Filename is required"
+msgid "Filename or url is required"
 msgstr "un nom de fichier est requis"
 
 #, python-brace-format
@@ -421,6 +433,28 @@ msgstr ""
 msgid "Failed to download '{url}'"
 msgstr "Impossible de télécharger '{url}'"
 
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"too large"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not wide enough"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not tall enough"
+msgstr ""
+
+#, python-brace-format
+msgid "Model {model}"
+msgstr ""
+
 msgid "Import from web."
 msgstr "Importer du web."
 
@@ -438,7 +472,9 @@ msgstr "Photos accessibilité"
 msgid ""
 "You are not allowed to modify attachments on this object, this object is not "
 "from the same structure."
-msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet objet n'est pas de la même structure"
+msgstr ""
+"Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet "
+"objet n'est pas de la même structure"
 
 msgid "Accessibility type"
 msgstr "Type d'accessibilité"
@@ -548,8 +584,9 @@ msgstr "ces champs doivent être renseignés :"
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide ;"
 
-#, python-format
-msgid "%(obj)s has changed  state, it needs a review to be published. "
+#, fuzzy, python-format
+#| msgid "%(obj)s has changed  state, it needs a review to be published. "
+msgid "%(obj)s has changed state, it needs a review to be published. "
 msgstr "%(obj)s a changé d'état, et a besoin d'être review pour être publié."
 
 msgid "Sync verifications"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 17:15+0000\n"
+"POT-Creation-Date: 2022-09-30 11:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,9 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Tourism"
+msgstr ""
+
+msgid "Provider"
 msgstr ""
 
 msgid "After"
@@ -36,6 +39,15 @@ msgstr ""
 msgid "HH:MM"
 msgstr ""
 
+msgid "Start time is unset"
+msgstr ""
+
+msgid "Start time is after end time"
+msgstr ""
+
+msgid "Start date is after end date"
+msgstr ""
+
 msgid "Label"
 msgstr ""
 
@@ -49,6 +61,9 @@ msgid "Label accessibility"
 msgstr ""
 
 msgid "Labels accessibility"
+msgstr ""
+
+msgid "External id"
 msgstr ""
 
 msgid "Title"
@@ -202,9 +217,6 @@ msgstr ""
 msgid "Portal"
 msgstr ""
 
-msgid "External id"
-msgstr ""
-
 msgid "Reservation system"
 msgstr ""
 
@@ -235,6 +247,12 @@ msgstr ""
 msgid "Touristic event types"
 msgstr ""
 
+msgid "Cancellation reason"
+msgstr ""
+
+msgid "Cancellation reasons"
+msgstr ""
+
 msgid "Begin date"
 msgstr ""
 
@@ -259,6 +277,9 @@ msgstr ""
 msgid "11:00, 23:30"
 msgstr ""
 
+msgid "End time"
+msgstr ""
+
 msgid "Organizer"
 msgstr ""
 
@@ -277,6 +298,15 @@ msgstr ""
 msgid "Recommandations / To plan / Advices"
 msgstr ""
 
+msgid "Bookable"
+msgstr ""
+
+msgid "Cancelled"
+msgstr ""
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr ""
+
 msgid "Touristic event"
 msgstr ""
 
@@ -285,10 +315,6 @@ msgstr ""
 
 #, python-brace-format
 msgid "starting from {begin}"
-msgstr ""
-
-#, python-brace-format
-msgid "up to {end}"
 msgstr ""
 
 #, python-brace-format
@@ -330,13 +356,19 @@ msgstr ""
 msgid "Print"
 msgstr ""
 
+msgid "Public print booklet"
+msgstr ""
+
+msgid "Print booklet"
+msgstr ""
+
 msgid "Attributes"
 msgstr ""
 
-msgid "None"
+msgid "yes,no"
 msgstr ""
 
-msgid "yes,no"
+msgid "None"
 msgstr ""
 
 msgid "Thumbnail"
@@ -357,7 +389,13 @@ msgstr ""
 msgid "All useful information"
 msgstr ""
 
+msgid "Yes,No"
+msgstr ""
+
 msgid "Date"
+msgstr ""
+
+msgid "Number of participants"
 msgstr ""
 
 msgid "Invalid geometry value."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 17:15+0000\n"
+"POT-Creation-Date: 2022-09-30 11:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,6 +20,9 @@ msgstr ""
 
 msgid "Tourism"
 msgstr "Turismo"
+
+msgid "Provider"
+msgstr ""
 
 msgid "After"
 msgstr "Dopo"
@@ -36,6 +39,17 @@ msgstr "gg/mm/aaaa"
 msgid "HH:MM"
 msgstr "HH:MM"
 
+#, fuzzy
+#| msgid "Start time"
+msgid "Start time is unset"
+msgstr "Orario della riunione"
+
+msgid "Start time is after end time"
+msgstr ""
+
+msgid "Start date is after end date"
+msgstr ""
+
 msgid "Label"
 msgstr "Label"
 
@@ -50,6 +64,9 @@ msgstr ""
 
 msgid "Labels accessibility"
 msgstr ""
+
+msgid "External id"
+msgstr "External id"
 
 msgid "Title"
 msgstr "Titolo"
@@ -202,9 +219,6 @@ msgstr "Fonte"
 msgid "Portal"
 msgstr "Portale"
 
-msgid "External id"
-msgstr "External id"
-
 msgid "Reservation system"
 msgstr ""
 
@@ -235,6 +249,12 @@ msgstr "Tipo di evento turistico"
 msgid "Touristic event types"
 msgstr "Tipi di eventi turistici"
 
+msgid "Cancellation reason"
+msgstr ""
+
+msgid "Cancellation reasons"
+msgstr ""
+
 msgid "Begin date"
 msgstr "Data di inizio"
 
@@ -259,6 +279,11 @@ msgstr "Orario della riunione"
 msgid "11:00, 23:30"
 msgstr "11:00, 23:30"
 
+#, fuzzy
+#| msgid "End date"
+msgid "End time"
+msgstr "Data di fine"
+
 msgid "Organizer"
 msgstr "Organizzatore"
 
@@ -277,6 +302,15 @@ msgstr "Pubblico destinatario"
 msgid "Recommandations / To plan / Advices"
 msgstr "Raccomandazioni / A pianificare / Consigli"
 
+msgid "Bookable"
+msgstr ""
+
+msgid "Cancelled"
+msgstr ""
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr ""
+
 msgid "Touristic event"
 msgstr "Evento turistico"
 
@@ -286,10 +320,6 @@ msgstr "Eventi turistici"
 #, python-brace-format
 msgid "starting from {begin}"
 msgstr "a partire da {begin}"
-
-#, python-brace-format
-msgid "up to {end}"
-msgstr "fino a {end}"
 
 #, python-brace-format
 msgid "from {begin} to {end}"
@@ -334,14 +364,22 @@ msgstr "Public print"
 msgid "Print"
 msgstr "Stampa"
 
+#, fuzzy
+#| msgid "Public print"
+msgid "Public print booklet"
+msgstr "Public print"
+
+msgid "Print booklet"
+msgstr ""
+
 msgid "Attributes"
 msgstr "Attributi"
 
-msgid "None"
-msgstr "Nessuna"
-
 msgid "yes,no"
 msgstr "si, no"
+
+msgid "None"
+msgstr "Nessuna"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"
@@ -361,8 +399,17 @@ msgstr "Posizione geografica"
 msgid "All useful information"
 msgstr "Tutte le informazioni utili"
 
+msgid "Yes,No"
+msgstr ""
+
 msgid "Date"
 msgstr "Data"
 
+msgid "Number of participants"
+msgstr ""
+
 msgid "Invalid geometry value."
 msgstr "Valore geometrico non valido"
+
+#~ msgid "up to {end}"
+#~ msgstr "fino a {end}"

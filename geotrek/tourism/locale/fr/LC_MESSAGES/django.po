@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 17:15+0000\n"
+"POT-Creation-Date: 2022-09-30 11:49+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -20,12 +20,11 @@ msgstr ""
 "X-Generator: Weblate 4.0.1\n"
 "Project-Id-Verésion: PACKAGE VERSION\n"
 
-
-msgid "Start date is after end date"
-msgstr "La date de début est après la date de fin"
-
 msgid "Tourism"
 msgstr "Tourisme"
+
+msgid "Provider"
+msgstr "Fournisseur"
 
 msgid "After"
 msgstr "À partir du"
@@ -42,6 +41,15 @@ msgstr "jj/mm/aaaa"
 msgid "HH:MM"
 msgstr "HH:MM"
 
+msgid "Start time is unset"
+msgstr "La date de début n'est pas renseignée"
+
+msgid "Start time is after end time"
+msgstr "L'heure de début est après l'heure de fin"
+
+msgid "Start date is after end date"
+msgstr "La date de début est après la date de fin"
+
 msgid "Label"
 msgstr "Étiquette"
 
@@ -57,6 +65,9 @@ msgstr "Label accessibilité"
 msgid "Labels accessibility"
 msgstr "Labels accessibilité"
 
+msgid "External id"
+msgstr "ID externe"
+
 msgid "Title"
 msgstr "Titre"
 
@@ -65,15 +76,6 @@ msgstr "Type"
 
 msgid "Description"
 msgstr "Description"
-
-msgid "Cancelled"
-msgstr "Annulé"
-
-msgid "Cancellation reason"
-msgstr "Cause d'annulation"
-
-msgid "Cancellation reasons"
-msgstr "Causes d'annulation"
 
 msgid "Brief description"
 msgstr "Brève description"
@@ -129,9 +131,6 @@ msgstr "Tout"
 
 msgid "First list label"
 msgstr "Nom de la première liste"
-
-msgid "Bookable"
-msgstr "Réservable"
 
 msgid "Second list label"
 msgstr "Nom de la deuxième liste"
@@ -220,9 +219,6 @@ msgstr "Source"
 msgid "Portal"
 msgstr "Portail"
 
-msgid "External id"
-msgstr "ID externe"
-
 msgid "Reservation system"
 msgstr "Système de réservation"
 
@@ -253,6 +249,12 @@ msgstr "Type d'évènement touristique"
 msgid "Touristic event types"
 msgstr "Types d'évènement touristique"
 
+msgid "Cancellation reason"
+msgstr "Cause d'annulation"
+
+msgid "Cancellation reasons"
+msgstr "Causes d'annulation"
+
 msgid "Begin date"
 msgstr "Date de début"
 
@@ -274,11 +276,11 @@ msgstr "Où exactement ?"
 msgid "Start time"
 msgstr "Heure de début"
 
-msgid "End time"
-msgstr "Heure de fin"
-
 msgid "11:00, 23:30"
 msgstr "11:00, 23:30"
+
+msgid "End time"
+msgstr "Heure de fin"
 
 msgid "Organizer"
 msgstr "Organisateur"
@@ -298,6 +300,15 @@ msgstr "Public visé"
 msgid "Recommandations / To plan / Advices"
 msgstr "Recommandations / À prévoir / Conseils"
 
+msgid "Bookable"
+msgstr "Réservable"
+
+msgid "Cancelled"
+msgstr "Annulé"
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr "Booléen indiquant si l'évènement est annulé"
+
 msgid "Touristic event"
 msgstr "Évènement touristique"
 
@@ -307,10 +318,6 @@ msgstr "Évènements touristiques"
 #, python-brace-format
 msgid "starting from {begin}"
 msgstr "à partir du {begin}"
-
-#, python-brace-format
-msgid "up to {end}"
-msgstr "jusqu'au {end}"
 
 #, python-brace-format
 msgid "from {begin} to {end}"
@@ -355,17 +362,22 @@ msgstr "Impression grand public"
 msgid "Print"
 msgstr "Impr."
 
+#, fuzzy
+#| msgid "Public print"
+msgid "Public print booklet"
+msgstr "Impression grand public"
+
+msgid "Print booklet"
+msgstr ""
+
 msgid "Attributes"
 msgstr "Informations"
-
-msgid "None"
-msgstr "Aucun(e)"
 
 msgid "yes,no"
 msgstr "oui,non"
 
-msgid "Yes,No"
-msgstr "Oui,Non"
+msgid "None"
+msgstr "Aucun(e)"
 
 msgid "Thumbnail"
 msgstr "Aperçu"
@@ -385,8 +397,14 @@ msgstr "Emplacement géographique"
 msgid "All useful information"
 msgstr "Toutes les informations pratiques"
 
+msgid "Yes,No"
+msgstr "Oui,Non"
+
 msgid "Date"
 msgstr "Date"
+
+msgid "Number of participants"
+msgstr ""
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
@@ -434,3 +452,6 @@ msgstr "Veuillez ajouter une classe de participants dans l’interface "
 
 msgid "Select a place to auto-locate event on map"
 msgstr "Sélectionner un lieu positionne automatiquement l'évènement sur la carte"
+
+msgid "up to {end}"
+msgstr "jusqu'au {end}"

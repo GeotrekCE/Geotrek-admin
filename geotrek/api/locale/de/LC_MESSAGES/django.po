@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-16 09:23+0000\n"
+"POT-Creation-Date: 2022-09-30 11:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -336,6 +336,12 @@ msgid "Categories"
 msgstr ""
 
 msgid "Filter by one or more category id, comma-separated."
+msgstr ""
+
+msgid "Filter events on bookable boolean : true/false expected"
+msgstr ""
+
+msgid "Filter events on cancelled boolean : true/false expected"
 msgstr ""
 
 msgid "Dates before"
