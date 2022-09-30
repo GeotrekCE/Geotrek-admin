@@ -41,5 +41,5 @@ def is_tourism_enabled():
 def places_coords():
     places = TouristicEventPlace.objects.annotate(
         geom_4326=Transform('geom', 4326)
-    ).all()
+    )
     return json.dumps({str(p.pk) : p.geom_4326.coords for p in places})
