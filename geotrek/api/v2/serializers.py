@@ -451,7 +451,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         cancellation_reason = serializers.SerializerMethodField()
       
         legacy_mapping = {
-            'meeting_time': 'start_time'
+            'meeting_time': 'start_time',
+            'participant_number': 'capacity'
         }
 
         def get_cancellation_reason(self, obj):

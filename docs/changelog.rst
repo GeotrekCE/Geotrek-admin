@@ -24,7 +24,7 @@ CHANGELOG
 
 **Breaking change**
 
-- Rename `participant_number` to `capacity` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `capacity` instead of `participant_number`
+- Rename `participant_number` to `capacity` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `capacity` instead of `participant_number`.  The field is still available in api v2 for compatibility but will be remove in few month
 
 
 2.87.2 (2022-09-23)
