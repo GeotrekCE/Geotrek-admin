@@ -3024,11 +3024,12 @@ class TouristicEventTestCase(BaseApiTest):
 
     def test_touristic_event_legacy(self):
         response = self.get_touristicevent_list({'fields': 'meeting_time'})
-        self.assertEqual(sorted(response.json().get('features')[0].get('properties').keys()),
+        
+        self.assertEqual(sorted(response.json().get('results')[0].keys()),
                             ['meeting_time'])
 
         response = self.get_touristicevent_list({'fields': 'meeting_time,start_time'})
-        self.assertEqual(sorted(response.json().get('features')[0].get('properties').keys()),
+        self.assertEqual(sorted(response.json().get('results')[0].keys()),
                             ['meeting_time', 'start_time'])
 
 
