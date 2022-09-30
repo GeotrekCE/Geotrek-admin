@@ -17,6 +17,8 @@ CHANGELOG
 **New features**
 
 - Add fields `end_time`, `cancelled`, `cancellation_reason`, `bookable` to TouristicEvents
+- `cancellation_reason` selector is displayed in Event form if `bookable` is checked
+- `booking` text box is displayed in Event form if `bookable` is checked
 
 **Breaking changes**
 

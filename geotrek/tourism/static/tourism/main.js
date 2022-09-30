@@ -72,6 +72,10 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         $('#id_cancelled').change(function () {
             $('#div_id_cancellation_reason').prop("hidden", !this.checked);
         })
+        $('#booking_widget').prop("hidden", !$('#id_bookable').is(":checked"));
+        $('#id_bookable').change(function () {
+            $('#booking_widget').prop("hidden", !this.checked);
+        })
     }
 
     if (data.modelname != 'touristiccontent')
