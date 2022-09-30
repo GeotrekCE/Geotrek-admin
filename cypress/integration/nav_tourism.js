@@ -14,8 +14,8 @@ describe('Create tourism event', () => {
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
   });
 
-  it('Should dynamically show/hide cancellation reason', () => {
-    cy.visit('/touristicevent/add/').get("#modelfields").scrollTo('bottom');
+  it('Should dynamicly show/hide cancellation reason', () => {
+    cy.visit('/touristicevent/add/').get("#event").scrollTo('bottom');
     // check initially hidden
     cy.get('#div_id_cancellation_reason').should("not.be.visible");
     // check toggle hide/show
