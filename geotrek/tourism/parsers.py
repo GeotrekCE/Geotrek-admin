@@ -271,7 +271,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'end_date': 'ouverture.periodesOuvertures.0.dateFin',
         'duration': ('ouverture.periodesOuvertures.0.horaireOuverture',
                      'ouverture.periodesOuvertures.-1.horaireFermeture'),
-        'meeting_time': 'ouverture.periodesOuvertures.0.horaireOuverture',
+        'start_time': 'ouverture.periodesOuvertures.0.horaireOuverture',
         'contact': (
             'localisation.adresse.adresse1',
             'localisation.adresse.adresse2',

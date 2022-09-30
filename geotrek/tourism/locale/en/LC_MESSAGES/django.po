@@ -18,6 +18,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Start date is after end date"
+msgstr ""
+
 msgid "Tourism"
 msgstr ""
 
@@ -253,7 +256,10 @@ msgstr ""
 msgid "Where exactly ?"
 msgstr ""
 
-msgid "Meeting time"
+msgid "Start time"
+msgstr ""
+
+msgid "End time"
 msgstr ""
 
 msgid "11:00, 23:30"

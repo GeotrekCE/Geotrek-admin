@@ -24,4 +24,14 @@ describe('Create tourism event', () => {
     cy.get('#id_bookable').uncheck({ force: true });
     cy.get('#div_id_participant_number').should("not.be.visible");
   })
+
+  it('Should dynamicly show/hidde cancellation reason', () => {
+    // check initially hidden
+    cy.get('#div_id_cancellation_reason').should("not.be.visible");
+    // check toggle hide/show
+    cy.get('#id_cancelled').check({ force: true });
+    cy.get('#div_id_cancellation_reason').should("be.visible");
+    cy.get('#id_cancelled').uncheck({ force: true });
+    cy.get('#div_id_cancellation_reason').should("not.be.visible");
+  })
 })

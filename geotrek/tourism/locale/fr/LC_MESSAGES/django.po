@@ -20,6 +20,10 @@ msgstr ""
 "X-Generator: Weblate 4.0.1\n"
 "Project-Id-Verésion: PACKAGE VERSION\n"
 
+
+msgid "Start date is after end date"
+msgstr "La date de début est après la date de fin"
+
 msgid "Tourism"
 msgstr "Tourisme"
 
@@ -61,6 +65,15 @@ msgstr "Type"
 
 msgid "Description"
 msgstr "Description"
+
+msgid "Cancelled"
+msgstr "Annulé"
+
+msgid "Cancellation reason"
+msgstr "Cause d'annulation"
+
+msgid "Cancellation reasons"
+msgstr "Causes d'annulation"
 
 msgid "Brief description"
 msgstr "Brève description"
@@ -258,8 +271,11 @@ msgstr "Lieu de RDV"
 msgid "Where exactly ?"
 msgstr "Où exactement ?"
 
-msgid "Meeting time"
-msgstr "Heure de RDV"
+msgid "Start time"
+msgstr "Heure de début"
+
+msgid "End time"
+msgstr "Heure de fin"
 
 msgid "11:00, 23:30"
 msgstr "11:00, 23:30"
@@ -348,6 +364,9 @@ msgstr "Aucun(e)"
 msgid "yes,no"
 msgstr "oui,non"
 
+msgid "Yes,No"
+msgstr "Oui,Non"
+
 msgid "Thumbnail"
 msgstr "Aperçu"
 
@@ -375,7 +394,14 @@ msgstr "Valeur de géométrie invalide"
 msgid "Provider"
 msgstr "Fournisseur"
 
-
 msgid "Filter events on bookable boolean : true/false exepected"
-msgstr "Filtre les evenement sur le booléen 'bookable' : true/false attendu"
+msgstr "Filtre les évènements réservables : true/false attendu"
 
+msgid "Start time is after end time"
+msgstr "L'heure de début est après l'heure de fin"
+
+msgid "Start time is unset"
+msgstr "La date de début n'est pas renseignée"
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr "Booléen indiquant si l'évènement est annulé"

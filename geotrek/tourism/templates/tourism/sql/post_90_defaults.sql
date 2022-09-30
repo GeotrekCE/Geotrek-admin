@@ -98,7 +98,8 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN description SET DEFAULT '';
 -- end_date
 ALTER TABLE tourism_touristicevent ALTER COLUMN duration SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN meeting_point SET DEFAULT '';
--- meeting_time
+-- start_time
+-- end_time
 ALTER TABLE tourism_touristicevent ALTER COLUMN contact SET DEFAULT '';
 -- email
 -- website
@@ -108,6 +109,7 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN speaker SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN accessibility SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN participant_number SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN bookable SET DEFAULT FALSE;
+ALTER TABLE tourism_touristicevent ALTER COLUMN cancelled SET DEFAULT FALSE;
 ALTER TABLE tourism_touristicevent ALTER COLUMN booking SET DEFAULT '';
 -- target_audience
 ALTER TABLE tourism_touristicevent ALTER COLUMN practical_info SET DEFAULT '';

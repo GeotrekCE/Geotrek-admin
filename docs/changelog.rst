@@ -4,6 +4,24 @@ CHANGELOG
 
 2.87.2+dev (XXXX-XX-XX)
 -----------------------
+ 
+**Minor improvements** 
+
+- Check `begin date`` is before `end date` in TouristicEvent forms
+- Set `begin_date` not null for TouristicEvents (#3127)
+
+**Bug fixes**
+
+- Fix TouristicEvent with no end dates are not returned in APIv2
+
+**New features**
+
+- Add fields `end_time`, `cancelled`, `cancellation_reason`, `bookable` to TouristicEvents
+
+**Breaking change**
+
+- Rename `meeting_time` to `start_time` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `start_time` instead of `meeting_time`
+
 
 2.87.2 (2022-09-23)
 -----------------------
@@ -14,7 +32,7 @@ CHANGELOG
 
 **Minor improvements**
 
-- Ensure attachments from parsers have generated thumbnails 
+- Ensure attachments from parsers have generated thumbnails
 
 **Bug fixes**
 

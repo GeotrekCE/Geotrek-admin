@@ -192,7 +192,8 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             'files': [],
             'map_image_url': '/image/touristicevent-{}.png'.format(self.obj.pk),
             'meeting_point': '',
-            'meeting_time': None,
+            'start_time': None,
+            'end_time': None,
             'name': 'Touristic event',
             'organizer': '',
             'participant_number': '',
@@ -256,6 +257,8 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             'structure': StructureFactory.create().pk,
             'name_en': 'test',
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
+            'begin_date': '2002-02-20',
+            'end_date': '2002-02-20'
         }
 
     @patch('mapentity.helpers.requests')

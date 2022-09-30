@@ -1,6 +1,7 @@
 import logging
 import os
 import uuid
+
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -396,6 +397,17 @@ class TouristicEventType(OptionalPictogramMixin):
         return self.type
 
 
+class CancellationReason(models.Model):
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Cancellation reason")
+        verbose_name_plural = _("Cancellation reasons")
+
+    def __str__(self):
+        return self.label
+
+
 class TouristicEventManager(NoDeleteManager):
     def provider_choices(self):
         providers = self.get_queryset().existing().order_by('provider').exclude(provider__exact='') \
@@ -415,14 +427,16 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.PointField(verbose_name=_("Location"), srid=settings.SRID)
-    begin_date = models.DateField(blank=True, null=True, verbose_name=_("Begin date"))
+    begin_date = models.DateField(blank=False, null=False, verbose_name=_("Begin date"))
     end_date = models.DateField(blank=True, null=True, verbose_name=_("End date"))
     duration = models.CharField(verbose_name=_("Duration"), max_length=64, blank=True,
                                 help_text=_("3 days, season, ..."))
     meeting_point = models.CharField(verbose_name=_("Meeting point"), max_length=256, blank=True,
                                      help_text=_("Where exactly ?"))
-    meeting_time = models.TimeField(verbose_name=_("Meeting time"), blank=True, null=True,
-                                    help_text=_("11:00, 23:30"))
+    start_time = models.TimeField(verbose_name=_("Start time"), blank=True, null=True,
+                                  help_text=_("11:00, 23:30"))
+    end_time = models.TimeField(verbose_name=_("End time"), blank=True, null=True,
+                                help_text=_("11:00, 23:30"))
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     email = models.EmailField(verbose_name=_("Email"), max_length=256,
                               blank=True, null=True)
@@ -448,6 +462,8 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     bookable = models.BooleanField(verbose_name=_("Bookable"), default=False)
+    cancelled = models.BooleanField(default=False, verbose_name=_("Cancelled"), help_text=_("Boolean indicating if Event is cancelled"))
+    cancellation_reason = models.ForeignKey(CancellationReason, verbose_name=_("Cancellation reason"), related_name="touristic_events", null=True, blank=True, on_delete=models.PROTECT)
     objects = TouristicEventManager()
     id_prefix = 'E'
 
@@ -469,14 +485,9 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
 
     @property
     def dates_display(self):
-        if not self.begin_date and not self.end_date:
-            return ""
-        elif not self.end_date:
+        if not self.end_date:
             return _("starting from {begin}").format(
                 begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'))
-        elif not self.begin_date:
-            return _("up to {end}").format(
-                end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
         elif self.begin_date == self.end_date:
             return date_format(self.begin_date, 'SHORT_DATE_FORMAT')
         else:
