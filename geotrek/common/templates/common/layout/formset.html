@@ -2,6 +2,7 @@
 
 <fieldset class="formset">
     {% if legend %}<legend>{{ legend }}</legend>{% endif %}
+    {{ formset.non_form_errors }}
     {{ formset.management_form }}
     {% for form in formset.forms %}
         <div class="form-row inline controls controls-row {{ form.prefix }}">
