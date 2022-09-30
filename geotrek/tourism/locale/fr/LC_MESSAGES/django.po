@@ -404,7 +404,7 @@ msgid "Boolean indicating if Event is cancelled"
 msgstr "Booléen indiquant si l'évènement est annulé"
 
 msgid "Event place"
-msgstr "Lieu d'evenement"
+msgstr "Lieu d'évènement"
 
 msgid "Event places"
-msgstr "Lieux d'evenement"
+msgstr "Lieux d'évènements"

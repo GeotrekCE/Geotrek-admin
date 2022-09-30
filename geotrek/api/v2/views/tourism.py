@@ -108,12 +108,6 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.UpdateOrCreateDateFilter,
     )
     serializer_class = api_serializers.TouristicEventPlaceSerializer
-    filteredset_view = ["pk", "geom", "name"]
+
     def get_queryset(self):
-        return tourism_models.TouristicEventPlace.objects.annotate(
-            geom_transformed=Transform('geom', settings.API_SRID)
-        ).annotate(
-            count_event=Count('touristicevents')
-        ).filter(
-            count_event__gt=0
-        ).order_by()
+        return tourism_models.TouristicEventPlace.objects.exclude(touristicevents__isnull=True).annotate(geom_transformed=Transform('geom', settings.API_SRID)).order_by('name')

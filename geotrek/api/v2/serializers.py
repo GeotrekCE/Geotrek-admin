@@ -491,6 +491,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class TouristicEventPlaceSerializer(serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+
         class Meta:
             model = tourism_models.TouristicEventPlace
             fields = ("pk", "geometry", "name")

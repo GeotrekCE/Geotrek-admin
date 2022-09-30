@@ -40,6 +40,6 @@ def is_tourism_enabled():
 @register.simple_tag
 def places_coords():
     places = TouristicEventPlace.objects.annotate(
-        geom_4326=Transform('geom', 4326)
+        geom_4326=Transform('geom', 4326)  # Leaflet requries 4326
     )
-    return json.dumps({str(p.pk) : p.geom_4326.coords for p in places})
+    return json.dumps({str(p.pk): p.geom_4326.coords for p in places})

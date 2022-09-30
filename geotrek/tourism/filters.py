@@ -85,19 +85,13 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         label=_("Provider"),
         choices=TouristicEvent.objects.provider_choices()
     )
-    place = ChoiceFilter(
-        field_name='place',
-        empty_label=_("Event place"),
-        label=_("Event place"),
-        choices=TouristicEventPlace.objects.all().values_list('pk', 'name')
-    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'type', 'themes', 'after',
             'before', 'approved', 'source', 'portal', 'provider',
-            'bookable', 'cancelled'
+            'bookable', 'cancelled', 'place'
         ]
 
 
