@@ -448,6 +448,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
         cancellation_reason = serializers.SerializerMethodField()
+        place = serializers.SlugRelatedField(
+            read_only=True,
+            slug_field='name'
+        )
 
         def get_cancellation_reason(self, obj):
             if not obj.cancellation_reason:
@@ -472,7 +476,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'start_time', 'end_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
                 'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
                 'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website',
-                'cancelled', 'cancellation_reason'
+                'cancelled', 'cancellation_reason', 'place'
             )
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
