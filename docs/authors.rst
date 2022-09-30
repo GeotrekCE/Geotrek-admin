@@ -23,7 +23,6 @@ Makina Corpus
 * Emmanuelle Helly
 * Célia Prat
 * Paul Florence
-* TOTO
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
