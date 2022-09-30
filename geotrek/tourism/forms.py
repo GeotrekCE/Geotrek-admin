@@ -58,6 +58,7 @@ class TouristicContentForm(CommonForm):
 
 class TouristicEventForm(CommonForm):
     geomfields = ['geom']
+    leftpanel_scrollable = False
 
     fieldslayout = [
         Div(
