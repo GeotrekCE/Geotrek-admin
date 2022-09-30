@@ -342,38 +342,38 @@ msgstr ""
 "L'équipe Geotrek\n"
 "http://www.geotrek.fr"
 
-#~ msgid "New reports from Suricate"
-#~ msgstr "Nouveaux signalements Suricate"
+msgid "New reports from Suricate"
+msgstr "Nouveaux signalements Suricate"
 
-#~ msgid "Workflow manager"
-#~ msgstr "Manager de gestion"
+msgid "Workflow manager"
+msgstr "Manager de gestion"
 
-#~ msgid "Workflow managers"
-#~ msgstr "Managers de gestion"
+msgid "Workflow managers"
+msgstr "Managers de gestion"
 
-#~ msgid "Workflow districts"
-#~ msgstr "Secteurs de gestion"
+msgid "Workflow districts"
+msgstr "Secteurs de gestion"
 
-#~ msgid "Workflow district"
-#~ msgstr "Secteur de gestion"
+msgid "Workflow district"
+msgstr "Secteur de gestion"
 
-#~ msgid "Intervention terminée"
-#~ msgstr "Intervention terminée"
+msgid "Intervention terminée"
+msgstr "Intervention terminée"
 
-#~ msgid "New report to process"
-#~ msgstr "Nouveau Signalement à traiter"
+msgid "New report to process"
+msgstr "Nouveau Signalement à traiter"
 
-#~ msgid "Late report processing"
-#~ msgstr "Signalement à traiter en retard"
+msgid "Late report processing"
+msgstr "Signalement à traiter en retard"
 
-#~ msgid "A report must be solved"
-#~ msgstr "Un Signalement est à clôturer"
+msgid "A report must be solved"
+msgstr "Un Signalement est à clôturer"
 
-#~ msgid "to"
-#~ msgstr "pour"
+msgid "to"
+msgstr "pour"
 
-#~ msgid "Mail body"
-#~ msgstr "Corps du mail"
+msgid "Mail body"
+msgstr "Corps du mail"
 
-#~ msgid "Extended username"
-#~ msgstr "Dénomination complète"
+msgid "Extended username"
+msgstr "Dénomination complète"
