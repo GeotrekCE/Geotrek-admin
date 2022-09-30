@@ -22,6 +22,10 @@
             <td>{{ object.type }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"direction" }}</th>
+            <td>{{ object.direction }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"condition" }}</th>
             <td>{% if object.condition %}{{ object.condition }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
