@@ -14,7 +14,7 @@ describe('Create tourism event', () => {
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
   });
 
-  it('Should dynamicly show/hidde cancellation reason', () => {
+  it('Should dynamicly show/hide cancellation reason', () => {
     cy.visit('/touristicevent/add/').get("#modelfields").scrollTo('bottom');
     // check initially hidden
     cy.get('#div_id_cancellation_reason').should("not.be.visible");
@@ -25,7 +25,7 @@ describe('Create tourism event', () => {
     cy.get('#div_id_cancellation_reason').should("not.be.visible");
   })
 
-  it('Should dynamicly show/hidde reservation text box', () => {
+  it('Should dynamicly show/hide reservation text box', () => {
     // check initially hidden
     cy.get('#booking_widget').should("not.be.visible");
     // check toggle hide/show
