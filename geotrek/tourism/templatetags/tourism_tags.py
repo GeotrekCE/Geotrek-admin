@@ -36,9 +36,6 @@ def touristic_content_categories():
 def is_tourism_enabled():
     return settings.TOURISM_ENABLED
 
-@register.simple_tag
-def test():
-    return "UN TEST"
 
 @register.simple_tag
 def places_coords():
