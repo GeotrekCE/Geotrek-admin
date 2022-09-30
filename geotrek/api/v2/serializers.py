@@ -448,6 +448,13 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
         cancellation_reason = serializers.SerializerMethodField()
+        meeting_time = serializers.ReadOnlyField(
+            source='start_time',
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'start_time'")
+        )
+        participant_number = serializers.SerializerMethodField(
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'capacity'")
+        )
 
         def get_cancellation_reason(self, obj):
             if not obj.cancellation_reason:
@@ -460,6 +467,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 return obj_type.pk
             return None
 
+        def get_participant_number(self, obj):
+            return str(obj.capacity)
+
         def get_end_date(self, obj):
             return obj.end_date or obj.begin_date
 
@@ -469,10 +479,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable', 'booking',
                 'cities', 'contact', 'create_datetime', 'description', 'description_teaser',
                 'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
-                'start_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
+                'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
                 'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
                 'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website',
-                'cancelled', 'cancellation_reason'
+                'cancelled', 'cancellation_reason', 'participant_number'
             )
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
