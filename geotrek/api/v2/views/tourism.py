@@ -86,7 +86,7 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
     )
-    filter_class = api_filters.TouristicEventFilterSet
+    filterset_class = api_filters.TouristicEventFilterSet
     serializer_class = api_serializers.TouristicEventSerializer
     filterset_fields = ["cancelled", "bookable"]
 

@@ -486,13 +486,15 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
 
 class TouristicEventFilterSet(filters.FilterSet):
     bookable = filters.BooleanFilter(
-        field_name=_("Bookable"), 
-        help_text=_("Filter events on bookable boolean : true/false exepected")
+        help_text=_("Filter events on bookable boolean : true/false expected")
+    )
+    cancelled = filters.BooleanFilter(
+        help_text=_("Filter events on cancelled boolean : true/false expected")
     )
 
     class Meta:
         model = TouristicEvent
-        fields = ['bookable']
+        fields = ['cancelled', 'bookable']
 
 
 class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):

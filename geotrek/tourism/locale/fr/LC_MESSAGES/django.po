@@ -394,9 +394,6 @@ msgstr "Valeur de géométrie invalide"
 msgid "Provider"
 msgstr "Fournisseur"
 
-msgid "Filter events on bookable boolean : true/false exepected"
-msgstr "Filtre les évènements réservables : true/false attendu"
-
 msgid "Start time is after end time"
 msgstr "L'heure de début est après l'heure de fin"
 
