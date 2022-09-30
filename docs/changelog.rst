@@ -18,13 +18,11 @@ CHANGELOG
 
 - Add fields `end_time`, `cancelled`, `cancellation_reason`, `bookable` to TouristicEvents
 
-**Breaking change**
+**Breaking changes**
 
 - Rename `meeting_time` to `start_time` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `start_time` instead of `meeting_time`
-
-**Breaking change**
-
 - Rename `participant_number` to `capacity` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `capacity` instead of `participant_number`
+- These fields are still available in API v2 for retrocompatibility but should not be used by default
 
 
 2.87.2 (2022-09-23)

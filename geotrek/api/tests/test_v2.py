@@ -213,9 +213,9 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
-    'meeting_point', 'start_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
+    'meeting_point', 'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
-    'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason'
+    'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason', 'participant_number'
 ])
 
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -2945,6 +2945,8 @@ class TouristicEventTestCase(BaseApiTest):
             published=True,
             name="No end date",
             begin_date='2022-02-20',
+            start_time="12:34",
+            capacity=12,
             bookable=False
         )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
@@ -2960,6 +2962,10 @@ class TouristicEventTestCase(BaseApiTest):
         self.assertEqual(response.json().get("count"), 2)
         # Event with no end date is returned with begin date as end date
         self.assertEqual(response.json().get("results")[0]['end_date'], "2022-02-20")
+        # start_time replaces meeting_time
+        self.assertEqual(response.json().get("results")[0]['meeting_time'], "12:34:00")
+        # capacity replaces participant_number
+        self.assertEqual(response.json().get("results")[0]['participant_number'], '12')
         # Event with end date returns right end date
         self.assertEqual(response.json().get("results")[1]['end_date'], "2202-02-22")
 
