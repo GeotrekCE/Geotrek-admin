@@ -19,7 +19,7 @@ from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
                                           PicturesMixin, PublishableMixin, TimeStampedModelMixin)
 from geotrek.common.models import ReservationSystem, Theme
-from geotrek.common.utils import intersecting
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import Topology
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
@@ -483,6 +483,14 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Event place"), on_delete=models.PROTECT, null=True, blank=True)
     id_prefix = 'E'
 
+    @property
+    def participants_total(self):
+        return self.participants.aggregate(participants_total=models.Sum('count'))['participants_total']
+
+    @classproperty
+    def participants_total_verbose_name(cls):
+        return _("Number of participants")
+
     class Meta:
         verbose_name = _("Touristic event")
         verbose_name_plural = _("Touristic events")
@@ -526,6 +534,28 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     @property
     def meta_description(self):
         return plain_text(self.description_teaser or self.description)[:500]
+
+
+class TouristicEventParticipantCategory(models.Model):
+    label = models.CharField(verbose_name=_("Label"), max_length=255)
+    order = models.PositiveSmallIntegerField(default=None, null=True, blank=True, verbose_name=_("Display order"))
+
+    class Meta:
+        verbose_name = _("Participant category")
+        verbose_name_plural = _("Participant categories")
+        ordering = ['order', 'label']
+
+    def __str__(self):
+        return self.label
+
+
+class TouristicEventParticipantCount(models.Model):
+    count = models.PositiveIntegerField(verbose_name=_("Number of participants"))
+    category = models.ForeignKey(TouristicEventParticipantCategory, verbose_name=_("Category"), on_delete=models.CASCADE, related_name="participants")
+    event = models.ForeignKey(TouristicEvent, verbose_name=_("Touristic event"), on_delete=models.CASCADE, related_name="participants")
+
+    def __str__(self):
+        return f"{self.count} {self.category}"
 
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))

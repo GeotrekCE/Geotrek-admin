@@ -408,3 +408,26 @@ msgstr "Lieu d'évènement"
 
 msgid "Event places"
 msgstr "Lieux d'évènements"
+
+msgid "Event"
+msgstr "Évènement"
+
+msgid "Assessment"
+msgstr "Évaluation"
+
+msgid "Participant category"
+msgstr "Classe de participants"
+
+msgid "Participant categories"
+msgstr "Classes de participants"
+
+msgid "Number"
+msgstr "Nombre"
+
+msgid "Number of participants"
+msgstr "Nombre de participants"
+
+msgid "Please add a participant category in admin interface in order to "
+"complete the number of participants."
+msgstr "Veuillez ajouter une classe de participants dans l’interface "
+"d’administration afin de pouvoir renseigner le nombre de participants."
