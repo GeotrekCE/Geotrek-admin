@@ -4,10 +4,10 @@ CHANGELOG
 
 2.87.2+dev (XXXX-XX-XX)
 -----------------------
+ 
+**Minor improvements** 
 
-**Minor improvements**
-
-- Test begin date is before end date
+- Check `begin date`` is before `end date` in TouristicEvent forms
 - Set `begin_date` not null for TouristicEvents (#3127)
 
 **Bug fixes**
@@ -16,8 +16,11 @@ CHANGELOG
 
 **New features**
 
-- Add `cancelled` and `cancellation_reason` to TouristicEvents
-- Add `bookable` and `cancellation_reason` to TouristicEvents
+- Add fields `end_time`, `cancelled`, `cancellation_reason`, `bookable` to TouristicEvents
+
+**Breaking change**
+
+- Rename `meeting_time` to `start_time` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `start_time` instead of `meeting_time`
 
 **Breaking change**
 

@@ -107,10 +107,16 @@
                 <span class="meta-item-value">{{ object.meeting_point }}</span>
               </span>
             {% endif %}
-            {% if object.meeting_time %}
+            {% if object.start_time %}
               <span class="meta-item">
-                <span class="meta-item-label">{% trans "Meeting time" %}</span>
-                <span class="meta-item-value">{{ object.meeting_time|time:"H \h i" }}</span>
+                <span class="meta-item-label">{% trans "Start time" %}</span>
+                <span class="meta-item-value">{{ object.start_time|time:"H \h i" }}</span>
+              </span>
+            {% endif %}
+            {% if object.end_time %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "End time" %}</span>
+                <span class="meta-item-value">{{ object.end_time|time:"H \h i" }}</span>
               </span>
             {% endif %}
             {% if object.duration %}

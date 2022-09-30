@@ -98,7 +98,8 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN description SET DEFAULT '';
 -- end_date
 ALTER TABLE tourism_touristicevent ALTER COLUMN duration SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN meeting_point SET DEFAULT '';
--- meeting_time
+-- start_time
+-- end_time
 ALTER TABLE tourism_touristicevent ALTER COLUMN contact SET DEFAULT '';
 -- email
 -- website

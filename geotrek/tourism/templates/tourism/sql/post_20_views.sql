@@ -180,6 +180,8 @@ SELECT a.id,
        h.labels AS "Themes",
        a.begin_date AS "Begin date",
        a.end_date AS "End date",
+       a.start_time AS "Start time",
+       a.end_time AS "End time",
        concat(a.duration, ' days') AS "Duration",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.booking_{{ lang }} AS "Booking {{ lang }}",

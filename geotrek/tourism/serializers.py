@@ -205,7 +205,7 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
         fields = (
             'id', 'description_teaser', 'description', 'themes',
             'begin_date', 'end_date', 'duration', 'meeting_point',
-            'meeting_time', 'contact', 'email', 'website', 'structure',
+            'start_time', 'end_time', 'contact', 'email', 'website', 'structure',
             'organizer', 'speaker', 'type', 'accessibility',
             'capacity', 'booking', 'target_audience',
             'practical_info', 'touristic_contents', 'touristic_events',

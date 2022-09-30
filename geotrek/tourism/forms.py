@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.utils.translation import gettext_lazy as _
 
 from .models import TouristicContent, TouristicEvent
@@ -66,7 +68,8 @@ class TouristicEventForm(CommonForm):
             'end_date',
             'duration',
             'meeting_point',
-            'meeting_time',
+            'start_time',
+            'end_time',
             'contact',
             'email',
             'website',
@@ -91,7 +94,7 @@ class TouristicEventForm(CommonForm):
     class Meta:
         fields = ['name', 'review', 'published', 'description_teaser', 'description',
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
-                  'meeting_time', 'contact', 'email', 'website', 'organizer', 'speaker',
+                  'start_time', 'end_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'capacity', 'booking', 'target_audience',
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
                   'cancelled', 'cancellation_reason']
@@ -101,15 +104,32 @@ class TouristicEventForm(CommonForm):
         super().__init__(*args, **kwargs)
         self.fields['begin_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
         self.fields['end_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
-        self.fields['meeting_time'].widget.attrs['placeholder'] = _('HH:MM')
+        self.fields['start_time'].widget.attrs['placeholder'] = _('HH:MM')
+        self.fields['end_time'].widget.attrs['placeholder'] = _('HH:MM')
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
 
     def clean(self, *args, **kwargs):
-        data = super().clean(*args, **kwargs)
+        clean_data = super().clean(*args, **kwargs)
+        start_time = clean_data.get('start_time')
+        end_time = clean_data.get('end_time')
+        if not start_time and not end_time:
+            pass
+        elif not start_time and end_time:
+            self.add_error('start_time', _('Start time is unset'))
+        elif not end_time:
+            pass
+        elif not clean_data.get('end_date'):
+            if start_time > end_time:
+                self.add_error('end_time', _('Start time is after end time'))
+        else:
+            begin = datetime.combine(clean_data.get('begin_date'), start_time)
+            end = datetime.combine(clean_data.get('end_date'), end_time)
+            if begin > end:
+                self.add_error('end_time', _('Start time is after end time'))
 
-        if data.get("end_date") and data.get("end_date") < data.get("begin_date"):
+        if clean_data.get("end_date") and clean_data.get("end_date") < clean_data.get("begin_date"):
             self.add_error('end_date', _('Start date is after end date'))
 
-        return data
+        return clean_data

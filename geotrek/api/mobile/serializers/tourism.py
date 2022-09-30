@@ -56,7 +56,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             geo_field = 'geometry'
             fields = ('id', 'pk', 'name', 'description_teaser', 'description', 'themes', 'pictures',
                       'begin_date', 'end_date', 'duration', 'meeting_point',
-                      'meeting_time', 'contact', 'email', 'website',
+                      'start_time', 'contact', 'email', 'website',
                       'organizer', 'speaker', 'type', 'accessibility',
                       'capacity', 'booking', 'target_audience',
                       'practical_info', 'approved', 'geometry')

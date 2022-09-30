@@ -254,7 +254,7 @@ msgstr "Treffpunkt"
 msgid "Where exactly ?"
 msgstr "Wo genau?"
 
-msgid "Meeting time"
+msgid "Start time"
 msgstr "Terminzeit"
 
 msgid "11:00, 23:30"

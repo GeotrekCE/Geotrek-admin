@@ -42,7 +42,7 @@
         ]
       },
       "meeting_point": "Centre ville de Saint Girons",
-      "meeting_time": null,
+      "start_time": null,
       "name": {
         "fr": "Autrefois le Couserans",
         "en": "",
@@ -117,7 +117,8 @@
         ]
       },
       "meeting_point": "Au bout du monde",
-      "meeting_time": "15:45:00",
+      "start_time": "15:45:00",
+      "end_time": "16:45:00",
       "name": {
         "fr": "Festival du test",
         "en": "",

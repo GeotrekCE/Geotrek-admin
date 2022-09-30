@@ -46,8 +46,12 @@
             <td>{{ object.meeting_point }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"meeting_time" }}</th>
-            <td>{{ object.meeting_time|default:"" }}</td>
+            <th>{{ object|verbose:"start_time" }}</th>
+            <td>{{ object.start_time|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"end_time" }}</th>
+            <td>{{ object.end_time|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"contact" }}</th>

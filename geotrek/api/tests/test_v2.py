@@ -213,7 +213,7 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
-    'meeting_point', 'meeting_time', 'name', 'organizer', 'bookable', 'capacity', 'pdf', 'portal',
+    'meeting_point', 'start_time', 'end_time', 'name', 'organizer', 'bookable', 'capacity', 'pdf', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
     'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason'
 ])
@@ -2912,8 +2912,10 @@ class TouristicEventTestCase(BaseApiTest):
             published=True,
             bookable=True,
             type=cls.touristic_event_type,
-            meeting_time=datetime.time(11, 20),
-            cancelled=True
+            start_time=datetime.time(11, 20),
+            end_time=datetime.time(12, 20),
+            cancelled=True,
+            cancellation_reason=tourism_factory.CancellationReasonFactory(label_en="Fire", label_fr="Incendie")
         )
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
         cls.touristic_event2 = tourism_factory.TouristicEventFactory(
@@ -2981,6 +2983,9 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristic_event_cancelled_filter(self):
         response = self.get_touristicevent_list({'cancelled': 'True'})
         self.assertEqual(response.json().get("count"), 1)
+        self.assertTrue(response.json().get("results")[0].get("cancelled"))
+        self.assertEqual(response.json().get("results")[0].get("cancellation_reason").get('en'), "Fire")
+        self.assertEqual(response.json().get("results")[0].get("cancellation_reason").get('fr'), "Incendie")
         response = self.get_touristicevent_list({'cancelled': 'False'})
         self.assertEqual(response.json().get("count"), 2)
 

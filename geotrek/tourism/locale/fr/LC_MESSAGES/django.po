@@ -271,8 +271,11 @@ msgstr "Lieu de RDV"
 msgid "Where exactly ?"
 msgstr "Où exactement ?"
 
-msgid "Meeting time"
-msgstr "Heure de RDV"
+msgid "Start time"
+msgstr "Heure de début"
+
+msgid "End time"
+msgstr "Heure de fin"
 
 msgid "11:00, 23:30"
 msgstr "11:00, 23:30"
@@ -390,6 +393,12 @@ msgstr "Valeur de géométrie invalide"
 
 msgid "Provider"
 msgstr "Fournisseur"
+
+msgid "Start time is after end time"
+msgstr "L'heure de début est après l'heure de fin"
+
+msgid "Start time is unset"
+msgstr "La date de début n'est pas renseignée"
 
 msgid "Boolean indicating if Event is cancelled"
 msgstr "Booléen indiquant si l'évènement est annulé"
