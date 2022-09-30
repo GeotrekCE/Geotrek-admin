@@ -195,7 +195,7 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             'meeting_time': None,
             'name': 'Touristic event',
             'organizer': '',
-            'capacity': '',
+            'capacity': None,
             'pictures': [],
             'pois': [],
             'portal': [],
