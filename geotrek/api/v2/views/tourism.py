@@ -46,7 +46,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
             .select_related('category', 'reservation_system', 'label_accessibility') \
             .prefetch_related('source', 'themes', 'type1', 'type2',
                               Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
+                                       queryset=Attachment.objects.select_related('license', 'filetype__structure').order_by('starred', '-date_insert'))
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('name')  # Required for reliable pagination

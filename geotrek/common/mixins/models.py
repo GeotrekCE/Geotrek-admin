@@ -7,7 +7,7 @@ from PIL.Image import DecompressionBombError
 from django.conf import settings
 from django.core.mail import mail_managers
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Max, Count
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.formats import date_format
@@ -31,8 +31,7 @@ class TimeStampedModelMixin(models.Model):
         abstract = True
 
     def reload(self, fromdb):
-        """Reload fields computed at DB-level (triggers)
-        """
+        """ Reload fields computed at DB-level (triggers) """
         self.date_insert = fromdb.date_insert
         self.date_update = fromdb.date_update
         return self
@@ -45,8 +44,23 @@ class TimeStampedModelMixin(models.Model):
     def date_update_display(self):
         return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
 
+    @classproperty
+    def last_update(self):
+        try:
+            # disable useless annotations
+            return self._meta.model.objects.annotate().only('date_update').latest('date_update').date_update
+        except self._meta.model.DoesNotExist:
+            # case where there is no instance in model
+            return None
+
     date_update_verbose_name = _("Update date")
 
+    @classproperty
+    def last_update_and_count(self):
+        return self._meta.model.objects.aggregate(
+            last_update=Max('date_update'),
+            count=Count('pk')
+        )
 
 class NoDeleteMixin(models.Model):
     deleted = models.BooleanField(editable=False, default=False, verbose_name=_("Deleted"))
@@ -63,15 +77,13 @@ class NoDeleteMixin(models.Model):
         abstract = True
 
     def reload(self, fromdb):
-        """Reload fields computed at DB-level (triggers)
-        """
+        """ Reload fields computed at DB-level (triggers) """
         self.deleted = fromdb.deleted
         return self
 
 
 class PicturesMixin:
-    """A common class to share code between Trek and POI regarding
-    attached pictures"""
+    """ A common class to share code between Trek and POI regarding attached pictures"""
 
     @property
     def pictures(self):
@@ -238,8 +250,8 @@ class PicturesMixin:
 
 
 class BasePublishableMixin(models.Model):
-    """ Basic fields to control publication of objects.
-
+    """
+    Basic fields to control publication of objects.
     It is used for flat pages and publishable entities.
     """
     published = models.BooleanField(verbose_name=_("Published"), default=False,
@@ -259,8 +271,7 @@ class BasePublishableMixin(models.Model):
 
     @property
     def any_published(self):
-        """Returns True if the object is published in at least one of the language
-        """
+        """ Returns True if the object is published in at least one of the language """
         if not settings.PUBLISHED_BY_LANG:
             return self.published
 
@@ -271,8 +282,7 @@ class BasePublishableMixin(models.Model):
 
     @property
     def published_status(self):
-        """Returns the publication status by language.
-        """
+        """ Returns the publication status by language. """
         status = []
         for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             if settings.PUBLISHED_BY_LANG:
@@ -288,8 +298,7 @@ class BasePublishableMixin(models.Model):
 
     @property
     def published_langs(self):
-        """Returns languages in which the object is published.
-        """
+        """ Returns languages in which the object is published. """
         langs = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         if settings.PUBLISHED_BY_LANG:
             return [language for language in langs if getattr(self, 'published_%s' % language, None)]

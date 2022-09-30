@@ -165,7 +165,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             ','.join([str(p.pk) for p in self.species.practices.all()])
         )
         response = self.client.get(url)
-        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['count'], 1, response.json())
 
     def test_multipolygon(self):
         sensitivearea = MultiPolygonSensitiveAreaFactory.create()

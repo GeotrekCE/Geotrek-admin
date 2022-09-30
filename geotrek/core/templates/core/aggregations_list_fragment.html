@@ -1,8 +1,8 @@
 {% load i18n %}
 
-{% for aggr in object.aggregations.all %}
+{% for aggr in object.aggregations_optimized.all %}
     {% if forloop.first %}<ul>{% endif %}
-    <li class="hoverable" data-modelname="path" data-pk="{{ aggr.path.pk }}" title="{{ aggr.start_position|floatformat:"2" }}-{{ aggr.end_position|floatformat:"2" }}">
+    <li class="hoverable" data-modelname="path" data-pk="{{ aggr.path_id }}" title="{{ aggr.start_position|floatformat:"2" }}-{{ aggr.end_position|floatformat:"2" }}">
       <span class="path">{{ aggr.path.name_display|safe }}</span>
       <span class="aggregation">
         {% if forloop.first and object.offset != 0 %}

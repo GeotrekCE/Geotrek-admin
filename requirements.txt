@@ -192,6 +192,7 @@ idna==3.3
 importlib-metadata==4.8.3
     # via
     #   kombu
+    #   markdown
     #   redis
 inflection==0.5.1
     # via drf-yasg
@@ -206,6 +207,8 @@ landez==2.5.0
 lxml==4.8.0
     # via mapentity
 mapentity==8.2.1
+    # via geotrek (setup.py)
+markdown==3.3.7
     # via geotrek (setup.py)
 markupsafe==2.0.1
     # via jinja2

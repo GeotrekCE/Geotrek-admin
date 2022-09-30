@@ -85,7 +85,7 @@ def uniquify(values):
     return unique
 
 
-def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None):
+def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None, select_related=None):
     """ Small helper to filter all model instances by geometry intersection """
     if isinstance(qs, ModelBase):
         qs = qs.objects
@@ -109,6 +109,10 @@ def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None
         qs = qs.exclude(pk=obj.pk)
     if defer:
         qs = qs.defer(*defer)
+
+    if select_related:
+        qs = qs.select_related(*select_related)
+
     return qs
 
 
@@ -161,3 +165,11 @@ def collate_c(field):
 
 def spatial_reference():
     return "{epsg_name}".format(epsg_name=SpatialReference(settings.DISPLAY_SRID).name)
+
+
+def simplify_coords(coords):
+    if isinstance(coords, (list, tuple)):
+        return [simplify_coords(coord) for coord in coords]
+    elif isinstance(coords, float):
+        return round(coords, 7)
+    raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))

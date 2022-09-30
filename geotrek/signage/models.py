@@ -8,7 +8,7 @@ from django.conf import settings
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin
+from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, TimeStampedModelMixin
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
@@ -20,7 +20,7 @@ from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCond
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 
-class Sealing(StructureOrNoneRelated):
+class Sealing(TimeStampedModelMixin, StructureOrNoneRelated):
     """ A sealing linked with a signage"""
     label = models.CharField(verbose_name=_("Name"), max_length=250)
 
@@ -34,7 +34,7 @@ class Sealing(StructureOrNoneRelated):
         return self.label
 
 
-class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
+class SignageType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(max_length=128)
 
@@ -148,7 +148,7 @@ Topology.add_property('published_signages', lambda self: Signage.published_topol
                       _("Published Signages"))
 
 
-class Direction(models.Model):
+class Direction(TimeStampedModelMixin, models.Model):
     label = models.CharField(max_length=128)
 
     class Meta:
@@ -159,7 +159,7 @@ class Direction(models.Model):
         return self.label
 
 
-class Color(models.Model):
+class Color(TimeStampedModelMixin, models.Model):
     label = models.CharField(max_length=128)
 
     class Meta:
@@ -170,7 +170,7 @@ class Color(models.Model):
         return self.label
 
 
-class BladeType(StructureOrNoneRelated):
+class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
     """ Types of blades"""
     label = models.CharField(max_length=128)
 
@@ -184,7 +184,7 @@ class BladeType(StructureOrNoneRelated):
         return self.label
 
 
-class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
+class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)

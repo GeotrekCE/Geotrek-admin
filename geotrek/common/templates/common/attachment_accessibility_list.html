@@ -46,9 +46,7 @@
                     {% block extra_column_data %}{% endblock %}
                     {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
                         <td>
-
                             {% if perms|change_attachment %}
-                                &nbsp;
                                 <a href="#"
                                    class="update-accessibility-action"
                                    data-update-url="{% url 'update_attachment_accessibility' att.pk %}">

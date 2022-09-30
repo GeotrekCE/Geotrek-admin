@@ -14,11 +14,10 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
-from geotrek.common.utils import intersecting, classproperty
-from geotrek.core.models import simplify_coords
+from geotrek.common.utils import intersecting, classproperty, simplify_coords
 
 
-class SportPractice(models.Model):
+class SportPractice(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
 
     class Meta:
@@ -30,7 +29,7 @@ class SportPractice(models.Model):
         return self.name
 
 
-class Species(OptionalPictogramMixin):
+class Species(TimeStampedModelMixin, OptionalPictogramMixin):
     SPECIES = 1
     REGULATORY = 2
 
@@ -205,7 +204,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core.models import Topology
-    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
+    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).select_related('species'), _("Sensitive areas"))
     Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:

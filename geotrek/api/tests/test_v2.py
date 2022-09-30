@@ -254,9 +254,7 @@ SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 
 
 class BaseApiTest(TestCase):
-    """
-    Base TestCase for all API profile
-    """
+    """ Base TestCase for all API profiles """
 
     @classmethod
     def setUpTestData(cls):
@@ -761,9 +759,7 @@ class BaseApiTest(TestCase):
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase for anonymous API profile """
 
     def test_path_list(self):
         response = self.get_path_list()
@@ -1585,9 +1581,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             len(json_response.get('results')),
             trek_models.POI.objects.all().count()
         )
-
+        old_update = obj.date_update
         obj.pois_excluded.add(self.poi)
         obj.save()
+        new_update = obj.date_update
+        raise Exception(old_update, new_update)
 
         response = self.get_poi_list({filter_name: obj.pk})
         json_response = response.json()
@@ -2200,26 +2198,16 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase for administrator API profile """
+
     @classmethod
     def setUpTestData(cls):
         #  created user
         cls.administrator = SuperUserFactory()
         BaseApiTest.setUpTestData()
 
-    def login(self):
-        """
-        Override base class login method, used before all function request 'get_api_element'
-        """
-        self.client.force_login(self.administrator)
-
-    def setUp(self):
-        self.login()
-
     def test_path_list(self):
-        self.login()
+        self.client.force_login(self.administrator)
         response = self.get_path_list()
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
@@ -2243,9 +2231,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
 
 class APISwaggerTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase API documentation """
 
     @classmethod
     def setUpTestData(cls):
@@ -2520,7 +2506,6 @@ class OutdoorRatingTestCase(TestCase):
 
 
 class FlatPageTestCase(TestCase):
-    maxDiff = None
 
     @classmethod
     def setUpTestData(cls):
@@ -2905,7 +2890,6 @@ class TouristicEventTestCase(BaseApiTest):
 
     @classmethod
     def setUpTestData(cls):
-        cls.maxDiff = None
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory()
         cls.place = tourism_factory.TouristicEventPlaceFactory(name="Here")
         cls.other_place = tourism_factory.TouristicEventPlaceFactory(name="Over here")
@@ -3076,8 +3060,7 @@ class TouristicEventTypeTestCase(BaseApiTest):
 
 
 class TouristicEventTypeFilterTestCase(BaseApiTest):
-    """ Test filtering depending on published, deleted content for touristic event types
-    """
+    """ Test filtering depending on published, deleted content for touristic event types """
 
     @classmethod
     def setUpTestData(cls):
@@ -3142,8 +3125,7 @@ class TouristicEventTypeFilterTestCase(BaseApiTest):
 
 
 class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase):
-    """ Test filtering depending on portal for touristic event types
-    """
+    """ Test filtering depending on portal for touristic event types """
 
     @classmethod
     def setUpTestData(cls):
@@ -3210,8 +3192,7 @@ class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase)
 
 
 class NearOutdoorFilterTestCase(BaseApiTest):
-    """ Test near_outdoorsite and near_outdoorcourse filter on routes
-    """
+    """ Test near_outdoorsite and near_outdoorcourse filter on routes """
 
     @classmethod
     def setUpTestData(cls):
@@ -3414,7 +3395,6 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     def setUp(self):
         self.client.force_login(self.user)
-        return super().setUp()
 
     def test_updated_after_filter(self):
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()

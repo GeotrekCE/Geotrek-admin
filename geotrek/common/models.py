@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from paperclip.models import Attachment as BaseAttachment, FileType as BaseFileType, License as BaseLicense
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin
+from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
 
 
 class AccessibilityAttachmentManager(models.Manager):
@@ -106,7 +106,7 @@ class AccessibilityAttachment(models.Model):
         return os.path.split(self.attachment_accessibility_file.name)[1]
 
 
-class Organism(StructureOrNoneRelated):
+class Organism(TimeStampedModelMixin, StructureOrNoneRelated):
     organism = models.CharField(max_length=128, verbose_name=_("Organism"))
 
     class Meta:
@@ -120,7 +120,7 @@ class Organism(StructureOrNoneRelated):
         return self.organism
 
 
-class FileType(StructureOrNoneRelated, BaseFileType):
+class FileType(StructureOrNoneRelated, TimeStampedModelMixin, BaseFileType):
     """ Attachment FileTypes, related to structure and with custom table name."""
     class Meta(BaseFileType.Meta):
         pass
@@ -141,7 +141,7 @@ class Attachment(BaseAttachment):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 
-class Theme(PictogramMixin):
+class Theme(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
 
@@ -177,7 +177,7 @@ class Theme(PictogramMixin):
         return open(output, 'rb')
 
 
-class RecordSource(OptionalPictogramMixin):
+class RecordSource(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=50)
     website = models.URLField(verbose_name=_("Website"), max_length=256, blank=True, null=True)
 
@@ -190,7 +190,7 @@ class RecordSource(OptionalPictogramMixin):
         return self.name
 
 
-class TargetPortal(models.Model):
+class TargetPortal(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=50, unique=True, help_text=_("Used for sync"))
     website = models.URLField(verbose_name=_("Website"), max_length=256, unique=True)
     title = models.CharField(verbose_name=_("Title Rando"), max_length=50, help_text=_("Title on Geotrek Rando"),
@@ -218,7 +218,7 @@ class TargetPortal(models.Model):
         return self.name
 
 
-class ReservationSystem(models.Model):
+class ReservationSystem(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=256,
                             blank=False, null=False, unique=True)
 
@@ -231,7 +231,7 @@ class ReservationSystem(models.Model):
         ordering = ('name',)
 
 
-class Label(OptionalPictogramMixin):
+class Label(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     advice = models.TextField(verbose_name=_("Advice"), blank=True)
     filter = models.BooleanField(verbose_name=_("Filter"), default=False,
@@ -246,7 +246,7 @@ class Label(OptionalPictogramMixin):
         return self.name
 
 
-class RatingScaleMixin(models.Model):
+class RatingScaleMixin(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Within a practice. Alphabetical order if blank"))
@@ -258,7 +258,7 @@ class RatingScaleMixin(models.Model):
         abstract = True
 
 
-class RatingMixin(OptionalPictogramMixin, models.Model):
+class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     description = models.TextField(verbose_name=_("Description"), blank=True)
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,

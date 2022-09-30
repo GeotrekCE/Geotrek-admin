@@ -4,6 +4,7 @@ import coreschema
 
 from coreapi.document import Field
 from django.conf import settings
+from django.contrib.gis.measure import Distance
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
 from django_filters import ModelMultipleChoiceFilter
@@ -172,12 +173,13 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
         trek_id = request.GET.get('trek')
-        trek = Trek.objects.filter(pk=trek_id)
-        if trek:
-            contents_intersecting = intersecting(qs,
-                                                 trek.get(),
-                                                 distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
-            qs = contents_intersecting.order_by('id')
+        if trek_id:
+            qs = qs.filter(Exists(Trek.objects.filter(geom__dwithin=(OuterRef('geom'),
+                                                                     Distance(m=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)),
+                                                      pk=trek_id)))
+            # qs = intersecting(qs,
+            #                   trek,
+            #                   distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
         return qs.distinct()
 
     def get_schema_fields(self, view):
@@ -267,39 +269,32 @@ class GeotrekPOIFilter(BaseFilterBackend):
 
 class NearbyContentFilter(BaseFilterBackend):
 
-    def intersect_queryset_with_object(self, qs, model, obj_pk, ordering):
+    def intersect_queryset_with_object(self, qs, model, obj_pk):
         obj = model.objects.filter(pk=obj_pk).first()
         if obj:
-            contents_intersecting = intersecting(qs, obj)
-            qs = contents_intersecting.order_by(*ordering)
+            qs = intersecting(qs, obj)
         else:
             # Intersecting with a non-existing object results in empty data
             qs = model.objects.none()
         return qs
 
-    def filter_queryset(self, request, queryset, view):
-        ordering = ("name",)
-        if queryset.model.__name__ == "SensitiveArea":
-            ordering = ("-area", "pk")
-        elif queryset.model.__name__ == "Service":
-            ordering = ("id",)
-        qs = queryset
+    def filter_queryset(self, request, qs, view):
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
-            qs = self.intersect_queryset_with_object(qs, TouristicEvent, near_touristicevent, ordering)
+            qs = self.intersect_queryset_with_object(qs, TouristicEvent, near_touristicevent)
         near_touristiccontent = request.GET.get('near_touristiccontent')
         if near_touristiccontent:
-            qs = self.intersect_queryset_with_object(qs, TouristicContent, near_touristiccontent, ordering)
+            qs = self.intersect_queryset_with_object(qs, TouristicContent, near_touristiccontent)
         near_trek = request.GET.get('near_trek')
         if near_trek:
-            qs = self.intersect_queryset_with_object(qs, Trek, near_trek, ordering)
+            qs = self.intersect_queryset_with_object(qs, Trek, near_trek)
         near_outdoorsite = request.GET.get('near_outdoorsite')
         if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             if near_outdoorsite:
-                qs = self.intersect_queryset_with_object(qs, Site, near_outdoorsite, ordering)
+                qs = self.intersect_queryset_with_object(qs, Site, near_outdoorsite)
             near_outdoorcourse = request.GET.get('near_outdoorcourse')
             if near_outdoorcourse:
-                qs = self.intersect_queryset_with_object(qs, Course, near_outdoorcourse, ordering)
+                qs = self.intersect_queryset_with_object(qs, Course, near_outdoorcourse)
         return qs
 
     def get_schema_fields(self, view):

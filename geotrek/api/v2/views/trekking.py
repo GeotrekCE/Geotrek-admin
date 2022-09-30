@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Prefetch, Q
 from django.db.models.aggregates import Count
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
 from rest_framework.decorators import action
@@ -34,7 +33,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))
-        return trekking_models.Trek.objects.existing() \
+        qs = trekking_models.Trek.objects.existing() \
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'accessibilities',
                               Prefetch('attachments',
@@ -45,18 +44,13 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                                        queryset=trekking_models.WebLink.objects.select_related('category'))) \
             .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                       length_3d_m=Length3D('geom_3d')) \
-            .order_by("name")  # Required for reliable pagination
+            .order_by("name")
 
-    def retrieve(self, request, pk=None, format=None):
-        # Return detail view even for unpublished treks that are childrens of other published treks
-        qs_filtered = self.filter_published_lang_retrieve(request, self.get_queryset())
-        try:
-            trek = qs_filtered.get(pk=pk)
-        except self.get_queryset().model.DoesNotExist:
-            raise Http404('No %s matches the given query.' % self.get_queryset().model._meta.object_name)
-        serializer_class = self.get_serializer_class()
-        serializer = serializer_class(trek, many=False, context={'request': request})
-        return Response(serializer.data)
+        if self.action == 'retrieve':
+            # Return detail view even for unpublished treks that are children of other published treks
+            qs = self.filter_published_lang_retrieve(self.request, qs)
+
+        return qs
 
     def filter_published_lang_retrieve(self, request, queryset):
         # filter trek by publication language (including parents publication language)
@@ -187,23 +181,11 @@ class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.AccessibilitySerializer
     queryset = trekking_models.Accessibility.objects.all()
 
-    def retrieve(self, request, pk=None, format=None):
-        # Allow to retrieve objects even if not visible in list view
-        elem = get_object_or_404(trekking_models.Accessibility, pk=pk)
-        serializer = api_serializers.AccessibilitySerializer(elem, many=False, context={'request': request})
-        return Response(serializer.data)
-
 
 class AccessibilityLevelViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
     serializer_class = api_serializers.AccessibilityLevelSerializer
     queryset = trekking_models.AccessibilityLevel.objects.all()
-
-    def retrieve(self, request, pk=None, format=None):
-        # Allow to retrieve objects even if not visible in list view
-        elem = get_object_or_404(trekking_models.AccessibilityLevel, pk=pk)
-        serializer = api_serializers.AccessibilityLevelSerializer(elem, many=False, context={'request': request})
-        return Response(serializer.data)
 
 
 class RouteViewSet(api_viewsets.GeotrekViewSet):

@@ -22,20 +22,12 @@ from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.functions import Length
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
-from geotrek.common.utils import classproperty, sqlfunction, uniquify
+from geotrek.common.utils import classproperty, sqlfunction, uniquify, simplify_coords
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 logger = logging.getLogger(__name__)
-
-
-def simplify_coords(coords):
-    if isinstance(coords, (list, tuple)):
-        return [simplify_coords(coord) for coord in coords]
-    elif isinstance(coords, float):
-        return round(coords, 7)
-    raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
 
 
 class PathManager(models.Manager):
@@ -826,6 +818,9 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
         """Distance to associate this topology to another topology class"""
         return None
 
+    @property
+    def aggregations_optimized(self):
+        return self.aggregations.all().select_related('path', 'topo_object')
 
 class PathAggregationManager(models.Manager):
     def get_queryset(self):
@@ -867,6 +862,10 @@ class PathAggregation(models.Model):
     def is_full(self):
         return (self.start_position == 0.0 and self.end_position == 1.0
                 or self.start_position == 1.0 and self.end_position == 0.0)
+
+    @property
+    def aggregations_optimized(self):
+        return self.aggregations.all().select_related('path')
 
     class Meta:
         verbose_name = _("Path aggregation")
