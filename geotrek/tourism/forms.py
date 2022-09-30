@@ -142,12 +142,16 @@ class TouristicEventForm(CommonForm):
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
         participants_count = { p.category.pk: p.count for p in self.instance.participants.all() }
-        for category in TouristicEventParticipantCategory.objects.all():
-            field_id = 'participant_count_{}'.format(category.id)
-            self.fields[field_id] = TouristicEventParticipantCount._meta.get_field('count').formfield(required=False)
-            self.fields[field_id].label = category.label
-            self.fields[field_id].initial = participants_count.get(category.pk)
-            self.fieldslayout[0][1][1][0].append(field_id)
+        categories = TouristicEventParticipantCategory.objects.all()
+        if not categories:
+            self.fieldslayout[0][1][1][0].append(HTML(_("Please add a participant category in admin interface in order to complete the number of participants.")))
+        else:
+            for category in categories:
+                field_id = 'participant_count_{}'.format(category.id)
+                self.fields[field_id] = TouristicEventParticipantCount._meta.get_field('count').formfield(required=False)
+                self.fields[field_id].label = category.label
+                self.fields[field_id].initial = participants_count.get(category.pk)
+                self.fieldslayout[0][1][1][0].append(field_id)
 
     def clean(self, *args, **kwargs):
         clean_data = super().clean(*args, **kwargs)
