@@ -118,7 +118,7 @@ class TrailForm(TopologyForm):
             'arrival',
             'category',
             'comments',
-            Formset('certification_formset', legend=_("Certifications")),
+            Formset('certificationtrail_formset', legend=_("Certifications")),
         )
     ]
 
