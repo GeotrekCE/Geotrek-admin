@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
+from django.db.models.aggregates import Count
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
@@ -99,3 +100,20 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('name')  # Required for reliable pagination
+
+
+class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter,
+    )
+    serializer_class = api_serializers.TouristicEventPlaceSerializer
+    filteredset_view = ["pk", "geom", "name"]
+    def get_queryset(self):
+        return tourism_models.TouristicEventPlace.objects.annotate(
+            geom_transformed=Transform('geom', settings.API_SRID)
+        ).annotate(
+            count_event=Count('touristicevents')
+        ).filter(
+            count_event__gt=0
+        ).order_by()

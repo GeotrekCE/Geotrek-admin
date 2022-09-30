@@ -479,6 +479,12 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'cancelled', 'cancellation_reason', 'place'
             )
 
+    class TouristicEventPlaceSerializer(serializers.ModelSerializer):
+        geom = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+        class Meta:
+            model = tourism_models.TouristicEventPlace
+            fields = ("pk", "geom", "name")
+
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()
 
