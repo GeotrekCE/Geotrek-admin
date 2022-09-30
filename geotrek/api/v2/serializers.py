@@ -466,10 +466,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         class Meta:
             model = tourism_models.TouristicEvent
             fields = (
-                'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking',
+                'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable', 'booking',
                 'cities', 'contact', 'create_datetime', 'description', 'description_teaser',
                 'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
-                'start_time', 'end_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
+                'start_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
                 'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
                 'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website',
                 'cancelled', 'cancellation_reason'

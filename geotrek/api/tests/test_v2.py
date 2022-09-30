@@ -211,9 +211,9 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
+    'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
-    'meeting_point', 'start_time', 'end_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
+    'meeting_point', 'start_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
     'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason'
 ])

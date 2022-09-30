@@ -199,7 +199,7 @@ SELECT a.id,
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% endfor %}
-       a.participant_number AS "Number of participants",
+       a.capacity AS "Number of participants",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.target_audience_{{ lang }} AS "Target audience {{ lang }}",
        {% endfor %}

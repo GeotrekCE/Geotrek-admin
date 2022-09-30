@@ -17,12 +17,12 @@ describe('Create tourism event', () => {
   it('Should dynamicly show/hidde participant number', () => {
     cy.visit('/touristicevent/add/').get("#modelfields").scrollTo('bottom');
     // check initially hidden
-    cy.get('#div_id_participant_number').should("not.be.visible");
+    cy.get('#div_id_capacity').should("not.be.visible");
     // check toggle hide/show
     cy.get('#id_bookable').check({ force: true });
-    cy.get('#div_id_participant_number').should("be.visible");
+    cy.get('#div_id_capacity').should("be.visible");
     cy.get('#id_bookable').uncheck({ force: true });
-    cy.get('#div_id_participant_number').should("not.be.visible");
+    cy.get('#div_id_capacity').should("not.be.visible");
   })
 
   it('Should dynamicly show/hidde cancellation reason', () => {
