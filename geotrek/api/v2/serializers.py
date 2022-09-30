@@ -447,6 +447,12 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         begin_date = serializers.DateField()
         end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
+        cancellation_reason = serializers.SerializerMethodField()
+
+        def get_cancellation_reason(self, obj):
+            if not obj.cancellation_reason:
+                return None
+            return get_translation_or_dict('label', self, obj.cancellation_reason)
 
         def get_type(self, obj):
             obj_type = obj.type
