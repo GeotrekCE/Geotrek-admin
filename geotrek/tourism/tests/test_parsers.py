@@ -403,6 +403,7 @@ class ParserTests(TranslationResetMixin, TestCase):
             ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
         )
         self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(TouristicEventApidaeParser().filter_capacity("capacity", "12"), 12)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_apidae_constant_fields(self, mocked):
