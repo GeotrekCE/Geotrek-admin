@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 10:07+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,6 +33,9 @@ msgid "Practices"
 msgstr ""
 
 msgid "Trekking"
+msgstr ""
+
+msgid "Provider"
 msgstr ""
 
 msgid "Trek"
@@ -470,6 +473,22 @@ msgstr ""
 msgid ""
 "Invalid geometry type for field '{src}'. Should be LineString, not "
 "{geom_type}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Trying to retrieve children for missing trek : could not find trek with UUID "
+"{key}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"One trek has not be generated for {trek_parent_instance[0].name} : could not "
+"find trek with UUID {child}"
+msgstr ""
+
+msgid ""
+"An error occured in children generation : {getattr(e, 'message', repr(e))}"
 msgstr ""
 
 #. Translators: This is a slug (without space, accent or special char)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-05 12:24+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,6 +82,15 @@ msgid "Cancel"
 msgstr ""
 
 msgid "Update attachment"
+msgstr ""
+
+msgid "The uploaded file is too large"
+msgstr ""
+
+msgid "The uploaded file is not wide enough"
+msgstr ""
+
+msgid "The uploaded file is not tall enough"
 msgstr ""
 
 msgid "Global tiles syncing ..."
@@ -366,7 +375,7 @@ msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 
 #, python-brace-format
-msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr ""
 
 #, python-brace-format
@@ -378,7 +387,7 @@ msgstr ""
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
 msgstr ""
 
-msgid "Filename is required"
+msgid "Filename or url is required"
 msgstr ""
 
 #, python-brace-format
@@ -401,6 +410,31 @@ msgstr ""
 
 #, python-brace-format
 msgid "Failed to download '{url}'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"too large"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not wide enough"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not tall enough"
+msgstr ""
+
+#, python-brace-format
+msgid "Model {model}"
+msgstr ""
+
+msgid "Geotrek-admin"
 msgstr ""
 
 msgid "Import from web."
@@ -527,7 +561,7 @@ msgid "has invalid geometry;"
 msgstr ""
 
 #, python-format
-msgid "%(obj)s has changed  state, it needs a review to be published. "
+msgid "%(obj)s has changed state, it needs a review to be published. "
 msgstr ""
 
 msgid "Sync verifications"
