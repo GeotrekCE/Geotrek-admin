@@ -451,6 +451,3 @@ msgstr "Date"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
-
-#~ msgid "up to {end}"
-#~ msgstr "jusqu'au {end}"

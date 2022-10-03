@@ -622,9 +622,3 @@ msgid ""
 "This field is deprecated and will be removed in next releases. Please start "
 "using 'capacity'"
 msgstr "Ce champ est déprécié et sera retiré dans de prochaines releases, merci d'utiliser 'capacity' à la place."
-
-#~ msgid "Is cancelled"
-#~ msgstr "Est annulé"
-
-#~ msgid "Filter events according to cancelled status (True/False)"
-#~ msgstr "Filter les évenements selon leur statut d'annulation (True/False)"
