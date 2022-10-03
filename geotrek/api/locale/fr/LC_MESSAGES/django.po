@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-30 11:49+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: 2020-10-20 16:33+0000\n"
 "Last-Translator: Bastien Potiron <bastien.potiron@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -292,15 +292,6 @@ msgstr ""
 msgid "Near touristic content"
 msgstr ""
 
-msgid "Filter events on bookable boolean : true/false expected"
-msgstr "Filtre les évènements réservables : true/false attendu"
-
-msgid "Filter by a place id"
-msgstr "Filtrer par un id de lieu d'évènement"
-
-msgid "Filter events on cancelled boolean : true/false expected"
-msgstr "Filtre sur les évènements annulés : true/false attendu"
-
 msgid ""
 "Filter by a touristic content id. It will only show the contents related to "
 "this touristic content."
@@ -388,6 +379,9 @@ msgstr "Filtre les évènements réservables : true/false attendu"
 
 msgid "Filter events on cancelled boolean : true/false expected"
 msgstr "Filtre sur les évènements annulés : true/false attendu"
+
+msgid "Filter by a place id"
+msgstr "Filtrer par un id de lieu d'évènement"
 
 msgid "Dates before"
 msgstr ""
@@ -618,6 +612,16 @@ msgstr ""
 
 msgid "Altimetry data not available"
 msgstr "Données altimétriques non disponibles"
+
+msgid ""
+"This field is deprecated and will be removed in next releases. Please start "
+"using 'start_time'"
+msgstr "Ce champ est déprécié et sera retiré dans de prochaines releases, merci d'utiliser 'start_time' à la place."
+
+msgid ""
+"This field is deprecated and will be removed in next releases. Please start "
+"using 'capacity'"
+msgstr "Ce champ est déprécié et sera retiré dans de prochaines releases, merci d'utiliser 'capacity' à la place."
 
 #~ msgid "Is cancelled"
 #~ msgstr "Est annulé"

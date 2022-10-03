@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-30 11:49+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -454,6 +454,11 @@ msgstr ""
 #, python-brace-format
 msgid "Model {model}"
 msgstr ""
+
+#, fuzzy
+#| msgid "Geotrek Rando"
+msgid "Geotrek-admin"
+msgstr "Geotrek Admin"
 
 msgid "Import from web."
 msgstr "Importer du web."

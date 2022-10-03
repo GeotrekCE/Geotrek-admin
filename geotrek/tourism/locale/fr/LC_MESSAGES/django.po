@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-30 11:49+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -35,11 +35,29 @@ msgstr "Jusqu'au"
 msgid "Completed"
 msgstr "Terminés"
 
+msgid "Event"
+msgstr "Évènement"
+
+msgid "Assessment"
+msgstr "Évaluation"
+
+#, fuzzy
+#| msgid "Participant categories"
+msgid "Participants"
+msgstr "Classes de participants"
+
 msgid "dd/mm/yyyy"
 msgstr "jj/mm/aaaa"
 
 msgid "HH:MM"
 msgstr "HH:MM"
+
+msgid ""
+"Please add a participant category in admin interface in order to complete "
+"the number of participants."
+msgstr ""
+"Veuillez ajouter une classe de participants dans l’interface "
+"d’administration afin de pouvoir renseigner le nombre de participants."
 
 msgid "Start time is unset"
 msgstr "La date de début n'est pas renseignée"
@@ -255,6 +273,12 @@ msgstr "Cause d'annulation"
 msgid "Cancellation reasons"
 msgstr "Causes d'annulation"
 
+msgid "Event place"
+msgstr "Lieu d'évènement"
+
+msgid "Event places"
+msgstr "Lieux d'évènements"
+
 msgid "Begin date"
 msgstr "Date de début"
 
@@ -309,6 +333,13 @@ msgstr "Annulé"
 msgid "Boolean indicating if Event is cancelled"
 msgstr "Booléen indiquant si l'évènement est annulé"
 
+msgid "Select a place to auto-locate event on map"
+msgstr ""
+"Sélectionner un lieu positionne automatiquement l'évènement sur la carte"
+
+msgid "Number of participants"
+msgstr "Nombre de participants"
+
 msgid "Touristic event"
 msgstr "Évènement touristique"
 
@@ -325,6 +356,15 @@ msgstr "du {begin} au {end}"
 
 msgid "touristic-event"
 msgstr "evenement-touristique"
+
+msgid "Display order"
+msgstr "Ordre d'affichage"
+
+msgid "Participant category"
+msgstr "Classe de participants"
+
+msgid "Participant categories"
+msgstr "Classes de participants"
 
 msgid "Published touristic events"
 msgstr "Évènements touristiques publiés"
@@ -400,58 +440,17 @@ msgstr "Toutes les informations pratiques"
 msgid "Yes,No"
 msgstr "Oui,Non"
 
+msgid "Number"
+msgstr "Nombre"
+
+msgid "Total"
+msgstr "Total"
+
 msgid "Date"
 msgstr "Date"
-
-msgid "Number of participants"
-msgstr ""
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
 
-msgid "Provider"
-msgstr "Fournisseur"
-
-msgid "Start time is after end time"
-msgstr "L'heure de début est après l'heure de fin"
-
-msgid "Start time is unset"
-msgstr "La date de début n'est pas renseignée"
-
-msgid "Boolean indicating if Event is cancelled"
-msgstr "Booléen indiquant si l'évènement est annulé"
-
-msgid "Event place"
-msgstr "Lieu d'évènement"
-
-msgid "Event places"
-msgstr "Lieux d'évènements"
-
-msgid "Event"
-msgstr "Évènement"
-
-msgid "Assessment"
-msgstr "Évaluation"
-
-msgid "Participant category"
-msgstr "Classe de participants"
-
-msgid "Participant categories"
-msgstr "Classes de participants"
-
-msgid "Number"
-msgstr "Nombre"
-
-msgid "Number of participants"
-msgstr "Nombre de participants"
-
-msgid "Please add a participant category in admin interface in order to "
-"complete the number of participants."
-msgstr "Veuillez ajouter une classe de participants dans l’interface "
-"d’administration afin de pouvoir renseigner le nombre de participants."
-
-msgid "Select a place to auto-locate event on map"
-msgstr "Sélectionner un lieu positionne automatiquement l'évènement sur la carte"
-
-msgid "up to {end}"
-msgstr "jusqu'au {end}"
+#~ msgid "up to {end}"
+#~ msgstr "jusqu'au {end}"

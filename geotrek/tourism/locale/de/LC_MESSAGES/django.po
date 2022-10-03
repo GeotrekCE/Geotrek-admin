@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-30 11:49+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,11 +34,25 @@ msgstr "Bis"
 msgid "Completed"
 msgstr "Abgeschlossen"
 
+msgid "Event"
+msgstr ""
+
+msgid "Assessment"
+msgstr ""
+
+msgid "Participants"
+msgstr ""
+
 msgid "dd/mm/yyyy"
 msgstr "tt/mm/jjjj"
 
 msgid "HH:MM"
 msgstr "ZZ:MM"
+
+msgid ""
+"Please add a participant category in admin interface in order to complete "
+"the number of participants."
+msgstr ""
 
 #, fuzzy
 #| msgid "Start time"
@@ -256,6 +270,12 @@ msgstr ""
 msgid "Cancellation reasons"
 msgstr ""
 
+msgid "Event place"
+msgstr ""
+
+msgid "Event places"
+msgstr ""
+
 msgid "Begin date"
 msgstr "Startdatum"
 
@@ -312,6 +332,12 @@ msgstr ""
 msgid "Boolean indicating if Event is cancelled"
 msgstr ""
 
+msgid "Select a place to auto-locate event on map"
+msgstr ""
+
+msgid "Number of participants"
+msgstr ""
+
 msgid "Touristic event"
 msgstr "Touristische Veranstaltung"
 
@@ -328,6 +354,19 @@ msgstr "von {begin} bis {end}"
 
 msgid "touristic-event"
 msgstr "touristische Veranstaltung"
+
+msgid "Display order"
+msgstr ""
+
+#, fuzzy
+#| msgid "Touristic content category"
+msgid "Participant category"
+msgstr "Kategorie der touristischen Inhalte"
+
+#, fuzzy
+#| msgid "Touristic content categories"
+msgid "Participant categories"
+msgstr "Kategorien der touristische Inhalte"
 
 msgid "Published touristic events"
 msgstr "Veröffentlichte touristische Veranstaltungen"
@@ -403,11 +442,14 @@ msgstr "Alle praktischen Informationen"
 msgid "Yes,No"
 msgstr ""
 
+msgid "Number"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
 msgid "Date"
 msgstr "Datum"
-
-msgid "Number of participants"
-msgstr ""
 
 msgid "Invalid geometry value."
 msgstr "Ungültiger Geometriewert"

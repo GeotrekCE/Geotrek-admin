@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-30 11:49+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,11 +33,25 @@ msgstr "Prima"
 msgid "Completed"
 msgstr "Completato"
 
+msgid "Event"
+msgstr ""
+
+msgid "Assessment"
+msgstr ""
+
+msgid "Participants"
+msgstr ""
+
 msgid "dd/mm/yyyy"
 msgstr "gg/mm/aaaa"
 
 msgid "HH:MM"
 msgstr "HH:MM"
+
+msgid ""
+"Please add a participant category in admin interface in order to complete "
+"the number of participants."
+msgstr ""
 
 #, fuzzy
 #| msgid "Start time"
@@ -255,6 +269,12 @@ msgstr ""
 msgid "Cancellation reasons"
 msgstr ""
 
+msgid "Event place"
+msgstr ""
+
+msgid "Event places"
+msgstr ""
+
 msgid "Begin date"
 msgstr "Data di inizio"
 
@@ -311,6 +331,12 @@ msgstr ""
 msgid "Boolean indicating if Event is cancelled"
 msgstr ""
 
+msgid "Select a place to auto-locate event on map"
+msgstr ""
+
+msgid "Number of participants"
+msgstr ""
+
 msgid "Touristic event"
 msgstr "Evento turistico"
 
@@ -327,6 +353,9 @@ msgstr "da {begin} a {end}"
 
 msgid "touristic-event"
 msgstr "touristic-event"
+
+msgid "Display order"
+msgstr ""
 
 msgid "Published touristic events"
 msgstr "Pubblicato eventi turistici"
@@ -402,11 +431,14 @@ msgstr "Tutte le informazioni utili"
 msgid "Yes,No"
 msgstr ""
 
+msgid "Number"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
 msgid "Date"
 msgstr "Data"
-
-msgid "Number of participants"
-msgstr ""
 
 msgid "Invalid geometry value."
 msgstr "Valore geometrico non valido"
