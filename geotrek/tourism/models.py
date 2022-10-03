@@ -414,21 +414,19 @@ class TouristicEventManager(NoDeleteManager):
             .distinct('provider').values_list('provider', 'provider')
         return providers
 
+
 class TouristicEventPlace(models.Model):
     name = models.CharField(null=False, max_length=256)
-    #TO CHECK  spatial index = False et création d'un index plus bas
-    geom = models.PointField(srid=settings.SRID, spatial_index=False)
+    geom = models.PointField(srid=settings.SRID)
 
     class Meta:
         verbose_name = _("Event place")
         verbose_name_plural = _("Event places")
         ordering = ['name']
-        indexes = [
-            GistIndex(name='place_geom_gist_idx', fields=['geom']),
-        ]
 
     def __str__(self):
         return self.name
+
 
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
