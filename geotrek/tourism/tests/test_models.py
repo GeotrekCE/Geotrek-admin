@@ -7,7 +7,7 @@ from django.test.utils import override_settings
 from geotrek.core.tests import factories as core_factories
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.trekking.tests import factories as trekking_factories
-from geotrek.tourism.tests.factories import InformationDeskFactory, InformationDeskTypeFactory
+from geotrek.tourism.tests.factories import InformationDeskFactory, InformationDeskTypeFactory, TouristicEventPlaceFactory
 
 import datetime
 
@@ -156,3 +156,9 @@ class TouristicEventCancellationReasonModelTest(TestCase):
         reason = tourism_factories.CancellationReasonFactory(label="Arson")
         event = tourism_factories.TouristicEventFactory(cancelled=True, cancellation_reason=reason)
         self.assertEqual(str(event.cancellation_reason), "Arson")
+
+
+class TourtisticEventPlaceModelTest(TestCase):
+    def test_place_label(self):
+        place = TouristicEventPlaceFactory(name="Place to be")
+        self.assertEqual(str(place), "Place to be")
