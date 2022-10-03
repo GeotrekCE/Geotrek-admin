@@ -86,8 +86,8 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
     )
+    filterset_class = api_filters.TouristicEventFilterSet
     serializer_class = api_serializers.TouristicEventSerializer
-    filterset_fields = ["cancelled", "bookable"]
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))
@@ -99,3 +99,14 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('name')  # Required for reliable pagination
+
+
+class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.NearbyContentFilter,
+        api_filters.UpdateOrCreateDateFilter,
+    )
+    serializer_class = api_serializers.TouristicEventPlaceSerializer
+
+    def get_queryset(self):
+        return tourism_models.TouristicEventPlace.objects.exclude(touristicevents__isnull=True).annotate(geom_transformed=Transform('geom', settings.API_SRID)).order_by('name')

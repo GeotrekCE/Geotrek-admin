@@ -298,6 +298,15 @@ msgstr ""
 msgid "Near touristic content"
 msgstr ""
 
+msgid "Filter events on bookable boolean : true/false expected"
+msgstr "Filtre les évènements réservables : true/false attendu"
+
+msgid "Filter by a place id"
+msgstr "Filtrer par un id de lieu d'évènement"
+
+msgid "Filter events on cancelled boolean : true/false expected"
+msgstr "Filtre sur les évènements annulés : true/false attendu"
+
 msgid ""
 "Filter by a touristic content id. It will only show the contents related to "
 "this touristic content."

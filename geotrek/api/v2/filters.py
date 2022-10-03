@@ -6,7 +6,8 @@ from coreapi.document import Field
 from django.conf import settings
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
+from django_filters import rest_framework as filters
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
@@ -481,6 +482,24 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
             )
 
         )
+
+
+class TouristicEventFilterSet(filters.FilterSet):
+    help_texts = {
+        'bookable': _("Filter events on bookable boolean : true/false expected"),
+        'cancelled': _("Filter events on cancelled boolean : true/false expected"),
+        'place': _("Filter by a place id")
+    }
+
+    @classmethod
+    def filter_for_field(cls, f, name, lookup_expr):
+        field_filter = super().filter_for_field(f, name, lookup_expr)
+        field_filter.extra['help_text'] = cls.help_texts[name]
+        return field_filter
+
+    class Meta:
+        model = TouristicEvent
+        fields = ['cancelled', 'bookable', 'place']
 
 
 class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):

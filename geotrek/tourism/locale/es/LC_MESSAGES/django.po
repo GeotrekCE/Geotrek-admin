@@ -265,7 +265,7 @@ msgstr ""
 msgid "Speaker"
 msgstr ""
 
-msgid "Number of participants"
+msgid "Capacity"
 msgstr ""
 
 msgid "Booking"

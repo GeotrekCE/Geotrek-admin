@@ -271,7 +271,7 @@ msgstr ""
 msgid "Speaker"
 msgstr ""
 
-msgid "Number of participants"
+msgid "Capacity"
 msgstr ""
 
 msgid "Booking"
@@ -368,3 +368,9 @@ msgstr ""
 
 msgid "Invalid geometry value."
 msgstr ""
+
+msgid "Event place"
+msgstr "Event place"
+
+msgid "Event places"
+msgstr "Event places"
