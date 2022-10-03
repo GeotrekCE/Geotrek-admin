@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.utils.translation import gettext_lazy as _
+from geotrek.tourism.widgets import AutoLocateMapWidget
 from mapentity.widgets import MapWidget
 
 from crispy_forms.layout import Div, HTML, Fieldset
@@ -52,9 +53,6 @@ class TouristicContentForm(CommonForm):
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'type1', 'type2', 'source', 'portal']:
             self.fields[f].help_text = ''
-
-class PlacesMapWidget(MapWidget):
-    geometry_field_class = 'PlaceGeometryField'
 
 
 class TouristicEventForm(CommonForm):
@@ -134,7 +132,7 @@ class TouristicEventForm(CommonForm):
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
                   'cancelled', 'cancellation_reason']
         model = TouristicEvent
-        widgets = {'geom': PlacesMapWidget()}
+        widgets = {'geom': AutoLocateMapWidget()}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

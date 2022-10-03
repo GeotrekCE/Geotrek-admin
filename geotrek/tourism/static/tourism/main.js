@@ -2,7 +2,7 @@
 // Touristic Content
 //
 var drawnItems;
-PlaceGeometryField = L.GeometryField.extend({
+PublicLayerGeometryField = L.GeometryField.extend({
     // override _editionLayer to get the feature group (drawItems) global and make it accessible outside the leaflet draw event
     _editionLayer: function () {
         var type = 'featureGroup',
@@ -15,38 +15,9 @@ PlaceGeometryField = L.GeometryField.extend({
     }
 });
 
-$(window).on('entity:map:detail', function (e, data) {
-
+$(window).on('entity:map:update entity:map:add', function (e, data) {
     var map = data.map;
-    var loaded_event = false;
-    var loaded_touristic = false;
     var placeLayer = null;
-    // Show tourism layer in application maps
-    $.each(['touristiccontent', 'touristicevent'], function (i, modelname) {
-        var layer = new L.ObjectsLayer(null, {
-            modelname: modelname,
-            style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, { clickable: false }),
-        });
-        if (data.modelname != modelname) {
-            map.layerscontrol.addOverlay(layer, tr(modelname), tr('Tourism'));
-        };
-        map.on('layeradd', function (e) {
-            var options = e.layer.options || { 'modelname': 'None' };
-            if (!loaded_event) {
-                if (options.modelname == 'touristicevent' && options.modelname != data.modelname) {
-                    e.layer.load(window.SETTINGS.urls.touristicevent_layer);
-                    loaded_event = true;
-                }
-            }
-            if (!loaded_touristic) {
-                if (options.modelname == 'touristiccontent' && options.modelname != data.modelname) {
-                    e.layer.load(window.SETTINGS.urls.touristiccontent_layer);
-                    loaded_touristic = true;
-                }
-            }
-        });
-    });
-
     $("#id_place").change(function () {
         // remove leaflet draw marker
         drawnItems.eachLayer((layer) => {
@@ -81,7 +52,38 @@ $(window).on('entity:map:detail', function (e, data) {
         $("#id_place").val(null);
 
     });
+});
 
+$(window).on('entity:map', function (e, data) {
+
+    var map = data.map;
+    var loaded_event = false;
+    var loaded_touristic = false;
+    // Show tourism layer in application maps
+    $.each(['touristiccontent', 'touristicevent'], function (i, modelname) {
+        var layer = new L.ObjectsLayer(null, {
+            modelname: modelname,
+            style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, {clickable:false}),
+        });
+        if (data.modelname != modelname){
+            map.layerscontrol.addOverlay(layer, tr(modelname), tr('Tourism'));
+        };
+        map.on('layeradd', function(e){
+            var options = e.layer.options || {'modelname': 'None'};
+            if (! loaded_event){
+                if (options.modelname == 'touristicevent' && options.modelname != data.modelname){
+                    e.layer.load(window.SETTINGS.urls.touristicevent_layer);
+                    loaded_event = true;
+                }
+            }
+            if (! loaded_touristic){
+                if (options.modelname == 'touristiccontent' && options.modelname != data.modelname){
+                    e.layer.load(window.SETTINGS.urls.touristiccontent_layer);
+                    loaded_touristic = true;
+                }
+        }
+    });
+    });
 });
 
 
@@ -117,7 +119,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         placeholder_text_multiple: tr("Choose value(s)")
     });
 
-    if (data.modelname == 'touristicevent') {
+    if(data.modelname == 'touristicevent') {
         $('#div_id_cancellation_reason').prop("hidden", !$('#id_cancelled').is(":checked"));
         $('#id_cancelled').change(function () {
             $('#div_id_cancellation_reason').prop("hidden", !this.checked);
@@ -128,12 +130,11 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         })
     }
 
-
     if (data.modelname != 'touristiccontent')
         return;
 
     // Refresh types by category
-    $('#id_category').change(function () {
+    $('#id_category').change(function() {
         update_touristiccontent_types('1');
         update_touristiccontent_types('2');
 
@@ -146,7 +147,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         }
         else {
             $('.leaflet-draw-toolbar-top a').hide();
-            var controls = { 'point': 'marker', 'line': 'polyline', 'polygon': 'polygon' };
+            var controls = {'point': 'marker', 'line': 'polyline', 'polygon': 'polygon'};
             $('.leaflet-draw-toolbar a.leaflet-draw-draw-' + controls[geometry_type]).show();
         }
     });
@@ -171,7 +172,7 @@ function update_touristiccontent_types(n) {
 
     // Refresh options list for types, depending on category
     $select.empty();
-    for (var type_id in types_values) {
+    for(var type_id in types_values) {
         var type_name = types_values[type_id];
         $('<option/>')
             .text(type_name)
