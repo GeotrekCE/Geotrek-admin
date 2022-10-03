@@ -3034,6 +3034,7 @@ class TouristicEventTestCase(BaseApiTest):
         response = self.get_touristicevent_list({'place': self.place.pk})
         self.assertEqual(response.json().get("count"), 1)
 
+
 class TouristicEventTypeTestCase(BaseApiTest):
     @classmethod
     def setUpTestData(cls):

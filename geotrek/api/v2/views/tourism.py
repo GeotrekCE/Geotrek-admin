@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
-from django.db.models.aggregates import Count
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate

@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.utils.translation import gettext_lazy as _
 from geotrek.tourism.widgets import AutoLocateMapWidget
-from mapentity.widgets import MapWidget
 
 from crispy_forms.layout import Div, HTML, Fieldset
 

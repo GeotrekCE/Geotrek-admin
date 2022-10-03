@@ -7,7 +7,6 @@ from django.contrib.gis.db.models.functions import Transform
 from geotrek.tourism.models import TouristicContentCategory, TouristicEventPlace
 
 
-
 register = template.Library()
 
 

@@ -7,7 +7,7 @@ from geotrek.authent.filters import StructureRelatedFilterSet
 from django import forms
 from django.utils.datetime_safe import datetime
 
-from .models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2, TouristicEventPlace
+from .models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
 from geotrek.zoning.filters import ZoningFilterSet
 
 
