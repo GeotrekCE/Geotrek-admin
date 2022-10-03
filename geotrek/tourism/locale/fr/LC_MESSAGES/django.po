@@ -431,3 +431,6 @@ msgid "Please add a participant category in admin interface in order to "
 "complete the number of participants."
 msgstr "Veuillez ajouter une classe de participants dans l’interface "
 "d’administration afin de pouvoir renseigner le nombre de participants."
+
+msgid "Select a place to auto-locate event on map"
+msgstr "Sélectionner un lieu positionne automatiquement l'évènement sur la carte"
