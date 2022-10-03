@@ -5,28 +5,31 @@ CHANGELOG
 2.87.2+dev (XXXX-XX-XX)
 -----------------------
  
-**Minor improvements** 
+**New features**
 
-- Check `begin date`` is before `end date` in TouristicEvent forms
-- Set `begin_date` not null for TouristicEvents (#3127)
-- Update sql v_touristicevents view
+- Add model TouristicEventPlace, use place selector to locate TouristicEvent in forms' map
+- Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable``, ``place`` to TouristicEvents
+- ``cancellation_reason`` selector is displayed in Event form if ``bookable`` is checked
+- ``booking`` text box is displayed in Event form if ``bookable`` is checked
+- Create ``TouristicEventParticipantCategory`` model to define types of attendees for Events
+- Create `Assessment` tab in Event form to input retrospective information such as number of attendees per category
+
+**Breaking changes**
+
+- Rename ``meeting_time`` to ``start_time`` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes ``start_time`` instead of ``meeting_time``
+- Rename ``participant_number`` to ``capacity`` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes ``capacity`` instead of ``participant_number``
+- These fields are still available in API v2 for retrocompatibility but should not be used by default
 
 **Bug fixes**
 
 - Fix TouristicEvent with no end dates are not returned in APIv2
 
-**New features**
+**Minor improvements** 
 
-- Add model TouristicEventPlace, use place selector to locate TouristicEvent in forms' map
-- Add fields `end_time`, `cancelled`, `cancellation_reason`, `bookable`, `place` to TouristicEvents
-- `cancellation_reason` selector is displayed in Event form if `bookable` is checked
-- `booking` text box is displayed in Event form if `bookable` is checked
-
-**Breaking changes**
-
-- Rename `meeting_time` to `start_time` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `start_time` instead of `meeting_time`
-- Rename `participant_number` to `capacity` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes `capacity` instead of `participant_number`
-- These fields are still available in API v2 for retrocompatibility but should not be used by default
+- Check `begin date`` is before `end date` in TouristicEvent forms
+- Set `begin_date` not null for TouristicEvents (#3127)
+- Change order of attributes in Event forms and detail view
+- Update Event SQL view ``v_touristicevents``` accordingly to above changes
 
 
 2.87.2 (2022-09-23)
