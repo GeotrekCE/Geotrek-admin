@@ -7,7 +7,7 @@ CHANGELOG
  
 **New features**
 
-- Add model TouristicEventPlace, use place selector to locate TouristicEvent in forms' map
+- Add model TouristicEventPlace, use place selector to locate TouristicEvent on form map
 - Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable``, ``place`` to TouristicEvents
 - ``cancellation_reason`` selector is displayed in Event form if ``bookable`` is checked
 - ``booking`` text box is displayed in Event form if ``bookable`` is checked
@@ -26,10 +26,10 @@ CHANGELOG
 
 **Minor improvements** 
 
-- Check `begin date`` is before `end date` in TouristicEvent forms
-- Set `begin_date` not null for TouristicEvents (#3127)
+- Check ``begin date`` is before ``end date`` in TouristicEvent forms
+- Set ``begin_date`` not null for TouristicEvents (#3127)
 - Change order of attributes in Event forms and detail view
-- Update Event SQL view ``v_touristicevents``` accordingly to above changes
+- Update Event SQL view ``v_touristicevents`` according to above changes
 
 
 2.87.2 (2022-09-23)
