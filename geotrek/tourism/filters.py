@@ -7,7 +7,7 @@ from geotrek.authent.filters import StructureRelatedFilterSet
 from django import forms
 from django.utils.datetime_safe import datetime
 
-from .models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
+from .models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2, TouristicEventPlace
 from geotrek.zoning.filters import ZoningFilterSet
 
 
@@ -91,7 +91,7 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'type', 'themes', 'after',
             'before', 'approved', 'source', 'portal', 'provider',
-            'bookable', 'cancelled'
+            'bookable', 'cancelled', 'place'
         ]
 
 

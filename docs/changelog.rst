@@ -16,7 +16,8 @@ CHANGELOG
 
 **New features**
 
-- Add fields `end_time`, `cancelled`, `cancellation_reason`, `bookable` to TouristicEvents
+- Add model TouristicEventPlace, use place selector to locate TouristicEvent in forms' map
+- Add fields `end_time`, `cancelled`, `cancellation_reason`, `bookable`, `place` to TouristicEvents
 - `cancellation_reason` selector is displayed in Event form if `bookable` is checked
 - `booking` text box is displayed in Event form if `bookable` is checked
 

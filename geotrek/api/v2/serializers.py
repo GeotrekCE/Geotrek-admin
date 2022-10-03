@@ -448,6 +448,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
         cancellation_reason = serializers.SerializerMethodField()
+        place = serializers.SlugRelatedField(
+            read_only=True,
+            slug_field='name'
+        )
         meeting_time = serializers.ReadOnlyField(
             source='start_time',
             help_text=_("This field is deprecated and will be removed in next releases. Please start using 'start_time'")
@@ -482,8 +486,15 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
                 'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
                 'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website',
-                'cancelled', 'cancellation_reason', 'participant_number'
+                'cancelled', 'cancellation_reason', 'participant_number', 'place'
             )
+
+    class TouristicEventPlaceSerializer(serializers.ModelSerializer):
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+
+        class Meta:
+            model = tourism_models.TouristicEventPlace
+            fields = ("pk", "geometry", "name")
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()

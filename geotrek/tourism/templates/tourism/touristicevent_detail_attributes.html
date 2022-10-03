@@ -13,6 +13,11 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"place" }}</th>
+            <td>{% if object.place %}{{ object.place }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"type" }}</th>
             <td>{% if object.type %}{{ object.type }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
