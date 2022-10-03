@@ -91,7 +91,7 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'type', 'themes', 'after',
             'before', 'approved', 'source', 'portal', 'provider',
-            'bookable', 'cancelled'
+            'bookable', 'cancelled', 'place'
         ]
 
 

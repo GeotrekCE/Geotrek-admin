@@ -82,8 +82,15 @@ class CancellationReasonAdmin(MergeActionMixin, TabbedTranslationAdmin):
     merge_field = 'label'
 
 
+class TouristicEventPlaceAdmin(LeafletGeoAdmin):
+    list_display = ('name',)
+    list_filter = ('name',)
+    search_fields = ('name',)
+
+
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
     admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
     admin.site.register(tourism_models.TouristicEventParticipantCategory, TouristicEventParticipantCategoryAdmin)
     admin.site.register(tourism_models.CancellationReason, CancellationReasonAdmin)
+    admin.site.register(tourism_models.TouristicEventPlace, TouristicEventPlaceAdmin)

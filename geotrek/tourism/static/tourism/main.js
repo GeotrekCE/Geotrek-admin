@@ -1,6 +1,58 @@
 //
 // Touristic Content
 //
+var drawnItems;
+PublicLayerGeometryField = L.GeometryField.extend({
+    // override _editionLayer to get the feature group (drawItems) global and make it accessible outside the leaflet draw event
+    _editionLayer: function () {
+        var type = 'featureGroup',
+            constructor = L[type];
+        if (typeof (constructor) != 'function') {
+            throw 'Unsupported geometry type: ' + type;
+        }
+        drawnItems = constructor([], {})
+        return drawnItems;
+    }
+});
+
+$(window).on('entity:map:update entity:map:add', function (e, data) {
+    var map = data.map;
+    var placeLayer = null;
+    $("#id_place").change(function () {
+        // remove leaflet draw marker
+        drawnItems.eachLayer((layer) => {
+            drawnItems.removeLayer(layer);
+        });
+
+        // if change empty place
+        if (this.value.length == 0) {
+            if (placeLayer) {
+                map.removeLayer(placeLayer);
+            }
+        }
+        var placesCoords = JSON.parse($('#places-coords').text());
+        var currentCoordsPlace = placesCoords[this.value];
+        if (currentCoordsPlace) {
+            placeLayer = L.marker(currentCoordsPlace.reverse());
+            placeLayer.addTo(map);
+            // TODO : parametrize zoom level ?
+            map.setView(placeLayer.getLatLng(), 12);
+            // synchronize place geom with the form 
+            L.FieldStore.prototype.initialize("id_geom");
+            L.FieldStore.prototype.save(placeLayer);
+        }
+    })
+
+    map.on('draw:created', function (e) {
+        // on leaflet draw event : delete previous place marker
+        if (placeLayer) {
+            map.removeLayer(placeLayer);
+        }
+        // empty the place input
+        $("#id_place").val(null);
+
+    });
+});
 
 $(window).on('entity:map', function (e, data) {
 

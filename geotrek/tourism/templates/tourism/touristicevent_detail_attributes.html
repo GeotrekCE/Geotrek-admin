@@ -13,8 +13,8 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"type" }}</th>
-            <td>{% if object.type %}{{ object.type }}
+            <th>{{ object|verbose:"place" }}</th>
+            <td>{% if object.place %}{{ object.place }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
@@ -40,6 +40,10 @@
         <tr>
             <th>{{ object|verbose:"duration" }}</th>
             <td>{{ object.duration }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"place" }}</th>
+            <td>{{ object.place }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"meeting_point" }}</th>

@@ -139,6 +139,14 @@ class TouristicEventTypeFactory(factory.django.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('touristicevent-type.png')
 
 
+class TouristicEventPlaceFactory(factory.django.DjangoModelFactory):
+    geom = 'POINT(0 0)'
+    name = "Place"
+
+    class Meta:
+        model = models.TouristicEventPlace
+
+
 class TouristicEventFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TouristicEvent

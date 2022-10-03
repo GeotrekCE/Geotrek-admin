@@ -213,7 +213,7 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
-    'meeting_point', 'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'portal',
+    'meeting_point', 'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'place', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
     'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason', 'participant_number'
 ])
@@ -2940,6 +2940,7 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event4 = tourism_factory.TouristicEventFactory(
             deleted=True
         )
+        cls.place = tourism_factory.TouristicEventPlaceFactory()
         cls.touristic_event5 = tourism_factory.TouristicEventFactory(
             end_date=None,
             published=True,
@@ -2947,7 +2948,8 @@ class TouristicEventTestCase(BaseApiTest):
             begin_date='2022-02-20',
             start_time="12:34",
             capacity=12,
-            bookable=False
+            bookable=False,
+            place=cls.place
         )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
@@ -3027,6 +3029,10 @@ class TouristicEventTestCase(BaseApiTest):
         self.assertEqual(response.json().get("count"), 1)
         response = self.get_touristicevent_list({'bookable': 'False'})
         self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_place(self):
+        response = self.get_touristicevent_list({'place': self.place.pk})
+        self.assertEqual(response.json().get("count"), 1)
 
 
 class TouristicEventTypeTestCase(BaseApiTest):

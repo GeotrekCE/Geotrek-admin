@@ -415,6 +415,19 @@ class TouristicEventManager(NoDeleteManager):
         return providers
 
 
+class TouristicEventPlace(models.Model):
+    name = models.CharField(null=False, max_length=256)
+    geom = models.PointField(srid=settings.SRID)
+
+    class Meta:
+        verbose_name = _("Event place")
+        verbose_name_plural = _("Event places")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
@@ -465,6 +478,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     cancelled = models.BooleanField(default=False, verbose_name=_("Cancelled"), help_text=_("Boolean indicating if Event is cancelled"))
     cancellation_reason = models.ForeignKey(CancellationReason, verbose_name=_("Cancellation reason"), related_name="touristic_events", null=True, blank=True, on_delete=models.PROTECT)
     objects = TouristicEventManager()
+    place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Event place"), on_delete=models.PROTECT, null=True, blank=True, help_text=_("Select a place to auto-locate event on map"))
     id_prefix = 'E'
 
     @property

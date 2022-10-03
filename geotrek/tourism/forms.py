@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.utils.translation import gettext_lazy as _
+from geotrek.tourism.widgets import AutoLocateMapWidget
 
 from crispy_forms.layout import Div, HTML, Fieldset
 
@@ -122,13 +123,14 @@ class TouristicEventForm(CommonForm):
     ]
 
     class Meta:
-        fields = ['name', 'review', 'published', 'description_teaser', 'description',
+        fields = ['name', 'place', 'review', 'published', 'description_teaser', 'description',
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
                   'start_time', 'end_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'capacity', 'booking', 'target_audience',
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
                   'cancelled', 'cancellation_reason']
         model = TouristicEvent
+        widgets = {'geom': AutoLocateMapWidget()}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
