@@ -24,7 +24,7 @@ PDF generation might not work unless you add the following entry to ``/etc/hosts
 
 ::
 
-    127.0.0.1   geotrek.local
+    127.0.0.1   localhost geotrek.local
 
 
 Contribution guide
