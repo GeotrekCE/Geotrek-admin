@@ -26,11 +26,6 @@ class Migration(migrations.Migration):
                 'ordering': ['name'],
             },
         ),
-        migrations.AlterField(
-            model_name='touristicevent',
-            name='start_time',
-            field=models.TimeField(blank=True, help_text='11:00, 23:30', null=True, verbose_name='Start time'),
-        ),
         migrations.AddField(
             model_name='touristicevent',
             name='place',

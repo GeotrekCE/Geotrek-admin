@@ -8,20 +8,23 @@ def clean_participants_number(apps, schema_editor):
     TouristicEvent = apps.get_model('tourism', 'TouristicEvent')
 
     # Clean participant number
-    TouristicEvent.objects.exclude(
-        participant_number__iregex=r'^[0-9]+$'
-    ).exclude(
-        participant_number__exact=''
-    ).update(
-        practical_info=Concat(F('practical_info'), Value('| Participant :'), F('participant_number')),
+    qs = TouristicEvent.objects.exclude(participant_number__iregex=r'^[0-9]+$').exclude(participant_number__exact='')
+    qs.update(
+        practical_info=Concat(F('practical_info'), Value('\nParticipants: '), F('participant_number')),
         participant_number=''
     )
+    for t in qs:
+        t.save()
+
     # Populate capacity with cleaned participant_number
-    TouristicEvent.objects.exclude(
+    qs = TouristicEvent.objects.exclude(
         participant_number__exact=''
-    ).update(
+    )
+    qs.update(
         capacity=Cast(F('participant_number'), models.IntegerField())
     )
+    for t in qs:
+        t.save()
 
 
 class Migration(migrations.Migration):
@@ -32,5 +35,4 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(clean_participants_number, reverse_code=migrations.RunPython.noop),
-        migrations.RemoveField(model_name='touristicevent', name='participant_number')
     ]
