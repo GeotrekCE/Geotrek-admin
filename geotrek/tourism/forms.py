@@ -113,6 +113,9 @@ class TouristicEventForm(CommonForm):
                     Fieldset(
                         _("Participants"),
                     ),
+                    HTML("<hr>"),
+                    'preparation_duration',
+                    'intervention_duration',
                     css_id="assessment",
                     css_class="scrollable tab-pane",
                 ),
@@ -128,7 +131,7 @@ class TouristicEventForm(CommonForm):
                   'start_time', 'end_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'capacity', 'booking', 'target_audience',
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
-                  'cancelled', 'cancellation_reason']
+                  'cancelled', 'cancellation_reason', 'preparation_duration', 'intervention_duration']
         model = TouristicEvent
         widgets = {'geom': AutoLocateMapWidget()}
 

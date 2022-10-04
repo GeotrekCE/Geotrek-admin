@@ -1933,6 +1933,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "cancelled",
         "cancellation_reason"
         "place",
+        'preparation_duration',
+        'intervention_duration',
     ]
     COLUMNS_LISTS["feedback_view"] = [
         "email",
@@ -2454,7 +2456,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "bookable",
         "cancelled",
         "cancellation_reason"
-        "place"
+        "place",
+        'preparation_duration',
+        'intervention_duration'
     ]
     COLUMNS_LISTS["feedback_export"] = [
         "email",
@@ -2776,7 +2780,9 @@ An exhaustive list of form fields hideable in each module.
             "bookable",
             'cancelled',
             'cancellation_reason'
-            'place'
+            'place',
+            'preparation_duration',
+            'intervention_duration'
         ],
     HIDDEN_FORM_FIELDS["report"] = [
             "email",
