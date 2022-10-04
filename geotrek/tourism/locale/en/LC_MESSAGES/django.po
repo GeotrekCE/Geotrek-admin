@@ -329,8 +329,8 @@ msgstr ""
 msgid "Boolean indicating if Event is cancelled"
 msgstr ""
 
-msgid "Select a place to auto-locate event on map"
-msgstr ""
+msgid "Select a place on the list or locate the event directly on the map"
+msgstr "Select a place on the list or locate the event directly on the map"
 
 msgid "Number of participants"
 msgstr ""
