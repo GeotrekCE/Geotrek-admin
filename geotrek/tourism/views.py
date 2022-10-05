@@ -3,7 +3,7 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Q, Sum
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
