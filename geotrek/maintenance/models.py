@@ -18,6 +18,8 @@ from geotrek.core.models import Topology, Path, Trail
 from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
+from mapentity.models import DuplicateMixin
+
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -367,7 +369,7 @@ class InterventionJob(StructureOrNoneRelated):
         return self.job
 
 
-class ManDay(models.Model):
+class ManDay(DuplicateMixin, models.Model):
 
     nb_days = models.DecimalField(verbose_name=_("Mandays"), decimal_places=2, max_digits=6)
     intervention = models.ForeignKey(Intervention, on_delete=models.CASCADE)
@@ -617,7 +619,7 @@ class Contractor(StructureOrNoneRelated):
         return self.contractor
 
 
-class Funding(models.Model):
+class Funding(DuplicateMixin, models.Model):
 
     amount = models.FloatField(verbose_name=_("Amount"))
     project = models.ForeignKey(Project, verbose_name=_("Project"), on_delete=models.CASCADE)
