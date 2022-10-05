@@ -154,17 +154,17 @@
             <td>
                 {% for participant in object.participants.all %}
                     {% if forloop.first %}
-                    <table>
-                    <thead>
-                    <th>{% trans "Category" %}</th><th>{% trans "Number" %}</th>
-                    </thead>
-                    <tbody>
+                        <table>
+                            <thead>
+                                <th>{% trans "Category" %}</th><th>{% trans "Number" %}</th>
+                            </thead>
+                            <tbody>
                     {% endif %}
-                    <tr><td>{{ participant.category }}</td><td>{{ participant.count }}</td></tr>
+                            <tr><td>{{ participant.category }}</td><td>{{ participant.count }}</td></tr>
                     {% if forloop.last %}
-                    <tr class="total"><td>{% trans "Total" %}<td>{{ object.participants_total }}</td></tr>
-                    </tbody>
-                    </table>
+                            <tr class="total"><td>{% trans "Total" %}<td>{{ object.participants_total }}</td></tr>
+                            </tbody>
+                        </table>
                     {% endif %}
                 {% empty %}
                     <span class="none">{% trans "None" %}</span>
