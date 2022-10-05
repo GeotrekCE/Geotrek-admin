@@ -211,11 +211,6 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'cancelled', 'cancellation_reason', 'participants_total', 'place'
     ]
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs.annotate(participants_total=Sum('participants__count'))
-        return qs
-
 
 class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicEvent.objects.existing()
