@@ -494,7 +494,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta:
             model = tourism_models.TouristicEventPlace
-            fields = ("pk", "geometry", "name")
+            fields = ('id', 'geometry', 'name')
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()

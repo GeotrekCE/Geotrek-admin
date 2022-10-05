@@ -105,6 +105,7 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
+        api_filters.TouristicEventsRelatedPortalFilter
     )
     serializer_class = api_serializers.TouristicEventPlaceSerializer
 

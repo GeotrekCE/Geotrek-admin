@@ -1035,6 +1035,11 @@ class TouristicEventRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPorta
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevent')
 
 
+class TouristicEventsRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevents')
+
+
 class SiteRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         return self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
