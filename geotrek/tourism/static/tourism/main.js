@@ -23,12 +23,9 @@ $(window).on('entity:map:update entity:map:add', function (e, data) {
         drawnItems.eachLayer((layer) => {
             drawnItems.removeLayer(layer);
         });
-
-        // if change empty place
-        if (this.value.length == 0) {
-            if (placeLayer) {
-                map.removeLayer(placeLayer);
-            }
+        // if change place remove previous one
+        if (placeLayer) {
+            map.removeLayer(placeLayer);
         }
         var placesCoords = JSON.parse($('#places-coords').text());
         var currentCoordsPlace = placesCoords[this.value];
