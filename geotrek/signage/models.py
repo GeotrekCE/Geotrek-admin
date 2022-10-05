@@ -186,6 +186,7 @@ class Blade(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin):
     city_verbose_name = _("City")
     bladecode_verbose_name = _("Code")
     coordinates_verbose_name = "{} ({})".format(_("Coordinates"), spatial_reference())
+    can_duplicate = False
 
     class Meta:
         verbose_name = _("Blade")

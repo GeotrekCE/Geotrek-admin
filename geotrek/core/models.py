@@ -75,6 +75,7 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, Geotrek
     include_invisible = PathInvisibleManager()
 
     is_reversed = False
+    can_duplicate = False
 
     @property
     def topology_set(self):
