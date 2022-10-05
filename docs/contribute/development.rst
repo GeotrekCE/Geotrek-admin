@@ -18,7 +18,13 @@ Quickstart
     docker-compose run --rm web ./manage.py createsuperuser
     docker-compose up -d
 
-Got to http://localhost:8000
+Go to http://localhost:8000
+
+PDF generation might not work unless you add the following entry to ``/etc/hosts`` and use ``geotrek.local:8000`` to access Geotrek.
+
+::
+
+    127.0.0.1   localhost geotrek.local
 
 
 Contribution guide
@@ -118,13 +124,16 @@ When updating or adding a new field ``my_field`` to a model ``MyModel``, please 
 
     - If it exists, and if you wish to display a column for ``my_field`` in CSV/SHP exports for this model by default, simply add ``my_field`` to ``default_extra_colums`` on this class.
 
+- Follow the documentation you just edited to test that custom columns and hideable fields do work properly with your new field.
+
 - Look for sql file defaults ``geotrek/{app_name}/sql/post_90_defaults.sql`` :
 
     - If it exists find your modelname in the list and depending on the default value alter column ``my_field`` or add ``-- my_field``
 
     - If the modelname doesn't exist, create a new section (even if you don't need to alter column)
 
-Follow the documentation you just edited to test that custom columns and hideable fields do work properly with your new field.
+- Look for sql view file ``geotrek/{app_name}/sql/post_20_views.sql`` and update the view for your model with an alias for the new field
+
 
 **In API v2** :
 
