@@ -3,8 +3,7 @@ from io import BytesIO
 from urllib.parse import urljoin
 
 from django.conf import settings
-from django.contrib import messages
-from django.http import HttpResponseNotFound, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.functional import classproperty
@@ -17,9 +16,6 @@ from pdfimpose import PageList
 from geotrek.common.models import TargetPortal, FileType, Attachment
 from geotrek.common.utils import logger
 from geotrek.common.utils.portals import smart_get_template_by_portal
-
-from rest_framework.decorators import action
-from rest_framework.renderers import JSONRenderer
 
 
 class CustomColumnsMixin:
