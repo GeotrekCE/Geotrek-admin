@@ -333,9 +333,9 @@ msgstr "Annulé"
 msgid "Boolean indicating if Event is cancelled"
 msgstr "Booléen indiquant si l'évènement est annulé"
 
-msgid "Select a place to auto-locate event on map"
-msgstr ""
-"Sélectionner un lieu positionne automatiquement l'évènement sur la carte"
+msgid "Select a place on the list or locate the event directly on the map"
+msgstr "Sélectionnez un lieu dans la liste ou pointez directement l'événement sur la carte"
+
 
 msgid "Number of participants"
 msgstr "Nombre de participants"

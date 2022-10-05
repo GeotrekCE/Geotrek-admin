@@ -84,6 +84,7 @@ class TouristicEventForm(CommonForm):
                     'start_time',
                     'end_time',
                     'duration',
+                    'place',
                     'meeting_point',
                     'description_teaser',
                     'description',

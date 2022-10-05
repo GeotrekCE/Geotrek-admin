@@ -29,6 +29,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='touristicevent',
             name='place',
-            field=models.ForeignKey(blank=True, help_text='Select a place to auto-locate event on map', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='touristicevents', to='tourism.touristiceventplace', verbose_name='Event place'),
+            field=models.ForeignKey(blank=True, help_text='Select a place on the list or locate the event directly on the map', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='touristicevents', to='tourism.touristiceventplace', verbose_name='Event place'),
         ),
     ]
