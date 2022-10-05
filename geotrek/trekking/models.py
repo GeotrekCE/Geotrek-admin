@@ -1,5 +1,6 @@
 import os
 import logging
+import uuid
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
@@ -15,9 +16,11 @@ from django.urls import reverse
 import simplekml
 
 from mapentity.serializers import plain_text
+from mapentity.helpers import clone_attachment
 
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology, simplify_coords
+from geotrek.common.models import AccessibilityAttachment
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
     TimeStampedModelMixin, GeotrekMapEntityMixin
@@ -473,6 +476,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
                 field_names.remove('geom_3d')
             return super().save(update_fields=field_names, *args, **kwargs)
         super().save(*args, **kwargs)
+
+    def duplicate(self, **kwargs):
+        clone = super().duplicate(**kwargs)
+        for attachment in AccessibilityAttachment.objects.filter(object_id=self.pk):
+            clone_attachment(attachment, 'attachment_file', {"content_object": clone, "uuid": uuid.uuid4})
+        return clone
 
     @property
     def portal_display(self):

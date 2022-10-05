@@ -11,7 +11,7 @@ from django.utils.html import escape
 from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage, MapEntityDuplicate,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
