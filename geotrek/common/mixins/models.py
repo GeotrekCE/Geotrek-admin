@@ -443,7 +443,15 @@ class GeotrekMapEntityMixin(MapEntityMixin):
         abstract = True
 
     def duplicate(self, **kwargs):
-        clone = super(MapEntityMixin, self).duplicate(attachments={"uuid": uuid.uuid4},
-                                                      avoid_fields=["aggregations"],
-                                                      uuid=uuid.uuid4())
+        elements_duplication = {"attachments": {"uuid": uuid.uuid4},
+                                "avoid_fields": ["aggregations"],
+                                "uuid": uuid.uuid4(),
+                                }
+        if "name" in [field.name for field in self._meta.get_fields()]:
+            elements_duplication['name'] = f"{self.name} (copy)"
+        if "structure" in [field.name for field in self._meta.get_fields()]:
+            request = kwargs.pop('request', None)
+            if request:
+                elements_duplication['structure'] = request.user.profile.structure
+        clone = super(MapEntityMixin, self).duplicate(**elements_duplication)
         return clone
