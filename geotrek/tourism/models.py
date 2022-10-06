@@ -486,6 +486,11 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
         return self.participants.aggregate(participants_total=models.Sum('count'))['participants_total']
 
     @classproperty
+    def total_participants_verbose_name(cls):
+        # Specific for annotated exports
+        return _("Number of participants")
+
+    @classproperty
     def participants_total_verbose_name(cls):
         return _("Number of participants")
 
