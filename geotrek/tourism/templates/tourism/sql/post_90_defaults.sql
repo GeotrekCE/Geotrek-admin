@@ -127,3 +127,34 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 -- deleted
 ALTER TABLE tourism_touristicevent ALTER COLUMN provider SET DEFAULT '';
+
+
+-- TouristicEventParticipantCount
+-----------------
+-- name
+-- order
+ALTER TABLE tourism_touristiceventparticipantcount ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE tourism_touristiceventparticipantcount ALTER COLUMN date_update SET DEFAULT now();
+
+
+-- TouristicEventParticipantCategory
+-----------------
+-- label
+-- order
+ALTER TABLE tourism_touristiceventparticipantcategory ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE tourism_touristiceventparticipantcategory ALTER COLUMN date_update SET DEFAULT now();
+
+
+-- TouristicEventPlace
+-----------------
+-- name 
+-- geom
+ALTER TABLE tourism_touristiceventplace ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE tourism_touristiceventplace ALTER COLUMN date_update SET DEFAULT now();
+
+
+-- TouristicEventCancellationReason
+-----------------
+-- label
+ALTER TABLE tourism_cancellationreason ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE tourism_cancellationreason ALTER COLUMN date_update SET DEFAULT now();
