@@ -115,6 +115,11 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
     }
     extra_column_list = ['email', 'comment', 'advice']
 
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        feedback_factories.WorkflowManagerFactory(user=UserFactory())
+
     def get_expected_json_attrs(self):
         return {
             'activity': self.obj.activity.pk,

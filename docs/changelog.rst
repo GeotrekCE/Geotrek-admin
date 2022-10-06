@@ -5,6 +5,11 @@ CHANGELOG
 2.87.2+dev (XXXX-XX-XX)
 -----------------------
 
+**Suricate Workflow**  (#2366)
+
+-  Show sentinel email addresses only to workflow manager
+
+
 2.87.2 (2022-09-23)
 -----------------------
 
