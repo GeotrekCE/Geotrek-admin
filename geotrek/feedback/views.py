@@ -8,6 +8,7 @@ from django.db.models.functions import Concat
 from django.urls.base import reverse
 from django.utils.translation import gettext as _, get_language
 from django.views.generic.list import ListView
+from crispy_forms.helper import FormHelper
 from mapentity import views as mapentity_views
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import action
@@ -21,7 +22,7 @@ from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from . import models as feedback_models, serializers as feedback_serializers
-from .filters import ReportFilterSet
+from .filters import ReportFilterSet, ReportNoEmailFilterSet
 from .forms import ReportForm
 
 
@@ -45,6 +46,18 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
                 feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
         return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Remove email from available filters in workflow mode for supervisors
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(
+                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            self._filterform = ReportNoEmailFilterSet()
+            self._filterform.helper = FormHelper()
+            self._filterform.helper.field_class = 'form-control-sm'
+            self._filterform.helper.submit = None
+        context['filterform'] = self._filterform
+        return context
 
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
