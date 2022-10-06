@@ -348,7 +348,8 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
         event = self.modelfactory.create()
         counts = TouristicEventParticipantCountFactory.create_batch(2, event=event)
         total_count = sum(map(attrgetter('count'), counts))
-
+        self.assertEqual(event.participants_total, total_count)
+        self.assertEqual(event.participants_total_verbose_name, "Number of participants")
         with self.assertNumQueries(17):
             response = self.client.get(event.get_format_list_url())
         self.assertEqual(response.status_code, 200)
