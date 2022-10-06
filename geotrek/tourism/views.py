@@ -3,7 +3,7 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
@@ -208,11 +208,12 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'date_insert', 'date_update', 'source', 'portal',
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas', 'approved', 'uuid',
-        'cancelled', 'cancellation_reason', 'participants_total', 'place'
+        'cancelled', 'cancellation_reason', 'total_participants', 'place'
     ]
 
     def get_queryset(self):
-        return super().get_queryset().select_related('place', 'cancellation_reason').prefetch_related('participants')
+        qs = super().get_queryset().select_related('place', 'cancellation_reason').prefetch_related('participants')
+        return qs.annotate(total_participants=Sum('participants__count'))
 
 
 class TouristicEventDetail(CompletenessMixin, MapEntityDetail):

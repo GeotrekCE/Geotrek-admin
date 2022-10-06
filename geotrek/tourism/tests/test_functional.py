@@ -349,7 +349,8 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
         counts = TouristicEventParticipantCountFactory.create_batch(2, event=event)
         total_count = sum(map(attrgetter('count'), counts))
 
-        response = self.client.get(event.get_format_list_url())
+        with self.assertNumQueries(17):
+            response = self.client.get(event.get_format_list_url())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Type'), 'text/csv')
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
