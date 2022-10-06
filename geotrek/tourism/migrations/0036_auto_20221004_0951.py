@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tourism', '0035_auto_20221003_0946'),
+        ("tourism", "0035_auto_20221003_0946"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='touristicevent',
-            name='intervention_duration',
-            field=models.IntegerField(blank=True, null=True, verbose_name='Intervention duration'),
+            model_name="touristicevent",
+            name="intervention_duration",
+            field=models.FloatField(
+                blank=True, null=True, verbose_name="Intervention duration"
+            ),
         ),
         migrations.AddField(
-            model_name='touristicevent',
-            name='preparation_duration',
-            field=models.IntegerField(blank=True, null=True, verbose_name='Preparation duration'),
+            model_name="touristicevent",
+            name="preparation_duration",
+            field=models.FloatField(
+                blank=True, null=True, verbose_name="Preparation duration"
+            ),
         ),
     ]
