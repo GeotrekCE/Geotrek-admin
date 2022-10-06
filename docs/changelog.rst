@@ -936,6 +936,7 @@ In preparation for HD Views developments (PR #3298)
 
 - Show direction on lines with setting ``DIRECTION_ON_LINES_ENABLED`` in signage detail
 - Add mobile nginx configuration directly on Geotrek-admin
+- Improve sync rando, sync mobile and import views.
 
 **Bug fixes**
 
@@ -951,7 +952,7 @@ In preparation for HD Views developments (PR #3298)
 
 !!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
 
-**Improvements**
+**Improvments**
 
 - Cache API v2 Detail endpoints and themes list endpoint
 - Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.
