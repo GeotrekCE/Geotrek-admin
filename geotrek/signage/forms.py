@@ -23,7 +23,7 @@ class LineForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.helper.layout = Layout('id', 'number', 'text', 'distance', 'pictogram_name', 'time')
+        self.helper.layout = Layout('id', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time')
         self.fields['number'].widget.attrs['class'] = 'input-mini'
         self.fields['text'].widget.attrs['class'] = 'input-xlarge'
         self.fields['distance'].widget.attrs['class'] = 'input-mini'
@@ -31,7 +31,7 @@ class LineForm(forms.ModelForm):
         self.fields['time'].widget.attrs['class'] = 'input-mini'
 
     class Meta:
-        fields = ('id', 'blade', 'number', 'text', 'distance', 'pictogram_name', 'time')
+        fields = ('id', 'blade', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time')
 
 
 LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)

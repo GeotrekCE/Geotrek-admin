@@ -1268,7 +1268,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
         class Meta:
             model = signage_models.Line
-            fields = ('id', 'text', 'pictogram', 'distance', 'time')
+            fields = ('id', 'direction', 'text', 'pictogram', 'distance', 'time')
 
     class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         lines = LineSerializer(many=True)

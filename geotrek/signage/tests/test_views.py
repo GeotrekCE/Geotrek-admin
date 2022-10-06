@@ -165,8 +165,11 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         response = self.client.get(self.model.get_format_list_url() + '?format=csv')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Code,Type,Color,"
-                                                             b"Direction,Condition,Coordinates (WGS 84 / Pseudo-Mercator),Number 1,Text 1,"
-                                                             b"Distance 1,Time 1,Pictogram 1,Number 2,Text 2,"
+                                                             b"Direction,Condition,"
+                                                             b"Coordinates (WGS 84 / Pseudo-Mercator),"
+                                                             b"Number 1,Direction 1,Text 1,"
+                                                             b"Distance 1,Time 1,Pictogram 1,"
+                                                             b"Number 2,Direction 2,Text 2,"
                                                              b"Distance 2,Time 2,Pictogram 2")
 
     def test_set_structure_with_permission(self):

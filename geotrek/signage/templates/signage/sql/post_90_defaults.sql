@@ -60,6 +60,7 @@ ALTER TABLE signage_signage ALTER COLUMN provider SET DEFAULT '';
 -------
 -- blade
 -- number
+-- direction
 ALTER TABLE signage_line ALTER COLUMN text SET DEFAULT '';
 -- distance
 -- pictogram_name

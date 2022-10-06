@@ -46,6 +46,7 @@
             {% if object.order_lines.exists %}
                 <tr>
                     <th>{% trans "Code" %}</th>
+                    <th>{% trans "Direction" %}</th>
                     <th>{% trans "Text" %}</th>
                     <th>{% trans "Picto" %}</th>
                     <th>{% trans "Distance" %}</th>
@@ -55,6 +56,7 @@
             {% for line in object.order_lines.all %}
                 <tr>
                     <td>{{ line }}</td>
+                    <td>{{ line.direction }}</td>
                     <td>{{ line.text }}</td>
                     <td>{{ line.pictogram_name|default_if_none:"" }}</td>
                     <td>{{ line.distance_pretty }}</td>
