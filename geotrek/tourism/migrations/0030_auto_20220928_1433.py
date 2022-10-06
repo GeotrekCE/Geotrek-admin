@@ -16,6 +16,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(max_length=128, verbose_name='Label')),
+                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
+                ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
             ],
             options={
                 'verbose_name': 'Cancellation reason',

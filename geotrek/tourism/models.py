@@ -397,7 +397,7 @@ class TouristicEventType(OptionalPictogramMixin):
         return self.type
 
 
-class CancellationReason(models.Model):
+class CancellationReason(TimeStampedModelMixin):
     label = models.CharField(verbose_name=_("Label"), max_length=128)
 
     class Meta:
@@ -415,7 +415,7 @@ class TouristicEventManager(NoDeleteManager):
         return providers
 
 
-class TouristicEventPlace(models.Model):
+class TouristicEventPlace(TimeStampedModelMixin):
     name = models.CharField(null=False, max_length=256)
     geom = models.PointField(srid=settings.SRID)
 
@@ -539,7 +539,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
         return plain_text(self.description_teaser or self.description)[:500]
 
 
-class TouristicEventParticipantCategory(models.Model):
+class TouristicEventParticipantCategory(TimeStampedModelMixin):
     label = models.CharField(verbose_name=_("Label"), max_length=255)
     order = models.PositiveSmallIntegerField(default=None, null=True, blank=True, verbose_name=_("Display order"))
 
@@ -552,7 +552,7 @@ class TouristicEventParticipantCategory(models.Model):
         return self.label
 
 
-class TouristicEventParticipantCount(models.Model):
+class TouristicEventParticipantCount(TimeStampedModelMixin):
     count = models.PositiveIntegerField(verbose_name=_("Number of participants"))
     category = models.ForeignKey(TouristicEventParticipantCategory, verbose_name=_("Category"), on_delete=models.CASCADE, related_name="participants")
     event = models.ForeignKey(TouristicEvent, verbose_name=_("Touristic event"), on_delete=models.CASCADE, related_name="participants")

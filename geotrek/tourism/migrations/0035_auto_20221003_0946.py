@@ -19,6 +19,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=256)),
                 ('geom', django.contrib.gis.db.models.fields.PointField(srid=settings.SRID)),
+                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
+                ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
             ],
             options={
                 'verbose_name': 'Event place',
