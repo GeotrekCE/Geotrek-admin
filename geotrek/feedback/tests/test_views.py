@@ -122,7 +122,7 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         'type': 'Point',
         'coordinates': [3.0, 46.5],
     }
-    extra_column_list = ['email', 'comment', 'advice']
+    extra_column_list = ['comment', 'advice']
 
     @classmethod
     def setUpTestData(cls):
@@ -212,14 +212,16 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 302)
 
+    @test_for_all_suricate_modes
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
             return
         with override_settings(COLUMNS_LISTS={'feedback_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'eid', 'activity', 'email', 'comment', 'advice'])
+                             ['id', 'eid', 'activity', 'comment', 'advice'])
 
+    @test_for_all_suricate_modes
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
