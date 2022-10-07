@@ -3,12 +3,17 @@
 
 
 {% block attributes %}
+    {% suricate_workflow_enabled as suricate_workflow_enabled %}
+    {% suricate_management_enabled as suricate_management_enabled %}
+    {% workflow_manager as workflow_manager %}
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
-        <tr>
-            <th>{{ report|verbose:"email" }}</th>
-            <td>{{ report.email }}</td>
-        </tr>
+        {% if not suricate_workflow_enabled or request.user.pk == workflow_manager or request.user.is_superuser%}
+            <tr>
+                <th>{{ report|verbose:"email" }}</th>
+                <td>{{ report.email }}</td>
+            </tr>
+        {% endif %}
         <tr>
             <th>{{ report|verbose:"comment" }}</th>
             <td>{{ report.comment|safe|linebreaks }}</td>
@@ -101,19 +106,17 @@
                 {% endfor %}
             </td>
         </tr>
+        <tr>
+            <th>{{ report|verbose:"uses_timers" }}</th>
+            <td>{% if report.uses_timers %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>
+        </tr>
         {% endif %}
-        {% suricate_workflow_enabled as suricate_workflow_enabled %}
-        {% suricate_management_enabled as suricate_management_enabled %}
         {% if suricate_management_enabled or suricate_workflow_enabled %}
             <tr>
                 <th>{{ report|verbose:"eid" }}</th>
                 <td>{{ report.eid }}</td>
             </tr>
         {% endif %}
-        <tr>
-            <th>{{ report|verbose:"uses_timers" }}</th>
-            <td>{% if report.uses_timers %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>
-        </tr>
         {% if suricate_workflow_enabled %}
         <tr>
             <th>{{ report|verbose:"locked" }}</th>
