@@ -1,8 +1,9 @@
 from collections import OrderedDict
 
 from django.conf import settings
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -196,6 +197,46 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         result = self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(result.status_code, 302)
         self.assertEqual(self.model.objects.first().structure, structure)
+
+
+class BladeTemplatesTest(TestCase):
+
+    def setUp(self):
+        self.login()
+
+    def login(self):
+        user = User.objects.create_superuser('test', 'test@example.com', password='test')
+        self.client.force_login(user=user)
+
+    def tearDown(self):
+        self.client.logout()
+
+    def test_direction_field_visibility_on_detail_page(self):
+        blade = BladeFactory.create(
+            direction=BladeDirectionFactory.create(label="A direction on the blade")
+        )
+        line = blade.lines.first()
+        line.direction = BladeDirectionFactory.create(label="A direction on the line")
+        line.save()
+
+        response = self.client.get(blade.get_detail_url())
+
+        self.assertContains(response, "A direction on the blade")
+        self.assertNotContains(response, "A direction on the line")
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_visibility_on_detail_page_when_direction_on_lines_enabled(self):
+        blade = BladeFactory.create(
+            direction=BladeDirectionFactory.create(label="A direction on the blade")
+        )
+        line = blade.lines.first()
+        line.direction = BladeDirectionFactory.create(label="A direction on the line")
+        line.save()
+
+        response = self.client.get(blade.get_detail_url())
+
+        self.assertNotContains(response, "A direction on the blade")
+        self.assertContains(response, "A direction on the line")
 
 
 class SignageViewsTest(GeotrekAPITestCase, CommonTest):
