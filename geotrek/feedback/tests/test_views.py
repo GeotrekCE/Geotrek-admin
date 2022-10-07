@@ -501,3 +501,16 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
         self.assertIn("Courriel", column_names)
+
+    @test_for_report_and_basic_modes
+    def test_normal_csv_emails(self):
+        '''Test CSV job costs export do not contain emails for supervisor'''
+        translation.activate('fr')
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)

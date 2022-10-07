@@ -69,11 +69,12 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     ]
 
     def get_context_data(self, **kwargs):
-        # Remove email from available exports in workflow mode for supervisors
-        if 'email' in self.mandatory_columns and settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(
+        # Remove email from exports in workflow mode for user that are neither superusers or workflow manager
+        if settings.SURICATE_WORKFLOW_ENABLED and 'email' in self.mandatory_columns and not (self.request.user.is_superuser or self.request.user.pk in list(
                 feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             self.mandatory_columns.remove('email')
-        elif 'email' not in self.mandatory_columns:
+        elif settings.SURICATE_WORKFLOW_ENABLED and 'email' not in self.mandatory_columns and (self.request.user.is_superuser or self.request.user.pk in list(
+                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             self.mandatory_columns.append('email')
         return super().get_context_data(**kwargs)
 
