@@ -53,10 +53,8 @@ msgid ""
 "the number of participants."
 msgstr ""
 
-#, fuzzy
-#| msgid "Start time"
 msgid "Start time is unset"
-msgstr "Orario della riunione"
+msgstr ""
 
 msgid "Start time is after end time"
 msgstr ""
@@ -299,10 +297,8 @@ msgstr "Orario della riunione"
 msgid "11:00, 23:30"
 msgstr "11:00, 23:30"
 
-#, fuzzy
-#| msgid "End date"
 msgid "End time"
-msgstr "Data di fine"
+msgstr ""
 
 msgid "Organizer"
 msgstr "Organizzatore"
@@ -388,15 +384,13 @@ msgid "Choose value(s)"
 msgstr "Scegliere il valore (i)"
 
 msgid "Public print"
-msgstr "Public print"
+msgstr ""
 
 msgid "Print"
 msgstr "Stampa"
 
-#, fuzzy
-#| msgid "Public print"
 msgid "Public print booklet"
-msgstr "Public print"
+msgstr ""
 
 msgid "Print booklet"
 msgstr ""

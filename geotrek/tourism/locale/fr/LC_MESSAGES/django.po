@@ -41,10 +41,8 @@ msgstr "Évènement"
 msgid "Assessment"
 msgstr "Évaluation"
 
-#, fuzzy
-#| msgid "Participant categories"
 msgid "Participants"
-msgstr "Classes de participants"
+msgstr "Participants"
 
 msgid "dd/mm/yyyy"
 msgstr "jj/mm/aaaa"
@@ -402,8 +400,6 @@ msgstr "Impression grand public"
 msgid "Print"
 msgstr "Impr."
 
-#, fuzzy
-#| msgid "Public print"
 msgid "Public print booklet"
 msgstr "Impression grand public"
 

@@ -178,10 +178,8 @@ msgstr ""
 msgid "Problem magnitudes"
 msgstr "Amplitudes des problèmes"
 
-#, fuzzy
-#| msgid "Messages"
 msgid "Message"
-msgstr "Messages"
+msgstr "Message"
 
 msgid "Workflow Manager"
 msgstr "Manager de gestion"
@@ -251,15 +249,11 @@ msgstr "Informations"
 msgid "None"
 msgstr ""
 
-#, fuzzy
-#| msgid "Workflow Districts"
 msgid "Districts"
-msgstr "Secteurs de gestion"
+msgstr "Secteurs"
 
-#, fuzzy
-#| msgid "Activities"
 msgid "Cities"
-msgstr "Activités"
+msgstr "Communes"
 
 msgid "Messages"
 msgstr "Messages"

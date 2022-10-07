@@ -33,8 +33,6 @@ msgstr ""
 msgid "Completed"
 msgstr ""
 
-#, fuzzy
-#| msgid "Event place"
 msgid "Event"
 msgstr ""
 
