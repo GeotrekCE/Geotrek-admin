@@ -6,6 +6,8 @@ from coreapi.document import Field
 from django.conf import settings
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
+from django_filters import ModelMultipleChoiceFilter
+from django_filters.widgets import CSVWidget
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 from rest_framework.filters import BaseFilterBackend
@@ -13,7 +15,7 @@ from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
+from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventPlace, TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
 
@@ -485,10 +487,14 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
 
 
 class TouristicEventFilterSet(filters.FilterSet):
+    place = ModelMultipleChoiceFilter(
+        widget=CSVWidget(),
+        queryset=TouristicEventPlace.objects.only('pk'),
+        help_text=_("Filter by one or more Place id, comma-separated.")
+    )
     help_texts = {
         'bookable': _("Filter events on bookable boolean : true/false expected"),
-        'cancelled': _("Filter events on cancelled boolean : true/false expected"),
-        'place': _("Filter by a place id")
+        'cancelled': _("Filter events on cancelled boolean : true/false expected")
     }
 
     @classmethod

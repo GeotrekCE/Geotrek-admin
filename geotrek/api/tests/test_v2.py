@@ -2907,6 +2907,8 @@ class TouristicEventTestCase(BaseApiTest):
     def setUpTestData(cls):
         cls.maxDiff = None
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory()
+        cls.place = tourism_factory.TouristicEventPlaceFactory(name="Here")
+        cls.other_place = tourism_factory.TouristicEventPlaceFactory(name="Over here")
         cls.touristic_event1 = tourism_factory.TouristicEventFactory(
             name_fr="Exposition - Du vent, du sable et des étoiles",
             name_en="Wind and sand",
@@ -2925,6 +2927,7 @@ class TouristicEventTestCase(BaseApiTest):
             start_time=datetime.time(11, 20),
             end_time=datetime.time(12, 20),
             cancelled=True,
+            place=cls.other_place,
             cancellation_reason=tourism_factory.CancellationReasonFactory(label_en="Fire", label_fr="Incendie")
         )
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
@@ -2950,7 +2953,6 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event4 = tourism_factory.TouristicEventFactory(
             deleted=True
         )
-        cls.place = tourism_factory.TouristicEventPlaceFactory(name="Here")
         cls.place_unpublished = tourism_factory.TouristicEventPlaceFactory(name="There")
         cls.touristic_event5 = tourism_factory.TouristicEventFactory(
             end_date=None,
@@ -3046,12 +3048,12 @@ class TouristicEventTestCase(BaseApiTest):
         self.assertEqual(response.json().get("count"), 2)
 
     def test_touristic_event_place_filter(self):
-        response = self.get_touristicevent_list({'place': self.place.pk})
-        self.assertEqual(response.json().get("count"), 1)
+        response = self.get_touristicevent_list({'place': f"{self.place.pk},{self.other_place.pk}"})
+        self.assertEqual(response.json().get("count"), 2)
 
     def test_touristic_event_place_list(self):
         response = self.get_touristiceventplace_list()
-        self.assertEqual(response.json().get("count"), 1)
+        self.assertEqual(response.json().get("count"), 2)
 
 
 class TouristicEventTypeTestCase(BaseApiTest):
