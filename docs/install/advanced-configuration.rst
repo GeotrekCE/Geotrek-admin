@@ -2447,7 +2447,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "provider"
     ]
     COLUMNS_LISTS["feedback_export"] = [
-        "email",
         "comment",
         "activity",
         "category",

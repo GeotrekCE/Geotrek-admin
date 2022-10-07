@@ -1,5 +1,7 @@
+import csv
 import json
 from datetime import datetime
+from io import StringIO
 from unittest import mock
 
 from django.conf import settings
@@ -8,6 +10,7 @@ from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.utils import translation
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from freezegun import freeze_time
@@ -16,15 +19,21 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from geotrek.authent.tests.base import AuthentFixturesMixin
-from geotrek.common.tests import CommonTest, TranslationResetMixin, GeotrekAPITestCase
+from geotrek.common.tests import (CommonTest, GeotrekAPITestCase,
+                                  TranslationResetMixin)
 from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
-from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory, ReportInterventionFactory
+from geotrek.maintenance.tests.factories import (
+    InfrastructureInterventionFactory, ReportInterventionFactory)
+
 from . import factories as feedback_factories
-from .test_suricate_sync import SURICATE_REPORT_SETTINGS, test_for_all_suricate_modes, \
-    test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
+from .test_suricate_sync import (SURICATE_REPORT_SETTINGS,
+                                 test_for_all_suricate_modes,
+                                 test_for_management_mode,
+                                 test_for_report_and_basic_modes,
+                                 test_for_workflow_mode)
 
 
 class ReportViewsetMailSend(TestCase):
@@ -356,8 +365,11 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         cls.report = feedback_factories.ReportFactory(assigned_user=cls.workflow_manager_user, status=cls.classified_status)
         cls.report = feedback_factories.ReportFactory(status=cls.classified_status)
         permission = Permission.objects.get(name__contains='Can read Report')
+        permission_export = Permission.objects.get(name__contains='Can export Report')
         cls.workflow_manager_user.user_permissions.add(permission)
+        cls.workflow_manager_user.user_permissions.add(permission_export)
         cls.normal_user.user_permissions.add(permission)
+        cls.normal_user.user_permissions.add(permission_export)
         cls.intervention = ReportInterventionFactory()
         cls.unrelated_intervention = InfrastructureInterventionFactory()
 
@@ -450,3 +462,42 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
                                            format="geojson"),
                                    data={"status": self.classified_status.pk})
         self.assertEqual(len(response.json()['features']), 3)
+
+    @test_for_workflow_mode
+    def test_csv_superuser_sees_emails(self):
+        '''Test CSV job costs export does contain emails for superuser'''
+        translation.activate('fr')
+        self.client.force_login(user=self.super_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)
+
+    @test_for_workflow_mode
+    def test_csv_hidden_emails(self):
+        '''Test CSV job costs export do not contain emails for supervisor'''
+        translation.activate('fr')
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertNotIn("Courriel", column_names)
+
+    @test_for_workflow_mode
+    def test_csv_manager_sees_emails(self):
+        '''Test CSV job costs export does contain emails for manager'''
+        translation.activate('fr')
+        self.client.force_login(user=self.workflow_manager_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)

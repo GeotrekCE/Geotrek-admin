@@ -61,12 +61,21 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
 
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
-    mandatory_columns = ['id']
+    mandatory_columns = ['id', 'email']
     default_extra_columns = [
-        'email', 'activity', 'comment', 'category',
+        'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
         'date_insert', 'date_update', 'assigned_user'
     ]
+
+    def get_context_data(self, **kwargs):
+        # Remove email from available exports in workflow mode for supervisors
+        if 'email' in self.mandatory_columns and settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(
+                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            self.mandatory_columns.remove('email')
+        elif 'email' not in self.mandatory_columns:
+            self.mandatory_columns.append('email')
+        return super().get_context_data(**kwargs)
 
 
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
