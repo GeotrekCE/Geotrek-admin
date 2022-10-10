@@ -173,15 +173,13 @@ class InterventionViewSet(GeotrekMapentityViewSet):
     serializer_class = InterventionSerializer
     geojson_serializer_class = InterventionGeojsonSerializer
     filterset_class = InterventionFilterSet
+    mapentity_list_class = InterventionList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'name')
         return qs
-
-    def get_columns(self):
-        return InterventionList.mandatory_columns + settings.COLUMNS_LISTS.get('intervention_view', InterventionList.default_extra_columns)
 
 
 class ProjectList(CustomColumnsMixin, MapEntityList):
@@ -250,6 +248,7 @@ class ProjectViewSet(GeotrekMapentityViewSet):
     serializer_class = ProjectSerializer
     geojson_serializer_class = ProjectGeojsonSerializer
     filterset_class = ProjectFilterSet
+    mapentity_list_class = ProjectList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -258,6 +257,3 @@ class ProjectViewSet(GeotrekMapentityViewSet):
             qs = qs.filter(pk__in=non_empty_qs)
             qs = qs.only('id', 'name')
         return qs
-
-    def get_columns(self):
-        return ProjectList.mandatory_columns + settings.COLUMNS_LISTS.get('project_view', ProjectList.default_extra_columns)

@@ -158,6 +158,7 @@ class TouristicContentViewSet(GeotrekMapentityViewSet):
     serializer_class = TouristicContentSerializer
     geojson_serializer_class = TouristicContentGeojsonSerializer
     filterset_class = TouristicContentFilterSet
+    mapentity_list_class = TouristicContentList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -165,10 +166,6 @@ class TouristicContentViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
         return qs
-
-    def get_columns(self):
-        return TouristicContentList.mandatory_columns + settings.COLUMNS_LISTS.get('touristic_content_view',
-                                                                                   TouristicContentList.default_extra_columns)
 
 
 class TouristicContentAPIViewSet(APIViewSet):
@@ -294,6 +291,7 @@ class TouristicEventViewSet(GeotrekMapentityViewSet):
     serializer_class = TouristicEventSerializer
     geojson_serializer_class = TouristicEventGeojsonSerializer
     filterset_class = TouristicEventFilterSet
+    mapentity_list_class = TouristicEventList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -301,10 +299,6 @@ class TouristicEventViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
         return qs
-
-    def get_columns(self):
-        return TouristicEventList.mandatory_columns + settings.COLUMNS_LISTS.get('touristic_event_view',
-                                                                                 TouristicEventList.default_extra_columns)
 
 
 class TouristicEventAPIViewSet(APIViewSet):

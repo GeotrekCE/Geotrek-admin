@@ -86,6 +86,7 @@ class SignageViewSet(GeotrekMapentityViewSet):
     serializer_class = SignageSerializer
     geojson_serializer_class = SignageGeojsonSerializer
     filterset_class = SignageFilterSet
+    mapentity_list_class = SignageList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -95,10 +96,6 @@ class SignageViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.select_related('structure', 'manager', 'sealing', 'type', 'condition')
         return qs
-
-    def get_columns(self):
-        return SignageList.mandatory_columns + settings.COLUMNS_LISTS.get('signage_view',
-                                                                          SignageList.default_extra_columns)
 
 
 class SignageAPIViewSet(APIViewSet):
@@ -209,10 +206,7 @@ class BladeViewSet(GeotrekMapentityViewSet):
     serializer_class = BladeSerializer
     geojson_serializer_class = BladeGeojsonSerializer
     filterset_class = BladeFilterSet
-
-    def get_columns(self):
-        return BladeList.mandatory_columns + settings.COLUMNS_LISTS.get('blade_view',
-                                                                        BladeList.default_extra_columns)
+    mapentity_list_class = BladeList
 
     def get_queryset(self):
         qs = self.model.objects.all()

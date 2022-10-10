@@ -232,6 +232,7 @@ class PathViewSet(GeotrekMapentityViewSet):
     serializer_class = PathSerializer
     geojson_serializer_class = PathGeojsonSerializer
     filterset_class = PathFilterSet
+    mapentity_list_class = PathList
 
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator."""
@@ -270,9 +271,6 @@ class PathViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')
         return qs
-
-    def get_columns(self):
-        return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('path_view', PathList.default_extra_columns)
 
     def get_filter_count_infos(self, qs):
         """ Add total path length to count infos in List dropdown menu """
@@ -431,9 +429,7 @@ class TrailViewSet(GeotrekMapentityViewSet):
     serializer_class = TrailSerializer
     geojson_serializer_class = TrailGeojsonSerializer
     filterset_class = TrailFilterSet
-
-    def get_columns(self):
-        return TrailList.mandatory_columns + settings.COLUMNS_LISTS.get('trail_view', TrailList.default_extra_columns)
+    mapentity_list_class = TrailList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
