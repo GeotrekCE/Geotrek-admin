@@ -136,10 +136,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     filterset_class = ReportFilterSet
-
-    def get_columns(self):
-        return ReportList.mandatory_columns + settings.COLUMNS_LISTS.get('feedback_view',
-                                                                         ReportList.default_extra_columns)
+    mapentity_list_class = ReportList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("status")
