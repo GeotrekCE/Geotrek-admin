@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
+from django.utils.functional import classproperty
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
@@ -174,8 +175,21 @@ class BladeList(CustomColumnsMixin, MapEntityList):
     queryset = Blade.objects.all()
     filterform = BladeFilterSet
     mandatory_columns = ['id', 'number']
-    default_extra_columns = ['direction', 'type', 'color']
+    default_extra_columns = ['type', 'color', 'direction']
     searchable_columns = ['id', 'number']
+
+    @classproperty
+    def columns(cls):
+        columns = super().columns
+        if not settings.DIRECTION_ON_LINES_ENABLED:
+            return columns
+        columns.remove('direction')
+        if 'direction' in cls.get_custom_columns():
+            logger.warning(
+                f"Ignoring entry 'direction' in COLUMNS_LISTS for view {cls.__name__} because the setting "
+                "DIRECTION_ON_LINES is enabled."
+            )
+        return columns
 
 
 class BladeFormatList(MapEntityFormat, BladeList):

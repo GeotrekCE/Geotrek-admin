@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import json
 
 from django.conf import settings
 from django.contrib.auth.models import Permission, User
@@ -197,6 +198,27 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         result = self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(result.status_code, 302)
         self.assertEqual(self.model.objects.first().structure, structure)
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_is_hidden_on_blade_list_when_direction_on_lines_enabled(self):
+        BladeFactory.create()
+
+        response = self.client.get(Blade.get_datatablelist_url())
+
+        data = json.loads(response.content)
+        blade_repr = data['data'][0]
+        self.assertNotIn('direction', blade_repr)
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True, COLUMNS_LISTS={'blade_view': ['direction', 'condition']})
+    def test_direction_custom_field_is_hidden_on_blade_list_when_direction_on_lines_enabled(self):
+        BladeFactory.create()
+
+        response = self.client.get(Blade.get_datatablelist_url())
+
+        data = json.loads(response.content)
+        blade_repr = data['data'][0]
+        self.assertNotIn('direction', blade_repr)
+        self.assertIn('condition', blade_repr)
 
 
 class BladeTemplatesTest(TestCase):
