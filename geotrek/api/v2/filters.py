@@ -489,7 +489,7 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
 class TouristicEventFilterSet(filters.FilterSet):
     place = ModelMultipleChoiceFilter(
         widget=CSVWidget(),
-        queryset=TouristicEventPlace.objects.only('pk'),
+        queryset=TouristicEventPlace.objects.all(),
         help_text=_("Filter by one or more Place id, comma-separated.")
     )
     help_texts = {
