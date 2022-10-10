@@ -21,9 +21,16 @@ class LineForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        fields_for_layout = ['id', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time']
+
+        if not settings.DIRECTION_ON_LINES_ENABLED:
+            del self.fields['direction']
+            fields_for_layout.remove('direction')
+
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.helper.layout = Layout('id', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time')
+        self.helper.layout = Layout(*fields_for_layout)
         self.fields['number'].widget.attrs['class'] = 'input-mini'
         self.fields['text'].widget.attrs['class'] = 'input-xlarge'
         self.fields['distance'].widget.attrs['class'] = 'input-mini'
@@ -69,6 +76,9 @@ class BaseBladeForm(CommonForm):
         else:
             self.signage = self.instance.signage
         self._set_number_field_initial_value()
+
+        if settings.DIRECTION_ON_LINES_ENABLED:
+            del self.fields['direction']
 
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
