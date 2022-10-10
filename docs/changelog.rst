@@ -5,6 +5,11 @@ CHANGELOG
 2.88.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Blade list view now takes into account custom columns from COLUMNS_LISTS setting
+
+
 2.88.0 (2022-10-11)
 -----------------------
  
