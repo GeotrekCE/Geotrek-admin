@@ -203,13 +203,12 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
     class Meta:
         model = tourism_models.TouristicEvent
         fields = (
-            'id', 'description_teaser', 'description', 'themes',
-            'begin_date', 'end_date', 'duration', 'meeting_point',
-            'meeting_time', 'contact', 'email', 'website', 'structure',
-            'organizer', 'speaker', 'type', 'accessibility',
-            'participant_number', 'booking', 'target_audience',
-            'practical_info', 'touristic_contents', 'touristic_events',
-            'treks', 'pois', 'type1', 'category', 'source', 'portal', 'approved'
+            'id', 'accessibility', 'approved', 'begin_date', 'booking',
+            'capacity', 'category', 'contact', 'description', 'description_teaser',
+            'duration', 'email', 'end_date', 'end_time', 'meeting_point', 'organizer',
+            'pois', 'portal', 'practical_info', 'source', 'speaker', 'start_time',
+            'structure', 'target_audience', 'themes', 'touristic_contents', 'touristic_events',
+            'treks', 'type', 'type1', 'website'
         ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
 

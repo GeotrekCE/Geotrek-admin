@@ -368,8 +368,8 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'accessibility', 'approved', 'areas', 'begin_date', 'booking', 'category',
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
-            'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
-            'organizer', 'participant_number', 'pictures', 'pois', 'portal', 'practical_info',
+            'id', 'map_image_url', 'meeting_point', 'start_time', 'end_time', 'name',
+            'organizer', 'capacity', 'pictures', 'pois', 'portal', 'practical_info',
             'printable', 'publication_date', 'published', 'published_status',
             'slug', 'source', 'speaker', 'structure', 'target_audience', 'themes',
             'thumbnail', 'touristic_contents', 'touristic_events', 'treks', 'type',
@@ -518,7 +518,6 @@ class TouristicEventViewSetTest(TestCase):
         7 events with end date before relative date
                  ->  only events with no end or end in after relative date must be included
         """
-
         TouristicEventFactory.create_batch(5, end_date=None, published=True)
         TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
         TouristicEventFactory.create_batch(7, end_date=datetime.strptime('2010-05-10', '%Y-%m-%d'), published=True)

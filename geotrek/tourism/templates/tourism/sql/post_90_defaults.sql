@@ -98,7 +98,8 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN description SET DEFAULT '';
 -- end_date
 ALTER TABLE tourism_touristicevent ALTER COLUMN duration SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN meeting_point SET DEFAULT '';
--- meeting_time
+-- start_time
+-- end_time
 ALTER TABLE tourism_touristicevent ALTER COLUMN contact SET DEFAULT '';
 -- email
 -- website
@@ -106,7 +107,9 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN organizer SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN speaker SET DEFAULT '';
 -- type
 ALTER TABLE tourism_touristicevent ALTER COLUMN accessibility SET DEFAULT '';
-ALTER TABLE tourism_touristicevent ALTER COLUMN participant_number SET DEFAULT '';
+--capacity
+ALTER TABLE tourism_touristicevent ALTER COLUMN bookable SET DEFAULT FALSE;
+ALTER TABLE tourism_touristicevent ALTER COLUMN cancelled SET DEFAULT FALSE;
 ALTER TABLE tourism_touristicevent ALTER COLUMN booking SET DEFAULT '';
 -- target_audience
 ALTER TABLE tourism_touristicevent ALTER COLUMN practical_info SET DEFAULT '';
@@ -124,3 +127,34 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 -- deleted
 ALTER TABLE tourism_touristicevent ALTER COLUMN provider SET DEFAULT '';
+
+
+-- TouristicEventParticipantCount
+-----------------
+-- name
+-- order
+ALTER TABLE tourism_touristiceventparticipantcount ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE tourism_touristiceventparticipantcount ALTER COLUMN date_update SET DEFAULT now();
+
+
+-- TouristicEventParticipantCategory
+-----------------
+-- label
+-- order
+ALTER TABLE tourism_touristiceventparticipantcategory ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE tourism_touristiceventparticipantcategory ALTER COLUMN date_update SET DEFAULT now();
+
+
+-- TouristicEventPlace
+-----------------
+-- name 
+-- geom
+ALTER TABLE tourism_touristiceventplace ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE tourism_touristiceventplace ALTER COLUMN date_update SET DEFAULT now();
+
+
+-- TouristicEventCancellationReason
+-----------------
+-- label
+ALTER TABLE tourism_cancellationreason ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE tourism_cancellationreason ALTER COLUMN date_update SET DEFAULT now();

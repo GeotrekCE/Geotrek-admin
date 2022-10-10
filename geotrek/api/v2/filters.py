@@ -6,13 +6,16 @@ from coreapi.document import Field
 from django.conf import settings
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
-from django.utils.translation import gettext as _
+from django_filters import ModelMultipleChoiceFilter
+from django_filters.widgets import CSVWidget
+from django.utils.translation import gettext_lazy as _
+from django_filters import rest_framework as filters
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
+from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventPlace, TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
 
@@ -483,6 +486,28 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
         )
 
 
+class TouristicEventFilterSet(filters.FilterSet):
+    place = ModelMultipleChoiceFilter(
+        widget=CSVWidget(),
+        queryset=TouristicEventPlace.objects.all(),
+        help_text=_("Filter by one or more Place id, comma-separated.")
+    )
+    help_texts = {
+        'bookable': _("Filter events on bookable boolean : true/false expected"),
+        'cancelled': _("Filter events on cancelled boolean : true/false expected")
+    }
+
+    @classmethod
+    def filter_for_field(cls, f, name, lookup_expr):
+        field_filter = super().filter_for_field(f, name, lookup_expr)
+        field_filter.extra['help_text'] = cls.help_texts[name]
+        return field_filter
+
+    class Meta:
+        model = TouristicEvent
+        fields = ['cancelled', 'bookable', 'place']
+
+
 class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
@@ -500,10 +525,15 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
             dates_after = request.GET.get('dates_after')
             if dates_after:
                 dates_after = datetime.strptime(dates_after, "%Y-%m-%d").date()
-            else:
+                qs = qs.filter(
+                    Q(end_date__gte=dates_after) | Q(end_date__isnull=True) & Q(begin_date__gte=dates_after)
+                )
+            if not dates_after and not dates_before:
                 # Filter out past events by default
                 dates_after = date.today()
-            qs = qs.filter(Q(end_date__gte=dates_after))
+                qs = qs.filter(
+                    Q(end_date__gte=dates_after) | Q(end_date__isnull=True) & Q(begin_date__gte=dates_after)
+                )
         return self._filter_queryset(request, qs, view)
 
     def get_schema_fields(self, view):
@@ -1009,6 +1039,11 @@ class InfrastructureRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPorta
 class TouristicEventRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevent')
+
+
+class TouristicEventsRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevents')
 
 
 class SiteRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):

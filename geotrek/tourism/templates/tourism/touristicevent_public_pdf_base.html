@@ -107,10 +107,16 @@
                 <span class="meta-item-value">{{ object.meeting_point }}</span>
               </span>
             {% endif %}
-            {% if object.meeting_time %}
+            {% if object.start_time %}
               <span class="meta-item">
-                <span class="meta-item-label">{% trans "Meeting time" %}</span>
-                <span class="meta-item-value">{{ object.meeting_time|time:"H \h i" }}</span>
+                <span class="meta-item-label">{% trans "Start time" %}</span>
+                <span class="meta-item-value">{{ object.start_time|time:"H \h i" }}</span>
+              </span>
+            {% endif %}
+            {% if object.end_time %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "End time" %}</span>
+                <span class="meta-item-value">{{ object.end_time|time:"H \h i" }}</span>
               </span>
             {% endif %}
             {% if object.duration %}
@@ -179,10 +185,10 @@
           <div class="text-content">{{ object.speaker }}</div>
         </section>
       {% endif %}
-      {% if object.participant_number %}
+      {% if object.capacity %}
         <section class="half-block participants">
-          <h2>{% trans "Number of participants" %}</h2>
-          <div class="text-content">{{ object.participant_number }}</div>
+          <h2>{% trans "Capacity" %}</h2>
+          <div class="text-content">{{ object.capacity }}</div>
         </section>
       {% endif %}
       {% if object.booking %}

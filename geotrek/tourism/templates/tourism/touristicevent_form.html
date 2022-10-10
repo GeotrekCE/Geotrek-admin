@@ -1,9 +1,15 @@
 {% extends "mapentity/mapentity_form.html" %}
 
-{% load static %}
+{% load static tourism_tags %}
 
 
 {% block extrabody %}
+
     {{ block.super }}
     <script type="text/javascript" src="{% static "common/js/form.js" %}"></script>
+    <script type="application/json" id="places-coords">
+        {% places_coords as places_coords %}
+            {{places_coords|safe}}
+    </script>
 {% endblock extrabody %}
+

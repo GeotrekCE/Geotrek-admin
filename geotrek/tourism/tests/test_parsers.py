@@ -388,6 +388,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(round(event.geom.x), 922920)
         self.assertEqual(round(event.geom.y), 6357103)
         self.assertEqual(event.practical_info[:38], "<b>Ouverture:</b><br>Mardi 6 août 2019")
+        self.assertIn("<b>Capacité totale:</b><br>100 participants<br>", event.practical_info)
         self.assertIn("><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
                       event.practical_info)
         self.assertIn("<b>Ouverture:</b><br>Mardi 6 août 2019 de 9h à midi.<br>", event.practical_info)
@@ -395,13 +396,14 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("<b>Accès:</b><br>TestFr<br>", event.practical_info)
         self.assertTrue(event.published)
         self.assertEqual(event.organizer, 'Toto')
-        self.assertEqual(str(event.meeting_time), '09:00:00')
+        self.assertEqual(str(event.start_time), '09:00:00')
         self.assertEqual(event.type.type, 'Sports')
         self.assertQuerysetEqual(
             event.themes.all(),
             ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
         )
         self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(TouristicEventApidaeParser().filter_capacity("capacity", "12"), 12)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_apidae_constant_fields(self, mocked):

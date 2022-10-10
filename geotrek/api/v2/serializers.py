@@ -445,8 +445,25 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
-        end_date = serializers.DateField()
+        end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
+        cancellation_reason = serializers.SerializerMethodField()
+        place = serializers.SlugRelatedField(
+            read_only=True,
+            slug_field='name'
+        )
+        meeting_time = serializers.ReadOnlyField(
+            source='start_time',
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'start_time'")
+        )
+        participant_number = serializers.SerializerMethodField(
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'capacity'")
+        )
+
+        def get_cancellation_reason(self, obj):
+            if not obj.cancellation_reason:
+                return None
+            return get_translation_or_dict('label', self, obj.cancellation_reason)
 
         def get_type(self, obj):
             obj_type = obj.type
@@ -454,16 +471,31 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 return obj_type.pk
             return None
 
+        def get_participant_number(self, obj):
+            return str(obj.capacity)
+
+        def get_end_date(self, obj):
+            return obj.end_date or obj.begin_date
+
         class Meta:
             model = tourism_models.TouristicEvent
             fields = (
-                'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking',
-                'cities', 'contact', 'create_datetime', 'description', 'description_teaser',
-                'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
-                'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
-                'practical_info', 'published', 'provider', 'source', 'speaker', 'structure',
-                'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website'
+                'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable',
+                'booking', 'cancellation_reason', 'cancelled', 'capacity', 'cities',
+                'contact', 'create_datetime', 'description', 'description_teaser', 'duration',
+                'email', 'end_date', 'end_time', 'external_id', 'geometry', 'meeting_point',
+                'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'place',
+                'portal', 'practical_info', 'provider', 'published', 'source', 'speaker',
+                'start_time', 'structure', 'target_audience', 'themes', 'type',
+                'update_datetime', 'url', 'uuid', 'website'
             )
+
+    class TouristicEventPlaceSerializer(serializers.ModelSerializer):
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+
+        class Meta:
+            model = tourism_models.TouristicEventPlace
+            fields = ('id', 'geometry', 'name')
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()

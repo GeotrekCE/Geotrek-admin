@@ -271,7 +271,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'end_date': 'ouverture.periodesOuvertures.0.dateFin',
         'duration': ('ouverture.periodesOuvertures.0.horaireOuverture',
                      'ouverture.periodesOuvertures.-1.horaireFermeture'),
-        'meeting_time': 'ouverture.periodesOuvertures.0.horaireOuverture',
+        'start_time': 'ouverture.periodesOuvertures.0.horaireOuverture',
         'contact': (
             'localisation.adresse.adresse1',
             'localisation.adresse.adresse2',
@@ -284,7 +284,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'website': 'informations.moyensCommunication',
         'organizer': 'informations.structureGestion.nom.libelleFr',
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
-        'participant_number': 'informationsFeteEtManifestation.nbParticipantsAttendu',
+        'capacity': 'informationsFeteEtManifestation.nbParticipantsAttendu',
         'practical_info': (
             'ouverture.periodeEnClair.libelleFr',
             'informationsFeteEtManifestation.nbParticipantsAttendu',
@@ -373,6 +373,13 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
             tel,
         ] if line]
         return '<br>'.join(lines)
+
+    def filter_capacity(self, src, val):
+        if val.isnumeric():
+            return int(val)
+        else:
+            self.add_warning(f"Field {src} can't populate capacity field value: '{val}' isn't numeric")
+            return None
 
     def filter_email(self, src, val):
         return self._filter_comm(val, 204, multiple=False)

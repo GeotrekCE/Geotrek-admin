@@ -1,4 +1,5 @@
-[{
+[
+{
     "pk": 1,
     "model": "tourism.informationdesktype",
     "fields": {
@@ -835,6 +836,74 @@
         "type": "Spectacle",
         "type_en": "Show",
         "type_fr": "Spectacle"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Autre",
+        "label_en": "Other",
+        "label_fr": "Other",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "M\u00e9t\u00e9o",
+        "label_en": "Weather",
+        "label_fr": "Météo",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Animateur indisponible",
+        "label_en": "Host unavailable",
+        "label_fr": "Animateur indisponible",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Incendie",
+        "label_en": "Fire",
+        "label_fr": "Incendie",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Nombre d'inscrits",
+        "label_en": "Few participants",
+        "label_fr": "Nombre d'inscrits",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.touristiceventparticipantcategory",
+    "fields": {
+        "label": "Adultes",
+        "order": 1,
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.touristiceventparticipantcategory",
+    "fields": {
+        "label": "Enfants",
+        "order": 2,
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
     }
 }
 ]

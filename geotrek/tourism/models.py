@@ -1,6 +1,7 @@
 import logging
 import os
 import uuid
+
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -18,7 +19,7 @@ from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
                                           PicturesMixin, PublishableMixin, TimeStampedModelMixin)
 from geotrek.common.models import ReservationSystem, Theme
-from geotrek.common.utils import intersecting
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import Topology
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
@@ -396,11 +397,35 @@ class TouristicEventType(OptionalPictogramMixin):
         return self.type
 
 
+class CancellationReason(TimeStampedModelMixin):
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Cancellation reason")
+        verbose_name_plural = _("Cancellation reasons")
+
+    def __str__(self):
+        return self.label
+
+
 class TouristicEventManager(NoDeleteManager):
     def provider_choices(self):
         providers = self.get_queryset().existing().order_by('provider').exclude(provider__exact='') \
             .distinct('provider').values_list('provider', 'provider')
         return providers
+
+
+class TouristicEventPlace(TimeStampedModelMixin):
+    name = models.CharField(null=False, max_length=256)
+    geom = models.PointField(srid=settings.SRID)
+
+    class Meta:
+        verbose_name = _("Event place")
+        verbose_name_plural = _("Event places")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
@@ -415,14 +440,16 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.PointField(verbose_name=_("Location"), srid=settings.SRID)
-    begin_date = models.DateField(blank=True, null=True, verbose_name=_("Begin date"))
+    begin_date = models.DateField(blank=False, null=False, verbose_name=_("Begin date"))
     end_date = models.DateField(blank=True, null=True, verbose_name=_("End date"))
     duration = models.CharField(verbose_name=_("Duration"), max_length=64, blank=True,
                                 help_text=_("3 days, season, ..."))
     meeting_point = models.CharField(verbose_name=_("Meeting point"), max_length=256, blank=True,
                                      help_text=_("Where exactly ?"))
-    meeting_time = models.TimeField(verbose_name=_("Meeting time"), blank=True, null=True,
-                                    help_text=_("11:00, 23:30"))
+    start_time = models.TimeField(verbose_name=_("Start time"), blank=True, null=True,
+                                  help_text=_("11:00, 23:30"))
+    end_time = models.TimeField(verbose_name=_("End time"), blank=True, null=True,
+                                help_text=_("11:00, 23:30"))
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     email = models.EmailField(verbose_name=_("Email"), max_length=256,
                               blank=True, null=True)
@@ -432,7 +459,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
     type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.CASCADE)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
-    participant_number = models.CharField(verbose_name=_("Number of participants"), max_length=256, blank=True)
+    capacity = models.IntegerField(verbose_name=_("Capacity"), blank=True, null=True)
     booking = models.TextField(verbose_name=_("Booking"), blank=True)
     target_audience = models.CharField(verbose_name=_("Target audience"), max_length=128, blank=True, null=True)
     practical_info = models.TextField(verbose_name=_("Practical info"), blank=True,
@@ -447,8 +474,25 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    bookable = models.BooleanField(verbose_name=_("Bookable"), default=False)
+    cancelled = models.BooleanField(default=False, verbose_name=_("Cancelled"), help_text=_("Boolean indicating if Event is cancelled"))
+    cancellation_reason = models.ForeignKey(CancellationReason, verbose_name=_("Cancellation reason"), related_name="touristic_events", null=True, blank=True, on_delete=models.PROTECT)
     objects = TouristicEventManager()
+    place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Event place"), on_delete=models.PROTECT, null=True, blank=True, help_text=_("Select a place in the list or locate the event directly on the map"))
     id_prefix = 'E'
+
+    @property
+    def participants_total(self):
+        return self.participants.aggregate(participants_total=models.Sum('count'))['participants_total']
+
+    @classproperty
+    def total_participants_verbose_name(cls):
+        # Specific for annotated exports
+        return _("Number of participants")
+
+    @classproperty
+    def participants_total_verbose_name(cls):
+        return _("Number of participants")
 
     class Meta:
         verbose_name = _("Touristic event")
@@ -468,14 +512,9 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
 
     @property
     def dates_display(self):
-        if not self.begin_date and not self.end_date:
-            return ""
-        elif not self.end_date:
+        if not self.end_date:
             return _("starting from {begin}").format(
                 begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'))
-        elif not self.begin_date:
-            return _("up to {end}").format(
-                end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
         elif self.begin_date == self.end_date:
             return date_format(self.begin_date, 'SHORT_DATE_FORMAT')
         else:
@@ -498,6 +537,28 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     @property
     def meta_description(self):
         return plain_text(self.description_teaser or self.description)[:500]
+
+
+class TouristicEventParticipantCategory(TimeStampedModelMixin):
+    label = models.CharField(verbose_name=_("Label"), max_length=255)
+    order = models.PositiveSmallIntegerField(default=None, null=True, blank=True, verbose_name=_("Display order"))
+
+    class Meta:
+        verbose_name = _("Participant category")
+        verbose_name_plural = _("Participant categories")
+        ordering = ['order', 'label']
+
+    def __str__(self):
+        return self.label
+
+
+class TouristicEventParticipantCount(TimeStampedModelMixin):
+    count = models.PositiveIntegerField(verbose_name=_("Number of participants"))
+    category = models.ForeignKey(TouristicEventParticipantCategory, verbose_name=_("Category"), on_delete=models.CASCADE, related_name="participants")
+    event = models.ForeignKey(TouristicEvent, verbose_name=_("Touristic event"), on_delete=models.CASCADE, related_name="participants")
+
+    def __str__(self):
+        return f"{self.count} {self.category}"
 
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))

@@ -165,6 +165,7 @@ SELECT a.id,
         a.name_{{ lang }} AS "Name {{ lang }}",
        {% endfor %}
        b.type AS "Type",
+       p.name as "Place",
        a.contact AS "Contact",
        a.email AS "Email",
        a.website AS "Website",
@@ -180,6 +181,8 @@ SELECT a.id,
        h.labels AS "Themes",
        a.begin_date AS "Begin date",
        a.end_date AS "End date",
+       a.start_time AS "Start time",
+       a.end_time AS "End time",
        concat(a.duration, ' days') AS "Duration",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.booking_{{ lang }} AS "Booking {{ lang }}",
@@ -197,9 +200,17 @@ SELECT a.id,
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% endfor %}
-       a.participant_number AS "Number of participants",
+       a.capacity AS "Capacity",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.target_audience_{{ lang }} AS "Target audience {{ lang }}",
+       {% endfor %}
+        CASE
+            WHEN a.bookable IS FALSE THEN 'No'
+            WHEN a.bookable IS TRUE THEN 'Yes'
+        END AS "Bookable {{ lang }}",
+       a.cancelled AS "Canceled", 
+       {% for lang in MODELTRANSLATION_LANGUAGES %}
+        cr.label_{{ lang }} AS "Cancellation reason {{ lang }}",
        {% endfor %}
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
@@ -207,6 +218,8 @@ SELECT a.id,
 FROM public.tourism_touristicevent a
 LEFT JOIN public.tourism_touristiceventtype b ON a.type_id = b.id
 LEFT JOIN public.authent_structure c ON a.structure_id = c.id
+LEFT JOIN public.tourism_cancellationreason cr ON a.cancellation_reason_id = cr.id
+LEFT JOIN public.tourism_touristiceventplace p ON a.place_id = p.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
             a.id

@@ -42,7 +42,7 @@
         ]
       },
       "meeting_point": "Centre ville de Saint Girons",
-      "meeting_time": null,
+      "start_time": null,
       "name": {
         "fr": "Autrefois le Couserans",
         "en": "",
@@ -50,7 +50,7 @@
         "it": null
       },
       "organizer": "",
-      "participant_number": "",
+      "capacity": 0,
       "pdf": {
         "fr": "https://foo.fr/api/fr/touristicevents/3/autrefois-le-couserans.pdf",
         "en": "https://foo.fr/api/en/touristicevents/3/autrefois-le-couserans.pdf",
@@ -117,7 +117,8 @@
         ]
       },
       "meeting_point": "Au bout du monde",
-      "meeting_time": "15:45:00",
+      "start_time": "15:45:00",
+      "end_time": "16:45:00",
       "name": {
         "fr": "Festival du test",
         "en": "",
@@ -125,7 +126,7 @@
         "it": null
       },
       "organizer": "Mr Test",
-      "participant_number": "12",
+      "capacity": 12,
       "pdf": {
         "fr": "https://foo.fr/api/fr/touristicevents/1/festival-du-test.pdf",
         "en": "https://foo.fr/api/en/touristicevents/1/festival-du-test.pdf",
