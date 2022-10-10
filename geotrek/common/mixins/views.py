@@ -21,7 +21,7 @@ from geotrek.common.utils.portals import smart_get_template_by_portal
 class CustomColumnsMixin:
     """ Customize columns in List views """
 
-    MAP_SETTINGS = {
+    _MAP_SETTINGS = {
         'PathList': 'path_view',
         'PathJsonList': 'path_view',
         'PathFormatList': 'path_export',
@@ -116,16 +116,20 @@ class CustomColumnsMixin:
             )
         return default_extra_columns
 
+    @classmethod
+    def get_custom_columns(cls):
+        settings_key = cls._MAP_SETTINGS.get(cls.__name__, '')
+        return settings.COLUMNS_LISTS.get(settings_key, [])
+
     @classproperty
     def columns(cls):
         mandatory_cols = cls.get_mandatory_columns()
         default_extra_cols = cls.get_default_extra_columns()
-        settings_key = cls.MAP_SETTINGS.get(cls.__name__, '')
         if (mandatory_cols is None or default_extra_cols is None):
             return []
         else:
             # Get extra columns names from instance settings, or use default extra columns
-            extra_columns = settings.COLUMNS_LISTS.get(settings_key, default_extra_cols)
+            extra_columns = cls.get_custom_columns() or default_extra_cols
             # Some columns are mandatory to prevent crashes
             columns = mandatory_cols + extra_columns
             return columns
