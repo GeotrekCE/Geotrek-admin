@@ -66,6 +66,8 @@ class BaseBladeForm(CommonForm):
         )
     ]
 
+    not_hideable_fields = ['direction']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
