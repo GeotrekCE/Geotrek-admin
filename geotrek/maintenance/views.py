@@ -41,6 +41,7 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
 
+    @classmethod
     def build_cost_column_name(cls, job_name):
         return _normalize_annotation_column_name(f"{_('Cost')} {job_name}")
 
@@ -79,6 +80,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
                 queryset = queryset.annotate(**params)
         return queryset
 
+    @classmethod
     def get_mandatory_columns(cls):
         mandatory_columns = ['id']
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
