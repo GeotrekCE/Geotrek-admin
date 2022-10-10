@@ -6,9 +6,10 @@ class GeotrekMapentityViewSet(MapEntityViewSet):
     """ Custom MapentityViewSet for geotrek. """
 
     permission_classes = [permissions.DjangoModelPermissionsOrAnonReadOnly]
+    mapentity_list_class = []
 
     def get_columns(self):
-        return []
+        return self.mapentity_list_class.columns
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
