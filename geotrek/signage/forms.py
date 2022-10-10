@@ -68,18 +68,7 @@ class BaseBladeForm(CommonForm):
             self.helper.form_action += '?signage=%s' % self.signage.pk
         else:
             self.signage = self.instance.signage
-
-        value_max = self.signage.blade_set.all().aggregate(max=Max('number'))['max']
-        if settings.BLADE_CODE_TYPE == int:
-            if not value_max:
-                self.fields['number'].initial = "1"
-            elif value_max.isdigit():
-                self.fields['number'].initial = str(int(value_max) + 1)
-        elif settings.BLADE_CODE_TYPE is str:
-            if not value_max:
-                self.fields['number'].initial = "A"
-            elif len(value_max) == 1 and "A" <= value_max[0] < "Z":
-                self.fields['number'].initial = chr(ord(value_max[0]) + 1)
+        self._set_number_field_initial_value()
 
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
@@ -94,6 +83,19 @@ class BaseBladeForm(CommonForm):
         if blades.filter(number=self.cleaned_data['number']).exists():
             raise forms.ValidationError(_("Number already exists, numbers already used : %s" % already_used))
         return self.cleaned_data['number']
+
+    def _set_number_field_initial_value(self):
+        value_max = self.signage.blade_set.all().aggregate(max=Max('number'))['max']
+        if settings.BLADE_CODE_TYPE == int:
+            if not value_max:
+                self.fields['number'].initial = "1"
+            elif value_max.isdigit():
+                self.fields['number'].initial = str(int(value_max) + 1)
+        elif settings.BLADE_CODE_TYPE is str:
+            if not value_max:
+                self.fields['number'].initial = "A"
+            elif len(value_max) == 1 and "A" <= value_max[0] < "Z":
+                self.fields['number'].initial = chr(ord(value_max[0]) + 1)
 
     class Meta:
         model = Blade
