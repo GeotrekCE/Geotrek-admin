@@ -1276,6 +1276,8 @@ All settings used to generate altimetric profile.
 
 ``BLADE_ENABLED`` and ``LINE_ENABLED`` settings (default to ``True``) allow to enable or disable blades and lines submodules.
 
+``DIRECTION_ON_LINES_ENABLED`` setting (default to ``False``) allow to have the `direction` field on lines instead of blades.
+
 ::
 
     BLADE_CODE_TYPE = int
