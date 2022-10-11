@@ -209,8 +209,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas', 'approved', 'uuid',
         'cancelled', 'cancellation_reason', 'participants_total', 'place',
-        'preparation_duration', 'intervention_duration'
-        'cancelled', 'cancellation_reason', 'total_participants', 'place'
+        'preparation_duration', 'intervention_duration',
     ]
 
     def get_queryset(self):
