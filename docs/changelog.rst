@@ -5,6 +5,10 @@ CHANGELOG
 2.88.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add new setting `DIRECTION_ON_LINES_ENABLED` to have the `direction` field on lines instead of blades
+
 **Bug fixes**
 
 - Blade list view now takes into account custom columns from COLUMNS_LISTS setting
@@ -45,6 +49,10 @@ CHANGELOG
 
 - Show sentinel email addresses only to workflow manager
 
+
+**New features**
+
+- Add new setting `DIRECTION_ON_LINES_ENABLED` to have the `direction` field on lines instead of blades
 
 2.87.2 (2022-09-23)
 -----------------------
