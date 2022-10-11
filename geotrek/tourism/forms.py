@@ -84,6 +84,7 @@ class TouristicEventForm(CommonForm):
                     'start_time',
                     'end_time',
                     'duration',
+                    'place',
                     'meeting_point',
                     'description_teaser',
                     'description',
@@ -144,7 +145,7 @@ class TouristicEventForm(CommonForm):
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
-        participants_count = {p.category.pk: p.count for p in self.instance.participants.all()}
+        participants_count = {p.category.pk: p.count for p in self.instance.participants.select_related('category').all()}
         categories = TouristicEventParticipantCategory.objects.all()
         if not categories:
             self.fieldslayout[0][1][1][0].append(HTML(_("Please add a participant category in admin interface in order to complete the number of participants.")))

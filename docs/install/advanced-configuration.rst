@@ -2461,7 +2461,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         'intervention_duration'
     ]
     COLUMNS_LISTS["feedback_export"] = [
-        "email",
         "comment",
         "activity",
         "category",

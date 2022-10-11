@@ -19,6 +19,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=256)),
                 ('geom', django.contrib.gis.db.models.fields.PointField(srid=settings.SRID)),
+                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
+                ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
             ],
             options={
                 'verbose_name': 'Event place',
@@ -26,14 +28,9 @@ class Migration(migrations.Migration):
                 'ordering': ['name'],
             },
         ),
-        migrations.AlterField(
-            model_name='touristicevent',
-            name='start_time',
-            field=models.TimeField(blank=True, help_text='11:00, 23:30', null=True, verbose_name='Start time'),
-        ),
         migrations.AddField(
             model_name='touristicevent',
             name='place',
-            field=models.ForeignKey(blank=True, help_text='Select a place to auto-locate event on map', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='touristicevents', to='tourism.touristiceventplace', verbose_name='Event place'),
+            field=models.ForeignKey(blank=True, help_text='Select a place in the list or locate the event directly on the map', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='touristicevents', to='tourism.touristiceventplace', verbose_name='Event place'),
         ),
     ]

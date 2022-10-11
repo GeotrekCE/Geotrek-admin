@@ -33,8 +33,6 @@ msgstr ""
 msgid "Completed"
 msgstr ""
 
-#, fuzzy
-#| msgid "Event place"
 msgid "Event"
 msgstr ""
 
@@ -329,7 +327,7 @@ msgstr ""
 msgid "Boolean indicating if Event is cancelled"
 msgstr ""
 
-msgid "Select a place to auto-locate event on map"
+msgid "Select a place in the list or locate the event directly on the map"
 msgstr ""
 
 msgid "Number of participants"

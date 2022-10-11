@@ -218,6 +218,10 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason', 'participant_number'
 ])
 
+TOURISTIC_EVENT_PLACE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'name', 'geometry'
+])
+
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'pictogram', 'type'
 ])
@@ -658,6 +662,12 @@ class BaseApiTest(TestCase):
 
     def get_touristiceventtype_detail(self, id_touristiceventtype, params=None):
         return self.client.get(reverse('apiv2:touristiceventtype-detail', args=(id_touristiceventtype,)), params)
+
+    def get_touristiceventplace_list(self, params=None):
+        return self.client.get(reverse('apiv2:touristiceventplace-list'), params)
+
+    def get_touristiceventplace_detail(self, id_touristiceventplace, params=None):
+        return self.client.get(reverse('apiv2:touristiceventplace-detail', args=(id_touristiceventplace,)), params)
 
     def get_servicetype_list(self, params=None):
         return self.client.get(reverse('apiv2:servicetype-list'), params)
@@ -2897,6 +2907,8 @@ class TouristicEventTestCase(BaseApiTest):
     def setUpTestData(cls):
         cls.maxDiff = None
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory()
+        cls.place = tourism_factory.TouristicEventPlaceFactory(name="Here")
+        cls.other_place = tourism_factory.TouristicEventPlaceFactory(name="Over here")
         cls.touristic_event1 = tourism_factory.TouristicEventFactory(
             name_fr="Exposition - Du vent, du sable et des étoiles",
             name_en="Wind and sand",
@@ -2915,6 +2927,7 @@ class TouristicEventTestCase(BaseApiTest):
             start_time=datetime.time(11, 20),
             end_time=datetime.time(12, 20),
             cancelled=True,
+            place=cls.other_place,
             cancellation_reason=tourism_factory.CancellationReasonFactory(label_en="Fire", label_fr="Incendie")
         )
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
@@ -2940,7 +2953,7 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event4 = tourism_factory.TouristicEventFactory(
             deleted=True
         )
-        cls.place = tourism_factory.TouristicEventPlaceFactory()
+        cls.place_unpublished = tourism_factory.TouristicEventPlaceFactory(name="There")
         cls.touristic_event5 = tourism_factory.TouristicEventFactory(
             end_date=None,
             published=True,
@@ -3001,6 +3014,10 @@ class TouristicEventTestCase(BaseApiTest):
         response = self.get_touristicevent_detail(self.touristic_event1.pk)
         self.check_structure_response(response, TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE)
 
+    def test_touristic_event_place_detail(self):
+        response = self.get_touristiceventplace_detail(self.place.pk)
+        self.check_structure_response(response, TOURISTIC_EVENT_PLACE_DETAIL_JSON_STRUCTURE)
+
     def test_touristicevent_near_trek(self):
         response = self.get_touristicevent_list({'near_trek': self.trek.pk})
         # Event 1 appears but not Event 2
@@ -3030,9 +3047,13 @@ class TouristicEventTestCase(BaseApiTest):
         response = self.get_touristicevent_list({'bookable': 'False'})
         self.assertEqual(response.json().get("count"), 2)
 
-    def test_touristic_event_place(self):
-        response = self.get_touristicevent_list({'place': self.place.pk})
-        self.assertEqual(response.json().get("count"), 1)
+    def test_touristic_event_place_filter(self):
+        response = self.get_touristicevent_list({'place': f"{self.place.pk},{self.other_place.pk}"})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_place_list(self):
+        response = self.get_touristiceventplace_list()
+        self.assertEqual(response.json().get("count"), 2)
 
 
 class TouristicEventTypeTestCase(BaseApiTest):

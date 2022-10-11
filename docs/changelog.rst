@@ -2,34 +2,48 @@
 CHANGELOG
 =========
 
-2.87.2+dev (XXXX-XX-XX)
+2.88.0+dev (XXXX-XX-XX)
 -----------------------
  
 **New features**
 
-- Add model TouristicEventPlace, use place selector to locate TouristicEvent on form map
-- Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable``, ``place``, ``preparation_duration``, ``intervention_duration``  to TouristicEvents
-- ``cancellation_reason`` selector is displayed in Event form if ``bookable`` is checked
-- ``booking`` text box is displayed in Event form if ``bookable`` is checked
-- Create ``TouristicEventParticipantCategory`` model to define types of attendees for Events
-- Create `Assessment` tab in Event form to input retrospective information such as number of attendees per category
+- Add fields ``preparation_duration``, ``intervention_duration``  to TouristicEvents
+
+
+2.88.0 (2022-10-11)
+-----------------------
+ 
+**New features**
+
+- Add optional places to TouristicEvents, using place selector to locate TouristicEvent on form map (#3266)
+- Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable`` and ``place`` to TouristicEvents (#3237)
+- ``cancellation_reason`` selector is displayed in Event form if ``bookable`` is checked (#3237)
+- ``booking`` text box is displayed in Event form if ``bookable`` is checked (#3237)
+- Create `Assessment` tab in Event form to input retrospective information such as number of attendees per category (#3237)
+- Create ``TouristicEventParticipantCategory`` model to define types of attendees for Events (#3237)
 
 **Breaking changes**
 
-- Rename ``meeting_time`` to ``start_time`` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes ``start_time`` instead of ``meeting_time``
-- Rename ``participant_number`` to ``capacity`` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes ``capacity`` instead of ``participant_number``
-- These fields are still available in API v2 for retrocompatibility but should not be used by default
+- Rename ``meeting_time`` to ``start_time`` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes ``start_time`` instead of ``meeting_time`` (#3237)
+- Rename ``participant_number`` to ``capacity`` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes ``capacity`` instead of ``participant_number`` (#3237)
+- These fields are still available in API v2 for retrocompatibility but should not be used by default (#3237)
+- If you have specific parsers importing into TouristicEvents, you should rename ``meeting_time`` to ``start_time`` and ``participant_number`` to ``capacity`` (#3237)
 
 **Bug fixes**
 
-- Fix TouristicEvent with no end dates are not returned in APIv2
+- Fix TouristicEvent with no end dates are not returned in APIv2 (#3127)
 
 **Minor improvements** 
 
-- Check ``begin date`` is before ``end date`` in TouristicEvent forms
+- Check ``begin date`` is before ``end date`` in TouristicEvent forms (#3237)
 - Set ``begin_date`` not null for TouristicEvents (#3127)
-- Change order of attributes in Event forms and detail view
-- Update Event SQL view ``v_touristicevents`` according to above changes
+- Filter TouristicEventType by date in API v2 (GeotrekCE/Geotrek-rando-v3#763)
+- Change order of attributes in Event forms and detail view (#3237)
+- Update Event SQL view ``v_touristicevents`` according to above changes (#3237)
+
+**Suricate Workflow**  (#2366)
+
+- Show sentinel email addresses only to workflow manager
 
 
 2.87.2 (2022-09-23)
@@ -85,12 +99,14 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade dependencies. The detail for the main dependencies:
-  + django to 3.2.15
-  + celery[redis] to 5.1.2
 
-** Warning
+  - django to 3.2.15
+  - celery[redis] to 5.1.2
+
+**Warning**
 
 - You will need to delete your cache after this release upgrade.
+
   - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
   - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
 
@@ -134,6 +150,12 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade mapentity to 8.2.1
+
+**/!\ Regression /!\**
+
+- System permissions on files output by `sync_rando` and `sync_mobile` commands were inadvertently changed to more restricted
+  with no reading allowed by group or other. This may cause trouble if your deployment relies on those permissions.
+  The original broader permissions have been restored with `v2.87.1`.
 
 
 2.85.0     (2022-07-26)

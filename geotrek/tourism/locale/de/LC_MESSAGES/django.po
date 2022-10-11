@@ -54,10 +54,8 @@ msgid ""
 "the number of participants."
 msgstr ""
 
-#, fuzzy
-#| msgid "Start time"
 msgid "Start time is unset"
-msgstr "Terminzeit"
+msgstr ""
 
 msgid "Start time is after end time"
 msgstr ""
@@ -300,10 +298,8 @@ msgstr "Terminzeit"
 msgid "11:00, 23:30"
 msgstr "11:00, 23:30"
 
-#, fuzzy
-#| msgid "End date"
 msgid "End time"
-msgstr "Enddatum"
+msgstr ""
 
 msgid "Organizer"
 msgstr "Organisator"
@@ -358,15 +354,11 @@ msgstr "touristische Veranstaltung"
 msgid "Display order"
 msgstr ""
 
-#, fuzzy
-#| msgid "Touristic content category"
 msgid "Participant category"
-msgstr "Kategorie der touristischen Inhalte"
+msgstr ""
 
-#, fuzzy
-#| msgid "Touristic content categories"
 msgid "Participant categories"
-msgstr "Kategorien der touristische Inhalte"
+msgstr ""
 
 msgid "Published touristic events"
 msgstr "Veröffentlichte touristische Veranstaltungen"
@@ -404,10 +396,8 @@ msgstr "Öffentliches Drucken"
 msgid "Print"
 msgstr "Druck"
 
-#, fuzzy
-#| msgid "Public print"
 msgid "Public print booklet"
-msgstr "Öffentliches Drucken"
+msgstr ""
 
 msgid "Print booklet"
 msgstr ""

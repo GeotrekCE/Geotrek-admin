@@ -77,7 +77,4 @@ def resolved_intervention_info(report):
 
 @register.simple_tag
 def workflow_manager():
-    workflow_manager_json = {
-        'pk': WorkflowManager.objects.first().user.pk
-    }
-    return json.dumps(workflow_manager_json)
+    return WorkflowManager.objects.first().user.pk

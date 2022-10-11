@@ -15,6 +15,11 @@ class Migration(migrations.Migration):
             old_name='meeting_time',
             new_name='start_time',
         ),
+        migrations.AlterField(
+            model_name='touristicevent',
+            name='start_time',
+            field=models.TimeField(blank=True, help_text='11:00, 23:30', null=True, verbose_name='Start time'),
+        ),
         migrations.AddField(
             model_name='touristicevent',
             name='end_time',

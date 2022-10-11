@@ -344,7 +344,7 @@ msgstr ""
 msgid "Filter events on cancelled boolean : true/false expected"
 msgstr ""
 
-msgid "Filter by a place id"
+msgid "Filter by one or more Place id, comma-separated."
 msgstr ""
 
 msgid "Dates before"

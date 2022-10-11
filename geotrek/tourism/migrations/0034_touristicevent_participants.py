@@ -17,6 +17,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(max_length=255, verbose_name='Label')),
                 ('order', models.PositiveSmallIntegerField(blank=True, default=None, null=True, verbose_name='Display order')),
+                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
+                ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
             ],
             options={
                 'verbose_name': 'Participant category',
@@ -31,6 +33,8 @@ class Migration(migrations.Migration):
                 ('count', models.PositiveIntegerField(verbose_name='Number of participants')),
                 ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='participants', to='tourism.touristiceventparticipantcategory', verbose_name='Category')),
                 ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='participants', to='tourism.touristicevent', verbose_name='Touristic event')),
+                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
+                ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
             ],
         ),
     ]

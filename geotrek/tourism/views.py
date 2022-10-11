@@ -210,16 +210,16 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'cities', 'districts', 'areas', 'approved', 'uuid',
         'cancelled', 'cancellation_reason', 'participants_total', 'place',
         'preparation_duration', 'intervention_duration'
+        'cancelled', 'cancellation_reason', 'total_participants', 'place'
     ]
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        qs.annotate(participants_total=Sum('participants__count'))
-        return qs
+        qs = super().get_queryset().select_related('place', 'cancellation_reason').prefetch_related('participants')
+        return qs.annotate(total_participants=Sum('participants__count'))
 
 
 class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
-    queryset = TouristicEvent.objects.existing()
+    queryset = TouristicEvent.objects.existing().select_related('place', 'cancellation_reason').prefetch_related('participants')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -307,6 +307,8 @@ class TouristicEventViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
+        else:
+            qs = qs.select_related('place', 'cancellation_reason').prefetch_related('participants')
         return qs
 
     def get_columns(self):

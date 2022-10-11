@@ -105,8 +105,11 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
+        api_filters.TouristicEventsRelatedPortalFilter
     )
     serializer_class = api_serializers.TouristicEventPlaceSerializer
 
     def get_queryset(self):
-        return tourism_models.TouristicEventPlace.objects.exclude(touristicevents__isnull=True).annotate(geom_transformed=Transform('geom', settings.API_SRID)).order_by('name')
+        return tourism_models.TouristicEventPlace.objects.prefetch_related('touristicevents').annotate(
+            geom_transformed=Transform('geom', settings.API_SRID)
+        ).order_by('name')

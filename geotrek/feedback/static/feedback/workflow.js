@@ -18,7 +18,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
 
 function display_message_fields_on_status_change() {
     var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
-    var workflow_manager = JSON.parse($('#workflow_manager').text())['pk'];
+    var workflow_manager = JSON.parse($('#workflow_manager').text());
     var selected = $('#id_status').val() || null;
     do_display = ((status_ids_and_colors[selected]['id'] == "solved") || (status_ids_and_colors[selected]['id'] == "classified"))
     $('#div_id_message_sentinel').prop('hidden', !do_display);
@@ -39,7 +39,7 @@ function display_message_fields_on_status_change() {
 
 function display_message_fields_on_supervisor_change() {
     var selected = $('#id_assigned_user').val() || null;
-    var workflow_manager = JSON.parse($('#workflow_manager').text())['pk'];
+    var workflow_manager = JSON.parse($('#workflow_manager').text());
     $('#div_id_message_sentinel').prop('hidden', (selected == workflow_manager));
     $('#div_id_message_administrators').prop('hidden', (selected == workflow_manager));
     $('#div_id_message_sentinel_predefined').prop('hidden', (selected == workflow_manager));

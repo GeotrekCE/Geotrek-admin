@@ -20,10 +20,8 @@ msgstr ""
 msgid "Maintenance"
 msgstr "Maintenance"
 
-#, fuzzy
-#| msgid "Length"
 msgid "length 3d"
-msgstr "Longueur"
+msgstr "Longueur 3D"
 
 msgid "ascent"
 msgstr ""

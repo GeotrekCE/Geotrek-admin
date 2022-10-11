@@ -380,8 +380,8 @@ msgstr "Filtre les évènements réservables : true/false attendu"
 msgid "Filter events on cancelled boolean : true/false expected"
 msgstr "Filtre sur les évènements annulés : true/false attendu"
 
-msgid "Filter by a place id"
-msgstr "Filtrer par un id de lieu d'évènement"
+msgid "Filter by one or more Place id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de lieu d'évènement, séparés par des virgules."
 
 msgid "Dates before"
 msgstr ""

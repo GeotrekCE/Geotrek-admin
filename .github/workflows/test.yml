@@ -144,6 +144,7 @@ jobs:
       with:
         files: ./coverage.xml
         env_vars: OS,ENV
+        token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
         fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:

@@ -360,10 +360,8 @@ msgstr "Ajouter un site frère"
 msgid "Parents"
 msgstr "Parents"
 
-#, fuzzy
-#| msgid "Advice"
 msgid "Advices"
-msgstr "Recommandation"
+msgstr "Recommandations"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
