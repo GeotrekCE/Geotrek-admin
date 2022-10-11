@@ -201,8 +201,9 @@ class BladeFormatList(MapEntityFormat, BladeList):
     def csv_view(self, request, context, **kwargs):
         serializer = CSVBladeSerializer()
         response = HttpResponse(content_type='text/csv')
+        columns_line = self._adapt_direction_on_lines_visibility(self.columns_line)
         serializer.serialize(queryset=self.get_queryset(), stream=response,
-                             model=self.get_model(), fields=self.columns, line_fields=self.columns_line,
+                             model=self.get_model(), fields=self.columns, line_fields=columns_line,
                              ensure_ascii=True)
         return response
 
@@ -213,6 +214,13 @@ class BladeFormatList(MapEntityFormat, BladeList):
                              stream=response, fields=self.columns)
         response['Content-length'] = str(len(response.content))
         return response
+
+    @staticmethod
+    def _adapt_direction_on_lines_visibility(columns):
+        columns = columns.copy()
+        if not settings.DIRECTION_ON_LINES_ENABLED and 'direction' in columns:
+            columns.remove('direction')
+        return columns
 
 
 class BladeViewSet(GeotrekMapentityViewSet):

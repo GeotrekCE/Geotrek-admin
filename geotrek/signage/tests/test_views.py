@@ -1,4 +1,6 @@
 from collections import OrderedDict
+import csv
+from io import StringIO
 import json
 
 from django.conf import settings
@@ -169,9 +171,9 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Code,Type,Color,"
                                                              b"Direction,Condition,"
                                                              b"Coordinates (WGS 84 / Pseudo-Mercator),"
-                                                             b"Number 1,Direction 1,Text 1,"
+                                                             b"Number 1,Text 1,"
                                                              b"Distance 1,Time 1,Pictogram 1,"
-                                                             b"Number 2,Direction 2,Text 2,"
+                                                             b"Number 2,Text 2,"
                                                              b"Distance 2,Time 2,Pictogram 2")
 
     def test_set_structure_with_permission(self):
@@ -219,6 +221,29 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         blade_repr = data['data'][0]
         self.assertNotIn('direction', blade_repr)
         self.assertIn('condition', blade_repr)
+
+    def test_direction_field_visibility_on_blade_csv_format(self):
+        BladeFactory.create()
+
+        response = self.client.get(Blade.get_format_list_url() + '?format=csv')
+
+        lines = list(csv.reader(StringIO(response.content.decode("utf-8")), delimiter=','))
+        self.assertIn('Direction', lines[0])
+        self.assertIn('Blade direction', lines[1])
+        self.assertNotIn('Direction 1', lines[0])
+        self.assertNotIn('Line direction', lines[1])
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_visibility_on_blade_csv_format_when_direction_on_lines_enabled(self):
+        BladeFactory.create()
+
+        response = self.client.get(Blade.get_format_list_url() + '?format=csv')
+
+        lines = list(csv.reader(StringIO(response.content.decode("utf-8")), delimiter=','))
+        self.assertNotIn('Direction', lines[0])
+        self.assertNotIn('Blade direction', lines[1])
+        self.assertIn('Direction 1', lines[0])
+        self.assertIn('Line direction', lines[1])
 
 
 class BladeTemplatesTest(TestCase):
