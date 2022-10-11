@@ -31,11 +31,6 @@ class LineForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(*fields_for_layout)
-        self.fields['number'].widget.attrs['class'] = 'input-mini'
-        self.fields['text'].widget.attrs['class'] = 'input-xlarge'
-        self.fields['distance'].widget.attrs['class'] = 'input-mini'
-        self.fields['pictogram_name'].widget.attrs['class'] = 'input-mini'
-        self.fields['time'].widget.attrs['class'] = 'input-mini'
 
     class Meta:
         fields = ('id', 'blade', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time')
