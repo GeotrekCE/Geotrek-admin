@@ -8,7 +8,7 @@ CHANGELOG
 **New features**
 
 - Add optional places to TouristicEvents, using place selector to locate TouristicEvent on form map (#3266)
-- Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable``, ``place``, ``preparation_duration`` and ``intervention_duration`` to TouristicEvents (#3237)
+- Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable`` and ``place`` to TouristicEvents (#3237)
 - ``cancellation_reason`` selector is displayed in Event form if ``bookable`` is checked (#3237)
 - ``booking`` text box is displayed in Event form if ``bookable`` is checked (#3237)
 - Create `Assessment` tab in Event form to input retrospective information such as number of attendees per category (#3237)
