@@ -33,6 +33,8 @@ logger = logging.getLogger(__name__)
 
 class CommonForm(MapEntityForm):
 
+    not_hideable_fields = []
+
     class Meta:
         fields = []
 
@@ -127,6 +129,10 @@ class CommonForm(MapEntityForm):
                 if self.fields[field_to_hide].required:
                     logger.warning(
                         f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                    )
+                elif field_to_hide in self.not_hideable_fields:
+                    logger.warning(
+                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' cannot be hidden on form {self.__class__.__name__}."
                     )
                 else:
                     self.fields[field_to_hide].widget = HiddenInput()

@@ -188,7 +188,8 @@ class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)
-    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT)
+    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
+                                  blank=True)
     type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.CASCADE)
     color = models.ForeignKey(Color, on_delete=models.PROTECT, null=True, blank=True,
                               verbose_name=_("Color"))
@@ -302,6 +303,8 @@ class Line(models.Model):
     blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
                               on_delete=models.CASCADE)
     number = models.IntegerField(verbose_name=_("Number"))
+    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
+                                  blank=True)
     text = models.CharField(verbose_name=_("Text"), max_length=1000)
     distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
                                    decimal_places=1, max_digits=8, help_text='km')

@@ -70,6 +70,7 @@
 
     {% blades_enabled as is_blades_enabled %}
     {% if is_blades_enabled and perms.signage.read_blade %}
+        {% direction_on_lines_enabled as is_direction_on_lines_enabled %}
         <h3>{% trans "Blades" %}</h3>
         <table class="table blades">
             {% if object.order_blades %}
@@ -88,7 +89,9 @@
                 <tr {% if blade.order_lines.all|length > 1 %}class="dashed-line"{% endif %}>
                     <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
                     <td>{{ blade.color|default_if_none:"" }}</td>
+                    {% if not is_direction_on_lines_enabled %}
                     <td>{{ blade.direction }}</td>
+                    {% endif %}
                     <td>{{ blade.condition|default_if_none:"" }}</td>
                     {% for line in blade.order_lines.all %}
                         {% if not forloop.first %}

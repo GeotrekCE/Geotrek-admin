@@ -29,3 +29,8 @@ def blades_enabled():
 @register.simple_tag
 def lines_enabled():
     return settings.LINE_ENABLED
+
+
+@register.simple_tag
+def direction_on_lines_enabled():
+    return settings.DIRECTION_ON_LINES_ENABLED

@@ -112,10 +112,7 @@ class SiteViewSet(GeotrekMapentityViewSet):
     serializer_class = SiteSerializer
     geojson_serializer_class = SiteGeojsonSerializer
     filterset_class = SiteFilterSet
-
-    def get_columns(self):
-        return SiteList.mandatory_columns + settings.COLUMNS_LISTS.get('site_view',
-                                                                       SiteList.default_extra_columns)
+    mapentity_list_class = SiteList
 
     def get_queryset(self):
         qs = self.model.objects.all()
@@ -231,10 +228,7 @@ class CourseViewSet(GeotrekMapentityViewSet):
     serializer_class = CourseSerializer
     geojson_serializer_class = CourseGeojsonSerializer
     filterset_class = CourseFilterSet
-
-    def get_columns(self):
-        return CourseList.mandatory_columns + settings.COLUMNS_LISTS.get('course_view',
-                                                                         CourseList.default_extra_columns)
+    mapentity_list_class = CourseList
 
     def get_queryset(self):
         qs = self.model.objects.all()

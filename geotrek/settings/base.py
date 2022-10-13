@@ -741,6 +741,7 @@ LINE_ENABLED = True
 LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 LINE_DISTANCE_FORMAT = "{:0.1f} km"
 LINE_TIME_FORMAT = "{hours}h{minutes:02d}"
+DIRECTION_ON_LINES_ENABLED = False
 SHOW_EXTREMITIES = False  # Show a bullet at path extremities
 SHOW_LABELS = True  # Show labels on status
 

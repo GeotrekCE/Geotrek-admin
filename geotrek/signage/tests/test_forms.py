@@ -1,3 +1,4 @@
+from django.forms import HiddenInput
 from django.test import TestCase, override_settings
 
 from geotrek.authent.tests.factories import UserFactory
@@ -71,3 +72,22 @@ class BladeFormTest(TestCase):
         formset.save()
         self.assertTrue(formset.is_valid())
         self.assertEqual(Line.objects.count(), 0)
+
+    def test_direction_field_visibility(self):
+        blade_form = BladeForm(user=self.user, initial={'signage': self.signage})
+        self.assertIn('direction', blade_form.fields)
+        line_form = LineFormset().forms[0]
+        self.assertNotIn('direction', line_form.fields)
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_visibility_when_direction_on_lines_enabled(self):
+        blade_form = BladeForm(user=self.user, initial={'signage': self.signage})
+        self.assertNotIn('direction', blade_form.fields)
+        line_form = LineFormset().forms[0]
+        self.assertIn('direction', line_form.fields)
+
+    @override_settings(HIDDEN_FORM_FIELDS={'blade': ['direction']})
+    def test_direction_field_cannot_be_hidden(self):
+        blade_form = BladeForm(user=self.user, initial={'signage': self.signage})
+        self.assertIn('direction', blade_form.fields)
+        self.assertTrue(not isinstance(blade_form.fields['direction'].widget, HiddenInput))

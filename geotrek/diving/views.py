@@ -145,6 +145,7 @@ class DiveViewSet(GeotrekMapentityViewSet):
     serializer_class = DiveSerializer
     geojson_serializer_class = DiveGeojsonSerializer
     filterset_class = DiveFilterSet
+    mapentity_list_class = DiveList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -153,10 +154,6 @@ class DiveViewSet(GeotrekMapentityViewSet):
             qs = qs.only('id', 'name', 'published')
 
         return qs
-
-    def get_columns(self):
-        return DiveList.mandatory_columns + settings.COLUMNS_LISTS.get('dive_view',
-                                                                       DiveList.default_extra_columns)
 
 
 class DiveAPIViewSet(APIViewSet):
