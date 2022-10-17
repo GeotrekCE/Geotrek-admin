@@ -23,13 +23,13 @@ CHANGELOG
 - Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable`` and ``place`` to TouristicEvents (#3237)
 - ``cancellation_reason`` selector is displayed in Event form if ``bookable`` is checked (#3237)
 - ``booking`` text box is displayed in Event form if ``bookable`` is checked (#3237)
-- Create `Assessment` tab in Event form to input retrospective information such as number of attendees per category (#3237)
+- Create ``Assessment`` tab in Event form to input retrospective information such as number of attendees per category (#3237)
 - Create ``TouristicEventParticipantCategory`` model to define types of attendees for Events (#3237)
 
 **Breaking changes**
 
-- Rename ``meeting_time`` to ``start_time`` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes ``start_time`` instead of ``meeting_time`` (#3237)
-- Rename ``participant_number`` to ``capacity`` for TouristicEvent: APIv2 serialisation for TouristicEvent now exposes ``capacity`` instead of ``participant_number`` (#3237)
+- Rename ``meeting_time`` to ``start_time`` for TouristicEvent. APIv2 serialisation for TouristicEvent now exposes ``start_time`` instead of ``meeting_time`` (#3237)
+- Rename ``participant_number`` to ``capacity`` for TouristicEvent. APIv2 serialisation for TouristicEvent now exposes ``capacity`` instead of ``participant_number`` (#3237)
 - These fields are still available in API v2 for retrocompatibility but should not be used by default (#3237)
 - If you have specific parsers importing into TouristicEvents, you should rename ``meeting_time`` to ``start_time`` and ``participant_number`` to ``capacity`` (#3237)
 
@@ -39,9 +39,8 @@ CHANGELOG
 
 **Minor improvements** 
 
-- Check ``begin date`` is before ``end date`` in TouristicEvent forms (#3237)
-- Set ``begin_date`` not null for TouristicEvents (#3127)
-- Filter TouristicEventType by date in API v2 (GeotrekCE/Geotrek-rando-v3#763)
+- Check ``begin_date`` is before ``end_date`` in TouristicEvent forms (#3237)
+- Set ``begin_date`` not null for TouristicEvents (#3237)
 - Change order of attributes in Event forms and detail view (#3237)
 - Update Event SQL view ``v_touristicevents`` according to above changes (#3237)
 
