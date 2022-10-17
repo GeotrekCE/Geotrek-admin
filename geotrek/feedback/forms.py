@@ -127,7 +127,7 @@ class ReportForm(CommonForm):
                 msg_sentinel = self.cleaned_data.get('message_sentinel', "")
                 msg_admins = self.cleaned_data.get('message_administrators', "")
                 report.send_notifications_on_status_change(self.old_status.identifier, msg_sentinel, msg_admins)
-            if self.old_status.identifier != report.status.identifier and report.status.identifier in ['solved', 'classified', 'rejected']:
+            if self.old_status.identifier != report.status.identifier and report.status.identifier in ['classified', 'rejected']:
                 report.unlock_in_suricate()
             if 'geom' in self.changed_data and report.status.identifier in ['filed', 'waiting', 'programmed', 'late_intervention', 'late_resolution', 'solved_intervention']:  # geom cannot change for statuses 'rejected', 'classified' or 'solved'
                 force_gps = False

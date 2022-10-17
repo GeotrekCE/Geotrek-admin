@@ -12,6 +12,8 @@ CHANGELOG
 **Bug fixes**
 
 - Blade list view now takes into account custom columns from COLUMNS_LISTS setting
+- Fix Suricate Workflow : do not unlock reports when resolving them
+- Fix Suricate Workflow : display clickable links in report related emails
 
 
 2.88.0 (2022-10-11)

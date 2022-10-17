@@ -346,10 +346,6 @@ class TestSuricateForms(SuricateWorkflowTests):
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
-        mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.solved_intervention_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
-            auth=('', '')
-        )
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
