@@ -229,27 +229,7 @@ class Parser:
                 val = round(val, 10)
             if isinstance(old, str):
                 val = val or ""
-                if dst in self.translated_fields:
-                    old_translated = {}
-                    val_translated = {}
-                    for lang in settings.MODELTRANSLATION_LANGUAGES:
-                        field_name = '{field}_{lang}'.format(field=dst, lang=lang)
-                        old_translated.update({
-                            field_name: getattr(self.obj, field_name)
-                        })
-                        # Field not translated, use same val for all translated
-                        val_translated.update({
-                            field_name: val
-                        })
-                    breakpoint()
             if old != val:
-                """ TODO we need to add checks here for translated fields :
-                this only compares old 'name' with new 'name' but it should compare
-                    - old 'name_en' with new 'name_en',
-                    - old 'name_fr' with new 'name_fr'...
-                and return "True" if any of them have changed
-                At the moment, translations are only updated if the default language has changed
-                """
                 self.set_value(dst, src, val)
                 return True
             else:
@@ -257,6 +237,40 @@ class Parser:
         else:
             self.set_value(dst, src, val)
             return True
+
+    def parse_translated_field(self, dst, src, val):
+        """Specific treatment for translated fields
+        TODO: we need to add checks here for translated fields :
+        this only compares old 'name' with new 'name' but it should compare
+            - old 'name_en' with new 'name_en',
+            - old 'name_fr' with new 'name_fr'...
+        and return "True" if any of them have changed
+        TODO: check self.default_language to get default values
+        TODO: check if field_lang is already filled in, don't override it
+        """
+        val = val or ""
+        old_translated = {}
+        val_translated = {}
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            field_name = '{field}_{lang}'.format(field=dst, lang=lang)
+            old_translated.update({
+                field_name: getattr(self.obj, field_name)
+            })
+            # Field not translated, use same val for all translated
+            val_translated.update({
+                field_name: val
+            })
+        old = old_translated
+        val = val_translated
+        if old != val:
+            modified = False
+            for dst_field_lang in val.keys():
+                # Set dst_field_lang only if empty
+                if getattr(self.obj, dst_field_lang) is None:
+                    self.set_value(dst_field_lang, src, val[dst_field_lang])
+                    modified = True
+            return modified
+        return False
 
     def parse_field(self, row, dst, src, updated, non_field):
         if dst in self.constant_fields:
@@ -268,6 +282,8 @@ class Parser:
             val = self.get_val(row, dst, src)
         if non_field:
             modified = self.parse_non_field(dst, src, val)
+        elif dst in self.translated_fields:
+            modified = self.parse_translated_field(dst, src, val)
         else:
             modified = self.parse_real_field(dst, src, val)
         if modified:
