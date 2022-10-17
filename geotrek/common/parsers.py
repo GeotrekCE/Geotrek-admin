@@ -77,6 +77,7 @@ class Parser:
     update_only = False
     delete = False
     duplicate_eid_allowed = False
+    fill_empty_translated_fields = False
     warn_on_missing_fields = False
     warn_on_missing_objects = False
     separator = '+'
@@ -246,6 +247,7 @@ class Parser:
             - old 'name_fr' with new 'name_fr'...
         and return "True" if any of them have changed
         TODO: check self.default_language to get default values
+        TODO: don't update not empty fields if not default language
         """
         val = val or ""
         modified = False
@@ -273,7 +275,7 @@ class Parser:
             val = self.get_val(row, dst, src)
         if non_field:
             modified = self.parse_non_field(dst, src, val)
-        elif dst in self.translated_fields:
+        elif self.fill_empty_translated_fields and dst in self.translated_fields:
             modified = self.parse_translated_field(dst, src, val)
         else:
             modified = self.parse_real_field(dst, src, val)
