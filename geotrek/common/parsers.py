@@ -214,6 +214,7 @@ class Parser:
                 old = set(getattr(self.obj, dst).all())
             else:
                 old = getattr(self.obj, dst)
+
         if hasattr(self, 'filter_{0}'.format(dst)):
             val = getattr(self, 'filter_{0}'.format(dst))(src, val)
         else:
@@ -228,6 +229,19 @@ class Parser:
                 val = round(val, 10)
             if isinstance(old, str):
                 val = val or ""
+                if dst in self.translated_fields:
+                    old_translated = {}
+                    val_translated = {}
+                    for lang in settings.MODELTRANSLATION_LANGUAGES:
+                        field_name = '{field}_{lang}'.format(field=dst, lang=lang)
+                        old_translated.update({
+                            field_name: getattr(self.obj, field_name)
+                        })
+                        # Field not translated, use same val for all translated
+                        val_translated.update({
+                            field_name: val
+                        })
+                    breakpoint()
             if old != val:
                 """ TODO we need to add checks here for translated fields :
                 this only compares old 'name' with new 'name' but it should compare
