@@ -246,31 +246,22 @@ class Parser:
             - old 'name_fr' with new 'name_fr'...
         and return "True" if any of them have changed
         TODO: check self.default_language to get default values
-        TODO: check if field_lang is already filled in, don't override it
         """
         val = val or ""
-        old_translated = {}
-        val_translated = {}
+        modified = False
+
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            field_name = '{field}_{lang}'.format(field=dst, lang=lang)
-            old_translated.update({
-                field_name: getattr(self.obj, field_name)
-            })
+            dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
+            old = getattr(self.obj, dst_field_lang)
             # Field not translated, use same val for all translated
-            val_translated.update({
-                field_name: val
-            })
-        old = old_translated
-        val = val_translated
-        if old != val:
-            modified = False
-            for dst_field_lang in val.keys():
+            val = val or ""
+
+            if old != val:
                 # Set dst_field_lang only if empty
-                if getattr(self.obj, dst_field_lang) is None:
+                if old is None:
                     self.set_value(dst_field_lang, src, val[dst_field_lang])
                     modified = True
-            return modified
-        return False
+        return modified
 
     def parse_field(self, row, dst, src, updated, non_field):
         if dst in self.constant_fields:
