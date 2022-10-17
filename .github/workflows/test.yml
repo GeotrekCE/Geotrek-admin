@@ -40,7 +40,7 @@ jobs:
         tests-env: ['tests', 'tests_nds']
         include:
           - os: ubuntu-18.04
-            python-version: 3.6  # default python version in 18.04
+            python-version: 3.8  # default python version in 18.04
           - os: ubuntu-20.04
             python-version: 3.8  # default python version in 20.04
 
