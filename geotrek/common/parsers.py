@@ -241,12 +241,13 @@ class Parser:
 
     def parse_translated_field(self, dst, src, val):
         """Specific treatment for translated fields
-        TODO: import flow with field for each translated fields :
+        TODO: check self.default_language to get default values
+        TODO: handle flow with a field for each language
+        TODO: compare each translated fields with source fields :
         this only compares old 'name' with new 'name' but it should compare
             - old 'name_en' with new 'name_en',
             - old 'name_fr' with new 'name_fr'...
         and return "True" if any of them have changed
-        TODO: check self.default_language to get default values
         """
         val = val or ""
         modified = False
