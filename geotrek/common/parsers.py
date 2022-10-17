@@ -259,7 +259,7 @@ class Parser:
             if old != val:
                 # Set dst_field_lang only if empty
                 if old is None:
-                    self.set_value(dst_field_lang, src, val[dst_field_lang])
+                    self.set_value(dst_field_lang, src, val)
                     modified = True
         return modified
 

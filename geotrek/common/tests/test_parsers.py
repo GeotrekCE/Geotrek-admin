@@ -18,7 +18,7 @@ from django.test.utils import override_settings
 from requests import Response
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.models import Attachment, FileType, Organism
+from geotrek.common.models import Attachment, FileType, Organism, Theme
 from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
                                     ExcelParser, GeotrekAggregatorParser,
                                     GeotrekParser, OpenSystemParser,
@@ -185,6 +185,23 @@ class ParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism5.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismNoMappingPartialParser', filename, verbosity=2, stdout=output)
         self.assertIn("Bad value 'Structure' for field STRUCTURE. Should contain ['foo']", output.getvalue())
+
+
+class MultilangParser(ExcelParser):
+    """Parser used in MultilangParserTests, using Theme because it has a translated field"""
+    model = Theme
+    fields = {'label': 'Nom'}
+
+
+class MultilangParserTests(TestCase):
+    """Test for translated fields"""
+
+    def test_multilang(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'themes.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.MultilangParser', filename, verbosity=0)
+        self.assertEqual(Theme.objects.count(), 2)
+        theme1 = Theme.objects.first()
+        self.assertEqual(theme1.label_fr, theme1.label_en)
 
 
 @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
