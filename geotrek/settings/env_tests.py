@@ -30,6 +30,11 @@ LAND_BBOX_AREAS_ENABLED = True
 
 TIME_ZONE = "UTC"
 
+CACHES['default'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'unique-snowflake',
+}
+
 class DisableMigrations():
     def __contains__(self, item):
         return True
