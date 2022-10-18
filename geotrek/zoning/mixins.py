@@ -28,7 +28,7 @@ class ZoningPropertiesMixin:
         count = last_update_and_count['count']
         cache_string = f"areas:{self.pk}:{self.date_update.isoformat()}:{last_update_iso_format}:{count}"
         cache_key = hashlib.md5(cache_string.encode("utf-8")).hexdigest()
-        if cache.has_key(cache_key):
+        if cache_key in cache:
             return cache.get(cache_key)
         areas = self.get_areas()
         cache.set(cache_key, areas)
@@ -44,7 +44,7 @@ class ZoningPropertiesMixin:
         count = last_update_and_count['count']
         cache_string = f"districts:{self.pk}:{self.date_update.isoformat()}:{last_update_iso_format}:{count}"
         cache_key = hashlib.md5(cache_string.encode("utf-8")).hexdigest()
-        if cache.has_key(cache_key):
+        if cache_key in cache:
             return cache.get(cache_key)
         districts = self.get_districts()
         cache.set(cache_key, districts)

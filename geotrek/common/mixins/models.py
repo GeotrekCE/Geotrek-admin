@@ -62,6 +62,7 @@ class TimeStampedModelMixin(models.Model):
             count=Count('pk')
         )
 
+
 class NoDeleteMixin(models.Model):
     deleted = models.BooleanField(editable=False, default=False, verbose_name=_("Deleted"))
     objects = NoDeleteManager()

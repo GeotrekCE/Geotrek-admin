@@ -173,13 +173,12 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
         trek_id = request.GET.get('trek')
-        if trek_id:
-            qs = qs.filter(Exists(Trek.objects.filter(geom__dwithin=(OuterRef('geom'),
-                                                                     Distance(m=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)),
-                                                      pk=trek_id)))
-            # qs = intersecting(qs,
-            #                   trek,
-            #                   distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
+        trek = Trek.objects.filter(pk=trek_id)
+        if trek:
+            contents_intersecting = intersecting(qs,
+                                                 trek.get(),
+                                                 distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
+            qs = contents_intersecting.order_by('id')
         return qs.distinct()
 
     def get_schema_fields(self, view):

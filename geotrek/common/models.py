@@ -1,8 +1,8 @@
 import os
 import uuid
 
-from colorfield.fields import ColorField
 from PIL import Image
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from paperclip.models import Attachment as BaseAttachment, FileType as BaseFileType, License as BaseLicense
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
+from .mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
 
 
 class AccessibilityAttachmentManager(models.Manager):

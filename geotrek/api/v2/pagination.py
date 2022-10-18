@@ -18,7 +18,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size = 50
     page_size_query_param = 'page_size'
     max_page_size = 1000
-    #django_paginator_class = FasterPaginator
+    django_paginator_class = FasterPaginator
 
     def get_paginated_response(self, data):
         if self.request.query_params.get('format', 'json') == 'geojson':

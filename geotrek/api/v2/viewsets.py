@@ -1,20 +1,18 @@
-from collections import OrderedDict
 from hashlib import md5
 
+from django.conf import settings
 from django_filters.rest_framework.backends import DjangoFilterBackend
+from mapentity.renderers import GeoJSONRenderer
 from rest_framework import viewsets, renderers
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-
-from django.conf import settings
-from rest_framework_extensions.cache.mixins import CacheResponseMixin
+from rest_framework_extensions.cache.mixins import RetrieveCacheResponseMixin
 
 from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
 from geotrek.api.v2.serializers import override_serializer
-from mapentity.renderers import GeoJSONRenderer
 
 
-class GeotrekViewSet(CacheResponseMixin, viewsets.ReadOnlyModelViewSet):
+class GeotrekViewSet(RetrieveCacheResponseMixin, viewsets.ReadOnlyModelViewSet):
     filter_backends = (
         DjangoFilterBackend,
         api_filters.GeotrekQueryParamsFilter,
@@ -36,10 +34,10 @@ class GeotrekViewSet(CacheResponseMixin, viewsets.ReadOnlyModelViewSet):
         """ return cache string as url path + ordered query params """
         return f"{self.request.path}:{self.get_ordered_query_params()}:{self.request.accepted_renderer.format}"
 
-    def get_list_cache_key(self):
-        """ return specific list cache key based on list last_update object """
-        last_update = self.get_queryset().model.last_update
-        return f"{self.get_base_cache_string()}:{last_update.isoformat()}"
+    # def get_list_cache_key(self):
+    #     """ return specific list cache key based on list last_update object """
+    #     last_update = self.get_queryset().model.last_update
+    #     return f"{self.get_base_cache_string()}:{last_update.isoformat()}"
 
     def get_object_cache_key(self, pk):
         """ return specific object cache key based on object date_update column"""
@@ -51,9 +49,9 @@ class GeotrekViewSet(CacheResponseMixin, viewsets.ReadOnlyModelViewSet):
         """ cache key md5 for retrieve viexset action """
         return md5(self.get_object_cache_key(kwargs.get('kwargs').get('pk')).encode("utf-8")).hexdigest()
 
-    def list_cache_key_func(self, **kwargs):
-        """ cache key md5 for list viewset action """
-        return md5(self.get_list_cache_key().encode("utf-8")).hexdigest()
+    # def list_cache_key_func(self, **kwargs):
+    #     """ cache key md5 for list viewset action """
+    #     return md5(self.get_list_cache_key().encode("utf-8")).hexdigest()
 
     def get_serializer_context(self):
         return {

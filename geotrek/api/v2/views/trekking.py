@@ -2,9 +2,9 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Prefetch, Q
 from django.db.models.aggregates import Count
-from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from geotrek.api.v2 import filters as api_filters
@@ -33,7 +33,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))
-        qs = trekking_models.Trek.objects.existing() \
+        return trekking_models.Trek.objects.existing() \
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'accessibilities',
                               Prefetch('attachments',
@@ -44,13 +44,14 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                                        queryset=trekking_models.WebLink.objects.select_related('category'))) \
             .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                       length_3d_m=Length3D('geom_3d')) \
-            .order_by("name")
+            .order_by("name")  # Required for reliable pagination
 
-        if self.action == 'retrieve':
-            # Return detail view even for unpublished treks that are children of other published treks
-            qs = self.filter_published_lang_retrieve(self.request, qs)
-
-        return qs
+    def retrieve(self, request, pk=None, format=None):
+        """ Return detail view even for unpublished treks that are childrens of other published treks """
+        qs_filtered = self.filter_published_lang_retrieve(request, self.get_queryset())
+        trek = get_object_or_404(qs_filtered, pk=pk)
+        serializer = self.get_serializer(trek)
+        return Response(serializer.data)
 
     def filter_published_lang_retrieve(self, request, queryset):
         # filter trek by publication language (including parents publication language)

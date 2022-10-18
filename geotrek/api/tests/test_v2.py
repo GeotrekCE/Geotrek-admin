@@ -1581,11 +1581,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             len(json_response.get('results')),
             trek_models.POI.objects.all().count()
         )
-        old_update = obj.date_update
         obj.pois_excluded.add(self.poi)
         obj.save()
-        new_update = obj.date_update
-        raise Exception(old_update, new_update)
 
         response = self.get_poi_list({filter_name: obj.pk})
         json_response = response.json()

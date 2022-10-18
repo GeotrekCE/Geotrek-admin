@@ -822,6 +822,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
     def aggregations_optimized(self):
         return self.aggregations.all().select_related('path', 'topo_object')
 
+
 class PathAggregationManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().order_by('order')

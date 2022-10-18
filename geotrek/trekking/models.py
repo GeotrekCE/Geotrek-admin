@@ -876,7 +876,6 @@ class Service(StructureRelated, MapEntityMixin, Topology):
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
 
-
     def __str__(self):
         return str(self.type)
 
