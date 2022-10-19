@@ -218,6 +218,36 @@ The following example would cause ``NoProviderParser`` to delete objects from ``
         provider = None       (default)
 
 
+Generic settings for your parser
+--------------------------------
+
+This settings may be overriden when you define a new parser:
+
+- ``label`` parser display name (default: ``None``)
+- ``model`` import content with this model (default: ``None``)
+- ``filename`` file imported if no url (default: ``None``)
+- ``url`` flow url imported from if no filename (default: ``None``)
+- ``simplify_tolerance`` (default: ``0``)  # meters
+- ``update_only`` don't create new contents (default: ``False``)
+- ``delete`` (default: ``False``)
+- ``duplicate_eid_allowed`` if True, allows differents contents with same eid (default: ``False``)
+- ``fill_empty_translated_fields`` if True, fills empty translated fields with same value  (default: ``False``)
+- ``warn_on_missing_fields`` (default: ``False``)
+- ``warn_on_missing_objects`` (default: ``False``)
+- ``separator`` (default: ``'+'``)
+- ``eid`` field name for eid (default: ``None``)
+- ``provider`` (default: ``None``)
+- ``fields`` (default: ``None``)
+- ``m2m_fields``  (default: ``{}``)
+- ``constant_fields`` (default: ``{}``)
+- ``m2m_constant_fields`` (default: ``{}``)
+- ``m2m_aggregate_fields`` (default: ``[]``)
+- ``non_fields`` (default: ``{}``)
+- ``natural_keys`` (default: ``{}``)
+- ``field_options`` (default: ``{}``)
+- ``default_language`` use another default language for this parser (default: ``None``)
+
+
 Start import from command line
 ------------------------------
 
