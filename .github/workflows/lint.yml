@@ -3,6 +3,10 @@ name: Linting
 on:
   push:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   DEBIAN_FRONTEND: noninteractive
 
