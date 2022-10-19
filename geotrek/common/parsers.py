@@ -77,6 +77,7 @@ class Parser:
     update_only = False
     delete = False
     duplicate_eid_allowed = False
+    fill_empty_translated_fields = False
     warn_on_missing_fields = False
     warn_on_missing_objects = False
     separator = '+'
@@ -214,6 +215,7 @@ class Parser:
                 old = set(getattr(self.obj, dst).all())
             else:
                 old = getattr(self.obj, dst)
+
         if hasattr(self, 'filter_{0}'.format(dst)):
             val = getattr(self, 'filter_{0}'.format(dst))(src, val)
         else:
@@ -229,13 +231,6 @@ class Parser:
             if isinstance(old, str):
                 val = val or ""
             if old != val:
-                """ TODO we need to add checks here for translated fields :
-                this only compares old 'name' with new 'name' but it should compare
-                    - old 'name_en' with new 'name_en',
-                    - old 'name_fr' with new 'name_fr'...
-                and return "True" if any of them have changed
-                At the moment, translations are only updated if the default language has changed
-                """
                 self.set_value(dst, src, val)
                 return True
             else:
@@ -243,6 +238,36 @@ class Parser:
         else:
             self.set_value(dst, src, val)
             return True
+
+    def parse_translation_field(self, dst, src, val):
+        """Specific treatment for translated fields
+        TODO: check self.default_language to get default values
+        TODO: handle flow with a field for each language (ex: APIDAE)
+        TODO: compare each translated fields with source fields :
+        this only compares old 'name' with new 'name' but it should compare
+            - old 'name_en' with new 'name_en',
+            - old 'name_fr' with new 'name_fr'...
+        and return "True" if any of them have changed
+        """
+        val = val or ""
+        modified = False
+
+        if hasattr(self, 'filter_{0}'.format(dst)):
+            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
+        else:
+            val = self.apply_filter(dst, src, val)
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
+            old = getattr(self.obj, dst_field_lang)
+            # Field not translated, use same val for all translated
+            val = val or ""
+
+            if old != val:
+                # Set dst_field_lang only if empty
+                if not old:
+                    self.set_value(dst_field_lang, src, val)
+                    modified = True
+        return modified
 
     def parse_field(self, row, dst, src, updated, non_field):
         if dst in self.constant_fields:
@@ -254,6 +279,8 @@ class Parser:
             val = self.get_val(row, dst, src)
         if non_field:
             modified = self.parse_non_field(dst, src, val)
+        elif self.fill_empty_translated_fields and dst in self.translated_fields:
+            modified = self.parse_translation_field(dst, src, val)
         else:
             modified = self.parse_real_field(dst, src, val)
         if modified:

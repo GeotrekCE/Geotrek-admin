@@ -18,13 +18,14 @@ from django.test.utils import override_settings
 from requests import Response
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.models import Attachment, FileType, Organism
+from geotrek.common.models import Attachment, FileType, Organism, Theme
 from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
                                     ExcelParser, GeotrekAggregatorParser,
                                     GeotrekParser, OpenSystemParser,
                                     TourInSoftParser, TourismSystemParser,
                                     ValueImportError)
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
+from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_img
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
@@ -185,6 +186,74 @@ class ParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism5.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismNoMappingPartialParser', filename, verbosity=2, stdout=output)
         self.assertIn("Bad value 'Structure' for field STRUCTURE. Should contain ['foo']", output.getvalue())
+
+
+class ThemeParser(ExcelParser):
+    """Parser used in MultilangParserTests, using Theme because it has a translated field"""
+    model = Theme
+    eid = 'label'  # Ensure that already created themes with same name will be updated
+    fields = {'label': 'Nom'}
+
+
+class MultilangThemeParser(ThemeParser):
+    """Parser used in MultilangParserTests, using Theme because it has a translated field"""
+    fill_empty_translated_fields = True
+
+
+class MultilangFilterThemeParser(MultilangThemeParser):
+    """Parser used in MultilangParserTests, using Theme because it has a translated field"""
+
+    def filter_label(self, src, val):
+        return 'filtered {}'.format(val)
+
+
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+class MultilangParserTests(TestCase):
+    """Test for translated fields
+- case 1 : flow has only one data
+    - choose to fill all empty fields `label_fr`, `label_en`…
+    - choose to fill only default language field `label`
+- TODO: case 2 : flow has a data per language
+    - fill fields / language, if no data fill with default language
+    - only fill fields / language when data is present
+"""
+
+    def test_parser_fill_translated_fields_off(self):
+        """Parser should not fill empty fields for all languages, only main language"""
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'themes.xls')
+        label_default_language = "label_{}".format(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
+        other_languages = [lang for lang in settings.MODELTRANSLATION_LANGUAGES if lang != settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+        call_command('import', 'geotrek.common.tests.test_parsers.ThemeParser', filename, verbosity=0)
+
+        theme_imported = Theme.objects.get(label="Paysages")
+        self.assertEqual(getattr(theme_imported, label_default_language), "Paysages")
+        for language in other_languages:
+            label_language = "label_{}".format(language)
+            self.assertIsNone(getattr(theme_imported, label_language))
+
+    def test_parser_fill_translated_fields_on(self):
+        """Parser should fill empty fields for all languages"""
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'themes.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.MultilangThemeParser', filename, verbosity=0)
+        theme_imported = Theme.objects.get(label="Paysages")
+        self.assertEqual(theme_imported.label_fr, theme_imported.label_en)
+
+    def test_parser_fill_translated_fields_on_only_empty(self):
+        """Parser should fill empty fields for all languages"""
+        theme_landscape = ThemeFactory(label="Paysages", label_en="Landscape")
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'themes.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.MultilangThemeParser', filename, verbosity=0)
+        theme_imported = Theme.objects.get(label="Paysages")
+        self.assertEqual(theme_imported, theme_landscape)
+        self.assertEqual(theme_imported.label_en, "Landscape")
+
+    def test_parser_fill_translated_fields_with_apply_method(self):
+        """Parser should first apply filter method before"""
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'themes.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.MultilangFilterThemeParser', filename, verbosity=0)
+        theme_imported = Theme.objects.get(label="filtered Paysages")
+        self.assertEqual(theme_imported.label_fr, theme_imported.label_en)
+        self.assertEqual(theme_imported.label_fr, 'filtered Paysages')
 
 
 @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
