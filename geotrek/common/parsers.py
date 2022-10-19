@@ -239,7 +239,7 @@ class Parser:
             self.set_value(dst, src, val)
             return True
 
-    def parse_translated_field(self, dst, src, val):
+    def parse_translation_field(self, dst, src, val):
         """Specific treatment for translated fields
         TODO: check self.default_language to get default values
         TODO: handle flow with a field for each language (ex: APIDAE)
@@ -280,7 +280,7 @@ class Parser:
         if non_field:
             modified = self.parse_non_field(dst, src, val)
         elif self.fill_empty_translated_fields and dst in self.translated_fields:
-            modified = self.parse_translated_field(dst, src, val)
+            modified = self.parse_translation_field(dst, src, val)
         else:
             modified = self.parse_real_field(dst, src, val)
         if modified:
