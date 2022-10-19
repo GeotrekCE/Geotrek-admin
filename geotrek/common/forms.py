@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from django import forms
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.checks.messages import Error
 from django.core.files.images import get_image_dimensions
 from django.db.models import Q
@@ -16,7 +17,7 @@ from django.utils.translation import gettext_lazy as _
 from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
-from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.models import AccessibilityAttachment, HDViewPoint
 from geotrek.common.mixins.models import PublishableMixin
 from geotrek.common.utils.translation import get_translated_fields
 
@@ -463,3 +464,19 @@ class AttachmentAccessibilityForm(forms.ModelForm):
         self.instance.creator = request.user
         self.instance.content_object = obj
         return super().save(*args, **kwargs)
+
+
+class HDViewPointForm(MapEntityForm):
+    geomfields = ['geom']
+
+    def __init__(self, *args, content_type, object_id, **kwargs):
+        super().__init__(*args, **kwargs)
+        ct = ContentType.objects.get_for_id(content_type)
+        self.instance.content_type = ct
+        self.instance.content_object = ct.get_object_for_this_type(id=object_id)
+        self.instance.object_id = object_id
+        self.helper.form_action += f"?object_id={object_id}&content_type={content_type}"
+
+    class Meta:
+        model = HDViewPoint
+        fields = ('picture', 'geom', 'author', 'title', 'license', 'legend')

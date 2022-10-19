@@ -4,48 +4,54 @@ import mimetypes
 import os
 import re
 from datetime import timedelta
-from zipfile import is_zipfile, ZipFile
+from zipfile import ZipFile, is_zipfile
 
 import redis
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.admin.models import LogEntry, CHANGE
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.decorators import permission_required
+from django.contrib.admin.models import CHANGE, LogEntry
+from django.contrib.auth.decorators import (login_required,
+                                            permission_required,
+                                            user_passes_test)
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import JsonResponse, Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
-from django.views.decorators.http import require_POST, require_http_methods
-from django.views.generic import RedirectView, View
-from django.views.generic import TemplateView
+from django.views.decorators.http import require_http_methods, require_POST
+from django.views.generic import CreateView, RedirectView, TemplateView, View
 from django_celery_results.models import TaskResult
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
-from mapentity.registry import registry, app_settings
+from mapentity.registry import app_settings, registry
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
-from rest_framework import permissions as rest_permissions, viewsets
+from rest_framework import permissions as rest_permissions
+from rest_framework import viewsets
 
 from geotrek import __version__
 from geotrek.celery import app as celery_app
 from geotrek.feedback.parsers import SuricateParser
-from .forms import AttachmentAccessibilityForm, ImportDatasetForm, ImportSuricateForm, ImportDatasetFormWithFile, \
-    SyncRandoForm
-from .mixins.views import MetaMixin, DocumentPortalMixin, DocumentPublicMixin, BookletMixin
-from .models import TargetPortal, AccessibilityAttachment, Theme
+
+from .forms import (AttachmentAccessibilityForm, HDViewPointForm,
+                    ImportDatasetForm, ImportDatasetFormWithFile,
+                    ImportSuricateForm, SyncRandoForm)
+from .mixins.views import (BookletMixin, CompletenessMixin, DocumentPortalMixin,
+                           DocumentPublicMixin, MetaMixin)
+from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
 from .permissions import PublicOrReadPermMixin
 from .serializers import ThemeSerializer
 from .tasks import import_datas, import_datas_from_web, launch_sync_rando
 from .utils import sql_extent
-from .utils.import_celery import create_tmp_destination, discover_available_parsers
+from .utils.import_celery import (create_tmp_destination,
+                                  discover_available_parsers)
 
 
 class Meta(MetaMixin, TemplateView):
@@ -313,6 +319,46 @@ class ParametersView(View):
             'geotrek_admin_version': settings.VERSION,
         }
         return JsonResponse(response)
+
+
+# class HDViewPointList(CustomColumnsMixin, MapEntityList):
+#     queryset = HDViewPoint.objects.all()
+# TODO IN ADMIN
+#     filterform = HDViewPointFilterSet
+#     mandatory_columns = ['id', 'name']
+#     default_extra_columns = ['super_practices', 'date_update']
+#     searchable_columns = ['id', 'name']
+
+
+class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
+    model = HDViewPoint
+    queryset = HDViewPoint.objects.all()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        # TODO
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
+
+
+class HDViewPointCreate(mapentity_views.MapEntityCreate):
+    model = HDViewPoint
+    form_class = HDViewPointForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['content_type'] = self.request.GET.get('content_type')
+        kwargs['object_id'] = self.request.GET.get('object_id')
+        return kwargs
+
+
+class HDViewPointUpdate(mapentity_views.MapEntityUpdate):
+    queryset = HDViewPoint.objects.all()
+    form_class = HDViewPointForm
+
+
+class HDViewPointDelete(mapentity_views.MapEntityDelete):
+    model = HDViewPoint
 
 
 @login_required

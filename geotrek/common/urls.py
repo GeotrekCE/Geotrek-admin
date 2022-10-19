@@ -1,7 +1,7 @@
 from django.urls import path, converters, register_converter
 from mapentity.registry import MapEntityOptions
 
-from .views import (JSSettings, admin_check_extents, DocumentPublic, DocumentBookletPublic, import_view, import_update_json,
+from .views import (HDViewPointCreate, HDViewPointDetail, JSSettings, admin_check_extents, DocumentPublic, DocumentBookletPublic, import_view, import_update_json,
                     ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect)
 
 
@@ -21,6 +21,8 @@ urlpatterns = [
     path('commands/syncview', sync_view, name='sync_randos_view'),
     path('commands/statesync/', sync_update_json, name='sync_randos_state'),
     path('api/<lang:lang>/themes.json', ThemeViewSet.as_view({'get': 'list'}), name="themes_json"),
+    path('hdviewpoint/add', HDViewPointCreate.as_view(), name="hdviewpoint_add"),
+    path('hdviewpoint/<int:pk>', HDViewPointDetail.as_view(), name="hdviewpoint_detail"),
 ]
 
 
