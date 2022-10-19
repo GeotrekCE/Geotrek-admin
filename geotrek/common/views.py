@@ -14,6 +14,7 @@ from django.contrib.admin.models import CHANGE, LogEntry
 from django.contrib.auth.decorators import (login_required,
                                             permission_required,
                                             user_passes_test)
+from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import (Http404, HttpResponse, HttpResponseRedirect,
@@ -26,8 +27,9 @@ from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
 from django.views.decorators.http import require_http_methods, require_POST
-from django.views.generic import CreateView, RedirectView, TemplateView, View
+from django.views.generic import RedirectView, TemplateView, View
 from django_celery_results.models import TaskResult
+from geotrek.common.mixins.api import APIViewSet
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
@@ -47,7 +49,7 @@ from .mixins.views import (BookletMixin, CompletenessMixin, DocumentPortalMixin,
                            DocumentPublicMixin, MetaMixin)
 from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
 from .permissions import PublicOrReadPermMixin
-from .serializers import ThemeSerializer
+from .serializers import HDViewPointAPIGeoJSONSerializer, HDViewPointAPISerializer, ThemeSerializer
 from .tasks import import_datas, import_datas_from_web, launch_sync_rando
 from .utils import sql_extent
 from .utils.import_celery import (create_tmp_destination,
@@ -329,6 +331,14 @@ class ParametersView(View):
 #     default_extra_columns = ['super_practices', 'date_update']
 #     searchable_columns = ['id', 'name']
 
+class HDViewPointAPIViewSet(APIViewSet):
+    model = HDViewPoint
+    serializer_class = HDViewPointAPISerializer
+    geojson_serializer_class = HDViewPointAPIGeoJSONSerializer
+
+    def get_queryset(self):
+        return HDViewPoint.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
+
 
 class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
     model = HDViewPoint
@@ -336,7 +346,6 @@ class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        # TODO
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
 

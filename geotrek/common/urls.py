@@ -1,7 +1,9 @@
 from django.urls import path, converters, register_converter
+from geotrek.common.models import HDViewPoint
 from mapentity.registry import MapEntityOptions
+from rest_framework.routers import DefaultRouter
 
-from .views import (HDViewPointCreate, HDViewPointDetail, JSSettings, admin_check_extents, DocumentPublic, DocumentBookletPublic, import_view, import_update_json,
+from .views import (HDViewPointAPIViewSet, HDViewPointCreate, HDViewPointDetail, HDViewPointUpdate, HDViewPointDelete, JSSettings, admin_check_extents, DocumentPublic, DocumentBookletPublic, import_view, import_update_json,
                     ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect)
 
 
@@ -12,6 +14,8 @@ class LangConverter(converters.StringConverter):
 register_converter(LangConverter, 'lang')
 
 app_name = 'common'
+
+
 urlpatterns = [
     path('api/settings.json', JSSettings.as_view(), name='settings_json'),
     path('tools/extents/', admin_check_extents, name='check_extents'),
@@ -23,7 +27,14 @@ urlpatterns = [
     path('api/<lang:lang>/themes.json', ThemeViewSet.as_view({'get': 'list'}), name="themes_json"),
     path('hdviewpoint/add', HDViewPointCreate.as_view(), name="hdviewpoint_add"),
     path('hdviewpoint/<int:pk>', HDViewPointDetail.as_view(), name="hdviewpoint_detail"),
+    path('hdviewpoint/edit/<int:pk>', HDViewPointUpdate.as_view(), name="hdviewpoint_change"),
+    path('hdviewpoint/delete/<int:pk>', HDViewPointDelete.as_view(), name="hdviewpoint_delete"),
 ]
+
+rest_router = DefaultRouter(trailing_slash=False)
+rest_router.register(r'api/' + HDViewPoint._meta.model_name + '/drf/' + HDViewPoint._meta.model_name + 's',
+                     HDViewPointAPIViewSet, basename=f"{HDViewPoint._meta.model_name}-drf")
+urlpatterns += rest_router.urls
 
 
 class PublishableEntityOptions(MapEntityOptions):

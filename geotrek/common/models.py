@@ -319,8 +319,19 @@ class HDViewPoint(TimeStampedModelMixin):
     def structure(self):
         return self.content_object.structure
 
-    def same_structure(self, structure):
-        return self.structure == structure
+    def same_structure(self, user):
+        """ Returns True if the user is in the same structure or has
+            bypass_structure permission, False otherwise. """
+        return (user.profile.structure == self.structure
+                or user.is_superuser
+                or user.has_perm('authent.can_bypass_structure'))
+
+    @property
+    def full_url(self):
+        return reverse('common:hdviewpoint_detail', kwargs={'pk': self.pk})
+
+    def get_absolute_url(self):
+        return self.full_url
 
     def get_add_url(self):
         return reverse('common:hdviewpoint_add')
@@ -330,11 +341,19 @@ class HDViewPoint(TimeStampedModelMixin):
         # TODO
         return reverse('common:hdviewpoint_add')
 
+    def get_layer_detail_url(self):
+        return reverse("{app_name}:{model_name}-drf-detail".format(app_name=self._meta.app_label.lower(),
+                                                                   model_name=self._meta.model_name.lower()),
+                       kwargs={"format": "geojson", "pk": self.pk})
+
+    def get_detail_url(self):
+        return reverse('common:hdviewpoint_detail', args=[self.pk])
+
     def get_update_url(self):
-        return reverse('admin:hdviewpoint_change', args=[self.pk])
+        return reverse('common:hdviewpoint_change', args=[self.pk])
 
     def get_delete_url(self):
-        return reverse('admin:hdviewpoint_delete', args=[self.pk])
+        return reverse('common:hdviewpoint_delete', args=[self.pk])
 
     def get_permission_codename(self, *args):
         return
@@ -374,13 +393,6 @@ class HDViewPoint(TimeStampedModelMixin):
         obj = self.geom
         obj.transform(srid)
         return obj.extent
-
-    @property
-    def full_url(self):
-        return reverse('common:hdviewpoint_detail', kwargs={'pk': self.pk})
-
-    def get_absolute_url(self):
-        return self.full_url
 
     @classmethod
     def get_create_label(cls):

@@ -3,11 +3,11 @@ from django.urls import reverse
 from django.db import models as django_db_models
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
-
 from rest_framework import serializers as rest_serializers
-from rest_framework import serializers as rest_fields
+from rest_framework_gis.fields import GeometryField
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from .models import Theme, RecordSource, TargetPortal, FileType, Attachment, Label
+from .models import HDViewPoint, Theme, RecordSource, TargetPortal, FileType, Attachment, Label
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -92,3 +92,22 @@ class LabelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = Label
         fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')
+
+
+class HDViewPointAPISerializer(TranslatedModelSerializer):
+    #picture TODO : link to tileserver
+
+    class Meta:
+        model = HDViewPoint
+        fields = (
+            'id', 'uuid', 'author', 'title', 'legend', 'license'
+        )
+
+
+class HDViewPointAPIGeoJSONSerializer(GeoFeatureModelSerializer, HDViewPointAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = GeometryField(read_only=True, precision=7)
+
+    class Meta(HDViewPointAPISerializer.Meta):
+        geo_field = 'api_geom'
+        fields = HDViewPointAPISerializer.Meta.fields + ('api_geom', )
