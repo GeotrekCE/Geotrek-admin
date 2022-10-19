@@ -9,18 +9,14 @@ env:
 jobs:
   flake8:
     name: Check code styling
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.6
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.6
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.6  # lint with minimal version supported (3.6 in 18.04)
-
       - name: Install dependencies
         run: |
-          pip3 install --upgrade pip
           pip3 install flake8
 
       - name: Flake8

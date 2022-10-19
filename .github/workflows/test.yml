@@ -32,17 +32,14 @@ env:
 jobs:
   test:
     name: Python Unittests
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+      container:
+        image: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu:bionic, ubuntu:focal]
         tests-env: ['tests', 'tests_nds']
-        include:
-          - os: ubuntu-18.04
-            python-version: 3.6  # default python version in 18.04
-          - os: ubuntu-20.04
-            python-version: 3.8  # default python version in 20.04
 
     env:
       ENV: ${{ matrix.tests-env }}
