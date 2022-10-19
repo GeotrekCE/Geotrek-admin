@@ -203,8 +203,8 @@ class MultilangThemeParser(ThemeParser):
 class MultilangFilterThemeParser(MultilangThemeParser):
     """Parser used in MultilangParserTests, using Theme because it has a translated field"""
 
-    def filter_name(self, src, val):
-        return 'filtered {val}'.format(val)
+    def filter_label(self, src, val):
+        return 'filtered {}'.format(val)
 
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
@@ -251,7 +251,7 @@ class MultilangParserTests(TestCase):
         """Parser should first apply filter method before"""
         filename = os.path.join(os.path.dirname(__file__), 'data', 'themes.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.MultilangFilterThemeParser', filename, verbosity=0)
-        theme_imported = Theme.objects.get(label="Paysages")
+        theme_imported = Theme.objects.get(label="filtered Paysages")
         self.assertEqual(theme_imported.label_fr, theme_imported.label_en)
         self.assertEqual(theme_imported.label_fr, 'filtered Paysages')
 

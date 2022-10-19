@@ -252,6 +252,10 @@ class Parser:
         val = val or ""
         modified = False
 
+        if hasattr(self, 'filter_{0}'.format(dst)):
+            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
+        else:
+            val = self.apply_filter(dst, src, val)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
             old = getattr(self.obj, dst_field_lang)
