@@ -25,12 +25,10 @@ env:
   POSTGRES_DB: ci_test
   POSTGRES_PASSWORD: ci_test
   POSTGRES_USER: ci_test
-  POSTGRES_HOST: 127.0.0.1
   SERVER_NAME: geotrek.local
   SECRET_KEY: test-test-test
   CONVERSION_HOST: localhost
   CAPTURE_HOST: localhost
-  REDIS_HOST: 127.0.0.1
   VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
   LANG: C.UTF-8
 
@@ -57,15 +55,11 @@ jobs:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
           POSTGRES_USER: ci_test
-        ports:
-          - 5432:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
       redis:
         image: redis:5.0-alpine
-        ports:
-          - 6379:6379
 
     steps:
     - uses: actions/checkout@v3
