@@ -38,7 +38,7 @@ jobs:
 
     strategy:
       matrix:
-        os: ['ubuntu:bionic', 'ubuntu:focal']
+        os: ['makinacorpus/geodjango:bionic-3.6', 'makinacorpus/geodjango:focal-3.8']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -78,18 +78,11 @@ jobs:
       run: |
         apt-get update -q
         apt-get -qq -y install \
-          python3-dev \
-          python3-pip \
-          build-essential \
           unzip \
           gettext \
           binutils \
           libproj-dev \
           gdal-bin \
-          sudo \
-          less \
-          curl \
-          git \
           iproute2 \
           software-properties-common \
           shared-mime-info \
