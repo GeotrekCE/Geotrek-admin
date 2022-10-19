@@ -38,7 +38,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu:bionic, ubuntu:focal]
+        os: ['ubuntu:bionic', 'ubuntu:focal']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -64,11 +64,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-
     - uses: actions/cache@v2
       with:
         path: |
@@ -83,6 +78,9 @@ jobs:
       run: |
         sudo apt-get update -q
         sudo apt-get -qq -y install \
+             python3-dev \
+             python3-pip \
+             build-essential \
              unzip \
              gettext \
              binutils \
