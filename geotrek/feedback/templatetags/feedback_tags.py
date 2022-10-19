@@ -77,4 +77,6 @@ def resolved_intervention_info(report):
 
 @register.simple_tag
 def workflow_manager():
-    return WorkflowManager.objects.first().user.pk
+    if WorkflowManager.objects.exists():
+        return WorkflowManager.objects.first().user.pk
+    return None

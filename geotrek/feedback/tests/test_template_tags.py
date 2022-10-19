@@ -7,9 +7,9 @@ from mapentity.models import ADDITION, LogEntry
 
 from geotrek.authent.tests.factories import UserFactory, UserProfileFactory
 from geotrek.feedback.templatetags.feedback_tags import (
-    predefined_emails, resolved_intervention_info, status_ids_and_colors)
+    predefined_emails, resolved_intervention_info, status_ids_and_colors, workflow_manager)
 from geotrek.feedback.tests.factories import (PredefinedEmailFactory,
-                                              ReportStatusFactory)
+                                              ReportStatusFactory, WorkflowManagerFactory)
 from geotrek.maintenance.tests.factories import ReportInterventionFactory
 
 
@@ -78,3 +78,8 @@ class TestFeedbackTemplateTags(TestCase):
             sorted(expected.items()),
             sorted(actual.items())
         )
+
+    def test_workflow_manager(self):
+        self.assertEqual(workflow_manager(), None)
+        wm = WorkflowManagerFactory(user=self.user1)
+        self.assertEqual(workflow_manager(), wm.user.pk)
