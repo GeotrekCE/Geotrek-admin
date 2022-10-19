@@ -126,6 +126,8 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN published SET DEFAULT FALSE;
 ALTER TABLE tourism_touristiccontent ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 -- deleted
+-- preparation_duration
+-- intervention_duration
 ALTER TABLE tourism_touristicevent ALTER COLUMN provider SET DEFAULT '';
 
 

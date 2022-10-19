@@ -438,3 +438,9 @@ msgstr ""
 
 msgid "Invalid geometry value."
 msgstr ""
+
+msgid "Preparation duration"
+msgstr "Preparation duration"
+
+msgid "Intervention duration"
+msgstr "Intervention duration"

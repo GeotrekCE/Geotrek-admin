@@ -6,6 +6,7 @@ from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
+from django.core.validators import MinValueValidator
 from django.db.models.query_utils import Q
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
@@ -477,6 +478,16 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     bookable = models.BooleanField(verbose_name=_("Bookable"), default=False)
     cancelled = models.BooleanField(default=False, verbose_name=_("Cancelled"), help_text=_("Boolean indicating if Event is cancelled"))
     cancellation_reason = models.ForeignKey(CancellationReason, verbose_name=_("Cancellation reason"), related_name="touristic_events", null=True, blank=True, on_delete=models.PROTECT)
+    preparation_duration = models.FloatField(
+        verbose_name=_("Preparation duration"), blank=True, null=True,
+        help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
+        validators=[MinValueValidator(0)]
+    )
+    intervention_duration = models.FloatField(
+        verbose_name=_("Intervention duration"), blank=True, null=True,
+        help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
+        validators=[MinValueValidator(0)]
+    )
     objects = TouristicEventManager()
     place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Event place"), on_delete=models.PROTECT, null=True, blank=True, help_text=_("Select a place in the list or locate the event directly on the map"))
     id_prefix = 'E'

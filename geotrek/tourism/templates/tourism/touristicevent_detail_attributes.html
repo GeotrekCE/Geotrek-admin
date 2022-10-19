@@ -167,6 +167,15 @@
                 {% endfor %}
             </td>
         </tr>
+        <tr>
+            <th>{{ object|verbose:"preparation_duration" }}</th>
+            <td>{{ object.preparation_duration }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"intervention_duration" }}</th>
+            <td>{{ object.intervention_duration }}</td>
+        </tr>
+
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

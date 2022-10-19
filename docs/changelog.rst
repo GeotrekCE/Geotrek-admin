@@ -4,6 +4,11 @@ CHANGELOG
 
 2.88.0+dev (XXXX-XX-XX)
 -----------------------
+ 
+**New features**
+
+- Add fields ``preparation_duration``, ``intervention_duration``  to TouristicEvents
+
 
 **New features**
 
