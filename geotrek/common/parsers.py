@@ -242,7 +242,7 @@ class Parser:
     def parse_translated_field(self, dst, src, val):
         """Specific treatment for translated fields
         TODO: check self.default_language to get default values
-        TODO: handle flow with a field for each language
+        TODO: handle flow with a field for each language (ex: APIDAE)
         TODO: compare each translated fields with source fields :
         this only compares old 'name' with new 'name' but it should compare
             - old 'name_en' with new 'name_en',
@@ -264,7 +264,7 @@ class Parser:
 
             if old != val:
                 # Set dst_field_lang only if empty
-                if old is None:
+                if not old:
                     self.set_value(dst_field_lang, src, val)
                     modified = True
         return modified
