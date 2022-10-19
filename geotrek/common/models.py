@@ -2,18 +2,26 @@ import os
 import uuid
 
 from colorfield.fields import ColorField
-from PIL import Image
 from django.conf import settings
+from django.contrib import auth
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.db.models import Q
+from django.db.utils import OperationalError
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from paperclip.models import Attachment as BaseAttachment, FileType as BaseFileType, License as BaseLicense
+from paperclip.models import Attachment as BaseAttachment
+from paperclip.models import FileType as BaseFileType
+from paperclip.models import License as BaseLicense
+from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin
+from geotrek.common.mixins.models import (OptionalPictogramMixin,
+                                          PictogramMixin,
+                                          TimeStampedModelMixin)
 
 
 class AccessibilityAttachmentManager(models.Manager):
@@ -270,3 +278,110 @@ class RatingMixin(OptionalPictogramMixin, models.Model):
 
     class Meta:
         abstract = True
+
+
+class HDViewPoint(TimeStampedModelMixin):
+    picture = models.FileField(verbose_name=_("Picture"))
+    geom = gis_models.PointField(verbose_name=_("Location"),
+                                 srid=settings.SRID)
+    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    annotations = models.JSONField(null=True, verbose_name=_("Annotations"), blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    author = models.CharField(blank=True, default='', max_length=128,
+                              verbose_name=_('Author'),
+                              help_text=_("Original creator"))
+    title = models.CharField(max_length=1024,
+                             verbose_name=_("Title"),
+                             help_text=_("Title for this view point"))
+    legend = models.CharField(blank=True, default='', max_length=1024,
+                              verbose_name=_("Legend"),
+                              help_text=_("Details about this view"))
+    license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
+                                verbose_name=_("License"),
+                                null=True, blank=True,
+                                on_delete=models.SET_NULL)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name="created_hdviewpoints",
+                                verbose_name=_('Creator'),
+                                null=True, help_text=_("User that uploaded"),
+                                on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = _("HD View")
+        verbose_name_plural = _("HD Views")
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def structure(self):
+        return self.content_object.structure
+
+    def same_structure(self, structure):
+        return self.structure == structure
+
+    def get_add_url(self):
+        return reverse('common:hdviewpoint_add')
+
+    @classmethod
+    def get_list_url(cls):
+        # TODO
+        return reverse('common:hdviewpoint_add')
+
+    def get_update_url(self):
+        return reverse('admin:hdviewpoint_change', args=[self.pk])
+
+    def get_delete_url(self):
+        return reverse('admin:hdviewpoint_delete', args=[self.pk])
+
+    def get_permission_codename(self, *args):
+        return
+
+    @classmethod
+    def get_content_type_id(cls):
+        try:
+            return ContentType.objects.get_for_model(cls).pk
+        except OperationalError:  # table is not yet created
+            return None
+
+    @classmethod
+    def get_permission_codename(cls, entity_kind):
+        operations = {
+            'ENTITY_CREATE': 'add',
+            'ENTITY_UPDATE': 'change',
+            'ENfTITY_UPDATE_GEOM': 'change_geom',
+            'ENTITY_DELETE': 'delete',
+            'ENTITY_DETAIL': 'read',
+            'ENTITY_LAYER': 'read',
+            #ENTITY_LIST: 'read', # TODO
+            'ENTITY_DATATABLE_LIST': 'read',
+            'ENTITY_MARKUP': 'read',
+        }
+        perm = operations.get(entity_kind, entity_kind)
+        opts = cls._meta
+        appname = opts.app_label.lower()
+        if opts.proxy:
+            proxied = opts.proxy_for_model._meta
+            appname = proxied.app_label.lower() if proxied.app_label.lower() != "admin" else appname
+        return '%s.%s' % (appname, auth.get_permission_codename(perm, opts))
+
+    def get_geom(self):
+        return self.geom
+
+    def get_map_image_extent(self, srid=settings.API_SRID):
+        obj = self.geom
+        obj.transform(srid)
+        return obj.extent
+
+    @property
+    def full_url(self):
+        return reverse('common:hdviewpoint_detail', kwargs={'pk': self.pk})
+
+    def get_absolute_url(self):
+        return self.full_url
+
+    @classmethod
+    def get_create_label(cls):
+        return _("Add a new HD view")
