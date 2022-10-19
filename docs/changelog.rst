@@ -13,6 +13,8 @@ CHANGELOG
 **New features**
 
 - Add new setting `DIRECTION_ON_LINES_ENABLED` to have the `direction` field on lines instead of blades
+- Partially handle translated fields, when setting ``fill_empty_translated_fields`` is True,
+  all empty translated field will be set with value
 
 **Bug fixes**
 
