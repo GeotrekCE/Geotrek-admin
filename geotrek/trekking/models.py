@@ -218,6 +218,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     attachments_accessibility = GenericRelation('common.AccessibilityAttachment')
+    view_points = GenericRelation('common.HDViewPoint')
 
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
