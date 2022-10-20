@@ -29,27 +29,30 @@ from django.views import static
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.generic import RedirectView, TemplateView, View
 from django_celery_results.models import TaskResult
-from geotrek.common.mixins.api import APIViewSet
+from django_large_image.rest import LargeImageFileDetailMixin
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
+from rest_framework import mixins
 from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
 
 from geotrek import __version__
 from geotrek.celery import app as celery_app
+from geotrek.common.mixins.api import APIViewSet
 from geotrek.feedback.parsers import SuricateParser
 
 from .forms import (AttachmentAccessibilityForm, HDViewPointForm,
                     ImportDatasetForm, ImportDatasetFormWithFile,
                     ImportSuricateForm, SyncRandoForm)
-from .mixins.views import (BookletMixin, CompletenessMixin, DocumentPortalMixin,
-                           DocumentPublicMixin, MetaMixin)
+from .mixins.views import (BookletMixin, CompletenessMixin,
+                           DocumentPortalMixin, DocumentPublicMixin, MetaMixin)
 from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
 from .permissions import PublicOrReadPermMixin
-from .serializers import HDViewPointAPIGeoJSONSerializer, HDViewPointAPISerializer, ThemeSerializer
+from .serializers import (HDViewPointAPIGeoJSONSerializer,
+                          HDViewPointAPISerializer, ThemeSerializer)
 from .tasks import import_datas, import_datas_from_web, launch_sync_rando
 from .utils import sql_extent
 from .utils.import_celery import (create_tmp_destination,
@@ -368,6 +371,13 @@ class HDViewPointUpdate(mapentity_views.MapEntityUpdate):
 
 class HDViewPointDelete(mapentity_views.MapEntityDelete):
     model = HDViewPoint
+
+
+class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):
+    queryset = HDViewPoint.objects.all()
+    serializer_class = HDViewPointAPISerializer
+    # for `django-large-image`: the name of the image FileField on your model
+    FILE_FIELD_NAME = 'picture'
 
 
 @login_required

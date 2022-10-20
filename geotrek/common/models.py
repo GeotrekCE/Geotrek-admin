@@ -341,6 +341,9 @@ class HDViewPoint(TimeStampedModelMixin):
         # TODO
         return reverse('common:hdviewpoint_add')
 
+    def get_picture_tile_url(self, x, y, z):
+        return reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': x, 'y': y, 'z': z, 'fmt': 'png'})
+
     def get_layer_detail_url(self):
         return reverse("{app_name}:{model_name}-drf-detail".format(app_name=self._meta.app_label.lower(),
                                                                    model_name=self._meta.model_name.lower()),

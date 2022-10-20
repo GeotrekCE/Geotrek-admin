@@ -67,7 +67,18 @@
           </table>
 
           <h3>{% trans "Image" %}</h3>
-
+            {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
+            <div id="hdviewpoint-map"></div>
+            <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
+            <script>
+              var map = geo.map({ node: "#hdviewpoint-map" });
+              map.createLayer(
+                'osm',
+                {
+                  url: (x, y, z, subdomains) => "{{base_tile_url}}" + `/tiles/${z}/${x}/${y}.png`
+                }
+              );
+            </script>
           {% endblock detailspanel %}
         </div>
       {% if ACTION_HISTORY_ENABLED %}
