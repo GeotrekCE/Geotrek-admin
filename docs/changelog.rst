@@ -5,11 +5,19 @@ CHANGELOG
 2.89.0+dev (XXXX-XX-XX)
 -----------------------
  
+**Bug fixes**
 
+- Prevent migration ``0033_auto_20220929_0840`` from failing by escaping Touristic Events ``participant_number``
 
 2.89.0 (2022-10-20)
 -----------------------
- 
+
+**DO NOT USE IT!**
+
+**Warning**
+
+- Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
+
 **New features**
 
 - Add fields ``preparation_duration``, ``intervention_duration``  to TouristicEvents
@@ -26,7 +34,13 @@ CHANGELOG
 
 2.88.0 (2022-10-11)
 -----------------------
+
+**DO NOT USE IT!**
  
+**Warning**
+
+- Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
+
 **New features**
 
 - Add optional places to TouristicEvents, using place selector to locate TouristicEvent on form map (#3266)
