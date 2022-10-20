@@ -71,8 +71,10 @@
             <div id="hdviewpoint-map"></div>
             <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
             <script>
-              var map = geo.map({ node: "#hdviewpoint-map" });
-              map.createLayer(
+              var viewer = geo.map({
+                node: "#hdviewpoint-map",
+              });
+              viewer.createLayer(
                 'osm',
                 {
                   url: (x, y, z, subdomains) => "{{base_tile_url}}" + `/tiles/${z}/${x}/${y}.png`
