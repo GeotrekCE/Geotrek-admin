@@ -294,6 +294,7 @@ PROJECT_APPS += (
     'rest_framework_gis',
     'embed_video',
     'django_celery_results',
+    'django_large_image',
     'colorfield',
     'mptt',
 )

@@ -55,6 +55,7 @@ setup(
         'drf-yasg',
         'xlrd',
         'landez',
+        'large-image-source-pil',
         'django-large-image',
         'celery[redis]',
         'django-celery-results==2.2.*',  # Latest version supporting python3.6

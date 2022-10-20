@@ -20,6 +20,8 @@ billiard==3.6.4.0
     # via celery
 btrees==4.10.0
     # via zodb
+cachetools==5.2.0
+    # via large-image
 cairocffi==0.9.0
     # via
     #   cairosvg
@@ -91,6 +93,7 @@ django==3.2.15
     #   django-extensions
     #   django-filter
     #   django-js-asset
+    #   django-large-image
     #   django-leaflet
     #   django-modeltranslation
     #   django-weasyprint
@@ -126,6 +129,8 @@ django-filter==21.1
     # via mapentity
 django-js-asset==2.0.0
     # via django-mptt
+django-large-image==0.8.1
+    # via geotrek (setup.py)
 django-leaflet==0.19.post9
     # via mapentity
 django-modelcluster==5.3
@@ -142,6 +147,7 @@ django-weasyprint==1.1.0.post2
     #   mapentity
 djangorestframework==3.13.1
     # via
+    #   django-large-image
     #   djangorestframework-datatables
     #   djangorestframework-gis
     #   drf-extensions
@@ -158,7 +164,9 @@ drf-dynamic-fields==0.4.0
 drf-extensions==0.7.1
     # via geotrek (setup.py)
 drf-yasg==1.20.0
-    # via geotrek (setup.py)
+    # via
+    #   django-large-image
+    #   geotrek (setup.py)
 easy-thumbnails==2.7
     # via
     #   mapentity
@@ -169,6 +177,8 @@ factory-boy==3.2.1
     # via geotrek (setup.py)
 faker==13.3.4
     # via factory-boy
+filelock==3.8.0
+    # via django-large-image
 fiona==1.8.21
     # via
     #   geotrek (setup.py)
@@ -197,6 +207,12 @@ kombu==5.1.0
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
+large-image==1.17.1
+    # via
+    #   django-large-image
+    #   large-image-source-pil
+large-image-source-pil==1.17.1
+    # via geotrek (setup.py)
 lxml==4.8.0
     # via mapentity
 mapentity==8.2.1
@@ -209,10 +225,14 @@ munch==2.5.0
     # via fiona
 netifaces==0.11.0
     # via mapentity
+numpy==1.23.4
+    # via large-image
 packaging==21.3
     # via
     #   drf-yasg
     #   redis
+palettable==3.3.0
+    # via large-image
 paperclip==2.6.1
     # via
     #   geotrek (setup.py)
@@ -231,10 +251,13 @@ pillow==8.4.0
     #   django-colorfield
     #   easy-thumbnails
     #   geotrek (setup.py)
+    #   large-image
     #   paperclip
     #   weasyprint
 prompt-toolkit==3.0.30
     # via click-repl
+psutil==5.9.3
+    # via large-image
 psycopg2==2.9.3
     # via geotrek (setup.py)
 pycparser==2.21
