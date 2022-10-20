@@ -302,11 +302,6 @@ class HDViewPoint(TimeStampedModelMixin):
                                 verbose_name=_("License"),
                                 null=True, blank=True,
                                 on_delete=models.SET_NULL)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                related_name="created_hdviewpoints",
-                                verbose_name=_('Creator'),
-                                null=True, help_text=_("User that uploaded"),
-                                on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("HD View")
