@@ -347,6 +347,10 @@ class HDViewPoint(TimeStampedModelMixin):
     def get_detail_url(self):
         return reverse('common:hdviewpoint_detail', args=[self.pk])
 
+    @property
+    def get_thumbnail_url(self):
+        return reverse('common:hdviewpoint-thumbnail', kwargs={'pk': self.pk, 'fmt': 'png'})
+
     def get_update_url(self):
         return reverse('common:hdviewpoint_change', args=[self.pk])
 
