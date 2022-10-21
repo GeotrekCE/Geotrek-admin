@@ -77,7 +77,9 @@
                 <tr>
                     <th>{% trans "Code" %}</th>
                     <th>{% trans "Color" %}</th>
+                    {% if not is_direction_on_lines_enabled %}
                     <th>{% trans "Direction" %}</th>
+                    {% endif %}
                     <th>{% trans "Condition" %}</th>
                     <th>{% trans "Text" %}</th>
                     <th>{% trans "Picto" %}</th>

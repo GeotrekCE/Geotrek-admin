@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Prevent migration ``0033_auto_20220929_0840`` from failing by escaping Touristic Events ``participant_number``
+- Fix signage details page with DIRECTION_ON_LINES enabled (hide "Direction" column header)
 
 2.89.0 (2022-10-20)
 -----------------------
