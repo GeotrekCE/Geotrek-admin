@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.utils.translation import gettext
 
 from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -31,6 +32,30 @@ class SignageTest(TestCase):
             sign = SignageFactory.create(geom='SRID=2154;POINT (700050 6600050)')
 
         self.assertCountEqual(p.signages, [sign])
+
+
+class SignageTemplatesTest(TestCase):
+
+    def setUp(self):
+        self.login()
+
+    def login(self):
+        user = User.objects.create_superuser('test', 'test@example.com', password='test')
+        self.client.force_login(user=user)
+
+    def tearDown(self):
+        self.client.logout()
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_hidden_on_detail_page_when_direction_on_lines_enabled(self):
+        blade = BladeFactory.create(
+            direction=BladeDirectionFactory.create(label="A direction on the blade")
+        )
+
+        response = self.client.get(blade.signage.get_detail_url())
+
+        self.assertNotContains(response, "A direction on the blade")
+        self.assertNotContains(response, gettext("Direction"))
 
 
 class BladeViewsTest(GeotrekAPITestCase, CommonTest):
