@@ -6,6 +6,8 @@
     <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new HD view" %}</a>
 </p>
 <table class="table">
+    {% for viewpoint in object.view_points.all %}
+    {% if forloop.first %}
     <thead>
         <th>{% trans "File" %}</th>
         <th>{% trans "Title" %}</th>
@@ -17,8 +19,8 @@
             <th>{% trans "Actions" %}</th>
         {% endblock actions_attachment_header %}
     </thead>
+    {% endif %}
     <tbody>
-    {% for viewpoint in object.view_points.all %}
     <tr data-id="{{ viewpoint.pk }}"
         data-title="{{ viewpoint.title }}">
         <td>
