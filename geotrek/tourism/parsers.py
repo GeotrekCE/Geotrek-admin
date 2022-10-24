@@ -614,7 +614,7 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentMixin, Parser):
 
     @property
     def items(self):
-        return self.root['responseData']
+        return self.root['responseData'] or []
 
     def next_row(self):
         response = self.request_or_retry(self.url)
