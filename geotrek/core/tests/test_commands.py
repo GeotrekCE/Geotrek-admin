@@ -259,9 +259,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.path_2_b = Path.objects.get(geom=LineString(Point(700050, 6600050), Point(700100, 6600000),
                                                          srid=settings.SRID))
 
-    def get_geometries(self):
+    def get_geometries(self, topology):
         geometries = []
-        for pathagg in PathAggregation.objects.all():
+        for pathagg in topology.aggregations.all():
             cursor = connection.cursor()
             cursor.execute(f"""SELECT * FROM ST_ASTEXT(ST_SmartLineSubstring('{pathagg.path.geom.wkt}'::geometry,
                                                                               {pathagg.start_position},
@@ -308,7 +308,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         output = StringIO()
         call_command('reorder_topologies', stdout=output)
         self.assertEqual('1 topologies has beeen updated\n', output.getvalue())
-        geometries = self.get_geometries()
+        geometries = self.get_geometries(topo)
         self.assertEqual(geometries, [LineString((700000, 6600000), (700045, 6600045), srid=2154),
                                       LineString((700045, 6600045), (700050, 6600050), srid=2154),
                                       LineString((700050, 6600050), (700100, 6600100), srid=2154)])
@@ -365,7 +365,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(LineString((700000, 6600000), (700045, 6600045), (700047.5, 6600047.5), (700045, 6600045),
                                     (700025, 6600025), (700045, 6600045), (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
         call_command('reorder_topologies', verbosity=0)
-        geometries = self.get_geometries()
+        geometries = self.get_geometries(topo)
         self.assertEqual(geometries, [LineString((700000, 6600000), (700045, 6600045), srid=2154),
                                       LineString((700045, 6600045), (700047.5, 6600047.5), srid=2154),
                                       Point(700047.5, 6600047.5, srid=2154),
@@ -431,7 +431,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
                          [0, 0, 1, 1, 2, 3, 3, 4, 4])
         call_command('reorder_topologies', verbosity=0)
-        geometries = self.get_geometries()
+        geometries = self.get_geometries(topo)
         self.assertEqual(geometries, [LineString((700000, 6600000), (700035, 6600035), srid=2154),
                                       LineString((700035, 6600035), (700050, 6600050), srid=2154),
                                       LineString((700050, 6600050), (700035, 6600065), srid=2154),
@@ -501,7 +501,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
                          [0, 0, 1, 3, 4, 4])
         call_command('reorder_topologies', verbosity=0)
-        geometries = self.get_geometries()
+        geometries = self.get_geometries(topo)
         self.assertEqual(geometries, [LineString((700000, 6600000), (700035, 6600035), srid=2154),
                                       LineString((700035, 6600035), (700050, 6600050), srid=2154),
                                       LineString((700050, 6600050), (700035, 6600065), srid=2154),
@@ -565,7 +565,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
                          [0, 1, 1, 2, 2, 2, 3, 3, 4, 4])  # /!\ Duplicated Point
         call_command('reorder_topologies', verbosity=0)
-        geometries = self.get_geometries()
+        geometries = self.get_geometries(topo)
         self.assertEqual(geometries, [LineString((700000, 6600000), (700050, 6600050), srid=2154),
                                       LineString((700050, 6600050), (700025, 6600075), srid=2154),
                                       Point(700025, 6600075, srid=2154),
