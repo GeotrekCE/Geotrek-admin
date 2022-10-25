@@ -35,8 +35,9 @@ class Command(BaseCommand):
         return fetched[0][1]
 
     def handle(self, *args, **options):
-        topologies = Topology.objects.all()
+        topologies = Topology.objects.filter(deleted=False)
         failed_topologies = []
+        num_updated_topologies = 0
         for topology in topologies:
             geom_lines = self.get_geom_lines(topology)
 
@@ -103,10 +104,16 @@ class Command(BaseCommand):
             pas_updated = []
             for pa_id in initial_order:
                 pa = PathAggregation.objects.get(id=pa_id)
-                pa.order = new_orders[pa_id]
-                pas_updated.append(pa)
+                if pa.order != new_orders[pa_id]:
+                    pa.order = new_orders[pa_id]
+                    pas_updated.append(pa)
             PathAggregation.objects.bulk_update(pas_updated, ['order'])
+            if pas_updated:
+                num_updated_topologies += 1
+
+        if options['verbosity']:
+            self.stdout.write(f'{num_updated_topologies} topologies has beeen updated')
 
         if options['verbosity'] and failed_topologies:
             self.stdout.write('Topologies with errors :')
-            self.stdout.write(', '.join(failed_topologies))
+            self.stdout.write('\n'.join(failed_topologies))
