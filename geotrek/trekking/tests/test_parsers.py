@@ -13,7 +13,9 @@ from django.test.utils import override_settings
 from geotrek.common.models import Theme, FileType, Attachment
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
-from geotrek.trekking.parsers import TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser
+from geotrek.trekking.parsers import (
+    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser
+)
 
 
 class TrekParserFilterDurationTests(TestCase):
@@ -563,3 +565,95 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(service.type), 'Eau potable')
         self.assertAlmostEqual(service.geom.x, 572096.2266745908, places=5)
         self.assertAlmostEqual(service.geom.y, 6192330.15779677, places=5)
+
+
+class TestApidaeTrekParser(ApidaeTrekParser):
+    url = 'https://example.net/apidae/api/v002/recherche/list-objets-touristiques/'
+    warn_on_missing_fields = True
+    api_key = 'ABCDEF'
+    project_id = 1234
+    separator = None
+    selection_id = 654321
+    model = Trek
+    eid = 'eid'
+    fields = {
+        'name': 'nom.libelleFr',
+        'geom': 'multimedias',
+        'eid': 'id'
+    }
+    size = 20
+    skip = 0
+    responseFields = [
+        'id',
+        'nom',
+        'multimedias'
+    ]
+
+
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class ApidaeTrekParserTests(TestCase):
+
+    @staticmethod
+    def make_dummy_get(apidae_data_file):
+
+        def dummy_get(url, *args, **kwargs):
+            from unittest.mock import Mock
+            rv = Mock()
+            rv.status_code = 200
+            if url == TestApidaeTrekParser.url:
+                filename = apidae_data_file
+                with open(filename, 'r') as f:
+                    json_payload = f.read()
+                data = json.loads(json_payload)
+                rv.json = lambda: data
+            else:
+                from urllib.parse import urlparse
+                parsed_url = urlparse(url)
+                url_path = parsed_url.path
+                filename = os.path.join('geotrek/trekking/tests/data/apidae_trek_parser', url_path.lstrip('/'))
+                with open(filename, 'r') as f:
+                    gpx = f.read()
+                rv.content = bytes(gpx, 'utf-8')
+            return rv
+
+        return dummy_get
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.geom.srid, 2154)
+        self.assertEqual(len(trek.geom.coords), 13)
+        first_point = trek.geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_multiple_plans(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/trek_multiple_plans_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2, stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('has more than one map defined', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_gpx_file(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trek_plan_no_gpx_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('pas au format GPX', output_stdout.getvalue())

@@ -1,9 +1,12 @@
 import json
+from tempfile import NamedTemporaryFile
+
 from django.conf import settings
+from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils.translation import gettext as _
 
-from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser
+from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek
 
 
@@ -212,3 +215,66 @@ class GeotrekPOIParser(GeotrekParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/poi"
+
+
+from geotrek.tourism.parsers import ApidaeParser  # Noqa
+
+
+class ApidaeTrekParser(ApidaeParser):
+    url = 'https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
+    # locales%22:[%22fr%22,%22en%22,%22de%22,%22nl%22,%22it%22,%22es%22]}
+    api_key = None
+    project_id = None
+    separator = None
+    selection_id = None
+    model = Trek
+    eid = 'eid'
+    fields = {
+        'name': 'nom.libelleFr',
+        'geom': 'multimedias',
+        'eid': 'id'
+    }
+    size = 20
+    skip = 0
+    responseFields = [
+        'id',
+        'nom',
+        'multimedias'
+    ]
+
+    @staticmethod
+    def _find_gpx_plan_in_multimedia_items(items):
+        plans = list(filter(lambda item: item['type'] == 'PLAN', items))
+        if len(plans) > 1:
+            raise RowImportError("APIDAE Trek has more than one map defined")
+        return plans[0]
+
+    def _fetch_gpx_from_url(self, plan):
+        ref_fichier_plan = plan['traductionFichiers'][0]
+        if ref_fichier_plan['extension'] != 'gpx':
+            raise RowImportError("Le plan de l'itinéraire APIDAE n'est pas au format GPX")
+        response = self.request_or_retry(url=ref_fichier_plan['url'])
+        # print('downloaded url {}, content size {}'.format(plan['traductionFichiers'][0]['url'], len(response.text)))
+        return response.content
+
+    @staticmethod
+    def _get_tracks_layer(datasource):
+        for layer in datasource:
+            if layer.name == 'tracks':
+                return layer
+        raise RowImportError("APIDAE Trek GPX map does not have a 'tracks' layer")
+
+    def filter_geom(self, src, val):
+        plan = self._find_gpx_plan_in_multimedia_items(val)
+        gpx = self._fetch_gpx_from_url(plan)
+
+        # FIXME: is there another way than the temporary file? It seems not. `DataSource` really expects a filename.
+        with NamedTemporaryFile(mode='w+b', dir='/opt/geotrek-admin/var/tmp') as ntf:
+            ntf.write(gpx)
+            ntf.flush()
+
+            ds = DataSource(ntf.name)
+            track_layer = self._get_tracks_layer(ds)
+            geom = track_layer[0].geom[0].geos
+            geom.transform(settings.SRID)
+            return geom

@@ -1,0 +1,22 @@
+{
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "id": 123123,
+      "multimedias": [
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/un_plan.kmz",
+              "extension": "kmz"
+            }
+          ]
+        }
+      ],
+      "nom": {
+        "libelleFr": "Une belle randonnée de test avec un plan... mais pas au format gpx"
+      }
+    }
+  ]
+}
