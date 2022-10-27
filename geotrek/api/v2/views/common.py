@@ -24,7 +24,7 @@ class ThemeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class SourceViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekRelatedPortalFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TreksAndSitesRelatedPortalFilter,)
     serializer_class = api_serializers.RecordSourceSerializer
     queryset = common_models.RecordSource.objects.all()
 
