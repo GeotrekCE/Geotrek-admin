@@ -5,6 +5,10 @@ CHANGELOG
 2.89.1+dev (XXXX-XX-XX)
 -----------------------
  
+**Bug fixes**
+
+- Fix APIv2 does not return sources related to published sites
+
 
 2.89.1 (2022-10-20)
 -----------------------
