@@ -64,6 +64,16 @@
                         {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
                     </td>
                 </tr>
+                <tr>
+                  <th>{{ object|verbose:"date_insert" }}</th>
+                  <td>{{ object.date_insert|date }}
+                  </td>
+              </tr>
+              <tr>
+                <th>{{ object|verbose:"date_update" }}</th>
+                <td>{{ object.date_update|date }}
+                </td>
+            </tr>
           </table>
 
           <h3>{% trans "Image" %}</h3>

@@ -37,7 +37,8 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     libpango1.0-0 \
     libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-dev \
-    libffi-dev && \
+    libffi-dev \
+    libvips && \
     apt-get install -y --no-install-recommends postgis && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 

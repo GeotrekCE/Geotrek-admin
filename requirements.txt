@@ -45,6 +45,7 @@ cffi==1.15.0
     # via
     #   cairocffi
     #   persistent
+    #   pyvips
     #   weasyprint
 charset-normalizer==2.0.12
     # via requests
@@ -207,11 +208,11 @@ kombu==5.1.0
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.17.1
+large-image==1.17.2
     # via
     #   django-large-image
-    #   large-image-source-pil
-large-image-source-pil==1.17.1
+    #   large-image-source-vips
+large-image-source-vips==1.17.2
     # via geotrek (setup.py)
 lxml==4.8.0
     # via mapentity
@@ -226,10 +227,13 @@ munch==2.5.0
 netifaces==0.11.0
     # via mapentity
 numpy==1.23.4
-    # via large-image
+    # via
+    #   large-image
+    #   large-image-source-vips
 packaging==21.3
     # via
     #   drf-yasg
+    #   large-image-source-vips
     #   redis
 palettable==3.3.0
     # via large-image
@@ -284,6 +288,8 @@ pytz==2022.1
     #   django-modelcluster
     #   djangorestframework
     #   djangorestframework-datatables
+pyvips==2.2.1
+    # via large-image-source-vips
 rcssmin==1.1.0
     # via django-compressor
 redis==4.2.2
