@@ -307,33 +307,71 @@ Then run in command line
 Treks are now imported into your own instance.
 
 
-Import data from a file
-=======================
+Import other datas from a file
+==============================
 
 You can also use some of Geotrek commands to import data from a vector file handled by GDAL (https://gdal.org/drivers/vector/index.htm) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 
-Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas.
+Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas, dives, paths.
 
 You must use these commands to import spatial data because of the dynamic segmentation, which will not be computed if you enter the data manually. 
 
 Here are the Geotrek commands available to import data from file:
 
+- ``loaddem``
+- ``loadpoi``
+- ``loaddive``
 - ``loadinfrastructure``
 - ``loadsignage``
-- ``loadpoi``
 - ``loadcities``
 - ``loaddistricts``
 - ``loadrestrictedareas``
 
 Usually, these commands come with ability to match file attributes to model fields.
-    
+
 To get help about a command:
 
 ::
 
     sudo geotrek help <subcommand>
-    
-Example: ``sudo geotrek help loadpoi``
+
+
+Import DEM (altimetry)
+----------------------
+
+``sudo geotrek help loaddem``
+
+::
+
+    usage: manage.py loaddem [-h] [--replace] [--update-altimetry] [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color]
+                         [--skip-checks]
+                         dem_path
+
+    Load DEM data (projecting and clipping it if necessary). You may need to create a GDAL Virtual Raster if your DEM is composed of several files.
+
+    positional arguments:
+      dem_path
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --replace             Replace existing DEM if any.
+      --update-altimetry    Update altimetry of all 3D geometries, /!\ This option takes lot of time to perform
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+
+Import POIs
+-----------
+
+``sudo geotrek help loadpoi``
 
 ::
 
@@ -374,9 +412,400 @@ Example: ``sudo geotrek help loadpoi``
       --skip-checks         Skip system checks.
 
 
+
+Import Infrastructure
+---------------------
+
+``sudo geotrek help loadinfrastructure``
+
+::
+
+    usage: manage.py loadinfrastructure [-h] [--use-structure] [--encoding ENCODING] [--name-field NAME_FIELD] [--type-field TYPE_FIELD] [--category-field CATEGORY_FIELD]
+                                        [--condition-field CONDITION_FIELD] [--structure-field STRUCTURE_FIELD] [--description-field DESCRIPTION_FIELD] [--year-field YEAR_FIELD]
+                                        [--type-default TYPE_DEFAULT] [--category-default CATEGORY_DEFAULT] [--name-default NAME_DEFAULT] [--condition-default CONDITION_DEFAULT]
+                                        [--structure-default STRUCTURE_DEFAULT] [--description-default DESCRIPTION_DEFAULT] [--eid-field EID_FIELD] [--year-default YEAR_DEFAULT]
+                                        [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
+                                        point_layer
+
+    Load a layer with point geometries in te structure model
+
+    positional arguments:
+      point_layer
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --use-structure       Allow to use structure for condition and type of infrastructures
+      --encoding ENCODING, -e ENCODING
+                            File encoding, default utf-8
+      --name-field NAME_FIELD, -n NAME_FIELD
+                            Base url
+      --type-field TYPE_FIELD, -t TYPE_FIELD
+                            Base url
+      --category-field CATEGORY_FIELD, -i CATEGORY_FIELD
+                            Base url
+      --condition-field CONDITION_FIELD, -c CONDITION_FIELD
+                            Base url
+      --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
+                            Base url
+      --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
+                            Base url
+      --year-field YEAR_FIELD, -y YEAR_FIELD
+                            Base url
+      --type-default TYPE_DEFAULT
+                            Default type of infrastructure, it will create the type if it doesn't exist
+      --category-default CATEGORY_DEFAULT
+                            Category by default for all infrastructures, B by default
+      --name-default NAME_DEFAULT
+                            Base url
+      --condition-default CONDITION_DEFAULT
+                            Default Condition for all infrastructures, it will create the condition if it doesn't exist
+      --structure-default STRUCTURE_DEFAULT
+                            Default Structure for all infrastructures
+      --description-default DESCRIPTION_DEFAULT
+                            Default description for all infrastructures
+      --eid-field EID_FIELD
+                            External ID field
+      --year-default YEAR_DEFAULT
+                            Default year for all infrastructures
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+
+Import Dive
+-----------
+
+``sudo geotrek help loaddive``
+
+::
+
+    usage: manage.py loaddive [-h] [--encoding ENCODING] [--name-field NAME_FIELD] [--depth-field DEPTH_FIELD] [--practice-default PRACTICE_DEFAULT]
+                              [--structure-default STRUCTURE_DEFAULT] [--eid-field EID_FIELD] [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback]
+                              [--no-color] [--force-color] [--skip-checks]
+                              point_layer
+
+    Load a layer with point geometries in the Dive model
+
+    positional arguments:
+      point_layer
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --encoding ENCODING, -e ENCODING
+                            File encoding, default utf-8
+      --name-field NAME_FIELD, -n NAME_FIELD
+      --depth-field DEPTH_FIELD, -d DEPTH_FIELD
+      --practice-default PRACTICE_DEFAULT
+      --structure-default STRUCTURE_DEFAULT
+      --eid-field EID_FIELD
+                            External ID field
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+
+
+Import Signage
+--------------
+
+
+``sudo geotrek help loadsignage``
+
+::
+
+    usage: manage.py loadsignage [-h] [--use-structure] [--encoding ENCODING] [--name-field NAME_FIELD] [--type-field TYPE_FIELD] [--condition-field CONDITION_FIELD]
+                                 [--structure-field STRUCTURE_FIELD] [--description-field DESCRIPTION_FIELD] [--year-field YEAR_FIELD] [--code-field CODE_FIELD]
+                                 [--type-default TYPE_DEFAULT] [--name-default NAME_DEFAULT] [--condition-default CONDITION_DEFAULT] [--structure-default STRUCTURE_DEFAULT]
+                                 [--description-default DESCRIPTION_DEFAULT] [--eid-field EID_FIELD] [--year-default YEAR_DEFAULT] [--code-default CODE_DEFAULT] [--version]
+                                 [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
+                                 point_layer
+
+    Load a layer with point geometries in te structure model
+
+    positional arguments:
+      point_layer
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --use-structure       Allow to use structure for condition and type of infrastructures
+      --encoding ENCODING, -e ENCODING
+                            File encoding, default utf-8
+      --name-field NAME_FIELD, -n NAME_FIELD
+                            Name of the field that will be mapped to the Name field in Geotrek
+      --type-field TYPE_FIELD, -t TYPE_FIELD
+                            Name of the field that will be mapped to the Type field in Geotrek
+      --condition-field CONDITION_FIELD, -c CONDITION_FIELD
+                            Name of the field that will be mapped to the Condition field in Geotrek
+      --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
+                            Name of the field that will be mapped to the Structure field in Geotrek
+      --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
+                            Name of the field that will be mapped to the Description field in Geotrek
+      --year-field YEAR_FIELD, -y YEAR_FIELD
+                            Name of the field that will be mapped to the Year field in Geotrek
+      --code-field CODE_FIELD
+                            Name of the field that will be mapped to the Code field in Geotrek
+      --type-default TYPE_DEFAULT
+                            Default value for Type field
+      --name-default NAME_DEFAULT
+                            Default value for Name field
+      --condition-default CONDITION_DEFAULT
+                            Default value for Condition field
+      --structure-default STRUCTURE_DEFAULT
+                            Default value for Structure field
+      --description-default DESCRIPTION_DEFAULT
+                            Default value for Description field
+      --eid-field EID_FIELD
+                            External ID field
+      --year-default YEAR_DEFAULT
+                            Default value for Year field
+      --code-default CODE_DEFAULT
+                            Default value for Code field
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+
+Import Cities
+-------------
+
+
+``sudo geotrek help loadcities``
+
+::
+
+    usage: manage.py loadcities [-h] [--code-attribute CODE] [--name-attribute NAME] [--encoding ENCODING] [--srid SRID] [--intersect] [--version] [-v {0,1,2,3}] [--settings SETTINGS]
+                            [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
+                            file_path
+
+    Load Cities from a file within the spatial extent
+
+    positional arguments:
+      file_path             File's path of the cities
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --code-attribute CODE, -c CODE
+                            Name of the code's attribute inside the file
+      --name-attribute NAME, -n NAME
+                            Name of the name's attribute inside the file
+      --encoding ENCODING, -e ENCODING
+                            File encoding, default utf-8
+      --srid SRID, -s SRID  File's SRID
+      --intersect, -i       Check features intersect spatial extent and not only within
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+
+Import Districts
+----------------
+
+
+``sudo geotrek help loaddistricts``
+
+
+::
+
+    usage: manage.py loaddistricts [-h] [--name-attribute NAME] [--encoding ENCODING] [--srid SRID] [--intersect] [--version] [-v {0,1,2,3}] [--settings SETTINGS]
+                                   [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
+                                   file_path
+
+    Load Districts from a file within the spatial extent
+
+    positional arguments:
+      file_path             File's path of the districts
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --name-attribute NAME, -n NAME
+                            Name of the name's attribute inside the file
+      --encoding ENCODING, -e ENCODING
+                            File encoding, default utf-8
+      --srid SRID, -s SRID  File's SRID
+      --intersect, -i       Check features intersect spatial extent and not only within
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+
+
+Import Restricted areas
+-----------------------
+
+
+``sudo geotrek help loadrestrictedareas``
+
+::
+
+    usage: manage.py loadrestrictedareas [-h] [--name-attribute NAME] [--encoding ENCODING] [--srid SRID] [--intersect] [--version] [-v {0,1,2,3}] [--settings SETTINGS]
+                                         [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
+                                         file_path area_type
+
+    Load Restricted Area from a file within the spatial extent
+
+    positional arguments:
+      file_path             File's path of the restricted area
+      area_type             Type of restricted areas in the file
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --name-attribute NAME, -n NAME
+                            Name of the name's attribute inside the file
+      --encoding ENCODING, -e ENCODING
+                            File encoding, default utf-8
+      --srid SRID, -s SRID  File's SRID
+      --intersect, -i       Check features intersect spatial extent and not only within
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+
+Exploitation commands
+=====================
+
 Delete attachment from disk
-===========================
+---------------------------
 
 When an attachment (eg. pictures) is removed, its file is not automatically removed from disk.
 You have to run ``sudo geotrek clean_attachments`` manually or in a cron to remove old files.
 After that, you should run ``sudo geotrek thumbnail_cleanup`` to remove old thumbnails.
+
+
+Remove duplicate paths
+----------------------
+
+It can happens during additions of paths with commands or directly in the application to have duplicate paths.
+Duplicate paths can cause some problems of routing for topologies, it can generates topologies representing multilinestring.
+
+You have to run ``sudo geotrek remove_duplicate_paths``
+
+During the process of the command every topologies on a duplicate path will be set on the original path and the duplicate path deleted.
+
+
+Unset structure on categories
+-----------------------------
+
+If you need to remove some similar categories with different structures you may need to remove the structure of all categories
+and remove duplicates categories.
+
+
+You have to run ``sudo geotrek unset_structure``
+
+::
+
+    usage: manage.py unset_structure [-h] [--all] [--list] [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color]
+                                 [--skip-checks]
+                                 [model [model ...]]
+
+    Unset structure in lists of choices and group choices with the same name.
+
+    positional arguments:
+      model                 List of choices to manage
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --all                 Manage all models
+      --list                Show available models to manage
+      --version             show program's version number and exit
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
+
+.. danger::
+    You can't chose for each choice which set of category you want to unset structures. Every categories of each choice will
+
+
+Firstly, it creates (or finds) the category without structure associated.
+Secondly, every element with this category get this new category.
+Finally all old categories are removed.
+
+
+
+Reorder topologies
+------------------
+
+Every topologies have informations of which path they pass on and in which order.
+Actually, when an path is split in 2 by an other path, database add a new path.
+We need to add informations for every topologies which need to pass on this new path.
+This is badly managed at the moment, especially for the order of passage of the paths.
+``sudo geotrek reorder_topologies``
+
+It removes a lot of useless information which can accelerate the process of edition of topologies afterward.
+
+
+During the process of this command, it tries to find a good order of passage on the paths which create
+only one Linestring from the start to the end. It uses the wrong orders as much as possible. This command use the same algorithm to generate one Linestring
+when the order is not well managed during topologies' display.
+
+.. danger::
+    It can happens that this algorithm can't find any solution and will genereate a MultiLineString.
+    This will be display at the end of the reorder
+
+
+
+Automatication commands
+-----------------------
+
+
+You can set up automatic commands by creating a file ``/etc/cron.d/geotrek_command`` that contains:
+
+::
+
+    0 3 * * * root /usr/sbin/geotrek <command> <options>
+
+example :
+
+::
+
+    0 4 * * * root /usr/sbin/geotrek reorder_topologies
+
+
+This example will automatically reorder topologies at 4 am every day.
