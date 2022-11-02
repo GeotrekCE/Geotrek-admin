@@ -716,19 +716,18 @@ After that, you should run ``sudo geotrek thumbnail_cleanup`` to remove old thum
 Remove duplicate paths
 ----------------------
 
-It can happens during additions of paths with commands or directly in the application to have duplicate paths.
-Duplicate paths can cause some problems of routing for topologies, it can generates topologies representing multilinestring.
+Duplicate paths can appear while adding paths with commands or directly in the application.
+Duplicate paths can cause some problems of routing for topologies, it can generate corrupted topologies (that become MultiLineStrings instead of LineStrings).
 
 You have to run ``sudo geotrek remove_duplicate_paths``
 
-During the process of the command every topologies on a duplicate path will be set on the original path and the duplicate path deleted.
+During the process of the command, every topology on a duplicate path will be set on the original path, and the duplicate path will be deleted.
 
 
 Unset structure on categories
 -----------------------------
 
-If you need to remove some similar categories with different structures you may need to remove the structure of all categories
-and remove duplicates categories.
+Use this command if you wish to undo linking categories to structures for some models.
 
 
 You have to run ``sudo geotrek unset_structure``
@@ -760,11 +759,11 @@ You have to run ``sudo geotrek unset_structure``
       --skip-checks         Skip system checks.
 
 .. danger::
-    You can't chose for each choice which set of category you want to unset structures. Every categories of each choice will
+    You can't chose for each choice which set of category you want to unset structures, it will happen for all categories
 
 
-Firstly, it creates (or finds) the category without structure associated.
-Secondly, every element with this category get this new category.
+Firstly, if a categroy is linked to a structure, it creates the same category but with no structure associated.
+Secondly, every element with this old category gets assigned to this new category.
 Finally all old categories are removed.
 
 
@@ -772,22 +771,22 @@ Finally all old categories are removed.
 Reorder topologies
 ------------------
 
-Every topologies have informations of which path they pass on and in which order.
-Actually, when an path is split in 2 by an other path, database add a new path.
-We need to add informations for every topologies which need to pass on this new path.
+All topologies have information about which path they go through on and in which order.
+Actually, when a path is split in 2 by another path, a new path is added to the database.
+We need to add information for all topologies that need to go through this new path.
 This is badly managed at the moment, especially for the order of passage of the paths.
 ``sudo geotrek reorder_topologies``
 
-It removes a lot of useless information which can accelerate the process of edition of topologies afterward.
+It removes a lot of useless information which can accelerate the process of editing topologies afterward.
 
 
-During the process of this command, it tries to find a good order of passage on the paths which create
-only one Linestring from the start to the end. It uses the wrong orders as much as possible. This command use the same algorithm to generate one Linestring
+During the process of this command, it tries to find a good order of passage on the paths which creates
+only one Linestring from start to end. It stays as close as possible to the corrupted order. This command uses the same algorithm to generate one Linestring
 when the order is not well managed during topologies' display.
 
 .. danger::
     It can happens that this algorithm can't find any solution and will genereate a MultiLineString.
-    This will be display at the end of the reorder
+    This will be displayed at the end of the reorder
 
 
 
@@ -795,7 +794,7 @@ Automatication commands
 -----------------------
 
 
-You can set up automatic commands by creating a file ``/etc/cron.d/geotrek_command`` that contains:
+You can set up automatic commands by creating a `cron` file under ``/etc/cron.d/geotrek_command`` that contains:
 
 ::
 
