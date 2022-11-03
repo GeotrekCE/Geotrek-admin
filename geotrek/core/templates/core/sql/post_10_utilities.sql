@@ -2,6 +2,12 @@
 -- Interpolate along : the opposite of ST_LocateAlong
 -------------------------------------------------------------------------------
 
+CREATE TYPE {{ schema_geotrek }}.line_infos AS (
+    new_geometry geometry,
+    new_order integer[]
+);
+
+
 CREATE FUNCTION {{ schema_geotrek }}.ST_InterpolateAlong(line geometry, point geometry) RETURNS RECORD AS $$
 DECLARE
     linear_offset float;
@@ -65,7 +71,7 @@ $$ LANGUAGE plpgsql;
 -- A smart ST_MakeLine that will re-oder linestring before merging them
 -------------------------------------------------------------------------------
 
-CREATE FUNCTION {{ schema_geotrek }}.ft_Smart_MakeLine(lines geometry[]) RETURNS geometry AS $$
+CREATE FUNCTION {{ schema_geotrek }}.ft_Smart_MakeLine(lines geometry[]) RETURNS line_infos AS $$
 DECLARE
     result geometry;
     t_line geometry;
@@ -74,6 +80,7 @@ DECLARE
     i int;
     t_proceed boolean;
     t_found boolean;
+    final_result line_infos;
 BEGIN
     result := ST_GeomFromText('LINESTRING EMPTY');
     nblines := array_length(lines, 1);
@@ -125,9 +132,12 @@ BEGIN
     IF NOT t_found THEN
         result := ST_Union(lines);
         -- RAISE NOTICE 'Cannot connect Topology paths: %', ST_AsText(ST_Union(lines));
+        current := ARRAY[]::integer[];
     END IF;
     result := ST_SetSRID(result, ST_SRID(lines[1]));
-    RETURN result;
+    final_result.new_geometry = result;
+    final_result.new_order = current;
+    RETURN final_result;
 END;
 $$ LANGUAGE plpgsql;
 
