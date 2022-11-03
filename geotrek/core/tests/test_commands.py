@@ -2,15 +2,16 @@ from io import StringIO
 from unittest import mock, skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, MultiLineString, Point, GEOSGeometry
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
-from django.db import IntegrityError
+from django.db import connection, IntegrityError
 
 from geotrek.authent.models import Structure
-from geotrek.core.models import Path
-from geotrek.trekking.tests.factories import POIFactory
+from geotrek.core.models import Path, PathAggregation
+from geotrek.core.tests.factories import PathFactory, TopologyFactory
+from geotrek.trekking.tests.factories import POIFactory, TrekFactory
 import os
 
 
@@ -229,3 +230,399 @@ class LoadPathsCommandTest(TestCase):
         value = Path.objects.first()
         self.assertEqual(value.name, 'lulu')
         self.assertEqual(value.structure, self.structure)
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class ReorderTopologiesPathAggregationTest(TestCase):
+    def setUp(self):
+        """
+        ⠳               ⠞
+          ⠳           ⠞
+            ⠳       ⠞
+              ⠳   ⠞
+                ⠿
+              ⠞   ⠳
+            ⠞       ⠳
+        1 ⠞           ⠳ 2
+        ⠞               ⠳
+        """
+        self.path_1 = PathFactory.create(geom=LineString(Point(700000, 6600000), Point(700100, 6600100),
+                                                         srid=settings.SRID))
+        self.path_2 = PathFactory.create(geom=LineString(Point(700000, 6600100), Point(700100, 6600000),
+                                                         srid=settings.SRID))
+        self.path_1_a = Path.objects.get(geom=LineString(Point(700000, 6600000), Point(700050, 6600050),
+                                                         srid=settings.SRID))
+        self.path_1_b = Path.objects.get(geom=LineString(Point(700050, 6600050), Point(700100, 6600100),
+                                                         srid=settings.SRID))
+        self.path_2_a = Path.objects.get(geom=LineString(Point(700000, 6600100), Point(700050, 6600050),
+                                                         srid=settings.SRID))
+        self.path_2_b = Path.objects.get(geom=LineString(Point(700050, 6600050), Point(700100, 6600000),
+                                                         srid=settings.SRID))
+
+    def get_geometries(self, topology):
+        geometries = []
+        for pathagg in topology.aggregations.all():
+            cursor = connection.cursor()
+            cursor.execute(f"""SELECT * FROM ST_ASTEXT(ST_SmartLineSubstring('{pathagg.path.geom.wkt}'::geometry,
+                                                                              {pathagg.start_position},
+                                                                              {pathagg.end_position}
+                                                       ))
+            """)
+            geom = cursor.fetchall()[0][0]
+            geometries.append(GEOSGeometry(geom, srid=2154))
+        return geometries
+
+    def test_split_reorder_1(self):
+        """
+        Part A
+
+        ⠳               🡥
+          ⠳           🡥
+            ⠳       🡥
+              ⠳   🡥
+                🡥              🡥  Topo 1
+              🡥   ⠳            ⠳ Paths (1 2)
+            🡥       ⠳
+        1 🡥           ⠳ 2
+        🡥               ⠳
+
+        Part B
+
+        ⠳               🡥
+          ⠳           🡥
+        ⠳   ⠳       🡥
+          ⠳   ⠳   🡥
+             ⠳  🡥              🡥  Topo 1
+              🡥   ⠳            ⠳ Paths (1 2 3)
+            🡥   ⠳   ⠳
+        1 🡥       ⠳   ⠳ 2
+        🡥         3 ⠳   ⠳
+        """
+        topo = TopologyFactory.create(paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)])
+        self.assertEqual(LineString((700000, 6600000), (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        PathFactory.create(geom=LineString(Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID))
+        topo.reload()
+        self.assertEqual(LineString((700000, 6600000), (700045, 6600045), (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 0, 1])
+        output = StringIO()
+        call_command('reorder_topologies', stdout=output)
+        self.assertEqual('1 topologies has beeen updated\n', output.getvalue())
+        geometries = self.get_geometries(topo)
+        self.assertEqual(geometries, [LineString((700000, 6600000), (700045, 6600045), srid=2154),
+                                      LineString((700045, 6600045), (700050, 6600050), srid=2154),
+                                      LineString((700050, 6600050), (700100, 6600100), srid=2154)])
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 1, 2])
+        topo.reload()
+        self.assertEqual(
+            LineString((700000, 6600000), (700045, 6600045), (700050, 6600050), (700100, 6600100), srid=settings.SRID),
+            topo.geom)
+
+    def test_split_reorder_2(self):
+        """
+        Part A
+
+        ⠳                   🡥
+          ⠳               🡥
+            ⠳           🡥
+              ⠳       🡥
+                ⠳   🡥
+                  🡥              🡥  Topo 1
+                0   ⠳            0  Topo 1 (point)
+              X       ⠳          x  Topo 1 (2 directions)
+            0           ⠳        ⠳  Paths (1 2)
+        1 🡥               ⠳ 2
+        🡥                   ⠳
+
+        Part B
+
+        ⠳                   🡥
+          ⠳               🡥
+            ⠳           🡥
+        ⠳     ⠳       🡥
+          ⠳     ⠳   🡥
+            ⠳     🡥              🡥  Topo 1
+              ⠳ 0   ⠳            0  Topo 1 (point)
+              X ⠳     ⠳          x  Topo 1 (2 directions)
+            0     ⠳     ⠳        ⠳  Paths (1 2 3)
+        1 🡥         ⠳ 3   ⠳ 2
+        🡥             ⠳     ⠳
+
+        """
+        topo = TopologyFactory.create(paths=[(self.path_1_a, 0, 0.95),
+                                             (self.path_1_a, 0.95, 0.95),
+                                             (self.path_1_a, 0.95, 0.5),
+                                             (self.path_1_a, 0.5, 0.5),
+                                             (self.path_1_a, 0.5, 1),
+                                             (self.path_1_b, 0, 1)])
+        self.assertEqual(LineString((700000, 6600000), (700047.5, 6600047.5), (700025, 6600025),
+                                    (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        PathFactory.create(geom=LineString(Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID))
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 0, 1, 2, 2, 3, 4, 4, 5])
+        topo.reload()
+        self.assertEqual(LineString((700000, 6600000), (700045, 6600045), (700047.5, 6600047.5), (700045, 6600045),
+                                    (700025, 6600025), (700045, 6600045), (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        call_command('reorder_topologies', verbosity=0)
+        geometries = self.get_geometries(topo)
+        self.assertEqual(geometries, [LineString((700000, 6600000), (700045, 6600045), srid=2154),
+                                      LineString((700045, 6600045), (700047.5, 6600047.5), srid=2154),
+                                      Point(700047.5, 6600047.5, srid=2154),
+                                      LineString((700047.5, 6600047.5), (700045, 6600045), srid=2154),
+                                      LineString((700045, 6600045), (700025, 6600025), srid=2154),
+                                      Point(700025, 6600025, srid=2154),
+                                      LineString((700025, 6600025), (700045, 6600045), srid=2154),
+                                      LineString((700045, 6600045), (700050, 6600050), srid=2154),
+                                      LineString((700050, 6600050), (700100, 6600100), srid=2154)])
+
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 1, 2, 3, 4, 5, 6, 7, 8])
+        self.assertEqual(LineString((700000, 6600000), (700045, 6600045), (700047.5, 6600047.5), (700045, 6600045),
+                                    (700025, 6600025), (700045, 6600045), (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+
+    def test_split_reorder_3(self):
+        """
+        Part A
+
+        ⠳                   🡥
+          ⠳               🡥
+            0           🡥
+              X       🡥
+                X   🡥
+                  X              🡥  Topo 1
+                🡥   ⠳            0  Topo 1 (point)
+              🡥       ⠳          x  Topo 1 (2 directions)
+            🡥           ⠳        ⠳  Paths (1 2)
+        1 🡥               ⠳ 2
+        🡥                   ⠳
+
+        Part B
+
+        ⠳                   🡥
+          ⠳               🡥
+            0   ⠞  ⠛    🡥
+              X       ⠳
+           ⠿    X   🡥   ⠳
+            ⠳     X       ⠳          🡥  Topo 1
+              ⠳ 🡥   ⠳       ⠳ 3      0  Topo 1 (point)
+              🡥 ⠳     ⠳       ⠳      x  Topo 1 (2 directions)
+            🡥     ⠳     ⠳            ⠳  Paths (1 2 3)
+        1 🡥         ⠳     ⠳ 2
+        🡥           3 ⠳     ⠳
+
+        """
+        topo = TopologyFactory.create(paths=[(self.path_1_a, 0, 1),
+                                             (self.path_2_a, 1, 0.1),
+                                             (self.path_2_a, 0.1, 0.1),
+                                             (self.path_2_a, 0.1, 1),
+                                             (self.path_1_b, 0, 1)])
+        self.assertEqual(LineString((700000, 6600000), (700050, 6600050), (700005, 6600095),
+                                    (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        PathFactory.create(geom=LineString(Point(700070, 6600000),
+                                           Point(700020, 6600050),
+                                           Point(700060, 6600090),
+                                           Point(700100, 6600050),
+                                           srid=settings.SRID))
+        topo.reload()
+        self.assertEqual(LineString((700000, 6600000), (700035, 6600035), (700050, 6600050), (700035, 6600065),
+                                    (700007.1428571428, 6600092.857142857), (700035, 6600065),
+                                    (700050, 6600050), (700075, 6600075), (700100, 6600100), srid=settings.SRID), topo.geom)
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 0, 1, 1, 2, 3, 3, 4, 4])
+        call_command('reorder_topologies', verbosity=0)
+        geometries = self.get_geometries(topo)
+        self.assertEqual(geometries, [LineString((700000, 6600000), (700035, 6600035), srid=2154),
+                                      LineString((700035, 6600035), (700050, 6600050), srid=2154),
+                                      LineString((700050, 6600050), (700035, 6600065), srid=2154),
+                                      LineString((700035, 6600065),
+                                                 (700007.142857143, 6600092.85714286), srid=2154),
+                                      Point(700007.142857143, 6600092.85714286, srid=2154),
+                                      LineString((700007.142857143, 6600092.85714286), (700035, 6600065), srid=2154),
+                                      LineString((700035, 6600065), (700050, 6600050), srid=2154),
+                                      LineString((700050, 6600050), (700075, 6600075), srid=2154),
+                                      LineString((700075, 6600075), (700100, 6600100), srid=2154)])
+
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 1, 2, 3, 4, 5, 6, 7, 8])
+        topo.reload()
+        self.assertEqual(LineString((700000, 6600000), (700035, 6600035), (700050, 6600050), (700035, 6600065),
+                                    (700007.1428571428, 6600092.857142857), (700035, 6600065),
+                                    (700050, 6600050), (700075, 6600075), (700100, 6600100), srid=settings.SRID),
+                         topo.geom)
+
+    def test_split_reorder_4(self):
+        """
+        Part A
+
+        ⠳                   🡥
+          ⠳               🡥
+            ⠳           🡥
+              0       🡥
+                X   🡥
+                  X              🡥  Topo 1
+                🡥   ⠳            0  Topo 1 (point)
+              🡥       ⠳          x  Topo 1 (2 directions)
+            🡥           ⠳        ⠳  Paths (1 2)
+        1 🡥               ⠳ 2
+        🡥                   ⠳
+
+        Part B
+
+        ⠳                   🡥
+          ⠳               🡥
+            ⠳    ⠞  ⠛   🡥
+              ⠞       ⠳
+           ⠿    X   🡥   ⠳
+            ⠳     X       ⠳          🡥  Topo 1
+              ⠳ 🡥   ⠳       ⠳ 3      0  Topo 1 (point)
+              🡥 ⠳     ⠳       ⠳      x  Topo 1 (2 directions)
+            🡥     ⠳     ⠳            ⠳  Paths (1 2 3)
+        1 🡥         ⠳     ⠳ 2
+        🡥           3 ⠳     ⠳
+
+        """
+        topo = TopologyFactory.create(paths=[(self.path_1_a, 0, 1),
+                                             (self.path_2_a, 1, 0.5),
+                                             (self.path_2_a, 0.5, 0.5),
+                                             (self.path_2_a, 0.5, 1),
+                                             (self.path_1_b, 0, 1)])
+        self.assertEqual(LineString((700000, 6600000), (700050, 6600050), (700025, 6600075),
+                                    (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        PathFactory.create(geom=LineString(Point(700070, 6600000),
+                                           Point(700020, 6600050),
+                                           Point(700060, 6600090),
+                                           Point(700100, 6600050),
+                                           srid=settings.SRID))
+        topo.reload()
+        self.assertEqual(LineString((700000, 6600000), (700035, 6600035), (700050, 6600050),
+                                    (700035, 6600065), (700050, 6600050), (700075, 6600075),
+                                    (700100, 6600100), srid=settings.SRID), topo.geom)
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 0, 1, 3, 4, 4])
+        call_command('reorder_topologies', verbosity=0)
+        geometries = self.get_geometries(topo)
+        self.assertEqual(geometries, [LineString((700000, 6600000), (700035, 6600035), srid=2154),
+                                      LineString((700035, 6600035), (700050, 6600050), srid=2154),
+                                      LineString((700050, 6600050), (700035, 6600065), srid=2154),
+                                      LineString((700035, 6600065), (700050, 6600050), srid=2154),
+                                      LineString((700050, 6600050), (700075, 6600075), srid=2154),
+                                      LineString((700075, 6600075), (700100, 6600100), srid=2154)]
+                         )
+
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 1, 2, 3, 4, 5])
+        topo.reload()
+        self.assertEqual(LineString((700000, 6600000), (700035, 6600035), (700050, 6600050),
+                                    (700035, 6600065), (700050, 6600050), (700075, 6600075),
+                                    (700100, 6600100), srid=settings.SRID), topo.geom)
+
+    def test_split_reorder_5(self):
+        """
+        Part A
+
+        ⠳                   🡥
+          ⠳               🡥
+            ⠳           🡥
+              0       🡥
+                X   🡥
+                  X              🡥  Topo 1
+                🡥   ⠳            0  Topo 1 (point)
+              🡥       ⠳          x  Topo 1 (2 directions)
+            🡥           ⠳        ⠳  Paths (1 2)
+        1 🡥               ⠳ 2
+        🡥                   ⠳
+
+        Part B
+
+        ⠳           🡠 🡠 🡠 🡥
+          ⠳       🡧       🡥
+            ⠳   🡧       🡥
+              0       🡥
+            🡧   X   🡥
+          🡧       X              🡥  Topo 1
+        🡧       🡥   ⠳            0  Topo 1 (points)
+              🡥       ⠳          x  Topo 1 (2 directions)
+            🡥           ⠳        ⠳  Paths (1 2)
+        1 🡥               ⠳ 2
+        🡥                   ⠳
+
+        """
+        topo = TopologyFactory.create(paths=[(self.path_1_a, 0, 1),
+                                             (self.path_2_a, 1, 0.5),
+                                             (self.path_2_a, 0.5, 0.5),
+                                             (self.path_2_a, 0.5, 1),
+                                             (self.path_1_b, 0, 1)])
+        self.assertEqual(LineString((700000, 6600000), (700050, 6600050), (700025, 6600075),
+                                    (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        self.path_1_b.geom = LineString(Point(700050, 6600050), Point(700100, 6600100), Point(700050, 6600100),
+                                        Point(700000, 6600050), srid=settings.SRID)
+        self.path_1_b.save()
+        topo.reload()
+        self.assertEqual(LineString((700000, 6600000), (700050, 6600050), (700025, 6600075),
+                                    (700050, 6600050), (700100, 6600100), (700050, 6600100), (700025, 6600075),
+                                    (700000, 6600050), srid=settings.SRID), topo.geom)
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 1, 1, 2, 2, 2, 3, 3, 4, 4])  # /!\ Duplicated Point
+        call_command('reorder_topologies', verbosity=0)
+        geometries = self.get_geometries(topo)
+        self.assertEqual(geometries, [LineString((700000, 6600000), (700050, 6600050), srid=2154),
+                                      LineString((700050, 6600050), (700025, 6600075), srid=2154),
+                                      Point(700025, 6600075, srid=2154),
+                                      LineString((700025, 6600075), (700050, 6600050), srid=2154),
+                                      LineString((700050, 6600050), (700100, 6600100),
+                                                 (700050, 6600100), (700025, 6600075), srid=2154),
+                                      Point(700025, 6600075, srid=2154),
+                                      LineString((700025, 6600075), (700000, 6600050), srid=2154)
+                                      ]
+                         )
+
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 1, 2, 3, 4, 5, 6])
+        topo.reload()
+        self.assertEqual(LineString((700000, 6600000), (700050, 6600050), (700025, 6600075),
+                                    (700050, 6600050), (700100, 6600100), (700050, 6600100), (700025, 6600075),
+                                    (700000, 6600050), srid=settings.SRID), topo.geom)
+
+    def test_split_reorder_fail(self):
+        """
+        Part A
+
+        ⠳                   🡥
+          ⠳               🡥
+            ⠳           🡥
+        ⠳     0       🡥
+          ⠳     🡤   🡥
+            ⠳     X              🡥  Topo 1
+              ⠳ 🡥   ⠳            0  Topo 1 (point)
+              🡥 ⠳     ⠳          x  Topo 1 (2 directions)
+            🡥     ⠳     ⠳        ⠳  Paths (1 2)
+        1 🡥         ⠳ 3   ⠳ 2
+        🡥             ⠳     ⠳
+
+        Part B
+
+        FAILED
+
+        """
+        topo = TrekFactory.create(paths=[(self.path_1_a, 0, 1),
+                                         (self.path_2_a, 1, 0.5),
+                                         (self.path_2_a, 0.5, 0.5),
+                                         # (self.path_2_a, 0.5, 1), Doesn't exist in this test => MultiLinestring
+                                         (self.path_1_b, 0, 1)])
+        self.assertEqual(MultiLineString(LineString((700000, 6600000), (700050, 6600050)),
+                                         LineString((700050, 6600050), (700025, 6600075)),
+                                         LineString((700050, 6600050), (700100, 6600100)),
+                                         srid=settings.SRID), topo.geom)
+        PathFactory.create(geom=LineString(Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID))
+        topo.reload()
+        self.assertEqual(MultiLineString(LineString((700000, 6600000), (700045, 6600045)),
+                                         LineString((700045, 6600045), (700050, 6600050)),
+                                         LineString((700050, 6600050), (700025, 6600075)),
+                                         LineString((700050, 6600050), (700100, 6600100)),
+                                         srid=settings.SRID), topo.geom)
+        self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
+                         [0, 0, 1, 2, 3])
+        output = StringIO()
+        call_command('reorder_topologies', stdout=output)
+        self.assertIn(f'Topologies with errors :\nTREK id: {topo.pk}\n', output.getvalue())

@@ -1,8 +1,7 @@
 from django.test import TestCase
 from django.conf import settings
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.db import connections, DEFAULT_DB_ALIAS
-from django.contrib.gis.geos import fromstr
 
 from unittest import skipIf
 
@@ -18,10 +17,10 @@ class SmartMakelineTest(TestCase):
             lines = ["ST_GeomFromText('%s')" % line.wkt for line in lines]
         conn = connections[DEFAULT_DB_ALIAS]
         cursor = conn.cursor()
-        sql = "SELECT ST_AsText(ft_Smart_MakeLine(ARRAY[%s]));" % ','.join(lines)
+        sql = "SELECT ft_Smart_MakeLine(ARRAY[%s]);" % ','.join(lines)
         cursor.execute(sql)
         result = cursor.fetchall()
-        return fromstr(result[0][0])
+        return GEOSGeometry(result[0][0][1:].split(',')[0])
 
     def test_smart_makeline(self):
         self.assertEqual(self.smart_makeline([

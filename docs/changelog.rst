@@ -4,7 +4,11 @@ CHANGELOG
 
 2.89.1+dev (XXXX-XX-XX)
 -----------------------
- 
+
+**New features**
+
+- Add new command to reorder pathaggregations of topologies
+
 **Bug fixes**
 
 - Fix APIv2 does not return sources related to published sites
@@ -12,7 +16,7 @@ CHANGELOG
 
 2.89.1 (2022-10-20)
 -----------------------
- 
+
 **Bug fixes**
 
 - Prevent migration ``0033_auto_20220929_0840`` from failing by escaping Touristic Events ``participant_number``
