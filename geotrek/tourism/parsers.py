@@ -922,18 +922,21 @@ class GeotrekTouristicContentParser(GeotrekParser):
     url_categories = {
         "category": "touristiccontent_category",
         "themes": "theme",
+        "source": "source"
     }
 
     categories_keys_api_v2 = {
         'category': 'label',
         'themes': 'label',
+        'source': 'name'
     }
 
     natural_keys = {
         'category': 'label',
         'themes': 'label',
         'type1': 'label',
-        'type2': 'label'
+        'type2': 'label',
+        'source': 'name'
     }
 
     field_options = {
@@ -998,12 +1001,15 @@ class GeotrekTouristicEventParser(GeotrekParser):
     }
     url_categories = {
         "type": "touristicevent_type",
+        "source": "source"
     }
     categories_keys_api_v2 = {
         'type': 'type',
+        'source': 'name'
     }
     natural_keys = {
         'type': 'type',
+        'source': 'name'
     }
 
     def __init__(self, *args, **kwargs):

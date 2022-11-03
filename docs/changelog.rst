@@ -5,6 +5,10 @@ CHANGELOG
 2.89.1+dev (XXXX-XX-XX)
 -----------------------
  
+**New features**
+
+- Add sources parsing to GeotrekParser (for Trek, Touristic Content, Touristic Event)
+
 **Bug fixes**
 
 - Fix APIv2 does not return sources related to published sites
