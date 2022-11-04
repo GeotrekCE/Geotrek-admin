@@ -758,6 +758,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
                                 'trek_accessibility.json',
                                 'trek_network.json',
                                 'trek_label.json',
+                                'sources.json',
                                 'trek_ids.json',
                                 'trek.json',
                                 'trek_children.json',
