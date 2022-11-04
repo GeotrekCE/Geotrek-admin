@@ -2,14 +2,17 @@
 CHANGELOG
 =========
 
-2.89.1+dev (XXXX-XX-XX)
+2.90.0+dev (XXXX-XX-XX)
 -----------------------
 
 **New features**
 
 - Add sources parsing to GeotrekParser (for Trek, Touristic Content, Touristic Event)
-- Add new command to reorder pathaggregations of topologies
 
+2.90.0     (2022-11-03)
+-----------------------
+
+- Add new command to reorder pathaggregations of topologies
 
 **Bug fixes**
 
