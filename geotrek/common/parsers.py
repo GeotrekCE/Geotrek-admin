@@ -1086,7 +1086,6 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.url = url if url else self.url
         self.mapping = mapping if mapping else self.mapping
         self.provider = provider if provider else self.provider
-        print(f"setting {provider} on parser {self}")
         self.all_datas = all_datas if all_datas else self.all_datas
         self.create_categories = create_categories if create_categories else self.create_categories
         self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and f.name not in ['id', 'provider'])
