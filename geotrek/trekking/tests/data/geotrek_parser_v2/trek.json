@@ -269,7 +269,9 @@
       "reservation_id": "",
       "route": 1,
       "second_external_id": null,
-      "source": [],
+      "source": [
+        2
+      ],
       "structure": 1,
       "themes": [
         8,

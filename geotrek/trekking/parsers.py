@@ -44,8 +44,7 @@ class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
         'themes': 'label',
         'practice': 'name',
         'accessibilities': 'name',
-        'networks': 'network',
-        'source': 'name'
+        'networks': 'network'
     }
 
     def filter_geom(self, src, val):
