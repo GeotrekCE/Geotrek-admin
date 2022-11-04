@@ -639,6 +639,8 @@ class GeotrekParserTest(TestCase):
         t3 = TrekFactory(provider="", name="I should not be deleted", eid="12374")
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
         self.assertEqual(set([t.pk, t2.pk, t3.pk]), set(Trek.objects.values_list('pk', flat=True)))
+        call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
+        self.assertEqual(set([t.pk, t2.pk, t3.pk]), set(Trek.objects.values_list('pk', flat=True)))
 
     @mock.patch('requests.get')
     def test_delete_according_to_no_provider(self, mocked_get):
@@ -756,6 +758,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
                                 'trek_accessibility.json',
                                 'trek_network.json',
                                 'trek_label.json',
+                                'sources.json',
                                 'trek_ids.json',
                                 'trek.json',
                                 'trek_children.json',

@@ -44,7 +44,7 @@ class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
         'themes': 'label',
         'practice': 'name',
         'accessibilities': 'name',
-        'networks': 'network',
+        'networks': 'network'
     }
 
     def filter_geom(self, src, val):
@@ -85,7 +85,8 @@ class GeotrekTrekParser(GeotrekParser):
         "practice": "trek_practice",
         "accessibilities": "trek_accessibility",
         "networks": "trek_network",
-        'labels': 'label'
+        'labels': 'label',
+        'source': 'source'
     }
     categories_keys_api_v2 = {
         'difficulty': 'label',
@@ -94,7 +95,8 @@ class GeotrekTrekParser(GeotrekParser):
         'practice': 'name',
         'accessibilities': 'name',
         'networks': 'label',
-        'labels': 'name'
+        'labels': 'name',
+        'source': 'name'
     }
     natural_keys = {
         'difficulty': 'difficulty',
@@ -103,7 +105,8 @@ class GeotrekTrekParser(GeotrekParser):
         'practice': 'name',
         'accessibilities': 'name',
         'networks': 'network',
-        'labels': 'name'
+        'labels': 'name',
+        'source': 'name'
     }
 
     def __init__(self, *args, **kwargs):

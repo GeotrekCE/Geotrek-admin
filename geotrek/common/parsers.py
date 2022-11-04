@@ -1088,7 +1088,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.provider = provider if provider else self.provider
         self.all_datas = all_datas if all_datas else self.all_datas
         self.create_categories = create_categories if create_categories else self.create_categories
-        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and f.name != 'id')
+        self.fields = dict((f.name, f.name) for f in self.model._meta.fields if not isinstance(f, TranslationField) and f.name not in ['id', 'provider'])
         self.m2m_fields = {
             f.name: f.name
             for f in self.model._meta.many_to_many

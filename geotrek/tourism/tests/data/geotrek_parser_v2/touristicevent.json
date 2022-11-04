@@ -65,7 +65,9 @@
         "it": null
       },
       "published": true,
-      "source": [],
+      "source": [
+        2
+      ],
       "speaker": "",
       "structure": 1,
       "target_audience": "",

@@ -707,6 +707,7 @@ class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
     field_options = {
         "category": {'create': True},
         'themes': {'create': True},
+        'source': {'create': True},
         'type1': {'create': True, 'fk': 'category'},
         'type2': {'create': True, 'fk': 'category'},
         'geom': {'required': True},
@@ -722,6 +723,7 @@ class TestGeotrekTouristicEventParser(GeotrekTouristicEventParser):
     url = "https://test.fr"
 
     field_options = {
+        'source': {'create': True},
         'type': {'create': True, },
         'geom': {'required': True},
     }
@@ -750,6 +752,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.mock_time = 0
         self.mock_json_order = ['touristiccontent_category.json',
                                 'touristiccontent_themes.json',
+                                'sources.json',
                                 'touristiccontent_category.json',
                                 'touristiccontent_ids.json',
                                 'touristiccontent.json']
@@ -766,6 +769,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(touristic_content.category), 'Sorties')
         self.assertEqual(str(touristic_content.type1.first()), 'Ane')
         self.assertEqual(str(touristic_content.name), "Balad'âne")
+        self.assertEqual(str(touristic_content.source.first().name), "Une source numero 2")
         self.assertAlmostEqual(touristic_content.geom.x, 568112.6362873032, places=5)
         self.assertAlmostEqual(touristic_content.geom.y, 6196929.676669887, places=5)
         self.assertEqual(Attachment.objects.count(), 3)
@@ -777,6 +781,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.mock_time = 0
         self.mock_json_order = ['touristiccontent_category.json',
                                 'touristiccontent_themes.json',
+                                'sources.json',
                                 'touristiccontent_category.json',
                                 'touristiccontent_ids.json',
                                 'touristiccontent.json']
@@ -810,6 +815,7 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = ['touristicevent_type.json',
+                                'sources.json',
                                 'touristicevent_ids.json',
                                 'touristicevent.json']
 
@@ -824,6 +830,7 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         touristic_event = TouristicEvent.objects.all().first()
         self.assertEqual(str(touristic_event.type), 'Spectacle')
         self.assertEqual(str(touristic_event.name), "Autrefois le Couserans")
+        self.assertEqual(str(touristic_event.source.first().name), "Une source numero 2")
         self.assertAlmostEqual(touristic_event.geom.x, 548907.5259389633, places=5)
         self.assertAlmostEqual(touristic_event.geom.y, 6208918.713349126, places=5)
 
