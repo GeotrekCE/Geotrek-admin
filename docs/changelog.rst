@@ -12,6 +12,8 @@ CHANGELOG
 2.90.0     (2022-11-03)
 -----------------------
 
+**New features**
+
 - Add new command to reorder pathaggregations of topologies
 
 **Bug fixes**
