@@ -5,9 +5,10 @@ CHANGELOG
 2.90.0+dev (XXXX-XX-XX)
 -----------------------
 
-**New features**
+**Bug fixes**
 
-- Add sources parsing to GeotrekParser (for Trek, Touristic Content, Touristic Event)
+- Prevent providers from APIv2 from overriding local providers when using ``GeotrekParser``
+- Add missing sources parsing to ``GeotrekParser`` (for ``Trek``, ``Touristic Content``, ``Touristic Event``)
 
 2.90.0     (2022-11-03)
 -----------------------
