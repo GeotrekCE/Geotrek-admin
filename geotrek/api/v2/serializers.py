@@ -1,6 +1,7 @@
 import json
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
@@ -333,6 +334,41 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'advice', 'filter', 'name', 'pictogram')
 
 
+class HDViewPointSerializer(serializers.ModelSerializer):
+    geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+    picture_tiles_url = serializers.SerializerMethodField()
+    trek = serializers.SerializerMethodField()
+    site = serializers.SerializerMethodField()
+    license = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='label'
+    )
+    create_datetime = serializers.DateTimeField(source='date_insert')
+    update_datetime = serializers.DateTimeField(source='date_update')
+
+    def get_picture_tiles_url(self, obj):
+        return build_url(self, obj.get_generic_picture_tile_url())
+
+    def get_trek(self, obj):
+        if obj.content_type == ContentType.objects.get_for_model(trekking_models.Trek):
+            trek = obj.content_object
+            return {'uuid': trek.uuid, 'id': trek.id}
+        return None
+
+    def get_site(self, obj):
+        if obj.content_type == ContentType.objects.get_for_model(outdoor_models.Site):
+            site = obj.content_object
+            return {'uuid': site.uuid, 'id': site.id}
+        return None
+
+    class Meta:
+        model = common_models.HDViewPoint
+        fields = (
+            'id', 'annotations', 'author', 'create_datetime', 'geometry', 'legend', 'license', 'picture_tiles_url',
+            'title', 'site', 'trek', 'update_datetime', 'uuid'
+        )
+
+
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class LabelAccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()
@@ -602,6 +638,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         cities = serializers.SerializerMethodField()
         departure_city = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
+        view_points = HDViewPointSerializer(many=True)
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)
@@ -733,7 +770,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'parents', 'parking_location', 'pdf', 'points_reference',
                 'portal', 'practice', 'provider', 'ratings', 'ratings_description', 'previous', 'public_transport',
                 'published', 'reservation_system', 'reservation_id', 'route', 'second_external_id',
-                'source', 'structure', 'themes', 'update_datetime', 'url', 'uuid', 'web_links'
+                'source', 'structure', 'themes', 'update_datetime', 'url', 'uuid', 'view_points', 'web_links'
             )
 
     class TourSerializer(TrekSerializer):

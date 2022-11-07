@@ -87,7 +87,7 @@
               viewer.createLayer(
                 'osm',
                 {
-                  url: (x, y, z, subdomains) => "{{base_tile_url}}" + `/tiles/${z}/${x}/${y}.png`
+                  url: (x, y, z, subdomains) => "{{base_tile_url}}" + `/tiles/${z}/${x}/${y}.png?source=vips`
                 }
               );
             </script>

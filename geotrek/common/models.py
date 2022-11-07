@@ -281,7 +281,7 @@ class RatingMixin(OptionalPictogramMixin, models.Model):
 
 
 class HDViewPoint(TimeStampedModelMixin):
-    picture = models.FileField(verbose_name=_("Picture"))
+    picture = models.FileField(verbose_name=_("Picture"), upload_to="hdviewpoints/")
     geom = gis_models.PointField(verbose_name=_("Location"),
                                  srid=settings.SRID)
     object_id = models.PositiveIntegerField()
@@ -338,6 +338,10 @@ class HDViewPoint(TimeStampedModelMixin):
 
     def get_picture_tile_url(self, x, y, z):
         return reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': x, 'y': y, 'z': z, 'fmt': 'png'})
+
+    def get_generic_picture_tile_url(self):
+        thumbnail_path = reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': 0, 'y': 0, 'z': 0, 'fmt': 'png'})
+        return thumbnail_path.replace("/0/0/0.png", "/z/x/y.png")
 
     def get_layer_detail_url(self):
         return reverse("{app_name}:{model_name}-drf-detail".format(app_name=self._meta.app_label.lower(),

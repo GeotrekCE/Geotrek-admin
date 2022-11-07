@@ -68,3 +68,9 @@ class OrganismViewSet(api_viewsets.GeotrekViewSet):
 class FileTypeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.FileTypeSerializer
     queryset = common_models.FileType.objects.select_related('structure')
+
+
+class HDViewPointViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.HDViewPointSerializer
+    queryset = common_models.HDViewPoint.objects.all() # TODO .select_related('structure')
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekAndSitRelatedPublishedNotDeletedByPortalFilter,)

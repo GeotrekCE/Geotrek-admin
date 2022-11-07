@@ -950,7 +950,7 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
 
     def filter_queryset_related_objects_published_not_deleted(self, qs, request, related_name, optional_query=Q()):
         # Exclude if no related objects exist
-        qs = qs.exclude(**{'{}'.format(related_name): None})
+        qs = qs.filter(**{'{}__isnull'.format(related_name): False})
         # Ensure no deleted content is taken in consideration in the filter
         related_field_name = '{}__deleted'.format(related_name)
         optional_query &= Q(**{related_field_name: False})
@@ -1000,7 +1000,7 @@ class RelatedObjectsPublishedNotDeletedByPortalFilter(RelatedObjectsPublishedNot
 
     def filter_queryset_related_objects_published_not_deleted_by_portal(self, qs, request, related_name):
         # Exclude if no related objects exist
-        qs = qs.exclude(**{'{}'.format(related_name): None})
+        qs = qs.filter(**{'{}__isnull'.format(related_name): False})
         portal_query = self.filter_queryset_related_objects_by_portal(request, related_name)
         return self.filter_queryset_related_objects_published_not_deleted(qs, request, related_name, portal_query)
 
@@ -1066,6 +1066,15 @@ class RelatedPortalStructureOrReservationSystemFilter(RelatedObjectsPublishedNot
 class TouristicContentRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'contents')
+
+
+class TrekAndSitRelatedPublishedNotDeletedByPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'trek')
+        set_2 = qs.none()
+        # if 'geotrek.outdoor' in settings.INSTALLED_APPS: # TODO
+        #     set_2 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'site')
+        return (set_1 | set_2).distinct()
 
 
 class TreksAndSitesAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):

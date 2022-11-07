@@ -6,7 +6,7 @@ from django.contrib.gis.geos import Polygon
 
 from geotrek import __version__
 from .authent import StructureViewSet  # noqa
-from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet, LabelViewSet, OrganismViewSet, FileTypeViewSet  # noqa
+from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet, LabelViewSet, OrganismViewSet, FileTypeViewSet, HDViewPointViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
