@@ -575,7 +575,7 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=True)
 
         # There are 7 queries to get layer without drafts
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 1)
 
@@ -592,19 +592,19 @@ class PathViewsTest(CommonTest):
         self.assertIsNone(content_draft)
 
         # We have 1 less query because the generation of paths was cached
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
         self.modelfactory(draft=True)
 
         # Cache was not updated, the path was a draft
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
         self.modelfactory(draft=False)
 
         # Cache was updated, the path was not a draft : we get 7 queries
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
     def test_path_layer_cache(self):
@@ -618,7 +618,7 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=True)
 
         # There are 7 queries to get layer without drafts
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             response = self.client.get(obj.get_layer_url())
         self.assertEqual(len(response.json()['features']), 2)
 
@@ -635,19 +635,19 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.content, content.content)
 
         # We have 1 less query because the generation of paths was cached
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get(obj.get_layer_url())
 
         self.modelfactory(draft=True)
 
         # Cache is updated when we add a draft path
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get(obj.get_layer_url())
 
         self.modelfactory(draft=False)
 
         # Cache is updated when we add a path
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get(obj.get_layer_url())
 
 
@@ -700,7 +700,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             self.client.get(reverse('core:path-drf-list', kwargs={'format': 'datatables'}))
 
 
@@ -803,7 +803,7 @@ class TrailViewsTest(CommonTest):
 
     def test_perfs_export_csv(self):
         self.modelfactory.create()
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(14):
             self.client.get(self.model.get_format_list_url() + '?format=csv')
 
 

@@ -3,7 +3,7 @@ from django.db.models import Count, F, Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import BooleanFilter, CharFilter, FilterSet, ModelMultipleChoiceFilter, ChoiceFilter
 
-from .models import Topology, Path, Trail, CertificationLabel
+from .models import Topology, Path, Trail, CertificationLabel, Network, Usage, Comfort
 
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -105,6 +105,9 @@ class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureR
         label=_("Provider"),
         choices=Path.objects.provider_choices()
     )
+    networks = ModelMultipleChoiceFilter(queryset=Network.objects.all().select_related("structure"))
+    usages = ModelMultipleChoiceFilter(queryset=Usage.objects.all().select_related("structure"))
+    comfort = ModelMultipleChoiceFilter(queryset=Comfort.objects.all().select_related("structure"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path

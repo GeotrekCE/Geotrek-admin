@@ -6,7 +6,7 @@ from django.utils.translation import activate
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-
+from rest_framework_extensions.cache.decorators import cache_response
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
@@ -33,7 +33,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))
-        return trekking_models.Trek.objects.existing() \
+        qs = trekking_models.Trek.objects.existing() \
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'accessibilities',
                               Prefetch('attachments',
@@ -46,15 +46,12 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                       length_3d_m=Length3D('geom_3d')) \
             .order_by("name")  # Required for reliable pagination
 
-    def retrieve(self, request, pk=None, format=None):
-        """ Return detail view even for unpublished treks that are childrens of other published treks """
-        qs_filtered = self.filter_published_lang_retrieve(request, self.get_queryset())
-        trek = get_object_or_404(qs_filtered, pk=pk)
-        serializer = self.get_serializer(trek)
-        return Response(serializer.data)
+        if self.action == "retrieve":
+            qs = self.filter_published_lang_retrieve(self.request, qs)
+        return qs
 
     def filter_published_lang_retrieve(self, request, queryset):
-        # filter trek by publication language (including parents publication language)
+        """ filter trek by publication language (including parents publication language) """
         qs = queryset
         language = request.GET.get('language', 'all')
         associated_published_fields = [f.name for f in qs.model._meta.get_fields() if f.name.startswith('published')]
@@ -108,6 +105,7 @@ class PracticeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.PracticeSerializer
     queryset = trekking_models.Practice.objects.all()
 
+    @cache_response(key_func='object_cache_key_func', timeout='object_cache_timeout')
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(trekking_models.Practice, pk=pk)
@@ -137,6 +135,7 @@ class NetworkViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.NetworkSerializer
     queryset = trekking_models.TrekNetwork.objects.all()
 
+    @cache_response(key_func='object_cache_key_func', timeout='object_cache_timeout')
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(trekking_models.TrekNetwork, pk=pk)
@@ -149,6 +148,7 @@ class DifficultyViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.TrekDifficultySerializer
     queryset = trekking_models.DifficultyLevel.objects.all()
 
+    @cache_response(key_func='object_cache_key_func', timeout='object_cache_timeout')
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(trekking_models.DifficultyLevel, pk=pk)
@@ -194,6 +194,7 @@ class RouteViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.RouteSerializer
     queryset = trekking_models.Route.objects.all()
 
+    @cache_response(key_func='object_cache_key_func', timeout='object_cache_timeout')
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(trekking_models.Route, pk=pk)
@@ -205,6 +206,7 @@ class ServiceTypeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.ServiceTypeSerializer
     queryset = trekking_models.ServiceType.objects.all().order_by('pk')
 
+    @cache_response(key_func='object_cache_key_func', timeout='object_cache_timeout')
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(trekking_models.ServiceType, pk=pk)

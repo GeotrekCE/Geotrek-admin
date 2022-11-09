@@ -44,6 +44,7 @@ urlpatterns += [
          name="delete_attachment_accessibility"),
     path('paperclip/', include('paperclip.urls')),
     path('admin/doc/', include('django.contrib.admindocs.urls')),
+    path('admin/clearcache/', include('clearcache.urls')),
     path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
 ]

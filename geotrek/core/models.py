@@ -948,7 +948,6 @@ class Usage(StructureOrNoneRelated):
 
 
 class Network(StructureOrNoneRelated):
-
     network = models.CharField(verbose_name=_("Network"), max_length=50)
 
     class Meta:

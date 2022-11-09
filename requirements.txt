@@ -88,6 +88,7 @@ django==3.2.15
     # via
     #   django-appconf
     #   django-appypod
+    #   django-clearcache
     #   django-debug-toolbar
     #   django-embed-video
     #   django-extensions
@@ -107,6 +108,8 @@ django-appconf==1.0.5
 django-appypod==2.0.7
     # via mapentity
 django-celery-results==2.2.0
+    # via geotrek (setup.py)
+django-clearcache @ git+https://github.com/timonweb/django-clearcache.git@6de7994
     # via geotrek (setup.py)
 django-colorfield==0.6.3
     # via geotrek (setup.py)

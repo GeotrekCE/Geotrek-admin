@@ -32,7 +32,15 @@ TIME_ZONE = "UTC"
 
 CACHES['default'] = {
     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    'LOCATION': 'unique-snowflake',
+    'LOCATION': 'default',
+}
+CACHES['fat'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'fat',
+}
+CACHES['drf'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'drf',
 }
 
 

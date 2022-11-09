@@ -1,9 +1,10 @@
 """
     Models to manage users and profiles
 """
-from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.cache import cache
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.mixins.models import TimeStampedModelMixin
@@ -32,7 +33,15 @@ def default_structure():
 
 
 def default_structure_pk():
-    return default_structure().pk
+    if settings.TEST:
+        return default_structure().pk
+    structure_pk = cache.get("default_structure")
+    if structure_pk:
+        return int(structure_pk)
+    else:
+        pk = default_structure().pk
+        cache.set("default_structure", str(pk))
+        return pk
 
 
 class StructureRelated(models.Model):

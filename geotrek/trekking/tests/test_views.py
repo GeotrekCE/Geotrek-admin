@@ -172,18 +172,19 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             self.client.get(self.model.get_datatablelist_url())
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             self.client.get(self.model.get_format_list_url())
 
     def test_list_in_csv(self):
         self.modelfactory.create()
         DistrictFactory.create(name="Refouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
                                                       "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
-        DistrictFactory.create(name="Trifouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
-                                                       "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
+        DistrictFactory.create(name="Trifouilli",
+                               geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
+                                    "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
         response = self.client.get(self.model.get_format_list_url())
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         for row in reader:
@@ -192,14 +193,16 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
     def test_pois_on_treks_do_not_exist(self):
         self.modelfactory.create()
 
-        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
+        response = self.client.get(
+            reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
         self.assertEqual(response.status_code, 404)
 
     def test_pois_on_treks_not_public(self):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
-        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        response = self.client.get(
+            reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_pois_on_treks_not_public_anonymous(self):
@@ -207,7 +210,8 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
-        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        response = self.client.get(
+            reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 404)
 
 
@@ -859,6 +863,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
     """ Since we migrated some code to Django REST Framework, we should test
     the migration extensively. Geotrek-rando mainly relies on this view.
     """
+
     def test_related_urls(self):
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
@@ -1478,25 +1483,25 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
 
-        # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             self.client.get(self.model.get_datatablelist_url())
 
-        # 1) session, 2) user, 3) user perms, 4) group perms, 5) list
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(7):
             self.client.get(self.model.get_format_list_url())
 
     def test_services_on_treks_do_not_exist(self):
         self.modelfactory.create()
 
-        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
+        response = self.client.get(reverse('trekking:trek_service_geojson',
+                                           kwargs={'lang': translation.get_language(), 'pk': 0}))
         self.assertEqual(response.status_code, 404)
 
     def test_services_on_treks_not_public(self):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
-        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        response = self.client.get(reverse('trekking:trek_service_geojson',
+                                           kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_services_on_treks_not_public_anonymous(self):
@@ -1504,7 +1509,8 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
-        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        response = self.client.get(reverse('trekking:trek_service_geojson',
+                                           kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 404)
 
 
@@ -1548,7 +1554,8 @@ class TestDepublishSignagesRemovedFromPDF(TestCase):
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
         self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
-        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.client.get(
+            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
         trek = Trek.objects.get(pk=self.trek.pk)
         self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
@@ -1565,7 +1572,8 @@ class TestDepublishSignagesRemovedFromPDF(TestCase):
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
         self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
-        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.client.get(
+            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
         trek = Trek.objects.get(pk=self.trek.pk)
         self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
@@ -1587,7 +1595,8 @@ class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
         self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
-        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.client.get(
+            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
         trek = Trek.objects.get(pk=self.trek.pk)
         self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
@@ -1604,7 +1613,8 @@ class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
         self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
-        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.client.get(
+            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
         trek = Trek.objects.get(pk=self.trek.pk)
         self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))

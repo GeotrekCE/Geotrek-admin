@@ -276,12 +276,10 @@ PROJECT_APPS += (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'clearcache',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.gis',
-)
-
-PROJECT_APPS += (
     'crispy_forms',
     'compressor',
     'django_filters',
@@ -326,7 +324,12 @@ CACHES = {
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': CACHE_ROOT,
+        'LOCATION': os.path.join(CACHE_ROOT, 'django'),
+        'TIMEOUT': 2592000,  # 30 days
+    },
+    'drf': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(CACHE_ROOT, 'drf'),
         'TIMEOUT': 2592000,  # 30 days
     }
 }
@@ -853,6 +856,9 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 REST_FRAMEWORK_EXTENSIONS = {
-    'DEFAULT_USE_CACHE': 'fat',
+    'DEFAULT_USE_CACHE': 'drf',
     'DEFAULT_CACHE_ERRORS': False
 }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
