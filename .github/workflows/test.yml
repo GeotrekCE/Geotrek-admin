@@ -121,9 +121,9 @@ jobs:
         pip3 wheel --wheel-dir=~/.wheel_dir -r requirements.txt
         pip3 install --find-links=~/.wheel_dir -r requirements.txt
 
-    - name: Create test log directory
+    - name: Create test required directories
       run: |
-        mkdir -p ./var/log
+        mkdir -p ./var/log ./var/cache
 
     - name: Check migrations
       run: |
