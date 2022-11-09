@@ -222,6 +222,7 @@ from geotrek.tourism.parsers import ApidaeParser  # Noqa
 
 TYPOLOGIES_SITRA_IDS_AS_LABELS = [1599, 1676, 4639, 4819, 5022, 4971, 3845, 6566, 6049, 1582, 5538, 6825, 6608, 1602]
 TYPOLOGIES_SITRA_IDS_AS_THEMES = [6155, 6156, 6368, 6153, 6154, 6157, 6163, 6158, 6679, 6159, 6160, 6161]
+ENVIRONNEMENTS_IDS_AS_LABELS = [135, 4630, 171, 189, 186, 6238, 3743, 147, 149, 156, 153, 187, 195, 6464, 4006, 169, 3978, 6087]
 
 
 class ApidaeTrekParser(ApidaeParser):
@@ -241,6 +242,7 @@ class ApidaeTrekParser(ApidaeParser):
         'multimedias',
         'gestion',
         'presentation',
+        'localisation',
     ]
     locales = ['fr', 'en']
 
@@ -255,7 +257,7 @@ class ApidaeTrekParser(ApidaeParser):
     m2m_fields = {
         'source': ['gestion.membreProprietaire.nom'],
         'themes': 'presentation.typologiesPromoSitra.*',
-        'labels': 'presentation.typologiesPromoSitra.*',
+        'labels': ['presentation.typologiesPromoSitra.*', 'localisation.environnements.*'],
     }
     natural_keys = {
         'source': 'name',
@@ -307,7 +309,16 @@ class ApidaeTrekParser(ApidaeParser):
             return geom
 
     def filter_labels(self, src, val):
-        return [item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS]
+        rv = []
+        for subval in val:
+            if not subval:
+                continue
+            for item in subval:
+                item_type = item['elementReferenceType']
+                if ((item_type == 'TypologiePromoSitra' and item['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS)
+                        or (item_type == 'Environnement' and item['id'] in ENVIRONNEMENTS_IDS_AS_LABELS)):
+                    rv.append(item['libelleFr'])
+        return rv
 
     def filter_themes(self, src, val):
         return [item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
