@@ -345,7 +345,7 @@ class HDViewPointAPIViewSet(APIViewSet):
 
 class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
     model = HDViewPoint
-    queryset = HDViewPoint.objects.all()
+    queryset = HDViewPoint.objects.all().select_related('content_type', 'license')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
