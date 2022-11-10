@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('common', '0025_auto_20220425_1550'),
+        ('tourism', '0012_auto_20200708_1448'),
     ]
 
     operations = [
