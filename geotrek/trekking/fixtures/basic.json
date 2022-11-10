@@ -7,7 +7,9 @@
       "label": "Small patrimony",
       "label_en": "Small patrimony",
       "label_fr": "Petit patrimoine",
-      "cirkwi": 22
+      "cirkwi": 22,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -18,7 +20,9 @@
       "label": "Flora",
       "label_en": "Flora",
       "label_fr": "Flore",
-      "cirkwi": 23
+      "cirkwi": 23,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -29,7 +33,9 @@
       "label": "Fauna",
       "label_en": "Fauna",
       "label_fr": "Faune",
-      "cirkwi": 23
+      "cirkwi": 23,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -40,7 +46,9 @@
       "label": "Panorama",
       "label_en": "Panorama",
       "label_fr": "Point de vue",
-      "cirkwi": 21
+      "cirkwi": 21,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -51,7 +59,9 @@
       "label": "Refuge",
       "label_en": "Refuge",
       "label_fr": "Refuge",
-      "cirkwi": 8
+      "cirkwi": 8,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -62,7 +72,9 @@
       "label": "Lake",
       "label_en": "Lake",
       "label_fr": "Lac",
-      "cirkwi": 26
+      "cirkwi": 26,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -73,7 +85,9 @@
       "label": "Peak",
       "label_en": "Peak",
       "label_fr": "Sommet",
-      "cirkwi": 21
+      "cirkwi": 21,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -84,7 +98,9 @@
       "label": "Geology",
       "label_en": "Geology",
       "label_fr": "G\u00e9ologie",
-      "cirkwi": null
+      "cirkwi": null,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -94,7 +110,9 @@
       "pictogram": "upload/poi-archeology.png",
       "label": "Arch\u00e9ologie",
       "label_fr": "Arch\u00e9ologie",
-      "cirkwi": 18
+      "cirkwi": 18,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -104,7 +122,9 @@
       "pictogram": "upload/poi-history.png",
       "label": "Histoire",
       "label_fr": "Histoire",
-      "cirkwi": 18
+      "cirkwi": 18,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -114,7 +134,9 @@
       "pictogram": "upload/poi-architecture.png",
       "label": "Architecture",
       "label_fr": "Architecture",
-      "cirkwi": 16
+      "cirkwi": 16,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -124,7 +146,9 @@
       "pictogram": "upload/poi-glacier.png",
       "label": "Glacier",
       "label_fr": "Glacier",
-      "cirkwi": null
+      "cirkwi": null,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -134,7 +158,9 @@
       "pictogram": "upload/poi-knowhow.png",
       "label": "Savoir-faire",
       "label_fr": "Savoir-faire",
-      "cirkwi": null
+      "cirkwi": null,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -144,7 +170,9 @@
       "pictogram": "upload/poi-pastoral.png",
       "label": "Pastoralisme",
       "label_fr": "Pastoralisme",
-      "cirkwi": null
+      "cirkwi": null,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -154,7 +182,9 @@
       "pictogram": "upload/poi-pass.png",
       "label": "Col",
       "label_fr": "Col",
-      "cirkwi": 31
+      "cirkwi": 31,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -163,7 +193,9 @@
     "fields": {
       "network": "PR",
       "pictogram": "upload/network-PR.svg",
-      "network_fr": "PR"
+      "network_fr": "PR",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -172,7 +204,9 @@
     "fields": {
       "network": "GRP",
       "pictogram": "upload/network-GRP.svg",
-      "network_fr": "GRP"
+      "network_fr": "GRP",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -181,7 +215,9 @@
     "fields": {
       "network": "VTT",
       "pictogram": "upload/network-VTT.svg",
-      "network_fr": "VTT"
+      "network_fr": "VTT",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -190,7 +226,9 @@
     "fields": {
       "network": "Piste \u00e9questre",
       "pictogram": "upload/network-horse.svg",
-      "network_fr": "Piste \u00e9questre"
+      "network_fr": "Piste \u00e9questre",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -199,7 +237,9 @@
     "fields": {
       "network": "GR",
       "pictogram": "upload/network-GR.svg",
-      "network_fr": "GR"
+      "network_fr": "GR",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -221,7 +261,9 @@
       "name": "Cycling",
       "pictogram": "upload/practice-bike.svg",
       "cirkwi": 14,
-      "name_en": "Cycling"
+      "name_en": "Cycling",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -232,7 +274,9 @@
       "name": "Horse",
       "pictogram": "upload/practice-horse.svg",
       "cirkwi": 4,
-      "name_en": "Horse"
+      "name_en": "Horse",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -241,7 +285,9 @@
     "fields": {
       "name": "P\u00e9destre",
       "pictogram": "upload/practice-foot.svg",
-      "cirkwi": 1
+      "cirkwi": 1,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -250,7 +296,9 @@
     "fields": {
       "name": "Mountain climbing",
       "name_fr": "Alpinisme",
-      "pictogram": "upload/practice-mountain-climbing.svg"
+      "pictogram": "upload/practice-mountain-climbing.svg",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -258,7 +306,9 @@
     "model": "trekking.practice",
     "fields": {
       "name": "Trail",
-      "pictogram": "upload/practice-trail.svg"
+      "pictogram": "upload/practice-trail.svg",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -266,7 +316,9 @@
     "model": "trekking.practice",
     "fields": {
       "name": "VTTAE",
-      "pictogram": "upload/practice-vttae.svg"
+      "pictogram": "upload/practice-vttae.svg",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -276,7 +328,9 @@
       "name_fr": "Fauteuil roulant",
       "name": "Fauteuil roulant",
       "pictogram": "upload/accessibility-wheelchair.png",
-      "cirkwi": 9
+      "cirkwi": 9,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -286,7 +340,9 @@
       "name_fr": "Poussette",
       "name": "Poussette",
       "pictogram": "upload/accessibility-troller.png",
-      "cirkwi": 1
+      "cirkwi": 1,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -296,7 +352,9 @@
       "name_fr": "Joelette",
       "name": "Joelette",
       "pictogram": "upload/accessibility-joelette.png",
-      "cirkwi": null
+      "cirkwi": null,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -304,7 +362,9 @@
     "model": "trekking.accessibilitylevel",
     "fields": {
       "name_fr": "Débutant",
-      "name_en": "Beginner"
+      "name_en": "Beginner",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -312,7 +372,9 @@
     "model": "trekking.accessibilitylevel",
     "fields": {
       "name_fr": "Experimenté",
-      "name_en": "Experimented"
+      "name_en": "Experimented",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -322,7 +384,9 @@
       "pictogram": "upload/route-loop.svg",
       "route_fr": "Boucle",
       "route_en": "Loop",
-      "route": "Boucle"
+      "route": "Boucle",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -332,7 +396,9 @@
       "pictogram": "upload/route-return.svg",
       "route_fr": "Aller-retour",
       "route_en": "Round trip",
-      "route": "Aller-retour"
+      "route": "Aller-retour",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -342,7 +408,9 @@
       "pictogram": "upload/route-cross.svg",
       "route_fr": "Travers\u00e9e",
       "route_en": "Crossing",
-      "route": "Travers\u00e9e"
+      "route": "Travers\u00e9e",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -354,7 +422,9 @@
       "difficulty_en": "Very easy",
       "cirkwi": 5,
       "difficulty": "Very easy",
-      "difficulty_fr": "Très facile"
+      "difficulty_fr": "Très facile",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -366,7 +436,9 @@
       "difficulty_en": "Easy",
       "cirkwi": 12,
       "difficulty": "Easy",
-      "difficulty_fr": "Facile"
+      "difficulty_fr": "Facile",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -378,7 +450,9 @@
       "difficulty_en": "Medium",
       "cirkwi": 12,
       "difficulty": "Medium",
-      "difficulty_fr": "Intermédiaire"
+      "difficulty_fr": "Intermédiaire",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -390,7 +464,9 @@
       "difficulty_en": "Hard",
       "cirkwi": 11,
       "difficulty": "Hard",
-      "difficulty_fr": "Difficile"
+      "difficulty_fr": "Difficile",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -402,7 +478,9 @@
       "difficulty_en": "Very hard",
       "cirkwi": 16,
       "difficulty": "Very hard",
-      "difficulty_fr": "Très difficile"
+      "difficulty_fr": "Très difficile",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -413,7 +491,9 @@
       "name_fr": "Cotation globale",
       "name_en": null,
       "order": 1,
-      "practice": 5
+      "practice": 5,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -424,7 +504,9 @@
       "name_fr": "Engagement / éloignement",
       "name_en": null,
       "order": 2,
-      "practice": 5
+      "practice": 5,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -435,7 +517,9 @@
       "name_fr": "Effort",
       "name_en": null,
       "order": 1,
-      "practice": 4
+      "practice": 4,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -446,7 +530,9 @@
       "name_fr": "Technicité",
       "name_en": null,
       "order": 2,
-      "practice": 4
+      "practice": 4,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -457,7 +543,9 @@
       "name_fr": "Risque",
       "name_en": null,
       "order": 3,
-      "practice": 4
+      "practice": 4,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -468,7 +556,9 @@
       "name_fr": "Type de voie",
       "name_en": null,
       "order": 1,
-      "practice": 1
+      "practice": 1,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -479,7 +569,9 @@
       "name_fr": "Technique",
       "name_en": null,
       "order": 2,
-      "practice": 1
+      "practice": 1,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -490,7 +582,9 @@
       "name_fr": "Type de voie",
       "name_en": null,
       "order": 1,
-      "practice": 7
+      "practice": 7,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -501,7 +595,9 @@
       "name_fr": "Technique",
       "name_en": null,
       "order": 2,
-      "practice": 7
+      "practice": 7,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -512,7 +608,9 @@
       "name_fr": "Pente",
       "name_en": null,
       "order": 2,
-      "practice": 2
+      "practice": 2,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -557,7 +655,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 21,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -572,7 +672,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 22,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -587,7 +689,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 30,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -602,7 +706,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 31,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -617,7 +723,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 32,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -632,7 +740,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 40,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -647,7 +757,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 41,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -662,7 +774,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 42,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -677,7 +791,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 50,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -692,7 +808,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 51,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -707,7 +825,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 52,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -722,7 +842,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 60,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -737,7 +859,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 61,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -752,7 +876,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 62,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -767,7 +893,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 70,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -782,7 +910,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 71,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -797,7 +927,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 72,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -812,7 +944,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 1,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -827,7 +961,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 2,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -842,7 +978,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 3,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -857,7 +995,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 4,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -872,7 +1012,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 5,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -887,7 +1029,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 6,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -902,7 +1046,9 @@
       "description_fr": "",
       "description_en": "",
       "order": 1,
-      "color": ""
+      "color": "",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -918,7 +1064,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 3
+      "scale": 3,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -934,7 +1082,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 3
+      "scale": 3,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -950,7 +1100,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 3
+      "scale": 3,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -966,7 +1118,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 3
+      "scale": 3,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -982,7 +1136,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 4
+      "scale": 4,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -998,7 +1154,9 @@
       "description_en": "",
       "order": 2,
       "color": "",
-      "scale": 4
+      "scale": 4,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1014,7 +1172,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 4
+      "scale": 4,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1030,7 +1190,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 4
+      "scale": 4,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1046,7 +1208,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 4
+      "scale": 4,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1062,7 +1226,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 5
+      "scale": 5,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1078,7 +1244,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 5
+      "scale": 5,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1094,7 +1262,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 5
+      "scale": 5,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1110,7 +1280,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 5
+      "scale": 5,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1126,7 +1298,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 5
+      "scale": 5,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1142,7 +1316,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 10
+      "scale": 10,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1158,7 +1334,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 10
+      "scale": 10,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1174,7 +1352,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 10
+      "scale": 10,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1190,7 +1370,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 10
+      "scale": 10,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1206,7 +1388,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 6
+      "scale": 6,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1222,7 +1406,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 6
+      "scale": 6,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1238,7 +1424,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 6
+      "scale": 6,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1254,7 +1442,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 7
+      "scale": 7,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1270,7 +1460,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 7
+      "scale": 7,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1286,7 +1478,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 7
+      "scale": 7,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1302,7 +1496,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 7
+      "scale": 7,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1318,7 +1514,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 7
+      "scale": 7,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1334,7 +1532,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 8
+      "scale": 8,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1350,7 +1550,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 8
+      "scale": 8,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1366,7 +1568,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 8
+      "scale": 8,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1382,7 +1586,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 9
+      "scale": 9,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1398,7 +1604,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 9
+      "scale": 9,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1414,7 +1622,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 9
+      "scale": 9,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1430,7 +1640,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 9
+      "scale": 9,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1446,7 +1658,9 @@
       "description_en": "",
       "order": null,
       "color": "",
-      "scale": 9
+      "scale": 9,
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1456,7 +1670,9 @@
       "pictogram": "upload/weblink-refuge.png",
       "label": "Refugee",
       "label_en": "Refugee",
-      "label_fr": "Refuge"
+      "label_fr": "Refuge",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1466,7 +1682,9 @@
       "pictogram": "upload/weblink-map.png",
       "label": "Map",
       "label_en": "Map",
-      "label_fr": "Carte"
+      "label_fr": "Carte",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1476,7 +1694,9 @@
       "pictogram": "upload/weblink-bus.png",
       "label": "Bus",
       "label_en": "Bus",
-      "label_fr": "Bus"
+      "label_fr": "Bus",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1485,7 +1705,9 @@
     "fields": {
       "pictogram": "upload/weblink-book.png",
       "label": "A lire",
-      "label_fr": "A lire"
+      "label_fr": "A lire",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1494,7 +1716,9 @@
     "fields": {
       "pictogram": "upload/weblink-tourism.png",
       "label": "Information touristique",
-      "label_fr": "Information touristique"
+      "label_fr": "Information touristique",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1513,7 +1737,9 @@
       ],
       "published": true,
       "publication_date": null,
-      "name_en": "Drinking water"
+      "name_en": "Drinking water",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   },
   {
@@ -1532,7 +1758,9 @@
       ],
       "published": true,
       "publication_date": null,
-      "name_en": "Steep descent"
+      "name_en": "Steep descent",
+      "date_update": "2014-02-12T11:21:48.961Z",
+      "date_insert": "2014-02-12T11:21:48.961Z"
     }
   }
 ]
