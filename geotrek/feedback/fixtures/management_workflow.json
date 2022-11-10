@@ -6,7 +6,9 @@
             "label_en": "Programmed",
             "label_fr": "Programm\u00e9",
             "identifier": "programmed",
-            "color": "#6AA84F"
+            "color": "#6AA84F",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -16,7 +18,9 @@
             "label_en": "Late intervention",
             "label_fr": "Intervention en retard",
             "identifier": "late_intervention",
-            "color": "#CC0000"
+            "color": "#CC0000",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -26,7 +30,9 @@
             "label_en": "Late resolution",
             "label_fr": "R\u00e9solution en retard",
             "identifier": "late_resolution",
-            "color": "#CC0000"
+            "color": "#CC0000",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -36,7 +42,9 @@
             "label_en": "Resolved intervention",
             "label_fr": "Intervention termin\u00e9e",
             "identifier": "solved_intervention",
-            "color": "#4285F4"
+            "color": "#4285F4",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -46,7 +54,9 @@
             "label_en": "Rejected",
             "label_fr": "Rejet\u00e9",
             "identifier": "rejected",
-            "color": "#4444444"
+            "color": "#4444444",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     }
 ]

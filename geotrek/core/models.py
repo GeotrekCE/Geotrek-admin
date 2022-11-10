@@ -876,7 +876,6 @@ class PathAggregation(models.Model):
 
 
 class PathSource(StructureOrNoneRelated):
-
     source = models.CharField(verbose_name=_("Source"), max_length=50)
 
     class Meta:
