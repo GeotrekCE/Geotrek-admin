@@ -270,9 +270,7 @@
         "model": "maintenance.interventionstatus",
         "fields": {
             "status": "termin\u00e9e",
-            "order": 30,
-            "date_update": "2014-02-12T11:21:48.961Z",
-            "date_insert": "2014-02-12T11:21:48.961Z"
+            "order": 30
         }
     },
     {
