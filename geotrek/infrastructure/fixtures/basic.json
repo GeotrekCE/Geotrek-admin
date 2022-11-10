@@ -324,7 +324,9 @@
         "pk": 1,
         "model": "infrastructure.infrastructurecondition",
         "fields": {
-            "label": "Neuf"
+            "label": "Neuf",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -385,7 +387,9 @@
         "pk": 3,
         "model": "infrastructure.infrastructureusagedifficultylevel",
         "fields": {
-            "label": "Randonneurs sportifs, signal\u00e9tique de prudence au besoin"
+            "label": "Randonneurs sportifs, signal\u00e9tique de prudence au besoin",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
