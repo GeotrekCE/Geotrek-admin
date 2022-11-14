@@ -34,24 +34,15 @@ class GeotrekViewSet(RetrieveCacheResponseMixin, viewsets.ReadOnlyModelViewSet):
         """ return cache string as url path + ordered query params """
         return f"{self.request.path}:{self.get_ordered_query_params()}:{self.request.accepted_renderer.format}"
 
-    # def get_list_cache_key(self):
-    #     """ return specific list cache key based on list last_update object """
-    #     last_update = self.get_queryset().model.last_update
-    #     return f"{self.get_base_cache_string()}:{last_update.isoformat()}"
-
     def get_object_cache_key(self, pk):
         """ return specific object cache key based on object date_update column"""
         # don't directly use get_object or get_queryset to avoid select / prefetch and annotation sql queries
-        last_update = self.get_queryset().model.objects.only('date_update').get(pk=pk).date_update
+        last_update = self.get_queryset().model.last_update
         return f"{self.get_base_cache_string()}:{last_update.isoformat()}"
 
     def object_cache_key_func(self, **kwargs):
         """ cache key md5 for retrieve viexset action """
         return md5(self.get_object_cache_key(kwargs.get('kwargs').get('pk')).encode("utf-8")).hexdigest()
-
-    # def list_cache_key_func(self, **kwargs):
-    #     """ cache key md5 for list viewset action """
-    #     return md5(self.get_list_cache_key().encode("utf-8")).hexdigest()
 
     def get_serializer_context(self):
         return {

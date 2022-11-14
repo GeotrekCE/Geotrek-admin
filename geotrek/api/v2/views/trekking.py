@@ -31,6 +31,13 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     )
     serializer_class = api_serializers.TrekSerializer
 
+    def get_object_cache_key(self, pk):
+        """ Extends default cache key with attachments last update """
+        last_attachment = self.get_object().attachments.all().order_by('-date_update').first()
+        last_attachment_update = last_attachment.date_update.isoformat() if last_attachment else None
+        base_key = super().get_object_cache_key(pk)
+        return f"{base_key}:{last_attachment_update}"
+
     def get_queryset(self):
         activate(self.request.GET.get('language'))
         qs = trekking_models.Trek.objects.existing() \
