@@ -1705,8 +1705,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 404)
 
     def test_poi_not_published_detail(self):
-        id_poi = trek_factory.POIFactory.create(published=False)
-        response = self.get_poi_detail(id_poi.pk)
+        poi_not_published = trek_factory.POIFactory.create(published=False)
+        response = self.get_poi_detail(poi_not_published.pk)
         self.assertEqual(response.status_code, 404)
 
     def test_touristiccontentcategory_detail(self):

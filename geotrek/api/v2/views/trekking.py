@@ -2,18 +2,20 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Prefetch, Q
 from django.db.models.aggregates import Count
+from django.http import Http404
 from django.utils.translation import activate
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework_extensions.cache.decorators import cache_response
+
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.functions import Length3D
-from geotrek.common.models import Attachment, AccessibilityAttachment
 from geotrek.api.v2.renderers import SVGProfileRenderer
 from geotrek.api.v2.utils import build_response_from_cache
+from geotrek.common.models import Attachment, AccessibilityAttachment
 from geotrek.trekking import models as trekking_models
 
 
@@ -40,7 +42,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))
-        qs = trekking_models.Trek.objects.existing() \
+        return trekking_models.Trek.objects.existing() \
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'accessibilities',
                               Prefetch('attachments',
@@ -53,9 +55,16 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                       length_3d_m=Length3D('geom_3d')) \
             .order_by("name")  # Required for reliable pagination
 
-        if self.action == "retrieve":
-            qs = self.filter_published_lang_retrieve(self.request, qs)
         return qs
+
+    @cache_response(key_func='object_cache_key_func', timeout='object_cache_timeout')
+    def retrieve(self, request, pk=None, format=None):
+        """ Return detail view even for unpublished treks that are children of other published treks """
+        qs_filtered = self.filter_published_lang_retrieve(request, self.get_queryset())
+        trek = get_object_or_404(qs_filtered, pk=pk)
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(trek, many=False, context={'request': request})
+        return Response(serializer.data)
 
     def filter_published_lang_retrieve(self, request, queryset):
         """ filter trek by publication language (including parents publication language) """
@@ -177,6 +186,13 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
                                    queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))) \
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
+
+    def get_object_cache_key(self, pk):
+        """ Extends default cache key with attachments last update """
+        last_attachment = self.get_object().attachments.all().order_by('-date_update').first()
+        last_attachment_update = last_attachment.date_update.isoformat() if last_attachment else None
+        base_key = super().get_object_cache_key(pk)
+        return f"{base_key}:{last_attachment_update}"
 
 
 class POITypeViewSet(api_viewsets.GeotrekViewSet):

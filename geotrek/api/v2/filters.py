@@ -122,29 +122,26 @@ class GeotrekPublishedFilter(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         qs = queryset
-        print(view.action)
-        if view.action == "list":
-            language = request.GET.get('language', 'all')
-            associated_published_fields = [f.name for f in qs.model._meta.get_fields() if
-                                           f.name.startswith('published')]
+        language = request.GET.get('language', 'all')
+        associated_published_fields = [f.name for f in qs.model._meta.get_fields() if f.name.startswith('published')]
 
-            # if the model of the queryset published field is not translated
-            if len(associated_published_fields) == 1:
-                qs = qs.filter(published=True)
-            elif len(associated_published_fields) > 1:
-                # the published field of the queryset model is translated
-                if language == 'all':
-                    # no language specified. Check for all.
-                    q = Q()
-                    for lang in settings.MODELTRANSLATION_LANGUAGES:
-                        field_name = 'published_{}'.format(lang)
-                        if field_name in associated_published_fields:
-                            q |= Q(**{field_name: True})
-                    qs = qs.filter(q)
-                else:
-                    # one language is specified
-                    field_name = 'published_{}'.format(language)
-                    qs = qs.filter(**{field_name: True})
+        # if the model of the queryset published field is not translated
+        if len(associated_published_fields) == 1:
+            qs = qs.filter(published=True)
+        elif len(associated_published_fields) > 1:
+            # the published field of the queryset model is translated
+            if language == 'all':
+                # no language specified. Check for all.
+                q = Q()
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    field_name = 'published_{}'.format(lang)
+                    if field_name in associated_published_fields:
+                        q |= Q(**{field_name: True})
+                qs = qs.filter(q)
+            else:
+                # one language is specified
+                field_name = 'published_{}'.format(language)
+                qs = qs.filter(**{field_name: True})
 
         return qs
 
