@@ -8,6 +8,8 @@ CHANGELOG
 **Bug fixes**
 
 - Add missing help texts and validators on ``TouristicEvent`` ``intervention_duration`` and ``preparation_duration``
+- Fix flatpages can't be saved
+
 
 2.90.1 (2022-11-04)
 -----------------------
