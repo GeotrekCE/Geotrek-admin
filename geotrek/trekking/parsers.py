@@ -310,7 +310,7 @@ class ApidaeTrekParser(ApidaeParser):
             return geom
 
     def filter_labels(self, src, val):
-        rv = []
+        filtered_val = []
         for subval in val:
             if not subval:
                 continue
@@ -318,11 +318,19 @@ class ApidaeTrekParser(ApidaeParser):
                 item_type = item['elementReferenceType']
                 if ((item_type == 'TypologiePromoSitra' and item['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS)
                         or (item_type == 'Environnement' and item['id'] in ENVIRONNEMENTS_IDS_AS_LABELS)):
-                    rv.append(item['libelleFr'])
-        return rv
+                    filtered_val.append(item['libelleFr'])
+        return self.apply_filter(
+            dst='labels',
+            src=src,
+            val=filtered_val
+        )
 
     def filter_themes(self, src, val):
-        return [item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
+        return self.apply_filter(
+            dst='themes',
+            src=src,
+            val=[item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
+        )
 
 
 class ApidaeReferenceElementParser(Parser):
@@ -348,7 +356,7 @@ class ApidaeReferenceElementParser(Parser):
     def next_row(self):
         params = {
             'apiKey': self.api_key,
-            'projectId': self.project_id,
+            'projetId': self.project_id,
             'elementReferenceIds': self.element_reference_ids,
         }
         response = self.request_or_retry(self.url, params={'query': json.dumps(params)})

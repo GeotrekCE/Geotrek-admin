@@ -3,6 +3,25 @@
   "objetsTouristiques": [
     {
       "id": 123123,
+      "localisation": {
+        "environnements": [
+          {
+            "elementReferenceType": "Environnement",
+            "id": 135,
+            "libelleFr": "A la campagne",
+            "libelleEn": "In the country",
+            "libelleEs": "En el campo",
+            "libelleIt": "Campagna",
+            "libelleDe": "Auf dem Land",
+            "libelleNl": "Platteland",
+            "ordre": 1,
+            "libelleRu": "За городом",
+            "libelleZh": "国内",
+            "libellePtBR": "No campo",
+            "libelleJa": "田舎"
+          }
+        ]
+      },
       "multimedias": [
         {
           "type": "PLAN",
@@ -16,6 +35,147 @@
       ],
       "nom": {
         "libelleFr": "Une belle randonnée de test"
+      },
+      "presentation": {
+        "descriptifCourt": {
+          "libelleFr": "Le Beaujolais Vert est un secteur parfait pour les cyclorandonneurs réguliers qui cherchent du dénivelé. Parmi les 6 boucles, 3 sont cotées « difficile » et 3 « très difficile » !"
+        },
+        "descriptifDetaille": {
+          "libelleFr": "Côté sportif\r\nCircuit pour cyclos confirmés, l’effort exigé est récompensé par le paysage. Les routes de ce parcours sont splendides.Départ de Cublize,   échauffement de \r\n quelques kilomètres dans la vallée du Reins, ascension du col de la Cambuse suivie de sa très belle descente sur Grandris, montée du col de Nuzières, descente sur Chamelet, pour récupérer, avant l’ascension de 3 cols sur des routes magnifiques et enfin retour, en descente, sur Cublize.\r\n\r\nCôté tourisme\r\nLe vert est la couleur emblématique de ce secteur du Beaujolais où nature rime avec sérénité. La randonnée est l’activité idéale pour l’explorer grâce à des équi- pements et des sentiers balisés pour des pratiques multiples : trail, VTT, équita- tion, marche à pied…\r\nLe lac des Sapins est situé au cœur de la destination. Ouvert au nautisme il est aussi doté de la plus grande baignade biologique d’Europe avec, sur son pour- tour, un panel d’activités de plein air respectueuses de l’environnement."
+        },
+        "descriptifsThematises": [
+          {
+            "dateDisponibilite": null,
+            "dateLimiteDePublication": null,
+            "theme": {
+              "elementReferenceType": "DescriptifTheme",
+              "id": 5159,
+              "libelleFr": "Histoire, culture et patrimoine",
+              "libelleEn": "History, culture and heritage",
+              "libelleEs": "Historia, cultura y patrimonio",
+              "libelleIt": "Storia, cultura e eredità",
+              "libelleDe": "Geschichte, Kultur und Erbe",
+              "libelleNl": "Geschiedenis, cultuur en erfgoed",
+              "ordre": 10,
+              "description": "Descriptif spécialisé ou scientifique sur l'Histoire, la culture, le patrimoine, l'environnement destiné à des passionnés."
+            },
+            "description": {
+              "libelleFr": "CUBLIZE\r\nLac des Sapins\r\nBaignade biologique et baignade dans le lac, pédalo, aviron, catamaran, accrobranche, tir à l’arc, centre équestre, station trail, paintball….\r\n\r\nCHAMELET\r\nCol de la Croix de Thel\r\nLe Tour de France 2019 emprunte la boucle 3.4 entre Longeval (Chambost- sur-Alière) et la croix de Thel pendant 7 km, dont 3,5 km d’ascension vers le col de la Croix de Thel. La pente moyenne de cette montée de 2e catégorie est de 8 % et est assez régulière malgré un beau mur à la fin."
+            }
+          }
+        ],
+        "typologiesPromoSitra": [
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 6157,
+            "libelleFr": "Géologie",
+            "libelleEn": "Geology",
+            "libelleEs": "Geología",
+            "libelleIt": "Geologia",
+            "libelleDe": "Geologie",
+            "libelleNl": "Geologie",
+            "ordre": 405,
+            "description": "Itinéraire permettant d'expliquer l'origine de phénomènes naturels.",
+            "libelleRu": "Геология",
+            "libelleZh": "地质",
+            "libellePtBR": "Geologia",
+            "libelleJa": "地質学",
+            "familleCritere": {
+              "elementReferenceType": "FamilleCritere",
+              "id": 6152,
+              "libelleFr": "Thèmes",
+              "libelleEn": "Subjects",
+              "libelleEs": "Temas",
+              "libelleIt": "Temi",
+              "libelleDe": "Themen",
+              "libelleNl": "Thema’s",
+              "ordre": 153,
+              "description": "Thèmes pour les itinéraires, hébergements et restaurants",
+              "libelleRu": "Темы",
+              "libelleZh": "主题",
+              "libellePtBR": "Temas",
+              "libelleJa": "テーマ"
+            }
+          },
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 6158,
+            "libelleFr": "Historique",
+            "libelleEn": "Historic",
+            "libelleEs": "Histórico",
+            "libelleIt": "Storico",
+            "libelleDe": "Historisch",
+            "libelleNl": "Historisch",
+            "ordre": 407,
+            "description": "Itinéraire présentant un aspect historique de par sa situation géographique ou proposant du patrimoine culturel bâti le long du parcours.",
+            "libelleRu": "Историческая достопримечательность",
+            "libelleZh": "历史",
+            "libellePtBR": "Histórico",
+            "libelleJa": "歴史的",
+            "familleCritere": {
+              "elementReferenceType": "FamilleCritere",
+              "id": 6152,
+              "libelleFr": "Thèmes",
+              "libelleEn": "Subjects",
+              "libelleEs": "Temas",
+              "libelleIt": "Temi",
+              "libelleDe": "Themen",
+              "libelleNl": "Thema’s",
+              "ordre": 153,
+              "description": "Thèmes pour les itinéraires, hébergements et restaurants",
+              "libelleRu": "Темы",
+              "libelleZh": "主题",
+              "libellePtBR": "Temas",
+              "libelleJa": "テーマ"
+            }
+          },
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 1599,
+            "libelleFr": "Déconseillé par mauvais temps",
+            "libelleEn": "Not recommended in bad weather",
+            "libelleEs": "Desaconsejado en época de mal tiempo",
+            "libelleIt": "Sconsigliato con cattivo tempo",
+            "libelleDe": "Bei schlechtem Wetter abgeraten",
+            "libelleNl": "Af te raden bij slecht weer",
+            "ordre": 8,
+            "libelleRu": "Не рекомендуется в плохую погоду",
+            "libelleZh": "恶劣天气时不推荐",
+            "libellePtBR": "Desaconselhado no mau tempo",
+            "libelleJa": "Déconseillé par mauvais temps（悪天候時は控えた方がよい）"
+          },
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 4971,
+            "libelleFr": "Inscrit au PDIPR",
+            "libelleEn": "Listed PDIPR",
+            "libelleEs": "Listado en el PDIPR",
+            "libelleIt": "Elencato nel PDIPR",
+            "libelleDe": "Eingeschrieben PDIPR",
+            "libelleNl": "Genoteerd PDIPR",
+            "ordre": 164,
+            "description": "Permet d’identifier les itinéraires inscrits au Plan Départemental des Itinéraires de Promenade et de Randonnées.",
+            "libelleRu": "Внесен в список ПДИПР",
+            "libelleZh": "已上市的PDIPR",
+            "libellePtBR": "Listado no PDIPR",
+            "libelleJa": "PDIPRに登録",
+            "familleCritere": {
+              "elementReferenceType": "FamilleCritere",
+              "id": 113,
+              "libelleFr": "National",
+              "libelleEn": "National",
+              "libelleEs": "Nacional",
+              "libelleIt": "Nazionale",
+              "libelleDe": "National",
+              "libelleNl": "Nationaal",
+              "ordre": 93,
+              "libelleRu": "Национальный",
+              "libelleZh": "国家",
+              "libellePtBR": "Nacional",
+              "libelleJa": "国家"
+            }
+          }
+        ]
       }
     }
   ]

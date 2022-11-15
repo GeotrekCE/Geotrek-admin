@@ -1,0 +1,64 @@
+{
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "id": 123123,
+      "multimedias": [
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/apidae_test_trek.gpx",
+              "extension": "gpx"
+            }
+          ]
+        }
+      ],
+      "nom": {
+        "libelleFr": "Une belle randonnée de test"
+      },
+      "presentation": {
+        "descriptifCourt": {
+          "libelleFr": "Le Beaujolais Vert est un secteur parfait pour les cyclorandonneurs réguliers qui cherchent du dénivelé. Parmi les 6 boucles, 3 sont cotées « difficile » et 3 « très difficile » !"
+        },
+        "descriptifDetaille": {
+          "libelleFr": "Côté sportif\r\nCircuit pour cyclos confirmés, l’effort exigé est récompensé par le paysage. Les routes de ce parcours sont splendides.Départ de Cublize,   échauffement de \r\n quelques kilomètres dans la vallée du Reins, ascension du col de la Cambuse suivie de sa très belle descente sur Grandris, montée du col de Nuzières, descente sur Chamelet, pour récupérer, avant l’ascension de 3 cols sur des routes magnifiques et enfin retour, en descente, sur Cublize.\r\n\r\nCôté tourisme\r\nLe vert est la couleur emblématique de ce secteur du Beaujolais où nature rime avec sérénité. La randonnée est l’activité idéale pour l’explorer grâce à des équi- pements et des sentiers balisés pour des pratiques multiples : trail, VTT, équita- tion, marche à pied…\r\nLe lac des Sapins est situé au cœur de la destination. Ouvert au nautisme il est aussi doté de la plus grande baignade biologique d’Europe avec, sur son pour- tour, un panel d’activités de plein air respectueuses de l’environnement."
+        },
+        "descriptifsThematises": [
+          {
+            "dateDisponibilite": null,
+            "dateLimiteDePublication": null,
+            "theme": {
+              "elementReferenceType": "DescriptifTheme",
+              "id": 5159,
+              "libelleFr": "Histoire, culture et patrimoine",
+              "libelleEn": "History, culture and heritage",
+              "libelleEs": "Historia, cultura y patrimonio",
+              "libelleIt": "Storia, cultura e eredità",
+              "libelleDe": "Geschichte, Kultur und Erbe",
+              "libelleNl": "Geschiedenis, cultuur en erfgoed",
+              "ordre": 10,
+              "description": "Descriptif spécialisé ou scientifique sur l'Histoire, la culture, le patrimoine, l'environnement destiné à des passionnés."
+            },
+            "description": {
+              "libelleFr": "CUBLIZE\r\nLac des Sapins\r\nBaignade biologique et baignade dans le lac, pédalo, aviron, catamaran, accrobranche, tir à l’arc, centre équestre, station trail, paintball….\r\n\r\nCHAMELET\r\nCol de la Croix de Thel\r\nLe Tour de France 2019 emprunte la boucle 3.4 entre Longeval (Chambost- sur-Alière) et la croix de Thel pendant 7 km, dont 3,5 km d’ascension vers le col de la Croix de Thel. La pente moyenne de cette montée de 2e catégorie est de 8 % et est assez régulière malgré un beau mur à la fin."
+            }
+          }
+        ],
+        "typologiesPromoSitra": [
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 12341234,
+            "libelleFr": "Déconseillé par mauvais temps",
+            "libelleEn": "Not recommended in bad weather",
+            "libelleEs": "Desaconsejado en época de mal tiempo",
+            "libelleIt": "Sconsigliato con cattivo tempo",
+            "libelleDe": "Bei schlechtem Wetter abgeraten",
+            "libelleNl": "Af te raden bij slecht weer",
+            "ordre": 8
+          }
+        ]
+      }
+    }
+  ]
+}

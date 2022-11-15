@@ -11,7 +11,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from geotrek.common.models import Theme, FileType, Attachment
+from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
@@ -587,7 +587,8 @@ class TestApidaeTrekParser(ApidaeTrekParser):
     responseFields = [
         'id',
         'nom',
-        'multimedias'
+        'multimedias',
+        'presentation'
     ]
 
 
@@ -659,6 +660,35 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(Trek.objects.count(), 0)
         self.assertIn('pas au format GPX', output_stdout.getvalue())
 
+    @mock.patch('requests.get')
+    def test_trek_linked_entities_are_imported(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Theme.objects.count(), 2)
+        themes = Theme.objects.all()
+        for theme in themes:
+            self.assertIn(theme.label, ['Géologie', 'Historique'])
+        self.assertEqual(Label.objects.count(), 3)
+        labels = Label.objects.all()
+        for label in labels:
+            self.assertIn(label.name, ['A la campagne', 'Déconseillé par mauvais temps', 'Inscrit au PDIPR'])
+
+    @mock.patch('requests.get')
+    def test_trek_theme_with_unknown_id_is_not_imported(self, mocked_get):
+        from geotrek.trekking import parsers as trekking_parsers
+        assert 12341234 not in trekking_parsers.TYPOLOGIES_SITRA_IDS_AS_THEMES
+
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trek_with_unknown_theme.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        self.assertEqual(Theme.objects.count(), 0)
+
 
 class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):
 
@@ -683,7 +713,7 @@ class ApidaeTrekThemeParserTests(TestCase):
             self.assertEqual(url, TestApidaeTrekThemeParser.url)
             expected_query_param = {
                 'apiKey': TestApidaeTrekThemeParser.api_key,
-                'projectId': TestApidaeTrekThemeParser.project_id,
+                'projetId': TestApidaeTrekThemeParser.project_id,
                 'elementReferenceIds': TestApidaeTrekThemeParser.element_reference_ids,
             }
             self.assertDictEqual(json.loads(params['query']), expected_query_param)
