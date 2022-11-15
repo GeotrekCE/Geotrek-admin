@@ -504,7 +504,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         with open(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
             poi_geojson = json.load(f)
             # Check inside file generated we have only one picture
-            self.assertEqual(len(poi_geojson['features'][0]['properties']['pictures']), 1)
+            self.assertEqual(len(poi_geojson['features'][0]['properties']['pictures']), 1, poi_geojson['features'][0])
 
     @mock.patch('geotrek.api.mobile.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):
