@@ -52,7 +52,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         root_pk = self.request.GET.get('root_pk') or trek.pk
         qs = trek.pois.filter(published=True).select_related('topo_object', 'type', )\
             .prefetch_related('topo_object__aggregations', 'attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)).order_by('pk')
         data = api_serializers_trekking.POIListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
