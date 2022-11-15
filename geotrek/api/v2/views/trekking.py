@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Prefetch, Q
 from django.db.models.aggregates import Count
-from django.http import Http404
 from django.utils.translation import activate
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -35,10 +34,11 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_object_cache_key(self, pk):
         """ Extends default cache key with attachments last update """
-        last_attachment = self.get_object().attachments.all().order_by('-date_update').first()
+        instance = self.get_queryset().model.objects.get(pk=pk)
+        date_update = instance.date_update
+        last_attachment = instance.attachments.all().order_by('-date_update').first()
         last_attachment_update = last_attachment.date_update.isoformat() if last_attachment else None
-        base_key = super().get_object_cache_key(pk)
-        return f"{base_key}:{last_attachment_update}"
+        return f"{self.get_base_cache_string()}:{date_update.isoformat()}:{last_attachment_update}"
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))
@@ -55,16 +55,12 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                       length_3d_m=Length3D('geom_3d')) \
             .order_by("name")  # Required for reliable pagination
 
-        return qs
-
     @cache_response(key_func='object_cache_key_func', timeout='object_cache_timeout')
     def retrieve(self, request, pk=None, format=None):
         """ Return detail view even for unpublished treks that are children of other published treks """
         qs_filtered = self.filter_published_lang_retrieve(request, self.get_queryset())
         trek = get_object_or_404(qs_filtered, pk=pk)
-        serializer_class = self.get_serializer_class()
-        serializer = serializer_class(trek, many=False, context={'request': request})
-        return Response(serializer.data)
+        return Response(self.get_serializer(trek).data)
 
     def filter_published_lang_retrieve(self, request, queryset):
         """ filter trek by publication language (including parents publication language) """
