@@ -697,36 +697,30 @@ class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):
     project_id = 1234
     element_reference_ids = [6157]
 
-    fields = {
-        'label_fr': 'libelleFr',
-        'label_en': 'libelleEn',
-        'label_es': 'libelleEs',
-        'label_it': 'libelleIt',
-    }
-
 
 class ApidaeTrekThemeParserTests(TestCase):
 
+    def mocked_get_func(self, url, params, *args, **kwargs):
+        self.assertEqual(url, TestApidaeTrekThemeParser.url)
+        expected_query_param = {
+            'apiKey': TestApidaeTrekThemeParser.api_key,
+            'projetId': TestApidaeTrekThemeParser.project_id,
+            'elementReferenceIds': TestApidaeTrekThemeParser.element_reference_ids,
+        }
+        self.assertDictEqual(json.loads(params['query']), expected_query_param)
+
+        rv = Mock()
+        rv.status_code = 200
+        with open('geotrek/trekking/tests/data/apidae_trek_parser/trek_theme.json', 'r') as f:
+            json_payload = f.read()
+        data = json.loads(json_payload)
+        rv.json = lambda: data
+
+        return rv
+
     @mock.patch('requests.get')
-    def test_theme_is_created_with_specified_languages(self, mocked_get):
-        def mocked_get_func(url, params, *args, **kwargs):
-            self.assertEqual(url, TestApidaeTrekThemeParser.url)
-            expected_query_param = {
-                'apiKey': TestApidaeTrekThemeParser.api_key,
-                'projetId': TestApidaeTrekThemeParser.project_id,
-                'elementReferenceIds': TestApidaeTrekThemeParser.element_reference_ids,
-            }
-            self.assertDictEqual(json.loads(params['query']), expected_query_param)
-
-            rv = Mock()
-            rv.status_code = 200
-            with open('geotrek/trekking/tests/data/apidae_trek_parser/trek_theme.json', 'r') as f:
-                json_payload = f.read()
-            data = json.loads(json_payload)
-            rv.json = lambda: data
-
-            return rv
-        mocked_get.side_effect = mocked_get_func
+    def test_theme_is_created_with_configured_languages(self, mocked_get):
+        mocked_get.side_effect = self.mocked_get_func
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekThemeParser', verbosity=0)
 
@@ -736,3 +730,28 @@ class ApidaeTrekThemeParserTests(TestCase):
         self.assertEqual(theme.label_en, 'Geology')
         self.assertEqual(theme.label_es, 'Geología')
         self.assertEqual(theme.label_it, 'Geologia')
+
+    @mock.patch('requests.get')
+    def test_theme_is_identified_with_default_language_on_update(self, mocked_get):
+        mocked_get.side_effect = self.mocked_get_func
+        theme = Theme(label_en='Geology', label_fr='Géologie (cette valeur sera écrasée)')
+        theme.save()
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekThemeParser', verbosity=0)
+
+        self.assertEqual(len(Theme.objects.all()), 1)
+        theme = Theme.objects.first()
+        self.assertEqual(theme.label_en, 'Geology')
+        self.assertEqual(theme.label_fr, 'Géologie')
+        self.assertEqual(theme.label_es, 'Geología')
+        self.assertEqual(theme.label_it, 'Geologia')
+
+    @mock.patch('requests.get')
+    def test_another_theme_is_created_when_default_language_name_changes(self, mocked_get):
+        mocked_get.side_effect = self.mocked_get_func
+        theme = Theme(label_en='With interesting rocks', label_fr='Géologie', label_it='Geologia', label_es='Geologia')
+        theme.save()
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekThemeParser', verbosity=0)
+
+        self.assertEqual(len(Theme.objects.all()), 2)

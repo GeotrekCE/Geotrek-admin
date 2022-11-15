@@ -336,18 +336,26 @@ class ApidaeTrekParser(ApidaeParser):
 class ApidaeReferenceElementParser(Parser):
 
     url = 'https://api.apidae-tourisme.com/api/v002/referentiel/elements-reference/'
+
     api_key = None
     project_id = None
     element_reference_ids = None
+    name_field = None
+    # Fields mapping is generated in __init__
 
-    fields = {
-        'label_fr': 'libelleFr',
-        'label_en': 'libelleEn',
-        'label_es': 'libelleEs',
-        'label_it': 'libelleIt',
-        'label_de': 'libelleDe',
-        'label_nl': 'libelleNl'
-    }
+    def __init__(self, *args, **kwargs):
+        self._add_multi_languages_fields_mapping()
+        self._set_eid_fieldname()
+        super().__init__(*args, **kwargs)
+
+    def _add_multi_languages_fields_mapping(self):
+        self.fields = {
+            f'{self.name_field}_{lang}': f'libelle{lang.capitalize()}'
+            for lang in settings.MODELTRANSLATION_LANGUAGES
+        }
+
+    def _set_eid_fieldname(self):
+        self.eid = f'{self.name_field}_{settings.MODELTRANSLATION_DEFAULT_LANGUAGE}'
 
     @property
     def items(self):
@@ -372,11 +380,13 @@ class ApidaeReferenceElementParser(Parser):
 class ApidaeTrekThemeParser(ApidaeReferenceElementParser):
     model = Theme
     element_reference_ids = TYPOLOGIES_SITRA_IDS_AS_THEMES
+    name_field = 'label'
 
 
 class ApidaeTrekLabelParser(ApidaeReferenceElementParser):
     model = Label
     element_reference_ids = TYPOLOGIES_SITRA_IDS_AS_LABELS + ENVIRONNEMENTS_IDS_AS_LABELS
+    name_field = 'name'
 
 
 # TODO
