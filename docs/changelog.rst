@@ -5,6 +5,10 @@ CHANGELOG
 2.90.1+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Add paths in overlays for elements which are not topologies
+
 **Bug fixes**
 
 - Add missing help texts and validators on ``TouristicEvent`` ``intervention_duration`` and ``preparation_duration``
