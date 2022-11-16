@@ -227,6 +227,14 @@ TYPOLOGIES_SITRA_IDS_AS_LABELS = [1599, 1676, 4639, 4819, 5022, 4971, 3845, 6566
 TYPOLOGIES_SITRA_IDS_AS_THEMES = [6155, 6156, 6368, 6153, 6154, 6157, 6163, 6158, 6679, 6159, 6160, 6161]
 ENVIRONNEMENTS_IDS_AS_LABELS = [135, 4630, 171, 189, 186, 6238, 3743, 147, 149, 156, 153, 187, 195, 6464, 4006, 169, 3978, 6087]
 GUIDEBOOK_DESCRIPTION_ID = 6527
+DEFAULT_TREK_MARKING_DESCRIPTION = {
+    'libelleFr': 'Cet itinéraire est balisé.',
+    'libelleEn': 'This trek is marked.',
+}
+TREK_NO_MARKING_DESCRIPTION = {
+    'libelleFr': 'Cet itinéraire n\'est pas balisé',
+    'libelleEn': 'This trek is not marked',
+}
 
 
 class ApidaeTrekParser(ApidaeParser):
@@ -249,6 +257,7 @@ class ApidaeTrekParser(ApidaeParser):
         'presentation',
         'localisation',
         'ouverture',
+        'informationsEquipement',
     ]
     locales = ['fr', 'en']
 
@@ -259,6 +268,7 @@ class ApidaeTrekParser(ApidaeParser):
         'description': (
             'ouverture',
             'presentation.descriptifsThematises.*',
+            'informationsEquipement.itineraire',
         ),
         'geom': 'multimedias',
         'eid': 'id',
@@ -356,7 +366,7 @@ class ApidaeTrekParser(ApidaeParser):
         )
 
     def filter_description(self, src, val):
-        ouverture, descriptifs = val
+        ouverture, descriptifs, itineraire = val
         html_description = defaultdict(lambda: '')
 
         def append_to_html_description(translated_field, transform_func):
@@ -381,6 +391,9 @@ class ApidaeTrekParser(ApidaeParser):
         if ouverture:
             append_to_html_description(ouverture['periodeEnClair'], ApidaeTrekParser._transform_description_to_html)
 
+        if itineraire:
+            append_to_html_description(ApidaeTrekParser._make_marking_description(itineraire), ApidaeTrekParser._transform_description_to_html)
+
         return self.apply_filter(
             dst='description',
             src=src,
@@ -401,6 +414,17 @@ class ApidaeTrekParser(ApidaeParser):
     @staticmethod
     def _transform_guidebook_to_html(text):
         return ApidaeTrekParser._transform_description_to_html(text)
+
+    @staticmethod
+    def _make_marking_description(itineraire):
+        is_marked = itineraire['itineraireBalise'] == 'BALISE'
+        if is_marked:
+            marking_description = DEFAULT_TREK_MARKING_DESCRIPTION.copy()
+            if itineraire['precisionsBalisage']:
+                marking_description.update(itineraire['precisionsBalisage'])
+        else:
+            marking_description = TREK_NO_MARKING_DESCRIPTION.copy()
+        return marking_description
 
 
 class ApidaeReferenceElementParser(Parser):

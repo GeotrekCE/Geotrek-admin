@@ -1,21 +1,22 @@
-from io import StringIO
-from unittest import mock
 import json
 import os
+from io import StringIO
+from unittest import mock
 from unittest import skipIf
 from unittest.mock import Mock
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
 from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
-    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser
+    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser,
+    TREK_NO_MARKING_DESCRIPTION, DEFAULT_TREK_MARKING_DESCRIPTION,
 )
 
 
@@ -623,6 +624,7 @@ class ApidaeTrekParserTests(TestCase):
             '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
             '<p>Ouvert toute l\'année</p>'
             '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
+            '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
         )
         self.assertEqual(trek.description_fr, expected_fr_description)
         expected_en_description = (
@@ -632,6 +634,7 @@ class ApidaeTrekParserTests(TestCase):
             '<p>3/ Back to the chapelle by the woods.</p>'
             '<p>Open all year long</p>'
             '<p>Exceptionally closed during heavy rain</p>'
+            '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
         )
         self.assertEqual(trek.description_en, expected_en_description)
 
@@ -766,3 +769,44 @@ class ApidaeTrekThemeParserTests(TestCase):
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekThemeParser', verbosity=0)
 
         self.assertEqual(len(Theme.objects.all()), 2)
+
+
+class MakeMarkingDescriptionTests(SimpleTestCase):
+
+    def test_it_returns_default_text_when_not_marked(self):
+        itineraire = {'itineraireBalise': None}
+        description = ApidaeTrekParser._make_marking_description(itineraire)
+        self.assertDictEqual(description, TREK_NO_MARKING_DESCRIPTION)
+
+    def test_it_returns_given_text(self):
+        precisions = {
+            'libelleFr': 'fr-marked itinerary',
+            'libelleEn': 'en-marked itinerary',
+            'libelleEs': 'es-marked itinerary',
+            'libelleIt': 'it-marked itinerary',
+        }
+        itineraire = {
+            'itineraireBalise': 'BALISE',
+            'precisionsBalisage': precisions
+        }
+        description = ApidaeTrekParser._make_marking_description(itineraire)
+        self.assertDictEqual(description, precisions)
+
+    def test_it_returns_given_partial_text_mixed_with_default(self):
+        partial_precisions = {
+            'libelleEn': 'en-marked itinerary',
+            'libelleEs': 'es-marked itinerary',
+            'libelleIt': 'it-marked itinerary',
+        }
+        itineraire = {
+            'itineraireBalise': 'BALISE',
+            'precisionsBalisage': partial_precisions
+        }
+        description = ApidaeTrekParser._make_marking_description(itineraire)
+        expected = {
+            'libelleFr': DEFAULT_TREK_MARKING_DESCRIPTION['libelleFr'],
+            'libelleEn': 'en-marked itinerary',
+            'libelleEs': 'es-marked itinerary',
+            'libelleIt': 'it-marked itinerary',
+        }
+        self.assertDictEqual(description, expected)

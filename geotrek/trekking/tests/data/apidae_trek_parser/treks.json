@@ -3,6 +3,15 @@
   "objetsTouristiques": [
     {
       "id": 123123,
+      "informationsEquipement": {
+        "itineraire": {
+          "itineraireBalise": "BALISE",
+          "precisionsBalisage": {
+            "libelleFr": "Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).",
+            "libelleEn": "Follow the GR (white / red) or GRP (yellow / red) markings."
+          }
+        }
+      },
       "localisation": {
         "environnements": [
           {
