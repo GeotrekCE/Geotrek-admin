@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Add missing file field in Imports form layout
 - Add missing help texts and validators on ``TouristicEvent`` ``intervention_duration`` and ``preparation_duration``
 
 2.90.1 (2022-11-04)

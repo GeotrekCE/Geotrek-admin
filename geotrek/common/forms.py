@@ -354,7 +354,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
             Div(
                 Div(
                     'parser',
-                    'zipfile',
+                    'file',
                     'encoding',
                 ),
                 FormActions(
