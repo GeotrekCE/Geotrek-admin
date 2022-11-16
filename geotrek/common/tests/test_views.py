@@ -184,7 +184,9 @@ class ViewsImportTest(TestCase):
         mocked_current_task.request.id = '1'
         with open('geotrek/common/tests/data/test.geojson', 'rb') as geojson:
             url = reverse('common:import_dataset')
-
+            resp = self.client.get(url)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("id_with-file-file", resp.content.decode("utf-8"))
             response_real = self.client.post(
                 url, {
                     'upload-file': 'Upload',

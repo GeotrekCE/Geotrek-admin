@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Add missing file field in Imports form layout
 - Add missing help texts and validators on ``TouristicEvent`` ``intervention_duration`` and ``preparation_duration``
 - Fix flatpages can't be saved
 
