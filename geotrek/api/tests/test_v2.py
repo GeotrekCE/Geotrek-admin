@@ -4206,12 +4206,12 @@ class AltimetryCacheTests(BaseApiTest):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM(self):
-        # There are 8 queries to get trek DEM
+        # There are 9 queries to get trek DEM
         with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 1 queries to get trek DEM
+        # When cache is used there is single query to get trek DEM
         with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
@@ -4219,15 +4219,15 @@ class AltimetryCacheTests(BaseApiTest):
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM_nds(self):
-        self.trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
-        # There are 8 queries to get trek DEM
-        with self.assertNumQueries(8):
-            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        # There are 9 queries to get trek DEM
+        with self.assertNumQueries(9):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 7 queries to get trek DEM
-        with self.assertNumQueries(7):
-            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        # When cache is used there is single query to get trek DEM
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
