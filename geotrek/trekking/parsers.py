@@ -4,10 +4,11 @@ from tempfile import NamedTemporaryFile
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import Point, GEOSGeometry
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, get_language
 
 from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser
+from geotrek.common.utils.translation import get_translated_fields
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek
 
 
@@ -224,10 +225,12 @@ from geotrek.tourism.parsers import ApidaeParser  # Noqa
 TYPOLOGIES_SITRA_IDS_AS_LABELS = [1599, 1676, 4639, 4819, 5022, 4971, 3845, 6566, 6049, 1582, 5538, 6825, 6608, 1602]
 TYPOLOGIES_SITRA_IDS_AS_THEMES = [6155, 6156, 6368, 6153, 6154, 6157, 6163, 6158, 6679, 6159, 6160, 6161]
 ENVIRONNEMENTS_IDS_AS_LABELS = [135, 4630, 171, 189, 186, 6238, 3743, 147, 149, 156, 153, 187, 195, 6464, 4006, 169, 3978, 6087]
+GUIDEBOOK_DESCRIPTION_ID = 6527
 
 
 class ApidaeTrekParser(ApidaeParser):
     model = Trek
+    eid = 'eid'
     separator = None
 
     # Parameters to build the request
@@ -251,8 +254,10 @@ class ApidaeTrekParser(ApidaeParser):
     fields = {
         'name_fr': 'nom.libelleFr',
         'name_en': 'nom.libelleEn',
-        # retire la geom pour le moment car il y a des erreurs sur certains imports d'itinéraires
-        # 'geom': 'multimedias',
+        'description': (
+            'presentation.descriptifsThematises.*',
+        ),
+        'geom': 'multimedias',
         'eid': 'id',
     }
     m2m_fields = {
@@ -271,6 +276,10 @@ class ApidaeTrekParser(ApidaeParser):
         'labels': {'create': True},
     }
     non_fields = {}
+
+    def __init__(self, *args, **kwargs):
+        self._translated_fields = [field for field in get_translated_fields(self.model)]
+        super().__init__(*args, **kwargs)
 
     @staticmethod
     def _find_gpx_plan_in_multimedia_items(items):
@@ -293,6 +302,16 @@ class ApidaeTrekParser(ApidaeParser):
             if layer.name == 'tracks':
                 return layer
         raise RowImportError("APIDAE Trek GPX map does not have a 'tracks' layer")
+
+    def apply_filter(self, dst, src, val):
+        val = super().apply_filter(dst, src, val)
+        if dst in self.translated_fields:
+            if isinstance(val, dict):
+                for key, final_value in val.items():
+                    if key in settings.MODELTRANSLATION_LANGUAGES:
+                        self.set_value(f'{dst}_{key}', src, final_value)
+                val = val.get(get_language())
+        return val
 
     def filter_geom(self, src, val):
         plan = self._find_gpx_plan_in_multimedia_items(val)
@@ -331,6 +350,48 @@ class ApidaeTrekParser(ApidaeParser):
             src=src,
             val=[item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
         )
+
+    def filter_description(self, src, val):
+        # TODO: multi-languages
+        # TODO: process into HTML paragraphs
+        # TODO: process checkpoints numbers
+        descriptifs = val[0]
+
+        if not descriptifs:
+            return ''
+
+        rv = {}
+        guidebook = None
+        for d in descriptifs:
+            if d['theme']['id'] == GUIDEBOOK_DESCRIPTION_ID:
+                guidebook = d
+                break
+        if guidebook:
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                try:
+                    rv[lang] = guidebook['description'][f'libelle{lang.capitalize()}']
+                except KeyError:
+                    pass
+
+        for lang, value in rv.items():
+            rv[lang] = ApidaeTrekParser._transform_guidebook_to_html(value)
+
+        return self.apply_filter(
+            dst='description',
+            src=src,
+            val=rv
+        )
+
+    @staticmethod
+    def _transform_guidebook_to_html(text):
+        """Transform a guidebook string into HTML paragraphs."""
+        html_blocks = []
+        lines = text.replace('\r', '').split('\n')
+        for line in lines:
+            if not line:
+                continue
+            html_blocks.append(f'<p>{line}</p>')
+        return ''.join(html_blocks)
 
 
 class ApidaeReferenceElementParser(Parser):

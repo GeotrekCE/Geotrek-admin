@@ -569,27 +569,11 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
 
 class TestApidaeTrekParser(ApidaeTrekParser):
-    url = 'https://example.net/apidae/api/v002/recherche/list-objets-touristiques/'
     warn_on_missing_fields = True
+    url = 'https://example.net/fake/api/'
     api_key = 'ABCDEF'
     project_id = 1234
-    separator = None
     selection_id = 654321
-    model = Trek
-    eid = 'eid'
-    fields = {
-        'name': 'nom.libelleFr',
-        'geom': 'multimedias',
-        'eid': 'id'
-    }
-    size = 20
-    skip = 0
-    responseFields = [
-        'id',
-        'nom',
-        'multimedias',
-        'presentation'
-    ]
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
@@ -623,6 +607,21 @@ class ApidaeTrekParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    def test_trek_description_is_imported(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertIn("Start: from the parking near the Chapelle Saint Michel", trek.description_en)
+        self.assertIn("Départ: du parking de la Chapelle Saint Michel", trek.description_fr)
+        self.assertEqual(trek.description_fr.count('<p>'), 4)
+        self.assertEqual(trek.description_fr.count('</p>'), 4)
+        self.assertEqual(trek.description_en.count('<p>'), 4)
+        self.assertEqual(trek.description_en.count('</p>'), 4)
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):

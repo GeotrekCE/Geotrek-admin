@@ -49,18 +49,19 @@
             "dateLimiteDePublication": null,
             "theme": {
               "elementReferenceType": "DescriptifTheme",
-              "id": 5159,
-              "libelleFr": "Histoire, culture et patrimoine",
-              "libelleEn": "History, culture and heritage",
-              "libelleEs": "Historia, cultura y patrimonio",
-              "libelleIt": "Storia, cultura e eredità",
-              "libelleDe": "Geschichte, Kultur und Erbe",
-              "libelleNl": "Geschiedenis, cultuur en erfgoed",
-              "ordre": 10,
-              "description": "Descriptif spécialisé ou scientifique sur l'Histoire, la culture, le patrimoine, l'environnement destiné à des passionnés."
+              "id": 6527,
+              "libelleFr": "Topo/pas à pas",
+              "libelleEn": "Guidebook with maps/step-by-step",
+              "libelleEs": "Plano/Seguir paso a paso",
+              "libelleIt": "Topografia/passo passo",
+              "libelleDe": "Topo/Schritt für Schritt",
+              "libelleNl": "Topo/stap voor stap",
+              "ordre": 33,
+              "description": "Permet de saisir les informations de guidage sur un itinéraire comme :\r\n- tourner à gauche à cette intersection\r\n- suivre le balisage jaune"
             },
             "description": {
-              "libelleFr": "CUBLIZE\r\nLac des Sapins\r\nBaignade biologique et baignade dans le lac, pédalo, aviron, catamaran, accrobranche, tir à l’arc, centre équestre, station trail, paintball….\r\n\r\nCHAMELET\r\nCol de la Croix de Thel\r\nLe Tour de France 2019 emprunte la boucle 3.4 entre Longeval (Chambost- sur-Alière) et la croix de Thel pendant 7 km, dont 3,5 km d’ascension vers le col de la Croix de Thel. La pente moyenne de cette montée de 2e catégorie est de 8 % et est assez régulière malgré un beau mur à la fin."
+              "libelleFr": "Départ: du parking de la Chapelle Saint Michel \r\n1/ Suivre le chemin qui part à droite, traversant le vallon.\r\n2/ Au carrefour tourner à droite et suivre la rivière\r\n3/ Retour à la chapelle en passant à travers le petit bois.",
+              "libelleEn": "Start: from the parking near the Chapelle Saint Michel \r\n1/ Follow the path starting at right-hand, cross the valley.\r\n2/ At the crossroad turn left and follow the river.\r\n3/ Back to the chapelle by the woods."
             }
           }
         ],
