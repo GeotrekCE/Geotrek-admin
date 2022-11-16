@@ -1,3 +1,4 @@
+from collections import defaultdict
 import json
 from tempfile import NamedTemporaryFile
 
@@ -247,6 +248,7 @@ class ApidaeTrekParser(ApidaeParser):
         'gestion',
         'presentation',
         'localisation',
+        'ouverture',
     ]
     locales = ['fr', 'en']
 
@@ -255,6 +257,7 @@ class ApidaeTrekParser(ApidaeParser):
         'name_fr': 'nom.libelleFr',
         'name_en': 'nom.libelleEn',
         'description': (
+            'ouverture',
             'presentation.descriptifsThematises.*',
         ),
         'geom': 'multimedias',
@@ -329,6 +332,7 @@ class ApidaeTrekParser(ApidaeParser):
             return geom
 
     def filter_labels(self, src, val):
+        # TODO: unwrap val into typologies and environnements for clarity
         filtered_val = []
         for subval in val:
             if not subval:
@@ -352,39 +356,40 @@ class ApidaeTrekParser(ApidaeParser):
         )
 
     def filter_description(self, src, val):
-        # TODO: multi-languages
-        # TODO: process into HTML paragraphs
-        # TODO: process checkpoints numbers
-        descriptifs = val[0]
+        ouverture, descriptifs = val
+        html_description = defaultdict(lambda: '')
 
-        if not descriptifs:
-            return ''
-
-        rv = {}
-        guidebook = None
-        for d in descriptifs:
-            if d['theme']['id'] == GUIDEBOOK_DESCRIPTION_ID:
-                guidebook = d
-                break
-        if guidebook:
+        def append_to_html_description(translated_field, transform_func):
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 try:
-                    rv[lang] = guidebook['description'][f'libelle{lang.capitalize()}']
+                    html_description[lang] += transform_func(translated_field[f'libelle{lang.capitalize()}'])
                 except KeyError:
                     pass
 
-        for lang, value in rv.items():
-            rv[lang] = ApidaeTrekParser._transform_guidebook_to_html(value)
+        def get_guidebook():
+            if not descriptifs:
+                return None
+            for d in descriptifs:
+                if d['theme']['id'] == GUIDEBOOK_DESCRIPTION_ID:
+                    return d
+            return None
+
+        guidebook = get_guidebook()
+        if guidebook:
+            append_to_html_description(guidebook['description'], ApidaeTrekParser._transform_guidebook_to_html)
+
+        if ouverture:
+            append_to_html_description(ouverture['periodeEnClair'], ApidaeTrekParser._transform_description_to_html)
 
         return self.apply_filter(
             dst='description',
             src=src,
-            val=rv
+            val=html_description
         )
 
     @staticmethod
-    def _transform_guidebook_to_html(text):
-        """Transform a guidebook string into HTML paragraphs."""
+    def _transform_description_to_html(text):
+        """Transform a descriptive text into HTML paragraphs."""
         html_blocks = []
         lines = text.replace('\r', '').split('\n')
         for line in lines:
@@ -392,6 +397,10 @@ class ApidaeTrekParser(ApidaeParser):
                 continue
             html_blocks.append(f'<p>{line}</p>')
         return ''.join(html_blocks)
+
+    @staticmethod
+    def _transform_guidebook_to_html(text):
+        return ApidaeTrekParser._transform_description_to_html(text)
 
 
 class ApidaeReferenceElementParser(Parser):

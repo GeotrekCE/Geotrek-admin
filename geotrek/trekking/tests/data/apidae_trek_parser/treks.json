@@ -36,6 +36,12 @@
       "nom": {
         "libelleFr": "Une belle randonnée de test"
       },
+      "ouverture": {
+        "periodeEnClair": {
+          "libelleFr": "Ouvert toute l'année\n\nFermeture exceptionnelle en cas de pluie forte",
+          "libelleEn": "Open all year long\n\nExceptionally closed during heavy rain"
+        }
+      },
       "presentation": {
         "descriptifCourt": {
           "libelleFr": "Le Beaujolais Vert est un secteur parfait pour les cyclorandonneurs réguliers qui cherchent du dénivelé. Parmi les 6 boucles, 3 sont cotées « difficile » et 3 « très difficile » !"
@@ -60,7 +66,7 @@
               "description": "Permet de saisir les informations de guidage sur un itinéraire comme :\r\n- tourner à gauche à cette intersection\r\n- suivre le balisage jaune"
             },
             "description": {
-              "libelleFr": "Départ: du parking de la Chapelle Saint Michel \r\n1/ Suivre le chemin qui part à droite, traversant le vallon.\r\n2/ Au carrefour tourner à droite et suivre la rivière\r\n3/ Retour à la chapelle en passant à travers le petit bois.",
+              "libelleFr": "Départ : du parking de la Chapelle Saint Michel \r\n1/ Suivre le chemin qui part à droite, traversant le vallon.\r\n2/ Au carrefour tourner à droite et suivre la rivière\r\n3/ Retour à la chapelle en passant à travers le petit bois.",
               "libelleEn": "Start: from the parking near the Chapelle Saint Michel \r\n1/ Follow the path starting at right-hand, cross the valley.\r\n2/ At the crossroad turn left and follow the river.\r\n3/ Back to the chapelle by the woods."
             }
           }

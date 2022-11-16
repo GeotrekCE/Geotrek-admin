@@ -616,12 +616,24 @@ class ApidaeTrekParserTests(TestCase):
 
         self.assertEqual(Trek.objects.count(), 1)
         trek = Trek.objects.all().first()
-        self.assertIn("Start: from the parking near the Chapelle Saint Michel", trek.description_en)
-        self.assertIn("Départ: du parking de la Chapelle Saint Michel", trek.description_fr)
-        self.assertEqual(trek.description_fr.count('<p>'), 4)
-        self.assertEqual(trek.description_fr.count('</p>'), 4)
-        self.assertEqual(trek.description_en.count('<p>'), 4)
-        self.assertEqual(trek.description_en.count('</p>'), 4)
+        expected_fr_description = (
+            '<p>Départ : du parking de la Chapelle Saint Michel </p>'
+            '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
+            '<p>2/ Au carrefour tourner à droite et suivre la rivière</p>'
+            '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
+            '<p>Ouvert toute l\'année</p>'
+            '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
+        )
+        self.assertEqual(trek.description_fr, expected_fr_description)
+        expected_en_description = (
+            '<p>Start: from the parking near the Chapelle Saint Michel </p>'
+            '<p>1/ Follow the path starting at right-hand, cross the valley.</p>'
+            '<p>2/ At the crossroad turn left and follow the river.</p>'
+            '<p>3/ Back to the chapelle by the woods.</p>'
+            '<p>Open all year long</p>'
+            '<p>Exceptionally closed during heavy rain</p>'
+        )
+        self.assertEqual(trek.description_en, expected_en_description)
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
