@@ -27,3 +27,8 @@ class DumpGeom(GeomOutputGeoFunc):
 class StartPoint(GeoFunc):
     """ ST_StartPoint postgis function """
     output_field = PointField()
+
+
+class EndPoint(GeoFunc):
+    """ ST_EndPoint postgis function """
+    output_field = PointField()

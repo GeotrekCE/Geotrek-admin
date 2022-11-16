@@ -1,7 +1,6 @@
-from django.contrib.gis.db.models.functions import GeoFunc
 from django.db.models import Func
 from django.db.models.fields import FloatField
-from django.contrib.gis.db.models import GeometryField, PointField
+from django.contrib.gis.db.models import GeometryField
 
 
 def Buffer(geom, radius, num_seg):
@@ -25,8 +24,3 @@ class Area(Func):
     """
     function = 'ST_Area'
     output_field = FloatField()
-
-
-class EndPoint(GeoFunc):
-    """ ST_EndPoint postgis function """
-    output_field = PointField()

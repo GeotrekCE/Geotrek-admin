@@ -4190,16 +4190,7 @@ class OutdoorFilterByPortal(BaseApiTest):
 
 
 class AltimetryCacheTests(BaseApiTest):
-    """ Test APIV2 DEM serialization is cached
-    """
-
-    TMP_CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': settings.CACHE_ROOT
-        }
-    }
-
+    """ Test APIV2 DEM serialization is cached """
     @classmethod
     def setUpTestData(cls):
         # Create a simple fake DEM
@@ -4216,12 +4207,12 @@ class AltimetryCacheTests(BaseApiTest):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM(self):
         # There are 8 queries to get trek DEM
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 7 queries to get trek DEM
-        with self.assertNumQueries(7):
+        # When cache is used there are only 1 queries to get trek DEM
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
@@ -4242,28 +4233,26 @@ class AltimetryCacheTests(BaseApiTest):
 
     def test_cache_is_used_when_getting_trek_profile(self):
         # There are 8 queries to get trek profile
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertIn("profile", response.json().keys())
-        # When cache is used there are only 7 queries to get trek profile
-        with self.assertNumQueries(7):
+        # When cache is used there is single query to get trek profile
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertIn("profile", response.json().keys())
 
-    # Override default cache with fat cache since we can't use memcached in tests
-    @override_settings(CACHES=TMP_CACHES)
     def test_cache_is_used_when_getting_trek_profile_svg(self):
         # There are 8 queries to get trek profile svg
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'image/svg+xml')
-        # When cache is used there are only 7 queries to get trek profile
-        with self.assertNumQueries(7):
+        self.assertIn('image/svg+xml', response['Content-Type'])
+        # When cache is used there is single query to get trek profile
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'image/svg+xml')
+        self.assertIn('image/svg+xml', response['Content-Type'])

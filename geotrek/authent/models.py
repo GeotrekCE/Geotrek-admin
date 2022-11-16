@@ -34,6 +34,7 @@ def default_structure():
 
 def default_structure_pk():
     if settings.TEST:
+        # test env can create multiple default structure and keep in cache already deleted
         return default_structure().pk
     structure_pk = cache.get("default_structure")
     if structure_pk:

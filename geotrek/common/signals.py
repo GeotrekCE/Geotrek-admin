@@ -6,8 +6,8 @@ from geotrek.common.models import Attachment, AccessibilityAttachment
 
 
 @receiver(post_save, sender=Attachment)
-@receiver(post_save, sender=Attachment)
-@receiver(post_delete, sender=AccessibilityAttachment)
+@receiver(post_save, sender=AccessibilityAttachment)
+@receiver(post_delete, sender=Attachment)
 @receiver(post_delete, sender=AccessibilityAttachment)
 def update_content_object_date_update(sender, instance, *args, **kwargs):
     """ after each creation / edition / deletion, increment date_updated to avoid object cache """
