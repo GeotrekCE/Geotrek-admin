@@ -178,8 +178,13 @@
             $('textarea[id^=id_content_]').each(function () {
                 var gm = $(this).next().data('gridmanager');
                 gm.deinitCanvas();
-                var canvas = gm.$el.find("#" + gm.options.canvasId);
-                $(this).val(canvas.html());
+                if (gm !== undefined)  {
+                    var canvas = gm.$el.find("#" + gm.options.canvasId);
+                    $(this).val(canvas.html());
+                }
+                else {
+                    $(this).val("")
+                }
             });
             $('form').submit();
         });
