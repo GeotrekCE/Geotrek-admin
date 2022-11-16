@@ -369,7 +369,7 @@ class ApidaeTrekParser(ApidaeParser):
         ouverture, descriptifs, itineraire = val
         html_description = defaultdict(lambda: '')
 
-        def append_to_html_description(translated_field, transform_func):
+        def append_to_html_description(translated_field, transform_func=ApidaeTrekParser._transform_description_to_html):
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 try:
                     html_description[lang] += transform_func(translated_field[f'libelle{lang.capitalize()}'])
@@ -386,13 +386,13 @@ class ApidaeTrekParser(ApidaeParser):
 
         guidebook = get_guidebook()
         if guidebook:
-            append_to_html_description(guidebook['description'], ApidaeTrekParser._transform_guidebook_to_html)
+            append_to_html_description(guidebook['description'], transform_func=ApidaeTrekParser._transform_guidebook_to_html)
 
         if ouverture:
-            append_to_html_description(ouverture['periodeEnClair'], ApidaeTrekParser._transform_description_to_html)
+            append_to_html_description(ouverture['periodeEnClair'])
 
         if itineraire:
-            append_to_html_description(ApidaeTrekParser._make_marking_description(itineraire), ApidaeTrekParser._transform_description_to_html)
+            append_to_html_description(ApidaeTrekParser._make_marking_description(itineraire))
 
         return self.apply_filter(
             dst='description',
@@ -413,6 +413,7 @@ class ApidaeTrekParser(ApidaeParser):
 
     @staticmethod
     def _transform_guidebook_to_html(text):
+        # This method can be overriden
         return ApidaeTrekParser._transform_description_to_html(text)
 
     @staticmethod
