@@ -4,7 +4,6 @@ from PIL import Image
 from unittest import mock
 
 from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import TestCase, RequestFactory
@@ -13,8 +12,8 @@ from django.urls import reverse
 from geotrek.authent.tests.factories import StructureFactory
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
-from geotrek.common.models import AccessibilityAttachment, Attachment
-from geotrek.common.tests.factories import AttachmentAccessibilityFactory, FileTypeFactory, AttachmentFactory
+from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.tests.factories import AttachmentAccessibilityFactory, AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.tests.factories import TrekFactory, PracticeFactory
 from geotrek.trekking.views import TrekDetail

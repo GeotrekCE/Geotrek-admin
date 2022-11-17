@@ -16,7 +16,7 @@ from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
 from geotrek.core.tests.factories import (
     ComfortFactory, PathFactory, StakeFactory, TrailFactory, TrailCategoryFactory,
-    CertificationLabelFactory, CertificationStatusFactory, CertificationTrailFactory
+    CertificationLabelFactory, CertificationStatusFactory, CertificationTrailFactory, TopologyFactory
 )
 from geotrek.core.models import Path, Trail
 
@@ -383,3 +383,14 @@ class CertificationTest(TestCase):
             certification_status=self.certification_status,
         )
         self.assertEqual("certification label / certification status", str(certification_trail))
+
+
+class TopologyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory()
+        cls.topology = TopologyFactory(paths=[cls.path])
+
+    def test_aggregations_optimized_single_query(self):
+        with self.assertNumQueries(1):
+            list(self.topology.aggregations_optimized.all())

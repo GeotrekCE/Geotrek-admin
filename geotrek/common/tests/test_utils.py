@@ -5,16 +5,11 @@ from django.contrib.gis.geos import Point
 from django.test import TestCase, override_settings
 
 from ..parsers import Parser
-from ..utils import sql_extent, uniquify, format_coordinates, spatial_reference
+from ..utils import uniquify, format_coordinates, spatial_reference
 from ..utils.import_celery import create_tmp_destination, subclasses
 
 
 class UtilsTest(TestCase):
-    def test_sqlextent(self):
-        ext = sql_extent(
-            "SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")
-        self.assertEqual((0.0, 0.0, 10.0, 10.0), ext)
-
     def test_uniquify(self):
         self.assertEqual([3, 2, 1], uniquify([3, 3, 2, 1, 3, 1, 2]))
 
