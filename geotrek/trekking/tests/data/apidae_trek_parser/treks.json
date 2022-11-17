@@ -19,6 +19,13 @@
             "nom": "Sallanches"
           }
         },
+        "geolocalisation": {
+          "complement": {
+            "libelleFr": "En voiture, rejoindre le village de Salanches.",
+            "libelleEn": "By car, go to the village of Sallanches.",
+            "libelleIt": "In auto, andare al villaggio di Sallances."
+          }
+        },
         "environnements": [
           {
             "elementReferenceType": "Environnement",

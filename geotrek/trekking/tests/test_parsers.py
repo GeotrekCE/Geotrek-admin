@@ -643,10 +643,13 @@ class ApidaeTrekParserTests(TestCase):
             '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
         )
         self.assertEqual(trek.description_en, expected_en_description)
-        self.assertEqual(trek.advised_parking_fr, "Parking sur la place du village")
-        self.assertEqual(trek.advised_parking_en, "Parking sur la place du village")
-        self.assertEqual(trek.departure_fr, "Sallanches")
-        self.assertEqual(trek.departure_en, "Sallanches")
+        self.assertEqual(trek.advised_parking_fr, 'Parking sur la place du village')
+        self.assertEqual(trek.advised_parking_en, 'Parking sur la place du village')
+        self.assertEqual(trek.departure_fr, 'Sallanches')
+        self.assertEqual(trek.departure_en, 'Sallanches')
+        self.assertEqual(trek.access_fr, 'En voiture, rejoindre le village de Salanches.')
+        self.assertEqual(trek.access_en, 'By car, go to the village of Sallanches.')
+        self.assertEqual(trek.access_it, 'In auto, andare al villaggio di Sallances.')
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):

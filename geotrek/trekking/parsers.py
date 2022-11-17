@@ -275,7 +275,8 @@ class ApidaeTrekParser(ApidaeParser):
         'geom': 'multimedias',
         'eid': 'id',
         'advised_parking': 'localisation.adresse.adresse1',
-        'departure': 'localisation.adresse.commune.nom'
+        'departure': 'localisation.adresse.commune.nom',
+        'access': 'localisation.geolocalisation.complement',
     }
     m2m_fields = {
         'source': ['gestion.membreProprietaire.nom'],
@@ -294,6 +295,7 @@ class ApidaeTrekParser(ApidaeParser):
         'name': {'expand_translations': True},
         'description_teaser': {'expand_translations': True},
         'ambiance': {'expand_translations': True},
+        'access': {'expand_translations': True},
     }
     non_fields = {}
 
