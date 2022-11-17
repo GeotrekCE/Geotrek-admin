@@ -654,6 +654,9 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(trek.source.first().name, 'Office de tourisme de Sallanches')
         self.assertEqual(trek.source.first().website, 'https://www.example.net/ot-sallanches')
 
+        self.assertTrue(trek.difficulty is not None)
+        self.assertEqual(trek.difficulty.difficulty_en, 'Level red – hard')
+
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks.json')

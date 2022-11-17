@@ -226,6 +226,13 @@ from geotrek.tourism.parsers import ApidaeParser  # Noqa
 TYPOLOGIES_SITRA_IDS_AS_LABELS = [1599, 1676, 4639, 4819, 5022, 4971, 3845, 6566, 6049, 1582, 5538, 6825, 6608, 1602]
 TYPOLOGIES_SITRA_IDS_AS_THEMES = [6155, 6156, 6368, 6153, 6154, 6157, 6163, 6158, 6679, 6159, 6160, 6161]
 ENVIRONNEMENTS_IDS_AS_LABELS = [135, 4630, 171, 189, 186, 6238, 3743, 147, 149, 156, 153, 187, 195, 6464, 4006, 169, 3978, 6087]
+TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS = [
+    587,  # Niveau vert - Très facile
+    588,  # Niveau bleu - Modéré
+    589,  # Niveau rouge - Difficile
+    590,  # Niveau noir - Très difficile
+    6669,  # Niveau orange - assez difficile
+]
 GUIDEBOOK_DESCRIPTION_ID = 6527
 DEFAULT_TREK_MARKING_DESCRIPTION = {
     'libelleFr': 'Cet itinéraire est balisé.',
@@ -256,6 +263,7 @@ class ApidaeTrekParser(ApidaeParser):
         'gestion',
         'presentation',
         'localisation',
+        'prestations',
         'ouverture',
         'informationsEquipement',
     ]
@@ -277,6 +285,7 @@ class ApidaeTrekParser(ApidaeParser):
         'advised_parking': 'localisation.adresse.adresse1',
         'departure': 'localisation.adresse.commune.nom',
         'access': 'localisation.geolocalisation.complement',
+        'difficulty': 'prestations.typesClientele'
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -287,6 +296,7 @@ class ApidaeTrekParser(ApidaeParser):
         'source': 'name',
         'themes': 'label',
         'labels': 'name',
+        'difficulty': 'difficulty',
     }
     field_options = {
         'source': {'create': True},
@@ -296,6 +306,7 @@ class ApidaeTrekParser(ApidaeParser):
         'description_teaser': {'expand_translations': True},
         'ambiance': {'expand_translations': True},
         'access': {'expand_translations': True},
+        'difficulty': {'create': True},
     }
     non_fields = {}
 
@@ -434,6 +445,20 @@ class ApidaeTrekParser(ApidaeParser):
         source.website = manager['siteWeb']
         source.save()
         return sources
+
+    def filter_difficulty(self, src, val):
+        types_clientele = val
+        difficulty_level = None
+        for tc in types_clientele:
+            if tc['id'] in TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS:
+                difficulty_level = tc
+                break
+        if difficulty_level:
+            return self.apply_filter(
+                dst='difficulty',
+                src=src,
+                val=difficulty_level[f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}']
+            )
 
     @staticmethod
     def _transform_description_to_html(text):

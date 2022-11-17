@@ -44,6 +44,19 @@
           }
         ]
       },
+      "prestations": {
+        "typesClientele": [
+          {
+            "id": 589,
+            "libelleFr": "Niveau rouge - Difficile",
+            "libelleEn": "Level red – hard",
+            "libelleEs": "Rojo",
+            "libelleIt": "Livello rosso – difficile",
+            "libelleDe": "Rot",
+            "libelleNl": "Rood"
+          }
+        ]
+      },
       "multimedias": [
         {
           "type": "PLAN",
