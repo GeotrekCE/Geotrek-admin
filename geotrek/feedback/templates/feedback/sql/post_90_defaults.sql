@@ -22,18 +22,23 @@ ALTER TABLE feedback_report ALTER COLUMN deleted SET DEFAULT False;
 -----------------
 -- label
 -- suricate_id
+ALTER TABLE feedback_reportactivity ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE feedback_reportactivity ALTER COLUMN date_update SET DEFAULT now();
 
 
 -- ReportCategory
 -----------------
 -- label
 -- suricate_id
-
+ALTER TABLE feedback_reportcategory ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE feedback_reportcategory ALTER COLUMN date_update SET DEFAULT now();
 
 -- ReportStatus
 ---------------
 -- label
 -- suricate_id
+ALTER TABLE feedback_reportstatus ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE feedback_reportstatus ALTER COLUMN date_update SET DEFAULT now();
 
 
 -- ReportProblemMagnitude
@@ -41,6 +46,8 @@ ALTER TABLE feedback_report ALTER COLUMN deleted SET DEFAULT False;
 -- label
 -- suricate_id
 -- suricate_label
+ALTER TABLE feedback_reportproblemmagnitude ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE feedback_reportproblemmagnitude ALTER COLUMN date_update SET DEFAULT now();
 
 
 -- AttachedMessage
