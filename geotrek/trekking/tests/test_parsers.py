@@ -650,6 +650,9 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(trek.access_fr, 'En voiture, rejoindre le village de Salanches.')
         self.assertEqual(trek.access_en, 'By car, go to the village of Sallanches.')
         self.assertEqual(trek.access_it, 'In auto, andare al villaggio di Sallances.')
+        self.assertEqual(len(trek.source.all()), 1)
+        self.assertEqual(trek.source.first().name, 'Office de tourisme de Sallanches')
+        self.assertEqual(trek.source.first().website, 'https://www.example.net/ot-sallanches')
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):

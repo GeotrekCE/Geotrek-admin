@@ -279,7 +279,7 @@ class ApidaeTrekParser(ApidaeParser):
         'access': 'localisation.geolocalisation.complement',
     }
     m2m_fields = {
-        'source': ['gestion.membreProprietaire.nom'],
+        'source': 'gestion.membreProprietaire',
         'themes': 'presentation.typologiesPromoSitra.*',
         'labels': ['presentation.typologiesPromoSitra.*', 'localisation.environnements.*'],
     }
@@ -422,6 +422,18 @@ class ApidaeTrekParser(ApidaeParser):
             src=src,
             val=html_description
         )
+
+    def filter_source(self, src, val):
+        manager = val
+        sources = self.apply_filter(
+            dst='source',
+            src=src,
+            val=[manager['nom']]
+        )
+        source = sources[0]
+        source.website = manager['siteWeb']
+        source.save()
+        return sources
 
     @staticmethod
     def _transform_description_to_html(text):

@@ -208,6 +208,12 @@
             }
           }
         ]
+      },
+      "gestion": {
+        "membreProprietaire": {
+          "nom": "Office de tourisme de Sallanches",
+          "siteWeb": "https://www.example.net/ot-sallanches"
+        }
       }
     }
   ]
