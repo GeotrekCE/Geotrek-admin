@@ -265,6 +265,7 @@ class ApidaeTrekParser(ApidaeParser):
     fields = {
         'name': 'nom',
         'description_teaser': 'presentation.descriptifCourt',
+        'ambiance': 'presentation.descriptifDetaille',
         'description': (
             'ouverture',
             'presentation.descriptifsThematises.*',
@@ -288,7 +289,8 @@ class ApidaeTrekParser(ApidaeParser):
         'themes': {'create': True},
         'labels': {'create': True},
         'name': {'expand_translations': True},
-        'description_teaser': {'expand_translations': True}
+        'description_teaser': {'expand_translations': True},
+        'ambiance': {'expand_translations': True},
     }
     non_fields = {}
 
