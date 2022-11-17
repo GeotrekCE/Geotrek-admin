@@ -644,6 +644,7 @@ class ApidaeTrekParserTests(TestCase):
         )
         self.assertEqual(trek.description_en, expected_en_description)
         self.assertEqual(trek.advised_parking_fr, "Parking sur la place du village")
+        self.assertEqual(trek.advised_parking_en, "Parking sur la place du village")
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):

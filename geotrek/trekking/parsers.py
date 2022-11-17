@@ -262,6 +262,7 @@ class ApidaeTrekParser(ApidaeParser):
     locales = ['fr', 'en']
 
     # Fields mapping
+    fill_empty_translated_fields = True
     fields = {
         'name': 'nom',
         'description_teaser': 'presentation.descriptifCourt',
@@ -273,7 +274,8 @@ class ApidaeTrekParser(ApidaeParser):
         ),
         'geom': 'multimedias',
         'eid': 'id',
-        'advised_parking_fr': 'localisation.adresse.adresse1',
+        # 'advised_parking_fr': 'localisation.adresse.adresse1',
+        'advised_parking': 'localisation.adresse.adresse1',
     }
     m2m_fields = {
         'source': ['gestion.membreProprietaire.nom'],
