@@ -44,15 +44,6 @@ class TimeStampedModelMixin(models.Model):
     def date_update_display(self):
         return date_format(self.date_update, "SHORT_DATETIME_FORMAT")
 
-    @classproperty
-    def last_update(self):
-        try:
-            # disable useless annotations
-            return self._meta.model.objects.annotate().only('date_update').latest('date_update').date_update
-        except self._meta.model.DoesNotExist:
-            # case where there is no instance in model
-            return None
-
     date_update_verbose_name = _("Update date")
 
     @classproperty

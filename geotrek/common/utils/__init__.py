@@ -85,7 +85,7 @@ def uniquify(values):
     return unique
 
 
-def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None, select_related=None):
+def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None):
     """ Small helper to filter all model instances by geometry intersection """
     if isinstance(qs, ModelBase):
         qs = qs.objects
@@ -109,9 +109,6 @@ def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None
         qs = qs.exclude(pk=obj.pk)
     if defer:
         qs = qs.defer(*defer)
-
-    if select_related:
-        qs = qs.select_related(*select_related)
 
     return qs
 
