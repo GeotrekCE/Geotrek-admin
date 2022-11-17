@@ -13,6 +13,9 @@
         }
       },
       "localisation": {
+        "adresse": {
+          "adresse1": "Parking sur la place du village"
+        },
         "environnements": [
           {
             "elementReferenceType": "Environnement",

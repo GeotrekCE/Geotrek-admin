@@ -643,6 +643,7 @@ class ApidaeTrekParserTests(TestCase):
             '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
         )
         self.assertEqual(trek.description_en, expected_en_description)
+        self.assertEqual(trek.advised_parking_fr, "Parking sur la place du village")
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
