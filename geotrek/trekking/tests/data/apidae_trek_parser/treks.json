@@ -43,7 +43,8 @@
         }
       ],
       "nom": {
-        "libelleFr": "Une belle randonnée de test"
+        "libelleFr": "Une belle randonnée de test",
+        "libelleEn": "A great hike to test"
       },
       "ouverture": {
         "periodeEnClair": {
@@ -53,7 +54,8 @@
       },
       "presentation": {
         "descriptifCourt": {
-          "libelleFr": "Le Beaujolais Vert est un secteur parfait pour les cyclorandonneurs réguliers qui cherchent du dénivelé. Parmi les 6 boucles, 3 sont cotées « difficile » et 3 « très difficile » !"
+          "libelleFr": "Le secteur de Trifouilly-les-oies est parfait pour les randonneurs réguliers qui cherchent du dénivelé et des points de vue.",
+          "libelleEn": "The area of Trifouilly-les-oies is great for regular hikers looking for slopes and great sights."
         },
         "descriptifDetaille": {
           "libelleFr": "Côté sportif\r\nCircuit pour cyclos confirmés, l’effort exigé est récompensé par le paysage. Les routes de ce parcours sont splendides.Départ de Cublize,   échauffement de \r\n quelques kilomètres dans la vallée du Reins, ascension du col de la Cambuse suivie de sa très belle descente sur Grandris, montée du col de Nuzières, descente sur Chamelet, pour récupérer, avant l’ascension de 3 cols sur des routes magnifiques et enfin retour, en descente, sur Cublize.\r\n\r\nCôté tourisme\r\nLe vert est la couleur emblématique de ce secteur du Beaujolais où nature rime avec sérénité. La randonnée est l’activité idéale pour l’explorer grâce à des équi- pements et des sentiers balisés pour des pratiques multiples : trail, VTT, équita- tion, marche à pied…\r\nLe lac des Sapins est situé au cœur de la destination. Ouvert au nautisme il est aussi doté de la plus grande baignade biologique d’Europe avec, sur son pour- tour, un panel d’activités de plein air respectueuses de l’environnement."

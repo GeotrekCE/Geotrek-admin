@@ -263,8 +263,8 @@ class ApidaeTrekParser(ApidaeParser):
 
     # Fields mapping
     fields = {
-        'name_fr': 'nom.libelleFr',
-        'name_en': 'nom.libelleEn',
+        'name': 'nom',
+        'description_teaser': 'presentation.descriptifCourt',
         'description': (
             'ouverture',
             'presentation.descriptifsThematises.*',
@@ -287,12 +287,27 @@ class ApidaeTrekParser(ApidaeParser):
         'source': {'create': True},
         'themes': {'create': True},
         'labels': {'create': True},
+        'name': {'expand_translations': True},
+        'description_teaser': {'expand_translations': True}
     }
     non_fields = {}
 
     def __init__(self, *args, **kwargs):
         self._translated_fields = [field for field in get_translated_fields(self.model)]
+        self._expand_fields_mapping_with_translation_fields()
         super().__init__(*args, **kwargs)
+
+    def _expand_fields_mapping_with_translation_fields(self):
+        self.fields = self.fields.copy()
+        translated_fields_to_expand = [
+            field for field, options in self.field_options.items()
+            if options.get('expand_translations') is True
+        ]
+        for translated_field in translated_fields_to_expand:
+            src = self.fields[translated_field]
+            del self.fields[translated_field]
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                self.fields[f'{translated_field}_{lang}'] = f'{src}.libelle{lang.capitalize()}'
 
     @staticmethod
     def _find_gpx_plan_in_multimedia_items(items):
@@ -318,6 +333,7 @@ class ApidaeTrekParser(ApidaeParser):
 
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
+        # Can be called after a filter_*** to dispatch translated values into translation fields.
         if dst in self.translated_fields:
             if isinstance(val, dict):
                 for key, final_value in val.items():

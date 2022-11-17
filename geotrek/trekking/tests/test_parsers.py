@@ -617,6 +617,10 @@ class ApidaeTrekParserTests(TestCase):
 
         self.assertEqual(Trek.objects.count(), 1)
         trek = Trek.objects.all().first()
+        self.assertEqual(trek.name_fr, 'Une belle randonnée de test')
+        self.assertEqual(trek.name_en, 'A great hike to test')
+        self.assertIn('Le secteur de Trifouilly-les-oies', trek.description_teaser_fr or '')
+        self.assertIn('The area of Trifouilly-les-oies', trek.description_teaser_en or '')
         expected_fr_description = (
             '<p>Départ : du parking de la Chapelle Saint Michel </p>'
             '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
