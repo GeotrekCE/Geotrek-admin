@@ -864,10 +864,6 @@ class PathAggregation(models.Model):
         return (self.start_position == 0.0 and self.end_position == 1.0
                 or self.start_position == 1.0 and self.end_position == 0.0)
 
-    @property
-    def aggregations_optimized(self):
-        return self.aggregations.all().select_related('path')
-
     class Meta:
         verbose_name = _("Path aggregation")
         verbose_name_plural = _("Path aggregations")

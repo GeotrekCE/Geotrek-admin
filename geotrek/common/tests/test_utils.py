@@ -5,7 +5,7 @@ from django.contrib.gis.geos import Point
 from django.test import TestCase, override_settings
 
 from ..parsers import Parser
-from ..utils import uniquify, format_coordinates, spatial_reference
+from ..utils import uniquify, format_coordinates, spatial_reference, simplify_coords
 from ..utils.import_celery import create_tmp_destination, subclasses
 
 
@@ -68,3 +68,29 @@ class UtilsTest(TestCase):
     @override_settings(DISPLAY_SRID=32631)
     def test_spatial_reference_wgs84(self):
         self.assertEqual(spatial_reference(), 'WGS 84 / UTM zone 31N')
+
+    def test_simplify_coord_simple(self):
+        pass
+
+
+class SimplifyCoordsTest(TestCase):
+    def test_coords_float(self):
+        """ Test a float value is rounded at .0000007 """
+        arg_value = 0.00000008
+        simplified_value = simplify_coords(arg_value)
+        self.assertEqual(simplified_value, 0.0000001)
+
+    def test_coords_list_or_tuple_float(self):
+        arg_value = (0.00000008, 0.0000001)
+        simplified_value = simplify_coords(arg_value)
+        for value in simplified_value:
+            self.assertEqual(value, 0.0000001)
+
+        simplified_value = simplify_coords(list(arg_value))
+        for value in simplified_value:
+            self.assertEqual(value, 0.0000001)
+
+    def test_coords_bad_arg(self):
+        arg_value = "test"
+        with self.assertRaises(Exception):
+            simplify_coords(arg_value)
