@@ -14,7 +14,10 @@
       },
       "localisation": {
         "adresse": {
-          "adresse1": "Parking sur la place du village"
+          "adresse1": "Parking sur la place du village",
+          "commune": {
+            "nom": "Sallanches"
+          }
         },
         "environnements": [
           {

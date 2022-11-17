@@ -274,8 +274,8 @@ class ApidaeTrekParser(ApidaeParser):
         ),
         'geom': 'multimedias',
         'eid': 'id',
-        # 'advised_parking_fr': 'localisation.adresse.adresse1',
         'advised_parking': 'localisation.adresse.adresse1',
+        'departure': 'localisation.adresse.commune.nom'
     }
     m2m_fields = {
         'source': ['gestion.membreProprietaire.nom'],
