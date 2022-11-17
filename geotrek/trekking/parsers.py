@@ -10,7 +10,7 @@ from django.utils.translation import gettext as _, get_language
 from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser
 from geotrek.common.utils.translation import get_translated_fields
-from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek
+from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel
 
 
 class DurationParserMixin:
@@ -544,14 +544,15 @@ class ApidaeTrekLabelParser(ApidaeReferenceElementParser):
     name_field = 'name'
 
 
+class ApidaeTrekDifficultyParser(ApidaeReferenceElementParser):
+    model = DifficultyLevel
+    element_reference_ids = TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS
+    name_field = 'difficulty'
+
+
 # TODO
 # class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
 #     model = Accessibility
-#     element_reference_ids = None
-#
-#
-# class ApidaeTrekDifficultyParser(ApidaeReferenceElementParser):
-#     model = DifficultyLevel
 #     element_reference_ids = None
 #
 #
