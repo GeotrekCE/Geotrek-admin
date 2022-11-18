@@ -2878,6 +2878,7 @@ recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration
 
     ALERT_REVIEW = False
 
+
 If True, it sends a message to managers (MAIL_MANAGERS) whenever an object which can be published has been changed to review mode.
 
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
@@ -2885,9 +2886,17 @@ recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration
 
 
 **Custom SQL**
-
+::
 Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``
 
 * app name is the name of the Django application, eg. trekking or tourism
 * ``pre_``… scripts are executed before Django migrations and ``post_``… scripts after
 * script are executed in INSTALLED_APPS order, then by alphabetical order of script names
+
+
+**Manage Cache**
+::
+* You can purge application cache with command or in admin interface
+
+::
+    sudo geotrek clearcache --cache_name default --cache_name fat --cache_name api_v2
