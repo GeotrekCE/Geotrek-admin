@@ -327,7 +327,7 @@ CACHES = {
         'LOCATION': os.path.join(CACHE_ROOT, 'django'),
         'TIMEOUT': 2592000,  # 30 days
     },
-    'drf': {
+    'api_v2': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': os.path.join(CACHE_ROOT, 'drf'),
         'TIMEOUT': 2592000,  # 30 days
@@ -856,7 +856,7 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 REST_FRAMEWORK_EXTENSIONS = {
-    'DEFAULT_USE_CACHE': 'drf',
+    'DEFAULT_USE_CACHE': 'fat',  # default cache for DRF Cache Response Mixin. API v2 is override with 'api_v2'
     'DEFAULT_CACHE_ERRORS': False
 }
 
