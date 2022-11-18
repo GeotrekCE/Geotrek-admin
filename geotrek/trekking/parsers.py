@@ -220,27 +220,54 @@ class GeotrekPOIParser(GeotrekParser):
 from geotrek.tourism.parsers import ApidaeParser  # Noqa
 
 
+TYPOLOGIES_SITRA_IDS_AS_LABELS = [1599, 1676, 4639, 4819, 5022, 4971, 3845, 6566, 6049, 1582, 5538, 6825, 6608, 1602]
+TYPOLOGIES_SITRA_IDS_AS_THEMES = [6155, 6156, 6368, 6153, 6154, 6157, 6163, 6158, 6679, 6159, 6160, 6161]
+
+
 class ApidaeTrekParser(ApidaeParser):
+    model = Trek
+    separator = None
+
+    # Parameters to build the request
     url = 'https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
-    # locales%22:[%22fr%22,%22en%22,%22de%22,%22nl%22,%22it%22,%22es%22]}
     api_key = None
     project_id = None
-    separator = None
     selection_id = None
-    model = Trek
-    eid = 'eid'
-    fields = {
-        'name': 'nom.libelleFr',
-        'geom': 'multimedias',
-        'eid': 'id'
-    }
     size = 20
     skip = 0
     responseFields = [
         'id',
         'nom',
-        'multimedias'
+        'multimedias',
+        'gestion',
+        'presentation',
     ]
+    locales = ['fr', 'en']
+
+    # Fields mapping
+    fields = {
+        'name_fr': 'nom.libelleFr',
+        'name_en': 'nom.libelleEn',
+        # retire la geom pour le moment car il y a des erreurs sur certains imports d'itinéraires
+        # 'geom': 'multimedias',
+        'eid': 'id',
+    }
+    m2m_fields = {
+        'source': ['gestion.membreProprietaire.nom'],
+        'themes': 'presentation.typologiesPromoSitra.*',
+        'labels': 'presentation.typologiesPromoSitra.*',
+    }
+    natural_keys = {
+        'source': 'name',
+        'themes': 'label',
+        'labels': 'name',
+    }
+    field_options = {
+        'source': {'create': True},
+        'themes': {'create': True},
+        'labels': {'create': True},
+    }
+    non_fields = {}
 
     @staticmethod
     def _find_gpx_plan_in_multimedia_items(items):
@@ -278,3 +305,9 @@ class ApidaeTrekParser(ApidaeParser):
             geom = track_layer[0].geom[0].geos
             geom.transform(settings.SRID)
             return geom
+
+    def filter_labels(self, src, val):
+        return [item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS]
+
+    def filter_themes(self, src, val):
+        return [item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
