@@ -5,6 +5,9 @@ CHANGELOG
 2.91.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix flatpages can't be saved
 
 2.91.0     (2022-11-17)
 -----------------------
