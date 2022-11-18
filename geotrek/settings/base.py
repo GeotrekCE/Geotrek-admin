@@ -324,12 +324,12 @@ CACHES = {
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(CACHE_ROOT, 'django'),
+        'LOCATION': os.path.join(CACHE_ROOT, 'fat'),
         'TIMEOUT': 2592000,  # 30 days
     },
     'api_v2': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(CACHE_ROOT, 'drf'),
+        'LOCATION': os.path.join(CACHE_ROOT, 'api_v2'),
         'TIMEOUT': 2592000,  # 30 days
     }
 }

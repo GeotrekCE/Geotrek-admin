@@ -40,7 +40,7 @@ CACHES['fat'] = {
 }
 CACHES['api_v2'] = {
     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    'LOCATION': 'drf',
+    'LOCATION': 'api_v2',
 }
 
 
