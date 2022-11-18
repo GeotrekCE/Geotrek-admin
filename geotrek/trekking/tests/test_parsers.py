@@ -722,6 +722,51 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(Trek.objects.count(), 1)
         self.assertEqual(Theme.objects.count(), 0)
 
+    @mock.patch('requests.get')
+    def test_links_to_child_treks_are_set(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/related_treks.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 3)
+        parent_trek = Trek.objects.get(eid='123123')
+        child_trek = Trek.objects.get(eid='123124')
+        child_trek_2 = Trek.objects.get(eid='123125')
+        self.assertIn(parent_trek, child_trek.parents.all())
+        self.assertIn(parent_trek, child_trek_2.parents.all())
+        self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '123125'])
+
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/related_treks_updated.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 4)
+        parent_trek = Trek.objects.get(eid='123123')
+        child_trek = Trek.objects.get(eid='123124')
+        child_trek_2 = Trek.objects.get(eid='123125')
+        child_trek_3 = Trek.objects.get(eid='321321')
+        self.assertIn(parent_trek, child_trek.parents.all())
+        self.assertIn(parent_trek, child_trek_2.parents.all())
+        self.assertIn(parent_trek, child_trek_3.parents.all())
+        self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '321321', '123125'])
+
+    @mock.patch('requests.get')
+    def test_links_to_child_treks_are_set_with_changed_order_in_data(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/related_treks_another_order.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 3)
+        parent_trek = Trek.objects.get(eid='123123')
+        child_trek = Trek.objects.get(eid='123124')
+        child_trek_2 = Trek.objects.get(eid='123125')
+        self.assertIn(parent_trek, child_trek.parents.all())
+        self.assertIn(parent_trek, child_trek_2.parents.all())
+        self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '123125'])
+
 
 class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):
 

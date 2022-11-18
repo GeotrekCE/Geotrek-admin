@@ -263,6 +263,7 @@ class ApidaeTrekParser(ApidaeParser):
         'gestion',
         'presentation',
         'localisation',
+        'liens',
         'prestations',
         'ouverture',
         'informationsEquipement',
@@ -291,12 +292,14 @@ class ApidaeTrekParser(ApidaeParser):
         'source': 'gestion.membreProprietaire',
         'themes': 'presentation.typologiesPromoSitra.*',
         'labels': ['presentation.typologiesPromoSitra.*', 'localisation.environnements.*'],
+        'related_treks': 'liens.liensObjetsTouristiquesTypes',
     }
     natural_keys = {
         'source': 'name',
         'themes': 'label',
         'labels': 'name',
         'difficulty': 'difficulty',
+        'related_treks': 'eid',
     }
     field_options = {
         'source': {'create': True},
@@ -307,12 +310,14 @@ class ApidaeTrekParser(ApidaeParser):
         'ambiance': {'expand_translations': True},
         'access': {'expand_translations': True},
         'difficulty': {'create': True},
+        'related_treks': {'create': True},
     }
     non_fields = {}
 
     def __init__(self, *args, **kwargs):
         self._translated_fields = [field for field in get_translated_fields(self.model)]
         self._expand_fields_mapping_with_translation_fields()
+        self._related_treks_mapping = defaultdict(list)
         super().__init__(*args, **kwargs)
 
     def _expand_fields_mapping_with_translation_fields(self):
@@ -359,6 +364,9 @@ class ApidaeTrekParser(ApidaeParser):
                         self.set_value(f'{dst}_{key}', src, final_value)
                 val = val.get(get_language())
         return val
+
+    def end(self):
+        self._finalize_related_treks_association()
 
     def filter_geom(self, src, val):
         plan = self._find_gpx_plan_in_multimedia_items(val)
@@ -460,6 +468,20 @@ class ApidaeTrekParser(ApidaeParser):
                 val=difficulty_level[f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}']
             )
 
+    def filter_related_treks(self, src, val):
+        liens = val
+        child_treks = []
+        for lien in liens:
+            if lien['type'] == 'PARCOURS_ETAPE':
+                child_trek = lien['objetTouristique']
+                self._related_treks_mapping[self.obj.id].append(child_trek['id'])
+                child_treks.append(lien['objetTouristique'])
+        return self.apply_filter(
+            dst='related_treks',
+            src=src,
+            val=[ct['id'] for ct in child_treks]
+        )
+
     @staticmethod
     def _transform_description_to_html(text):
         """Transform a descriptive text into HTML paragraphs."""
@@ -486,6 +508,20 @@ class ApidaeTrekParser(ApidaeParser):
         else:
             marking_description = TREK_NO_MARKING_DESCRIPTION.copy()
         return marking_description
+
+    def _finalize_related_treks_association(self):
+        for parent_id, children_eids in self._related_treks_mapping.items():
+            parent_trek = Trek.objects.get(pk=parent_id)
+            order = 0
+            for child_eid in children_eids:
+                child_trek = Trek.objects.get(eid=child_eid)
+                otc, _ = OrderedTrekChild.objects.get_or_create(
+                    parent=parent_trek,
+                    child=child_trek
+                )
+                otc.order = order
+                otc.save()
+                order += 1
 
 
 class ApidaeReferenceElementParser(Parser):
