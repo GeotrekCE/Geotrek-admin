@@ -8,7 +8,9 @@ from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils.translation import gettext as _, get_language
 
 from geotrek.common.models import Label, Theme
-from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser
+from geotrek.common.parsers import (
+    ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeParser
+)
 from geotrek.common.utils.translation import get_translated_fields
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel
 
@@ -218,9 +220,6 @@ class GeotrekPOIParser(GeotrekParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/poi"
-
-
-from geotrek.tourism.parsers import ApidaeParser  # Noqa
 
 
 TYPOLOGIES_SITRA_IDS_AS_LABELS = [1599, 1676, 4639, 4819, 5022, 4971, 3845, 6566, 6049, 1582, 5538, 6825, 6608, 1602]

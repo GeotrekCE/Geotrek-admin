@@ -1,4 +1,3 @@
-import json
 import os
 
 import datetime
@@ -14,7 +13,7 @@ from django.utils.translation import gettext as _
 from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    TourInSoftParser, GeotrekParser)
+                                    TourInSoftParser, GeotrekParser, ApidaeParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 
@@ -52,14 +51,8 @@ class TouristicContentMixin:
         return kwargs
 
 
-class ApidaeParser(AttachmentParserMixin, Parser):
+class ApidaeTourismParser(AttachmentParserMixin, ApidaeParser):
     """Parser to import "anything" from APIDAE"""
-    separator = None
-    api_key = None
-    project_id = None
-    selection_id = None
-    url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
-    model = None
     eid = 'eid'
     fields = {
         'name': 'nom.libelleFr',
@@ -76,8 +69,6 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         'name': {'required': True},
         'geom': {'required': True},
     }
-    size = 100
-    skip = 0
     responseFields = [
         'id',
         'nom',
@@ -97,39 +88,6 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         'gestion.membreProprietaire.nom',
         'illustrations'
     ]
-
-    # A list of locales to be fetched (i.e. ['fr', 'en']). Leave empty to fetch default locales.
-    locales = None
-
-    @property
-    def items(self):
-        if self.nb == 0:
-            return []
-        return self.root['objetsTouristiques']
-
-    def next_row(self):
-        while True:
-            params = {
-                'apiKey': self.api_key,
-                'projetId': self.project_id,
-                'selectionIds': [self.selection_id],
-                'count': self.size,
-                'first': self.skip,
-                'responseFields': self.responseFields
-            }
-            if self.locales:
-                params['locales'] = self.locales
-            response = self.request_or_retry(self.url, params={'query': json.dumps(params)})
-            self.root = response.json()
-            self.nb = int(self.root['numFound'])
-            for row in self.items:
-                yield row
-            self.skip += self.size
-            if self.skip >= self.nb:
-                return
-
-    def normalize_field_name(self, name):
-        return name
 
     def filter_eid(self, src, val):
         return str(val)
@@ -173,7 +131,7 @@ class AttachmentApidaeParserMixin(object):
         return result
 
 
-class InformationDeskApidaeParser(ApidaeParser):
+class InformationDeskApidaeParser(ApidaeTourismParser):
     """Parser to import information desks from APIDAE"""
     type = None
     model = InformationDesk
@@ -261,7 +219,7 @@ class InformationDeskApidaeParser(ApidaeParser):
         return self._filter_comm(val, 205, multiple=False)
 
 
-class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
+class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeTourismParser):
     """Parser to import touristic events from APIDAE"""
     type = None
     themes = None
@@ -423,7 +381,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         return '<br>'.join(lines)
 
 
-class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContentMixin, ApidaeParser):
+class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContentMixin, ApidaeTourismParser):
     """Parser to import touristic contents from APIDAE"""
     separator = None
     api_key = None

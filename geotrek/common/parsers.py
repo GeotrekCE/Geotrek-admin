@@ -1234,3 +1234,47 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 yield row
 
             self.next_url = self.root['next']
+
+
+class ApidaeParser(Parser):
+    """Parser to import "anything" from APIDAE"""
+    separator = None
+    api_key = None
+    project_id = None
+    selection_id = None
+    url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
+    size = 100
+    skip = 0
+
+    # A list of locales to be fetched (i.e. ['fr', 'en']). Leave empty to fetch default locales.
+    locales = None
+
+    @property
+    def items(self):
+        if self.nb == 0:
+            return []
+        return self.root['objetsTouristiques']
+
+    def next_row(self):
+        while True:
+            params = {
+                'apiKey': self.api_key,
+                'projetId': self.project_id,
+                'selectionIds': [self.selection_id],
+                'count': self.size,
+                'first': self.skip,
+                'responseFields': self.responseFields
+            }
+            if self.locales:
+                params['locales'] = self.locales
+            response = self.request_or_retry(self.url, params={'query': json.dumps(params)})
+            self.root = response.json()
+            self.nb = int(self.root['numFound'])
+            for row in self.items:
+                yield row
+            self.skip += self.size
+            if self.skip >= self.nb:
+                return
+
+    def normalize_field_name(self, name):
+        return name
