@@ -2899,4 +2899,4 @@ Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app 
 * You can purge application cache with command or in admin interface
 
 ::
-    sudo geotrek clearcache --cache_name default --cache_name fat --cache_name api_v2
+    sudo geotrek clearcache --cache_name default --cache_name fat --cache_name api_v2h ori
