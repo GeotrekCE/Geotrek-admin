@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from geotrek.api.v2 import serializers as api_serializers, \
     filters as api_filters, viewsets as api_viewsets
+from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.common.models import Attachment
 from geotrek.tourism import models as tourism_models
 
@@ -25,6 +26,7 @@ class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
         .prefetch_related('types') \
         .order_by('pk')  # Required for reliable pagination
 
+    @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(tourism_models.TouristicContentCategory, pk=pk)
@@ -67,6 +69,7 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
         activate(self.request.GET.get('language'))
         return tourism_models.InformationDesk.objects.select_related('label_accessibility', 'type').order_by('name')
 
+    @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(tourism_models.InformationDesk, pk=pk)
