@@ -98,6 +98,9 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         'illustrations'
     ]
 
+    # A list of locales to be fetched (i.e. ['fr', 'en']). Leave empty to fetch default locales.
+    locales = None
+
     @property
     def items(self):
         if self.nb == 0:
@@ -114,6 +117,8 @@ class ApidaeParser(AttachmentParserMixin, Parser):
                 'first': self.skip,
                 'responseFields': self.responseFields
             }
+            if self.locales:
+                params['locales'] = self.locales
             response = self.request_or_retry(self.url, params={'query': json.dumps(params)})
             self.root = response.json()
             self.nb = int(self.root['numFound'])
