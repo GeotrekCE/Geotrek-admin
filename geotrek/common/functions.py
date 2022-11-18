@@ -32,3 +32,13 @@ class StartPoint(GeoFunc):
 class EndPoint(GeoFunc):
     """ ST_EndPoint postgis function """
     output_field = PointField()
+
+
+class Buffer(GeomOutputGeoFunc):
+    """ ST_Buffer postgis function """
+    pass
+
+
+class Area(GeoFunc):
+    """ ST_Area postgis function """
+    output_field = FloatField()

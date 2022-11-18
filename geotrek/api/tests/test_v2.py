@@ -2184,14 +2184,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'trek': trek.id,
             'period': '1'
         })
-        self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.status_code, 200)
-        with override_settings(SENSITIVE_AREA_INTERSECTION_MARGIN=700):
-            response = self.get_sensitivearea_list({
-                'trek': trek.id,
-                'period': '1'
-            })
-            self.assertEqual(response.json()['count'], 2)
+        self.assertEqual(response.json()['count'], 1)
+        # validate wrong trek id get 404
+        response = self.get_sensitivearea_list({
+            'trek': 9999
+        })
+        self.assertEqual(response.status_code, 404)
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):

@@ -11,6 +11,7 @@ from django_filters import ModelMultipleChoiceFilter
 from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
+from rest_framework.generics import get_object_or_404
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
@@ -171,11 +172,12 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
         trek_id = request.GET.get('trek')
-        trek = Trek.objects.filter(pk=trek_id)
-        if trek:
+        if trek_id:
+            trek = get_object_or_404(Trek, pk=trek_id)
             contents_intersecting = intersecting(qs,
-                                                 trek.get(),
-                                                 distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
+                                                 trek,
+                                                 distance=0,
+                                                 field='geom_buffered')
             qs = contents_intersecting.order_by('id')
         return qs.distinct()
 

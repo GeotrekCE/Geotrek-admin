@@ -6,9 +6,9 @@ from mapentity.renderers import GeoJSONRenderer
 from rest_framework import viewsets, renderers
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework_extensions.cache.mixins import RetrieveCacheResponseMixin
 
 from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
+from geotrek.api.v2.cache import RetrieveCacheResponseMixin
 from geotrek.api.v2.serializers import override_serializer
 
 
