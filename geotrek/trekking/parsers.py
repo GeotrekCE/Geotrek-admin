@@ -6,7 +6,8 @@ from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import Point, GEOSGeometry
 from django.utils.translation import gettext as _
 
-from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError
+from geotrek.common.models import Label, Theme
+from geotrek.common.parsers import ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek
 
 
@@ -322,3 +323,65 @@ class ApidaeTrekParser(ApidaeParser):
 
     def filter_themes(self, src, val):
         return [item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
+
+
+class ApidaeReferenceElementParser(Parser):
+
+    url = 'https://api.apidae-tourisme.com/api/v002/referentiel/elements-reference/'
+    api_key = None
+    project_id = None
+    element_reference_ids = None
+
+    fields = {
+        'label_fr': 'libelleFr',
+        'label_en': 'libelleEn',
+        'label_es': 'libelleEs',
+        'label_it': 'libelleIt',
+        'label_de': 'libelleDe',
+        'label_nl': 'libelleNl'
+    }
+
+    @property
+    def items(self):
+        return self.root
+
+    def next_row(self):
+        params = {
+            'apiKey': self.api_key,
+            'projectId': self.project_id,
+            'elementReferenceIds': self.element_reference_ids,
+        }
+        response = self.request_or_retry(self.url, params={'query': json.dumps(params)})
+        self.root = response.json()
+        self.nb = len(self.root)
+        for row in self.items:
+            yield row
+
+    def normalize_field_name(self, name):
+        return name
+
+
+class ApidaeTrekThemeParser(ApidaeReferenceElementParser):
+    model = Theme
+    element_reference_ids = TYPOLOGIES_SITRA_IDS_AS_THEMES
+
+
+class ApidaeTrekLabelParser(ApidaeReferenceElementParser):
+    model = Label
+    element_reference_ids = TYPOLOGIES_SITRA_IDS_AS_LABELS + ENVIRONNEMENTS_IDS_AS_LABELS
+
+
+# TODO
+# class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
+#     model = Accessibility
+#     element_reference_ids = None
+#
+#
+# class ApidaeTrekDifficultyParser(ApidaeReferenceElementParser):
+#     model = DifficultyLevel
+#     element_reference_ids = None
+#
+#
+# class ApidaeTrekNetworkParser(ApidaeReferenceElementParser):
+#     model = TrekNetwork
+#     element_reference_ids = None

@@ -3,6 +3,7 @@ from unittest import mock
 import json
 import os
 from unittest import skipIf
+from unittest.mock import Mock
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
@@ -14,7 +15,7 @@ from geotrek.common.models import Theme, FileType, Attachment
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
-    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser
+    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser
 )
 
 
@@ -657,3 +658,51 @@ class ApidaeTrekParserTests(TestCase):
 
         self.assertEqual(Trek.objects.count(), 0)
         self.assertIn('pas au format GPX', output_stdout.getvalue())
+
+
+class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):
+
+    url = 'https://example.net/fake/api/'
+    api_key = 'ABCDEF'
+    project_id = 1234
+    element_reference_ids = [6157]
+
+    fields = {
+        'label_fr': 'libelleFr',
+        'label_en': 'libelleEn',
+        'label_es': 'libelleEs',
+        'label_it': 'libelleIt',
+    }
+
+
+class ApidaeTrekThemeParserTests(TestCase):
+
+    @mock.patch('requests.get')
+    def test_theme_is_created_with_specified_languages(self, mocked_get):
+        def mocked_get_func(url, params, *args, **kwargs):
+            self.assertEqual(url, TestApidaeTrekThemeParser.url)
+            expected_query_param = {
+                'apiKey': TestApidaeTrekThemeParser.api_key,
+                'projectId': TestApidaeTrekThemeParser.project_id,
+                'elementReferenceIds': TestApidaeTrekThemeParser.element_reference_ids,
+            }
+            self.assertDictEqual(json.loads(params['query']), expected_query_param)
+
+            rv = Mock()
+            rv.status_code = 200
+            with open('geotrek/trekking/tests/data/apidae_trek_parser/trek_theme.json', 'r') as f:
+                json_payload = f.read()
+            data = json.loads(json_payload)
+            rv.json = lambda: data
+
+            return rv
+        mocked_get.side_effect = mocked_get_func
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekThemeParser', verbosity=0)
+
+        self.assertEqual(len(Theme.objects.all()), 1)
+        theme = Theme.objects.first()
+        self.assertEqual(theme.label_fr, 'Géologie')
+        self.assertEqual(theme.label_en, 'Geology')
+        self.assertEqual(theme.label_es, 'Geología')
+        self.assertEqual(theme.label_it, 'Geologia')
