@@ -5,10 +5,10 @@ from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
-from django.db.models import Q, Manager
+from django.db.models import Q
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
-from mptt.models import MPTTModel, TreeForeignKey, TreeManager
+from mptt.models import MPTTModel, TreeForeignKey
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
@@ -20,6 +20,7 @@ from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.maintenance.models import Intervention
+from geotrek.outdoor.managers import SiteManager, CourseOrderedChildManager, CourseManager
 from geotrek.outdoor.mixins import ExcludedPOIsMixin
 from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
@@ -108,13 +109,6 @@ class CourseType(TimeStampedModelMixin, models.Model):
 
     def __str__(self):
         return self.name
-
-
-class SiteManager(TreeManager):
-    def provider_choices(self):
-        providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
@@ -325,14 +319,6 @@ Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, 
 Site.add_property('interventions', lambda self: Site.site_interventions(self), _("Interventions"))
 
 
-class CourseOrderedChildManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        # Select treks foreign keys by default
-        return super(CourseOrderedChildManager, self).get_queryset().select_related('parent', 'child')
-
-
 class OrderedCourseChild(models.Model):
     parent = models.ForeignKey('Course', related_name='course_children', on_delete=models.CASCADE)
     child = models.ForeignKey('Course', related_name='course_parents', on_delete=models.CASCADE)
@@ -345,13 +331,6 @@ class OrderedCourseChild(models.Model):
         unique_together = (
             ('parent', 'child'),
         )
-
-
-class CourseManager(Manager):
-    def provider_choices(self):
-        providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin,

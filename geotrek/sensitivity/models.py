@@ -3,7 +3,6 @@
 """
 
 import datetime
-from geotrek.common.mixins.managers import NoDeleteManager
 import simplekml
 
 from django.conf import settings
@@ -15,6 +14,7 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
 from geotrek.common.utils import intersecting, classproperty, simplify_coords
+from geotrek.sensitivity.managers import SensitiveAreaManager
 
 
 class SportPractice(TimeStampedModelMixin, models.Model):
@@ -70,13 +70,6 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
 
     def pretty_practices(self):
         return ", ".join([str(practice) for practice in self.practices.all()])
-
-
-class SensitiveAreaManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,

@@ -19,37 +19,15 @@ from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.functions import Length
-from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty, sqlfunction, uniquify, simplify_coords
+from geotrek.core.managers import PathManager, PathInvisibleManager, TopologyManager, PathAggregationManager, \
+    TrailManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 logger = logging.getLogger(__name__)
-
-
-class PathManager(models.Manager):
-    # Use this manager when walking through FK/M2M relationships
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        """Hide all ``Path`` records that are not marked as visible.
-        """
-        return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
-
-    def provider_choices(self):
-        providers = self.get_queryset().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
-
-
-class PathInvisibleManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        return super().get_queryset()
 
 
 class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
@@ -388,14 +366,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     def distance(self, to_cls):
         """Distance to associate this path to another class"""
         return None
-
-
-class TopologyManager(NoDeleteManager):
-    # Use this manager when walking through FK/M2M relationships
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        return super().get_queryset().annotate(length_2d=Length('geom'))
 
 
 class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
@@ -823,11 +793,6 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
         return self.aggregations.all().select_related('path', 'topo_object')
 
 
-class PathAggregationManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().order_by('order')
-
-
 class PathAggregation(models.Model):
     path = ParentalKey(Path, null=False,
                        verbose_name=_("Path"),
@@ -954,13 +919,6 @@ class Network(StructureOrNoneRelated):
         if self.structure:
             return "{} ({})".format(self.network, self.structure.name)
         return self.network
-
-
-class TrailManager(TopologyManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='').order_by('provider') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class Trail(MapEntityMixin, Topology, StructureRelated):

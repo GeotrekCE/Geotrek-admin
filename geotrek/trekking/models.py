@@ -17,11 +17,10 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology, TopologyManager
+from geotrek.core.models import Path, Topology
 from geotrek.common.utils import intersecting, classproperty, simplify_coords
 from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
     TimeStampedModelMixin
-from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 
@@ -31,21 +30,14 @@ from geotrek.tourism import models as tourism_models
 
 from colorfield.fields import ColorField
 
+from geotrek.trekking.managers import TrekOrderedChildManager, TrekManager, TrekRelationshipManager, WebLinkManager, \
+    POIManager, ServiceManager
+
 logger = logging.getLogger(__name__)
 
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
-
-
-class TrekOrderedChildManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        # Select treks foreign keys by default
-        qs = super().get_queryset().select_related('parent', 'child')
-        # Exclude deleted treks
-        return qs.exclude(parent__deleted=True).exclude(child__deleted=True)
 
 
 class OrderedTrekChild(models.Model):
@@ -109,13 +101,6 @@ class Rating(RatingMixin):
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
         ordering = ('order', 'name')
-
-
-class TrekManager(TopologyManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().order_by('provider').distinct('provider') \
-            .exclude(provider__exact='').values_list('provider', 'provider')
-        return providers
 
 
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
@@ -547,16 +532,6 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('published_treks', lambda self: self.signage.published_treks, _("Published treks"))
 
 
-class TrekRelationshipManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        # Select treks foreign keys by default
-        qs = super().get_queryset().select_related('trek_a', 'trek_b')
-        # Exclude deleted treks
-        return qs.exclude(trek_a__deleted=True).exclude(trek_b__deleted=True)
-
-
 class TrekRelationship(models.Model):
     """
     Relationships between treks : symmetrical aspect is managed by a trigger that
@@ -683,11 +658,6 @@ class DifficultyLevel(TimeStampedModelMixin, OptionalPictogramMixin):
         super().save(*args, **kwargs)
 
 
-class WebLinkManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().select_related('category')
-
-
 class WebLink(models.Model):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
@@ -721,13 +691,6 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
 
     def __str__(self):
         return "%s" % self.label
-
-
-class POIManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
@@ -854,13 +817,6 @@ class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
 
     def __str__(self):
         return self.name
-
-
-class ServiceManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class Service(StructureRelated, MapEntityMixin, Topology):
