@@ -79,6 +79,7 @@
           <h3>{% trans "Image" %}</h3>
             {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
             <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
+            {% include "common/annotations_widget.html" %}
             <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
             <script>
               $(window).on('detailmap:ready', function (e, data) {
@@ -101,6 +102,8 @@
                       max: 12,
                     });
                     viewer.createLayer('osm', params.layer);
+                    initAnnotations(viewer);
+                    $(".loader-wrapper").remove()
                     // Change default interactor options
                     const interactorOpts = viewer.interactor().options();
                     interactorOpts.zoomAnimation = {
@@ -182,4 +185,5 @@
 {% block extrabody %}
   {{ block.super}}
   <script type="text/javascript" src="{% static 'mapentity/mapentity.detail.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/annotations.js' %}"></script>
 {% endblock %}
