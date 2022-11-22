@@ -10,16 +10,18 @@ import redis
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.gis.db.models.functions import Transform
 from django.contrib.admin.models import CHANGE, LogEntry
 from django.contrib.auth.decorators import (login_required,
                                             permission_required,
                                             user_passes_test)
-from django.contrib.gis.db.models.functions import Transform
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.gis.db.models import Extent, GeometryField
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import (Http404, HttpResponse, HttpResponseRedirect,
-                         JsonResponse)
-from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models.functions import Cast
+from django.http import JsonResponse, Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
@@ -54,9 +56,10 @@ from .permissions import PublicOrReadPermMixin
 from .serializers import (HDViewPointAPIGeoJSONSerializer,
                           HDViewPointAPISerializer, ThemeSerializer)
 from .tasks import import_datas, import_datas_from_web, launch_sync_rando
-from .utils import sql_extent
-from .utils.import_celery import (create_tmp_destination,
-                                  discover_available_parsers)
+from .utils import leaflet_bounds
+from .utils.import_celery import create_tmp_destination, discover_available_parsers
+from ..altimetry.models import Dem
+from ..core.models import Path
 
 
 class Meta(MetaMixin, TemplateView):
@@ -143,9 +146,7 @@ class JSSettings(mapentity_views.JSSettings):
         return dictsettings
 
 
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def admin_check_extents(request):
+class CheckExtentsView(LoginRequiredMixin, TemplateView):
     """
     This view allows administrators to visualize data and configured extents.
 
@@ -153,40 +154,37 @@ def admin_check_extents(request):
     to be more admin tools like this one. Move this to a separate Django app and
     style HTML properly.
     """
-    path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM core_path;")
-    path_extent = api_bbox(path_extent_native)
-    dem_extent_native = sql_extent(
-        "SELECT ST_Extent(rast::geometry) FROM altimetry_dem;")
-    dem_extent = api_bbox(dem_extent_native)
-    tiles_extent_native = settings.SPATIAL_EXTENT
-    tiles_extent = api_bbox(tiles_extent_native)
-    viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
-    viewport = api_bbox(viewport_native, srid=settings.API_SRID)
+    template_name = 'common/check_extents.html'
 
-    def leafletbounds(bbox):
-        return [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]
+    def get_context_data(self, **kwargs):
+        path_extent_native = Path.include_invisible.aggregate(extent=Extent('geom')) \
+            .get('extent')
+        path_extent = api_bbox(path_extent_native or (0, 0, 0, 0))
+        dem_extent_native = Dem.objects.aggregate(extent=Extent(Cast('rast',
+                                                                     output_field=GeometryField(srid=settings.SRID)))) \
+            .get('extent')
+        dem_extent = api_bbox(dem_extent_native or (0, 0, 0, 0))
+        tiles_extent_native = settings.SPATIAL_EXTENT
+        tiles_extent = api_bbox(tiles_extent_native)
+        viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
+        viewport = api_bbox(viewport_native, srid=settings.API_SRID)
 
-    context = dict(
-        path_extent=leafletbounds(path_extent),
-        path_extent_native=path_extent_native,
-        dem_extent=leafletbounds(dem_extent) if dem_extent else None,
-        dem_extent_native=dem_extent_native,
-        tiles_extent=leafletbounds(tiles_extent),
-        tiles_extent_native=tiles_extent_native,
-        viewport=leafletbounds(viewport),
-        viewport_native=viewport_native,
-        SRID=settings.SRID,
-        API_SRID=settings.API_SRID,
-    )
-    return render(request, 'common/check_extents.html', context)
+        return dict(
+            path_extent=leaflet_bounds(path_extent),
+            path_extent_native=path_extent_native,
+            dem_extent=leaflet_bounds(dem_extent) if dem_extent else None,
+            dem_extent_native=dem_extent_native,
+            tiles_extent=leaflet_bounds(tiles_extent),
+            tiles_extent_native=tiles_extent_native,
+            viewport=leaflet_bounds(viewport),
+            viewport_native=viewport_native,
+            SRID=settings.SRID,
+            API_SRID=settings.API_SRID,
+        )
 
-
-class UserArgMixin:
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 def import_file(uploaded, parser, encoding, user_pk):

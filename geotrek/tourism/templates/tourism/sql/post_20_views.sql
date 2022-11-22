@@ -45,8 +45,8 @@ SELECT a.id,
        {% endfor %}
        a.eid AS "External ID",
        d.name AS "Reservation system",
-       date_insert AS "Insertion date",
-       date_update AS "Update date",
+       a.date_insert AS "Insertion date",
+       a.date_update AS "Update date",
        a.geom
 FROM tourism_touristiccontent a
 LEFT JOIN tourism_touristiccontentcategory b ON a.category_id = b.id

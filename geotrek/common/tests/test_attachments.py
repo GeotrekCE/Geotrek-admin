@@ -4,7 +4,6 @@ from PIL import Image
 from unittest import mock
 
 from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import TestCase, RequestFactory
@@ -13,8 +12,8 @@ from django.urls import reverse
 from geotrek.authent.tests.factories import StructureFactory
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
-from geotrek.common.models import AccessibilityAttachment, Attachment
-from geotrek.common.tests.factories import AttachmentAccessibilityFactory, FileTypeFactory
+from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.tests.factories import AttachmentAccessibilityFactory, AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.tests.factories import TrekFactory, PracticeFactory
 from geotrek.trekking.views import TrekDetail
@@ -57,28 +56,10 @@ class EntityAttachmentTestCase(TestCase):
         return request
 
     def createAttachmentAccessibility(self, obj):
-        kwargs = {
-            'content_type': ContentType.objects.get_for_model(obj),
-            'object_id': obj.pk,
-            'creator': self.user,
-            'title': "Attachment title",
-            'legend': "Attachment legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(),
-            'info_accessibility': 'slope'
-        }
-        return AccessibilityAttachment.objects.create(**kwargs)
+        return AttachmentAccessibilityFactory(content_object=obj, creator=self.user)
 
     def createAttachment(self, obj):
-        kwargs = {
-            'content_type': ContentType.objects.get_for_model(obj),
-            'object_id': obj.pk,
-            'filetype_id': FileTypeFactory.create().pk,
-            'creator': self.user,
-            'title': "Attachment title",
-            'legend': "Attachment legend",
-            'attachment_file': get_dummy_uploaded_image(),
-        }
-        return Attachment.objects.create(**kwargs)
+        return AttachmentFactory(content_object=obj, creator=self.user)
 
     def test_list_attachments_in_details(self):
         self.createAttachmentAccessibility(self.object)
@@ -142,6 +123,7 @@ class EntityAttachmentTestCase(TestCase):
         def user_perms(p):
             return {'authent.can_bypass_structure': False}.get(p, True)
         self.createAttachmentAccessibility(self.object)
+
         user = UserFactory()
         user.has_perm = mock.MagicMock(side_effect=user_perms)
         user.user_permissions.add(Permission.objects.get(codename='read_trek'))

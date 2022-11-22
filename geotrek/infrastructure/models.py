@@ -9,7 +9,7 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.utils import classproperty
-from geotrek.common.mixins.models import BasePublishableMixin, OptionalPictogramMixin
+from geotrek.common.mixins.models import BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.core.models import Topology, Path
 
@@ -19,7 +19,7 @@ INFRASTRUCTURE_TYPES = Choices(
 )
 
 
-class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
+class InfrastructureType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(max_length=128)
     type = models.CharField(max_length=1, choices=INFRASTRUCTURE_TYPES)
@@ -41,7 +41,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
 
 
-class InfrastructureCondition(StructureOrNoneRelated):
+class InfrastructureCondition(TimeStampedModelMixin, StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Name"), max_length=250)
 
     class Meta:
@@ -55,7 +55,7 @@ class InfrastructureCondition(StructureOrNoneRelated):
         return self.label
 
 
-class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
+class InfrastructureMaintenanceDifficultyLevel(TimeStampedModelMixin, StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), max_length=250)
 
     class Meta:
@@ -70,7 +70,7 @@ class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
         return self.label
 
 
-class InfrastructureUsageDifficultyLevel(StructureOrNoneRelated):
+class InfrastructureUsageDifficultyLevel(TimeStampedModelMixin, StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), unique=True, max_length=250)
 
     class Meta:

@@ -9,6 +9,8 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
 from django.utils.translation import gettext_lazy as _
 
+from geotrek.common.mixins.models import TimeStampedModelMixin
+
 
 class RestrictedAreaType(models.Model):
     name = models.CharField(max_length=200, verbose_name=_("Name"))
@@ -20,19 +22,11 @@ class RestrictedAreaType(models.Model):
         return self.name
 
 
-class RestrictedAreaManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().select_related('area_type')
-
-
-class RestrictedArea(models.Model):
+class RestrictedArea(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.CASCADE)
     published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
-
-    # Override default manager
-    objects = RestrictedAreaManager()
 
     class Meta:
         ordering = ['area_type', 'name']
@@ -46,7 +40,7 @@ class RestrictedArea(models.Model):
         return "{} - {}".format(self.area_type.name, self.name)
 
 
-class City(models.Model):
+class City(TimeStampedModelMixin, models.Model):
     code = models.CharField(primary_key=True, max_length=6)
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
@@ -64,7 +58,7 @@ class City(models.Model):
         return self.name
 
 
-class District(models.Model):
+class District(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))

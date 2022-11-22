@@ -22,7 +22,7 @@ from geotrek.api.v2.mixins import PDFSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
-from geotrek.core.models import simplify_coords
+from geotrek.common.utils import simplify_coords
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models
@@ -449,7 +449,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return get_translation_or_dict('description_teaser', self, obj)
 
     class TouristicContentSerializer(TouristicModelSerializer):
-        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        attachments = AttachmentSerializer(many=True)
         departure_city = serializers.SerializerMethodField()
         types = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
@@ -875,7 +875,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         elevation = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         period = serializers.SerializerMethodField()
-        practices = serializers.SerializerMethodField()
+        practices = serializers.PrimaryKeyRelatedField(many=True, source='species.practices', read_only=True)
         info_url = serializers.URLField(source='species.url')
         structure = serializers.CharField(source='structure.name')
         create_datetime = serializers.DateTimeField(source='date_insert')
@@ -894,15 +894,12 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         def get_period(self, obj):
             return [getattr(obj.species, 'period{:02}'.format(p)) for p in range(1, 13)]
 
-        def get_practices(self, obj):
-            return obj.species.practices.values_list('id', flat=True)
-
         def get_elevation(self, obj):
             return obj.species.radius
 
         def get_species_id(self, obj):
             if obj.species.category == sensitivity_models.Species.SPECIES:
-                return obj.species.id
+                return obj.species_id
             return None
 
         def get_kml_url(self, obj):

@@ -30,6 +30,20 @@ LAND_BBOX_AREAS_ENABLED = True
 
 TIME_ZONE = "UTC"
 
+CACHES['default'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'default',
+}
+CACHES['fat'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'fat',
+}
+CACHES['api_v2'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'api_v2',
+}
+
+
 class DisableMigrations():
     def __contains__(self, item):
         return True

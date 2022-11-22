@@ -485,7 +485,8 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         with open(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
             poi_geojson = json.load(f)
             # Check inside file generated we have 2 pictures
-            self.assertEqual(len(poi_geojson['features'][0]['properties']['pictures']), 2)
+            for poi in poi_geojson['features']:
+                self.assertLessEqual(len(poi['properties']['pictures']), 3)
 
     @override_settings(MOBILE_NUMBER_PICTURES_SYNC=1)
     def test_medias_treks_configuration_number_picture(self):
@@ -504,7 +505,8 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         with open(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
             poi_geojson = json.load(f)
             # Check inside file generated we have only one picture
-            self.assertEqual(len(poi_geojson['features'][0]['properties']['pictures']), 1)
+            for poi in poi_geojson['features']:
+                self.assertLessEqual(len(poi['properties']['pictures']), 1)
 
     @mock.patch('geotrek.api.mobile.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):

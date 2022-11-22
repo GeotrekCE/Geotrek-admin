@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from geotrek.api.v2 import serializers as api_serializers, \
     filters as api_filters, viewsets as api_viewsets
+from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.common.models import Attachment
 from geotrek.tourism import models as tourism_models
 
@@ -25,6 +26,7 @@ class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
         .prefetch_related('types') \
         .order_by('pk')  # Required for reliable pagination
 
+    @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(tourism_models.TouristicContentCategory, pk=pk)
@@ -46,7 +48,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
             .select_related('category', 'reservation_system', 'label_accessibility') \
             .prefetch_related('source', 'themes', 'type1', 'type2',
                               Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
+                                       queryset=Attachment.objects.select_related('license', 'filetype__structure').order_by('starred', '-date_insert'))
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('name')  # Required for reliable pagination
@@ -67,6 +69,7 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
         activate(self.request.GET.get('language'))
         return tourism_models.InformationDesk.objects.select_related('label_accessibility', 'type').order_by('name')
 
+    @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(tourism_models.InformationDesk, pk=pk)

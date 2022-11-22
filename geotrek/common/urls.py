@@ -3,8 +3,10 @@ from geotrek.common.models import HDViewPoint
 from mapentity.registry import MapEntityOptions
 from rest_framework.routers import DefaultRouter
 
-from .views import (HDViewPointAPIViewSet, HDViewPointCreate, HDViewPointDetail, HDViewPointUpdate, HDViewPointDelete, JSSettings, TiledHDViewPointViewSet, admin_check_extents, DocumentPublic, DocumentBookletPublic, import_view, import_update_json,
-                    ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect)
+from .views import (HDViewPointAPIViewSet, HDViewPointCreate, HDViewPointDetail, HDViewPointUpdate, HDViewPointDelete,
+                    TiledHDViewPointViewSet, JSSettings, DocumentPublic, DocumentBookletPublic, import_view,
+                    import_update_json, ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect,
+                    CheckExtentsView)
 
 
 class LangConverter(converters.StringConverter):
@@ -18,7 +20,7 @@ app_name = 'common'
 
 urlpatterns = [
     path('api/settings.json', JSSettings.as_view(), name='settings_json'),
-    path('tools/extents/', admin_check_extents, name='check_extents'),
+    path('tools/extents/', CheckExtentsView.as_view(), name='check_extents'),
     path('commands/import-update.json', import_update_json, name='import_update_json'),
     path('commands/import', import_view, name='import_dataset'),
     path('commands/sync', SyncRandoRedirect.as_view(), name='sync_randos'),

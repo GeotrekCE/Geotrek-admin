@@ -178,7 +178,9 @@ class InterventionViewSet(GeotrekMapentityViewSet):
     def get_queryset(self):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
-            qs = qs.only('id', 'name')
+            qs = qs.only(*self.geojson_serializer_class.Meta.fields)
+        else:
+            qs = qs.select_related("stake", "status", "type")
         return qs
 
 
