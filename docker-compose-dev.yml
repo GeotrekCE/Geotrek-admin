@@ -1,9 +1,5 @@
 version: "3"
 services:
-
-  memcached:
-    image: memcached:1.5-alpine
-
   postgres:
     image: postgis/postgis:11-2.5
     env_file:
@@ -37,7 +33,6 @@ services:
     depends_on:
       - postgres
       - redis
-      - memcached
     user: ${UID:-1000}:${GID:-1000}
     command: celery -A geotrek worker -c 1
 
@@ -54,7 +49,6 @@ services:
       - redis
       - screamshotter
       - convertit
-      - memcached
     user: ${UID:-1000}:${GID:-1000}
     command: ./manage.py runserver 0.0.0.0:8000
     networks:

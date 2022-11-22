@@ -39,3 +39,5 @@ SYNC_RANDO_OPTIONS = {
 }
 
 LOGGING['loggers']['']['level'] = 'DEBUG'
+
+CACHES['default']['BACKEND'] = 'django.core.cache.backends.locmem.LocMemCache'
