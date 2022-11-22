@@ -10,8 +10,8 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.utils import classproperty
 from geotrek.common.mixins.models import BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin
-from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.core.models import Topology, Path
+from geotrek.infrastructure.managers import InfrastructureGISManager
 
 INFRASTRUCTURE_TYPES = Choices(
     ('BUILDING', 'A', _("Building")),
@@ -139,20 +139,6 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
         return settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN
-
-
-class InfrastructureGISManager(NoDeleteManager):
-    """ Override default typology mixin manager"""
-    def implantation_year_choices(self):
-        all_years = self.get_queryset().existing().filter(implantation_year__isnull=False) \
-            .order_by('-implantation_year').distinct('implantation_year') \
-            .values_list('implantation_year', 'implantation_year')
-        return all_years
-
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class Infrastructure(MapEntityMixin, BaseInfrastructure):

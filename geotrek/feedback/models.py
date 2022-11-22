@@ -26,6 +26,7 @@ from geotrek.zoning.mixins import ZoningPropertiesMixin
 from geotrek.zoning.models import District
 
 from .helpers import SuricateMessenger
+from .managers import SelectableUserManager
 
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     from geotrek.maintenance.models import Intervention
@@ -51,12 +52,6 @@ def status_default():
     if new_status_query:
         return new_status_query.get().pk
     return None
-
-
-class SelectableUserManager(models.Manager):
-
-    def get_queryset(self):
-        return super().get_queryset().filter(userprofile__isnull=False)
 
 
 class SelectableUser(User):
