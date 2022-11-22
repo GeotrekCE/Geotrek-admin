@@ -125,7 +125,7 @@ class CustomColumnsMixin:
     def columns(cls):
         mandatory_cols = cls.get_mandatory_columns()
         default_extra_cols = cls.get_default_extra_columns()
-        if (mandatory_cols is None or default_extra_cols is None):
+        if mandatory_cols is None or default_extra_cols is None:
             return []
         else:
             # Get extra columns names from instance settings, or use default extra columns

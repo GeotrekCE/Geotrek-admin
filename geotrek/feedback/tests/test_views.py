@@ -85,7 +85,7 @@ class ReportSerializationOptimizeTests(TestCase):
         cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
 
         # There are 5 queries to get layer
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             response = self.client.get(reverse("feedback:report-drf-list",
                                                format="geojson"))
         self.assertEqual(len(response.json()['features']), 4)
@@ -98,7 +98,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.assertEqual(response.content, cache_content.content)
 
         # We have 1 less query because the generation of report was cached
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get(reverse("feedback:report-drf-list",
                                     format="geojson"))
 
@@ -107,7 +107,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.classified_report_4.save_no_suricate()
 
         # Cache is updated when we add a report
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.client.get(reverse("feedback:report-drf-list",
                                     format="geojson"))
 

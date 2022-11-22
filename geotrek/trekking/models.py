@@ -17,9 +17,10 @@ from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology, TopologyManager, simplify_coords
-from geotrek.common.utils import intersecting, classproperty
-from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin
+from geotrek.core.models import Path, Topology, TopologyManager
+from geotrek.common.utils import intersecting, classproperty, simplify_coords
+from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
+    TimeStampedModelMixin
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
@@ -61,8 +62,7 @@ class OrderedTrekChild(models.Model):
         )
 
 
-class Practice(PictogramMixin):
-
+class Practice(TimeStampedModelMixin, PictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
                                    help_text=_("Touristic contents and events will associate within this distance (meters)"))
@@ -593,7 +593,7 @@ class TrekRelationship(models.Model):
         return self.relation
 
 
-class TrekNetwork(PictogramMixin):
+class TrekNetwork(TimeStampedModelMixin, PictogramMixin):
     network = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
@@ -605,8 +605,7 @@ class TrekNetwork(PictogramMixin):
         return self.network
 
 
-class Accessibility(OptionalPictogramMixin):
-
+class Accessibility(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
 
@@ -629,7 +628,7 @@ class Accessibility(OptionalPictogramMixin):
         return slugify(self.name) or str(self.pk)
 
 
-class AccessibilityLevel(models.Model):
+class AccessibilityLevel(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
@@ -641,8 +640,7 @@ class AccessibilityLevel(models.Model):
         return self.name
 
 
-class Route(OptionalPictogramMixin):
-
+class Route(TimeStampedModelMixin, OptionalPictogramMixin):
     route = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
@@ -654,7 +652,7 @@ class Route(OptionalPictogramMixin):
         return self.route
 
 
-class DifficultyLevel(OptionalPictogramMixin):
+class DifficultyLevel(TimeStampedModelMixin, OptionalPictogramMixin):
 
     """We use an IntegerField for id, since we want to edit it in Admin.
     This column is used to order difficulty levels, especially in public website
@@ -713,8 +711,7 @@ class WebLink(models.Model):
         return reverse('trekking:weblink_add')
 
 
-class WebLinkCategory(PictogramMixin):
-
+class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
@@ -832,8 +829,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('published_pois', lambda self: self.signage.published_pois, _("Published POIs"))
 
 
-class POIType(PictogramMixin):
-
+class POIType(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True, on_delete=models.CASCADE)
 
@@ -846,7 +842,7 @@ class POIType(PictogramMixin):
         return self.label
 
 
-class ServiceType(PictogramMixin, PublishableMixin):
+class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
     practices = models.ManyToManyField('Practice', related_name="services",
                                        blank=True,
                                        verbose_name=_("Practices"))
@@ -861,9 +857,6 @@ class ServiceType(PictogramMixin, PublishableMixin):
 
 
 class ServiceManager(NoDeleteManager):
-    def get_queryset(self):
-        return super().get_queryset().select_related('type')
-
     def provider_choices(self):
         providers = self.get_queryset().existing().exclude(provider__exact='') \
             .distinct('provider').values_list('provider', 'provider')
@@ -877,12 +870,11 @@ class Service(StructureRelated, MapEntityMixin, Topology):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
+    objects = ServiceManager()
+
     class Meta:
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
-
-    # Override default manager
-    objects = ServiceManager()
 
     def __str__(self):
         return str(self.type)

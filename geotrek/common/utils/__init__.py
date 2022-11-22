@@ -53,17 +53,6 @@ def dbnow():
     return row[0].replace(tzinfo=utc)
 
 
-def sql_extent(sql):
-    """ Given a SQL query that returns a BOX(), returns tuple (xmin, ymin, xmax, ymax) """
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    result = cursor.fetchall()
-    row = result[0]
-    extent = row[0] or '0 0 0 0'
-    value = extent.replace('BOX(', '').replace(')', '').replace(',', ' ')
-    return tuple([float(v) for v in value.split()])
-
-
 def sqlfunction(function, *args):
     """ Executes the SQL function with the specified args, and returns the result. """
     sql = '%s(%s)' % (function, ','.join(args))
@@ -109,6 +98,7 @@ def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None
         qs = qs.exclude(pk=obj.pk)
     if defer:
         qs = qs.defer(*defer)
+
     return qs
 
 
@@ -161,3 +151,15 @@ def collate_c(field):
 
 def spatial_reference():
     return "{epsg_name}".format(epsg_name=SpatialReference(settings.DISPLAY_SRID).name)
+
+
+def simplify_coords(coords):
+    if isinstance(coords, (list, tuple)):
+        return [simplify_coords(coord) for coord in coords]
+    elif isinstance(coords, float):
+        return round(coords, 7)
+    raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
+
+
+def leaflet_bounds(bbox):
+    return [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]

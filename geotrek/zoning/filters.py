@@ -40,7 +40,7 @@ class IntersectionFilterRestrictedAreaType(RightFilter):
 
 
 class IntersectionFilterRestrictedArea(IntersectionFilter):
-    model = RestrictedArea
+    queryset = RestrictedArea.objects.all().select_related("area_type")
 
 
 class ZoningFilterSet(FilterSet):

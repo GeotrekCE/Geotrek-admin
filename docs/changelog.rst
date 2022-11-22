@@ -5,6 +5,16 @@ CHANGELOG
 2.91.1+dev (XXXX-XX-XX)
 -----------------------
 
+**Improvments**
+
+- Cache API v2 Detail endpoints and themes list endpoint
+- Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.
+- Zoning informations are now cached until instance or zoning is updated.
+
+**New feature**
+
+- Separate application and API v2 cache, ability to purge them with command or via admin
+
 
 2.91.1     (2022-11-18)
 -----------------------

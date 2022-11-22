@@ -8,3 +8,4 @@ class CommonConfig(AppConfig):
 
     def ready(self):
         import geotrek.common.lookups  # NOQA
+        import geotrek.common.signals  # NOQA

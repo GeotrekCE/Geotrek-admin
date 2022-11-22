@@ -419,7 +419,7 @@ if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     Report.add_property('interventions', lambda self: Report.report_interventions(self), _("Interventions"))
 
 
-class ReportActivity(models.Model):
+class ReportActivity(TimeStampedModelMixin, models.Model):
     """Activity involved in report"""
 
     label = models.CharField(verbose_name=_("Activity"), max_length=128)
@@ -436,7 +436,7 @@ class ReportActivity(models.Model):
         return self.label
 
 
-class ReportCategory(models.Model):
+class ReportCategory(TimeStampedModelMixin, models.Model):
     label = models.CharField(verbose_name=_("Category"), max_length=128)
     identifier = models.PositiveIntegerField(_("Suricate id"), null=True, blank=True)
 
@@ -449,7 +449,7 @@ class ReportCategory(models.Model):
         return self.label
 
 
-class ReportStatus(models.Model):
+class ReportStatus(TimeStampedModelMixin, models.Model):
     label = models.CharField(verbose_name=_("Status"), max_length=128)
     identifier = models.CharField(
         null=True,
@@ -472,7 +472,7 @@ class ReportStatus(models.Model):
         return self.label
 
 
-class ReportProblemMagnitude(models.Model):
+class ReportProblemMagnitude(TimeStampedModelMixin, models.Model):
     """Report problem magnitude"""
 
     label = models.CharField(verbose_name=_("Problem magnitude"), max_length=128)

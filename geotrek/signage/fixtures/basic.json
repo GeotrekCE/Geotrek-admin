@@ -3,154 +3,198 @@
         "pk": 1,
         "model": "signage.signagetype",
         "fields": {
-            "label": "Porte d'entr\u00e9e du Parc"
+            "label": "Porte d'entr\u00e9e du Parc",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "signage.signagetype",
         "fields": {
-            "label": "Directionelle"
+            "label": "Directionelle",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "signage.signagetype",
         "fields": {
-            "label": "Situation"
+            "label": "Situation",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 4,
         "model": "signage.signagetype",
         "fields": {
-            "label": "R\u00e9glementaire"
+            "label": "R\u00e9glementaire",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 5,
         "model": "signage.signagetype",
         "fields": {
-            "label": "Service"
+            "label": "Service",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 6,
         "model": "signage.signagetype",
         "fields": {
-            "label": "Appartenance"
+            "label": "Appartenance",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 7,
         "model": "signage.signagetype",
         "fields": {
-            "label": "Limite C\u0153ur"
+            "label": "Limite C\u0153ur",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 8,
         "model": "signage.signagetype",
         "fields": {
-            "label": "Information"
+            "label": "Information",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 9,
         "model": "signage.signagetype",
         "fields": {
-            "label": "Temporaire"
+            "label": "Temporaire",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 1,
         "model": "signage.bladetype",
         "fields": {
-            "label": "Attention"
+            "label": "Attention",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "signage.bladetype",
         "fields": {
-            "label": "Défaut"
+            "label": "Défaut",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "signage.bladetype",
         "fields": {
-            "label": "Directionnel"
+            "label": "Directionnel",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "signage.bladetype",
         "fields": {
-            "label": "Directionnel"
+            "label": "Directionnel",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
         {
         "pk": 1,
         "model": "signage.color",
         "fields": {
-            "label": "Jaune"
+            "label": "Jaune",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "signage.color",
         "fields": {
-            "label": "Blanc"
+            "label": "Blanc",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 1,
         "model": "signage.direction",
         "fields": {
-            "label": "Tout Droit"
+            "label": "Tout Droit",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "signage.direction",
         "fields": {
-            "label": "Droite"
+            "label": "Droite",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "signage.direction",
         "fields": {
-            "label": "Gauche"
+            "label": "Gauche",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 1,
         "model": "signage.sealing",
         "fields": {
-            "label": "Beton"
+            "label": "Beton",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "signage.sealing",
         "fields": {
-            "label": "Platine"
+            "label": "Platine",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "signage.sealing",
         "fields": {
-            "label": "Fourreau"
+            "label": "Fourreau",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 4,
         "model": "signage.sealing",
         "fields": {
-            "label": "Applique"
+            "label": "Applique",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     }
 ]

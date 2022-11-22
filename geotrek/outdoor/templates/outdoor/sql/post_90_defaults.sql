@@ -11,14 +11,16 @@
 -- Sector
 ---------
 -- name
-
+ALTER TABLE outdoor_sector ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE outdoor_sector ALTER COLUMN date_update SET DEFAULT now();
 
 -- Practice
 -----------
 -- name
 -- sector
 -- pictogram
-
+ALTER TABLE outdoor_practice ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE outdoor_practice ALTER COLUMN date_update SET DEFAULT now();
 
 
 -- RatingScale
@@ -41,13 +43,15 @@ ALTER TABLE outdoor_rating ALTER COLUMN color SET DEFAULT '#ffffff';
 -----------
 -- name
 -- practice
-
+ALTER TABLE outdoor_sitetype ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE outdoor_sitetype ALTER COLUMN date_update SET DEFAULT now();
 
 -- CourseType
 -------------
 -- name
 -- practice
-
+ALTER TABLE outdoor_coursetype ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE outdoor_coursetype ALTER COLUMN date_update SET DEFAULT now();
 
 -- Site
 -------

@@ -36,7 +36,7 @@ class AltimetryMixin(BaseAltimetryMixin):
         abstract = True
 
 
-class Sector(models.Model):
+class Sector(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
@@ -48,7 +48,7 @@ class Sector(models.Model):
         return self.name
 
 
-class Practice(OptionalPictogramMixin, models.Model):
+class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.PROTECT,
                                verbose_name=_("Sector"), null=True, blank=True)
@@ -82,7 +82,7 @@ class Rating(RatingMixin):
         ordering = ('order', 'name')
 
 
-class SiteType(models.Model):
+class SiteType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)
@@ -96,7 +96,7 @@ class SiteType(models.Model):
         return self.name
 
 
-class CourseType(models.Model):
+class CourseType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)

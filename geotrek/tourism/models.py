@@ -34,7 +34,7 @@ else:
 logger = logging.getLogger(__name__)
 
 
-class InformationDeskType(PictogramMixin):
+class InformationDeskType(TimeStampedModelMixin, PictogramMixin):
 
     label = models.CharField(verbose_name=_("Label"), max_length=128)
 
@@ -47,7 +47,7 @@ class InformationDeskType(PictogramMixin):
         return self.label
 
 
-class LabelAccessibility(PictogramMixin):
+class LabelAccessibility(TimeStampedModelMixin, PictogramMixin):
 
     label = models.CharField(verbose_name=_("Label"), max_length=128)
 
@@ -60,7 +60,7 @@ class LabelAccessibility(PictogramMixin):
         return self.label
 
 
-class InformationDesk(models.Model):
+class InformationDesk(TimeStampedModelMixin, models.Model):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     name = models.CharField(verbose_name=_("Title"), max_length=256)
@@ -151,7 +151,7 @@ GEOMETRY_TYPES = Choices(
 )
 
 
-class TouristicContentCategory(PictogramMixin):
+class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
 
     label = models.CharField(verbose_name=_("Label"), max_length=128)
     geometry_type = models.CharField(max_length=16, choices=GEOMETRY_TYPES, default=GEOMETRY_TYPES.POINT)
@@ -385,8 +385,7 @@ TouristicContent.add_property('touristic_contents', lambda self: intersecting(To
 TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
 
 
-class TouristicEventType(OptionalPictogramMixin):
-
+class TouristicEventType(TimeStampedModelMixin, OptionalPictogramMixin):
     type = models.CharField(verbose_name=_("Type"), max_length=128)
 
     class Meta:

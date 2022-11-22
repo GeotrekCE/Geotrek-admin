@@ -371,7 +371,7 @@ class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Zoni
             PicturesSerializerMixin.Meta.fields
 
 
-class POIAPIGeojsonSerializer(GeoFeatureModelSerializer, POIAPISerializer):
+class POIAPIGeojsonSerializer(DynamicFieldsMixin, GeoFeatureModelSerializer, POIAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 

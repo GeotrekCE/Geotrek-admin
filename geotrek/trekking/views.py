@@ -100,7 +100,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
 
 class TrekDetail(CompletenessMixin, MapEntityDetail):
-    queryset = Trek.objects.existing()
+    queryset = Trek.objects.existing().select_related('topo_object')
 
     @property
     def icon_sizes(self):
@@ -415,7 +415,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if not self.request.user.has_perm('trekking.read_poi') and not trek.is_public():
             raise Http404
-        return trek.pois.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
+        return trek.pois.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID)).select_related('type',)
 
 
 class TrekSignageViewSet(viewsets.ModelViewSet):

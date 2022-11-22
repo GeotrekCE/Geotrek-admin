@@ -254,9 +254,7 @@ SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 
 
 class BaseApiTest(TestCase):
-    """
-    Base TestCase for all API profile
-    """
+    """ Base TestCase for all API profiles """
 
     @classmethod
     def setUpTestData(cls):
@@ -761,9 +759,7 @@ class BaseApiTest(TestCase):
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase for anonymous API profile """
 
     def test_path_list(self):
         response = self.get_path_list()
@@ -1585,7 +1581,6 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             len(json_response.get('results')),
             trek_models.POI.objects.all().count()
         )
-
         obj.pois_excluded.add(self.poi)
         obj.save()
 
@@ -1710,8 +1705,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 404)
 
     def test_poi_not_published_detail(self):
-        id_poi = trek_factory.POIFactory.create(published=False)
-        response = self.get_poi_detail(id_poi.pk)
+        poi_not_published = trek_factory.POIFactory.create(published=False)
+        response = self.get_poi_detail(poi_not_published.pk)
         self.assertEqual(response.status_code, 404)
 
     def test_touristiccontentcategory_detail(self):
@@ -2189,37 +2184,26 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'trek': trek.id,
             'period': '1'
         })
-        self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.status_code, 200)
-        with override_settings(SENSITIVE_AREA_INTERSECTION_MARGIN=700):
-            response = self.get_sensitivearea_list({
-                'trek': trek.id,
-                'period': '1'
-            })
-            self.assertEqual(response.json()['count'], 2)
+        self.assertEqual(response.json()['count'], 1)
+        # validate wrong trek id get 404
+        response = self.get_sensitivearea_list({
+            'trek': 9999
+        })
+        self.assertEqual(response.status_code, 404)
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase for administrator API profile """
+
     @classmethod
     def setUpTestData(cls):
         #  created user
         cls.administrator = SuperUserFactory()
         BaseApiTest.setUpTestData()
 
-    def login(self):
-        """
-        Override base class login method, used before all function request 'get_api_element'
-        """
-        self.client.force_login(self.administrator)
-
-    def setUp(self):
-        self.login()
-
     def test_path_list(self):
-        self.login()
+        self.client.force_login(self.administrator)
         response = self.get_path_list()
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
@@ -2243,9 +2227,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
 
 class APISwaggerTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase API documentation """
 
     @classmethod
     def setUpTestData(cls):
@@ -2520,7 +2502,6 @@ class OutdoorRatingTestCase(TestCase):
 
 
 class FlatPageTestCase(TestCase):
-    maxDiff = None
 
     @classmethod
     def setUpTestData(cls):
@@ -2905,7 +2886,6 @@ class TouristicEventTestCase(BaseApiTest):
 
     @classmethod
     def setUpTestData(cls):
-        cls.maxDiff = None
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory()
         cls.place = tourism_factory.TouristicEventPlaceFactory(name="Here")
         cls.other_place = tourism_factory.TouristicEventPlaceFactory(name="Over here")
@@ -3076,8 +3056,7 @@ class TouristicEventTypeTestCase(BaseApiTest):
 
 
 class TouristicEventTypeFilterTestCase(BaseApiTest):
-    """ Test filtering depending on published, deleted content for touristic event types
-    """
+    """ Test filtering depending on published, deleted content for touristic event types """
 
     @classmethod
     def setUpTestData(cls):
@@ -3142,8 +3121,7 @@ class TouristicEventTypeFilterTestCase(BaseApiTest):
 
 
 class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase):
-    """ Test filtering depending on portal for touristic event types
-    """
+    """ Test filtering depending on portal for touristic event types """
 
     @classmethod
     def setUpTestData(cls):
@@ -3210,8 +3188,7 @@ class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase)
 
 
 class NearOutdoorFilterTestCase(BaseApiTest):
-    """ Test near_outdoorsite and near_outdoorcourse filter on routes
-    """
+    """ Test near_outdoorsite and near_outdoorcourse filter on routes """
 
     @classmethod
     def setUpTestData(cls):
@@ -3414,7 +3391,6 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     def setUp(self):
         self.client.force_login(self.user)
-        return super().setUp()
 
     def test_updated_after_filter(self):
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
@@ -4213,16 +4189,7 @@ class OutdoorFilterByPortal(BaseApiTest):
 
 
 class AltimetryCacheTests(BaseApiTest):
-    """ Test APIV2 DEM serialization is cached
-    """
-
-    TMP_CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': settings.CACHE_ROOT
-        }
-    }
-
+    """ Test APIV2 DEM serialization is cached """
     @classmethod
     def setUpTestData(cls):
         # Create a simple fake DEM
@@ -4238,55 +4205,53 @@ class AltimetryCacheTests(BaseApiTest):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM(self):
-        # There are 8 queries to get trek DEM
-        with self.assertNumQueries(8):
+        # There are 9 queries to get trek DEM
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 7 queries to get trek DEM
-        with self.assertNumQueries(7):
+        # When cache is used there is single query to get trek DEM
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM_nds(self):
-        self.trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
-        # There are 8 queries to get trek DEM
-        with self.assertNumQueries(8):
-            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        # There are 9 queries to get trek DEM
+        with self.assertNumQueries(9):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 7 queries to get trek DEM
-        with self.assertNumQueries(7):
-            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        # When cache is used there is single query to get trek DEM
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_cache_is_used_when_getting_trek_profile(self):
         # There are 8 queries to get trek profile
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertIn("profile", response.json().keys())
-        # When cache is used there are only 7 queries to get trek profile
-        with self.assertNumQueries(7):
+        # When cache is used there is single query to get trek profile
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertIn("profile", response.json().keys())
 
-    # Override default cache with fat cache since we can't use memcached in tests
-    @override_settings(CACHES=TMP_CACHES)
     def test_cache_is_used_when_getting_trek_profile_svg(self):
         # There are 8 queries to get trek profile svg
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'image/svg+xml')
-        # When cache is used there are only 7 queries to get trek profile
-        with self.assertNumQueries(7):
+        self.assertIn('image/svg+xml', response['Content-Type'])
+        # When cache is used there is single query to get trek profile
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'image/svg+xml')
+        self.assertIn('image/svg+xml', response['Content-Type'])

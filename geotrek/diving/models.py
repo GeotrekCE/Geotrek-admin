@@ -18,7 +18,7 @@ from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 
-class Practice(PictogramMixin):
+class Practice(TimeStampedModelMixin, PictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Alphabetical order if blank"))

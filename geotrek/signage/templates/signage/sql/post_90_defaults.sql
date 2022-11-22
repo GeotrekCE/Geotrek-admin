@@ -2,13 +2,15 @@
 ----------
 -- label
 -- structure
-
+ALTER TABLE signage_sealing ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE signage_sealing ALTER COLUMN date_update SET DEFAULT now();
 
 -- SignageType
 --------------
 -- label
 -- structure
-
+ALTER TABLE signage_signagetype ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE signage_signagetype ALTER COLUMN date_update SET DEFAULT now();
 
 -- Signage
 ----------
@@ -33,17 +35,20 @@ ALTER TABLE signage_signage ALTER COLUMN provider SET DEFAULT '';
 -- Direction
 ------------
 -- label
-
+ALTER TABLE signage_direction ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE signage_direction ALTER COLUMN date_update SET DEFAULT now();
 
 -- Color
 --------
 -- label
-
+ALTER TABLE signage_color ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE signage_color ALTER COLUMN date_update SET DEFAULT now();
 
 -- BladeType
 ------------
 -- label
-
+ALTER TABLE signage_bladetype ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE signage_bladetype ALTER COLUMN date_update SET DEFAULT now();
 
 -- Blade
 --------
@@ -54,7 +59,8 @@ ALTER TABLE signage_signage ALTER COLUMN provider SET DEFAULT '';
 -- color
 -- condition
 -- topology
-
+ALTER TABLE signage_blade ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE signage_blade ALTER COLUMN date_update SET DEFAULT now();
 
 -- Line
 -------

@@ -276,12 +276,10 @@ PROJECT_APPS += (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'clearcache',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.gis',
-)
-
-PROJECT_APPS += (
     'crispy_forms',
     'compressor',
     'django_filters',
@@ -318,13 +316,20 @@ INSTALLED_APPS = PROJECT_APPS + (
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
         'TIMEOUT': 2592000,  # 30 days
+        'LOCATION': '{}:{}'.format(os.getenv('MEMCACHED_HOST', 'memcached'),
+                                   os.getenv('MEMCACHED_PORT', '11211'))
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': CACHE_ROOT,
+        'LOCATION': os.path.join(CACHE_ROOT, 'fat'),
+        'TIMEOUT': 2592000,  # 30 days
+    },
+    'api_v2': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(CACHE_ROOT, 'api_v2'),
         'TIMEOUT': 2592000,  # 30 days
     }
 }
@@ -849,3 +854,11 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_USE_CACHE': 'fat',  # default cache for DRF Cache Response Mixin. API v2 is override with 'api_v2'
+    'DEFAULT_CACHE_ERRORS': False
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
