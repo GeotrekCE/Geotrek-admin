@@ -69,9 +69,6 @@ class UtilsTest(TestCase):
     def test_spatial_reference_wgs84(self):
         self.assertEqual(spatial_reference(), 'WGS 84 / UTM zone 31N')
 
-    def test_simplify_coord_simple(self):
-        pass
-
 
 class SimplifyCoordsTest(TestCase):
     def test_coords_float(self):
