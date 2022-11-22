@@ -60,7 +60,7 @@
                 </tr>
                 <tr>
                     <th>{% trans "Related to" %}</th>
-                    <td>{% if object.content_object %}{{ object.content_object|safe }}
+                    <td>{% if object.content_object %}{{ object.content_object.name_display|safe }}
                         {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
                     </td>
                 </tr>
