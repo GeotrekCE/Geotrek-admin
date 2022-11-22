@@ -85,7 +85,7 @@
 
                 const containerRef = document.getElementById('hdviewpoint-map')
                 var tileUrl = "{{base_tile_url}}" + `/tiles/{z}/{x}/{y}.png?source=vips`;
-                var metadataUrl = "{{base_tile_url}}" + "/info/metadata";
+                var metadataUrl = "{{base_tile_url}}" + "/info/metadata?source=vips";
                 var viewer;
 
                 fetch(metadataUrl)
