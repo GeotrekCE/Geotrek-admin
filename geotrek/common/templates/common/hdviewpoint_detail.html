@@ -78,6 +78,7 @@
 
           <h3>{% trans "Image" %}</h3>
             {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
+            {{object.annotations|json_script:"geojson_annotations"}}
             <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
             {% include "common/annotations_widget.html" %}
             <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
@@ -102,7 +103,7 @@
                       max: 12,
                     });
                     viewer.createLayer('osm', params.layer);
-                    initAnnotations(viewer);
+                    initAnnotationsWidget(viewer);
 
                     // Change default interactor options
                     const interactorOpts = viewer.interactor().options();
@@ -122,7 +123,9 @@
                         top: 40
                       }
                     });
-                    $(".loader-wrapper").remove()
+                    layer = viewer.createLayer('annotation');
+                    layer.geojson($('#geojson_annotations').text());
+                    $(".loader-wrapper").remove();
                   });
               });
             </script>

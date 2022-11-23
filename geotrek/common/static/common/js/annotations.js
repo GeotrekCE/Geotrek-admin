@@ -39,7 +39,7 @@ if (query.lastannotation) {
     $('.annotationtype button#' + query.lastannotation).addClass('lastused');
 }
 
-function initAnnotations(map) {
+function initAnnotationsWidget(map) {
 
     var annotationDebug = {};
 
