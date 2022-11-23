@@ -331,28 +331,6 @@ class ApidaeTrekParser(ApidaeParser):
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 self.fields[f'{translated_field}_{lang}'] = f'{src}.libelle{lang.capitalize()}'
 
-    @staticmethod
-    def _find_gpx_plan_in_multimedia_items(items):
-        plans = list(filter(lambda item: item['type'] == 'PLAN', items))
-        if len(plans) > 1:
-            raise RowImportError("APIDAE Trek has more than one map defined")
-        return plans[0]
-
-    def _fetch_gpx_from_url(self, plan):
-        ref_fichier_plan = plan['traductionFichiers'][0]
-        if ref_fichier_plan['extension'] != 'gpx':
-            raise RowImportError("Le plan de l'itinéraire APIDAE n'est pas au format GPX")
-        response = self.request_or_retry(url=ref_fichier_plan['url'])
-        # print('downloaded url {}, content size {}'.format(plan['traductionFichiers'][0]['url'], len(response.text)))
-        return response.content
-
-    @staticmethod
-    def _get_layer(datasource, layer_name):
-        for layer in datasource:
-            if layer.name == layer_name:
-                return layer
-        return None
-
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
         # Can be called after a filter_*** to dispatch translated values into translation fields.
@@ -472,6 +450,28 @@ class ApidaeTrekParser(ApidaeParser):
             val=[ct['id'] for ct in child_treks]
         )
 
+    def _finalize_related_treks_association(self):
+        for parent_id, children_eids in self._related_treks_mapping.items():
+            parent_trek = Trek.objects.get(pk=parent_id)
+            order = 0
+            for child_eid in children_eids:
+                child_trek = Trek.objects.get(eid=child_eid)
+                otc, _ = OrderedTrekChild.objects.get_or_create(
+                    parent=parent_trek,
+                    child=child_trek
+                )
+                otc.order = order
+                otc.save()
+                order += 1
+
+    def _fetch_gpx_from_url(self, plan):
+        ref_fichier_plan = plan['traductionFichiers'][0]
+        if ref_fichier_plan['extension'] != 'gpx':
+            raise RowImportError("Le plan de l'itinéraire APIDAE n'est pas au format GPX")
+        response = self.request_or_retry(url=ref_fichier_plan['url'])
+        # print('downloaded url {}, content size {}'.format(plan['traductionFichiers'][0]['url'], len(response.text)))
+        return response.content
+
     @staticmethod
     def _transform_description_to_html(text):
         """Transform a descriptive text into HTML paragraphs."""
@@ -499,19 +499,12 @@ class ApidaeTrekParser(ApidaeParser):
             marking_description = TREK_NO_MARKING_DESCRIPTION.copy()
         return marking_description
 
-    def _finalize_related_treks_association(self):
-        for parent_id, children_eids in self._related_treks_mapping.items():
-            parent_trek = Trek.objects.get(pk=parent_id)
-            order = 0
-            for child_eid in children_eids:
-                child_trek = Trek.objects.get(eid=child_eid)
-                otc, _ = OrderedTrekChild.objects.get_or_create(
-                    parent=parent_trek,
-                    child=child_trek
-                )
-                otc.order = order
-                otc.save()
-                order += 1
+    @staticmethod
+    def _find_gpx_plan_in_multimedia_items(items):
+        plans = list(filter(lambda item: item['type'] == 'PLAN', items))
+        if len(plans) > 1:
+            raise RowImportError("APIDAE Trek has more than one map defined")
+        return plans[0]
 
     @staticmethod
     def _get_geom_from_gpx(data):
@@ -531,6 +524,13 @@ class ApidaeTrekParser(ApidaeParser):
             geos = geom.geos
             geos.transform(settings.SRID)
             return geos
+
+    @staticmethod
+    def _get_layer(datasource, layer_name):
+        for layer in datasource:
+            if layer.name == layer_name:
+                return layer
+        return None
 
     @staticmethod
     def _maybe_get_linestring_from_layer(layer):
