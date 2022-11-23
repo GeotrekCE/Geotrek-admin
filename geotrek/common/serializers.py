@@ -19,7 +19,7 @@ class TranslatedModelSerializer(rest_serializers.ModelSerializer):
             if model_field.null:
                 kwargs['allow_none'] = True
             kwargs['max_length'] = getattr(model_field, 'max_length')
-            return rest_fields.CharField(**kwargs)
+            return rest_serializers.CharField(**kwargs)
         return super().get_field(model_field)
 
 
@@ -95,7 +95,7 @@ class LabelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class HDViewPointAPISerializer(TranslatedModelSerializer):
-    #picture TODO : link to tileserver
+    # picture TODO : link to tileserver
 
     class Meta:
         model = HDViewPoint

@@ -1,7 +1,6 @@
 import os
 import uuid
 
-from PIL import Image
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib import auth
@@ -354,9 +353,6 @@ class HDViewPoint(TimeStampedModelMixin):
     def get_delete_url(self):
         return reverse('common:hdviewpoint_delete', args=[self.pk])
 
-    def get_permission_codename(self, *args):
-        return
-
     @classmethod
     def get_content_type_id(cls):
         try:
@@ -373,7 +369,7 @@ class HDViewPoint(TimeStampedModelMixin):
             'ENTITY_DELETE': 'delete',
             'ENTITY_DETAIL': 'read',
             'ENTITY_LAYER': 'read',
-            #ENTITY_LIST: 'read', # TODO
+            # ENTITY_LIST: 'read', # TODO
             'ENTITY_DATATABLE_LIST': 'read',
             'ENTITY_MARKUP': 'read',
         }
