@@ -4,6 +4,13 @@
     {
       "id": 123123,
       "informationsEquipement": {
+        "activites": [
+          {
+            "id": 3333,
+            "libelleFr": "Itinéraire de randonnée pédestre",
+            "libelleEn": "Hiking itinerary"
+          }
+        ],
         "itineraire": {
           "itineraireBalise": "BALISE",
           "precisionsBalisage": {

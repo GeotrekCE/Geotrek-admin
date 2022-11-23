@@ -610,7 +610,7 @@ class ApidaeTrekParserTests(TestCase):
         cls.filetype = FileType.objects.create(type="Photographie")
 
     @mock.patch('requests.get')
-    def test_trek_description_is_imported(self, mocked_get):
+    def test_trek_is_imported(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
@@ -656,6 +656,9 @@ class ApidaeTrekParserTests(TestCase):
 
         self.assertTrue(trek.difficulty is not None)
         self.assertEqual(trek.difficulty.difficulty_en, 'Level red – hard')
+
+        self.assertTrue(trek.practice is not None)
+        self.assertEqual(trek.practice.name, 'Pédestre')
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
@@ -914,3 +917,25 @@ class GpxToGeomTests(SimpleTestCase):
         first_point = geom.coords[0]
         self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
         self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+
+class GetPracticeNameFromActivities(SimpleTestCase):
+
+    def test_it_considers_specific_activity_before_default_activity(self):
+        practice_name = ApidaeTrekParser._get_practice_name_from_activities(
+            [
+                3113,  # Sports cyclistes
+                3284,  # Itinéraire VTT
+            ]
+        )
+        self.assertEqual(practice_name, 'VTT')
+
+    def test_it_takes_default_activity_if_no_specific_match(self):
+        not_mapped_activity_id = 12341234
+        practice_name = ApidaeTrekParser._get_practice_name_from_activities(
+            [
+                not_mapped_activity_id,
+                3113,  # Sports cyclistes
+            ]
+        )
+        self.assertEqual(practice_name, 'Vélo')

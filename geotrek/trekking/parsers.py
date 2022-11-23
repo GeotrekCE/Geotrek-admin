@@ -1,5 +1,5 @@
-from collections import defaultdict
 import json
+from collections import defaultdict
 from tempfile import NamedTemporaryFile
 
 from django.conf import settings
@@ -286,6 +286,7 @@ class ApidaeTrekParser(ApidaeParser):
         'departure': 'localisation.adresse.commune.nom',
         'access': 'localisation.geolocalisation.complement',
         'difficulty': 'prestations.typesClientele',
+        'practice': 'informationsEquipement.activites',
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -299,6 +300,7 @@ class ApidaeTrekParser(ApidaeParser):
         'labels': 'name',
         'difficulty': 'difficulty',
         'related_treks': 'eid',
+        'practice': 'name',
     }
     field_options = {
         'source': {'create': True},
@@ -310,8 +312,46 @@ class ApidaeTrekParser(ApidaeParser):
         'access': {'expand_translations': True},
         'difficulty': {'create': True},
         'related_treks': {'create': True},
+        'practice': {'create': True},
     }
     non_fields = {}
+
+    # Relevant default mapping considering practices in trekking data fixture.
+    # The practice key must be the name in the default language on your instance.
+    practices_mapped_with_activities_ids = {
+        'Pédestre': [
+            3333,  # Itinéraire de randonnée pédestre
+            3331,  # Parcours / sentier thématique
+            5324,  # Parcours de marche nordique
+        ],
+        'Vélo': [
+            3283,  # Itinéraire cyclotourisme
+            5447,  # Itinéraire de Vélo à Assistance Electrique
+            3280,  # Véloroute et voie verte
+        ],
+        'VTT': [
+            3284,  # Itinéraire VTT
+            3281,  # Piste de descente VTT
+            5446,  # Itinéraire enduro
+            4174,  # Itinéraire Fat Bike
+            6168,  # Itinéraire fauteuil tout terrain
+            6224,  # Itinéraire gravel bike
+        ],
+        'Cheval': [
+            3313,  # Itinéraire de randonnée équestre
+        ],
+        'Trail': [
+            4201,  # Itinéraire de Trail
+        ],
+        'VTTAE': [
+            6225,  # Itinéraire de VTT à Assistance Électrique
+        ],
+    }
+    practices_mapped_with_default_activities_ids = {
+        'Pédestre': 3184,  # Sports pédestres
+        'Vélo': 3113,  # Sports cyclistes
+        'Cheval': 3165,  # Sports équestres
+    }
 
     def __init__(self, *args, **kwargs):
         self._translated_fields = [field for field in get_translated_fields(self.model)]
@@ -450,6 +490,15 @@ class ApidaeTrekParser(ApidaeParser):
             val=[ct['id'] for ct in child_treks]
         )
 
+    def filter_practice(self, src, val):
+        activities = val
+        activities_ids = [act['id'] for act in activities]
+        return self.apply_filter(
+            dst='practice',
+            src=src,
+            val=ApidaeTrekParser._get_practice_name_from_activities(activities_ids)
+        )
+
     def _finalize_related_treks_association(self):
         for parent_id, children_eids in self._related_treks_mapping.items():
             parent_trek = Trek.objects.get(pk=parent_id)
@@ -542,6 +591,32 @@ class ApidaeTrekParser(ApidaeParser):
         else:
             geom = first_entity.geom
         return geom
+
+    @staticmethod
+    def _find_matching_practice_in_mapping(activities_ids, mapping):
+        returned_practice_name = None
+        for activity_id in activities_ids:
+            for practice_name, value in mapping.items():
+                try:
+                    for mapped_activity_id in value:
+                        if activity_id == mapped_activity_id:
+                            returned_practice_name = practice_name
+                except TypeError:
+                    mapped_activity_id = value
+                    if activity_id == mapped_activity_id:
+                        returned_practice_name = practice_name
+        return returned_practice_name
+
+    @staticmethod
+    def _get_practice_name_from_activities(activities_ids):
+        for mapping in (
+            ApidaeTrekParser.practices_mapped_with_activities_ids,
+            ApidaeTrekParser.practices_mapped_with_default_activities_ids
+        ):
+            practice_name = ApidaeTrekParser._find_matching_practice_in_mapping(activities_ids, mapping)
+            if practice_name:
+                break
+        return practice_name
 
 
 class ApidaeReferenceElementParser(Parser):
