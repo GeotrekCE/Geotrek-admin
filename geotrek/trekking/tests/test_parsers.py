@@ -875,6 +875,13 @@ class MakeMarkingDescriptionTests(SimpleTestCase):
         }
         self.assertDictEqual(description, expected)
 
+    def test_it_returns_default_text_when_no_details(self):
+        itineraire = {
+            'itineraireBalise': 'BALISE',
+        }
+        description = ApidaeTrekParser._make_marking_description(itineraire)
+        self.assertDictEqual(description, DEFAULT_TREK_MARKING_DESCRIPTION)
+
 
 class GpxToGeomTests(SimpleTestCase):
 

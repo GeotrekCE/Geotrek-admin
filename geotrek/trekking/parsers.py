@@ -493,7 +493,7 @@ class ApidaeTrekParser(ApidaeParser):
         is_marked = itineraire['itineraireBalise'] == 'BALISE'
         if is_marked:
             marking_description = DEFAULT_TREK_MARKING_DESCRIPTION.copy()
-            if itineraire['precisionsBalisage']:
+            if itineraire.get('precisionsBalisage'):
                 marking_description.update(itineraire['precisionsBalisage'])
         else:
             marking_description = TREK_NO_MARKING_DESCRIPTION.copy()
