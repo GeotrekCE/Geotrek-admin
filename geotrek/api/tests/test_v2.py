@@ -68,7 +68,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
     'portal', 'practice', 'previous', 'public_transport', 'provider', 'published', 'ratings', 'ratings_description',
     'reservation_system', 'reservation_id', 'route', 'second_external_id', 'source', 'structure',
-    'themes', 'update_datetime', 'url', 'uuid', 'web_links'
+    'themes', 'update_datetime', 'url', 'uuid', 'view_points', 'web_links'
 ])
 
 PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'provider', 'url', 'uuid'])
