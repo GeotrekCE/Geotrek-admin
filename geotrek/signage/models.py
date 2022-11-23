@@ -9,13 +9,13 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, TimeStampedModelMixin
-from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
 
 from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
+from geotrek.signage.managers import SignageGISManager
 
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
@@ -53,20 +53,6 @@ class SignageType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogr
         if pictogram_url:
             return pictogram_url
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
-
-
-class SignageGISManager(NoDeleteManager):
-    """ Override default typology mixin manager, and filter by type. """
-    def implantation_year_choices(self):
-        choices = self.get_queryset().existing().filter(implantation_year__isnull=False)\
-            .order_by('-implantation_year').distinct('implantation_year') \
-            .values_list('implantation_year', 'implantation_year')
-        return choices
-
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class Signage(MapEntityMixin, BaseInfrastructure):

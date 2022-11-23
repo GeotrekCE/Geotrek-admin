@@ -20,14 +20,8 @@ from paperclip.models import License as BaseLicense
 from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
+from .managers import AccessibilityAttachmentManager
 from .mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
-
-
-class AccessibilityAttachmentManager(models.Manager):
-    def attachments_for_object(self, obj):
-        object_type = ContentType.objects.get_for_model(obj)
-        return self.filter(content_type__pk=object_type.id,
-                           object_id=obj.id)
 
 
 def attachment_accessibility_upload(instance, filename):

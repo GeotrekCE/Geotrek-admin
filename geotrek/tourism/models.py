@@ -7,7 +7,6 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
-from django.db.models.query_utils import Q
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
@@ -16,20 +15,21 @@ from easy_thumbnails.files import get_thumbnailer
 from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
                                           PicturesMixin, PublishableMixin, TimeStampedModelMixin)
 from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import Topology
+from geotrek.tourism.managers import TouristicContentTypeFilteringManager, TouristicContentType1Manager, \
+    TouristicContentType2Manager, TouristicContentManager, TouristicEventManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.manager import MultilingualManager
+    pass
 else:
-    from django.db.models import Manager as MultilingualManager
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -179,52 +179,6 @@ class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
         return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
-class TouristicContentTypeFilteringManager(MultilingualManager):
-    def has_content_published_not_deleted_in_list(self, list_index, category=None, portals=None, language=None):
-        """ Retrieves content types for which there exists an event that is published and not deleted in list (type1 or type2)
-        """
-        i = list_index
-        q_total = Q()
-        qs = super().get_queryset().filter(in_list=i)
-        # Building following logic :
-        # return type1 if:
-        #            (contents1__portal__in==portals)
-        #          & (contents1__category==category)
-        #          & (contents1_published_fr | contents1_published_en)
-        #          & not(contents1_deleted)
-        #
-        # q_total  =      q_portal
-        #               & q_category
-        #               & q_lang
-        #               & q_deleted
-
-        q_portal = Q()
-        if portals:
-            portal_field_name = f"contents{i}__portal__in"
-            q_portal = Q(**{portal_field_name: portals})
-
-        q_category = Q()
-        if category:
-            category_field_name = f"contents{i}__category"
-            q_category = Q(**{category_field_name: category})
-
-        if language:
-            published_field_name = f"contents{i}__published_{language}"
-            q_lang = Q(**{published_field_name: True})
-        else:
-            q_lang = Q()
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                published_field_name = f"contents{i}__published_{lang}"
-                q_lang |= Q(**{published_field_name: True})
-
-        deleted_field_name = f"contents{i}__deleted"
-        q_deleted = Q(**{deleted_field_name: False})
-
-        q_total = q_portal & q_category & q_lang & q_deleted
-
-        return qs.filter(q_total).distinct()
-
-
 class TouristicContentType(OptionalPictogramMixin):
     objects = TouristicContentTypeFilteringManager()
     label = models.CharField(verbose_name=_("Label"), max_length=128)
@@ -240,16 +194,6 @@ class TouristicContentType(OptionalPictogramMixin):
 
     def __str__(self):
         return self.label
-
-
-class TouristicContentType1Manager(MultilingualManager):
-    def get_queryset(self):
-        return super().get_queryset().filter(in_list=1)
-
-
-class TouristicContentType2Manager(MultilingualManager):
-    def get_queryset(self):
-        return super().get_queryset().filter(in_list=2)
 
 
 class TouristicContentType1(TouristicContentType):
@@ -276,13 +220,6 @@ class TouristicContentType2(TouristicContentType):
         proxy = True
         verbose_name = _("Type2")
         verbose_name_plural = _("Second list types")
-
-
-class TouristicContentManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
@@ -406,13 +343,6 @@ class CancellationReason(TimeStampedModelMixin):
 
     def __str__(self):
         return self.label
-
-
-class TouristicEventManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().order_by('provider').exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
 
 
 class TouristicEventPlace(TimeStampedModelMixin):
