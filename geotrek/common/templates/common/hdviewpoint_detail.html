@@ -103,7 +103,7 @@
                     });
                     viewer.createLayer('osm', params.layer);
                     initAnnotations(viewer);
-                    $(".loader-wrapper").remove()
+
                     // Change default interactor options
                     const interactorOpts = viewer.interactor().options();
                     interactorOpts.zoomAnimation = {
@@ -122,6 +122,7 @@
                         top: 40
                       }
                     });
+                    $(".loader-wrapper").remove()
                   });
               });
             </script>

@@ -34,7 +34,7 @@ function setQuery(params) {
 var query = getQuery();
 
 $('#showLabels').prop('checked', query.labels !== 'false');
-if (query.lastannotation && query.clickmode !== 'brush') {
+if (query.lastannotation) {
     $('.annotationtype button').removeClass('lastused');
     $('.annotationtype button#' + query.lastannotation).addClass('lastused');
 }
@@ -58,9 +58,8 @@ function initAnnotations(map) {
         renderer: query.renderer ? (query.renderer === 'html' ? null : query.renderer) : undefined,
         annotations: query.renderer ? undefined : geo.listAnnotations(),
         showLabels: query.labels !== 'false',
-        clickToEdit: !query.clickmode || query.clickmode === 'edit'
+        clickToEdit: true
     });
-
 
     layer.geoOn(geo.event.mouseclick, mouseClickToStart);
     layer.geoOn(geo.event.annotation.mode, handleModeChange);
@@ -69,12 +68,10 @@ function initAnnotations(map) {
     layer.geoOn(geo.event.annotation.remove, handleAnnotationChange);
     layer.geoOn(geo.event.annotation.state, handleAnnotationChange);
 
-    let brushLayer;
-
     map.draw();
 
     if (query.lastused || query.active) {
-        if (query.active && query.clickmode !== 'brush') {
+        if (query.active) {
             layer.mode(query.active);
         } else {
             $('.annotationtype button').removeClass('lastused active');
@@ -86,10 +83,6 @@ function initAnnotations(map) {
         layer.geojson(initialGeoJSON, true);
     }
 
-    // if (query.clickmode === 'brush') {
-    //     setBrushMode();
-    // }
-
     annotationDebug.map = map;
     annotationDebug.layer = layer;
     annotationDebug.query = query;
@@ -100,7 +93,7 @@ function initAnnotations(map) {
      * @param {geo.event} evt geojs event.
      */
     function mouseClickToStart(evt) {
-        if (evt.handled || query.clickmode !== 'add') {
+        if (evt.handled) {
             return;
         }
         if (evt.buttonsDown.left) {
@@ -112,94 +105,6 @@ function initAnnotations(map) {
             select_button('.annotationtype button#' +
                 $('.annotationtype button.lastused').attr('next'));
         }
-    }
-
-    /**
-     * Handle a click or drag with a brush.
-     *
-     * @param {object} evt The event with the activity.
-     * */
-    let lastState;
-    function brushAction(evt) {
-        let source;
-        if (evt.event === geo.event.annotation.cursor_action) {
-            if (evt.operation && evt.operation !== 'union' && evt.operation !== 'difference') {
-                return;
-            }
-
-
-            if (lastState && lastState.stateId && lastState.stateId === evt.evt.state.stateId) {
-                const size = parseInt($('#brushsize').val());
-                source = brushLayer.toPolygonList();
-                const bbox1 = brushLayer.annotations()[0]._coordinates();
-                const bbox2 = lastState.bbox;
-                if (bbox1[0].x !== bbox2[0].x || bbox1[0].y !== bbox2[0].y) {
-                    const order = (bbox1[0].x - bbox2[0].x) * (bbox1[0].y - bbox2[0].y) < 0 ? 0 : 1;
-                    source.push([[
-                        [bbox1[order].x, bbox1[order].y],
-                        [bbox1[order + 2].x, bbox1[order + 2].y],
-                        [bbox2[order + 2].x, bbox2[order + 2].y],
-                        [bbox2[order].x, bbox2[order].y]
-                    ]]);
-                }
-            }
-            lastState = evt.evt.state;
-            lastState.bbox = brushLayer.annotations()[0]._coordinates();
-        } else {
-            lastState = null;
-        }
-        geo.util.polyops[evt.operation || 'union'](layer, source || brushLayer, { correspond: {}, keepAnnotations: 'exact', style: layer });
-    }
-
-    /**
-     * If the brush mode ends but we are supposed to be in brush mode, reset it.
-     */
-    var inUpdateBrushMode;
-    function updateBrushMode() {
-        if (query.clickmode !== 'brush') {
-            return;
-        }
-        if (!inUpdateBrushMode) {
-            inUpdateBrushMode = true;
-            window.setTimeout(() => {
-                setBrushMode();
-                inUpdateBrushMode = false;
-            }, 1);
-        }
-    }
-
-    /**
-     * If we are switching to brush mode, create an annotation that will be used
-     * and hook to annotation cursor events.  If switching away, remove such an
-     * annotation.
-     */
-    function setBrushMode(mode) {
-        if (brushLayer) {
-            brushLayer.mode(null);
-            brushLayer.removeAllAnnotations();
-        }
-        if (query.clickmode !== 'brush') {
-            return;
-        }
-        layer.mode(null);
-        if (!brushLayer) {
-            brushLayer = map.createLayer('annotation', {
-                renderer: query.renderer ? (query.renderer === 'html' ? null : query.renderer) : undefined,
-                showLabels: false
-            });
-            brushLayer.geoOn(geo.event.annotation.cursor_click, brushAction);
-            brushLayer.geoOn(geo.event.annotation.cursor_action, brushAction);
-            brushLayer.geoOn(geo.event.annotation.mode, updateBrushMode);
-            brushLayer.geoOn(geo.event.annotation.state, updateBrushMode);
-        }
-        annotationDebug.brushLayer = brushLayer;
-        const size = parseInt($('#brushsize').val());
-        console.log(size);
-        const annot = geo.registries.annotations['square'].func({ layer: layer });
-        brushLayer.addAnnotation(annot);
-        annot._coordinates([{ x: 0, y: 0 }, { x: size, y: 0 }, { x: size, y: size }, { y: size, x: 0 }]);
-        brushLayer.mode(brushLayer.modes.cursor, annot);
-        map.draw();
     }
 
     /**
@@ -220,31 +125,16 @@ function initAnnotations(map) {
         if (!param || value === query[param]) {
             return;
         }
-        switch (param) {
-            case 'labels':
-                layer.options('showLabels', '' + value !== 'false');
-                layer.draw();
-                break;
-            case 'clickmode':
-                layer.options('clickToEdit', value === 'edit');
-                layer.draw();
-                if (value === 'brush') {
-                    $('.annotationtype button').removeClass('lastused active');
-                    query.lastused = query.active ? query.active : query.lastused;
-                    query.active = undefined;
-                }
-                break;
+        if (param == 'labels') {
+            layer.options('showLabels', '' + value !== 'false');
+            layer.draw();
         }
         query[param] = value;
         if (value === '' || (ctl.attr('placeholder') &&
             value === ctl.attr('placeholder'))) {
             delete query[param];
         }
-
         setQuery(query);
-        if (['clickmode'].indexOf(param) >= 0) {
-            setBrushMode();
-        }
     }
 
     /**
@@ -283,13 +173,6 @@ function initAnnotations(map) {
      */
     function select_button(ctl) {
         ctl = $(ctl);
-        if (query.clickmode === 'brush') {
-            query.clickmode = 'edit';
-            layer.options('clickToEdit', true);
-            $('#clickmode').val(query.clickmode);
-            setQuery(query);
-            setBrushMode();
-        }
         var wasactive = ctl.hasClass('active'),
             id = ctl.attr('id');
         fromButtonSelect = true;
@@ -303,8 +186,6 @@ function initAnnotations(map) {
      * @param {geo.event} evt a geojs mode change event.
      */
     function handleModeChange(evt) {
-
-
         var mode = layer.mode();
         $('.annotationtype button').removeClass('active');
         if (mode) {
@@ -317,7 +198,7 @@ function initAnnotations(map) {
         query.lastused = query.active ? undefined : $('.annotationtype button.lastused').attr('id');
         setQuery(query);
 
-        if (!mode && !fromButtonSelect && query.clickmode !== 'brush') {
+        if (!mode && !fromButtonSelect) {
             layer.mode($('.annotationtype button.lastused').attr('id'));
         }
     }
@@ -339,18 +220,13 @@ function initAnnotations(map) {
                 return;
             }
             var id = entry.attr('annotation-id');
-
-
             if ($.inArray(id, ids) < 0) {
                 entry.remove();
                 return;
             }
             present.push(id);
-
-
             entry.find('.entry-name').text(layer.annotationById(id).name());
         });
-
 
         $.each(ids, function (idx, id) {
             if ($.inArray(id, present) >= 0) {
@@ -368,8 +244,6 @@ function initAnnotations(map) {
         $('#annotationheader').css(
             'display', $('#annotationlist .entry').length <= 1 ? 'none' : 'block');
         if (!fromGeojsonUpdate) {
-
-
             var geojson = layer.geojson();
             $('#geojson').val(geojson ? JSON.stringify(geojson, undefined, 2) : '');
             if (query.save) {
@@ -395,9 +269,6 @@ function initAnnotations(map) {
                 layer.mode(layer.modes.edit, annotation);
                 layer.draw();
                 break;
-            case 'edit':
-                show_edit_dialog(id);
-                break;
             case 'remove':
                 layer.removeAnnotation(annotation);
                 break;
@@ -410,75 +281,5 @@ function initAnnotations(map) {
                 fromButtonSelect = false;
                 break;
         }
-    }
-
-    /**
-     * Show the edit dialog for a particular annotation.
-     *
-     * @param {number} id the annotation id to edit.
-     */
-    function show_edit_dialog(id) {
-        var annotation = layer.annotationById(id),
-            type = annotation.type(),
-            typeMatch = new RegExp('(^| )(' + type + '|all)( |$)'),
-            opt = annotation.options(),
-            dlg = $('#editdialog');
-
-        $('#edit-validation-error', dlg).text('');
-        dlg.attr('annotation-id', id);
-        dlg.attr('annotation-type', type);
-        $('[option="name"]', dlg).val(annotation.name());
-        $('[option="label"]', dlg).val(annotation.label(undefined, true));
-        $('[option="description"]', dlg).val(annotation.description());
-
-
-        $('.form-group[annotation-types]').each(function () {
-            var ctl = $(this),
-                key = $('[option]', ctl).attr('option'),
-                format = $('[option]', ctl).attr('format'),
-                value;
-            if (!ctl.attr('annotation-types').match(typeMatch)) {
-
-
-                ctl.hide();
-                return;
-            }
-            ctl.show();
-            switch ($('[option]', ctl).attr('optiontype')) {
-                case 'option':
-                    value = opt[key];
-                    break;
-                case 'label':
-                    value = (opt.labelStyle || {})[key];
-                    break;
-                default:
-                    value = opt.style[key];
-                    break;
-            }
-            switch (format) {
-                case 'angle':
-                    if (value !== undefined && value !== null && value !== '') {
-                        value = '' + +(+value * 180.0 / Math.PI).toFixed(4) + ' deg';
-                    }
-                    break;
-                case 'color':
-
-
-                    value = geo.util.convertColorToHex(value || { r: 0, g: 0, b: 0 }, 'needed');
-                    break;
-                case 'coordinate2':
-                    if (value !== undefined && value !== null && value !== '') {
-                        value = '' + value.x + ', ' + value.y;
-                    }
-            }
-            if ((value === undefined || value === '' || value === null) && $('[option]', ctl).is('select')) {
-                value = $('[option] option', ctl).eq(0).val();
-            }
-            $('[option]', ctl).val(value === undefined ? '' : '' + value);
-        });
-        dlg.one('shown.bs.modal', function () {
-            $('[option="name"]', dlg).focus();
-        });
-        dlg.modal();
     }
 }
