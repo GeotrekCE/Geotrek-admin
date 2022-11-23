@@ -874,3 +874,19 @@ class MakeMarkingDescriptionTests(SimpleTestCase):
             'libelleIt': 'it-marked itinerary',
         }
         self.assertDictEqual(description, expected)
+
+
+class GpxToGeomTests(SimpleTestCase):
+
+    def test_gpx_with_waypoint_can_be_converted(self):
+        with open('geotrek/trekking/tests/data/apidae_trek_parser/apidae_test_trek.gpx', 'r') as f:
+            gpx = f.read()
+
+        geom = ApidaeTrekParser._get_geom_from_gpx(bytes(gpx, 'utf-8'))
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 13)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)

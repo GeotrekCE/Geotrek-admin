@@ -371,16 +371,7 @@ class ApidaeTrekParser(ApidaeParser):
         plan = self._find_gpx_plan_in_multimedia_items(val)
         gpx = self._fetch_gpx_from_url(plan)
 
-        # FIXME: is there another way than the temporary file? It seems not. `DataSource` really expects a filename.
-        with NamedTemporaryFile(mode='w+b', dir='/opt/geotrek-admin/var/tmp') as ntf:
-            ntf.write(gpx)
-            ntf.flush()
-
-            ds = DataSource(ntf.name)
-            track_layer = self._get_tracks_layer(ds)
-            geom = track_layer[0].geom[0].geos
-            geom.transform(settings.SRID)
-            return geom
+        return ApidaeTrekParser._get_geom_from_gpx(gpx)
 
     def filter_labels(self, src, val):
         # TODO: unwrap val into typologies and environnements for clarity
@@ -521,6 +512,20 @@ class ApidaeTrekParser(ApidaeParser):
                 otc.order = order
                 otc.save()
                 order += 1
+
+    @staticmethod
+    def _get_geom_from_gpx(data):
+        """Given GPX data as bytes it returns a geom."""
+        # FIXME: is there another way than the temporary file? It seems not. `DataSource` really expects a filename.
+        with NamedTemporaryFile(mode='w+b', dir='/opt/geotrek-admin/var/tmp') as ntf:
+            ntf.write(data)
+            ntf.flush()
+
+            ds = DataSource(ntf.name)
+            track_layer = ApidaeTrekParser._get_tracks_layer(ds)
+            geom = track_layer[0].geom[0].geos
+            geom.transform(settings.SRID)
+            return geom
 
 
 class ApidaeReferenceElementParser(Parser):
