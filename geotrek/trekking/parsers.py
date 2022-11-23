@@ -347,11 +347,11 @@ class ApidaeTrekParser(ApidaeParser):
         return response.content
 
     @staticmethod
-    def _get_tracks_layer(datasource):
+    def _get_layer(datasource, layer_name):
         for layer in datasource:
-            if layer.name == 'tracks':
+            if layer.name == layer_name:
                 return layer
-        raise RowImportError("APIDAE Trek GPX map does not have a 'tracks' layer")
+        return None
 
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
@@ -520,12 +520,28 @@ class ApidaeTrekParser(ApidaeParser):
         with NamedTemporaryFile(mode='w+b', dir='/opt/geotrek-admin/var/tmp') as ntf:
             ntf.write(data)
             ntf.flush()
-
             ds = DataSource(ntf.name)
-            track_layer = ApidaeTrekParser._get_tracks_layer(ds)
-            geom = track_layer[0].geom[0].geos
-            geom.transform(settings.SRID)
-            return geom
+            for layer_name in ('tracks', 'routes'):
+                layer = ApidaeTrekParser._get_layer(ds, layer_name)
+                if not layer:
+                    continue
+                geom = ApidaeTrekParser._maybe_get_linestring_from_layer(layer)
+                if geom:
+                    break
+            geos = geom.geos
+            geos.transform(settings.SRID)
+            return geos
+
+    @staticmethod
+    def _maybe_get_linestring_from_layer(layer):
+        if layer.num_feat == 0:
+            return None
+        first_entity = layer[0]
+        if first_entity.geom.geom_type == 'MultiLineString':
+            geom = first_entity.geom[0]
+        else:
+            geom = first_entity.geom
+        return geom
 
 
 class ApidaeReferenceElementParser(Parser):
