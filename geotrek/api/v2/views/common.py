@@ -1,7 +1,10 @@
 from hashlib import md5
 
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
+from django.db.models import F
 from django.shortcuts import get_object_or_404
+from django.utils.translation import activate
 
 from rest_framework.response import Response
 
@@ -106,11 +109,15 @@ class OrganismViewSet(api_viewsets.GeotrekViewSet):
 
 class FileTypeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.FileTypeSerializer
-    queryset = common_models.FileType.objects.select_related('structure')
+    queryset = common_models.FileType.objects.all()
 
 
 class HDViewPointViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.HDViewPointSerializer
-    queryset = common_models.HDViewPoint.objects.all()  # TODO .select_related('structure')
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TrekAndSitRelatedPublishedNotDeletedByPortalFilter,)
-    queryset = common_models.FileType.objects.all()
+
+    def get_queryset(self):
+        activate(self.request.GET.get('language'))
+        return common_models.HDViewPoint.objects \
+            .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+            .order_by('title')  # Required for reliable pagination

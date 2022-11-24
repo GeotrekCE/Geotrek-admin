@@ -1,8 +1,10 @@
 import datetime
+import json
 from unittest import skipIf
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
                                      Point, Polygon)
 from django.contrib.gis.geos.collections import GeometryCollection
@@ -252,6 +254,11 @@ SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'label', 'structure'
 ])
 
+HDVIEWPOINT_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'annotations', 'author', 'create_datetime', 'geometry', 'legend',
+    'license', 'picture_tiles_url', 'site', 'title', 'trek', 'update_datetime', 'uuid'
+])
+
 
 class BaseApiTest(TestCase):
     """ Base TestCase for all API profiles """
@@ -428,6 +435,10 @@ class BaseApiTest(TestCase):
         cls.site2.themes.add(cls.theme3)
         cls.label_3 = common_factory.LabelFactory()
         cls.site2.labels.add(cls.label_3)
+        cls.hdviewpoint_trek = common_factory.HDViewPointFactory(
+            content_type=ContentType.objects.get_for_model(trek_models.Trek),
+            object_id=cls.treks[0].pk
+        )
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -756,6 +767,12 @@ class BaseApiTest(TestCase):
 
     def get_sector_detail(self, id_sector, params=None):
         return self.client.get(reverse('apiv2:outdoor-sector-detail', args=(id_sector,)), params)
+
+    def get_hdviewpoint_list(self, params=None):
+        return self.client.get(reverse('apiv2:hdviewpoint-list'), params)
+
+    def get_hdviewpoint_detail(self, id_hdviewpoint, params=None):
+        return self.client.get(reverse('apiv2:hdviewpoint-detail', args=(id_hdviewpoint,)), params)
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
@@ -1307,6 +1324,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_number_elems_response(
             self.get_sector_list(),
             outdoor_models.Sector
+        )
+
+    def test_hdviewpoint_detail(self):
+        self.check_structure_response(
+            self.get_hdviewpoint_detail(self.hdviewpoint_trek.pk),
+            HDVIEWPOINT_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_hdviewpoint_list(self):
+        self.check_number_elems_response(
+            self.get_hdviewpoint_list(),
+            common_models.HDViewPoint
         )
 
     def test_route_detail(self):
@@ -2191,6 +2220,19 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'trek': 9999
         })
         self.assertEqual(response.status_code, 404)
+
+    def test_hdviewpoint_detail_content(self):
+        response = self.get_hdviewpoint_detail(self.hdviewpoint_trek.pk)
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(
+            json_response.get('picture_tiles_url'),
+            f"http://testserver/api/hdviewpoint/drf/hdviewpoints/{self.hdviewpoint_trek.pk}/tiles/z/x/y.png"
+        )
+        json.dumps(json_response.get('annotations'))
+        self.assertIsNone(json_response.get('site'))
+        self.assertEquals(json_response.get('trek').get('uuid'), str(self.treks[0].uuid))
+        self.assertEquals(json_response.get('trek').get('id'), self.treks[0].id)
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):
