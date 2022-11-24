@@ -345,6 +345,10 @@ class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
     model = HDViewPoint
     queryset = HDViewPoint.objects.all().select_related('content_type', 'license')
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
@@ -354,6 +358,10 @@ class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
 class HDViewPointCreate(mapentity_views.MapEntityCreate):
     model = HDViewPoint
     form_class = HDViewPointForm
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -366,9 +374,17 @@ class HDViewPointUpdate(mapentity_views.MapEntityUpdate):
     queryset = HDViewPoint.objects.all()
     form_class = HDViewPointForm
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
 
 class HDViewPointDelete(mapentity_views.MapEntityDelete):
     model = HDViewPoint
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 
 class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):

@@ -320,7 +320,8 @@ class HDViewPoint(TimeStampedModelMixin):
     def get_absolute_url(self):
         return self.full_url
 
-    def get_add_url(self):
+    @classmethod
+    def get_add_url(cls):
         return reverse('common:hdviewpoint_add')
 
     @classmethod

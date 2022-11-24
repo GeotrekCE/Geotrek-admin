@@ -7,6 +7,8 @@ from unittest import mock
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.geos import Point
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -15,7 +17,7 @@ from mapentity.tests.factories import UserFactory, SuperUserFactory
 from mapentity.views.generic import MapEntityList
 
 from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.models import FileType
+from geotrek.common.models import FileType, HDViewPoint
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import launch_sync_rando, import_datas
 from geotrek.common.tests.factories import TargetPortalFactory
@@ -389,3 +391,44 @@ class SyncRandoViewTest(TestCase):
     def tearDown(self):
         if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando')):
             shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando'))
+
+
+class HDViewPointViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.su = SuperUserFactory.create()
+        cls.trek = TrekFactory()
+
+    def setUp(self):
+        self.client.force_login(user=self.su)
+
+    def test_creation_view(self):
+        ContentType.objects.clear_cache()
+        response = self.client.get('%s?object_id=%s&content_type=%s' % (HDViewPoint.get_add_url(),
+                                                                        self.trek.pk,
+                                                                        ContentType.objects.get_for_model(Trek).pk
+                                                                        )
+                                   )
+        self.assertEqual(response.status_code, 200)
+        img = SimpleUploadedFile("an_uploaded_image.png", b"file_content", content_type="image/x-png")
+        data = {
+            'picture': img,
+            'title': "Un titre",
+            'author': "Someone",
+            'legend': "Something",
+            'geom': "SRID=2154;POINT(0 0)"
+        }
+        response = self.client.post('%s?object_id=%s&content_type=%s' % (HDViewPoint.get_add_url(),
+                                                                         self.trek.pk,
+                                                                         ContentType.objects.get_for_model(Trek).pk
+                                                                         ),
+                                    data)
+        vp = HDViewPoint.objects.first()
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(self.trek, vp.content_object)
+        self.assertIn("an_uploaded_image", vp.picture.name)
+        self.assertEqual(vp.title, "Un titre")
+        self.assertEqual(vp.author, "Someone")
+        self.assertEqual(vp.legend, "Something")
+        self.assertEqual(vp.geom, Point((0, 0), srid=2154))
+        # TODO assert annotations
