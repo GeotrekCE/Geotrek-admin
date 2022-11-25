@@ -285,7 +285,7 @@ class ApidaeTrekParser(ApidaeParser):
         'advised_parking': 'localisation.adresse.adresse1',
         'departure': 'localisation.adresse.commune.nom',
         'access': 'localisation.geolocalisation.complement',
-        'difficulty': 'prestations.typesClientele'
+        'difficulty': 'prestations.typesClientele',
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
