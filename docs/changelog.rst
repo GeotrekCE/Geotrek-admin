@@ -15,6 +15,10 @@ CHANGELOG
 
 - Separate application and API v2 cache, ability to purge them with command or via admin
 
+**Bug fixes**
+
+- Check geom is valid before save
+
 
 2.91.1     (2022-11-18)
 -----------------------
