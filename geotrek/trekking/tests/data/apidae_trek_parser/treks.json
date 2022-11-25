@@ -6,6 +6,11 @@
       "informationsEquipement": {
         "activites": [
           {
+            "id": 3184,
+            "libelleFr": "Sports pédestres",
+            "libelleEn": "Pedestrian sports"
+          },
+          {
             "id": 3333,
             "libelleFr": "Itinéraire de randonnée pédestre",
             "libelleEn": "Hiking itinerary"

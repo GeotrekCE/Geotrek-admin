@@ -293,6 +293,7 @@ class ApidaeTrekParser(ApidaeParser):
         'themes': 'presentation.typologiesPromoSitra.*',
         'labels': ['presentation.typologiesPromoSitra.*', 'localisation.environnements.*'],
         'related_treks': 'liens.liensObjetsTouristiquesTypes',
+        'networks': 'informationsEquipement.activites',
     }
     natural_keys = {
         'source': 'name',
@@ -301,6 +302,7 @@ class ApidaeTrekParser(ApidaeParser):
         'difficulty': 'difficulty',
         'related_treks': 'eid',
         'practice': 'name',
+        'networks': 'network',
     }
     field_options = {
         'source': {'create': True},
@@ -313,6 +315,7 @@ class ApidaeTrekParser(ApidaeParser):
         'difficulty': {'create': True},
         'related_treks': {'create': True},
         'practice': {'create': True},
+        'networks': {'create': True},
     }
     non_fields = {}
 
@@ -497,6 +500,19 @@ class ApidaeTrekParser(ApidaeParser):
             dst='practice',
             src=src,
             val=ApidaeTrekParser._get_practice_name_from_activities(activities_ids)
+        )
+
+    def filter_networks(self, src, val):
+        activities = val
+        default_translation_fieldname = f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}'
+        filtered_activities = []
+        for activity in activities:
+            if default_translation_fieldname in activity:
+                filtered_activities.append(activity[default_translation_fieldname])
+        return self.apply_filter(
+            dst='networks',
+            src=src,
+            val=filtered_activities
         )
 
     def _finalize_related_treks_association(self):

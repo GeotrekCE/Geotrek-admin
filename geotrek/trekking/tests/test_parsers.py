@@ -660,6 +660,11 @@ class ApidaeTrekParserTests(TestCase):
         self.assertTrue(trek.practice is not None)
         self.assertEqual(trek.practice.name, 'Pédestre')
 
+        self.assertEqual(trek.networks.count(), 2)
+        networks = trek.networks.all()
+        self.assertIn('Hiking itinerary', [n.network for n in networks])
+        self.assertIn('Pedestrian sports', [n.network for n in networks])
+
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
