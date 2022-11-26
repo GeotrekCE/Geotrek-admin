@@ -12,7 +12,7 @@ from geotrek.common.parsers import (
     ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeParser
 )
 from geotrek.common.utils.translation import get_translated_fields
-from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel
+from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork
 
 
 class DurationParserMixin:
@@ -225,6 +225,23 @@ class GeotrekPOIParser(GeotrekParser):
 TYPOLOGIES_SITRA_IDS_AS_LABELS = [1599, 1676, 4639, 4819, 5022, 4971, 3845, 6566, 6049, 1582, 5538, 6825, 6608, 1602]
 TYPOLOGIES_SITRA_IDS_AS_THEMES = [6155, 6156, 6368, 6153, 6154, 6157, 6163, 6158, 6679, 6159, 6160, 6161]
 ENVIRONNEMENTS_IDS_AS_LABELS = [135, 4630, 171, 189, 186, 6238, 3743, 147, 149, 156, 153, 187, 195, 6464, 4006, 169, 3978, 6087]
+APIDAE_ACTIVITIES_IDS_AS_NETWORKS = [
+    3333,  # Itinéraire de randonnée pédestre
+    3331,  # Parcours / sentier thématique
+    5324,  # Parcours de marche nordique
+    3283,  # Itinéraire cyclotourisme
+    5447,  # Itinéraire de Vélo à Assistance Electrique
+    3280,  # Véloroute et voie verte
+    3284,  # Itinéraire VTT
+    3281,  # Piste de descente VTT
+    5446,  # Itinéraire enduro
+    4174,  # Itinéraire Fat Bike
+    6168,  # Itinéraire fauteuil tout terrain
+    6224,  # Itinéraire gravel bike
+    3313,  # Itinéraire de randonnée équestre
+    4201,  # Itinéraire de Trail
+    6225,  # Itinéraire de VTT à Assistance Électrique
+]
 TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS = [
     587,  # Niveau vert - Très facile
     588,  # Niveau bleu - Modéré
@@ -697,12 +714,12 @@ class ApidaeTrekDifficultyParser(ApidaeReferenceElementParser):
     name_field = 'difficulty'
 
 
+class ApidaeTrekNetworkParser(ApidaeReferenceElementParser):
+    model = TrekNetwork
+    element_reference_ids = APIDAE_ACTIVITIES_IDS_AS_NETWORKS
+    name_field = 'network'
+
 # TODO
 # class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
 #     model = Accessibility
-#     element_reference_ids = None
-#
-#
-# class ApidaeTrekNetworkParser(ApidaeReferenceElementParser):
-#     model = TrekNetwork
 #     element_reference_ids = None
