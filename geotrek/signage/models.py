@@ -168,7 +168,7 @@ class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
         return self.label
 
 
-class Blade(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin):
+class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)

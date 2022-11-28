@@ -6,7 +6,6 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
 from geotrek.common.functions import GeometryType, Buffer, Area
-from geotrek.common.mixins.views import DuplicateMixin
 from geotrek.sensitivity import models as sensitivity_models
 from ..filters import GeotrekQueryParamsFilter, GeotrekQueryParamsDimensionFilter, GeotrekInBBoxFilter, GeotrekSensitiveAreaFilter, NearbyContentFilter, UpdateOrCreateDateFilter
 
