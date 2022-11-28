@@ -20,7 +20,7 @@ from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import FileType, HDViewPoint
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import launch_sync_rando, import_datas
-from geotrek.common.tests.factories import TargetPortalFactory
+from geotrek.common.tests.factories import LicenseFactory, TargetPortalFactory
 from geotrek.core.models import Path
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
@@ -398,12 +398,14 @@ class HDViewPointViewTest(TestCase):
     def setUpTestData(cls):
         cls.su = SuperUserFactory.create()
         cls.trek = TrekFactory()
+        cls.license = LicenseFactory()
 
     def setUp(self):
         self.client.force_login(user=self.su)
 
-    def test_creation_view(self):
-        ContentType.objects.clear_cache()
+    def test_crud_view(self):
+        # Test create view
+        ContentType.objects.clear_cache()  # Sometimes cache can contain bad values
         response = self.client.get('%s?object_id=%s&content_type=%s' % (HDViewPoint.get_add_url(),
                                                                         self.trek.pk,
                                                                         ContentType.objects.get_for_model(Trek).pk
@@ -416,7 +418,8 @@ class HDViewPointViewTest(TestCase):
             'title': "Un titre",
             'author': "Someone",
             'legend': "Something",
-            'geom': "SRID=2154;POINT(0 0)"
+            'geom': "SRID=2154;POINT(0 0)",
+            "license": self.license.pk
         }
         response = self.client.post('%s?object_id=%s&content_type=%s' % (HDViewPoint.get_add_url(),
                                                                          self.trek.pk,
@@ -430,5 +433,29 @@ class HDViewPointViewTest(TestCase):
         self.assertEqual(vp.title, "Un titre")
         self.assertEqual(vp.author, "Someone")
         self.assertEqual(vp.legend, "Something")
+        self.assertEqual(vp.license, self.license)
         self.assertEqual(vp.geom, Point((0, 0), srid=2154))
         # TODO assert annotations
+
+        # Test Update view
+        response = self.client.get(vp.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        img = SimpleUploadedFile("an_uploaded_image.png", b"file_content", content_type="image/x-png")
+        data = {
+            'picture': img,
+            'title': "Un titre",
+            'author': "Someone",
+            'legend': "Something else",
+            'geom': "SRID=2154;POINT(0 0)"
+        }
+        response = self.client.post(vp.get_update_url(), data)
+        self.assertRedirects(response, f"/hdviewpoint/{vp.pk}", status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+        vp = HDViewPoint.objects.first()
+        self.assertEqual(vp.legend, "Something else")
+        self.assertEqual(vp.license, None)
+
+        # Test delete view
+        vp = HDViewPoint.objects.first()
+        response = self.client.post(vp.get_delete_url(), {}, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(HDViewPoint.objects.count(), 0)
