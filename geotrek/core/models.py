@@ -19,7 +19,6 @@ from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.functions import Length
 from geotrek.core.managers import PathManager, PathInvisibleManager, TopologyManager, PathAggregationManager, \
     TrailManager
 from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,

@@ -8,7 +8,7 @@ from PIL.Image import DecompressionBombError
 from django.conf import settings
 from django.core.mail import mail_managers
 from django.db import models
-from django.db.models import Q,  Max, Count
+from django.db.models import Q, Max, Count
 
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
