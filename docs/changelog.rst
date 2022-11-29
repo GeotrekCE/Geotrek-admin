@@ -10,6 +10,7 @@ CHANGELOG
 - Cache API v2 Detail endpoints and themes list endpoint
 - Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.
 - Zoning informations are now cached until instance or zoning is updated.
+- Show more decimal for coordinates in signage sql view
 
 **New feature**
 
