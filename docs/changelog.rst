@@ -5,7 +5,7 @@ CHANGELOG
 2.91.1+dev (XXXX-XX-XX)
 -----------------------
 
-**Improvments**
+**Improvements**
 
 - Cache API v2 Detail endpoints and themes list endpoint
 - Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.
@@ -18,6 +18,7 @@ CHANGELOG
 **Bug fixes**
 
 - Check geom is valid before save
+- Fix old migration script of Topology.geom (actually causes Django to falsely detect model changes not yet with a migration in NDS mode)
 
 
 2.91.1     (2022-11-18)
