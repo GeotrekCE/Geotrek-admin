@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.91.1+dev (XXXX-XX-XX)
+2.92.0     (2022-11-29)
 -----------------------
 
 **Improvements**
@@ -21,6 +21,8 @@ CHANGELOG
 - Check geom is valid before save
 - Fix old migration script of Topology.geom (actually causes Django to falsely detect model changes not yet with a migration in NDS mode)
 - Check that the Spatial Reference Identifier (SRID) unit is in meters before launching application (was during migration)
+- Fix filter_type1 and filter_type2 for EspritParcParser when val is a list
+- Fix "'NoneType' object is not iterable" when responseData is null for EspritParcParser
 
 **Documentation**
 
