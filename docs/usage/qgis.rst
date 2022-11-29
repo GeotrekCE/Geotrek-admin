@@ -43,19 +43,19 @@ Importer une vue SQL sous forme de couche
 * Dans l'Explorateur > PostgreSQL > Ouvrir la connexion précédemment créé > Schéma public
 * Ajouter les vues : Clic droit sur l'objet > Ajouter la couche au projet
 * Correspondance couches <> vues
-  * Sentiers <> `v_trails`
-  * Aménagements <> `v_infrastructures`
-  * Signalétiques <> `v_signages`
-  * Interventions <> `v_interventions`
-  * Chantiers <> `v_projects`
-  * Itinéraires <> `v_treks`
-  * POI's <> `v_pois`
-  * Contenus touristiques <> `v_touristiccontents`
-  * Évènements touristiques <> `v_touristicevents`
-  * Signalement <> `v_reports`
-  * Zones sensibles <> `v_sensitivearea_qgis`
-  * Zones <> `v_districts`
-  * Communes <> `v_cities`
+    * Sentiers <> `v_trails`
+    * Aménagements <> `v_infrastructures`
+    * Signalétiques <> `v_signages`
+    * Interventions <> `v_interventions`
+    * Chantiers <> `v_projects`
+    * Itinéraires <> `v_treks`
+    * POI's <> `v_pois`
+    * Contenus touristiques <> `v_touristiccontents`
+    * Évènements touristiques <> `v_touristicevents`
+    * Signalement <> `v_reports`
+    * Zones sensibles <> `v_sensitivearea_qgis`
+    * Zones <> `v_districts`
+    * Communes <> `v_cities`
 * Couches supplémentaires (dépend des projets)
   * Sites outdoor <> `v_outdoor_sites`
   * Parcours outdoor <> `v_outdoor_courses`
