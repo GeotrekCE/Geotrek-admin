@@ -298,6 +298,9 @@ class HDViewPoint(TimeStampedModelMixin):
     class Meta:
         verbose_name = _("HD View")
         verbose_name_plural = _("HD Views")
+        permissions = (
+            ("read_hdviewpoint", "Can read hd view point"),
+        )
 
     def __str__(self):
         return self.title
@@ -364,15 +367,13 @@ class HDViewPoint(TimeStampedModelMixin):
     @classmethod
     def get_permission_codename(cls, entity_kind):
         operations = {
-            'ENTITY_CREATE': 'add',
-            'ENTITY_UPDATE': 'change',
-            'ENfTITY_UPDATE_GEOM': 'change_geom',
-            'ENTITY_DELETE': 'delete',
-            'ENTITY_DETAIL': 'read',
-            'ENTITY_LAYER': 'read',
-            # ENTITY_LIST: 'read', # TODO
-            'ENTITY_DATATABLE_LIST': 'read',
-            'ENTITY_MARKUP': 'read',
+            'update': 'change',
+            'update_geom': 'change_geom',
+            'detail': 'read',
+            'layer': 'read',
+            'list': 'read',
+            '-drf-list': 'read',
+            'markup': 'read',
         }
         perm = operations.get(entity_kind, entity_kind)
         opts = cls._meta

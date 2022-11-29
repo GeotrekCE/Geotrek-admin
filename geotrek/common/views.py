@@ -351,7 +351,7 @@ class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context['can_edit'] = self.get_object().content_object.same_structure(self.request.user)
         return context
 
 
