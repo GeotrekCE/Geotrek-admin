@@ -1,5 +1,7 @@
+from datetime import date, timedelta
 import json
 from collections import defaultdict
+import re
 from tempfile import NamedTemporaryFile
 
 from django.conf import settings
@@ -260,7 +262,7 @@ TREK_NO_MARKING_DESCRIPTION = {
 }
 
 
-class ApidaeTrekParser(ApidaeParser):
+class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
     model = Trek
     eid = 'eid'
     separator = None
@@ -334,7 +336,9 @@ class ApidaeTrekParser(ApidaeParser):
         'practice': {'create': True},
         'networks': {'create': True},
     }
-    non_fields = {}
+    non_fields = {
+        'attachments': 'illustrations'
+    }
 
     # Relevant default mapping considering practices in trekking data fixture.
     # The practice key must be the name in the default language on your instance.
@@ -532,6 +536,25 @@ class ApidaeTrekParser(ApidaeParser):
             val=filtered_activities
         )
 
+    def filter_attachments(self, src, val):
+        translation_src = f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}'
+        illustrations = val
+        rv = []
+        for illustration in illustrations:
+            files_metadata_list = illustration['traductionFichiers']
+            if not ApidaeTrekParser._is_still_publishable_tomorrow(illustration) or not files_metadata_list:
+                continue
+            first_file_metadata = files_metadata_list[0]
+            rv.append(
+                (
+                    first_file_metadata['url'],
+                    illustration['legende'][translation_src],
+                    illustration['copyright'][translation_src],
+                    illustration['nom'][translation_src],
+                )
+            )
+        return rv
+
     def _finalize_related_treks_association(self):
         for parent_id, children_eids in self._related_treks_mapping.items():
             parent_trek = Trek.objects.get(pk=parent_id)
@@ -650,6 +673,24 @@ class ApidaeTrekParser(ApidaeParser):
             if practice_name:
                 break
         return practice_name
+
+    @staticmethod
+    def _is_still_publishable_tomorrow(illustration):
+        # The illustration is still publishable tomorrow if tomorrow is strictly before the limit date.
+        # This is to ensure the next import will always occur before the time part of the limit date.
+        return ApidaeTrekParser._is_still_publishable_on(illustration, date.today() + timedelta(days=1))
+
+    @staticmethod
+    def _is_still_publishable_on(illustration, a_date):
+        max_datetime_str = illustration.get('dateLimiteDePublication')
+        if not max_datetime_str:
+            return True
+        # Regexp parsing because Python does not handle timezone with no colon,
+        # and because we don't know when the import is run we drop the time part.
+        max_date_str = re.match(r'(\d{4}-\d{2}-\d{2})', max_datetime_str).group(0)
+        max_date = date.fromisoformat(max_date_str)
+        # Note this exludes the limit date.
+        return max_date > a_date
 
 
 class ApidaeReferenceElementParser(Parser):

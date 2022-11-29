@@ -1,3 +1,4 @@
+from copy import copy
 import json
 import os
 from io import StringIO
@@ -113,6 +114,9 @@ WKT = (
     b'356566.6531 6689904.7406, 356712.9721 6689804.1463, 356703.8271 6689703.5520, 356621.5227 6689639.5374, '
     b'356612.3778 6689511.5083, 356447.7689 6689502.3634)'
 )
+
+# return # Produce a small red dot
+IMG_FILE = b'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
 
 
 class TrekParserTests(TestCase):
@@ -597,10 +601,14 @@ class ApidaeTrekParserTests(TestCase):
                 from urllib.parse import urlparse
                 parsed_url = urlparse(url)
                 url_path = parsed_url.path
-                filename = os.path.join('geotrek/trekking/tests/data/apidae_trek_parser', url_path.lstrip('/'))
-                with open(filename, 'r') as f:
-                    gpx = f.read()
-                rv.content = bytes(gpx, 'utf-8')
+                extension = url_path.split('.')[1]
+                if extension == 'jpg':
+                    rv.content = copy(IMG_FILE)
+                elif extension == 'gpx':
+                    filename = os.path.join('geotrek/trekking/tests/data/apidae_trek_parser', url_path.lstrip('/'))
+                    with open(filename, 'r') as f:
+                        gpx = f.read()
+                    rv.content = bytes(gpx, 'utf-8')
             return rv
 
         return dummy_get
@@ -664,6 +672,19 @@ class ApidaeTrekParserTests(TestCase):
         networks = trek.networks.all()
         self.assertIn('Hiking itinerary', [n.network for n in networks])
         self.assertIn('Pedestrian sports', [n.network for n in networks])
+
+        from geotrek.common.models import Attachment
+        self.assertEqual(Attachment.objects.count(), 1)
+        photo = Attachment.objects.first()
+        self.assertEqual(photo.author, 'The author of the picture')
+        self.assertEqual(photo.legend, 'The legend of the picture')
+        self.assertEqual(photo.attachment_file.size, len(IMG_FILE))
+        self.assertEqual(photo.title, 'The title of the picture')
+
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks_updated.json')
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Attachment.objects.count(), 0)
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
@@ -944,3 +965,24 @@ class GetPracticeNameFromActivities(SimpleTestCase):
             ]
         )
         self.assertEqual(practice_name, 'Vélo')
+
+
+class IsStillPublishableOn(SimpleTestCase):
+
+    def test_it_returns_true(self):
+        from datetime import date
+        illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
+        a_date_before_that = date.fromisoformat('2020-03-10')
+        self.assertTrue(ApidaeTrekParser._is_still_publishable_on(illustration, a_date_before_that))
+
+    def test_it_returns_false(self):
+        from datetime import date
+        illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
+        a_date_after_that = date.fromisoformat('2020-08-10')
+        self.assertFalse(ApidaeTrekParser._is_still_publishable_on(illustration, a_date_after_that))
+
+    def test_it_considers_date_limite_is_not_included(self):
+        from datetime import date
+        illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
+        that_same_date = date.fromisoformat('2020-06-28')
+        self.assertFalse(ApidaeTrekParser._is_still_publishable_on(illustration, that_same_date))

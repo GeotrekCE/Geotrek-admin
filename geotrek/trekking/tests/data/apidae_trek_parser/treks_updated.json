@@ -72,7 +72,8 @@
             {
               "url": "https://example.net/a_picture.jpg"
             }
-          ]
+          ],
+          "dateLimiteDePublication": "2013-02-17T00:00:00.000+0000"
         },
         {
           "type": "IMAGE",
