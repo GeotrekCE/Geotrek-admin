@@ -655,7 +655,7 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentMixin, Parser):
         dst = []
         if val:
             if isinstance(val, str):
-                val = set(val)
+                val = [val]
             for subval in val:
                 try:
                     dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=subval))
@@ -669,13 +669,13 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentMixin, Parser):
         dst = []
         if val:
             if isinstance(val, str):
-                val = set(val)
+                val = [val]
             for subval in val:
                 try:
                     dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=subval))
                 except TouristicContentType2.DoesNotExist:
                     self.add_warning(
-                        _("Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                        _("Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
                             subval=subval, cat=self.obj.category.label))
         return dst
 
