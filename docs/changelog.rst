@@ -19,6 +19,7 @@ CHANGELOG
 
 - Check geom is valid before save
 - Fix old migration script of Topology.geom (actually causes Django to falsely detect model changes not yet with a migration in NDS mode)
+- Check that the Spatial Reference Identifier (SRID) unit is in meters before launching application (was during migration)
 
 
 2.91.1     (2022-11-18)
