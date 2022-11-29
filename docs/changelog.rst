@@ -21,6 +21,10 @@ CHANGELOG
 - Fix old migration script of Topology.geom (actually causes Django to falsely detect model changes not yet with a migration in NDS mode)
 - Check that the Spatial Reference Identifier (SRID) unit is in meters before launching application (was during migration)
 
+**Documentation**
+
+- Fix parameter name ``MAIL_MANAGERS`` in documentation
+
 
 2.91.1     (2022-11-18)
 -----------------------

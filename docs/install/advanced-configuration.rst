@@ -48,7 +48,7 @@ Geotrek-admin will send emails:
 * to managers when a feedback report is created
 
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
-recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
 
@@ -2869,10 +2869,10 @@ If false, it forbid to delete a path when at least one topology is linked to thi
 
     ALERT_DRAFT = False
 
-If True, it sends a message to managers (MAIL_MANAGERS) whenever a path has been changed to draft.
+If True, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
 
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
-recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 
 ::
@@ -2880,10 +2880,10 @@ recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration
     ALERT_REVIEW = False
 
 
-If True, it sends a message to managers (MAIL_MANAGERS) whenever an object which can be published has been changed to review mode.
+If True, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
 
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
-recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 
 **Custom SQL**
