@@ -484,17 +484,17 @@ class ApidaeTrekParser(ApidaeParser):
 
     def filter_difficulty(self, src, val):
         types_clientele = val
-        difficulty_level = None
         for tc in types_clientele:
             if tc['id'] in TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS:
                 difficulty_level = tc
                 break
-        if difficulty_level:
-            return self.apply_filter(
-                dst='difficulty',
-                src=src,
-                val=difficulty_level[f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}']
-            )
+        else:
+            return None
+        return self.apply_filter(
+            dst='difficulty',
+            src=src,
+            val=difficulty_level[f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}']
+        )
 
     def filter_related_treks(self, src, val):
         liens = val
