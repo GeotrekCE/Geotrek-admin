@@ -73,7 +73,7 @@ On master branch:
 * Commit with message 'Back to development'
 * Push branch and tag
 * Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
-* When create a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
+* When creating a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 
 
 Developement
