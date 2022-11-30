@@ -386,6 +386,9 @@ class HDViewPointDelete(mapentity_views.MapEntityDelete):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    def get_success_url(self):
+        return self.get_object().content_object.get_detail_url()
+
 
 class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):
     queryset = HDViewPoint.objects.all()
