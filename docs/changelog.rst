@@ -19,6 +19,10 @@ CHANGELOG
 2.92.0     (2022-11-29)
 -----------------------
 
+**Warning**
+
+!!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
+
 **Improvements**
 
 - Cache API v2 Detail endpoints and themes list endpoint
