@@ -2,3 +2,10 @@
     width: 40px;
     height: 40px;
 }
+
+.dynamic-form .asteriskField {
+    display: inline;
+}
+.dynamic-form label.requiredField {
+    font-weight: bold;
+}

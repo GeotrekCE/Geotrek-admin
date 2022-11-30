@@ -5,6 +5,15 @@ CHANGELOG
 2.92.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Improvements**
+
+- Show direction on lines with setting ``DIRECTION_ON_LINES_ENABLED`` in signage detail
+
+**Bug fixes**
+
+- Fix display lines on signage with setting ``DIRECTION_ON_LINES_ENABLED``
+- Show required's style for lines in blade form
+
 
 2.92.0     (2022-11-29)
 -----------------------
