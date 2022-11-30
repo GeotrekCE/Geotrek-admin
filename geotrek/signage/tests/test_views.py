@@ -16,7 +16,7 @@ from geotrek.signage.models import Signage, Blade
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
                                              SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                             InfrastructureConditionFactory, LineFactory)
+                                             InfrastructureConditionFactory, LineFactory, LineDirectionFactory)
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.infrastructure.tests.test_views import InfraFilterTestMixin
 
@@ -47,15 +47,26 @@ class SignageTemplatesTest(TestCase):
         self.client.logout()
 
     @override_settings(DIRECTION_ON_LINES_ENABLED=True)
-    def test_direction_field_hidden_on_detail_page_when_direction_on_lines_enabled(self):
-        blade = BladeFactory.create(
-            direction=BladeDirectionFactory.create(label="A direction on the blade")
+    def test_direction_field_on_each_line_on_detail_page_when_direction_on_lines_enabled(self):
+        line_1 = LineFactory.create(
+            number=2,
+            direction=LineDirectionFactory.create(label="A direction on the line 1")
         )
+        line_2 = LineFactory.create(
+            number=3,
+            direction=LineDirectionFactory.create(label="A direction on the line 2")
+        )
+        blade = BladeFactory.create(
+            direction=BladeDirectionFactory.create(label="A direction on the blade"),
+        )
+        blade.lines.add(line_1, line_2)
 
         response = self.client.get(blade.signage.get_detail_url())
 
         self.assertNotContains(response, "A direction on the blade")
-        self.assertNotContains(response, gettext("Direction"))
+        self.assertContains(response, gettext("Direction"))
+        self.assertContains(response, "A direction on the line 1")
+        self.assertContains(response, "A direction on the line 2")
 
 
 class BladeViewsTest(GeotrekAPITestCase, CommonTest):
