@@ -14,6 +14,7 @@ CHANGELOG
 
 - Fix display lines on signage with setting ``DIRECTION_ON_LINES_ENABLED``
 - Show required's style for lines in blade form
+- Fix cache management in API v2
 
 
 2.92.0     (2022-11-29)
