@@ -312,6 +312,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
             'informationsEquipement.itineraire.dureeJournaliere',
             'informationsEquipement.itineraire.dureeItinerance',
         ),
+        'advice': 'informationsEquipement.itineraire.passagesDelicats'
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -341,6 +342,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'related_treks': {'create': True},
         'practice': {'create': True},
         'networks': {'create': True},
+        'advice': {'expand_translations': True},
     }
     non_fields = {
         'attachments': 'illustrations'

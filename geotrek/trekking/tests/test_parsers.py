@@ -686,6 +686,9 @@ class ApidaeTrekParserTests(TestCase):
         self.assertTrue(trek.duration is not None)
         self.assertAlmostEqual(trek.duration, 2.5)
 
+        self.assertEqual(trek.advice, "Avoid after heavy rain.")
+        self.assertEqual(trek.advice_fr, "À éviter après de grosses pluies.")
+
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks_updated.json')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 

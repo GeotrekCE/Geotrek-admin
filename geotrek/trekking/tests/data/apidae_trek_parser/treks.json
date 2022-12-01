@@ -18,6 +18,10 @@
         ],
         "itineraire": {
           "dureeJournaliere": 150,
+          "passagesDelicats": {
+            "libelleFr": "À éviter après de grosses pluies.",
+            "libelleEn": "Avoid after heavy rain."
+          },
           "itineraireBalise": "BALISE",
           "precisionsBalisage": {
             "libelleFr": "Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).",
