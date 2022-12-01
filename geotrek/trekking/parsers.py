@@ -441,37 +441,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
 
     def filter_description(self, src, val):
         ouverture, descriptifs, itineraire = val
-        html_description = defaultdict(lambda: '')
-
-        def append_to_html_description(translated_field, transform_func=ApidaeTrekParser._transform_description_to_html):
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                try:
-                    html_description[lang] += transform_func(translated_field[f'libelle{lang.capitalize()}'])
-                except KeyError:
-                    pass
-
-        def get_guidebook():
-            if not descriptifs:
-                return None
-            for d in descriptifs:
-                if d['theme']['id'] == GUIDEBOOK_DESCRIPTION_ID:
-                    return d
-            return None
-
-        guidebook = get_guidebook()
-        if guidebook:
-            append_to_html_description(guidebook['description'], transform_func=ApidaeTrekParser._transform_guidebook_to_html)
-
-        if ouverture:
-            append_to_html_description(ouverture['periodeEnClair'])
-
-        if itineraire:
-            append_to_html_description(ApidaeTrekParser._make_marking_description(itineraire))
-
         return self.apply_filter(
             dst='description',
             src=src,
-            val=html_description
+            val=ApidaeTrekParser._make_description(ouverture, descriptifs, itineraire)
         )
 
     def filter_source(self, src, val):
@@ -691,6 +664,39 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         max_date = date.fromisoformat(max_date_str)
         # Note this exludes the limit date.
         return max_date > a_date
+
+    @staticmethod
+    def _make_description(ouverture, descriptifs, itineraire):
+        html_description = defaultdict(lambda: '')
+
+        def append_to_html_description(translated_field,
+                                       transform_func=ApidaeTrekParser._transform_description_to_html):
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                try:
+                    html_description[lang] += transform_func(translated_field[f'libelle{lang.capitalize()}'])
+                except KeyError:
+                    pass
+
+        def get_guidebook():
+            if not descriptifs:
+                return None
+            for d in descriptifs:
+                if d['theme']['id'] == GUIDEBOOK_DESCRIPTION_ID:
+                    return d
+            return None
+
+        guidebook = get_guidebook()
+        if guidebook:
+            append_to_html_description(guidebook['description'],
+                                       transform_func=ApidaeTrekParser._transform_guidebook_to_html)
+
+        if ouverture:
+            append_to_html_description(ouverture['periodeEnClair'])
+
+        if itineraire:
+            append_to_html_description(ApidaeTrekParser._make_marking_description(itineraire))
+
+        return html_description
 
 
 class ApidaeReferenceElementParser(Parser):

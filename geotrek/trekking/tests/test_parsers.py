@@ -864,6 +864,66 @@ class ApidaeTrekThemeParserTests(TestCase):
         self.assertEqual(len(Theme.objects.all()), 2)
 
 
+class MakeDescriptionTests(SimpleTestCase):
+
+    def setUp(self):
+        self.ouverture = {
+            'periodeEnClair': {
+                'libelleFr': 'Ouvert toute l\'année\n\nFermeture exceptionnelle en cas de pluie forte',
+                'libelleEn': 'Open all year long\n\nExceptionally closed during heavy rain'
+            }
+        }
+        self.descriptifs = [
+            {
+                'theme': {
+                    'id': 6527,
+                    'libelleFr': 'Topo/pas à pas',
+                    'libelleEn': 'Guidebook with maps/step-by-step'
+                },
+                'description': {
+                    'libelleFr': 'Départ : du parking de la Chapelle Saint Michel \r\n'
+                                 '1/ Suivre le chemin qui part à droite, traversant le vallon.\r\n'
+                                 '2/ Au carrefour tourner à droite et suivre la rivière\r\n'
+                                 '3/ Retour à la chapelle en passant à travers le petit bois.',
+                    'libelleEn': 'Start: from the parking near the Chapelle Saint Michel \r\n'
+                                 '1/ Follow the path starting at right-hand, cross the valley.\r\n'
+                                 '2/ At the crossroad turn left and follow the river.\r\n'
+                                 '3/ Back to the chapelle by the woods.'
+                }
+            }
+        ]
+        self.itineraire = {
+            'itineraireBalise': 'BALISE',
+            'precisionsBalisage': {
+                'libelleFr': 'Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).',
+                'libelleEn': 'Follow the GR (white / red) or GRP (yellow / red) markings.'
+            }
+        }
+
+    def test_it_returns_the_right_elements_in_description(self):
+        description = ApidaeTrekParser._make_description(self.ouverture, self.descriptifs, self.itineraire)
+        expected_fr_description = (
+            '<p>Départ : du parking de la Chapelle Saint Michel </p>'
+            '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
+            '<p>2/ Au carrefour tourner à droite et suivre la rivière</p>'
+            '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
+            '<p>Ouvert toute l\'année</p>'
+            '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
+            '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
+        )
+        self.assertEqual(description['fr'], expected_fr_description)
+        expected_en_description = (
+            '<p>Start: from the parking near the Chapelle Saint Michel </p>'
+            '<p>1/ Follow the path starting at right-hand, cross the valley.</p>'
+            '<p>2/ At the crossroad turn left and follow the river.</p>'
+            '<p>3/ Back to the chapelle by the woods.</p>'
+            '<p>Open all year long</p>'
+            '<p>Exceptionally closed during heavy rain</p>'
+            '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
+        )
+        self.assertEqual(description['en'], expected_en_description)
+
+
 class MakeMarkingDescriptionTests(SimpleTestCase):
 
     def test_it_returns_default_text_when_not_marked(self):
