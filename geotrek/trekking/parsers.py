@@ -308,6 +308,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'access': 'localisation.geolocalisation.complement',
         'difficulty': 'prestations.typesClientele',
         'practice': 'informationsEquipement.activites',
+        'duration': (
+            'informationsEquipement.itineraire.dureeJournaliere',
+            'informationsEquipement.itineraire.dureeItinerance',
+        ),
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -530,6 +534,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
             )
         return rv
 
+    def filter_duration(self, src, val):
+        duree_journaliere, duree_itinerance = val
+        return ApidaeTrekParser._make_duration(duration_in_minutes=duree_journaliere, duration_in_days=duree_itinerance)
+
     def _finalize_related_treks_association(self):
         for parent_id, children_eids in self._related_treks_mapping.items():
             parent_trek = Trek.objects.get(pk=parent_id)
@@ -708,6 +716,17 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
             append_to_html_description(tarifs['tarifsEnClair'])
 
         return html_description
+
+    @staticmethod
+    def _make_duration(duration_in_minutes=None, duration_in_days=None):
+        """Returns the duration in hours. Expects only one of the argument to have a non-zero value."""
+        assert not (duration_in_minutes and duration_in_days)
+        if duration_in_minutes:
+            return duration_in_minutes / 60
+        elif duration_in_days:
+            return duration_in_days * 24
+        else:
+            return None
 
 
 class ApidaeReferenceElementParser(Parser):

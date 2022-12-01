@@ -17,6 +17,7 @@
           }
         ],
         "itineraire": {
+          "dureeJournaliere": 150,
           "itineraireBalise": "BALISE",
           "precisionsBalisage": {
             "libelleFr": "Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).",

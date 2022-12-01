@@ -683,6 +683,9 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(photo.attachment_file.size, len(IMG_FILE))
         self.assertEqual(photo.title, 'The title of the picture')
 
+        self.assertTrue(trek.duration is not None)
+        self.assertAlmostEqual(trek.duration, 2.5)
+
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks_updated.json')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 
@@ -1076,3 +1079,16 @@ class IsStillPublishableOn(SimpleTestCase):
         illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
         that_same_date = date.fromisoformat('2020-06-28')
         self.assertFalse(ApidaeTrekParser._is_still_publishable_on(illustration, that_same_date))
+
+
+class MakeDurationTests(SimpleTestCase):
+
+    def test_it_returns_correct_duration_from_duration_in_minutes(self):
+        self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90), 1.5)
+
+    def test_it_returns_correct_duration_from_duration_in_days(self):
+        self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_days=3), 72.0)
+
+    def test_giving_both_duration_arguments_raises_an_error(self):
+        with self.assertRaises(AssertionError):
+            ApidaeTrekParser._make_duration(duration_in_minutes=45, duration_in_days=2)
