@@ -321,6 +321,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'labels': ['presentation.typologiesPromoSitra.*', 'localisation.environnements.*'],
         'related_treks': 'liens.liensObjetsTouristiquesTypes',
         'networks': 'informationsEquipement.activites',
+        'accessibilities': 'informationsEquipement.itineraire.naturesTerrain.*',
     }
     natural_keys = {
         'source': 'name',
@@ -331,6 +332,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'practice': 'name',
         'networks': 'network',
         'route': 'route',
+        'accessibilities': 'name',
     }
     field_options = {
         'source': {'create': True},
@@ -352,7 +354,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
                 'ALLER_RETOUR': 'Aller-retour',
                 'ALLER_ITINERANCE': 'Traversée',
             }
-        }
+        },
+        'accessibilities': {'create': True}
     }
     non_fields = {
         'attachments': 'illustrations'
@@ -394,6 +397,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'Vélo': 3113,  # Sports cyclistes
         'Cheval': 3165,  # Sports équestres
     }
+    natures_de_terrain_ids_as_accessibilities = [
+        4244,  # Adapté aux poussettes de ville
+        4245,  # Adapté aux poussettes tout terrain
+    ]
 
     def __init__(self, *args, **kwargs):
         self._translated_fields = [field for field in get_translated_fields(self.model)]
@@ -549,6 +556,17 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
     def filter_duration(self, src, val):
         duree_journaliere, duree_itinerance = val
         return ApidaeTrekParser._make_duration(duration_in_minutes=duree_journaliere, duration_in_days=duree_itinerance)
+
+    def filter_accessibilities(self, src, val):
+        translation_fieldname = f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}'
+        return self.apply_filter(
+            dst='accessibilities',
+            src=src,
+            val=[
+                item[translation_fieldname] for item in val
+                if item['id'] in ApidaeTrekParser.natures_de_terrain_ids_as_accessibilities
+            ]
+        )
 
     def _finalize_related_treks_association(self):
         for parent_id, children_eids in self._related_treks_mapping.items():

@@ -27,7 +27,13 @@
           "precisionsBalisage": {
             "libelleFr": "Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).",
             "libelleEn": "Follow the GR (white / red) or GRP (yellow / red) markings."
-          }
+          },
+          "naturesTerrain": [
+            {
+              "id": 4245,
+              "libelleEn": "Suitable for all terrain strollers"
+            }
+          ]
         }
       },
       "localisation": {

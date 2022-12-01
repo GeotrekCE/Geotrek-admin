@@ -694,6 +694,10 @@ class ApidaeTrekParserTests(TestCase):
 
         self.assertEqual(trek.route.route, 'Boucle')
 
+        self.assertEqual(trek.accessibilities.count(), 1)
+        accessibility = trek.accessibilities.first()
+        self.assertEqual(accessibility.name, 'Suitable for all terrain strollers')
+
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks_updated.json')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 
