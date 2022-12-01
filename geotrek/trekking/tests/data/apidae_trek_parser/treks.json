@@ -22,6 +22,7 @@
             "libelleFr": "À éviter après de grosses pluies.",
             "libelleEn": "Avoid after heavy rain."
           },
+          "itineraireType": "BOUCLE",
           "itineraireBalise": "BALISE",
           "precisionsBalisage": {
             "libelleFr": "Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).",

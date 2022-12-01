@@ -14,6 +14,7 @@ from django.test.utils import override_settings
 
 from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
+from geotrek.trekking.tests.factories import RouteFactory
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
     TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser,
@@ -619,6 +620,8 @@ class ApidaeTrekParserTests(TestCase):
 
     @mock.patch('requests.get')
     def test_trek_is_imported(self, mocked_get):
+        RouteFactory(route='Boucle')
+
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
@@ -688,6 +691,8 @@ class ApidaeTrekParserTests(TestCase):
 
         self.assertEqual(trek.advice, "Avoid after heavy rain.")
         self.assertEqual(trek.advice_fr, "À éviter après de grosses pluies.")
+
+        self.assertEqual(trek.route.route, 'Boucle')
 
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks_updated.json')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)

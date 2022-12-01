@@ -312,7 +312,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
             'informationsEquipement.itineraire.dureeJournaliere',
             'informationsEquipement.itineraire.dureeItinerance',
         ),
-        'advice': 'informationsEquipement.itineraire.passagesDelicats'
+        'advice': 'informationsEquipement.itineraire.passagesDelicats',
+        'route': 'informationsEquipement.itineraire.itineraireType',
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -329,6 +330,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'related_treks': 'eid',
         'practice': 'name',
         'networks': 'network',
+        'route': 'route',
     }
     field_options = {
         'source': {'create': True},
@@ -343,6 +345,14 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'practice': {'create': True},
         'networks': {'create': True},
         'advice': {'expand_translations': True},
+        'route': {
+            # Relevant default mapping considering routes in trekking data fixture.
+            "mapping": {
+                'BOUCLE': 'Boucle',
+                'ALLER_RETOUR': 'Aller-retour',
+                'ALLER_ITINERANCE': 'Traversée',
+            }
+        }
     }
     non_fields = {
         'attachments': 'illustrations'
