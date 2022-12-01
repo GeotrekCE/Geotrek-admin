@@ -5,6 +5,10 @@ CHANGELOG
 2.92.1+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix cache management in API v2
+
 
 2.92.1     (2022-12-01)
 -----------------------

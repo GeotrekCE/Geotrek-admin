@@ -5,6 +5,7 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from mapentity.renderers import GeoJSONRenderer
 from rest_framework import viewsets, renderers
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
@@ -37,7 +38,9 @@ class GeotrekViewSet(RetrieveCacheResponseMixin, viewsets.ReadOnlyModelViewSet):
     def get_object_cache_key(self, pk):
         """ return specific object cache key based on object date_update column"""
         # don't directly use get_object or get_queryset to avoid select / prefetch and annotation sql queries
-        date_update = self.get_queryset().model.objects.get(pk=pk).date_update
+        # insure object exists and doesn't raise exception
+        instance = get_object_or_404(self.get_queryset().model, pk=pk)
+        date_update = instance.date_update
         return f"{self.get_base_cache_string()}:{date_update.isoformat()}"
 
     def object_cache_key_func(self, **kwargs):
