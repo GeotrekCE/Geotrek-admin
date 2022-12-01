@@ -52,7 +52,7 @@ from .forms import (AttachmentAccessibilityForm, HDViewPointForm,
 from .mixins.views import (BookletMixin, CompletenessMixin,
                            DocumentPortalMixin, DocumentPublicMixin, MetaMixin)
 from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
-from .permissions import PublicOrReadPermMixin
+from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
 from .serializers import (HDViewPointAPIGeoJSONSerializer,
                           HDViewPointAPISerializer, ThemeSerializer)
 from .tasks import import_datas, import_datas_from_web, launch_sync_rando
@@ -393,6 +393,7 @@ class HDViewPointDelete(mapentity_views.MapEntityDelete):
 class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):
     queryset = HDViewPoint.objects.all()
     serializer_class = HDViewPointAPISerializer
+    permission_classes = [RelatedPublishedPermission]
     # for `django-large-image`: the name of the image FileField on your model
     FILE_FIELD_NAME = 'picture'
 

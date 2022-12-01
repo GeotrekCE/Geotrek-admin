@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.db.utils import OperationalError
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from django.utils.http import urlencode
 from django.utils.translation import gettext_lazy as _
 from paperclip.models import Attachment as BaseAttachment
 from paperclip.models import FileType as BaseFileType
@@ -333,7 +334,8 @@ class HDViewPoint(TimeStampedModelMixin):
         return reverse('common:hdviewpoint_add')
 
     def get_picture_tile_url(self, x, y, z):
-        return reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': x, 'y': y, 'z': z, 'fmt': 'png'})
+        url = reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': x, 'y': y, 'z': z, 'fmt': 'png'})
+        return f"{url}?{urlencode({'source': 'vips'})}"
 
     def get_generic_picture_tile_url(self):
         thumbnail_path = reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': 0, 'y': 0, 'z': 0, 'fmt': 'png'})

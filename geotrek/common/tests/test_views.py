@@ -6,13 +6,15 @@ from io import StringIO
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
+from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 from mapentity.views.generic import MapEntityList
 
@@ -20,7 +22,7 @@ from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import FileType, HDViewPoint
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import launch_sync_rando, import_datas
-from geotrek.common.tests.factories import LicenseFactory, TargetPortalFactory
+from geotrek.common.tests.factories import HDViewPointFactory, LicenseFactory, TargetPortalFactory
 from geotrek.core.models import Path
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
@@ -396,23 +398,34 @@ class SyncRandoViewTest(TestCase):
 class HDViewPointViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.su = SuperUserFactory.create()
-        cls.trek = TrekFactory()
+        # Create objects
+        cls.trek = TrekFactory(published=False)
         cls.license = LicenseFactory()
-
-    def setUp(self):
-        self.client.force_login(user=self.su)
+        # Create user with proper permissions
+        cls.user_perm = UserFactory.create()
+        read_perm = Permission.objects.get(codename="read_hdviewpoint")
+        add_perm = Permission.objects.get(codename="add_hdviewpoint")
+        update_perm = Permission.objects.get(codename="change_hdviewpoint")
+        delete_perm = Permission.objects.get(codename="delete_hdviewpoint")
+        cls.user_perm.user_permissions.add(add_perm, read_perm, update_perm, delete_perm)
+        # Prepare access to test image
+        cls.directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
+        cls.files = [f for f in os.listdir(cls.directory)]
 
     def test_crud_view(self):
-        # Test create view
+        """
+        Test CRUD rights and views for HD View Point object
+        """
+        self.client.force_login(user=self.user_perm)
         ContentType.objects.clear_cache()  # Sometimes cache can contain bad values
+        # Test create view
         response = self.client.get('%s?object_id=%s&content_type=%s' % (HDViewPoint.get_add_url(),
                                                                         self.trek.pk,
                                                                         ContentType.objects.get_for_model(Trek).pk
                                                                         )
                                    )
         self.assertEqual(response.status_code, 200)
-        img = SimpleUploadedFile("an_uploaded_image.png", b"file_content", content_type="image/x-png")
+        img = get_dummy_uploaded_image()
         data = {
             'picture': img,
             'title': "Un titre",
@@ -429,7 +442,7 @@ class HDViewPointViewTest(TestCase):
         vp = HDViewPoint.objects.first()
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.trek, vp.content_object)
-        self.assertIn("an_uploaded_image", vp.picture.name)
+        self.assertIn("dummy_img", vp.picture.name)
         self.assertEqual(vp.title, "Un titre")
         self.assertEqual(vp.author, "Someone")
         self.assertEqual(vp.legend, "Something")
@@ -440,7 +453,7 @@ class HDViewPointViewTest(TestCase):
         # Test Update view
         response = self.client.get(vp.get_update_url())
         self.assertEqual(response.status_code, 200)
-        img = SimpleUploadedFile("an_uploaded_image.png", b"file_content", content_type="image/x-png")
+        img = get_dummy_uploaded_image()
         data = {
             'picture': img,
             'title': "Un titre",
@@ -459,3 +472,36 @@ class HDViewPointViewTest(TestCase):
         response = self.client.post(vp.get_delete_url(), {}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(HDViewPoint.objects.count(), 0)
+
+    def test_tiles_view(self):
+        """
+        Test access rights for HD View Point tile endpoint
+        """
+        # Create HD View point with a dummy image
+        self.path = os.path.join(self.directory, 'empty_image.jpg')
+        self.assertEqual(os.path.getsize(self.path), 18438)
+        viewpoint = HDViewPointFactory.create(
+            object_id=self.trek.pk,
+            content_type=ContentType.objects.get_for_model(Trek)
+        )
+        with open(self.path, 'rb') as picto_file:
+            viewpoint.picture = File(picto_file, name="empty_image.jpg")
+            viewpoint.save()
+
+        # Test unlogged user cannot access HD View Point tiles
+        tile_url = viewpoint.get_picture_tile_url(x=0, y=0, z=0)
+        response = self.client.get(tile_url)
+        self.assertEqual(response.status_code, 403)
+
+        # Test unlogged user can access HD View Point tiles if related trek is published
+        self.trek.published = True
+        self.trek.save()
+        response = self.client.get(tile_url)
+        self.assertEqual(response.status_code, 200)
+        self.trek.published = False  # Revert to previous state
+        self.trek.save()
+
+        # Test logged in user can access HD View Point tiles
+        self.client.force_login(user=self.user_perm)
+        response = self.client.get(tile_url)
+        self.assertEqual(response.status_code, 200)

@@ -13,7 +13,6 @@ from .. import models
 
 from geotrek.common.management.commands.sync_rando import Command
 
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from django.test.client import RequestFactory
 
@@ -147,8 +146,7 @@ class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
 class HDViewPointFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.HDViewPoint
-
-    picture = SimpleUploadedFile("an_uploaded_image.png", b"file_content", content_type="image/x-png")
+    picture = get_dummy_uploaded_image()
     title = "A title"
     author = "An author"
     legend = "Something"
