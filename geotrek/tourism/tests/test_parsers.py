@@ -21,7 +21,8 @@ from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEven
                                      TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
                                      TouristicContentTourInSoftParser, TouristicEventTourInSoftParser,
                                      InformationDeskApidaeParser, GeotrekTouristicContentParser,
-                                     GeotrekTouristicEventParser, GeotrekInformationDeskParser)
+                                     GeotrekTouristicEventParser, GeotrekInformationDeskParser,
+                                     LEITouristicContentParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
@@ -117,6 +118,14 @@ class FMA28OtherPortal(TouristicEventTourInSoftParser):
     type = "Agenda rando"
     portal = "Other_portal"
     m2m_aggregate_fields = ["portal"]
+
+
+class RestaurantALEIParser(LEITouristicContentParser):
+    url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
+    category = "Restaurant"
+    non_fields = {
+        'attachments': ('CRITERES/Crit[@CLEF_CRITERE="1900421"]', 'CRITERES/Crit[@CLEF_CRITERE="1900268"]'),
+    }
 
 
 class ParserTests(TranslationResetMixin, TestCase):
@@ -699,6 +708,40 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         information_desk_2 = InformationDesk.objects.get(eid=2)
         self.assertEqual(information_desk_2.website, None)
+
+    @mock.patch('requests.get')
+    def test_create_content_lei(self, mocked):
+        self.x_time = 0
+
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 200
+            if self.x_time == 0:
+                filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
+                with open(filename, 'r') as f:
+                    self.x_time += 1
+                    response._content = f.read()
+                    return response
+            else:
+                response._content = b'test'
+                return response
+
+        mocked.side_effect = mocked_requests_get
+
+        FileType.objects.create(type="Photographie")
+
+        TouristicContentCategoryFactory(label="Restaurant")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantALEIParser', verbosity=0)
+        self.assertTrue(mocked.called)
+        self.assertEqual(TouristicContent.objects.count(), 1)
+        content = TouristicContent.objects.get()
+        self.assertEqual(content.eid, "LEI219006399")
+        self.assertEqual(content.name, "Restaurant A")
+        self.assertIn("Commentaire A", content.description)
+        self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(Attachment.objects.first().content_object, content)
 
 
 class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
