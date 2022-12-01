@@ -284,6 +284,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'liens',
         'prestations',
         'ouverture',
+        'descriptionTarif',
         'informationsEquipement',
     ]
     locales = ['fr', 'en']
@@ -298,6 +299,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
             'ouverture',
             'presentation.descriptifsThematises.*',
             'informationsEquipement.itineraire',
+            'descriptionTarif',
         ),
         'geom': 'multimedias',
         'eid': 'id',
@@ -440,11 +442,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         )
 
     def filter_description(self, src, val):
-        ouverture, descriptifs, itineraire = val
+        ouverture, descriptifs, itineraire, tarifs = val
         return self.apply_filter(
             dst='description',
             src=src,
-            val=ApidaeTrekParser._make_description(ouverture, descriptifs, itineraire)
+            val=ApidaeTrekParser._make_description(ouverture, descriptifs, itineraire, tarifs)
         )
 
     def filter_source(self, src, val):
@@ -666,7 +668,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         return max_date > a_date
 
     @staticmethod
-    def _make_description(ouverture, descriptifs, itineraire):
+    def _make_description(ouverture=None, descriptifs=None, itineraire=None, tarifs=None):
         html_description = defaultdict(lambda: '')
 
         def append_to_html_description(translated_field,
@@ -701,6 +703,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
 
         if itineraire:
             append_to_html_description(ApidaeTrekParser._make_marking_description(itineraire))
+
+        if tarifs and tarifs['indicationTarif'] == 'PAYANT':
+            append_to_html_description(tarifs['tarifsEnClair'])
 
         return html_description
 

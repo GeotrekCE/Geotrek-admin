@@ -127,6 +127,13 @@
           "libelleEn": "Open all year long\n\nExceptionally closed during heavy rain"
         }
       },
+      "descriptionTarif": {
+        "indicationTarif": "PAYANT",
+        "tarifsEnClair": {
+          "libelleFr": "Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.",
+          "libelleEn": "Ski lift ticket office: 2 shops - Frastaz and Bois Noir ski lifts."
+        }
+      },
       "presentation": {
         "descriptifCourt": {
           "libelleFr": "La description courte en français.",

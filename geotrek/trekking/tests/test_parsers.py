@@ -639,6 +639,7 @@ class ApidaeTrekParserTests(TestCase):
             '<p>Ouvert toute l\'année</p>'
             '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
             '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
+            '<p>Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.</p>'
         )
         self.assertEqual(trek.description_fr, expected_fr_description)
         expected_en_description = (
@@ -649,6 +650,7 @@ class ApidaeTrekParserTests(TestCase):
             '<p>Open all year long</p>'
             '<p>Exceptionally closed during heavy rain</p>'
             '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
+            '<p>Ski lift ticket office: 2 shops - Frastaz and Bois Noir ski lifts.</p>'
         )
         self.assertEqual(trek.description_en, expected_en_description)
         self.assertEqual(trek.advised_parking_fr, 'Parking sur la place du village')
