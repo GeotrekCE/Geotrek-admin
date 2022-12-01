@@ -685,12 +685,18 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
                     return d
             return None
 
+        def est_fermé_temporairement(ouverture):
+            return ouverture.get('fermeTemporairement') == 'FERME_TEMPORAIREMENT'
+
+        if ouverture and est_fermé_temporairement(ouverture):
+            append_to_html_description(ouverture['periodeEnClair'])
+
         guidebook = get_guidebook()
         if guidebook:
             append_to_html_description(guidebook['description'],
                                        transform_func=ApidaeTrekParser._transform_guidebook_to_html)
 
-        if ouverture:
+        if ouverture and not est_fermé_temporairement(ouverture):
             append_to_html_description(ouverture['periodeEnClair'])
 
         if itineraire:

@@ -1,6 +1,6 @@
-from copy import copy
 import json
 import os
+from copy import copy
 from io import StringIO
 from unittest import mock
 from unittest import skipIf
@@ -919,6 +919,34 @@ class MakeDescriptionTests(SimpleTestCase):
             '<p>3/ Back to the chapelle by the woods.</p>'
             '<p>Open all year long</p>'
             '<p>Exceptionally closed during heavy rain</p>'
+            '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
+        )
+        self.assertEqual(description['en'], expected_en_description)
+
+    def test_it_places_temporary_closed_warning_first(self):
+        temporary_closed = {
+            'periodeEnClair': {
+                'libelleFr': 'Fermé temporairement.',
+                'libelleEn': 'Closed temporarily.'
+            },
+            'fermeTemporairement': 'FERME_TEMPORAIREMENT'
+        }
+        description = ApidaeTrekParser._make_description(temporary_closed, self.descriptifs, self.itineraire)
+        expected_fr_description = (
+            '<p>Fermé temporairement.</p>'
+            '<p>Départ : du parking de la Chapelle Saint Michel </p>'
+            '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
+            '<p>2/ Au carrefour tourner à droite et suivre la rivière</p>'
+            '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
+            '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
+        )
+        self.assertEqual(description['fr'], expected_fr_description)
+        expected_en_description = (
+            '<p>Closed temporarily.</p>'
+            '<p>Start: from the parking near the Chapelle Saint Michel </p>'
+            '<p>1/ Follow the path starting at right-hand, cross the valley.</p>'
+            '<p>2/ At the crossroad turn left and follow the river.</p>'
+            '<p>3/ Back to the chapelle by the woods.</p>'
             '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
         )
         self.assertEqual(description['en'], expected_en_description)
