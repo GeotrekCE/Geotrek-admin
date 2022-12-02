@@ -84,7 +84,7 @@ defusedxml==0.7.1
     # via cairosvg
 deprecated==1.2.13
     # via redis
-django==3.2.15
+django==3.2.16
     # via
     #   django-appconf
     #   django-appypod
