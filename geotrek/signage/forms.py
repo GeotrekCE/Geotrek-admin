@@ -5,10 +5,11 @@ from django.db.models import Max
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
-from leaflet.forms.widgets import LeafletWidget
-
 from crispy_forms.layout import Div, Fieldset, Layout
 from crispy_forms.helper import FormHelper
+
+from mapentity.widgets import MapWidget
+
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
@@ -132,7 +133,7 @@ else:
             super().__init__(*args, **kwargs)
 
             self.fields['topology'].initial = self.signage.geom
-            self.fields['topology'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['topology'].widget = MapWidget(attrs={'geom_type': 'POINT'})
             self.fields['topology'].widget.modifiable = False
             self.fields['topology'].label = '%s%s %s' % (
                 self.instance.signage_display,
