@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _, get_language
 
 from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import (
-    ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeParser
+    ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeBaseParser
 )
 from geotrek.common.utils.translation import get_translated_fields
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
@@ -331,7 +331,7 @@ class ApidaeTranslatedField:
         return rv
 
 
-class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
+class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
     model = Trek
     eid = 'eid'
     separator = None
@@ -512,6 +512,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
 
     def end(self):
         self._finalize_related_treks_association()
+
+    def filter_eid(self, src, val):
+        return str(val)
 
     def filter_geom(self, src, val):
         plan = self._find_gpx_plan_in_multimedia_items(val)

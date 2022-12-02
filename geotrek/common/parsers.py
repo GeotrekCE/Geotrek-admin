@@ -1243,7 +1243,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             self.next_url = self.root['next']
 
 
-class ApidaeParser(Parser):
+class ApidaeBaseParser(Parser):
     """Parser to import "anything" from APIDAE"""
     separator = None
     api_key = None

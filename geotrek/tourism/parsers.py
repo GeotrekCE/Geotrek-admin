@@ -13,7 +13,7 @@ from django.utils.translation import gettext as _
 from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    TourInSoftParser, GeotrekParser, ApidaeParser)
+                                    TourInSoftParser, GeotrekParser, ApidaeBaseParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 
@@ -51,7 +51,7 @@ class TouristicContentMixin:
         return kwargs
 
 
-class ApidaeTourismParser(AttachmentParserMixin, ApidaeParser):
+class ApidaeParser(AttachmentParserMixin, ApidaeBaseParser):
     """Parser to import "anything" from APIDAE"""
     eid = 'eid'
     fields = {
@@ -131,7 +131,7 @@ class AttachmentApidaeParserMixin(object):
         return result
 
 
-class InformationDeskApidaeParser(ApidaeTourismParser):
+class InformationDeskApidaeParser(ApidaeParser):
     """Parser to import information desks from APIDAE"""
     type = None
     model = InformationDesk
@@ -219,7 +219,7 @@ class InformationDeskApidaeParser(ApidaeTourismParser):
         return self._filter_comm(val, 205, multiple=False)
 
 
-class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeTourismParser):
+class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
     """Parser to import touristic events from APIDAE"""
     type = None
     themes = None
@@ -381,7 +381,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeTourismParse
         return '<br>'.join(lines)
 
 
-class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContentMixin, ApidaeTourismParser):
+class TouristicContentApidaeParser(AttachmentApidaeParserMixin, TouristicContentMixin, ApidaeParser):
     """Parser to import touristic contents from APIDAE"""
     separator = None
     api_key = None
