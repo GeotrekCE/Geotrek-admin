@@ -550,7 +550,7 @@ class HebergementsApidaeParser(TouristicContentApidaeParser):
         return self.apply_filter('type1', src, [val])
 
 
-class EspritParcParser(AttachmentParserMixin, Parser):
+class EspritParcParser(AttachmentParserMixin, TouristicContentMixin, Parser):
     model = TouristicContent
     eid = 'eid'
     separator = None
@@ -614,7 +614,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
 
     @property
     def items(self):
-        return self.root['responseData']
+        return self.root['responseData'] or []
 
     def next_row(self):
         response = self.request_or_retry(self.url)
@@ -654,22 +654,29 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     def filter_type1(self, src, val):
         dst = []
         if val:
-            try:
-                dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=val))
-            except TouristicContentType1.DoesNotExist:
-                self.add_warning(
-                    _("Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
-                        subval=val, cat=self.obj.category.label))
+            if isinstance(val, str):
+                val = [val]
+            for subval in val:
+                try:
+                    dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=subval))
+                except TouristicContentType1.DoesNotExist:
+                    self.add_warning(
+                        _("Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                            subval=subval, cat=self.obj.category.label))
         return dst
 
     def filter_type2(self, src, val):
         dst = []
         if val:
-            try:
-                dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=val))
-            except TouristicContentType2.DoesNotExist:
-                self.add_warning(_("Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
-                    subval=val, cat=self.obj.category.label))
+            if isinstance(val, str):
+                val = [val]
+            for subval in val:
+                try:
+                    dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=subval))
+                except TouristicContentType2.DoesNotExist:
+                    self.add_warning(
+                        _("Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                            subval=subval, cat=self.obj.category.label))
         return dst
 
 

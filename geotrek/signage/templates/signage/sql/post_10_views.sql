@@ -45,7 +45,9 @@ SELECT a.id,
        {% endfor %}
        a.implantation_year AS "Implantation year",
        a.printed_elevation AS "Printed elevation",
-       concat('X : ', st_x(st_transform(a.geom,{{ API_SRID }}))::int,' / Y : ',st_y(st_transform(a.geom,{{ API_SRID }}))::int,' ({{ spatial_reference }})')AS "Coordinates",
+       concat('X : ', st_x(st_transform(a.geom,{{ API_SRID }}))::numeric(9,7),
+              ' / Y : ', st_y(st_transform(a.geom,{{ API_SRID }}))::numeric(9,7),
+              ' ({{ spatial_reference }})') AS "Coordinates",
        d.label AS "Sealing",
        h.organism AS "Manager",
        {% for lang in MODELTRANSLATION_LANGUAGES %}

@@ -857,7 +857,7 @@ LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 REST_FRAMEWORK_EXTENSIONS = {
-    'DEFAULT_USE_CACHE': 'fat',  # default cache for DRF Cache Response Mixin. API v2 is override with 'api_v2'
+    'DEFAULT_USE_CACHE': 'api_v2',
     'DEFAULT_CACHE_ERRORS': False
 }
 

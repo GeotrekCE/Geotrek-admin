@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='topology',
             name='geom',
-            field=django.contrib.gis.db.models.fields.GeometryField(default=None, editable=False, null=True, spatial_index=False, srid=settings.SRID),
+            field=django.contrib.gis.db.models.fields.GeometryField(default=None, editable=(not settings.TREKKING_TOPOLOGY_ENABLED), null=True, spatial_index=False, srid=settings.SRID),
         ),
         migrations.AddIndex(
             model_name='path',

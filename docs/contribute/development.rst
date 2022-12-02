@@ -72,8 +72,8 @@ On master branch:
 * Run ``dch -v <version>+dev --no-force-save-on-release`` and save
 * Commit with message 'Back to development'
 * Push branch and tag
-* When pushing a release tag 'x.y.z', CircleCI will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 * Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
+* When creating a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 
 
 Developement
@@ -245,7 +245,7 @@ Assuming a dump of your database is located in your project directory:
 
 ::
 
-   docker-compose run --rm web pg_restore -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek/<path_to_backup>.dump
+   docker-compose run --rm web pg_restore --clean --no-owner --no-acl -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek-admin/<path_to_backup>.dump
 
 Restore your ``./var/conf/`` project files, and data files into ``./var/media``.
 

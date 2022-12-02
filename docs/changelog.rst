@@ -2,18 +2,62 @@
 CHANGELOG
 =========
 
-2.91.1+dev (XXXX-XX-XX)
+2.92.2+dev (XXXX-XX-XX)
 -----------------------
 
-**Improvments**
+
+2.92.2     (2022-12-01)
+-----------------------
+
+**Bug fixes**
+
+- Fix cache management in API v2
+
+
+2.92.1     (2022-12-01)
+-----------------------
+
+**Improvements**
+
+- Show direction on lines with setting ``DIRECTION_ON_LINES_ENABLED`` in signage detail
+- Add mobile nginx configuration directly on Geotrek-admin
+
+**Bug fixes**
+
+- Fix display lines on signage with setting ``DIRECTION_ON_LINES_ENABLED``
+- Show required's style for lines in blade form
+- Fix cache management in API v2
+
+
+2.92.0     (2022-11-29)
+-----------------------
+
+**Warning**
+
+!!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
+
+**Improvements**
 
 - Cache API v2 Detail endpoints and themes list endpoint
 - Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.
 - Zoning informations are now cached until instance or zoning is updated.
+- Show more decimal for coordinates in signage sql view
 
 **New feature**
 
 - Separate application and API v2 cache, ability to purge them with command or via admin
+
+**Bug fixes**
+
+- Check geom is valid before save
+- Fix old migration script of Topology.geom (actually causes Django to falsely detect model changes not yet with a migration in NDS mode)
+- Check that the Spatial Reference Identifier (SRID) unit is in meters before launching application (was during migration)
+- Fix filter_type1 and filter_type2 for EspritParcParser when val is a list
+- Fix "'NoneType' object is not iterable" when responseData is null for EspritParcParser
+
+**Documentation**
+
+- Fix parameter name ``MAIL_MANAGERS`` in documentation
 
 
 2.91.1     (2022-11-18)

@@ -129,7 +129,8 @@ class BiodivParser(Parser):
 class SpeciesSensitiveAreaShapeParser(ShapeParser):
     model = SensitiveArea
     label = "Shapefile zone sensible espèce"
-    label_fr = "Shapefile species sensitive area"
+    label_fr = "Shapefile zone sensible espèce"
+    label_en = "Shapefile species sensitive area"
     separator = ','
     delete = False
     fields = {
@@ -158,7 +159,8 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
 class RegulatorySensitiveAreaShapeParser(ShapeParser):
     model = SensitiveArea
     label = "Shapefile zone sensible réglementaire"
-    label_fr = "Shapefile regulatory sensitive area"
+    label_fr = "Shapefile zone sensible réglementaire"
+    label_en = "Shapefile species sensitive area"
     separator = ','
     delete = False
     fields = {
