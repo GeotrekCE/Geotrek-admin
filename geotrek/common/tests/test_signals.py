@@ -1,7 +1,7 @@
 from django.test import TestCase
 from freezegun import freeze_time
 
-from geotrek.common.tests.factories import OrganismFactory, AttachmentFactory, AttachmentAccessibilityFactory
+from geotrek.common.tests.factories import HDViewPointFactory, OrganismFactory, AttachmentFactory, AttachmentAccessibilityFactory
 
 
 class CommonSignalsTestCase(TestCase):
@@ -63,3 +63,22 @@ class CommonSignalsTestCase(TestCase):
         self.object.refresh_from_db()
         # object date_update has been updated with current datetime
         self.assertEqual(self.object.date_update.isoformat(), "2022-07-04T15:00:00+00:00")
+
+    def test_date_update_when_hdviewpoint_updated(self):
+        """ Object date_update updated when HD view point updated """
+        # add attachment
+        hdviewpoint = HDViewPointFactory(content_object=self.object)
+        with freeze_time("2022-07-04T16:00:00+00:00"):
+            hdviewpoint.save()
+        self.object.refresh_from_db()
+        # object date_update has been updated with current datetime
+        self.assertEqual(self.object.date_update.isoformat(), "2022-07-04T16:00:00+00:00")
+
+    def test_date_update_when_hdviewpoint_deleted(self):
+        """ Object date_update updated when HD view point deleted """
+        hdviewpoint = HDViewPointFactory(content_object=self.object)
+        with freeze_time("2022-07-04T17:00:00+00:00"):
+            hdviewpoint.delete()
+        self.object.refresh_from_db()
+        # object date_update has been updated with current datetime
+        self.assertEqual(self.object.date_update.isoformat(), "2022-07-04T17:00:00+00:00")
