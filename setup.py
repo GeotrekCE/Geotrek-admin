@@ -56,7 +56,7 @@ setup(
         'xlrd',
         'landez',
         'celery[redis]',
-        'django-celery-results==2.2.*',  # Latest version supporting python3.6
+        'django-celery-results>=2.2,<2.5',  # Latest version supporting python3.6
         'drf-extensions',
         'django-colorfield',
         'Fiona',
