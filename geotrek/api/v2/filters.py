@@ -23,6 +23,8 @@ from geotrek.zoning.models import City, District
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    from geotrek.sensitivity.models import SensitiveArea
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -177,7 +179,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             contents_intersecting = intersecting(qs,
                                                  trek,
                                                  distance=0,
-                                                 field='geom_buffered')
+                                                 field='geom')
             qs = contents_intersecting.order_by('id')
         return qs.distinct()
 
@@ -203,7 +205,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_('Filter by a trek id. It will show only the sensitive areas related to this trek.')
+                    description=_('Filter by a trek id. It will show only the sensitive areas intersecting this trek.')
                 )
             ),
         )
@@ -268,32 +270,46 @@ class GeotrekPOIFilter(BaseFilterBackend):
 
 class NearbyContentFilter(BaseFilterBackend):
 
-    def intersect_queryset_with_object(self, qs, model, obj_pk):
+    def intersect_queryset_with_object(self, qs, model, obj_pk, distance=None, field="geom"):
         obj = model.objects.filter(pk=obj_pk).first()
         if obj:
-            qs = intersecting(qs, obj)
+            qs = intersecting(qs, obj, distance=distance, field=field)
         else:
             # Intersecting with a non-existing object results in empty data
             qs = model.objects.none()
         return qs
 
     def filter_queryset(self, request, qs, view):
+        distance = None
+        field = "geom"
+
+        # sensitive area particular cases. We should intersect with the buffered geometry
+        if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+            if qs.model == SensitiveArea:
+                distance = 0
+                field = "geom_buffered"
+
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
-            qs = self.intersect_queryset_with_object(qs, TouristicEvent, near_touristicevent)
+            qs = self.intersect_queryset_with_object(qs, TouristicEvent, near_touristicevent,
+                                                     distance=distance, field=field)
         near_touristiccontent = request.GET.get('near_touristiccontent')
         if near_touristiccontent:
-            qs = self.intersect_queryset_with_object(qs, TouristicContent, near_touristiccontent)
+            qs = self.intersect_queryset_with_object(qs, TouristicContent, near_touristiccontent,
+                                                     distance=distance, field=field)
         near_trek = request.GET.get('near_trek')
         if near_trek:
-            qs = self.intersect_queryset_with_object(qs, Trek, near_trek)
+            qs = self.intersect_queryset_with_object(qs, Trek, near_trek,
+                                                     distance=distance, field=field)
         near_outdoorsite = request.GET.get('near_outdoorsite')
         if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             if near_outdoorsite:
-                qs = self.intersect_queryset_with_object(qs, Site, near_outdoorsite)
+                qs = self.intersect_queryset_with_object(qs, Site, near_outdoorsite,
+                                                         distance=distance, field=field)
             near_outdoorcourse = request.GET.get('near_outdoorcourse')
             if near_outdoorcourse:
-                qs = self.intersect_queryset_with_object(qs, Course, near_outdoorcourse)
+                qs = self.intersect_queryset_with_object(qs, Course, near_outdoorcourse,
+                                                         distance=distance, field=field)
         return qs
 
     def get_schema_fields(self, view):
