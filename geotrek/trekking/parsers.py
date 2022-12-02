@@ -262,6 +262,27 @@ TREK_NO_MARKING_DESCRIPTION = {
 }
 
 
+class ApidaeTranslatedField:
+
+    apidae_prefix = 'libelle'
+
+    def __init__(self):
+        self._translated_items = defaultdict(list)
+
+    def append(self, translated_value, transform_func=None):
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            translation_value = translated_value.get(f'{ApidaeTranslatedField.apidae_prefix}{lang.capitalize()}', '')
+            if transform_func:
+                translation_value = transform_func(translation_value)
+            self._translated_items[lang].append(translation_value)
+
+    def to_dict(self):
+        rv = {}
+        for key, value in self._translated_items.items():
+            rv[key] = ''.join(value)
+        return rv
+
+
 class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
     model = Trek
     eid = 'eid'
@@ -424,10 +445,15 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         val = super().apply_filter(dst, src, val)
         # Can be called after a filter_*** to dispatch translated values into translation fields.
         if dst in self.translated_fields:
-            if isinstance(val, dict):
+            if isinstance(val, dict) or isinstance(val, ApidaeTranslatedField):
+
+                if isinstance(val, ApidaeTranslatedField):
+                    val = val.to_dict()
+
                 for key, final_value in val.items():
                     if key in settings.MODELTRANSLATION_LANGUAGES:
                         self.set_value(f'{dst}_{key}', src, final_value)
+
                 val = val.get(get_language())
         return val
 
@@ -707,15 +733,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
 
     @staticmethod
     def _make_description(ouverture=None, descriptifs=None, itineraire=None, tarifs=None):
-        html_description = defaultdict(lambda: '')
-
-        def append_to_html_description(translated_field,
-                                       transform_func=ApidaeTrekParser._transform_description_to_html):
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                try:
-                    html_description[lang] += transform_func(translated_field[f'libelle{lang.capitalize()}'])
-                except KeyError:
-                    pass
 
         def get_guidebook():
             if not descriptifs:
@@ -728,24 +745,30 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         def est_fermé_temporairement(ouverture):
             return ouverture.get('fermeTemporairement') == 'FERME_TEMPORAIREMENT'
 
+        tf = ApidaeTranslatedField()
+
         if ouverture and est_fermé_temporairement(ouverture):
-            append_to_html_description(ouverture['periodeEnClair'])
+            tf.append(translated_value=ouverture['periodeEnClair'],
+                      transform_func=ApidaeTrekParser._transform_description_to_html)
 
         guidebook = get_guidebook()
         if guidebook:
-            append_to_html_description(guidebook['description'],
-                                       transform_func=ApidaeTrekParser._transform_guidebook_to_html)
+            tf.append(translated_value=guidebook['description'],
+                      transform_func=ApidaeTrekParser._transform_guidebook_to_html)
 
         if ouverture and not est_fermé_temporairement(ouverture):
-            append_to_html_description(ouverture['periodeEnClair'])
+            tf.append(translated_value=ouverture['periodeEnClair'],
+                      transform_func=ApidaeTrekParser._transform_description_to_html)
 
         if itineraire:
-            append_to_html_description(ApidaeTrekParser._make_marking_description(itineraire))
+            tf.append(translated_value=ApidaeTrekParser._make_marking_description(itineraire),
+                      transform_func=ApidaeTrekParser._transform_description_to_html)
 
         if tarifs and tarifs['indicationTarif'] == 'PAYANT':
-            append_to_html_description(tarifs['tarifsEnClair'])
+            tf.append(translated_value=tarifs['tarifsEnClair'],
+                      transform_func=ApidaeTrekParser._transform_description_to_html)
 
-        return html_description
+        return tf
 
     @staticmethod
     def _make_duration(duration_in_minutes=None, duration_in_days=None):

@@ -928,7 +928,7 @@ class MakeDescriptionTests(SimpleTestCase):
             '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
             '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
         )
-        self.assertEqual(description['fr'], expected_fr_description)
+        self.assertEqual(description.to_dict()['fr'], expected_fr_description)
         expected_en_description = (
             '<p>Start: from the parking near the Chapelle Saint Michel </p>'
             '<p>1/ Follow the path starting at right-hand, cross the valley.</p>'
@@ -938,7 +938,7 @@ class MakeDescriptionTests(SimpleTestCase):
             '<p>Exceptionally closed during heavy rain</p>'
             '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
         )
-        self.assertEqual(description['en'], expected_en_description)
+        self.assertEqual(description.to_dict()['en'], expected_en_description)
 
     def test_it_places_temporary_closed_warning_first(self):
         temporary_closed = {
@@ -957,7 +957,7 @@ class MakeDescriptionTests(SimpleTestCase):
             '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
             '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
         )
-        self.assertEqual(description['fr'], expected_fr_description)
+        self.assertEqual(description.to_dict()['fr'], expected_fr_description)
         expected_en_description = (
             '<p>Closed temporarily.</p>'
             '<p>Start: from the parking near the Chapelle Saint Michel </p>'
@@ -966,7 +966,7 @@ class MakeDescriptionTests(SimpleTestCase):
             '<p>3/ Back to the chapelle by the woods.</p>'
             '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
         )
-        self.assertEqual(description['en'], expected_en_description)
+        self.assertEqual(description.to_dict()['en'], expected_en_description)
 
 
 class MakeMarkingDescriptionTests(SimpleTestCase):
