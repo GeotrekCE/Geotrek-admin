@@ -5,6 +5,12 @@ CHANGELOG
 2.92.2+dev (XXXX-XX-XX)
 -----------------------
 
+**Improvements**
+
+- API v2:
+  - revert ?trek filter by direct intersecting geometry on sensitive area endpoint.
+  - improve ?near_xxx filters by direct intersecting buffered geometry on sensitive area endpoint.
+
 
 2.92.2     (2022-12-01)
 -----------------------
