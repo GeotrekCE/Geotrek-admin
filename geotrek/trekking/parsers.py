@@ -14,7 +14,7 @@ from geotrek.common.parsers import (
     ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeParser
 )
 from geotrek.common.utils.translation import get_translated_fields
-from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork
+from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
 
 
 class DurationParserMixin:
@@ -826,7 +826,8 @@ class ApidaeTrekNetworkParser(ApidaeReferenceElementParser):
     element_reference_ids = APIDAE_ACTIVITIES_IDS_AS_NETWORKS
     name_field = 'network'
 
-# TODO
-# class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
-#     model = Accessibility
-#     element_reference_ids = None
+
+class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
+    model = Accessibility
+    element_reference_ids = ApidaeTrekParser.natures_de_terrain_ids_as_accessibilities
+    name_field = 'name'
