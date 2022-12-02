@@ -224,9 +224,56 @@ class GeotrekPOIParser(GeotrekParser):
         self.next_url = f"{self.url}/api/v2/poi"
 
 
-TYPOLOGIES_SITRA_IDS_AS_LABELS = [1599, 1676, 4639, 4819, 5022, 4971, 3845, 6566, 6049, 1582, 5538, 6825, 6608, 1602]
-TYPOLOGIES_SITRA_IDS_AS_THEMES = [6155, 6156, 6368, 6153, 6154, 6157, 6163, 6158, 6679, 6159, 6160, 6161]
-ENVIRONNEMENTS_IDS_AS_LABELS = [135, 4630, 171, 189, 186, 6238, 3743, 147, 149, 156, 153, 187, 195, 6464, 4006, 169, 3978, 6087]
+TYPOLOGIES_SITRA_IDS_AS_LABELS = [
+    1599,  # Déconseillé par mauvais temps
+    1676,  # En plein air
+    4639,  # Conseillé par forte chaleur
+    4819,  # Paysages
+    5022,  # Respirando
+    4971,  # Inscrit au PDIPR
+    3845,  # Itinéraire France vélo
+    6566,  # Label Espace Cyclosport
+    6049,  # Label Vélo et Fromages
+    1582,  # Label VTT - FFC
+    5538,  # Label VTT - FFCT
+    6825,  # Station de Trail®
+    6608,  # Site sur-fréquenté
+    1602,  # Circuits de France
+]
+TYPOLOGIES_SITRA_IDS_AS_THEMES = [
+    6155,  # Adrénaline
+    6156,  # Au fil de l'eau
+    6368,  # Familial
+    6153,  # Faune
+    6154,  # Flore
+    6157,  # Géologie
+    6163,  # Gourmande
+    6158,  # Historique
+    6679,  # Itinéraire d'accès à un refuge
+    6159,  # Vue exceptionnelle
+    6160,  # Pastoralisme
+    6161,  # Volcanisme
+]
+ENVIRONNEMENTS_IDS_AS_LABELS = [
+    135,  # A la campagne
+    4630,  # Dans une réserve naturelle
+    171,  # En montagne
+    189,  # En moyenne montagne
+    186,  # En haute montagne
+    6238,  # Présence de troupeaux et chiens de protection
+    3743,  # Au bord de l'eau
+    147,  # Lac ou plan d'eau à moins de 300 m
+    149,  # Rivière ou fleuve à moins de 300 m
+    156,  # Etang à moins de 300 m
+    153,  # En forêt
+    187,  # Isolé
+    195,  # Village à -2 km
+    6464,  # Vue cascade
+    4006,  # Vue sur fleuve ou rivière
+    169,  # Vue montagne
+    3978,  # Vue sur le vignoble
+    6087,  # Vue panoramique
+]
 APIDAE_ACTIVITIES_IDS_AS_NETWORKS = [
     3333,  # Itinéraire de randonnée pédestre
     3331,  # Parcours / sentier thématique
