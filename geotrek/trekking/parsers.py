@@ -266,7 +266,8 @@ class ApidaeTranslatedField:
 
     apidae_prefix = 'libelle'
 
-    def __init__(self):
+    def __init__(self, separator=''):
+        self._separator = separator
         self._translated_items = defaultdict(list)
 
     def append(self, translated_value, transform_func=None):
@@ -279,7 +280,7 @@ class ApidaeTranslatedField:
     def to_dict(self):
         rv = {}
         for key, value in self._translated_items.items():
-            rv[key] = ''.join(value)
+            rv[key] = self._separator.join(value)
         return rv
 
 
@@ -335,6 +336,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         ),
         'advice': 'informationsEquipement.itineraire.passagesDelicats',
         'route': 'informationsEquipement.itineraire.itineraireType',
+        'accessibility_covering': 'informationsEquipement.itineraire.naturesTerrain.*',
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -592,6 +594,26 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
                 item[translation_fieldname] for item in val
                 if item['id'] in ApidaeTrekParser.natures_de_terrain_ids_as_accessibilities
             ]
+        )
+
+    def filter_accessibility_covering(self, src, val):
+        natures_terrain = val
+        natures_terrain_ids_as_coverings = [
+            4240,  # Cailloux
+            4243,  # Gravillons
+            4242,  # Revêtement dur (goudron, ciment, plancher)
+            4239,  # Rocher
+            4241,  # Terre
+        ]
+        filtered_nt = [nt for nt in natures_terrain if nt['id'] in natures_terrain_ids_as_coverings]
+
+        tf = ApidaeTranslatedField(separator=', ')
+        for nt in filtered_nt:
+            tf.append(translated_value=nt)
+        self.apply_filter(
+            dst='accessibility_covering',
+            src=src,
+            val=tf
         )
 
     def _finalize_related_treks_association(self):

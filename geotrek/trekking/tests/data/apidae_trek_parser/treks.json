@@ -32,6 +32,16 @@
             {
               "id": 4245,
               "libelleEn": "Suitable for all terrain strollers"
+            },
+            {
+              "id": 4239,
+              "libelleEn": "Rock",
+              "libelleFr": "Rocher"
+            },
+            {
+              "id": 4241,
+              "libelleEn": "Ground",
+              "libelleFr": "Terre"
             }
           ]
         }
