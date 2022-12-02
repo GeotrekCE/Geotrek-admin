@@ -742,7 +742,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
     def _get_geom_from_gpx(data):
         """Given GPX data as bytes it returns a geom."""
         # FIXME: is there another way than the temporary file? It seems not. `DataSource` really expects a filename.
-        with NamedTemporaryFile(mode='w+b', dir='/opt/geotrek-admin/var/tmp') as ntf:
+        with NamedTemporaryFile(mode='w+b', dir=settings.TMP_DIR) as ntf:
             ntf.write(data)
             ntf.flush()
             ds = DataSource(ntf.name)
