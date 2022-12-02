@@ -337,6 +337,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
         'advice': 'informationsEquipement.itineraire.passagesDelicats',
         'route': 'informationsEquipement.itineraire.itineraireType',
         'accessibility_covering': 'informationsEquipement.itineraire.naturesTerrain.*',
+        'gear': (
+            'informationsEquipement.itineraire.referencesCartographiques',
+            'informationsEquipement.itineraire.referencesTopoguides',
+        ),
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -612,6 +616,21 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeParser):
             tf.append(translated_value=nt)
         self.apply_filter(
             dst='accessibility_covering',
+            src=src,
+            val=tf
+        )
+
+    def filter_gear(self, src, val):
+        ref_carto, ref_topo = val
+        if not ref_carto and not ref_topo:
+            return None
+        tf = ApidaeTranslatedField()
+        if ref_carto:
+            tf.append(translated_value=ref_carto, transform_func=ApidaeTrekParser._transform_description_to_html)
+        if ref_topo:
+            tf.append(translated_value=ref_topo, transform_func=ApidaeTrekParser._transform_description_to_html)
+        return self.apply_filter(
+            dst='gear',
             src=src,
             val=tf
         )

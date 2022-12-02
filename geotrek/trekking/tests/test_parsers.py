@@ -703,6 +703,13 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn('Rocher', trek.accessibility_covering_fr)
         self.assertIn('Terre', trek.accessibility_covering_fr)
 
+        self.assertTrue(trek.gear is not None)
+        self.assertIn("Map IGN3531OT Top 25", trek.gear)
+        self.assertIn("Guidebook sold at the tourist board", trek.gear)
+        self.assertIn("TOP 25 IGN 3531 OT", trek.gear_fr)
+        self.assertIn("Cartoguide en vente à l'Office de Tourisme", trek.gear_fr)
+
+        # Import an updated trek
         mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks_updated.json')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 

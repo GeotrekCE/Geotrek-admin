@@ -18,6 +18,14 @@
         ],
         "itineraire": {
           "dureeJournaliere": 150,
+          "referencesCartographiques": {
+            "libelleFr": "TOP 25 IGN 3531 OT",
+            "libelleEn": "Map IGN3531OT Top 25"
+          },
+          "referencesTopoguides": {
+            "libelleFr": "Cartoguide en vente à l'Office de Tourisme",
+            "libelleEn": "Guidebook sold at the tourist board"
+          },
           "passagesDelicats": {
             "libelleFr": "À éviter après de grosses pluies.",
             "libelleEn": "Avoid after heavy rain."
