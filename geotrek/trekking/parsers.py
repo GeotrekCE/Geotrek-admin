@@ -720,7 +720,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
 
     @classmethod
     def _transform_guidebook_to_html(cls, text):
-        # This method in custom install.
+        # This method can be overridden in var/conf/parsers.py.
+        # FIXME: is there a better way to provide specific behaviors for parsing?
         return cls._transform_description_to_html(text)
 
     @staticmethod
