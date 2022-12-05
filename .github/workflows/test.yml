@@ -112,7 +112,8 @@ jobs:
              libpango1.0-0 \
              libpangocairo-1.0-0 \
              libgdk-pixbuf2.0-dev \
-             libffi-dev
+             libffi-dev \
+             libvips
         sudo apt-get install -y --no-install-recommends postgis
 
     - name: Install python dependencies
