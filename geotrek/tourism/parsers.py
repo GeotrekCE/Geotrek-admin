@@ -902,6 +902,7 @@ class LEITouristicContentParser(LEIParser):
         'type1': 'label',
         'type2': 'label',
     }
+    m2m_fields = {}
 
     def __init__(self, *args, **kwargs):
         LEIParser.__init__(self, *args, **kwargs)
@@ -935,6 +936,7 @@ class LEITouristicEventParser(LEIParser):
         'type': 'TYPE_NOM',
         'geom': ('LATITUDE', 'LONGITUDE'),
     }
+    m2m_fields = {}
     type = None
     natural_keys = {
         'category': 'label',
@@ -953,9 +955,7 @@ class LEITouristicEventParser(LEIParser):
 
     def filter_organizer(self, src, val):
         (first, second) = val
-        if first:
-            return first
-        return second
+        return first if first else second
 
     def filter_speaker(self, src, val):
         (civilite, nom, prenom) = val

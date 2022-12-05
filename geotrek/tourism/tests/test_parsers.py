@@ -123,6 +123,9 @@ class FMA28OtherPortal(TouristicEventTourInSoftParser):
 class RestaurantALEIParser(LEITouristicContentParser):
     url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
     category = "Restaurant"
+    type1 = "Type 1"
+    type2 = "Type 2"
+    practical_info = "Practical Info"
     non_fields = {
         'attachments': ('CRITERES/Crit[@CLEF_CRITERE="1900421"]', 'CRITERES/Crit[@CLEF_CRITERE="1900268"]'),
     }
