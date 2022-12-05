@@ -1,12 +1,30 @@
 {% extends "mapentity/base_site.html" %}
 {% load i18n static mapentity_tags leaflet_tags %}
 
-{% block title %}{{ object }} | {{ block.super }}{% endblock title %}
-
+{% block head %}
+  {% block title %}{{ object }} | {{ block.super }}{% endblock title %}
+  {{ block.super }}
+  <style>
+      .list-panel.{{ object.modelname }},
+      .form-panel.{{ object.modelname }},
+      .details-panel.{{ object.modelname }} {
+          background-image: url({% static object.icon_big %});
+          background-position: left top -3%;
+      }
+      li.history.{{ object.modelname }} > a,
+      li.history.{{ object.modelname }} button:first-child {
+          background: url({% static object.icon_small %}) no-repeat;
+          background-position: left center;
+      }
+      .nav-item.{{ object.modelname }} .btn-list {
+          background-image: url({% static object.icon_big %});
+      }
+</style>
+{% endblock head %}
 {% block mainpanel %}
-<div class="details-panel detail col-12 col-lg-7 {{ modelname }}">
+<div class="details-panel detail col-12 col-lg-7 {{ object.modelname }}">
   <h1 class="details-title">{{ object }}</h1>
-
+  <div class="download-group"></div>
   <div class="tabbable">
     <ul class="nav nav-tabs">
         <li class="nav-item">

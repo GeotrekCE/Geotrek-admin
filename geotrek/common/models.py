@@ -396,3 +396,19 @@ class HDViewPoint(TimeStampedModelMixin):
     @classmethod
     def get_create_label(cls):
         return _("Add a new HD view")
+
+    @property
+    def icon(self):
+        return 'images/hdviewpoint.png'
+
+    @property
+    def icon_small(self):
+        return 'images/hdviewpoint-16.png'
+
+    @property
+    def icon_big(self):
+        return 'images/hdviewpoint-96.png'
+
+    @property
+    def modelname(self):
+        return self._meta.model_name
