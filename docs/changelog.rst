@@ -5,6 +5,10 @@ CHANGELOG
 2.92.3+dev (XXXX-XX-XX)
 -----------------------
 
+**New feature**
+
+- New ``Parser`` subclass to import treks from the APIDAE touristic data system.
+
 **Improvements**
 
 - Use MapEntity widget for geometries even without setting ``TREKKING_TOPOLOGY_ENABLED`` (to always display file layer leaflet plugin)
