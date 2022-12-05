@@ -1113,6 +1113,5 @@ class MakeDurationTests(SimpleTestCase):
     def test_it_returns_correct_duration_from_duration_in_days(self):
         self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_days=3), 72.0)
 
-    def test_giving_both_duration_arguments_raises_an_error(self):
-        with self.assertRaises(AssertionError):
-            ApidaeTrekParser._make_duration(duration_in_minutes=45, duration_in_days=2)
+    def test_giving_both_duration_arguments_only_duration_in_minutes_is_considered(self):
+        self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90, duration_in_days=0.5), 1.5)

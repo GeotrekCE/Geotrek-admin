@@ -873,8 +873,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
 
     @staticmethod
     def _make_duration(duration_in_minutes=None, duration_in_days=None):
-        """Returns the duration in hours. Expects only one of the argument to have a non-zero value."""
-        assert not (duration_in_minutes and duration_in_days)
+        """Returns the duration in hours. The method expects one argument or the other, not both. If both arguments have
+         non-zero values the method only considers `duration_in_minutes` and discards `duration_in_days`."""
         if duration_in_minutes:
             return duration_in_minutes / 60
         elif duration_in_days:
