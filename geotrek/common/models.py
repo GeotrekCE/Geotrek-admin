@@ -1,4 +1,5 @@
 import os
+from sqlite3 import OperationalError
 import uuid
 
 from colorfield.fields import ColorField
@@ -9,7 +10,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.db.models import Q
-from django.db.utils import OperationalError
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.http import urlencode
@@ -349,7 +349,7 @@ class HDViewPoint(TimeStampedModelMixin):
         return reverse('common:hdviewpoint_detail', args=[self.pk])
 
     @property
-    def get_thumbnail_url(self):
+    def thumbnail_url(self):
         return reverse('common:hdviewpoint-thumbnail', kwargs={'pk': self.pk, 'fmt': 'png'})
 
     def get_update_url(self):
@@ -357,13 +357,6 @@ class HDViewPoint(TimeStampedModelMixin):
 
     def get_delete_url(self):
         return reverse('common:hdviewpoint_delete', args=[self.pk])
-
-    @classmethod
-    def get_content_type_id(cls):
-        try:
-            return ContentType.objects.get_for_model(cls).pk
-        except OperationalError:  # table is not yet created
-            return None
 
     @classmethod
     def get_permission_codename(cls, entity_kind):
@@ -379,10 +372,14 @@ class HDViewPoint(TimeStampedModelMixin):
         perm = operations.get(entity_kind, entity_kind)
         opts = cls._meta
         appname = opts.app_label.lower()
-        if opts.proxy:
-            proxied = opts.proxy_for_model._meta
-            appname = proxied.app_label.lower() if proxied.app_label.lower() != "admin" else appname
         return '%s.%s' % (appname, auth.get_permission_codename(perm, opts))
+
+    @classmethod
+    def get_content_type_id(cls):
+        try:
+            return ContentType.objects.get_for_model(cls).pk
+        except OperationalError:  # table is not yet created
+            return None
 
     def get_geom(self):
         return self.geom
@@ -395,10 +392,6 @@ class HDViewPoint(TimeStampedModelMixin):
     @classmethod
     def get_create_label(cls):
         return _("Add a new HD view")
-
-    @property
-    def icon(self):
-        return 'images/hdviewpoint.png'
 
     @property
     def icon_small(self):
