@@ -551,7 +551,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         return self.apply_filter(
             dst='description',
             src=src,
-            val=ApidaeTrekParser._make_description(ouverture, descriptifs, itineraire, tarifs)
+            val=self.__class__._make_description(ouverture, descriptifs, itineraire, tarifs)
         )
 
     def filter_source(self, src, val):
@@ -707,8 +707,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         # print('downloaded url {}, content size {}'.format(plan['traductionFichiers'][0]['url'], len(response.text)))
         return response.content
 
-    @staticmethod
-    def _transform_description_to_html(text):
+    @classmethod
+    def _transform_description_to_html(cls, text):
         """Transform a descriptive text into HTML paragraphs."""
         html_blocks = []
         lines = text.replace('\r', '').split('\n')
@@ -718,10 +718,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             html_blocks.append(f'<p>{line}</p>')
         return ''.join(html_blocks)
 
-    @staticmethod
-    def _transform_guidebook_to_html(text):
-        # This method can be overriden
-        return ApidaeTrekParser._transform_description_to_html(text)
+    @classmethod
+    def _transform_guidebook_to_html(cls, text):
+        # This method in custom install.
+        return cls._transform_description_to_html(text)
 
     @staticmethod
     def _make_marking_description(itineraire):
@@ -832,8 +832,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         # Note this exludes the limit date.
         return max_date > a_date
 
-    @staticmethod
-    def _make_description(ouverture=None, descriptifs=None, itineraire=None, tarifs=None):
+    @classmethod
+    def _make_description(cls, ouverture=None, descriptifs=None, itineraire=None, tarifs=None):
 
         def get_guidebook():
             if not descriptifs:
@@ -850,24 +850,24 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
 
         if ouverture and est_fermé_temporairement(ouverture):
             tf.append(translated_value=ouverture['periodeEnClair'],
-                      transform_func=ApidaeTrekParser._transform_description_to_html)
+                      transform_func=cls._transform_description_to_html)
 
         guidebook = get_guidebook()
         if guidebook:
             tf.append(translated_value=guidebook['description'],
-                      transform_func=ApidaeTrekParser._transform_guidebook_to_html)
+                      transform_func=cls._transform_guidebook_to_html)
 
         if ouverture and not est_fermé_temporairement(ouverture):
             tf.append(translated_value=ouverture['periodeEnClair'],
-                      transform_func=ApidaeTrekParser._transform_description_to_html)
+                      transform_func=cls._transform_description_to_html)
 
         if itineraire:
-            tf.append(translated_value=ApidaeTrekParser._make_marking_description(itineraire),
-                      transform_func=ApidaeTrekParser._transform_description_to_html)
+            tf.append(translated_value=cls._make_marking_description(itineraire),
+                      transform_func=cls._transform_description_to_html)
 
         if tarifs and tarifs['indicationTarif'] == 'PAYANT':
             tf.append(translated_value=tarifs['tarifsEnClair'],
-                      transform_func=ApidaeTrekParser._transform_description_to_html)
+                      transform_func=cls._transform_description_to_html)
 
         return tf
 
