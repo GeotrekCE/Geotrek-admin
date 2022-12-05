@@ -903,6 +903,8 @@ class LEITouristicContentParser(LEIParser):
         'type2': 'label',
     }
     m2m_fields = {}
+    m2m_constant_fields = {}
+    non_fields = {}
 
     def __init__(self, *args, **kwargs):
         LEIParser.__init__(self, *args, **kwargs)
@@ -942,6 +944,9 @@ class LEITouristicEventParser(LEIParser):
         'category': 'label',
         'type': 'type'
     }
+    constant_fields = {}
+    m2m_constant_fields = {}
+    non_fields = {}
 
     def __init__(self, *args, **kwargs):
         LEIParser.__init__(self, *args, **kwargs)
