@@ -915,7 +915,7 @@ class LEITouristicContentParser(LEIParser):
             self.fields['practical_info'] = self.practical_info
 
 
-class LEIEventParser(LEIParser):
+class LEITouristicEventParser(LEIParser):
     """LEI Parser for touristic events"""
     model = TouristicEvent
     fields = {
@@ -935,7 +935,6 @@ class LEIEventParser(LEIParser):
         'type': 'TYPE_NOM',
         'geom': ('LATITUDE', 'LONGITUDE'),
     }
-    category = None
     type = None
     natural_keys = {
         'category': 'label',
@@ -944,7 +943,7 @@ class LEIEventParser(LEIParser):
 
     def __init__(self, *args, **kwargs):
         LEIParser.__init__(self, *args, **kwargs)
-        if self.category:
+        if self.type:
             self.constant_fields['type'] = self.type
 
     def filter_description_teaser(self, src, val):
