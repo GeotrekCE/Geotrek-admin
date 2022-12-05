@@ -95,8 +95,6 @@ class LabelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class HDViewPointAPISerializer(TranslatedModelSerializer):
-    # picture TODO : link to tileserver
-
     class Meta:
         model = HDViewPoint
         fields = (

@@ -330,8 +330,7 @@ class HDViewPoint(TimeStampedModelMixin):
 
     @classmethod
     def get_list_url(cls):
-        # TODO
-        return reverse('common:hdviewpoint_add')
+        return reverse('admin:common_hdviewpoint_changelist')
 
     def get_picture_tile_url(self, x, y, z):
         url = reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': x, 'y': y, 'z': z, 'fmt': 'png'})

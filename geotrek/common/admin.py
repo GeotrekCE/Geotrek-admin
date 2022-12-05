@@ -4,7 +4,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import NoReverseMatch
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+
 from geotrek.common.mixins.actions import MergeActionMixin
+
 from . import models as common_models
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -102,8 +104,6 @@ class LabelAdmin(TabbedTranslationAdmin):
     list_display = ('pictogram_img', 'name', 'filter')
     list_display_links = ('name',)
     search_fields = ('name', )
-
-
 
 
 class HDViewPointAdmin(admin.ModelAdmin):

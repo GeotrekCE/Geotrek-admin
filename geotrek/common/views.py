@@ -324,14 +324,6 @@ class ParametersView(View):
         return JsonResponse(response)
 
 
-# class HDViewPointList(CustomColumnsMixin, MapEntityList):
-#     queryset = HDViewPoint.objects.all()
-# TODO IN ADMIN
-#     filterform = HDViewPointFilterSet
-#     mandatory_columns = ['id', 'name']
-#     default_extra_columns = ['super_practices', 'date_update']
-#     searchable_columns = ['id', 'name']
-
 class HDViewPointAPIViewSet(APIViewSet):
     model = HDViewPoint
     serializer_class = HDViewPointAPISerializer
