@@ -6,7 +6,7 @@ from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import Point, GEOSGeometry
+from django.contrib.gis.geos import Point, GEOSGeometry, MultiLineString
 from django.utils.translation import gettext as _, get_language
 
 from geotrek.common.models import Label, Theme
@@ -753,10 +753,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
                 layer = ApidaeTrekParser._get_layer(ds, layer_name)
                 if not layer:
                     continue
-                geom = ApidaeTrekParser._maybe_get_linestring_from_layer(layer)
-                if geom:
+                geos = ApidaeTrekParser._maybe_get_linestring_from_layer(layer)
+                if geos:
                     break
-            geos = geom.geos
             geos.transform(settings.SRID)
             return geos
 
@@ -768,15 +767,26 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         return None
 
     @staticmethod
+    def _convert_to_geos(geom):
+        # FIXME: is it right to try to correct input geometries?
+        # FIXME: how to log that info/spread errors?
+        if geom.geom_type == 'MultiLineString' and any([ls for ls in geom if ls.num_points == 1]):
+            # Handles that framework conversion fails when there are LineStrings of length 1
+            geos_mls = MultiLineString([ls.geos for ls in geom if ls.num_points > 1])
+            geos_mls.srid = geom.srid
+            return geos_mls
+
+        return geom.geos
+
+    @staticmethod
     def _maybe_get_linestring_from_layer(layer):
         if layer.num_feat == 0:
             return None
-        first_entity = layer[0]
-        if first_entity.geom.geom_type == 'MultiLineString':
-            geom = first_entity.geom[0]
-        else:
-            geom = first_entity.geom
-        return geom
+        first_feature = layer[0]
+        geos = ApidaeTrekParser._convert_to_geos(first_feature.geom)
+        if geos.geom_type == 'MultiLineString':
+            geos = geos.merged
+        return geos
 
     @staticmethod
     def _find_matching_practice_in_mapping(activities_ids, mapping):
