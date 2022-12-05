@@ -1,3 +1,4 @@
+from datetime import date
 import json
 import os
 from copy import copy
@@ -1087,21 +1088,18 @@ class GetPracticeNameFromActivities(SimpleTestCase):
 class IsStillPublishableOn(SimpleTestCase):
 
     def test_it_returns_true(self):
-        from datetime import date
         illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
-        a_date_before_that = date.fromisoformat('2020-03-10')
+        a_date_before_that = date(year=2020, month=3, day=10)
         self.assertTrue(ApidaeTrekParser._is_still_publishable_on(illustration, a_date_before_that))
 
     def test_it_returns_false(self):
-        from datetime import date
         illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
-        a_date_after_that = date.fromisoformat('2020-08-10')
+        a_date_after_that = date(year=2020, month=8, day=10)
         self.assertFalse(ApidaeTrekParser._is_still_publishable_on(illustration, a_date_after_that))
 
     def test_it_considers_date_limite_is_not_included(self):
-        from datetime import date
         illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
-        that_same_date = date.fromisoformat('2020-06-28')
+        that_same_date = date(year=2020, month=6, day=28)
         self.assertFalse(ApidaeTrekParser._is_still_publishable_on(illustration, that_same_date))
 
 

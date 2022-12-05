@@ -828,8 +828,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             return True
         # Regexp parsing because Python does not handle timezone with no colon,
         # and because we don't know when the import is run we drop the time part.
-        max_date_str = re.match(r'(\d{4}-\d{2}-\d{2})', max_datetime_str).group(0)
-        max_date = date.fromisoformat(max_date_str)
+        result = re.match(r'(\d{4})-(\d{2})-(\d{2})', max_datetime_str)
+        year, month, day = map(int, result.groups())
+        max_date = date(year, month, day)
         # Note this exludes the limit date.
         return max_date > a_date
 
