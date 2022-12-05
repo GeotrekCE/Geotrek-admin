@@ -9,6 +9,16 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
     import geotrek.zoning.parsers  # noqa
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     import geotrek.sensitivity.parsers  # noqa
+if 'geotrek.trekking' in settings.INSTALLED_APPS:
+    import geotrek.trekking.parsers  # noqa
+if 'geotrek.tourism' in settings.INSTALLED_APPS:
+    import geotrek.tourism.parsers  # noqa
+if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    import geotrek.feedback.parsers  # noqa
+if 'geotrek.infrastucture' in settings.INSTALLED_APPS:
+    import geotrek.infrastucture.parsers  # noqa
+if 'geotrek.infrastucture' in settings.INSTALLED_APPS:
+    import geotrek.infrastucture.parsers  # noqa
 
 
 def subclasses(cls):
