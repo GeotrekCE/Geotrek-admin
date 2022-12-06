@@ -1,5 +1,5 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Div, Fieldset, Layout
+from crispy_forms.layout import Div, Layout
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -9,6 +9,7 @@ from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
+from geotrek.common.layouts import Formset
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
@@ -88,7 +89,7 @@ class InterventionForm(CommonForm):
             'material_cost',
             'heliport_cost',
             'subcontract_cost',
-            Fieldset(_("Mandays")),
+            Formset('manday_formset', legend=_("Mandays")),
             css_class="scrollable tab-pane active"
         ),
     ]
@@ -188,7 +189,7 @@ class ProjectForm(CommonForm):
                 Div('project_owner',
                     'project_manager',
                     'contractors',
-                    Fieldset(_("Fundings")),
+                    Formset('funding_formset', legend=_("Fundings")),
                     css_class="span6"),
                 css_class="row-fluid"
             ),
