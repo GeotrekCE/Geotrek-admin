@@ -621,7 +621,7 @@ class ApidaeTrekParserTests(TestCase):
     def test_trek_is_imported(self, mocked_get):
         RouteFactory(route='Boucle')
 
-        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/a_trek.json')
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 
@@ -708,14 +708,16 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn("Cartoguide en vente à l'Office de Tourisme", trek.gear_fr)
 
         # Import an updated trek
-        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks_updated.json')
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/a_trek_with_updated_limit_date.json'
+        )
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 
         self.assertEqual(Attachment.objects.count(), 0)
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
-        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/a_trek.json')
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 
@@ -752,7 +754,7 @@ class ApidaeTrekParserTests(TestCase):
     @mock.patch('requests.get')
     def test_trek_linked_entities_are_imported(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get(
-            'geotrek/trekking/tests/data/apidae_trek_parser/treks.json')
+            'geotrek/trekking/tests/data/apidae_trek_parser/a_trek.json')
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 

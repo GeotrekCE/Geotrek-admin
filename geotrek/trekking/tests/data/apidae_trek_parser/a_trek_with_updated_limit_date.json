@@ -18,11 +18,40 @@
         ],
         "itineraire": {
           "dureeJournaliere": 150,
+          "referencesCartographiques": {
+            "libelleFr": "TOP 25 IGN 3531 OT",
+            "libelleEn": "Map IGN3531OT Top 25"
+          },
+          "referencesTopoguides": {
+            "libelleFr": "Cartoguide en vente à l'Office de Tourisme",
+            "libelleEn": "Guidebook sold at the tourist board"
+          },
+          "passagesDelicats": {
+            "libelleFr": "À éviter après de grosses pluies.",
+            "libelleEn": "Avoid after heavy rain."
+          },
+          "itineraireType": "BOUCLE",
           "itineraireBalise": "BALISE",
           "precisionsBalisage": {
             "libelleFr": "Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).",
             "libelleEn": "Follow the GR (white / red) or GRP (yellow / red) markings."
-          }
+          },
+          "naturesTerrain": [
+            {
+              "id": 4245,
+              "libelleEn": "Suitable for all terrain strollers"
+            },
+            {
+              "id": 4239,
+              "libelleEn": "Rock",
+              "libelleFr": "Rocher"
+            },
+            {
+              "id": 4241,
+              "libelleEn": "Ground",
+              "libelleFr": "Terre"
+            }
+          ]
         }
       },
       "localisation": {
@@ -48,12 +77,7 @@
             "libelleEs": "En el campo",
             "libelleIt": "Campagna",
             "libelleDe": "Auf dem Land",
-            "libelleNl": "Platteland",
-            "ordre": 1,
-            "libelleRu": "За городом",
-            "libelleZh": "国内",
-            "libellePtBR": "No campo",
-            "libelleJa": "田舎"
+            "libelleNl": "Platteland"
           }
         ]
       },
@@ -129,6 +153,13 @@
           "libelleEn": "Open all year long\n\nExceptionally closed during heavy rain"
         }
       },
+      "descriptionTarif": {
+        "indicationTarif": "PAYANT",
+        "tarifsEnClair": {
+          "libelleFr": "Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.",
+          "libelleEn": "Ski lift ticket office: 2 shops - Frastaz and Bois Noir ski lifts."
+        }
+      },
       "presentation": {
         "descriptifCourt": {
           "libelleFr": "La description courte en français.",
@@ -140,19 +171,8 @@
         },
         "descriptifsThematises": [
           {
-            "dateDisponibilite": null,
-            "dateLimiteDePublication": null,
             "theme": {
-              "elementReferenceType": "DescriptifTheme",
-              "id": 6527,
-              "libelleFr": "Topo/pas à pas",
-              "libelleEn": "Guidebook with maps/step-by-step",
-              "libelleEs": "Plano/Seguir paso a paso",
-              "libelleIt": "Topografia/passo passo",
-              "libelleDe": "Topo/Schritt für Schritt",
-              "libelleNl": "Topo/stap voor stap",
-              "ordre": 33,
-              "description": "Permet de saisir les informations de guidage sur un itinéraire comme :\r\n- tourner à gauche à cette intersection\r\n- suivre le balisage jaune"
+              "id": 6527
             },
             "description": {
               "libelleFr": "Départ : du parking de la Chapelle Saint Michel \r\n1/ Suivre le chemin qui part à droite, traversant le vallon.\r\n2/ Au carrefour tourner à droite et suivre la rivière\r\n3/ Retour à la chapelle en passant à travers le petit bois.",
@@ -167,31 +187,7 @@
             "libelleFr": "Géologie",
             "libelleEn": "Geology",
             "libelleEs": "Geología",
-            "libelleIt": "Geologia",
-            "libelleDe": "Geologie",
-            "libelleNl": "Geologie",
-            "ordre": 405,
-            "description": "Itinéraire permettant d'expliquer l'origine de phénomènes naturels.",
-            "libelleRu": "Геология",
-            "libelleZh": "地质",
-            "libellePtBR": "Geologia",
-            "libelleJa": "地質学",
-            "familleCritere": {
-              "elementReferenceType": "FamilleCritere",
-              "id": 6152,
-              "libelleFr": "Thèmes",
-              "libelleEn": "Subjects",
-              "libelleEs": "Temas",
-              "libelleIt": "Temi",
-              "libelleDe": "Themen",
-              "libelleNl": "Thema’s",
-              "ordre": 153,
-              "description": "Thèmes pour les itinéraires, hébergements et restaurants",
-              "libelleRu": "Темы",
-              "libelleZh": "主题",
-              "libellePtBR": "Temas",
-              "libelleJa": "テーマ"
-            }
+            "libelleIt": "Geologia"
           },
           {
             "elementReferenceType": "TypologiePromoSitra",
@@ -199,31 +195,7 @@
             "libelleFr": "Historique",
             "libelleEn": "Historic",
             "libelleEs": "Histórico",
-            "libelleIt": "Storico",
-            "libelleDe": "Historisch",
-            "libelleNl": "Historisch",
-            "ordre": 407,
-            "description": "Itinéraire présentant un aspect historique de par sa situation géographique ou proposant du patrimoine culturel bâti le long du parcours.",
-            "libelleRu": "Историческая достопримечательность",
-            "libelleZh": "历史",
-            "libellePtBR": "Histórico",
-            "libelleJa": "歴史的",
-            "familleCritere": {
-              "elementReferenceType": "FamilleCritere",
-              "id": 6152,
-              "libelleFr": "Thèmes",
-              "libelleEn": "Subjects",
-              "libelleEs": "Temas",
-              "libelleIt": "Temi",
-              "libelleDe": "Themen",
-              "libelleNl": "Thema’s",
-              "ordre": 153,
-              "description": "Thèmes pour les itinéraires, hébergements et restaurants",
-              "libelleRu": "Темы",
-              "libelleZh": "主题",
-              "libellePtBR": "Temas",
-              "libelleJa": "テーマ"
-            }
+            "libelleIt": "Storico"
           },
           {
             "elementReferenceType": "TypologiePromoSitra",
@@ -231,14 +203,7 @@
             "libelleFr": "Déconseillé par mauvais temps",
             "libelleEn": "Not recommended in bad weather",
             "libelleEs": "Desaconsejado en época de mal tiempo",
-            "libelleIt": "Sconsigliato con cattivo tempo",
-            "libelleDe": "Bei schlechtem Wetter abgeraten",
-            "libelleNl": "Af te raden bij slecht weer",
-            "ordre": 8,
-            "libelleRu": "Не рекомендуется в плохую погоду",
-            "libelleZh": "恶劣天气时不推荐",
-            "libellePtBR": "Desaconselhado no mau tempo",
-            "libelleJa": "Déconseillé par mauvais temps（悪天候時は控えた方がよい）"
+            "libelleIt": "Sconsigliato con cattivo tempo"
           },
           {
             "elementReferenceType": "TypologiePromoSitra",
@@ -246,30 +211,7 @@
             "libelleFr": "Inscrit au PDIPR",
             "libelleEn": "Listed PDIPR",
             "libelleEs": "Listado en el PDIPR",
-            "libelleIt": "Elencato nel PDIPR",
-            "libelleDe": "Eingeschrieben PDIPR",
-            "libelleNl": "Genoteerd PDIPR",
-            "ordre": 164,
-            "description": "Permet d’identifier les itinéraires inscrits au Plan Départemental des Itinéraires de Promenade et de Randonnées.",
-            "libelleRu": "Внесен в список ПДИПР",
-            "libelleZh": "已上市的PDIPR",
-            "libellePtBR": "Listado no PDIPR",
-            "libelleJa": "PDIPRに登録",
-            "familleCritere": {
-              "elementReferenceType": "FamilleCritere",
-              "id": 113,
-              "libelleFr": "National",
-              "libelleEn": "National",
-              "libelleEs": "Nacional",
-              "libelleIt": "Nazionale",
-              "libelleDe": "National",
-              "libelleNl": "Nationaal",
-              "ordre": 93,
-              "libelleRu": "Национальный",
-              "libelleZh": "国家",
-              "libellePtBR": "Nacional",
-              "libelleJa": "国家"
-            }
+            "libelleIt": "Elencato nel PDIPR"
           }
         ]
       },
