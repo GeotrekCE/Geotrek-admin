@@ -224,91 +224,6 @@ class GeotrekPOIParser(GeotrekParser):
         self.next_url = f"{self.url}/api/v2/poi"
 
 
-TYPOLOGIES_SITRA_IDS_AS_LABELS = [
-    1599,  # Déconseillé par mauvais temps
-    1676,  # En plein air
-    4639,  # Conseillé par forte chaleur
-    4819,  # Paysages
-    5022,  # Respirando
-    4971,  # Inscrit au PDIPR
-    3845,  # Itinéraire France vélo
-    6566,  # Label Espace Cyclosport
-    6049,  # Label Vélo et Fromages
-    1582,  # Label VTT - FFC
-    5538,  # Label VTT - FFCT
-    6825,  # Station de Trail®
-    6608,  # Site sur-fréquenté
-    1602,  # Circuits de France
-]
-TYPOLOGIES_SITRA_IDS_AS_THEMES = [
-    6155,  # Adrénaline
-    6156,  # Au fil de l'eau
-    6368,  # Familial
-    6153,  # Faune
-    6154,  # Flore
-    6157,  # Géologie
-    6163,  # Gourmande
-    6158,  # Historique
-    6679,  # Itinéraire d'accès à un refuge
-    6159,  # Vue exceptionnelle
-    6160,  # Pastoralisme
-    6161,  # Volcanisme
-]
-ENVIRONNEMENTS_IDS_AS_LABELS = [
-    135,  # A la campagne
-    4630,  # Dans une réserve naturelle
-    171,  # En montagne
-    189,  # En moyenne montagne
-    186,  # En haute montagne
-    6238,  # Présence de troupeaux et chiens de protection
-    3743,  # Au bord de l'eau
-    147,  # Lac ou plan d'eau à moins de 300 m
-    149,  # Rivière ou fleuve à moins de 300 m
-    156,  # Etang à moins de 300 m
-    153,  # En forêt
-    187,  # Isolé
-    195,  # Village à -2 km
-    6464,  # Vue cascade
-    4006,  # Vue sur fleuve ou rivière
-    169,  # Vue montagne
-    3978,  # Vue sur le vignoble
-    6087,  # Vue panoramique
-]
-APIDAE_ACTIVITIES_IDS_AS_NETWORKS = [
-    3333,  # Itinéraire de randonnée pédestre
-    3331,  # Parcours / sentier thématique
-    5324,  # Parcours de marche nordique
-    3283,  # Itinéraire cyclotourisme
-    5447,  # Itinéraire de Vélo à Assistance Electrique
-    3280,  # Véloroute et voie verte
-    3284,  # Itinéraire VTT
-    3281,  # Piste de descente VTT
-    5446,  # Itinéraire enduro
-    4174,  # Itinéraire Fat Bike
-    6168,  # Itinéraire fauteuil tout terrain
-    6224,  # Itinéraire gravel bike
-    3313,  # Itinéraire de randonnée équestre
-    4201,  # Itinéraire de Trail
-    6225,  # Itinéraire de VTT à Assistance Électrique
-]
-TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS = [
-    587,  # Niveau vert - Très facile
-    588,  # Niveau bleu - Modéré
-    589,  # Niveau rouge - Difficile
-    590,  # Niveau noir - Très difficile
-    6669,  # Niveau orange - assez difficile
-]
-GUIDEBOOK_DESCRIPTION_ID = 6527
-DEFAULT_TREK_MARKING_DESCRIPTION = {
-    'libelleFr': 'Cet itinéraire est balisé.',
-    'libelleEn': 'This trek is marked.',
-}
-TREK_NO_MARKING_DESCRIPTION = {
-    'libelleFr': 'Cet itinéraire n\'est pas balisé',
-    'libelleEn': 'This trek is not marked',
-}
-
-
 class ApidaeTranslatedField:
 
     apidae_prefix = 'libelle'
@@ -475,7 +390,90 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         4244,  # Adapté aux poussettes de ville
         4245,  # Adapté aux poussettes tout terrain
     ]
+    typologies_sitra_ids_as_labels = [
+        1599,  # Déconseillé par mauvais temps
+        1676,  # En plein air
+        4639,  # Conseillé par forte chaleur
+        4819,  # Paysages
+        5022,  # Respirando
+        4971,  # Inscrit au PDIPR
+        3845,  # Itinéraire France vélo
+        6566,  # Label Espace Cyclosport
+        6049,  # Label Vélo et Fromages
+        1582,  # Label VTT - FFC
+        5538,  # Label VTT - FFCT
+        6825,  # Station de Trail®
+        6608,  # Site sur-fréquenté
+        1602,  # Circuits de France
+    ]
+    typologies_sitra_ids_as_themes = [
+        6155,  # Adrénaline
+        6156,  # Au fil de l'eau
+        6368,  # Familial
+        6153,  # Faune
+        6154,  # Flore
+        6157,  # Géologie
+        6163,  # Gourmande
+        6158,  # Historique
+        6679,  # Itinéraire d'accès à un refuge
+        6159,  # Vue exceptionnelle
+        6160,  # Pastoralisme
+        6161,  # Volcanisme
+    ]
+    environnements_ids_as_labels = [
+        135,  # A la campagne
+        4630,  # Dans une réserve naturelle
+        171,  # En montagne
+        189,  # En moyenne montagne
+        186,  # En haute montagne
+        6238,  # Présence de troupeaux et chiens de protection
+        3743,  # Au bord de l'eau
+        147,  # Lac ou plan d'eau à moins de 300 m
+        149,  # Rivière ou fleuve à moins de 300 m
+        156,  # Etang à moins de 300 m
+        153,  # En forêt
+        187,  # Isolé
+        195,  # Village à -2 km
+        6464,  # Vue cascade
+        4006,  # Vue sur fleuve ou rivière
+        169,  # Vue montagne
+        3978,  # Vue sur le vignoble
+        6087,  # Vue panoramique
+    ]
+    activites_ids_as_networks = [
+        3333,  # Itinéraire de randonnée pédestre
+        3331,  # Parcours / sentier thématique
+        5324,  # Parcours de marche nordique
+        3283,  # Itinéraire cyclotourisme
+        5447,  # Itinéraire de Vélo à Assistance Electrique
+        3280,  # Véloroute et voie verte
+        3284,  # Itinéraire VTT
+        3281,  # Piste de descente VTT
+        5446,  # Itinéraire enduro
+        4174,  # Itinéraire Fat Bike
+        6168,  # Itinéraire fauteuil tout terrain
+        6224,  # Itinéraire gravel bike
+        3313,  # Itinéraire de randonnée équestre
+        4201,  # Itinéraire de Trail
+        6225,  # Itinéraire de VTT à Assistance Électrique
+    ]
+    types_clientele_ids_as_difficulty_levels = [
+        587,  # Niveau vert - Très facile
+        588,  # Niveau bleu - Modéré
+        589,  # Niveau rouge - Difficile
+        590,  # Niveau noir - Très difficile
+        6669,  # Niveau orange - assez difficile
+    ]
 
+    guidebook_description_id = 6527
+    default_trek_marking_description = {
+        'libelleFr': 'Cet itinéraire est balisé.',
+        'libelleEn': 'This trek is marked.',
+    }
+    trek_no_marking_description = {
+        'libelleFr': 'Cet itinéraire n\'est pas balisé',
+        'libelleEn': 'This trek is not marked',
+    }
     apidae_translation_prefix = 'libelle'
 
     def __init__(self, *args, **kwargs):
@@ -529,9 +527,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         translation_src = self._get_default_translation_src()
         filtered_val = []
         if typologies:
-            filtered_val += [t[translation_src] for t in typologies if t['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS]
+            filtered_val += [t[translation_src] for t in typologies if t['id'] in self.typologies_sitra_ids_as_labels]
         if environnements:
-            filtered_val += [e[translation_src] for e in environnements if e['id'] in ENVIRONNEMENTS_IDS_AS_LABELS]
+            filtered_val += [e[translation_src] for e in environnements if e['id'] in self.environnements_ids_as_labels]
         return self.apply_filter(
             dst='labels',
             src=src,
@@ -543,7 +541,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         return self.apply_filter(
             dst='themes',
             src=src,
-            val=[item[translation_src] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
+            val=[item[translation_src] for item in val if item['id'] in self.typologies_sitra_ids_as_themes]
         )
 
     def filter_description(self, src, val):
@@ -569,7 +567,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
     def filter_difficulty(self, src, val):
         types_clientele = val
         for tc in types_clientele:
-            if tc['id'] in TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS:
+            if tc['id'] in self.types_clientele_ids_as_difficulty_levels:
                 difficulty_level = tc
                 break
         if difficulty_level:
@@ -723,15 +721,15 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         # FIXME: is there a better way to provide specific behaviors for parsing?
         return cls._transform_description_to_html(text)
 
-    @staticmethod
-    def _make_marking_description(itineraire):
+    @classmethod
+    def _make_marking_description(cls, itineraire):
         is_marked = itineraire['itineraireBalise'] == 'BALISE'
         if is_marked:
-            marking_description = DEFAULT_TREK_MARKING_DESCRIPTION.copy()
+            marking_description = cls.default_trek_marking_description.copy()
             if itineraire.get('precisionsBalisage'):
                 marking_description.update(itineraire['precisionsBalisage'])
         else:
-            marking_description = TREK_NO_MARKING_DESCRIPTION.copy()
+            marking_description = cls.trek_no_marking_description.copy()
         return marking_description
 
     @staticmethod
@@ -837,7 +835,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             if not descriptifs:
                 return None
             for d in descriptifs:
-                if d['theme']['id'] == GUIDEBOOK_DESCRIPTION_ID:
+                if d['theme']['id'] == cls.guidebook_description_id:
                     return d
             return None
 
@@ -931,25 +929,25 @@ class ApidaeReferenceElementParser(Parser):
 
 class ApidaeTrekThemeParser(ApidaeReferenceElementParser):
     model = Theme
-    element_reference_ids = TYPOLOGIES_SITRA_IDS_AS_THEMES
+    element_reference_ids = ApidaeTrekParser.typologies_sitra_ids_as_themes
     name_field = 'label'
 
 
 class ApidaeTrekLabelParser(ApidaeReferenceElementParser):
     model = Label
-    element_reference_ids = TYPOLOGIES_SITRA_IDS_AS_LABELS + ENVIRONNEMENTS_IDS_AS_LABELS
+    element_reference_ids = ApidaeTrekParser.typologies_sitra_ids_as_labels + ApidaeTrekParser.environnements_ids_as_labels
     name_field = 'name'
 
 
 class ApidaeTrekDifficultyParser(ApidaeReferenceElementParser):
     model = DifficultyLevel
-    element_reference_ids = TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS
+    element_reference_ids = ApidaeTrekParser.types_clientele_ids_as_difficulty_levels
     name_field = 'difficulty'
 
 
 class ApidaeTrekNetworkParser(ApidaeReferenceElementParser):
     model = TrekNetwork
-    element_reference_ids = APIDAE_ACTIVITIES_IDS_AS_NETWORKS
+    element_reference_ids = ApidaeTrekParser.activites_ids_as_networks
     name_field = 'network'
 
 

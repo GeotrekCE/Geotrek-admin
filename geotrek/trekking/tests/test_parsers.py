@@ -19,8 +19,7 @@ from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.trekking.tests.factories import RouteFactory
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
-    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser,
-    TREK_NO_MARKING_DESCRIPTION, DEFAULT_TREK_MARKING_DESCRIPTION,
+    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser
 )
 
 
@@ -769,8 +768,7 @@ class ApidaeTrekParserTests(TestCase):
 
     @mock.patch('requests.get')
     def test_trek_theme_with_unknown_id_is_not_imported(self, mocked_get):
-        from geotrek.trekking import parsers as trekking_parsers
-        assert 12341234 not in trekking_parsers.TYPOLOGIES_SITRA_IDS_AS_THEMES
+        assert 12341234 not in ApidaeTrekParser.typologies_sitra_ids_as_themes
 
         mocked_get.side_effect = self.make_dummy_get(
             'geotrek/trekking/tests/data/apidae_trek_parser/trek_with_unknown_theme.json')
@@ -994,7 +992,7 @@ class MakeMarkingDescriptionTests(SimpleTestCase):
     def test_it_returns_default_text_when_not_marked(self):
         itineraire = {'itineraireBalise': None}
         description = ApidaeTrekParser._make_marking_description(itineraire)
-        self.assertDictEqual(description, TREK_NO_MARKING_DESCRIPTION)
+        self.assertDictEqual(description, ApidaeTrekParser.trek_no_marking_description)
 
     def test_it_returns_given_text(self):
         precisions = {
@@ -1022,7 +1020,7 @@ class MakeMarkingDescriptionTests(SimpleTestCase):
         }
         description = ApidaeTrekParser._make_marking_description(itineraire)
         expected = {
-            'libelleFr': DEFAULT_TREK_MARKING_DESCRIPTION['libelleFr'],
+            'libelleFr': ApidaeTrekParser.default_trek_marking_description['libelleFr'],
             'libelleEn': 'en-marked itinerary',
             'libelleEs': 'es-marked itinerary',
             'libelleIt': 'it-marked itinerary',
@@ -1034,7 +1032,7 @@ class MakeMarkingDescriptionTests(SimpleTestCase):
             'itineraireBalise': 'BALISE',
         }
         description = ApidaeTrekParser._make_marking_description(itineraire)
-        self.assertDictEqual(description, DEFAULT_TREK_MARKING_DESCRIPTION)
+        self.assertDictEqual(description, ApidaeTrekParser.default_trek_marking_description)
 
 
 class GpxToGeomTests(SimpleTestCase):
