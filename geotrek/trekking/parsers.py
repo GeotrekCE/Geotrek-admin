@@ -572,14 +572,13 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             if tc['id'] in TYPES_CLIENTELE_IDS_AS_DIFFICULTY_LEVELS:
                 difficulty_level = tc
                 break
-        else:
-            return None
-        translation_src = self._get_default_translation_src()
-        return self.apply_filter(
-            dst='difficulty',
-            src=src,
-            val=difficulty_level[translation_src]
-        )
+        if difficulty_level:
+            translation_src = self._get_default_translation_src()
+            return self.apply_filter(
+                dst='difficulty',
+                src=src,
+                val=difficulty_level[translation_src]
+            )
 
     def filter_related_treks(self, src, val):
         liens = val
