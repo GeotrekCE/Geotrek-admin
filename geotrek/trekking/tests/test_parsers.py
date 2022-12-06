@@ -6,6 +6,7 @@ from io import StringIO
 from unittest import mock
 from unittest import skipIf
 from unittest.mock import Mock
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
@@ -587,7 +588,6 @@ class ApidaeTrekParserTests(TestCase):
     def make_dummy_get(apidae_data_file):
 
         def dummy_get(url, *args, **kwargs):
-            from unittest.mock import Mock
             rv = Mock()
             rv.status_code = 200
             if url == TestApidaeTrekParser.url:
@@ -597,7 +597,6 @@ class ApidaeTrekParserTests(TestCase):
                 data = json.loads(json_payload)
                 rv.json = lambda: data
             else:
-                from urllib.parse import urlparse
                 parsed_url = urlparse(url)
                 url_path = parsed_url.path
                 extension = url_path.split('.')[1]
