@@ -1,7 +1,6 @@
 import json
 
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import MultiLineString, Point
 from django.db.models import F
