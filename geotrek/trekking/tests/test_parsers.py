@@ -13,6 +13,7 @@ from django.core.management import call_command
 from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
+from geotrek.common.utils import testdata
 from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.trekking.tests.factories import RouteFactory
@@ -116,9 +117,6 @@ WKT = (
     b'356566.6531 6689904.7406, 356712.9721 6689804.1463, 356703.8271 6689703.5520, 356621.5227 6689639.5374, '
     b'356612.3778 6689511.5083, 356447.7689 6689502.3634)'
 )
-
-# return # Produce a small red dot
-IMG_FILE = b'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
 
 
 class TrekParserTests(TestCase):
@@ -605,7 +603,7 @@ class ApidaeTrekParserTests(TestCase):
                 url_path = parsed_url.path
                 extension = url_path.split('.')[1]
                 if extension == 'jpg':
-                    rv.content = copy(IMG_FILE)
+                    rv.content = copy(testdata.IMG_FILE)
                 elif extension == 'gpx':
                     filename = os.path.join('geotrek/trekking/tests/data/apidae_trek_parser', url_path.lstrip('/'))
                     with open(filename, 'r') as f:
@@ -679,12 +677,11 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn('Hiking itinerary', [n.network for n in networks])
         self.assertIn('Pedestrian sports', [n.network for n in networks])
 
-        from geotrek.common.models import Attachment
         self.assertEqual(Attachment.objects.count(), 1)
         photo = Attachment.objects.first()
         self.assertEqual(photo.author, 'The author of the picture')
         self.assertEqual(photo.legend, 'The legend of the picture')
-        self.assertEqual(photo.attachment_file.size, len(IMG_FILE))
+        self.assertEqual(photo.attachment_file.size, len(testdata.IMG_FILE))
         self.assertEqual(photo.title, 'The title of the picture')
 
         self.assertTrue(trek.duration is not None)
