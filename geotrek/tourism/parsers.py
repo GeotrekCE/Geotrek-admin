@@ -890,6 +890,7 @@ class LEITouristicContentParser(LEIParser):
     }
 
     field_options = {
+        'geom': {'required': True},
         'type1': {'create': True, 'fk': 'category'},
         'type2': {'create': True, 'fk': 'category'},
     }
@@ -942,7 +943,8 @@ class LEITouristicEventParser(LEIParser):
     type = None
     natural_keys = {
         'category': 'label',
-        'type': 'type'
+        'geom': {'required': True},
+        'type': 'type',
     }
     constant_fields = {}
     m2m_constant_fields = {}

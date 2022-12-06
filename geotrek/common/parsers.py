@@ -1083,7 +1083,11 @@ class LEIParser(AttachmentParserMixin, XmlParser):
             raise ValueImportError("Missing {required}field '{src}'")
         lat = lat.replace(',', '.')
         lng = lng.replace(',', '.')
-        geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        try:
+            geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        except ValueError:
+            raise ValueImportError("Missing {required}field '{src}'")
+
         try:
             geom.transform(settings.SRID)
         except InternalError as e:
