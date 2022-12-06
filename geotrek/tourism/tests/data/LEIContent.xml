@@ -115,7 +115,7 @@
                 <Crit CLEF_CRITERE="1900390" CLEF_MODA="1908125"><![CDATA[20]]></Crit>
                 <Crit CLEF_CRITERE="1900395" CLEF_MODA="1911765"></Crit>
                 <Crit CLEF_CRITERE="1900421" CLEF_MODA="0">
-                    <![CDATA[apps.tourisme-alsace.info/photos/niederbronn/photos/219006399_1.jpg]]></Crit>
+                    <![CDATA[url.url/photo5.jpg]]></Crit>
                 <Crit CLEF_CRITERE="1900480" CLEF_MODA="0">
                     <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Vue extérieure]]></Crit>
                 <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903782"><![CDATA[20]]></Crit>
@@ -144,7 +144,7 @@
                 <Crit CLEF_CRITERE="1900569" CLEF_MODA="1904449"></Crit>
                 <Crit CLEF_CRITERE="1900569" CLEF_MODA="1911080"></Crit>
                 <Crit CLEF_CRITERE="1900603" CLEF_MODA="0">
-                    <![CDATA[apps.tourisme-alsace.info/photos/niederbronn/photos/restaurant-cheval-blanc2.jpg]]></Crit>
+                    <![CDATA[url.url/photo4.jpg]]></Crit>
                 <Crit CLEF_CRITERE="1900605" CLEF_MODA="1904881"><![CDATA[20]]></Crit>
                 <Crit CLEF_CRITERE="1900605" CLEF_MODA="1904882"><![CDATA[17]]></Crit>
                 <Crit CLEF_CRITERE="1900605" CLEF_MODA="1911972"><![CDATA[2]]></Crit>
@@ -154,21 +154,22 @@
                 <Crit CLEF_CRITERE="1900661" CLEF_MODA="0">
                     <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Restaurant traditionnel]]></Crit>
                 <Crit CLEF_CRITERE="1900751" CLEF_MODA="0">
-                    <![CDATA[apps.tourisme-alsace.info/photos/niederbronn/photos/restaurant-cheval-blanc3.jpg]]></Crit>
+                    <![CDATA[url.url/photo3.jpg]]></Crit>
                 <Crit CLEF_CRITERE="1900752" CLEF_MODA="0">
                     <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Terrine de Lapereau]]></Crit>
                 <Crit CLEF_CRITERE="1900763" CLEF_MODA="1908016"></Crit>
                 <Crit CLEF_CRITERE="1900770" CLEF_MODA="1906279"></Crit>
                 <Crit CLEF_CRITERE="1900781" CLEF_MODA="0">
-                    <![CDATA[apps.tourisme-alsace.info/photos/niederbronn/photos/restaurant-cheval-blanc4.jpg]]></Crit>
+                    <![CDATA[url.url/photo2.jpg]]></Crit>
                 <Crit CLEF_CRITERE="1900782" CLEF_MODA="0">
-                    <![CDATA[apps.tourisme-alsace.info/photos/niederbronn/photos/restaurant-cheval-blanc5.jpg]]></Crit>
+                    <![CDATA[url.url/photo1.jpg]]></Crit>
                 <Crit CLEF_CRITERE="1900783" CLEF_MODA="0">
                     <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Restaurant gastronomique]]></Crit>
                 <Crit CLEF_CRITERE="1900784" CLEF_MODA="0">
                     <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Espace bien-être]]></Crit>
                 <Crit CLEF_CRITERE="1901129" CLEF_MODA="1908717">
-                    <![CDATA[www.facebook.com/hotelrestaurantauchevalblanc/]]></Crit>
+                    <![CDATA[facebook/]]></Crit>
+                <Crit CLEF_CRITERE="30000100" CLEF_MODA="30000144"><![CDATA[Bar]]></Crit>
             </CRITERES>
         </sit_liste>
         <Les_temps>
@@ -207,4 +208,212 @@
             <TEMPSTOTAL>609 ms</TEMPSTOTAL>
         </Les_temps>
     </Resultat>
+    <NOMENCLATURE>
+        <CRIT CLEF="30000100" QUAL="-1" TYPVAL="2" CLASSE="4">
+            <NOMCRIT><![CDATA[Tox]]></NOMCRIT>
+            <MODAL CLEF="30000144" ORDRE="3"><![CDATA[Foo]]></MODAL>
+            <MODAL CLEF="30000145" ORDRE="2"><![CDATA[American express]]></MODAL>
+            <MODAL CLEF="30000146" ORDRE="1"><![CDATA[Chèque vacances]]></MODAL>
+            <MODAL CLEF="30000147" ORDRE="13"><![CDATA[Visa]]></MODAL>
+            <MODAL CLEF="30000148" ORDRE="11"><![CDATA[Travellers]]></MODAL>
+            <MODAL CLEF="30000149" ORDRE="8"><![CDATA[Master-card]]></MODAL>
+            <MODAL CLEF="30000150" ORDRE="7"><![CDATA[Eurochèques]]></MODAL>
+            <MODAL CLEF="30000151" ORDRE="6"><![CDATA[Eurocard]]></MODAL>
+            <MODAL CLEF="30001615" ORDRE="10"><![CDATA[Tickets restaurant]]></MODAL>
+            <MODAL CLEF="30001841" ORDRE="4"><![CDATA[Chèque bancaire]]></MODAL>
+            <MODAL CLEF="30001842" ORDRE="12"><![CDATA[Virement]]></MODAL>
+            <MODAL CLEF="30001843" ORDRE="5"><![CDATA[Espèces]]></MODAL>
+            <MODAL CLEF="30003007" ORDRE="16"><![CDATA[Chèque cadeau - Gîtes de France]]></MODAL>
+            <MODAL CLEF="30003672" ORDRE="15"><![CDATA[Paypal]]></MODAL>
+            <MODAL CLEF="30003836" ORDRE="14"><![CDATA[Badges]]></MODAL>
+            <MODAL CLEF="30003843" ORDRE="9"><![CDATA[Chèque Déjeuner]]></MODAL>
+            <MODAL CLEF="30003866" ORDRE="17"><![CDATA[Pass/carte cadeau Patrivia]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000270" QUAL="-1" TYPVAL="2" CLASSE="16">
+            <NOMCRIT><![CDATA[Encadrement]]></NOMCRIT>
+            <MODAL CLEF="30001550" ORDRE="2"><![CDATA[Accompagnateur de tourisme équestre]]></MODAL>
+            <MODAL CLEF="30001551" ORDRE="5"><![CDATA[Brevet d'Etat 1er degré]]></MODAL>
+            <MODAL CLEF="30001552" ORDRE="6"><![CDATA[Brevet d'Etat 2ème degré]]></MODAL>
+            <MODAL CLEF="30001555" ORDRE="9"><![CDATA[Guide accompagnateur]]></MODAL>
+            <MODAL CLEF="30001558" ORDRE="1"><![CDATA[Accompagnateur]]></MODAL>
+            <MODAL CLEF="30001559" ORDRE="10"><![CDATA[Guide de tourisme équestre]]></MODAL>
+            <MODAL CLEF="30002177" ORDRE="12"><![CDATA[Maître nageur sauveteur]]></MODAL>
+            <MODAL CLEF="30002241" ORDRE="14"><![CDATA[Meneur de tourisme équestre]]></MODAL>
+            <MODAL CLEF="30002247" ORDRE="13"><![CDATA[Maître randonneur]]></MODAL>
+            <MODAL CLEF="30002732" ORDRE="15"><![CDATA[BPJEPS]]></MODAL>
+            <MODAL CLEF="30002733" ORDRE="16"><![CDATA[BAPAAT]]></MODAL>
+            <MODAL CLEF="30002777" ORDRE="8"><![CDATA[Brevet Fédéral d'Equitation Ethologique]]></MODAL>
+            <MODAL CLEF="30002778" ORDRE="3"><![CDATA[Brevet d'Animation Poney]]></MODAL>
+            <MODAL CLEF="30003772" ORDRE="0"><![CDATA[Oui]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000275" QUAL="2" TYPVAL="1" CLASSE="8">
+            <NOMCRIT><![CDATA[Accueil de groupes]]></NOMCRIT>
+            <MODAL CLEF="30001643" ORDRE="1"><![CDATA[Mini]]></MODAL>
+            <MODAL CLEF="30001644" ORDRE="2"><![CDATA[Maxi]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000276" QUAL="-1" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Accueil d'individuel]]></NOMCRIT>
+            <MODAL CLEF="30001646" ORDRE="1"><![CDATA[Oui]]></MODAL>
+            <MODAL CLEF="30001647" ORDRE="2"><![CDATA[Non]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000279" QUAL="2" TYPVAL="4" CLASSE="512">
+            <NOMCRIT><![CDATA[Photos]]></NOMCRIT>
+            <MODAL CLEF="30001664" ORDRE="4"><![CDATA[Photo 4]]></MODAL>
+            <MODAL CLEF="30001665" ORDRE="5"><![CDATA[Photo 5]]></MODAL>
+            <MODAL CLEF="30001666" ORDRE="6"><![CDATA[Photo 6]]></MODAL>
+            <MODAL CLEF="30001667" ORDRE="1"><![CDATA[Photo 1 d'appel]]></MODAL>
+            <MODAL CLEF="30001668" ORDRE="2"><![CDATA[Photo 2]]></MODAL>
+            <MODAL CLEF="30001669" ORDRE="3"><![CDATA[Photo 3]]></MODAL>
+            <MODAL CLEF="30002251" ORDRE="10"><![CDATA[Photo 10]]></MODAL>
+            <MODAL CLEF="30002252" ORDRE="11"><![CDATA[Photo 11]]></MODAL>
+            <MODAL CLEF="30002253" ORDRE="12"><![CDATA[Photo 12]]></MODAL>
+            <MODAL CLEF="30002828" ORDRE="7"><![CDATA[Photo 7]]></MODAL>
+            <MODAL CLEF="30002829" ORDRE="8"><![CDATA[Photo 8]]></MODAL>
+            <MODAL CLEF="30002830" ORDRE="9"><![CDATA[Photo 9]]></MODAL>
+            <MODAL CLEF="30003129" ORDRE="13"><![CDATA[Photo 13]]></MODAL>
+            <MODAL CLEF="30003130" ORDRE="14"><![CDATA[Photo 14]]></MODAL>
+            <MODAL CLEF="30003131" ORDRE="15"><![CDATA[Photo 15]]></MODAL>
+            <MODAL CLEF="30003132" ORDRE="16"><![CDATA[Photo 16]]></MODAL>
+            <MODAL CLEF="30003518" ORDRE="17"><![CDATA[T&H photo 1]]></MODAL>
+            <MODAL CLEF="30003519" ORDRE="18"><![CDATA[T&H photo 2]]></MODAL>
+            <MODAL CLEF="30003520" ORDRE="19"><![CDATA[T&H photo 3]]></MODAL>
+            <MODAL CLEF="30003521" ORDRE="20"><![CDATA[T&H photo 4]]></MODAL>
+            <MODAL CLEF="30003522" ORDRE="21"><![CDATA[T&H photo 5]]></MODAL>
+            <MODAL CLEF="30003574" ORDRE="22"><![CDATA[Spe Photo 1]]></MODAL>
+            <MODAL CLEF="30003581" ORDRE="23"><![CDATA[Spe Photo 2]]></MODAL>
+            <MODAL CLEF="30003582" ORDRE="24"><![CDATA[Spe Photo 3]]></MODAL>
+            <MODAL CLEF="30003583" ORDRE="25"><![CDATA[Spe Photo 4]]></MODAL>
+            <MODAL CLEF="30003584" ORDRE="26"><![CDATA[Spe Photo 5]]></MODAL>
+            <MODAL CLEF="30003585" ORDRE="27"><![CDATA[Spe Photo 6]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000291" QUAL="2" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Caractéristiques de la randonnée]]></NOMCRIT>
+            <MODAL CLEF="30001755" ORDRE="1"><![CDATA[Balisage pédestre]]></MODAL>
+            <MODAL CLEF="30001756" ORDRE="24"><![CDATA[Point de départ]]></MODAL>
+            <MODAL CLEF="30001757" ORDRE="40"><![CDATA[Référence carte IGN]]></MODAL>
+            <MODAL CLEF="30001758" ORDRE="3"><![CDATA[Intérêt pédestre]]></MODAL>
+            <MODAL CLEF="30001759" ORDRE="2"><![CDATA[Difficulté pédestre]]></MODAL>
+            <MODAL CLEF="30003001" ORDRE="26"><![CDATA[Audioguidage]]></MODAL>
+            <MODAL CLEF="30003429" ORDRE="5"><![CDATA[Balisage VTT]]></MODAL>
+            <MODAL CLEF="30003430" ORDRE="6"><![CDATA[Difficulté VTT]]></MODAL>
+            <MODAL CLEF="30003431" ORDRE="10"><![CDATA[Balisage équestre]]></MODAL>
+            <MODAL CLEF="30003432" ORDRE="12"><![CDATA[Difficulté équestre]]></MODAL>
+            <MODAL CLEF="30003433" ORDRE="7"><![CDATA[Intérêt VTT]]></MODAL>
+            <MODAL CLEF="30003434" ORDRE="14"><![CDATA[Intérêt équestre]]></MODAL>
+            <MODAL CLEF="30003669" ORDRE="16"><![CDATA[Difficulté Trail]]></MODAL>
+            <MODAL CLEF="30003674" ORDRE="8"><![CDATA[Difficulté vélo]]></MODAL>
+            <MODAL CLEF="30003891" ORDRE="9"><![CDATA[Difficulté VTTAE]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000303" QUAL="2" TYPVAL="5" CLASSE="4">
+            <NOMCRIT><![CDATA[Tarifs prestations]]></NOMCRIT>
+            <MODAL CLEF="30001880" ORDRE="1"><![CDATA[Individuel enfant]]></MODAL>
+            <MODAL CLEF="30001881" ORDRE="2"><![CDATA[Individuel adulte]]></MODAL>
+            <MODAL CLEF="30001882" ORDRE="4"><![CDATA[Groupe scolaires]]></MODAL>
+            <MODAL CLEF="30001883" ORDRE="5"><![CDATA[Groupe adultes]]></MODAL>
+            <MODAL CLEF="30001884" ORDRE="6"><![CDATA[Famille]]></MODAL>
+            <MODAL CLEF="30001885" ORDRE="3"><![CDATA[Individuel étudiant]]></MODAL>
+            <MODAL CLEF="30002533" ORDRE="7"><![CDATA[Chômeurs]]></MODAL>
+            <MODAL CLEF="30003218" ORDRE="8"><![CDATA[Passeport adultes]]></MODAL>
+            <MODAL CLEF="30003219" ORDRE="9"><![CDATA[Passeport enfants]]></MODAL>
+            <MODAL CLEF="30003322" ORDRE="0"><![CDATA[Gratuit]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000330" QUAL="-1" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Spécificités]]></NOMCRIT>
+            <MODAL CLEF="30002480" ORDRE="19"><![CDATA[PNR Millevaches]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000346" QUAL="1" TYPVAL="2" CLASSE="32">
+            <NOMCRIT><![CDATA[Communauté de communes]]></NOMCRIT>
+            <MODAL CLEF="30002273" ORDRE="20"><![CDATA[Com Com Elan]]></MODAL>
+            <MODAL CLEF="30002275" ORDRE="22"><![CDATA[Com Com Gartempe St-Pardoux]]></MODAL>
+            <MODAL CLEF="30002278" ORDRE="4"><![CDATA[Com Agglo Limoges]]></MODAL>
+            <MODAL CLEF="30002279" ORDRE="50"><![CDATA[Com Com Val de Vienne]]></MODAL>
+            <MODAL CLEF="30002281" ORDRE="24"><![CDATA[Com Com Haut Limousin en Marche]]></MODAL>
+            <MODAL CLEF="30002283" ORDRE="43"><![CDATA[Com Com Pays Sostranien]]></MODAL>
+            <MODAL CLEF="30002296" ORDRE="1"><![CDATA[Agglo du bassin de Brive]]></MODAL>
+            <MODAL CLEF="30002297" ORDRE="52"><![CDATA[Com Com Ventadour Egletons Monédières]]></MODAL>
+            <MODAL CLEF="30002305" ORDRE="42"><![CDATA[Com Com Pays d'Uzerche]]></MODAL>
+            <MODAL CLEF="30002306" ORDRE="36"><![CDATA[Com Com Pays de Lubersac Pompadour]]></MODAL>
+            <MODAL CLEF="30002307" ORDRE="40"><![CDATA[Com Com Pays de St Yrieix]]></MODAL>
+            <MODAL CLEF="30002308" ORDRE="6"><![CDATA[Tulle Agglo ]]></MODAL>
+            <MODAL CLEF="30002310" ORDRE="14"><![CDATA[Com Com Creuse Grand Sud]]></MODAL>
+            <MODAL CLEF="30002314" ORDRE="7"><![CDATA[Com Com Bénévent Grand Bourg]]></MODAL>
+            <MODAL CLEF="30002321" ORDRE="10"><![CDATA[Com Com Briance Sud Haute-Vienne]]></MODAL>
+            <MODAL CLEF="30002341" ORDRE="2"><![CDATA[Com Agglo Grand Guéret]]></MODAL>
+            <MODAL CLEF="30002342" ORDRE="28"><![CDATA[Com Com Midi Corrézien]]></MODAL>
+            <MODAL CLEF="30002360" ORDRE="44"><![CDATA[Com Com Porte Océane du Limousin]]></MODAL>
+            <MODAL CLEF="30002362" ORDRE="38"><![CDATA[Com Com Pays de Nexon Monts de Châlus]]></MODAL>
+            <MODAL CLEF="30002363" ORDRE="8"><![CDATA[Com Com Briance Combade]]></MODAL>
+            <MODAL CLEF="30002379" ORDRE="54"><![CDATA[Com Com Vézère Monédières Millesources]]></MODAL>
+            <MODAL CLEF="30002382" ORDRE="110">
+                <![CDATA[Com Com Chénéraille, Auzances Bellegarde, Haut Pays Marchois]]></MODAL>
+            <MODAL CLEF="30002383" ORDRE="16"><![CDATA[Com Com Creuse Sud Ouest]]></MODAL>
+            <MODAL CLEF="30002384" ORDRE="120"><![CDATA[Com Com C.I.A.T.E. Thaurion Gartempe]]></MODAL>
+            <MODAL CLEF="30002385" ORDRE="100"><![CDATA[Com Com Chambon Evaux les Bains]]></MODAL>
+            <MODAL CLEF="30002388" ORDRE="130"><![CDATA[Com Com Haut Pays Marchois]]></MODAL>
+            <MODAL CLEF="30002390" ORDRE="41"><![CDATA[Com Com Pays Dunois]]></MODAL>
+            <MODAL CLEF="30002391" ORDRE="140"><![CDATA[Com Com Pays de Boussac]]></MODAL>
+            <MODAL CLEF="30002392" ORDRE="46"><![CDATA[Com Com Portes de la Creuse en Marche]]></MODAL>
+            <MODAL CLEF="30002393" ORDRE="12"><![CDATA[Com Com Creuse Confluence]]></MODAL>
+            <MODAL CLEF="30002412" ORDRE="34"><![CDATA[Com Com Ouest Limousin]]></MODAL>
+            <MODAL CLEF="30002539" ORDRE="58"><![CDATA[Haute Corrèze Communauté]]></MODAL>
+            <MODAL CLEF="30002595" ORDRE="48"><![CDATA[Com Com Portes de Vassivière]]></MODAL>
+            <MODAL CLEF="30002610" ORDRE="32"><![CDATA[Com Com Noblat]]></MODAL>
+            <MODAL CLEF="30003211" ORDRE="56"><![CDATA[Com Com Xaintrie Val'Dordogne]]></MODAL>
+            <MODAL CLEF="30003627" ORDRE="3"><![CDATA[Grand Châtellerault]]></MODAL>
+            <MODAL CLEF="30003755" ORDRE="26"><![CDATA[Com Com Marche et Combraille en Aquitaine]]></MODAL>
+            <MODAL CLEF="30003756" ORDRE="18"><![CDATA[Com Com des Sources de la Creuse]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000361" QUAL="1" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Type d'organisme]]></NOMCRIT>
+            <MODAL CLEF="30002425" ORDRE="1"><![CDATA[Communal]]></MODAL>
+            <MODAL CLEF="30002426" ORDRE="2"><![CDATA[Intercommunal]]></MODAL>
+            <MODAL CLEF="30002427" ORDRE="3"><![CDATA[Projet intercommunal]]></MODAL>
+            <MODAL CLEF="30002524" ORDRE="4"><![CDATA[Départemental]]></MODAL>
+            <MODAL CLEF="30002525" ORDRE="5"><![CDATA[Régional]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000392" QUAL="1" TYPVAL="2" CLASSE="4">
+            <NOMCRIT><![CDATA[Sur inscription]]></NOMCRIT>
+            <MODAL CLEF="30002699" ORDRE="1"><![CDATA[Oui]]></MODAL>
+            <MODAL CLEF="30002700" ORDRE="2"><![CDATA[Non]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000461" QUAL="2" TYPVAL="6" CLASSE="1">
+            <NOMCRIT><![CDATA[Réseaux sociaux]]></NOMCRIT>
+            <MODAL CLEF="30003220" ORDRE="1"><![CDATA[Compte Facebook]]></MODAL>
+            <MODAL CLEF="30003221" ORDRE="2"><![CDATA[Compte Twitter]]></MODAL>
+            <MODAL CLEF="30003623" ORDRE="3"><![CDATA[Instagram]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000462" QUAL="-1" TYPVAL="2" CLASSE="16">
+            <NOMCRIT><![CDATA[Wifi]]></NOMCRIT>
+            <MODAL CLEF="30003222" ORDRE="3"><![CDATA[Gratuit]]></MODAL>
+            <MODAL CLEF="30003223" ORDRE="4"><![CDATA[Payant]]></MODAL>
+            <MODAL CLEF="30003317" ORDRE="1"><![CDATA[Oui]]></MODAL>
+            <MODAL CLEF="30003318" ORDRE="2"><![CDATA[Non]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="900003" QUAL="0" TYPVAL="2" CLASSE="512">
+            <NOMCRIT><![CDATA[Dates et heures en texte]]></NOMCRIT>
+        </CRIT>
+        <CRIT CLEF="30000382" QUAL="-1" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Accessible en famille]]></NOMCRIT>
+            <MODAL CLEF="30002637" ORDRE="1"><![CDATA[Oui]]></MODAL>
+            <MODAL CLEF="30002638" ORDRE="30"><![CDATA[Non]]></MODAL>
+            <MODAL CLEF="30003554" ORDRE="3"><![CDATA[La Corrèze en famille]]></MODAL>
+            <MODAL CLEF="30003555" ORDRE="5"><![CDATA[La Creuse en famille]]></MODAL>
+            <MODAL CLEF="30003556" ORDRE="7"><![CDATA[Haute Vienne, Escapades en famille]]></MODAL>
+            <MODAL CLEF="30003557" ORDRE="9"><![CDATA[Charente en famille]]></MODAL>
+            <MODAL CLEF="30003559" ORDRE="25"><![CDATA[Quand il pleut]]></MODAL>
+            <MODAL CLEF="30003571" ORDRE="17"><![CDATA[Je suis aventurier]]></MODAL>
+            <MODAL CLEF="30003572" ORDRE="19"><![CDATA[Je suis curieux]]></MODAL>
+            <MODAL CLEF="30003825" ORDRE="12"><![CDATA[Calendrier familles]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000376" QUAL="-1" TYPVAL="2" CLASSE="1">
+            <NOMCRIT><![CDATA[Jour de la semaine]]></NOMCRIT>
+            <MODAL CLEF="30002588" ORDRE="1"><![CDATA[Lundi]]></MODAL>
+            <MODAL CLEF="30002589" ORDRE="2"><![CDATA[Mardi]]></MODAL>
+            <MODAL CLEF="30002590" ORDRE="3"><![CDATA[Mercredi]]></MODAL>
+            <MODAL CLEF="30002591" ORDRE="4"><![CDATA[Jeudi]]></MODAL>
+            <MODAL CLEF="30002592" ORDRE="5"><![CDATA[Vendredi]]></MODAL>
+            <MODAL CLEF="30002593" ORDRE="6"><![CDATA[Samedi]]></MODAL>
+            <MODAL CLEF="30002594" ORDRE="7"><![CDATA[Dimanche]]></MODAL>
+        </CRIT>
+    </NOMENCLATURE>
 </LEI>

@@ -131,6 +131,45 @@ class RestaurantALEIParser(LEITouristicContentParser):
     }
 
 
+class RestaurantBLEIParser(LEITouristicContentParser):
+    url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
+    category = "Restaurant"
+    type1 = "Type 1"
+    type2 = "Type 2"
+    practical_info = (
+        "CRITERES/Crit",
+        "COMMENTAIREL1"
+    )
+    non_fields = {}
+    practical_info_criteria = [
+        "Tox",
+    ]
+
+    def filter_practical_info(self, src, val):
+        criteres = {}
+        crit_elements, coml1 = val
+        if coml1:
+            criteres['Infos 1'] = coml1
+        for elt in crit_elements:
+            crit_name, crit_value = self.get_crit_kv(elt)
+            if crit_value is not None and crit_name in self.practical_info_criteria:
+                if crit_name in criteres.keys():
+                    criteres[crit_name].append(crit_value)
+                else:
+                    criteres[crit_name] = [crit_value]
+        result = ""
+        for elt in criteres.items():
+            formatted_value = ""
+            if elt[1] == "" or elt[1] == []:
+                continue
+            elif isinstance(elt[1], str):
+                formatted_value = elt[1]
+            elif isinstance(elt[1], list):
+                formatted_value = '<br>'.join(elt[1])
+            result += '<p><strong>{0}</strong> : {1}</p>'.format(elt[0], formatted_value)
+        return result
+
+
 class EventALEIParser(LEITouristicEventParser):
     url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
     non_fields = {
@@ -753,6 +792,33 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("Commentaire A", content.description)
         self.assertEqual(Attachment.objects.count(), 1)
         self.assertEqual(Attachment.objects.first().content_object, content)
+
+    @mock.patch('requests.get')
+    def test_create_content_kv_critere_lei(self, mocked):
+
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 200
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'LEIContent.xml')
+            with open(filename, 'r') as f:
+                response._content = f.read()
+                return response
+
+        mocked.side_effect = mocked_requests_get
+
+        FileType.objects.create(type="Photographie")
+
+        TouristicContentCategoryFactory(label="Restaurant")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantBLEIParser', verbosity=0)
+        self.assertTrue(mocked.called)
+        self.assertEqual(TouristicContent.objects.count(), 1)
+        content = TouristicContent.objects.get()
+        self.assertEqual(content.eid, "LEI219006399")
+        self.assertEqual(content.name, "Restaurant A")
+        self.assertIn("Commentaire A", content.description)
+        self.assertEqual("<p><strong>Tox</strong> : Foo : Bar</p>", content.practical_info)
 
     @mock.patch('requests.get')
     def test_create_event_lei(self, mocked):

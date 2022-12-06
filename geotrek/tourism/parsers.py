@@ -877,7 +877,7 @@ class LEITouristicContentParser(LEIParser):
     category = None
     type1 = None
     type2 = None
-    practical_info = None
+    practical_info = []
     fields = {
         'eid': 'PRODUIT',
         'name': 'NOM',

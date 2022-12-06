@@ -1026,10 +1026,9 @@ class LEIParser(AttachmentParserMixin, XmlParser):
     def get_crit_kv(self, crit):
         """Get Crit key / value according to Nomenclature"""
         crit_name = self.root.findtext(
-            'NOMENCLATURE/CRIT[@CLEF="{0}"]/NOMCRIT'.format(crit.attrib['CLEF_CRITERE'])
+            f'NOMENCLATURE/CRIT[@CLEF="{crit.attrib["CLEF_CRITERE"]}"]/NOMCRIT'
         )
         crit_value = self.get_crit_value(crit)
-
         # If value is available for crit, add it to result
         if crit.text is not None and crit_value != 'Photos':
             crit_value = "{0} : {1}".format(crit_value, crit.text)
@@ -1038,10 +1037,7 @@ class LEIParser(AttachmentParserMixin, XmlParser):
     def get_crit_value(self, crit):
         """Get Crit value only, according to Nomenclature"""
         return self.root.findtext(
-            'NOMENCLATURE/CRIT[@CLEF="{0}"]/MODAL[@CLEF="{1}"]'.format(
-                crit.attrib['CLEF_CRITERE'],
-                crit.attrib['CLEF_MODA']
-            )
+            f'NOMENCLATURE/CRIT[@CLEF="{crit.attrib["CLEF_CRITERE"]}"]/MODAL[@CLEF="{crit.attrib["CLEF_MODA"]}"]'
         )
 
     def start(self):
