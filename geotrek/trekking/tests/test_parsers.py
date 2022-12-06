@@ -825,6 +825,14 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn(parent_trek, child_trek_2.parents.all())
         self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '123125'])
 
+    @mock.patch('requests.get')
+    def test_trek_illustration_is_not_imported_on_missing_file_metadata(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trek_with_not_complete_illustration.json'
+        )
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+        self.assertEqual(Attachment.objects.count(), 0)
+
 
 class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):
 
