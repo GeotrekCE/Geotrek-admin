@@ -523,16 +523,12 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         return ApidaeTrekParser._get_geom_from_gpx(gpx)
 
     def filter_labels(self, src, val):
-        # TODO: unwrap val into typologies and environnements for clarity
+        typologies, environnements = val
         filtered_val = []
-        for subval in val:
-            if not subval:
-                continue
-            for item in subval:
-                item_type = item['elementReferenceType']
-                if ((item_type == 'TypologiePromoSitra' and item['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS)
-                        or (item_type == 'Environnement' and item['id'] in ENVIRONNEMENTS_IDS_AS_LABELS)):
-                    filtered_val.append(item['libelleFr'])
+        if typologies:
+            filtered_val += [t['libelleFr'] for t in typologies if t['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS]
+        if environnements:
+            filtered_val += [e['libelleFr'] for e in environnements if e['id'] in ENVIRONNEMENTS_IDS_AS_LABELS]
         return self.apply_filter(
             dst='labels',
             src=src,
