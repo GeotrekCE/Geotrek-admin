@@ -7,7 +7,7 @@ CHANGELOG
 
 **Improvements**
 
-- Use MapEnity widget for geometries even without setting ``TREKKING_TOPOLOGY_ENABLED`` (to always display file layer lealfet plugin)
+- Use MapEntity widget for geometries even without setting ``TREKKING_TOPOLOGY_ENABLED`` (to always display file layer leaflet plugin)
 
 
 2.92.2     (2022-12-01)
