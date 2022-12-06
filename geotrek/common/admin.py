@@ -121,7 +121,7 @@ class HDViewPointAdmin(admin.ModelAdmin):
         return False
 
     def update_link(self, obj):
-        """Returns content object link"""
+        """Returns link to HD View"""
         return format_html(
             '<a data-pk="{}" href="{}" >{}</a>',
             obj.pk, obj.full_url, obj.title
