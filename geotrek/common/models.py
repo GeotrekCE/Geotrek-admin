@@ -172,7 +172,7 @@ class Theme(TimeStampedModelMixin, PictogramMixin):
 
 
 class RecordSource(TimeStampedModelMixin, OptionalPictogramMixin):
-    name = models.CharField(verbose_name=_("Name"), max_length=50)
+    name = models.CharField(verbose_name=_("Name"), max_length=80)
     website = models.URLField(verbose_name=_("Website"), max_length=256, blank=True, null=True)
 
     class Meta:

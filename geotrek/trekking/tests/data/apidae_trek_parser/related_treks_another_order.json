@@ -1,0 +1,102 @@
+{
+  "numFound": 3,
+  "objetsTouristiques": [
+    {
+      "id": 123124,
+      "nom": {
+        "libelleFr": "Étape 1 d'une randonnée itinérante"
+      },
+      "presentation": {
+        "descriptifCourt": {
+          "libelleFr": "Première étape !"
+        },
+        "descriptifDetaille": {
+          "libelleFr": "Il s'agit de la première étape."
+        }
+      },
+      "multimedias": [
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/apidae_test_trek.gpx",
+              "extension": "gpx"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 123125,
+      "nom": {
+        "libelleFr": "Étape 2 d'une randonnée itinérante"
+      },
+      "presentation": {
+        "descriptifCourt": {
+          "libelleFr": "Deuxième étape !"
+        },
+        "descriptifDetaille": {
+          "libelleFr": "Il s'agit de la deuxième étape."
+        }
+      },
+      "multimedias": [
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/apidae_test_trek.gpx",
+              "extension": "gpx"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 123123,
+      "nom": {
+        "libelleFr": "Une randonnée itinérante avec plusieures étapes"
+      },
+      "presentation": {
+        "descriptifCourt": {
+          "libelleFr": "Itinérance sur plusieurs étapes !"
+        },
+        "descriptifDetaille": {
+          "libelleFr": "Il s'agit d'une longue itinérance en plusieurs étapes."
+        }
+      },
+      "liens": {
+        "liensObjetsTouristiquesTypes": [
+          {
+            "type": "PARCOURS_ETAPE",
+            "objetTouristique": {
+              "id": 123124,
+              "nom": {
+                "libelleFr": "Étape 1 d'une randonnée itinérante"
+              }
+            }
+          },
+          {
+            "type": "PARCOURS_ETAPE",
+            "objetTouristique": {
+              "id": 123125,
+              "nom": {
+                "libelleFr": "Étape 2 d'une randonnée itinérante"
+              }
+            }
+          }
+        ]
+      },
+      "multimedias": [
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/apidae_test_trek.gpx",
+              "extension": "gpx"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

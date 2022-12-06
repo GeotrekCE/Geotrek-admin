@@ -1,4 +1,3 @@
-import json
 import os
 
 import datetime
@@ -14,7 +13,7 @@ from django.utils.translation import gettext as _
 from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    TourInSoftParser, GeotrekParser)
+                                    TourInSoftParser, GeotrekParser, ApidaeBaseParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 
@@ -52,14 +51,8 @@ class TouristicContentMixin:
         return kwargs
 
 
-class ApidaeParser(AttachmentParserMixin, Parser):
+class ApidaeParser(AttachmentParserMixin, ApidaeBaseParser):
     """Parser to import "anything" from APIDAE"""
-    separator = None
-    api_key = None
-    project_id = None
-    selection_id = None
-    url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
-    model = None
     eid = 'eid'
     fields = {
         'name': 'nom.libelleFr',
@@ -76,8 +69,6 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         'name': {'required': True},
         'geom': {'required': True},
     }
-    size = 100
-    skip = 0
     responseFields = [
         'id',
         'nom',
@@ -97,34 +88,6 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         'gestion.membreProprietaire.nom',
         'illustrations'
     ]
-
-    @property
-    def items(self):
-        if self.nb == 0:
-            return []
-        return self.root['objetsTouristiques']
-
-    def next_row(self):
-        while True:
-            params = {
-                'apiKey': self.api_key,
-                'projetId': self.project_id,
-                'selectionIds': [self.selection_id],
-                'count': self.size,
-                'first': self.skip,
-                'responseFields': self.responseFields
-            }
-            response = self.request_or_retry(self.url, params={'query': json.dumps(params)})
-            self.root = response.json()
-            self.nb = int(self.root['numFound'])
-            for row in self.items:
-                yield row
-            self.skip += self.size
-            if self.skip >= self.nb:
-                return
-
-    def normalize_field_name(self, name):
-        return name
 
     def filter_eid(self, src, val):
         return str(val)

@@ -1,19 +1,27 @@
-from io import StringIO
-from unittest import mock
+from datetime import date
 import json
 import os
+from copy import copy
+from io import StringIO
+from unittest import mock
 from unittest import skipIf
+from unittest.mock import Mock
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
-from geotrek.common.models import Theme, FileType, Attachment
+from geotrek.common.utils import testdata
+from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
+from geotrek.trekking.tests.factories import RouteFactory
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
-from geotrek.trekking.parsers import TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser
+from geotrek.trekking.parsers import (
+    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser
+)
 
 
 class TrekParserFilterDurationTests(TestCase):
@@ -563,3 +571,559 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(service.type), 'Eau potable')
         self.assertAlmostEqual(service.geom.x, 572096.2266745908, places=5)
         self.assertAlmostEqual(service.geom.y, 6192330.15779677, places=5)
+
+
+class TestApidaeTrekParser(ApidaeTrekParser):
+    warn_on_missing_fields = True
+    url = 'https://example.net/fake/api/'
+    api_key = 'ABCDEF'
+    project_id = 1234
+    selection_id = 654321
+
+
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class ApidaeTrekParserTests(TestCase):
+
+    @staticmethod
+    def make_dummy_get(apidae_data_file):
+
+        def dummy_get(url, *args, **kwargs):
+            rv = Mock()
+            rv.status_code = 200
+            if url == TestApidaeTrekParser.url:
+                filename = apidae_data_file
+                with open(filename, 'r') as f:
+                    json_payload = f.read()
+                data = json.loads(json_payload)
+                rv.json = lambda: data
+            else:
+                parsed_url = urlparse(url)
+                url_path = parsed_url.path
+                extension = url_path.split('.')[1]
+                if extension == 'jpg':
+                    rv.content = copy(testdata.IMG_FILE)
+                elif extension == 'gpx':
+                    filename = os.path.join('geotrek/trekking/tests/data/apidae_trek_parser', url_path.lstrip('/'))
+                    with open(filename, 'r') as f:
+                        gpx = f.read()
+                    rv.content = bytes(gpx, 'utf-8')
+            return rv
+
+        return dummy_get
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    def test_trek_is_imported(self, mocked_get):
+        RouteFactory(route='Boucle')
+
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/a_trek.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.name_fr, 'Une belle randonnée de test')
+        self.assertEqual(trek.name_en, 'A great hike to test')
+        self.assertEqual(trek.description_teaser_fr, 'La description courte en français.')
+        self.assertEqual(trek.description_teaser_en, 'The short description in english.')
+        self.assertEqual(trek.ambiance_fr, 'La description détaillée en français.')
+        self.assertEqual(trek.ambiance_en, 'The longer description in english.')
+        expected_fr_description = (
+            '<p>Départ : du parking de la Chapelle Saint Michel </p>'
+            '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
+            '<p>2/ Au carrefour tourner à droite et suivre la rivière</p>'
+            '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
+            '<p>Ouvert toute l\'année</p>'
+            '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
+            '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
+            '<p>Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.</p>'
+        )
+        self.assertEqual(trek.description_fr, expected_fr_description)
+        expected_en_description = (
+            '<p>Start: from the parking near the Chapelle Saint Michel </p>'
+            '<p>1/ Follow the path starting at right-hand, cross the valley.</p>'
+            '<p>2/ At the crossroad turn left and follow the river.</p>'
+            '<p>3/ Back to the chapelle by the woods.</p>'
+            '<p>Open all year long</p>'
+            '<p>Exceptionally closed during heavy rain</p>'
+            '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
+            '<p>Ski lift ticket office: 2 shops - Frastaz and Bois Noir ski lifts.</p>'
+        )
+        self.assertEqual(trek.description_en, expected_en_description)
+        self.assertEqual(trek.advised_parking_fr, 'Parking sur la place du village')
+        self.assertEqual(trek.advised_parking_en, 'Parking sur la place du village')
+        self.assertEqual(trek.departure_fr, 'Sallanches')
+        self.assertEqual(trek.departure_en, 'Sallanches')
+        self.assertEqual(trek.access_fr, 'En voiture, rejoindre le village de Salanches.')
+        self.assertEqual(trek.access_en, 'By car, go to the village of Sallanches.')
+        self.assertEqual(trek.access_it, 'In auto, andare al villaggio di Sallances.')
+        self.assertEqual(len(trek.source.all()), 1)
+        self.assertEqual(trek.source.first().name, 'Office de tourisme de Sallanches')
+        self.assertEqual(trek.source.first().website, 'https://www.example.net/ot-sallanches')
+
+        self.assertTrue(trek.difficulty is not None)
+        self.assertEqual(trek.difficulty.difficulty_en, 'Level red – hard')
+
+        self.assertTrue(trek.practice is not None)
+        self.assertEqual(trek.practice.name, 'Pédestre')
+
+        self.assertEqual(trek.networks.count(), 2)
+        networks = trek.networks.all()
+        self.assertIn('Hiking itinerary', [n.network for n in networks])
+        self.assertIn('Pedestrian sports', [n.network for n in networks])
+
+        self.assertEqual(Attachment.objects.count(), 1)
+        photo = Attachment.objects.first()
+        self.assertEqual(photo.author, 'The author of the picture')
+        self.assertEqual(photo.legend, 'The legend of the picture')
+        self.assertEqual(photo.attachment_file.size, len(testdata.IMG_FILE))
+        self.assertEqual(photo.title, 'The title of the picture')
+
+        self.assertTrue(trek.duration is not None)
+        self.assertAlmostEqual(trek.duration, 2.5)
+
+        self.assertEqual(trek.advice, "Avoid after heavy rain.")
+        self.assertEqual(trek.advice_fr, "À éviter après de grosses pluies.")
+
+        self.assertEqual(trek.route.route, 'Boucle')
+
+        self.assertEqual(trek.accessibilities.count(), 1)
+        accessibility = trek.accessibilities.first()
+        self.assertEqual(accessibility.name, 'Suitable for all terrain strollers')
+
+        self.assertIn('Rock', trek.accessibility_covering)
+        self.assertIn('Ground', trek.accessibility_covering)
+        self.assertIn('Rocher', trek.accessibility_covering_fr)
+        self.assertIn('Terre', trek.accessibility_covering_fr)
+
+        self.assertTrue(trek.gear is not None)
+        self.assertIn("Map IGN3531OT Top 25", trek.gear)
+        self.assertIn("Guidebook sold at the tourist board", trek.gear)
+        self.assertIn("TOP 25 IGN 3531 OT", trek.gear_fr)
+        self.assertIn("Cartoguide en vente à l'Office de Tourisme", trek.gear_fr)
+
+        # Import an updated trek
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/a_trek_with_updated_limit_date.json'
+        )
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Attachment.objects.count(), 0)
+
+    @mock.patch('requests.get')
+    def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/a_trek.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.geom.srid, 2154)
+        self.assertEqual(len(trek.geom.coords), 13)
+        first_point = trek.geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_multiple_plans(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('geotrek/trekking/tests/data/apidae_trek_parser/trek_multiple_plans_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2, stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('has more than one map defined', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_gpx_file(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trek_plan_no_gpx_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('pas au format GPX', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
+    def test_trek_linked_entities_are_imported(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/a_trek.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Theme.objects.count(), 2)
+        themes = Theme.objects.all()
+        for theme in themes:
+            self.assertIn(theme.label, ['Geology', 'Historic'])
+        self.assertEqual(Label.objects.count(), 3)
+        labels = Label.objects.all()
+        for label in labels:
+            self.assertIn(label.name, ['In the country', 'Not recommended in bad weather', 'Listed PDIPR'])
+
+    @mock.patch('requests.get')
+    def test_trek_theme_with_unknown_id_is_not_imported(self, mocked_get):
+        assert 12341234 not in ApidaeTrekParser.typologies_sitra_ids_as_themes
+
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trek_with_unknown_theme.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        self.assertEqual(Theme.objects.count(), 0)
+
+    @mock.patch('requests.get')
+    def test_links_to_child_treks_are_set(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/related_treks.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 3)
+        parent_trek = Trek.objects.get(eid='123123')
+        child_trek = Trek.objects.get(eid='123124')
+        child_trek_2 = Trek.objects.get(eid='123125')
+        self.assertIn(parent_trek, child_trek.parents.all())
+        self.assertIn(parent_trek, child_trek_2.parents.all())
+        self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '123125'])
+
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/related_treks_updated.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 4)
+        parent_trek = Trek.objects.get(eid='123123')
+        child_trek = Trek.objects.get(eid='123124')
+        child_trek_2 = Trek.objects.get(eid='123125')
+        child_trek_3 = Trek.objects.get(eid='321321')
+        self.assertIn(parent_trek, child_trek.parents.all())
+        self.assertIn(parent_trek, child_trek_2.parents.all())
+        self.assertIn(parent_trek, child_trek_3.parents.all())
+        self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '321321', '123125'])
+
+    @mock.patch('requests.get')
+    def test_links_to_child_treks_are_set_with_changed_order_in_data(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/related_treks_another_order.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 3)
+        parent_trek = Trek.objects.get(eid='123123')
+        child_trek = Trek.objects.get(eid='123124')
+        child_trek_2 = Trek.objects.get(eid='123125')
+        self.assertIn(parent_trek, child_trek.parents.all())
+        self.assertIn(parent_trek, child_trek_2.parents.all())
+        self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '123125'])
+
+    @mock.patch('requests.get')
+    def test_trek_illustration_is_not_imported_on_missing_file_metadata(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trek_with_not_complete_illustration.json'
+        )
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+        self.assertEqual(Attachment.objects.count(), 0)
+
+
+class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):
+
+    url = 'https://example.net/fake/api/'
+    api_key = 'ABCDEF'
+    project_id = 1234
+    element_reference_ids = [6157]
+
+
+class ApidaeTrekThemeParserTests(TestCase):
+
+    def mocked_get_func(self, url, params, *args, **kwargs):
+        self.assertEqual(url, TestApidaeTrekThemeParser.url)
+        expected_query_param = {
+            'apiKey': TestApidaeTrekThemeParser.api_key,
+            'projetId': TestApidaeTrekThemeParser.project_id,
+            'elementReferenceIds': TestApidaeTrekThemeParser.element_reference_ids,
+        }
+        self.assertDictEqual(json.loads(params['query']), expected_query_param)
+
+        rv = Mock()
+        rv.status_code = 200
+        with open('geotrek/trekking/tests/data/apidae_trek_parser/trek_theme.json', 'r') as f:
+            json_payload = f.read()
+        data = json.loads(json_payload)
+        rv.json = lambda: data
+
+        return rv
+
+    @mock.patch('requests.get')
+    def test_theme_is_created_with_configured_languages(self, mocked_get):
+        mocked_get.side_effect = self.mocked_get_func
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekThemeParser', verbosity=0)
+
+        self.assertEqual(len(Theme.objects.all()), 1)
+        theme = Theme.objects.first()
+        self.assertEqual(theme.label_fr, 'Géologie')
+        self.assertEqual(theme.label_en, 'Geology')
+        self.assertEqual(theme.label_es, 'Geología')
+        self.assertEqual(theme.label_it, 'Geologia')
+
+    @mock.patch('requests.get')
+    def test_theme_is_identified_with_default_language_on_update(self, mocked_get):
+        mocked_get.side_effect = self.mocked_get_func
+        theme = Theme(label_en='Geology', label_fr='Géologie (cette valeur sera écrasée)')
+        theme.save()
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekThemeParser', verbosity=0)
+
+        self.assertEqual(len(Theme.objects.all()), 1)
+        theme = Theme.objects.first()
+        self.assertEqual(theme.label_en, 'Geology')
+        self.assertEqual(theme.label_fr, 'Géologie')
+        self.assertEqual(theme.label_es, 'Geología')
+        self.assertEqual(theme.label_it, 'Geologia')
+
+    @mock.patch('requests.get')
+    def test_another_theme_is_created_when_default_language_name_changes(self, mocked_get):
+        mocked_get.side_effect = self.mocked_get_func
+        theme = Theme(label_en='With interesting rocks', label_fr='Géologie', label_it='Geologia', label_es='Geologia')
+        theme.save()
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekThemeParser', verbosity=0)
+
+        self.assertEqual(len(Theme.objects.all()), 2)
+
+
+class MakeDescriptionTests(SimpleTestCase):
+
+    def setUp(self):
+        self.ouverture = {
+            'periodeEnClair': {
+                'libelleFr': 'Ouvert toute l\'année\n\nFermeture exceptionnelle en cas de pluie forte',
+                'libelleEn': 'Open all year long\n\nExceptionally closed during heavy rain'
+            }
+        }
+        self.descriptifs = [
+            {
+                'theme': {
+                    'id': 6527,
+                    'libelleFr': 'Topo/pas à pas',
+                    'libelleEn': 'Guidebook with maps/step-by-step'
+                },
+                'description': {
+                    'libelleFr': 'Départ : du parking de la Chapelle Saint Michel \r\n'
+                                 '1/ Suivre le chemin qui part à droite, traversant le vallon.\r\n'
+                                 '2/ Au carrefour tourner à droite et suivre la rivière\r\n'
+                                 '3/ Retour à la chapelle en passant à travers le petit bois.',
+                    'libelleEn': 'Start: from the parking near the Chapelle Saint Michel \r\n'
+                                 '1/ Follow the path starting at right-hand, cross the valley.\r\n'
+                                 '2/ At the crossroad turn left and follow the river.\r\n'
+                                 '3/ Back to the chapelle by the woods.'
+                }
+            }
+        ]
+        self.itineraire = {
+            'itineraireBalise': 'BALISE',
+            'precisionsBalisage': {
+                'libelleFr': 'Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).',
+                'libelleEn': 'Follow the GR (white / red) or GRP (yellow / red) markings.'
+            }
+        }
+
+    def test_it_returns_the_right_elements_in_description(self):
+        description = ApidaeTrekParser._make_description(self.ouverture, self.descriptifs, self.itineraire)
+        expected_fr_description = (
+            '<p>Départ : du parking de la Chapelle Saint Michel </p>'
+            '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
+            '<p>2/ Au carrefour tourner à droite et suivre la rivière</p>'
+            '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
+            '<p>Ouvert toute l\'année</p>'
+            '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
+            '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
+        )
+        self.assertEqual(description.to_dict()['fr'], expected_fr_description)
+        expected_en_description = (
+            '<p>Start: from the parking near the Chapelle Saint Michel </p>'
+            '<p>1/ Follow the path starting at right-hand, cross the valley.</p>'
+            '<p>2/ At the crossroad turn left and follow the river.</p>'
+            '<p>3/ Back to the chapelle by the woods.</p>'
+            '<p>Open all year long</p>'
+            '<p>Exceptionally closed during heavy rain</p>'
+            '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
+        )
+        self.assertEqual(description.to_dict()['en'], expected_en_description)
+
+    def test_it_places_temporary_closed_warning_first(self):
+        temporary_closed = {
+            'periodeEnClair': {
+                'libelleFr': 'Fermé temporairement.',
+                'libelleEn': 'Closed temporarily.'
+            },
+            'fermeTemporairement': 'FERME_TEMPORAIREMENT'
+        }
+        description = ApidaeTrekParser._make_description(temporary_closed, self.descriptifs, self.itineraire)
+        expected_fr_description = (
+            '<p>Fermé temporairement.</p>'
+            '<p>Départ : du parking de la Chapelle Saint Michel </p>'
+            '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
+            '<p>2/ Au carrefour tourner à droite et suivre la rivière</p>'
+            '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
+            '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
+        )
+        self.assertEqual(description.to_dict()['fr'], expected_fr_description)
+        expected_en_description = (
+            '<p>Closed temporarily.</p>'
+            '<p>Start: from the parking near the Chapelle Saint Michel </p>'
+            '<p>1/ Follow the path starting at right-hand, cross the valley.</p>'
+            '<p>2/ At the crossroad turn left and follow the river.</p>'
+            '<p>3/ Back to the chapelle by the woods.</p>'
+            '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
+        )
+        self.assertEqual(description.to_dict()['en'], expected_en_description)
+
+
+class MakeMarkingDescriptionTests(SimpleTestCase):
+
+    def test_it_returns_default_text_when_not_marked(self):
+        itineraire = {'itineraireBalise': None}
+        description = ApidaeTrekParser._make_marking_description(itineraire)
+        self.assertDictEqual(description, ApidaeTrekParser.trek_no_marking_description)
+
+    def test_it_returns_given_text(self):
+        precisions = {
+            'libelleFr': 'fr-marked itinerary',
+            'libelleEn': 'en-marked itinerary',
+            'libelleEs': 'es-marked itinerary',
+            'libelleIt': 'it-marked itinerary',
+        }
+        itineraire = {
+            'itineraireBalise': 'BALISE',
+            'precisionsBalisage': precisions
+        }
+        description = ApidaeTrekParser._make_marking_description(itineraire)
+        self.assertDictEqual(description, precisions)
+
+    def test_it_returns_given_partial_text_mixed_with_default(self):
+        partial_precisions = {
+            'libelleEn': 'en-marked itinerary',
+            'libelleEs': 'es-marked itinerary',
+            'libelleIt': 'it-marked itinerary',
+        }
+        itineraire = {
+            'itineraireBalise': 'BALISE',
+            'precisionsBalisage': partial_precisions
+        }
+        description = ApidaeTrekParser._make_marking_description(itineraire)
+        expected = {
+            'libelleFr': ApidaeTrekParser.default_trek_marking_description['libelleFr'],
+            'libelleEn': 'en-marked itinerary',
+            'libelleEs': 'es-marked itinerary',
+            'libelleIt': 'it-marked itinerary',
+        }
+        self.assertDictEqual(description, expected)
+
+    def test_it_returns_default_text_when_no_details(self):
+        itineraire = {
+            'itineraireBalise': 'BALISE',
+        }
+        description = ApidaeTrekParser._make_marking_description(itineraire)
+        self.assertDictEqual(description, ApidaeTrekParser.default_trek_marking_description)
+
+
+class GpxToGeomTests(SimpleTestCase):
+
+    @staticmethod
+    def _get_gpx_from(filename):
+        with open(filename, 'r') as f:
+            gpx = f.read()
+        return bytes(gpx, 'utf-8')
+
+    def test_gpx_with_waypoint_can_be_converted(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/apidae_test_trek.gpx')
+
+        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 13)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_gpx_with_route_points_can_be_converted(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_route_points.gpx')
+
+        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 13)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_it_handles_segment_with_single_point(self):
+        gpx = self._get_gpx_from(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trace_with_single_point_segment.gpx'
+        )
+        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 13)
+
+
+class GetPracticeNameFromActivities(SimpleTestCase):
+
+    def test_it_considers_specific_activity_before_default_activity(self):
+        practice_name = ApidaeTrekParser._get_practice_name_from_activities(
+            [
+                3113,  # Sports cyclistes
+                3284,  # Itinéraire VTT
+            ]
+        )
+        self.assertEqual(practice_name, 'VTT')
+
+    def test_it_takes_default_activity_if_no_specific_match(self):
+        not_mapped_activity_id = 12341234
+        practice_name = ApidaeTrekParser._get_practice_name_from_activities(
+            [
+                not_mapped_activity_id,
+                3113,  # Sports cyclistes
+            ]
+        )
+        self.assertEqual(practice_name, 'Vélo')
+
+
+class IsStillPublishableOn(SimpleTestCase):
+
+    def test_it_returns_true(self):
+        illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
+        a_date_before_that = date(year=2020, month=3, day=10)
+        self.assertTrue(ApidaeTrekParser._is_still_publishable_on(illustration, a_date_before_that))
+
+    def test_it_returns_false(self):
+        illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
+        a_date_after_that = date(year=2020, month=8, day=10)
+        self.assertFalse(ApidaeTrekParser._is_still_publishable_on(illustration, a_date_after_that))
+
+    def test_it_considers_date_limite_is_not_included(self):
+        illustration = {'dateLimiteDePublication': '2020-06-28T00:00:00.000+0000'}
+        that_same_date = date(year=2020, month=6, day=28)
+        self.assertFalse(ApidaeTrekParser._is_still_publishable_on(illustration, that_same_date))
+
+
+class MakeDurationTests(SimpleTestCase):
+
+    def test_it_returns_correct_duration_from_duration_in_minutes(self):
+        self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90), 1.5)
+
+    def test_it_returns_correct_duration_from_duration_in_days(self):
+        self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_days=3), 72.0)
+
+    def test_giving_both_duration_arguments_only_duration_in_minutes_is_considered(self):
+        self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90, duration_in_days=0.5), 1.5)

@@ -1,0 +1,31 @@
+{
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "id": 123123,
+      "multimedias": [
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/un_plan.gpx",
+              "extension": "gpx"
+            }
+          ]
+        },
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/et_un_autre_plan.gpx",
+              "extension": "gpx"
+            }
+          ]
+        }
+      ],
+      "nom": {
+        "libelleFr": "Une belle randonnée de test mais avec trop de plans"
+      }
+    }
+  ]
+}
