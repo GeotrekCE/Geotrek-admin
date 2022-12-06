@@ -15,10 +15,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     import geotrek.tourism.parsers  # noqa
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
     import geotrek.feedback.parsers  # noqa
-if 'geotrek.infrastucture' in settings.INSTALLED_APPS:
-    import geotrek.infrastucture.parsers  # noqa
-if 'geotrek.infrastucture' in settings.INSTALLED_APPS:
-    import geotrek.infrastucture.parsers  # noqa
+if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+    import geotrek.infrastructure.parsers  # noqa
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    import geotrek.signage.parsers  # noqa
 
 
 def subclasses(cls):
