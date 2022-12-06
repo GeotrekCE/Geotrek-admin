@@ -752,8 +752,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             ds = DataSource(ntf.name)
             for layer_name in ('tracks', 'routes'):
                 layer = ApidaeTrekParser._get_layer(ds, layer_name)
-                if not layer:
-                    continue
                 geos = ApidaeTrekParser._maybe_get_linestring_from_layer(layer)
                 if geos:
                     break
@@ -765,7 +763,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         for layer in datasource:
             if layer.name == layer_name:
                 return layer
-        return None
 
     @staticmethod
     def _convert_to_geos(geom):
