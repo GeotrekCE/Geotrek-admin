@@ -704,7 +704,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         if ref_fichier_plan['extension'] != 'gpx':
             raise RowImportError("Le plan de l'itinéraire APIDAE n'est pas au format GPX")
         response = self.request_or_retry(url=ref_fichier_plan['url'])
-        # print('downloaded url {}, content size {}'.format(plan['traductionFichiers'][0]['url'], len(response.text)))
         return response.content
 
     @classmethod
