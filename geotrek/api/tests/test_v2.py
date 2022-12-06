@@ -4248,7 +4248,7 @@ class AltimetryCacheTests(BaseApiTest):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM(self):
         # There are 9 queries to get trek DEM
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
@@ -4262,7 +4262,7 @@ class AltimetryCacheTests(BaseApiTest):
     def test_cache_is_used_when_getting_trek_DEM_nds(self):
         trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
         # There are 9 queries to get trek DEM
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get(reverse('apiv2:trek-dem', args=(trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
@@ -4274,7 +4274,7 @@ class AltimetryCacheTests(BaseApiTest):
 
     def test_cache_is_used_when_getting_trek_profile(self):
         # There are 8 queries to get trek profile
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
@@ -4288,7 +4288,7 @@ class AltimetryCacheTests(BaseApiTest):
 
     def test_cache_is_used_when_getting_trek_profile_svg(self):
         # There are 8 queries to get trek profile svg
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
         self.assertIn('image/svg+xml', response['Content-Type'])
