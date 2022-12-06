@@ -1069,6 +1069,16 @@ class GpxToGeomTests(SimpleTestCase):
         self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
         self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
 
+    def test_it_handles_segment_with_single_point(self):
+        gpx = self._get_gpx_from(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trace_with_single_point_segment.gpx'
+        )
+        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 13)
+
 
 class GetPracticeNameFromActivities(SimpleTestCase):
 
