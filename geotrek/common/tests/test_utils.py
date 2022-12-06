@@ -2,11 +2,12 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.test import TestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 
 from ..parsers import Parser
 from ..utils import uniquify, format_coordinates, spatial_reference, simplify_coords
 from ..utils.import_celery import create_tmp_destination, subclasses
+from ..utils.parsers import add_http_prefix
 
 
 class UtilsTest(TestCase):
@@ -91,3 +92,11 @@ class SimplifyCoordsTest(TestCase):
         arg_value = "test"
         with self.assertRaises(Exception):
             simplify_coords(arg_value)
+
+
+class UtilsParsersTest(SimpleTestCase):
+    def test_add_http_prefix_without_prefix(self):
+        self.assertEqual('http://test.com', add_http_prefix('test.com'))
+
+    def test_add_http_prefix_with_prefix(self):
+        self.assertEqual('http://test.com', add_http_prefix('http://test.com'))

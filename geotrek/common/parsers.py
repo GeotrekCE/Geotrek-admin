@@ -35,6 +35,7 @@ from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment, License
+from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
 
 
@@ -1096,16 +1097,11 @@ class LEIParser(AttachmentParserMixin, XmlParser):
 
     def filter_website(self, src, val):
         (val1, val2) = val
+
         if val1:
-            if val1.startswith('http'):
-                return val1
-            else:
-                return 'http://' + val1
+            return add_http_prefix(val1)
         if val2:
-            if val2.startswith('http'):
-                return val2
-            else:
-                return 'http://' + val2
+            return add_http_prefix(val2)
 
 
 class GeotrekAggregatorParser:
