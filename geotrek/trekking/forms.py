@@ -10,9 +10,8 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
-from leaflet.forms.widgets import LeafletWidget
 from mapentity.forms import TranslatedModelForm
-from mapentity.widgets import SelectMultipleWithPop
+from mapentity.widgets import SelectMultipleWithPop, MapWidget
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
@@ -76,7 +75,7 @@ else:
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
-            self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
+            self.fields['geom'].widget = MapWidget(attrs={'geom_type': 'LINESTRING'})
             self.fields['geom'].widget.modifiable = modifiable
             self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'geom'
@@ -345,7 +344,7 @@ else:
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
-            self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['geom'].widget = MapWidget(attrs={'geom_type': 'POINT'})
             self.fields['geom'].widget.modifiable = modifiable
 
         class Meta(CommonForm.Meta):
@@ -390,7 +389,7 @@ else:
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
-            self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['geom'].widget = MapWidget(attrs={'geom_type': 'POINT'})
             self.fields['geom'].widget.modifiable = modifiable
 
         class Meta(CommonForm.Meta):
