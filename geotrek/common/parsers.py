@@ -1092,8 +1092,6 @@ class LEIParser(AttachmentParserMixin, XmlParser):
             geom.transform(settings.SRID)
         except InternalError as e:
             raise ValueImportError(e)
-        if self.obj.geom and abs(geom.x - self.obj.geom.x) < 0.001 and abs(geom.y - self.obj.geom.y) < 0.001:
-            return self.obj.geom
         return geom
 
     def filter_website(self, src, val):
