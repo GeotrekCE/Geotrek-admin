@@ -1080,13 +1080,13 @@ class LEIParser(AttachmentParserMixin, XmlParser):
     def filter_geom(self, src, val):
         lat, lng = val
         if lat is None or lng is None:
-            raise ValueImportError("Missing {required}field '{src}'")
+            raise ValueImportError("Empty geometry")
         lat = lat.replace(',', '.')
         lng = lng.replace(',', '.')
         try:
             geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         except ValueError:
-            raise ValueImportError("Missing {required}field '{src}'")
+            raise ValueImportError("Empty geometry")
 
         try:
             geom.transform(settings.SRID)

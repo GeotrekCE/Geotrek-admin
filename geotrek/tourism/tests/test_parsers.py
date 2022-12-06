@@ -120,6 +120,11 @@ class FMA28OtherPortal(TouristicEventTourInSoftParser):
     m2m_aggregate_fields = ["portal"]
 
 
+class FilenameLEIParser(LEITouristicContentParser):
+    filename = 'geotrek/tourism/tests/data/LEIContent.xml'
+    category = "Restaurant"
+
+
 class RestaurantALEIParser(LEITouristicContentParser):
     url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
     category = "Restaurant"
@@ -762,7 +767,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(information_desk_2.website, None)
 
     @mock.patch('requests.get')
-    def test_create_content_lei(self, mocked):
+    def test_create_content_lei_url(self, mocked):
         self.x_time = 0
 
         def mocked_requests_get(*args, **kwargs):
@@ -792,6 +797,15 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.eid, "LEI219006400")
         self.assertEqual(Attachment.objects.count(), 2)
         self.assertEqual(Attachment.objects.first().content_object, content)
+
+    def test_create_content_lei_filename(self):
+        FileType.objects.create(type="Photographie")
+
+        TouristicContentCategoryFactory(label="Restaurant")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.FilenameLEIParser', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 2)
 
     @mock.patch('requests.get')
     def test_create_content_kv_critere_lei(self, mocked):
