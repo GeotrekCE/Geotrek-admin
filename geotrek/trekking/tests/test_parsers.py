@@ -761,11 +761,11 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(Theme.objects.count(), 2)
         themes = Theme.objects.all()
         for theme in themes:
-            self.assertIn(theme.label, ['Géologie', 'Historique'])
+            self.assertIn(theme.label, ['Geology', 'Historic'])
         self.assertEqual(Label.objects.count(), 3)
         labels = Label.objects.all()
         for label in labels:
-            self.assertIn(label.name, ['A la campagne', 'Déconseillé par mauvais temps', 'Inscrit au PDIPR'])
+            self.assertIn(label.name, ['In the country', 'Not recommended in bad weather', 'Listed PDIPR'])
 
     @mock.patch('requests.get')
     def test_trek_theme_with_unknown_id_is_not_imported(self, mocked_get):

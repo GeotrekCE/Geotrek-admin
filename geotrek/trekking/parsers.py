@@ -476,6 +476,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         4245,  # Adapté aux poussettes tout terrain
     ]
 
+    apidae_translation_prefix = 'libelle'
+
     def __init__(self, *args, **kwargs):
         self._translated_fields = [field for field in get_translated_fields(self.model)]
         self._expand_fields_mapping_with_translation_fields()
@@ -492,7 +494,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             src = self.fields[translated_field]
             del self.fields[translated_field]
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                self.fields[f'{translated_field}_{lang}'] = f'{src}.libelle{lang.capitalize()}'
+                self.fields[f'{translated_field}_{lang}'] = f'{src}.{self.apidae_translation_prefix}{lang.capitalize()}'
 
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
@@ -524,11 +526,12 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
 
     def filter_labels(self, src, val):
         typologies, environnements = val
+        translation_src = self._get_default_translation_src()
         filtered_val = []
         if typologies:
-            filtered_val += [t['libelleFr'] for t in typologies if t['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS]
+            filtered_val += [t[translation_src] for t in typologies if t['id'] in TYPOLOGIES_SITRA_IDS_AS_LABELS]
         if environnements:
-            filtered_val += [e['libelleFr'] for e in environnements if e['id'] in ENVIRONNEMENTS_IDS_AS_LABELS]
+            filtered_val += [e[translation_src] for e in environnements if e['id'] in ENVIRONNEMENTS_IDS_AS_LABELS]
         return self.apply_filter(
             dst='labels',
             src=src,
@@ -536,10 +539,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         )
 
     def filter_themes(self, src, val):
+        translation_src = self._get_default_translation_src()
         return self.apply_filter(
             dst='themes',
             src=src,
-            val=[item['libelleFr'] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
+            val=[item[translation_src] for item in val if item['id'] in TYPOLOGIES_SITRA_IDS_AS_THEMES]
         )
 
     def filter_description(self, src, val):
@@ -570,10 +574,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
                 break
         else:
             return None
+        translation_src = self._get_default_translation_src()
         return self.apply_filter(
             dst='difficulty',
             src=src,
-            val=difficulty_level[f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}']
+            val=difficulty_level[translation_src]
         )
 
     def filter_related_treks(self, src, val):
@@ -601,7 +606,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
 
     def filter_networks(self, src, val):
         activities = val
-        default_translation_fieldname = f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}'
+        default_translation_fieldname = self._get_default_translation_src()
         filtered_activities = []
         for activity in activities:
             if default_translation_fieldname in activity:
@@ -613,7 +618,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         )
 
     def filter_attachments(self, src, val):
-        translation_src = f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}'
+        translation_src = self._get_default_translation_src()
         illustrations = val
         rv = []
         for illustration in illustrations:
@@ -636,7 +641,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         return ApidaeTrekParser._make_duration(duration_in_minutes=duree_journaliere, duration_in_days=duree_itinerance)
 
     def filter_accessibilities(self, src, val):
-        translation_fieldname = f'libelle{settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()}'
+        translation_fieldname = self._get_default_translation_src()
         return self.apply_filter(
             dst='accessibilities',
             src=src,
@@ -879,6 +884,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             return duration_in_days * 24
         else:
             return None
+
+    @classmethod
+    def _get_default_translation_src(cls):
+        return cls.apidae_translation_prefix + settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()
 
 
 class ApidaeReferenceElementParser(Parser):
