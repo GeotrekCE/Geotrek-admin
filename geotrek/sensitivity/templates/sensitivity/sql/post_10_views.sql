@@ -80,7 +80,7 @@ FROM sensitivity_sensitivearea a
 LEFT JOIN sensitivity_species b ON a.species_id = b.id
 LEFT JOIN
     (SELECT species_id,
-            array_to_string(ARRAY_AGG (b.name), ', ', '_') pratiques_sportives,
+            array_to_string(ARRAY_AGG (b.name ORDER BY b.id), ', ', '_') pratiques_sportives,
             c.name AS "Nom"
      FROM sensitivity_species_practices a
      JOIN sensitivity_sportpractice b ON a.sportpractice_id = b.id
@@ -90,13 +90,13 @@ LEFT JOIN
 LEFT JOIN sensitivity_species h ON a.species_id = h.id
 LEFT JOIN authent_structure d ON a.structure_id = d.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM sensitivity_sensitivearea a
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM sensitivity_sensitivearea a
      JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)

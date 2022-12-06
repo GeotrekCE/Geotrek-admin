@@ -42,19 +42,19 @@ LEFT JOIN core_stake d ON a.stake_id = d.id
 LEFT JOIN authent_structure e ON a.structure_id = e.id
 LEFT JOIN maintenance_project h ON a.project_id = h.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM maintenance_intervention a
      JOIN zoning_city b ON ST_INTERSECTS (st_pointonsurface(a.geom_3d), b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM maintenance_intervention a
      JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom_3d), b.geom)
      GROUP BY a.id) g ON a.id = g.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (disorder), ', ', '_') disorder,
+    (SELECT array_to_string(ARRAY_AGG (disorder  ORDER BY a.id), ', ', '_') disorder,
             c.id
      FROM maintenance_interventiondisorder a
      JOIN maintenance_intervention_disorders b ON a.id = b.interventiondisorder_id
@@ -120,7 +120,7 @@ LEFT JOIN
           FROM maintenance_funding a
           JOIN maintenance_project b ON a.project_id = b.id
           JOIN common_organism c ON a.organism_id = c.id) SELECT project_id,
-                                                                 array_to_string(ARRAY_AGG (financement), ', ', '_') financement
+                                                                 array_to_string(ARRAY_AGG (financement  ORDER BY financements.id), ', ', '_') financement
      FROM financements
      GROUP BY project_id) i ON a.id = i.project_id
 LEFT JOIN
