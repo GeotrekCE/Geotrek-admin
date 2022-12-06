@@ -40,6 +40,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                                        queryset=AccessibilityAttachment.objects.select_related('license')),
                               Prefetch('web_links',
                                        queryset=trekking_models.WebLink.objects.select_related('category'))) \
+            .prefetch_related('view_points') \
             .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                       length_3d_m=Length3D('geom_3d')) \
             .order_by("name")  # Required for reliable pagination

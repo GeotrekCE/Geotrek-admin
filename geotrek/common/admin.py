@@ -60,8 +60,7 @@ class AttachmentAdmin(admin.ModelAdmin):
     readonly_fields = ('content_type', 'content_link', 'creator', 'title')
 
     def has_add_permission(self, request):
-        """ Do not add from Adminsite.
-        """
+        """ Do not add from Adminsite. """
         return False
 
     def content_link(self, obj):
@@ -116,8 +115,7 @@ class HDViewPointAdmin(admin.ModelAdmin):
         self.list_display_links = None
 
     def has_add_permission(self, request):
-        """ Do not add from Adminsite.
-        """
+        """ Do not add from Adminsite. """
         return False
 
     def update_link(self, obj):

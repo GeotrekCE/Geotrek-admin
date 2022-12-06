@@ -350,15 +350,15 @@ class HDViewPointSerializer(serializers.ModelSerializer):
         return build_url(self, obj.get_generic_picture_tile_url())
 
     def get_trek(self, obj):
-        if obj.content_type == ContentType.objects.get_for_model(trekking_models.Trek):
-            trek = obj.content_object
-            return {'uuid': trek.uuid, 'id': trek.id}
+        related_obj = obj.content_object
+        if isinstance(related_obj, trekking_models.Trek):
+            return {'uuid': related_obj.uuid, 'id': related_obj.id}
         return None
 
     def get_site(self, obj):
-        if obj.content_type == ContentType.objects.get_for_model(outdoor_models.Site):
-            site = obj.content_object
-            return {'uuid': site.uuid, 'id': site.id}
+        related_obj = obj.content_object
+        if isinstance(related_obj, outdoor_models.Site):
+            return {'uuid': related_obj.uuid, 'id': related_obj.id}
         return None
 
     class Meta:

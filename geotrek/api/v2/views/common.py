@@ -119,5 +119,6 @@ class HDViewPointViewSet(api_viewsets.GeotrekViewSet):
     def get_queryset(self):
         activate(self.request.GET.get('language'))
         return common_models.HDViewPoint.objects \
+            .prefetch_related('content_object') \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('title')  # Required for reliable pagination
