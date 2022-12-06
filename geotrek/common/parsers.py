@@ -1058,16 +1058,17 @@ class LEIParser(AttachmentParserMixin, XmlParser):
         returns photos list of tuples (url, legend, '')
         """
         photos = []
-        for crit in val[0]:
-            (url, legend) = crit.text, self.get_crit_value(crit)
-            if not url:
-                continue
-            if legend:
-                legend = legend[:128]
-            url = url.replace('https://', 'http://')
-            if url[:7] != 'http://':
-                url = 'http://' + url
-            photos.append((url, legend, ''))
+        for crits in val:
+            for crit in crits:
+                (url, legend) = crit.text, self.get_crit_value(crit)
+                if not url:
+                    continue
+                if legend:
+                    legend = legend[:128]
+                url = url.replace('https://', 'http://')
+                if url[:7] != 'http://':
+                    url = 'http://' + url
+                photos.append((url, legend, ''))
         return photos
 
     def filter_description(self, src, val):

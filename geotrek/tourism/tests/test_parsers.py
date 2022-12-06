@@ -127,7 +127,9 @@ class RestaurantALEIParser(LEITouristicContentParser):
     type2 = "Type 2"
     practical_info = "Practical Info"
     non_fields = {
-        'attachments': ('CRITERES/Crit[@CLEF_CRITERE="1900421"]', 'CRITERES/Crit[@CLEF_CRITERE="1900268"]'),
+        'attachments': ('CRITERES/Crit[@CLEF_CRITERE="1900604"]',
+                        'CRITERES/Crit[@CLEF_CRITERE="1900421"]',
+                        'CRITERES/Crit[@CLEF_CRITERE="1900268"]'),
     }
 
 
@@ -785,12 +787,10 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantALEIParser', verbosity=0)
         self.assertTrue(mocked.called)
-        self.assertEqual(TouristicContent.objects.count(), 1)
-        content = TouristicContent.objects.get()
-        self.assertEqual(content.eid, "LEI219006399")
-        self.assertEqual(content.name, "Restaurant A")
-        self.assertIn("Commentaire A", content.description)
-        self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        content = TouristicContent.objects.get(name="Restaurant B")
+        self.assertEqual(content.eid, "LEI219006400")
+        self.assertEqual(Attachment.objects.count(), 2)
         self.assertEqual(Attachment.objects.first().content_object, content)
 
     @mock.patch('requests.get')
@@ -813,12 +813,13 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantBLEIParser', verbosity=0)
         self.assertTrue(mocked.called)
-        self.assertEqual(TouristicContent.objects.count(), 1)
-        content = TouristicContent.objects.get()
-        self.assertEqual(content.eid, "LEI219006399")
-        self.assertEqual(content.name, "Restaurant A")
-        self.assertIn("Commentaire A", content.description)
-        self.assertEqual("<p><strong>Tox</strong> : Foo : Bar</p>", content.practical_info)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        content_a = TouristicContent.objects.get(name="Restaurant A")
+        self.assertEqual(content_a.eid, "LEI219006399")
+        self.assertIn("Commentaire A", content_a.description)
+        self.assertEqual("<p><strong>Tox</strong> : Foo : Bar</p>", content_a.practical_info)
+        content_b = TouristicContent.objects.get(name="Restaurant B")
+        self.assertEqual(content_b.eid, "LEI219006400")
 
     @mock.patch('requests.get')
     def test_create_event_lei(self, mocked):
