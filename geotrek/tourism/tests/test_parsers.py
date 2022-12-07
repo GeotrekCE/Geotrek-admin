@@ -806,6 +806,9 @@ class LEIParserTest(TranslationResetMixin, TestCase):
         content = TouristicContent.objects.get(name="Restaurant B")
         self.assertEqual(content.eid, "LEI219006400")
         self.assertEqual(Attachment.objects.count(), 2)
+        self.assertEqual(Attachment.objects.exclude(legend='').first().legend,
+                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, '
+                         'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nec')
         self.assertEqual(Attachment.objects.first().content_object, content)
 
     def test_create_content_lei_filename(self):
