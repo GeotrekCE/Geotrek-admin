@@ -162,11 +162,12 @@ class ViewsImportTest(TestCase):
 
         with open('geotrek/common/tests/data/test.zip', 'rb') as real_archive:
             url = reverse('common:import_dataset')
-
+            choices = {choice: id_choice for id_choice, choice in
+                       self.client.get(url).context['form'].fields['parser'].choices}
             response_real = self.client.post(
                 url, {
                     'upload-file': 'Upload',
-                    'with-file-parser': '1',
+                    'with-file-parser': choices['Cities'],
                     'with-file-file': real_archive,
                     'with-file-encoding': 'UTF-8'
                 }
