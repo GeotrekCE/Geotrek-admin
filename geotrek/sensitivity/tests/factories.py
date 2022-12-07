@@ -34,7 +34,7 @@ class SpeciesFactory(factory.django.DjangoModelFactory):
             if not extracted:
                 practices = [
                     SportPracticeFactory.create(name="Practice1"),
-                    SportPracticeFactory.create(name="Practice2")
+                    SportPracticeFactory.create(name="Practice2"),
                 ]
             for practice in practices:
                 obj.practices.add(practice)

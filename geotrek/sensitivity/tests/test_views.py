@@ -2,6 +2,7 @@ from freezegun import freeze_time
 
 from django.contrib.auth.models import User, Permission
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -91,6 +92,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             "elevation": None,
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'kml_url': 'http://testserver/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
+            'openair_url': 'http://testserver/api/en/sensitiveareas/{pk}/openair'.format(pk=self.pk),
             'info_url': self.species.url,
             'species_id': self.species.id,
             "name": self.species.name,
@@ -122,17 +124,20 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         }
         self.expected_geo_result['properties']['url'] = 'http://testserver/api/v2/sensitivearea/{}/?format=geojson'.format(self.pk)
 
+    @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Practice1', ])
     def test_detail_sensitivearea(self):
         url = '/api/v2/sensitivearea/{pk}/?format=json&period=ignore&language=en'.format(pk=self.pk)
         response = self.client.get(url)
         self.assertJSONEqual(response.content.decode(), self.expected_result)
-
+    
+    @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Practice1', ])
     def test_detail_sensitivearea_regulatory(self):
         self.sensitivearea = RegulatorySensitiveAreaFactory.create(species__period01=True)
         url = '/api/v2/sensitivearea/{pk}/?format=json&period=ignore&language=en'.format(pk=self.sensitivearea.pk)
         response = self.client.get(url)
         self.assertIsNone(response.json()['species_id'])
 
+    @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Practice1', ])
     def test_list_sensitivearea(self):
         url = '/api/v2/sensitivearea/?format=json&period=ignore&language=en'
         response = self.client.get(url)
@@ -143,11 +148,13 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             'results': [self.expected_result],
         })
 
+    @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Practice1', ])
     def test_geo_detail_sensitivearea(self):
         url = '/api/v2/sensitivearea/{pk}/?format=geojson&period=ignore&language=en'.format(pk=self.pk)
         response = self.client.get(url)
         self.assertJSONEqual(response.content.decode(), self.expected_geo_result)
 
+    @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Practice1', ])
     def test_geo_list_sensitivearea(self):
         url = '/api/v2/sensitivearea/?format=geojson&period=ignore&language=en'
         response = self.client.get(url)
@@ -191,6 +198,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         response = self.client.get(url)
         self.assertEqual(response.json()['geometry'], expected_geom)
 
+    @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Practice1', ])
     def test_list_bubble_sensitivearea(self):
         url = '/api/v2/sensitivearea/?format=json&period=ignore&language=en&bubble=True'
         response = self.client.get(url)

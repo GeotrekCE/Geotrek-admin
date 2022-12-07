@@ -19,11 +19,14 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
     }
     extra_column_list = ['description', 'contact']
 
+
     def get_expected_json_attrs(self):
+        
         return {
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
             'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
+            'openair_url': '/api/en/sensitiveareas/{}/openair'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,
             'species': {
@@ -94,6 +97,7 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
             'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
+            'openair_url': '/api/en/sensitiveareas/{}/openair'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,
             'species': {
