@@ -757,6 +757,29 @@ class ParserTests(TranslationResetMixin, TestCase):
         information_desk_2 = InformationDesk.objects.get(eid=2)
         self.assertEqual(information_desk_2.website, None)
 
+
+class LEIParserTest(TranslationResetMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        FileType.objects.create(type="Photographie")
+        TouristicContentCategoryFactory(label="Restaurant")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+
+    @mock.patch('requests.get')
+    def test_fail_lei_url(self, mocked):
+        self.x_time = 0
+
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 404
+            return response
+
+        mocked.side_effect = mocked_requests_get
+        with self.assertRaisesRegex(CommandError, "Failed to download %s. HTTP status code 404" % RestaurantALEIParser.url):
+            call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantALEIParser', verbosity=2)
+            self.assertTrue(mocked.called)
+
     @mock.patch('requests.get')
     def test_create_content_lei_url(self, mocked):
         self.x_time = 0
@@ -776,9 +799,6 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         mocked.side_effect = mocked_requests_get
 
-        TouristicContentCategoryFactory(label="Restaurant")
-        TouristicContentType1Factory(label="Type A")
-        TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantALEIParser', verbosity=0)
         self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 2)
@@ -789,9 +809,6 @@ class ParserTests(TranslationResetMixin, TestCase):
 
     def test_create_content_lei_filename(self):
 
-        TouristicContentCategoryFactory(label="Restaurant")
-        TouristicContentType1Factory(label="Type A")
-        TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.FilenameLEIParser', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 2)
 
@@ -808,9 +825,6 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         mocked.side_effect = mocked_requests_get
 
-        TouristicContentCategoryFactory(label="Restaurant")
-        TouristicContentType1Factory(label="Type A")
-        TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantBLEIParser', verbosity=0)
         self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 2)
@@ -840,9 +854,6 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         mocked.side_effect = mocked_requests_get
 
-        TouristicContentCategoryFactory(label="Restaurant")
-        TouristicContentType1Factory(label="Type A")
-        TouristicContentType1Factory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EventALEIParser', verbosity=0)
         self.assertTrue(mocked.called)
         self.assertEqual(TouristicEvent.objects.count(), 1)

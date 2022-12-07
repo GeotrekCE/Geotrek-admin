@@ -1091,7 +1091,7 @@ class LEIParser(AttachmentParserMixin, XmlParser):
 
         try:
             geom.transform(settings.SRID)
-        except InternalError as e:
+        except (GDALException, InternalError) as e:
             raise ValueImportError(e)
         return geom
 

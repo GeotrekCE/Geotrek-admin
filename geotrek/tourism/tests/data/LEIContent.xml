@@ -322,6 +322,20 @@
             <NOM><![CDATA[Restaurant C]]></NOM>
             <TYPE_DE_PRODUIT>1900014</TYPE_DE_PRODUIT>
             <TYPE_NOM><![CDATA[Restauration]]></TYPE_NOM>
+            <COMMENTAIRE>
+                <![CDATA[Commentaire C]]>
+            </COMMENTAIRE>
+            <CRITERES>
+                <Crit CLEF_CRITERE="900000" CLEF_MODA="1901749"></Crit>
+            </CRITERES>
+        </sit_liste>
+        <sit_liste>
+            <PRODUIT>219006401</PRODUIT>
+            <NOM><![CDATA[Restaurant C]]></NOM>
+            <TYPE_DE_PRODUIT>1900014</TYPE_DE_PRODUIT>
+            <TYPE_NOM><![CDATA[Restauration]]></TYPE_NOM>
+            <LATITUDE>900</LATITUDE>
+            <LONGITUDE>207,71041727388229</LONGITUDE>
             <INSEE><![CDATA[67334]]></INSEE>
             <COMMENTAIRE>
                 <![CDATA[Commentaire C]]>
