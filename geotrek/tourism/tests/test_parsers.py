@@ -759,12 +759,12 @@ class ParserTests(TranslationResetMixin, TestCase):
 
 
 class LEIParserTest(TranslationResetMixin, TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
+        super().setUp()
         FileType.objects.create(type="Photographie")
-        TouristicContentCategoryFactory(label="Restaurant")
-        TouristicContentType1Factory(label="Type A")
-        TouristicContentType1Factory(label="Type B")
+        TouristicContentCategoryFactory.create(label="Restaurant")
+        TouristicContentType1Factory.create(label="Type A")
+        TouristicContentType1Factory.create(label="Type B")
 
     @mock.patch('requests.get')
     def test_fail_lei_url(self, mocked):
@@ -776,8 +776,9 @@ class LEIParserTest(TranslationResetMixin, TestCase):
             return response
 
         mocked.side_effect = mocked_requests_get
-        with self.assertRaisesRegex(CommandError, "Failed to download %s. HTTP status code 404" % RestaurantALEIParser.url):
-            call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantALEIParser', verbosity=2)
+        with self.assertRaisesRegex(CommandError, "Failed to download %s. HTTP status code 404"
+                                                  % RestaurantALEIParser.url):
+            call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantALEIParser', verbosity=0)
             self.assertTrue(mocked.called)
 
     @mock.patch('requests.get')
