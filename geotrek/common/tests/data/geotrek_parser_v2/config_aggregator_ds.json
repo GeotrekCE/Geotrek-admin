@@ -1,0 +1,30 @@
+{
+  "URL_1": {
+    "url": "url_1",
+    "data_to_import": ["Service", "POI"],
+    "portals": null,
+    "mapping": {
+      "trek_practice": {
+        "Randonnée Pédestre": ["Pédestre"],
+        "Vélo": ["VTT", "Vélo"]
+      },
+      "trek_difficulty": {
+        "Moyen": ["Facile"]
+      }
+    }
+  },
+  "URL_2": {
+    "url": "url_2",
+    "data_to_import": ["Trek", "POI"],
+    "portals": null,
+    "mapping": {
+      "trek_practice": {
+        "Randonnée Pédestre": ["Pédestre"],
+        "Vélo": ["VTT", "Vélo"]
+      },
+      "trek_difficulty": {
+        "Moyen": ["Facile"]
+      }
+    }
+  }
+}

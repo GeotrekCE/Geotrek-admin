@@ -7,19 +7,11 @@ from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import Point, LineString
 
+from geotrek.common.tests.mixins import dictfetchall
 from geotrek.common.utils import dbnow
 from geotrek.core.tests.factories import (PathFactory, PathAggregationFactory,
                                           TopologyFactory)
 from geotrek.core.models import Path, Topology, PathAggregation
-
-
-def dictfetchall(cursor):
-    "Return all rows from a cursor as a dict"
-    columns = [col[0] for col in cursor.description]
-    return [
-        dict(zip(columns, row))
-        for row in cursor.fetchall()
-    ]
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

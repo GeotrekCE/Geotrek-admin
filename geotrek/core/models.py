@@ -8,50 +8,26 @@ from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, fromstr, LineString, GEOSGeometry
 from django.contrib.postgres.indexes import GistIndex
+from django.core.mail import mail_managers
 from django.db import connection, connections, DEFAULT_DB_ALIAS
 from django.db.models import ProtectedError
 from django.db.models.query import QuerySet
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.functions import Length
-from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
-from geotrek.common.utils import classproperty, sqlfunction, uniquify
-from geotrek.common.utils.postgresql import debug_pg_notices
+from geotrek.common.utils import classproperty, sqlfunction, uniquify, simplify_coords
+from geotrek.core.managers import PathManager, PathInvisibleManager, TopologyManager, PathAggregationManager, \
+    TrailManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
 logger = logging.getLogger(__name__)
-
-
-def simplify_coords(coords):
-    if isinstance(coords, (list, tuple)):
-        return [simplify_coords(coord) for coord in coords]
-    elif isinstance(coords, float):
-        return round(coords, 7)
-    raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
-
-
-class PathManager(models.Manager):
-    # Use this manager when walking through FK/M2M relationships
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        """Hide all ``Path`` records that are not marked as visible.
-        """
-        return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
-
-
-class PathInvisibleManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        return super().get_queryset()
 
 
 class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
@@ -90,6 +66,7 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                                       blank=True, related_name="paths",
                                       verbose_name=_("Networks"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
@@ -234,7 +211,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
             TimeStampedModelMixin.reload(self, fromdb)
         return self
 
-    @debug_pg_notices
     def save(self, *args, **kwargs):
         # If the path was reversed, we have to invert related topologies
         if self.is_reversed:
@@ -243,6 +219,17 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
                 aggr.end_position = 1 - aggr.end_position
                 aggr.save()
             self._is_reversed = False
+
+        # If draft is set from False to True, and setting ALERT_DRAFT is True, send email to managers
+        if (self.pk and self.draft and self.__class__.objects.get(pk=self.pk).draft != self.draft) \
+                and settings.ALERT_DRAFT:
+            subject = _("{obj} has been set to draft").format(obj=self)
+            message = render_to_string('core/draft_email_message.txt', {"obj": self})
+            try:
+                mail_managers(subject, message, fail_silently=False)
+            except Exception as exc:
+                msg = f'Caught {exc.__class__.__name__}: {exc}'
+                logger.warning(f"Error mail managers didn't work ({msg})")
         super().save(*args, **kwargs)
         self.reload()
 
@@ -379,14 +366,6 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     def distance(self, to_cls):
         """Distance to associate this path to another class"""
         return None
-
-
-class TopologyManager(NoDeleteManager):
-    # Use this manager when walking through FK/M2M relationships
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        return super().get_queryset().annotate(length_2d=Length('geom'))
 
 
 class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
@@ -570,7 +549,6 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
         return self
 
-    @debug_pg_notices
     def save(self, *args, **kwargs):
         # HACK: these fields are readonly from the Django point of view
         # but they can be changed at DB level. Since Django write all fields
@@ -810,10 +788,9 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
         """Distance to associate this topology to another topology class"""
         return None
 
-
-class PathAggregationManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().order_by('order')
+    @property
+    def aggregations_optimized(self):
+        return self.aggregations.all().select_related('path', 'topo_object')
 
 
 class PathAggregation(models.Model):
@@ -852,10 +829,6 @@ class PathAggregation(models.Model):
         return (self.start_position == 0.0 and self.end_position == 1.0
                 or self.start_position == 1.0 and self.end_position == 0.0)
 
-    @debug_pg_notices
-    def save(self, *args, **kwargs):
-        return super().save(*args, **kwargs)
-
     class Meta:
         verbose_name = _("Path aggregation")
         verbose_name_plural = _("Path aggregations")
@@ -864,7 +837,6 @@ class PathAggregation(models.Model):
 
 
 class PathSource(StructureOrNoneRelated):
-
     source = models.CharField(verbose_name=_("Source"), max_length=50)
 
     class Meta:
@@ -936,7 +908,6 @@ class Usage(StructureOrNoneRelated):
 
 
 class Network(StructureOrNoneRelated):
-
     network = models.CharField(verbose_name=_("Network"), max_length=50)
 
     class Meta:
@@ -953,12 +924,23 @@ class Network(StructureOrNoneRelated):
 class Trail(MapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Name"), max_length=64)
+    category = models.ForeignKey(
+        "TrailCategory",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_("Category"),
+    )
     departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64)
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
+    certifications_verbose_name = _("Certifications")
     geometry_types_allowed = ["LINESTRING"]
+
+    objects = TrailManager()
 
     class Meta:
         verbose_name = _("Trail")
@@ -974,6 +956,10 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
                                                                  self.get_detail_url(),
                                                                  self,
                                                                  self)
+
+    @property
+    def certifications_display(self):
+        return ', '.join([str(n) for n in self.certifications.all()])
 
     @classmethod
     def path_trails(cls, path):
@@ -992,6 +978,87 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
+
+
+class TrailCategory(StructureOrNoneRelated):
+    """Trail category"""
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+    class Meta:
+        verbose_name = _("Trail category")
+        verbose_name_plural = _("Trail categories")
+        ordering = ['label']
+        unique_together = (
+            ('label', 'structure'),
+        )
+
+
+class CertificationLabel(StructureOrNoneRelated):
+    """Certification label model"""
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+    class Meta:
+        verbose_name = _("Certification label")
+        verbose_name_plural = _("Certification labels")
+        ordering = ['label']
+        unique_together = (
+            ('label', 'structure'),
+        )
+
+
+class CertificationStatus(StructureOrNoneRelated):
+    """Certification status model"""
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+    class Meta:
+        verbose_name = _("Certification status")
+        verbose_name_plural = _("Certification statuses")
+        ordering = ['label']
+        unique_together = (
+            ('label', 'structure'),
+        )
+
+
+class CertificationTrail(StructureOrNoneRelated):
+    """Certification trail model"""
+
+    trail = models.ForeignKey("core.Trail",
+                              related_name='certifications',
+                              on_delete=models.CASCADE,
+                              verbose_name=_("Trail"))
+    certification_label = models.ForeignKey("core.CertificationLabel",
+                                            related_name='certifications',
+                                            on_delete=models.PROTECT,
+                                            verbose_name=_("Certification label"))
+    certification_status = models.ForeignKey("core.CertificationStatus",
+                                             related_name='certifications',
+                                             on_delete=models.PROTECT,
+                                             verbose_name=_("Certification status"))
+
+    class Meta:
+        verbose_name = _("Certification")
+        verbose_name_plural = _("Certifications")
+        unique_together = (
+            ('trail', 'certification_label', 'certification_status'),
+        )
+
+    def __str__(self):
+        return f"{self.certification_label} / {self.certification_status}"
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _("Trails"))

@@ -8,7 +8,9 @@ ALLOWED_HOSTS = ['localhost']
 
 CELERY_ALWAYS_EAGER = True
 
-TEST_EXCLUDE = ('django',)
+# TEST_EXCLUDE = ('django',)
+
+ALLOWED_HOSTS = ['localhost']
 
 INSTALLED_APPS += (
     'geotrek.diving',
@@ -17,7 +19,8 @@ INSTALLED_APPS += (
     'drf_yasg',
 )
 
-LOGGING['handlers']['console']['level'] = 'CRITICAL'
+LOGGING['loggers']['']['handlers'] = ('log_file', )
+LOGGING['handlers']['log_file']['level'] = 'INFO'
 
 LANGUAGE_CODE = 'en'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
@@ -27,6 +30,19 @@ LAND_BBOX_AREAS_ENABLED = True
 
 TIME_ZONE = "UTC"
 
+CACHES['default'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'default',
+}
+CACHES['fat'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'fat',
+}
+CACHES['api_v2'] = {
+    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    'LOCATION': 'api_v2',
+}
+
 
 class DisableMigrations():
     def __contains__(self, item):
@@ -34,7 +50,6 @@ class DisableMigrations():
 
     def __getitem__(self, item):
         return None
-
 
 MIGRATION_MODULES = DisableMigrations()
 
@@ -44,4 +59,4 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-TEST_RUNNER = 'geotrek.test_runner.TestRunner'
+# TEST_RUNNER = 'geotrek.test_runner.TestRunner'

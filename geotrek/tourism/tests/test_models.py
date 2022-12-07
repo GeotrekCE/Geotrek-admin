@@ -7,7 +7,7 @@ from django.test.utils import override_settings
 from geotrek.core.tests import factories as core_factories
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.trekking.tests import factories as trekking_factories
-from geotrek.tourism.tests.factories import InformationDeskFactory, InformationDeskTypeFactory
+from geotrek.tourism.tests.factories import InformationDeskFactory, InformationDeskTypeFactory, TouristicEventPlaceFactory
 
 import datetime
 
@@ -125,11 +125,6 @@ class TourismRelations(TestCase):
 
 
 class TouristicEventModelTest(TestCase):
-    def test_dates_display_no_begin_date(self):
-        date = datetime.datetime(year=2000, month=1, day=12)
-        event = tourism_factories.TouristicEventFactory(begin_date=None, end_date=date)
-        self.assertEqual('up to 01/12/2000', event.dates_display)
-
     def test_dates_display_no_end_date(self):
         date = datetime.datetime(year=2000, month=1, day=12)
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=None)
@@ -139,10 +134,6 @@ class TouristicEventModelTest(TestCase):
         date = datetime.datetime(year=2000, month=1, day=12)
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=date)
         self.assertEqual('01/12/2000', event.dates_display)
-
-    def test_dates_display_no_end_begin_date(self):
-        event = tourism_factories.TouristicEventFactory(begin_date=None, end_date=None)
-        self.assertEqual('', event.dates_display)
 
     def test_dates_display_end_begin_date_different(self):
         date_1 = datetime.datetime(year=2000, month=1, day=12)
@@ -158,3 +149,16 @@ class TouristicContentModelTest(TestCase):
                                                             category=category)
 
         self.assertEqual(str(content.type), "Test")
+
+
+class TouristicEventCancellationReasonModelTest(TestCase):
+    def tests_cancellation_reason_label(self):
+        reason = tourism_factories.CancellationReasonFactory(label="Arson")
+        event = tourism_factories.TouristicEventFactory(cancelled=True, cancellation_reason=reason)
+        self.assertEqual(str(event.cancellation_reason), "Arson")
+
+
+class TourtisticEventPlaceModelTest(TestCase):
+    def test_place_label(self):
+        place = TouristicEventPlaceFactory(name="Place to be")
+        self.assertEqual(str(place), "Place to be")

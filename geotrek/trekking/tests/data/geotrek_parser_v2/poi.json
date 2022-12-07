@@ -1,0 +1,139 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 2867,
+      "description": {
+        "fr": "<p>Le pic des Trois Seigneurs est situ&eacute; au point de rencontre des trois vall&eacute;es de la&nbsp;<a>Courbi&egrave;re</a>, du&nbsp;<a>Vicdessos</a>&nbsp;et de l'<a>Arac</a>&nbsp;(<a>Couserans</a>).</p>\r\n<p>Modeste sommet bien individualis&eacute;, il offre n&eacute;anmoins un panorama exceptionnel sur les montagnes ari&eacute;geoises.</p>",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "external_id": null,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4397635,
+          42.8303552,
+          2166.0
+        ]
+      },
+      "name": {
+        "fr": "Pic des Trois Seigneurs",
+        "en": "Peak of the Three Lords",
+        "es": "",
+        "it": "Picco dei Tre Signori"
+      },
+      "attachments": [
+        {
+          "backend": "",
+          "type": "file",
+          "author": "gutard",
+          "license": null,
+          "thumbnail": "",
+          "legend": "",
+          "title": "",
+          "url": "https://foo.fr/media/paperclip/trekking_poi/2867/dep-a5-chartreuse-bat1.pdf",
+          "uuid": "004c3484-d018-4706-996a-fba6e89abd96"
+        },
+        {
+          "backend": "Attachment",
+          "type": "video",
+          "author": "",
+          "license": null,
+          "thumbnail": "",
+          "legend": "",
+          "title": "",
+          "url": "https://soundcloud.com/user-14604138/chemin-de-memoires-annie-carriere",
+          "uuid": "fd30f548-d870-402b-bbaf-31f895416662"
+        }
+      ],
+      "published": {
+        "fr": true,
+        "en": false,
+        "es": false,
+        "it": false
+      },
+      "type": 7,
+      "type_label": {
+        "fr": "Sommet",
+        "en": "Peak",
+        "es": null,
+        "it": null
+      },
+      "type_pictogram": "https://foo.fr/media/upload/poi-peak.png",
+      "url": "https://foo.fr/api/v2/poi/2867/",
+      "uuid": "d4f534b5-74af-40a0-9c6c-825c385b4e93",
+      "create_datetime": "2013-12-19T10:53:07.061717+01:00",
+      "update_datetime": "2020-11-24T10:52:46.696698+01:00"
+    },
+    {
+      "id": 2869,
+      "description": {
+        "fr": "<p>Ce lac tr&egrave;s accessible est un site pris&eacute; par les p&ecirc;cheurs. On y observe&nbsp;<a>truites fario</a>, saumons des fontaines,&nbsp;<a>ombles chevaliers</a>,&nbsp;<a>cristivomers</a>&nbsp;et&nbsp;<a>vairons</a>.</p>",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "external_id": null,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4358006,
+          42.8201023,
+          1750.0
+        ]
+      },
+      "name": {
+        "fr": "Étang d'Arbu",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "attachments": [
+        {
+          "backend": "",
+          "type": "image",
+          "author": "ads",
+          "license": null,
+          "thumbnail": "https://foo.fr/media/paperclip/trekking_poi/2869/sensitivearea.png.400x0_q85.png",
+          "legend": "",
+          "title": "sensitivearea",
+          "url": "https://foo.fr/media/paperclip/trekking_poi/2869/sensitivearea.png",
+          "uuid": "542afd02-487a-4df7-afaf-2082b24e8b6e"
+        },
+        {
+          "backend": "Attachment",
+          "type": "video",
+          "author": "",
+          "license": null,
+          "thumbnail": "",
+          "legend": "",
+          "title": "",
+          "url": "https://www.youtube.com/watch?v=CdWChQqZMZc",
+          "uuid": "0d0542b7-b6e9-4fbd-b7c2-1438de41dfb1"
+        }
+      ],
+      "published": {
+        "fr": true,
+        "en": false,
+        "es": false,
+        "it": false
+      },
+      "type": 6,
+      "type_label": {
+        "fr": "Lac",
+        "en": "Lake",
+        "es": null,
+        "it": null
+      },
+      "type_pictogram": "https://foo.fr/media/upload/poi-lake.png",
+      "url": "https://foo.fr/api/v2/poi/2869/",
+      "uuid": "3a48fd35-654a-442d-be37-cc4c43f620bb",
+      "create_datetime": "2013-12-19T10:59:43.060709+01:00",
+      "update_datetime": "2019-04-25T11:05:26.169812+02:00"
+    }
+  ]
+}

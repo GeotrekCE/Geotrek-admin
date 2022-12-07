@@ -3,84 +3,108 @@
         "pk": 1,
         "model": "common.organism",
         "fields": {
-            "organism": "Organisme A"
+            "organism": "Organisme A",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 1,
         "model": "common.filetype",
         "fields": {
-            "type": "Projets travaux"
+            "type": "Projets travaux",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "common.filetype",
         "fields": {
-            "type": "Autorisations de travaux"
+            "type": "Autorisations de travaux",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "common.filetype",
         "fields": {
-            "type": "Plans"
+            "type": "Plans",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 4,
         "model": "common.filetype",
         "fields": {
-            "type": "Croquis"
+            "type": "Croquis",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 5,
         "model": "common.filetype",
         "fields": {
-            "type": "Fiches techniques"
+            "type": "Fiches techniques",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 6,
         "model": "common.filetype",
         "fields": {
-            "type": "Commandes mat\u00e9riaux"
+            "type": "Commandes mat\u00e9riaux",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 7,
         "model": "common.filetype",
         "fields": {
-            "type": "Commandes sous-traitance"
+            "type": "Commandes sous-traitance",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 8,
         "model": "common.filetype",
         "fields": {
-            "type": "CCTP"
+            "type": "CCTP",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 9,
         "model": "common.filetype",
         "fields": {
-            "type": "CR de visite"
+            "type": "CR de visite",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 10,
         "model": "common.filetype",
         "fields": {
-            "type": "PV de r\u00e9ception"
+            "type": "PV de r\u00e9ception",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 11,
         "model": "common.filetype",
         "fields": {
-            "type": "Photographie"
+            "type": "Photographie",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -91,7 +115,9 @@
             "label": "Fauna",
             "label_en": "Fauna",
             "label_fr": "Faune",
-            "cirkwi": 32
+            "cirkwi": 32,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -102,7 +128,9 @@
             "label": "Flora",
             "label_en": "Flora",
             "label_fr": "Flore",
-            "cirkwi": 32
+            "cirkwi": 32,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -112,7 +140,9 @@
             "pictogram": "upload/theme-panorama.png",
             "label": "Point de vue",
             "label_fr": "Point de vue",
-            "cirkwi": null
+            "cirkwi": null,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -122,7 +152,9 @@
             "pictogram": "upload/theme-architecture.png",
             "label": "Architecture",
             "label_fr": "Architecture",
-            "cirkwi": null
+            "cirkwi": null,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -133,7 +165,9 @@
             "label": "Pastoralisme",
             "label_en": "Pastoralism",
             "label_fr": "Pastoralisme",
-            "cirkwi": null
+            "cirkwi": null,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -143,7 +177,9 @@
             "pictogram": "upload/theme-geology.png",
             "label": "G\u00e9ologie",
             "label_fr": "G\u00e9ologie",
-            "cirkwi": null
+            "cirkwi": null,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -153,7 +189,9 @@
             "pictogram": "upload/theme-lake.png",
             "label": "Lac et glacier",
             "label_fr": "Lac et glacier",
-            "cirkwi": null
+            "cirkwi": null,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -163,7 +201,9 @@
             "pictogram": "upload/theme-peak.png",
             "label": "Sommet",
             "label_fr": "Sommet",
-            "cirkwi": null
+            "cirkwi": null,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -173,7 +213,9 @@
             "pictogram": "upload/theme-refugee.png",
             "label": "Refuge",
             "label_fr": "Refuge",
-            "cirkwi": null
+            "cirkwi": null,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -183,14 +225,18 @@
             "pictogram": "upload/theme-history.png",
             "label": "Arch\u00e9ologie et histoire",
             "label_fr": "Arch\u00e9ologie et histoire",
-            "cirkwi": 39
+            "cirkwi": 39,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 1,
         "model": "common.reservationsystem",
         "fields": {
-            "name": "OpenSystem"
+            "name": "OpenSystem",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     }
 ]

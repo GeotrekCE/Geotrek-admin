@@ -74,6 +74,7 @@ class TestTimerEventClass(SuricateWorkflowTests):
         TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report_no_timers)
         self.assertEqual(TimerEvent.objects.filter(report=self.waiting_report_no_timers.pk).count(), 0)
 
+    @test_for_workflow_mode
     @freeze_time("2099-07-04")
     def test_events_notify(self):
         # Assert before notification
@@ -292,7 +293,7 @@ class TestPendingAPIRequests(SuricateTests):
         messenger = SuricateMessenger(PendingSuricateAPIRequest)
         self.assertRaises(
             Exception,
-            messenger.update_status(uid, self.status.identifier, "a nice and polite message")
+            messenger.update_status(uid, self.status.identifier, "a nice and polite message", "a brief message")
         )
         self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
         report.refresh_from_db()
@@ -308,7 +309,7 @@ class TestPendingAPIRequests(SuricateTests):
         params = json.dumps({
             "id_origin": "geotrek",
             "statut": "waiting",
-            "txt_changestatut": "a nice and polite message",
+            "txt_changestatut": "a brief message",
             "txt_changestatut_sentinelle": "a nice and polite message",
             "check": check,
             "uid_alerte": str(uid)

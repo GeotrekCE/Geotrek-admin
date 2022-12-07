@@ -1,5 +1,5 @@
 import json
-from geotrek.feedback.models import PredefinedEmail, ReportStatus
+from geotrek.feedback.models import PredefinedEmail, ReportStatus, WorkflowManager
 from django import template
 from django.conf import settings
 
@@ -10,6 +10,11 @@ register = template.Library()
 @register.simple_tag
 def suricate_management_enabled():
     return settings.SURICATE_MANAGEMENT_ENABLED
+
+
+@register.simple_tag
+def app_title():
+    return settings.TITLE
 
 
 @register.simple_tag
@@ -28,7 +33,8 @@ def status_ids_and_colors():
         status.pk: {
             "label": str(status.label),
             "id": str(status.identifier),
-            "color": str(status.color)
+            "color": str(status.color),
+            "display_in_legend": status.display_in_legend
         }
         for status in ReportStatus.objects.all()
     }
@@ -67,3 +73,10 @@ def resolved_intervention_info(report):
             }
             return json.dumps(resolved_intervention_info)
     return json.dumps({})
+
+
+@register.simple_tag
+def workflow_manager():
+    if WorkflowManager.objects.exists():
+        return WorkflowManager.objects.first().user.pk
+    return None

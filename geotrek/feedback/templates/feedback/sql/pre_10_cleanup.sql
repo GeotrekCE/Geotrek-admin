@@ -1,0 +1,4 @@
+-- 10
+
+DROP VIEW IF EXISTS v_reports CASCADE;
+

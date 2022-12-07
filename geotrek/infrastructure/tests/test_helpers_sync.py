@@ -1,8 +1,8 @@
 from io import StringIO
-import shutil
 import os
 from unittest.mock import patch
 
+from django.conf import settings
 from django.test import TestCase
 
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
@@ -21,10 +21,6 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync('en')
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'infrastructures.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'static', 'infrastructure',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'infrastructures.geojson')))
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'static', 'infrastructure',
                                                     'picto-infrastructure.png')))
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

@@ -1,4 +1,4 @@
-from django_filters import CharFilter, ModelChoiceFilter, MultipleChoiceFilter
+from django_filters import CharFilter, ModelChoiceFilter, MultipleChoiceFilter, ChoiceFilter
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
@@ -30,12 +30,18 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
                                              choices=Intervention.objects.year_choices())
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=Signage.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
-                                                          'sealing']
+                                                          'sealing', 'provider']
 
     def filter_intervention_year(self, qs, name, value):
         signage_ct = ContentType.objects.get_for_model(Signage)

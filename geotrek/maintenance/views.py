@@ -1,4 +1,5 @@
 import logging
+import re
 
 from django.conf import settings
 from django.db.models import Subquery, OuterRef, Sum
@@ -22,6 +23,14 @@ from .serializers import (InterventionSerializer, ProjectSerializer,
 logger = logging.getLogger(__name__)
 
 
+ANNOTATION_FORBIDDEN_CHARS = re.compile(r"['`\"\]\[;\s]|--|/\*|\*/")
+REPLACEMENT_CHAR = "_"
+
+
+def _normalize_annotation_column_name(col_name):
+    return ANNOTATION_FORBIDDEN_CHARS.sub(repl=REPLACEMENT_CHAR, string=col_name)
+
+
 class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
@@ -32,8 +41,9 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
 
+    @classmethod
     def build_cost_column_name(cls, job_name):
-        return f"{_('Cost')} {job_name}"
+        return _normalize_annotation_column_name(f"{_('Cost')} {job_name}")
 
     def get_queryset(self):
         """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
@@ -70,6 +80,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
                 queryset = queryset.annotate(**params)
         return queryset
 
+    @classmethod
     def get_mandatory_columns(cls):
         mandatory_columns = ['id']
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
@@ -140,12 +151,12 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
         if kwargs['can_delete']:
             intervention = self.get_object()
             # Disallow deletion if this intervention is part of Suricate Workflow at the moment
-            not_workflow = not(settings.SURICATE_WORKFLOW_ENABLED)
+            not_workflow = not settings.SURICATE_WORKFLOW_ENABLED
             is_report = intervention.target and intervention.target.__class__.__name__ == "Report"
             report_is_closed = False
             if is_report:
                 report_is_closed = (intervention.target.status.identifier == 'solved')
-            kwargs["can_delete"] = not_workflow or not(is_report) or report_is_closed
+            kwargs["can_delete"] = not_workflow or (not is_report) or report_is_closed
         return kwargs
 
 
@@ -162,15 +173,15 @@ class InterventionViewSet(GeotrekMapentityViewSet):
     serializer_class = InterventionSerializer
     geojson_serializer_class = InterventionGeojsonSerializer
     filterset_class = InterventionFilterSet
+    mapentity_list_class = InterventionList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
-            qs = qs.only('id', 'name')
+            qs = qs.only(*self.geojson_serializer_class.Meta.fields)
+        else:
+            qs = qs.select_related("stake", "status", "type")
         return qs
-
-    def get_columns(self):
-        return InterventionList.mandatory_columns + settings.COLUMNS_LISTS.get('intervention_view', InterventionList.default_extra_columns)
 
 
 class ProjectList(CustomColumnsMixin, MapEntityList):
@@ -239,6 +250,7 @@ class ProjectViewSet(GeotrekMapentityViewSet):
     serializer_class = ProjectSerializer
     geojson_serializer_class = ProjectGeojsonSerializer
     filterset_class = ProjectFilterSet
+    mapentity_list_class = ProjectList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -247,6 +259,3 @@ class ProjectViewSet(GeotrekMapentityViewSet):
             qs = qs.filter(pk__in=non_empty_qs)
             qs = qs.only('id', 'name')
         return qs
-
-    def get_columns(self):
-        return ProjectList.mandatory_columns + settings.COLUMNS_LISTS.get('project_view', ProjectList.default_extra_columns)

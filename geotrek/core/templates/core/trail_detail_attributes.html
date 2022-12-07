@@ -19,11 +19,35 @@
             <th>{{ trail|verbose:"arrival" }}</th>
             <td>{{ trail.arrival }}</td>
         </tr><tr>
+            <th>{{ trail|verbose:"category" }}</th>
+            <td>{{ trail.category|default:""  }}</td>
+        </tr><tr>
+            <th>{{ trail|verbose:"certifications" }}</th>
+            <td>
+            {% for certification in trail.certifications.all %}
+                {{ certification }}</br>
+            {% empty %}
+                  {% trans "No certification" %}
+            {% endfor %}
+            </td>
+        </tr><tr>
             <th>{{ trail|verbose:"comments" }}</th>
             <td>{{ trail.comments|safe|linebreaks }}</td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if trail.eid %}{{ trail.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if trail.provider %}{{ trail.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
     </table>
 
     {{ block.super }}

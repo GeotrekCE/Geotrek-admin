@@ -1,8 +1,8 @@
 from io import StringIO
 import os
-import shutil
 from unittest.mock import patch
 
+from django.conf import settings
 from django.test import TestCase
 
 from geotrek.common.tests.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory
@@ -27,8 +27,8 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync('en')
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'flatpages.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'meta', 'en', 'informations',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'flatpages.geojson')))
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'meta', 'en', 'informations',
                                                     'test-0', 'index.html')))
 
     @patch('sys.stdout', new_callable=StringIO)
@@ -36,10 +36,6 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand(portal=self.portal.name, source=[self.source.name])
         synchro = SyncRando(command)
         synchro.sync('en')
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'flatpages.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'meta', 'en', 'informations',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'flatpages.geojson')))
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'meta', 'en', 'informations',
                                                     'test', 'index.html')))
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

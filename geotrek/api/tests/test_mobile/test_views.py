@@ -1,8 +1,8 @@
 import os
-import shutil
 from io import StringIO
 from unittest.mock import patch
 
+from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -56,12 +56,10 @@ class SyncMobileViewTest(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True})
+                       SYNC_MOBILE_ROOT=os.path.join(settings.TMP_DIR, 'tmp_sync'),
+                       SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile(self, mocked_stdout):
         self.client.force_login(self.super_user)
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         launch_sync_mobile.apply()
         response = self.client.post(reverse('apimobile:sync_mobiles_state'), data={})
         self.assertEqual(response.status_code, 200)
@@ -70,30 +68,26 @@ class SyncMobileViewTest(TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
-    @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True})
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.TMP_DIR, 'tmp_sync'),
+                       SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
+                                            'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
         self.client.force_login(self.super_user)
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         launch_sync_mobile.apply()
         response = self.client.post(reverse('apimobile:sync_mobiles_state'), data={})
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'"exc_message": "This is a test"', response.content)
 
     @patch('sys.stdout', new_callable=StringIO)
-    @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True})
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.TMP_DIR, 'tmp_sync'),
+                       SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
+                                            'skip_tiles': True})
     def test_launch_sync_mobile(self, mocked_stdout):
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
         task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
         self.assertIn("Done", log)
         self.assertIn('Sync mobile ended', log)
         self.assertEqual(task.status, "SUCCESS")
-        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
 
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
@@ -105,13 +99,11 @@ class SyncMobileViewTest(TestCase):
         self.assertNotIn('Sync mobile ended', log)
         self.assertEqual(task.status, "FAILURE")
 
-    @override_settings(SYNC_MOBILE_ROOT='tmp')
+    @override_settings(SYNC_MOBILE_ROOT=os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'))
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
     @patch('sys.stdout', new_callable=StringIO)
     def test_launch_sync_rando_no_rando_root(self, mocked_stdout, command):
-        if os.path.exists('tmp'):
-            shutil.rmtree('tmp')
         task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
         self.assertNotIn("Done", log)

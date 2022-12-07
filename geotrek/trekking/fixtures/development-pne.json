@@ -72,9 +72,6 @@
         "ascent": 0,
         "min_elevation": 0
     }},
-
-
-
     {
         "pk": 9015,
         "model": "trekking.poi",

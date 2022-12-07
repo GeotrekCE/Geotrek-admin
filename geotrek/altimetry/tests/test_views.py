@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import LineString
 from django.db import connection
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from geotrek import settings
 from geotrek.authent.tests.factories import UserFactory
@@ -37,16 +37,7 @@ class ProfileViewsTest(TestCase):
 
 
 class ProfileCacheTests(TestCase):
-    """ Test profile svg is cached
-    """
-
-    TMP_CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': settings.CACHE_ROOT
-        }
-    }
-
+    """ Test profile svg is cached """
     @classmethod
     def setUpTestData(cls):
         # Create a simple fake DEM
@@ -72,15 +63,13 @@ class ProfileCacheTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-    # Override default cache with fat cache since we can't use memcached in tests
-    @override_settings(CACHES=TMP_CACHES)
     def test_cache_is_used_when_getting_trek_profile_svg(self):
         # There are 6 queries to get trek profile svg
         with self.assertNumQueries(6):
             response = self.client.get(f"/api/fr/treks/{self.trek.pk}/profile.svg")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'image/svg+xml')
-        # When cache is used there are only 7 queries to get trek profile
+        # When cache is used there are only 5 queries to get trek profile
         with self.assertNumQueries(5):
             response = self.client.get(f"/api/fr/treks/{self.trek.pk}/profile.svg")
         self.assertEqual(response.status_code, 200)

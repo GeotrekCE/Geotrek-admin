@@ -32,11 +32,13 @@ setup(
                       + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     scripts=['manage.py'],
     install_requires=[
-        'Django==3.1.*',
-        'mapentity==8.1.2',
+        'Django==3.2.*',
+        'mapentity==8.2.1',
+        'cairosvg',
+        'cairocffi==0.9.0',  # Latest version dh-virtualenv can handle to build the .deb package
         'env_file',
         # pinned by requirements.txt
-        'python-memcached',
+        'pymemcache',
         'psycopg2',
         'pdfimpose',
         'docutils',
@@ -54,13 +56,16 @@ setup(
         'xlrd',
         'landez',
         'celery[redis]',
-        'django-celery-results',
+        'django-celery-results==2.2.*',  # Latest version supporting python3.6
         'drf-extensions',
         'django-colorfield',
         'Fiona',
+        'markdown',
+        "weasyprint==52.5",  # newer version required libpango (not available in bionic)
+        'django-weasyprint<2.0.0',  # 2.10 require weasyprint > 53
+        "django-clearcache@git+https://github.com/timonweb/django-clearcache.git@6de7994#egg=django-clearcache",  # commit working with py 3.6 and django 3.2
         # prod,
         'gunicorn',
-        'raven',
         'sentry-sdk',
         # tests
         'freezegun',

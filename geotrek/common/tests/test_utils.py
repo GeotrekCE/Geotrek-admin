@@ -1,41 +1,17 @@
-from unittest import mock
+import os
 
+from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.db import connection
 from django.test import TestCase, override_settings
 
-from ..utils import sql_extent, uniquify, format_coordinates, spatial_reference
-from ..utils.postgresql import debug_pg_notices
-from ..utils.import_celery import (create_tmp_destination,
-                                   subclasses,
-                                   )
-
-from geotrek.common.parsers import Parser
+from ..parsers import Parser
+from ..utils import uniquify, format_coordinates, spatial_reference, simplify_coords
+from ..utils.import_celery import create_tmp_destination, subclasses
 
 
 class UtilsTest(TestCase):
-
-    def test_sqlextent(self):
-        ext = sql_extent(
-            "SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")
-        self.assertEqual((0.0, 0.0, 10.0, 10.0), ext)
-
     def test_uniquify(self):
         self.assertEqual([3, 2, 1], uniquify([3, 3, 2, 1, 3, 1, 2]))
-
-    def test_postgresql_notices(self):
-        def raisenotice():
-            cursor = connection.cursor()
-            cursor.execute("""
-                CREATE OR REPLACE FUNCTION raisenotice() RETURNS boolean AS $$
-                BEGIN
-                RAISE NOTICE 'hello'; RETURN FALSE;
-                END; $$ LANGUAGE plpgsql;
-                SELECT raisenotice();""")
-        raisenotice = debug_pg_notices(raisenotice)
-        with mock.patch('geotrek.common.utils.postgresql.logger') as fake_log:
-            raisenotice()
-            fake_log.debug.assert_called_with('hello')
 
     def test_subclasses(self):
         class_list = subclasses(Parser)
@@ -52,7 +28,8 @@ class UtilsTest(TestCase):
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(
-            ('/opt/geotrek-admin/var/tmp/bombadil', '/opt/geotrek-admin/var/tmp/bombadil/bombadil'),
+            (os.path.join(settings.TMP_DIR, 'bombadil'),
+             os.path.join(settings.TMP_DIR, 'bombadil', 'bombadil')),
             create_tmp_destination('bombadil')
         )
 
@@ -91,3 +68,26 @@ class UtilsTest(TestCase):
     @override_settings(DISPLAY_SRID=32631)
     def test_spatial_reference_wgs84(self):
         self.assertEqual(spatial_reference(), 'WGS 84 / UTM zone 31N')
+
+
+class SimplifyCoordsTest(TestCase):
+    def test_coords_float(self):
+        """ Test a float value is rounded at .0000007 """
+        arg_value = 0.00000008
+        simplified_value = simplify_coords(arg_value)
+        self.assertEqual(simplified_value, 0.0000001)
+
+    def test_coords_list_or_tuple_float(self):
+        arg_value = (0.00000008, 0.0000001)
+        simplified_value = simplify_coords(arg_value)
+        for value in simplified_value:
+            self.assertEqual(value, 0.0000001)
+
+        simplified_value = simplify_coords(list(arg_value))
+        for value in simplified_value:
+            self.assertEqual(value, 0.0000001)
+
+    def test_coords_bad_arg(self):
+        arg_value = "test"
+        with self.assertRaises(Exception):
+            simplify_coords(arg_value)

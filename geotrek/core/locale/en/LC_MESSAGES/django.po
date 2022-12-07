@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-03 09:53+0000\n"
+"POT-Creation-Date: 2022-11-24 14:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,19 +40,22 @@ msgstr ""
 msgid "Valid geometry"
 msgstr ""
 
-msgid "length"
-msgstr ""
-
 msgid "Name"
 msgstr ""
 
 msgid "Comments"
 msgstr ""
 
+msgid "Provider"
+msgstr ""
+
 msgid "Departure"
 msgstr ""
 
 msgid "Arrival"
+msgstr ""
+
+msgid "Certification labels"
 msgstr ""
 
 msgid "Trail"
@@ -71,6 +74,12 @@ msgid "Geometry is not simple."
 msgstr ""
 
 msgid "Geometry overlaps another."
+msgstr ""
+
+msgid "Geometry is not valid."
+msgstr ""
+
+msgid "Certifications"
 msgstr ""
 
 msgid "Validity"
@@ -129,6 +138,10 @@ msgid "Path"
 msgstr ""
 
 msgid "Paths"
+msgstr ""
+
+#, python-brace-format
+msgid "{obj} has been set to draft"
 msgstr ""
 
 msgid "You can't delete this path, some topologies are linked with this path"
@@ -212,6 +225,27 @@ msgstr ""
 msgid "Network"
 msgstr ""
 
+msgid "Category"
+msgstr ""
+
+msgid "Trail category"
+msgstr ""
+
+msgid "Trail categories"
+msgstr ""
+
+msgid "Certification label"
+msgstr ""
+
+msgid "Certification status"
+msgstr ""
+
+msgid "Certification statuses"
+msgstr ""
+
+msgid "Certification"
+msgstr ""
+
 msgid "Management"
 msgstr ""
 
@@ -219,6 +253,10 @@ msgid "No information"
 msgstr ""
 
 msgid "Add a new trail"
+msgstr ""
+
+#, python-format
+msgid "%(obj)s has changed state to draft. "
 msgstr ""
 
 #, python-format
@@ -276,7 +314,16 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-msgid "path"
+msgid "No certification"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "This field is required."
 msgstr ""
 
 msgid ""
@@ -286,6 +333,9 @@ msgstr ""
 msgid ""
 "Access to the requested resource is restricted by structure. You have been "
 "redirected."
+msgstr ""
+
+msgid "path"
 msgstr ""
 
 msgid "You should select two paths"

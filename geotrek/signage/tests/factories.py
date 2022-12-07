@@ -43,6 +43,13 @@ class BladeDirectionFactory(factory.django.DjangoModelFactory):
     label = "Blade direction"
 
 
+class LineDirectionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Direction
+
+    label = "Line direction"
+
+
 class SealingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Sealing
@@ -92,6 +99,7 @@ class LineFactory(factory.django.DjangoModelFactory):
         model = models.Line
 
     number = "1"
+    direction = factory.SubFactory(LineDirectionFactory)
     text = "Text"
     distance = 42.5
     pictogram_name = "Pictogram name"

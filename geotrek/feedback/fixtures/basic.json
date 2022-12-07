@@ -6,7 +6,9 @@
             "label": "Randonnée p\u00e9destre",
             "label_en": "Trek",
             "label_fr": "Randonnée p\u00e9destre",
-            "identifier": 31
+            "identifier": 31,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -16,7 +18,9 @@
             "label": "Environnement",
             "label_en": "Environment",
             "label_fr": "Environnement",
-            "identifier": 3
+            "identifier": 3,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -26,7 +30,9 @@
             "label": "Balisage / Signal\u00e9tique",
             "label_en": "Signage",
             "label_fr": "Balisage / Signal\u00e9tique",
-            "identifier": 0
+            "identifier": 0,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -36,7 +42,9 @@
             "label": "Incident / S\u00e9curit\u00e9",
             "label_en": "Incident / Security",
             "label_fr": "Incident / S\u00e9curit\u00e9",
-            "identifier": 2
+            "identifier": 2,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -46,7 +54,9 @@
             "label": "Conflits d'usage",
             "label_en": "conflicts",
             "label_fr": "Conflits d'usage",
-            "identifier": 1
+            "identifier": 1,
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -56,7 +66,9 @@
             "label": "Utilisation possible",
             "label_fr": "Utilisation possible",
             "identifier": 0,
-            "suricate_label": "possible"
+            "suricate_label": "possible",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -67,7 +79,9 @@
             "label_fr": "Utilisation difficile",
             "label_en": "Difficult to use",
             "identifier": 1,
-            "suricate_label": "difficile"
+            "suricate_label": "difficile",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -78,7 +92,9 @@
             "label_fr": "Utilisation impossible",
             "label_en": "Impossible to use",
             "identifier": 2,
-            "suricate_label": "impossible"
+            "suricate_label": "impossible",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     }
 ]

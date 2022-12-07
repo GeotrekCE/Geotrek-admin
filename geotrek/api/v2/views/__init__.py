@@ -6,7 +6,7 @@ from django.contrib.gis.geos import Polygon
 
 from geotrek import __version__
 from .authent import StructureViewSet  # noqa
-from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet, LabelViewSet, OrganismViewSet  # noqa
+from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet, LabelViewSet, OrganismViewSet, FileTypeViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
@@ -20,7 +20,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SportPracticeViewSet  # noqa
     from .sensitivity import SpeciesViewSet  # noqa
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
-    from .tourism import TouristicContentViewSet, TouristicEventViewSet, TouristicEventTypeViewSet, InformationDeskViewSet, InformationDeskTypeViewSet, TouristicContentCategoryViewSet, LabelAccessibilityViewSet  # noqa
+    from .tourism import TouristicContentViewSet, TouristicEventViewSet, TouristicEventTypeViewSet, InformationDeskViewSet, InformationDeskTypeViewSet, TouristicContentCategoryViewSet, LabelAccessibilityViewSet, TouristicEventPlaceViewSet  # noqa
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from .zoning import CityViewSet, DistrictViewSet  # noqa
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:

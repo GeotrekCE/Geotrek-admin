@@ -1,0 +1,58 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "advice": {
+        "fr": "<p>La divagation des chiens est autoris&eacute;e sur le sentier.</p>\r\n<p><img src=\"http://www.mercantour-parcnational.fr/sites/mercantour.eu/files/styles/slide_750x500/public/22259_pnm-800px.jpg?itok=S1nrGDX_\" alt=\"Chient sur le territoire\" width=\"750\" height=\"500\" /></p>",
+        "en": "The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.",
+        "es": "El parque nacional es un área natural sin restricciones pero sometido a regulaciones que deben ser conocidas por todos los visitantes.",
+        "it": "Il Parco Nazionale è un territorio naturale, aperto a tutti, ma soggetto ad un regolamento che è utile conoscere per preparare il vostro soggiorno."
+      },
+      "filter": true,
+      "name": {
+        "fr": "Chien autorisé",
+        "en": "Dogs are great",
+        "es": "En coeur de parc",
+        "it": "Nel cuore del parco"
+      },
+      "pictogram": "https://foo.fr/media/upload/dog.png"
+    },
+    {
+      "id": 2,
+      "advice": {
+        "fr": "Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il est utile de connaître pour préparer son séjour",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "filter": true,
+      "name": {
+        "fr": "En coeur de parc",
+        "en": "Is in the midst of the park",
+        "es": null,
+        "it": null
+      },
+      "pictogram": null
+    },
+    {
+      "id": 3,
+      "advice": {
+        "fr": "Cette randonnée se déroule sur un territoire où les patous sont présents.",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "filter": true,
+      "name": {
+        "fr": "Information Patou",
+        "en": "Patou",
+        "es": null,
+        "it": null
+      },
+      "pictogram": null
+    }
+  ]
+}

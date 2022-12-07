@@ -1,0 +1,42 @@
+{% extends "mapentity/mapentity_form.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block mainform %}
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
+    
+    {% crispy form %}
+    
+    <fieldset class="formset">
+        {{ certificationtrail_formset.management_form }}
+        {% for certificationtrail_form in certificationtrail_formset.forms %}
+            <div class="form-row inline controls controls-row {{ certificationtrail_form.prefix }}">
+            {% if certificationtrail_form.instance.pk %} {{ certificationtrail_form.DELETE }} {% endif %}
+            {% crispy certificationtrail_form %}
+            </div>
+        {% endfor %}
+    </fieldset>
+    
+    </form>
+{% endblock mainform %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(window).ready(function () {
+            // TODO: do this with crispyforms !
+            $("fieldset.formset").detach().appendTo('#mainform fieldset');
+            
+            $(".clearfix").removeClass("clearfix");
+            
+            $('.form-row.inline').formset({
+                prefix: '{{ certificationtrail_formset.prefix }}',
+                keepFieldValues: "[name='csrfmiddlewaretoken']",
+                addCssClass: 'btn btn-success add-row',
+                deleteCssClass: 'delete-row',
+                addText: '{% trans "Add" %}',
+                deleteText: '{% trans "Remove" %}', 
+            });
+        });
+    </script>
+{% endblock extrabody %}

@@ -8,19 +8,19 @@ from django.conf import settings
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin
-from geotrek.common.mixins.managers import NoDeleteManager
+from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, TimeStampedModelMixin
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
 
 from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
+from geotrek.signage.managers import SignageGISManager
 
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 
-class Sealing(StructureOrNoneRelated):
+class Sealing(TimeStampedModelMixin, StructureOrNoneRelated):
     """ A sealing linked with a signage"""
     label = models.CharField(verbose_name=_("Name"), max_length=250)
 
@@ -34,7 +34,7 @@ class Sealing(StructureOrNoneRelated):
         return self.label
 
 
-class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
+class SignageType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(max_length=128)
 
@@ -53,15 +53,6 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
         if pictogram_url:
             return pictogram_url
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
-
-
-class SignageGISManager(NoDeleteManager):
-    """ Override default typology mixin manager, and filter by type. """
-    def implantation_year_choices(self):
-        choices = self.get_queryset().existing().filter(implantation_year__isnull=False)\
-            .order_by('-implantation_year').distinct('implantation_year') \
-            .values_list('implantation_year', 'implantation_year')
-        return choices
 
 
 class Signage(MapEntityMixin, BaseInfrastructure):
@@ -143,7 +134,7 @@ Topology.add_property('published_signages', lambda self: Signage.published_topol
                       _("Published Signages"))
 
 
-class Direction(models.Model):
+class Direction(TimeStampedModelMixin, models.Model):
     label = models.CharField(max_length=128)
 
     class Meta:
@@ -154,7 +145,7 @@ class Direction(models.Model):
         return self.label
 
 
-class Color(models.Model):
+class Color(TimeStampedModelMixin, models.Model):
     label = models.CharField(max_length=128)
 
     class Meta:
@@ -165,7 +156,7 @@ class Color(models.Model):
         return self.label
 
 
-class BladeType(StructureOrNoneRelated):
+class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
     """ Types of blades"""
     label = models.CharField(max_length=128)
 
@@ -179,11 +170,12 @@ class BladeType(StructureOrNoneRelated):
         return self.label
 
 
-class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
+class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)
-    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT)
+    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
+                                  blank=True)
     type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.CASCADE)
     color = models.ForeignKey(Color, on_delete=models.PROTECT, null=True, blank=True,
                               verbose_name=_("Color"))
@@ -297,6 +289,8 @@ class Line(models.Model):
     blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
                               on_delete=models.CASCADE)
     number = models.IntegerField(verbose_name=_("Number"))
+    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
+                                  blank=True)
     text = models.CharField(verbose_name=_("Text"), max_length=1000)
     distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
                                    decimal_places=1, max_digits=8, help_text='km')

@@ -1,4 +1,4 @@
-{% extends "mapentity/mapentity_detail.html" %}
+{% extends "common/common_detail.html" %}
 {% load i18n l10n static thumbnail geotrek_tags mapentity_tags %}
 
 {% block download %}
@@ -80,7 +80,7 @@
 
             //
             // Trek POIs layer
-            $.getJSON('{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}', function (data) {
+            $.getJSON('{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}?fields=api_geom,id,name,type', function (data) {
                 var pois = new POILayer(data, {
                     iconSize: {{ view.icon_sizes.POI }}
                 });

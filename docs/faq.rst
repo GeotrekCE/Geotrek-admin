@@ -94,8 +94,7 @@ responsabilities :
 * Contribute, propose and argue code merge on external libraries ;
 * Keep software dependencies up-to-date, without regressions ;
 * Make sure the application remains easy to install on latest Linux distributions ;
-* Add some engineering to allow customization and pluggability when new
-  specific features are planned ;
+* Add some engineering to allow customization and pluggability when new specific features are planned ;
 
 Each of these tasks are often considered implicit, but they consume energy and time,
 which represents a substantial cost for a company like ours.
@@ -110,13 +109,12 @@ How can I help and contribute ?
 There are many ways to contribute to a Free Software. And modifying
 the source code is probably the least common action. For example :
 
-* Help the users and answers questions on the mailing-list ;
+* Help the users and answers questions on the `mailing-list <https://groups.google.com/g/geotrek-fr>`_ ;
 * Download it, try it ;
-* Open a ticket when you encounter a bug ;
-* Open a ticket when you have a suggestion or feature idea ;
+* `Open a ticket <https://github.com/GeotrekCE/Geotrek-admin/issues/new>`_ when you encounter a bug ;
+* `Open a ticket <https://github.com/GeotrekCE/Geotrek-admin/issues/new>`_ when you have a suggestion or feature idea ;
 * Share your feedback, spread the word inside your organization ;
 * Write and talk about *Geotrek*, at conferences, workgroups, forums ;
-
 * Translate the documentation ;
 * Translate the menus, buttons and labels (we use `Weblate <https://weblate.makina-corpus.net>`_) ;
 * Maintain the installation script for different Linux distributions (*requires some basic Linux skills*) ;

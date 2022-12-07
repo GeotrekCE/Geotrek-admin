@@ -36,6 +36,8 @@ export CONVERSION_PORT="6543"
 export CAPTURE_HOST="localhost"
 export CAPTURE_PORT="8000"
 export NGINX_PORT="80"
+export MEMCACHED_HOST="127.0.0.1"
+export MEMCACHED_PORT="11211"
 
 # Create geotrek user (only on a new install)
 if [ "$2" = "" ]; then
@@ -47,10 +49,12 @@ mkdir -p /opt/geotrek-admin/var/conf/extra_static || true
 mkdir -p /opt/geotrek-admin/var/log || true
 mkdir -p /opt/geotrek-admin/var/media/upload || true
 mkdir -p /opt/geotrek-admin/var/pid || true
+mkdir -p /opt/geotrek-admin/var/mobile || true
 chown -R geotrek.geotrek /opt/geotrek-admin/var || true
 
 # Create database (only on a new install)
-if [ "$MANAGE_DB" = "true" ] && [ "$2" = "" ]; then
+echo "MANAGE_DB : $MANAGE_DB - $2"
+if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	echo "Create Database" >&2
 	su postgres -c "psql -q -c \"CREATE USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD';\"" || true
 	su postgres -c "psql -q -c 'CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;'" || true
@@ -97,8 +101,6 @@ ldconfig
 echo "Migrate database" >&2
 geotrek migrate --noinput -v0 || true
 geotrek clearsessions || true
-geotrek sync_translation_fields --noinput > /dev/null || true
-geotrek update_translation_fields > /dev/null || true
 geotrek update_geotrek_permissions -v0 || true
 geotrek update_post_migration_languages -v0 || true
 
@@ -107,7 +109,7 @@ echo "Copy static files" >&2
 geotrek collectstatic --clear --noinput -v0 || true
 
 # Insert initial data (only on a new install with an empty database)
-if [ "$MANAGE_DB" = "true" ] && [ "$2" = "" ]; then
+if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	echo "Insert initial data" >&2
 	geotrek loaddata -v0 minimal || true
 	geotrek loaddata -v0 cirkwi || true
@@ -116,10 +118,10 @@ if [ "$MANAGE_DB" = "true" ] && [ "$2" = "" ]; then
 		cd $dir > /dev/null
 		cp -r * /opt/geotrek-admin/var/media/upload/
 	done
+	chown --recursive geotrek:geotrek /opt/geotrek-admin/var/media/upload/*
 fi
 
 echo "Reload" >&2
-
 # Reload nginx
 if [ -f /etc/init.d/nginx ] ; then
 	if which invoke-rc.d > /dev/null ; then
@@ -132,6 +134,8 @@ if [ -f /etc/init.d/nginx ] ; then
 		fi
 	fi
 fi
+
+rm -rf /opt/geotrek-admin/var/tmp/*
 
 # TODO: geotrek user, crontab, certbot
 

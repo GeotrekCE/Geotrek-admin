@@ -1,9 +1,9 @@
-from zipfile import is_zipfile
 from copy import deepcopy
 
 from django import forms
 from django.conf import settings
 from django.core.checks.messages import Error
+from django.core.files.images import get_image_dimensions
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
@@ -33,6 +33,8 @@ logger = logging.getLogger(__name__)
 
 class CommonForm(MapEntityForm):
 
+    not_hideable_fields = []
+
     class Meta:
         fields = []
 
@@ -41,6 +43,10 @@ class CommonForm(MapEntityForm):
         'TrekForm': 'trek',
         'TrailForm': 'trail',
         'LandEdgeForm': 'landedge',
+        'PhysicalEdgeForm': 'physicaledge',
+        'CompetenceEdgeForm': 'competenceedge',
+        'WorkManagementEdgeForm': 'workmanagement',
+        'SignageManagementEdgeForm': 'signagemanagementedge',
         'InfrastructureForm': 'infrastructure',
         'InterventionForm': 'intervention',
         'SignageForm': 'signage',
@@ -127,6 +133,10 @@ class CommonForm(MapEntityForm):
                 if self.fields[field_to_hide].required:
                     logger.warning(
                         f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                    )
+                elif field_to_hide in self.not_hideable_fields:
+                    logger.warning(
+                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' cannot be hidden on form {self.__class__.__name__}."
                     )
                 else:
                     self.fields[field_to_hide].widget = HiddenInput()
@@ -326,7 +336,7 @@ class ImportSuricateForm(forms.Form):
 
 
 class ImportDatasetFormWithFile(ImportDatasetForm):
-    zipfile = forms.FileField(
+    file = forms.FileField(
         label=_('File'),
         required=True,
         widget=forms.FileInput
@@ -344,7 +354,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
             Div(
                 Div(
                     'parser',
-                    'zipfile',
+                    'file',
                     'encoding',
                 ),
                 FormActions(
@@ -353,14 +363,6 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
                 css_class='file-attachment-form',
             )
         )
-
-    def clean_zipfile(self):
-        z = self.cleaned_data['zipfile']
-        if not is_zipfile(z):
-            raise forms.ValidationError(
-                _("File must be of ZIP type."), code='invalid')
-        # Reset position for further use.
-        z.seek(0)
 
 
 class SyncRandoForm(forms.Form):
@@ -439,6 +441,22 @@ class AttachmentAccessibilityForm(forms.ModelForm):
     def success_url(self):
         obj = self._object
         return f"{obj.get_detail_url()}?tab=attachments-accessibility"
+
+    def clean_attachment_accessibility_file(self):
+        uploaded_image = self.cleaned_data.get("attachment_accessibility_file", False)
+        if self.instance.pk:
+            try:
+                uploaded_image.file.readline()
+            except FileNotFoundError:
+                return uploaded_image
+        if settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < uploaded_image.size:
+            raise forms.ValidationError(_('The uploaded file is too large'))
+        width, height = get_image_dimensions(uploaded_image)
+        if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > width:
+            raise forms.ValidationError(_('The uploaded file is not wide enough'))
+        if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > height:
+            raise forms.ValidationError(_('The uploaded file is not tall enough'))
+        return uploaded_image
 
     def save(self, request, *args, **kwargs):
         obj = self._object

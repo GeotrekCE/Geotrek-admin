@@ -1,5 +1,6 @@
 import factory
 import os
+import tempfile
 from zipfile import ZipFile
 
 from geotrek.authent.tests.factories import UserFactory
@@ -12,6 +13,7 @@ from .. import models
 
 from geotrek.common.management.commands.sync_rando import Command
 
+from django.conf import settings
 from django.test.client import RequestFactory
 
 
@@ -27,8 +29,9 @@ class FakeSyncCommand(Command):
 
     def __init__(self, portal='', source='', skip_dem=False, skip_pdf=False, skip_profile_png=False):
         super().__init__(stdout=None, stderr=None, no_color=False, force_color=False)
-        self.dst_root = os.path.join('var', 'tmp')
-        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
+        self.dst_root = settings.TMP_DIR
+        self.temporary_directory = tempfile.TemporaryDirectory(dir=settings.VAR_DIR)
+        self.tmp_root = self.temporary_directory.name
         zipname = os.path.join('zip', 'tiles', 'global.zip')
         global_file = os.path.join(self.tmp_root, zipname)
         dirname = os.path.dirname(global_file)

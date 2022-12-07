@@ -14,9 +14,8 @@ from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, Ma
                              MapEntityDelete, MapEntityFormat, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
-from geotrek.api.v2.functions import Buffer, Area
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.functions import GeometryType
+from geotrek.common.functions import GeometryType, Buffer, Area
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
@@ -104,6 +103,7 @@ class SensitiveAreaViewSet(GeotrekMapentityViewSet):
     serializer_class = SensitiveAreaSerializer
     geojson_serializer_class = SensitiveAreaGeojsonSerializer
     filterset_class = SensitiveAreaFilterSet
+    mapentity_list_class = SensitiveAreaList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related('species')
@@ -111,10 +111,6 @@ class SensitiveAreaViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'species')
         return qs
-
-    def get_columns(self):
-        return SensitiveAreaList.mandatory_columns + settings.COLUMNS_LISTS.get('sensitivity_view',
-                                                                                SensitiveAreaList.default_extra_columns)
 
 
 class SensitiveAreaAPIViewSet(APIViewSet):

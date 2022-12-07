@@ -1,0 +1,163 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 3,
+      "accessibility": {
+        "fr": "",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "approved": false,
+      "attachments": [],
+      "begin_date": "2025-07-31",
+      "booking": "",
+      "cities": [],
+      "contact": "<p><span style=\"font-family: 'Georgia'; font-size: 13px; font-weight: normal; color: #000000;\">Autrefois le Couserans</span><br /><span style=\"font-family: 'Georgia'; font-size: 13px; font-weight: normal; color: #000000;\">Place Alphonse Sentein<br /></span><span style=\"font-family: 'Georgia'; font-size: 13px; font-weight: normal; color: #000000;\">09200 Saint-Girons<br /></span><span style=\"font-family: 'Georgia'; font-size: 13px; font-weight: normal; color: #000000;\"><span style=\"font-family: 'Arial'; font-size: 13px; font-weight: normal; color: #000000;\">05 34 14 62 69<br /></span></span><span style=\"font-family: 'Georgia'; font-size: 13px; font-weight: normal; color: #000000;\"><span style=\"font-family: 'Arial'; font-size: 13px; font-weight: normal; color: #000000;\"><span style=\"font-family: 'Arial'; font-size: 13px; font-weight: normal; color: #000000;\">09 67 11 26 69</span></span><br /><br /></span></p>",
+      "create_datetime": "2015-03-25T14:09:44.346826+01:00",
+      "description": {
+        "fr": "<p><span style=\"font-family: 'Georgia'; font-size: 13px; font-weight: normal; color: #000000;\">Ainsi d&eacute;file dans les rues et sur les boulevards de la ville, la longue caravane constitu&eacute;e de plus d'une cinquantaine de vieux tracteurs, en parfait &eacute;tat de fonctionnement, mais &eacute;galement de vieilles machines agricoles , faucheuses, batteuses &laquo; qui dans la journ&eacute;e avaleront goul&ucirc;ment leurs gerbes de bl&eacute;s &raquo;. Tous ces mat&eacute;riels et engins, sans oublier les charrettes, chars et tombereaux, sont guid&eacute;s par des hommes, des femmes et des enfants en costumes d'autrefois : boeufs, chevaux, &acirc;nes et mules tirent les attelages charg&eacute;s de bois, de fourrage, de fumier...plus loin suivent d'autres animaux, moutons, dindons, oies et canards, chiens et derri&egrave;re le cort&egrave;ge des lavandi&egrave;res, des couturi&egrave;res, des gardeuses d'oies, le livreur de lait, le facteur, le r&eacute;mouleur, le marchand de pain, les porteurs d'eau, les marchandes des quatre saisons, la classe 1900, Monsieur le Cur&eacute; et tant d'autres..</span></p>",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "description_teaser": {
+        "fr": "<p><span style=\"font-family: 'Arial'; font-size: 13px; font-weight: normal; color: #000000;\">Cette manifestation qui s&rsquo;inscrit dor&eacute;navant dans le patrimoine Ari&eacute;geois, mobilise 800 participants et attire chaque premier week end d&rsquo;Ao&ucirc;t&nbsp; 25 000 personnes venues de tout le Sud Ouest et de plus loin encore. </span></p>",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "duration": "3",
+      "email": "contact@autrefois-le-couserans.com",
+      "end_date": "2025-08-02",
+      "external_id": "",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.1496792,
+          42.9637089
+        ]
+      },
+      "meeting_point": "Centre ville de Saint Girons",
+      "start_time": null,
+      "name": {
+        "fr": "Autrefois le Couserans",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "organizer": "",
+      "capacity": 0,
+      "pdf": {
+        "fr": "https://foo.fr/api/fr/touristicevents/3/autrefois-le-couserans.pdf",
+        "en": "https://foo.fr/api/en/touristicevents/3/autrefois-le-couserans.pdf",
+        "es": "https://foo.fr/api/es/touristicevents/3/autrefois-le-couserans.pdf",
+        "it": "https://foo.fr/api/it/touristicevents/3/autrefois-le-couserans.pdf"
+      },
+      "portal": [],
+      "practical_info": {
+        "fr": "",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "published": true,
+      "source": [
+        2
+      ],
+      "speaker": "",
+      "structure": 1,
+      "target_audience": "",
+      "themes": [],
+      "type": 6,
+      "update_datetime": "2016-03-16T16:50:37.409679+01:00",
+      "url": "https://foo.fr/api/v2/touristicevent/3/",
+      "uuid": "7382c443-8206-4ef2-bf43-f471cdc5073d",
+      "website": "http://www.autrefois-le-couserans.com/"
+    },
+    {
+      "id": 1,
+      "accessibility": {
+        "fr": "accessible aux handicapés moteurs",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "approved": false,
+      "attachments": [],
+      "begin_date": "2025-01-16",
+      "booking": "<p>Pour les r&eacute;servations, voir l'encars contact</p>",
+      "cities": [
+        "09100"
+      ],
+      "contact": "<p>Contactez moi, ou elle, ou lui !<br />06 12 12 12 12 12</p>",
+      "create_datetime": "2015-01-17T14:44:58.483513+01:00",
+      "description": {
+        "fr": "<p>Ceci est un test evenement tourristique</p>",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "description_teaser": {
+        "fr": "<p>Les evenements tourristiques sont supers</p>",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "duration": "premier semestre",
+      "email": "test@test.fr",
+      "end_date": "2025-04-16",
+      "external_id": "",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.1946237,
+          42.7666746
+        ]
+      },
+      "meeting_point": "Au bout du monde",
+      "start_time": "15:45:00",
+      "end_time": "16:45:00",
+      "name": {
+        "fr": "Festival du test",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "organizer": "Mr Test",
+      "capacity": 12,
+      "pdf": {
+        "fr": "https://foo.fr/api/fr/touristicevents/1/festival-du-test.pdf",
+        "en": "https://foo.fr/api/en/touristicevents/1/festival-du-test.pdf",
+        "es": "https://foo.fr/api/es/touristicevents/1/festival-du-test.pdf",
+        "it": "https://foo.fr/api/it/touristicevents/1/festival-du-test.pdf"
+      },
+      "portal": [],
+      "practical_info": {
+        "fr": "<p>Venez en bonne compagnie et avec le sourire !</p>",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "published": true,
+      "source": [],
+      "speaker": "Batman",
+      "structure": 1,
+      "target_audience": "Tout public",
+      "themes": [
+        5,
+        7,
+        4,
+        10
+      ],
+      "type": 6,
+      "update_datetime": "2016-03-16T16:50:09.774431+01:00",
+      "url": "https://foo.fr/api/v2/touristicevent/1/",
+      "uuid": "20fb113f-07f7-4deb-94b4-8445c85d5598",
+      "website": "http://test.fr/"
+    }
+  ]
+}

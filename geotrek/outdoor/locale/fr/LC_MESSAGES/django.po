@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 17:18+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,9 @@ msgstr "Filière"
 
 msgid "Manager"
 msgstr "Gestionnaire"
+
+msgid "Provider"
+msgstr "Fournisseur"
 
 msgid "Orientation"
 msgstr "Orientation"
@@ -330,9 +333,6 @@ msgstr "Choisir une ou des valeur(s)"
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
 
-msgid "Attribution"
-msgstr "Crédit photo"
-
 msgid "Useful information"
 msgstr "Infos pratiques"
 
@@ -341,6 +341,12 @@ msgstr "Situation géographique"
 
 msgid "All useful information"
 msgstr "Toutes les infos pratiques"
+
+msgid "On your path..."
+msgstr ""
+
+msgid "Attribution"
+msgstr "Crédit photo"
 
 msgid "Add a course"
 msgstr "Ajouter un parcours outdoor"
@@ -353,6 +359,9 @@ msgstr "Ajouter un site frère"
 
 msgid "Parents"
 msgstr "Parents"
+
+msgid "Advices"
+msgstr "Recommandations"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"

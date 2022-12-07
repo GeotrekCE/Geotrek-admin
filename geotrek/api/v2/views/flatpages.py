@@ -14,4 +14,4 @@ class FlatPageViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.FlatPageSerializer
     queryset = flatpages_models.FlatPage.objects.order_by('order', 'pk') \
         .prefetch_related(Prefetch('attachments',
-                                   queryset=Attachment.objects.select_related('license')))  # Required for reliable pagination
+                                   queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')))  # Required for reliable pagination

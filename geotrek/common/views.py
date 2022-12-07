@@ -4,7 +4,7 @@ import mimetypes
 import os
 import re
 from datetime import timedelta
-from zipfile import ZipFile
+from zipfile import is_zipfile, ZipFile
 
 import redis
 from django.apps import apps
@@ -13,8 +13,11 @@ from django.contrib import messages
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.gis.db.models import Extent, GeometryField
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django.db.models.functions import Cast
 from django.http import JsonResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
@@ -44,8 +47,10 @@ from .models import TargetPortal, AccessibilityAttachment, Theme
 from .permissions import PublicOrReadPermMixin
 from .serializers import ThemeSerializer
 from .tasks import import_datas, import_datas_from_web, launch_sync_rando
-from .utils import sql_extent
+from .utils import leaflet_bounds
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
+from ..altimetry.models import Dem
+from ..core.models import Path
 
 
 class Meta(MetaMixin, TemplateView):
@@ -132,9 +137,7 @@ class JSSettings(mapentity_views.JSSettings):
         return dictsettings
 
 
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def admin_check_extents(request):
+class CheckExtentsView(LoginRequiredMixin, TemplateView):
     """
     This view allows administrators to visualize data and configured extents.
 
@@ -142,52 +145,54 @@ def admin_check_extents(request):
     to be more admin tools like this one. Move this to a separate Django app and
     style HTML properly.
     """
-    path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM core_path;")
-    path_extent = api_bbox(path_extent_native)
-    dem_extent_native = sql_extent(
-        "SELECT ST_Extent(rast::geometry) FROM altimetry_dem;")
-    dem_extent = api_bbox(dem_extent_native)
-    tiles_extent_native = settings.SPATIAL_EXTENT
-    tiles_extent = api_bbox(tiles_extent_native)
-    viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
-    viewport = api_bbox(viewport_native, srid=settings.API_SRID)
+    template_name = 'common/check_extents.html'
 
-    def leafletbounds(bbox):
-        return [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]
+    def get_context_data(self, **kwargs):
+        path_extent_native = Path.include_invisible.aggregate(extent=Extent('geom')) \
+            .get('extent')
+        path_extent = api_bbox(path_extent_native or (0, 0, 0, 0))
+        dem_extent_native = Dem.objects.aggregate(extent=Extent(Cast('rast',
+                                                                     output_field=GeometryField(srid=settings.SRID)))) \
+            .get('extent')
+        dem_extent = api_bbox(dem_extent_native or (0, 0, 0, 0))
+        tiles_extent_native = settings.SPATIAL_EXTENT
+        tiles_extent = api_bbox(tiles_extent_native)
+        viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
+        viewport = api_bbox(viewport_native, srid=settings.API_SRID)
 
-    context = dict(
-        path_extent=leafletbounds(path_extent),
-        path_extent_native=path_extent_native,
-        dem_extent=leafletbounds(dem_extent) if dem_extent else None,
-        dem_extent_native=dem_extent_native,
-        tiles_extent=leafletbounds(tiles_extent),
-        tiles_extent_native=tiles_extent_native,
-        viewport=leafletbounds(viewport),
-        viewport_native=viewport_native,
-        SRID=settings.SRID,
-        API_SRID=settings.API_SRID,
-    )
-    return render(request, 'common/check_extents.html', context)
+        return dict(
+            path_extent=leaflet_bounds(path_extent),
+            path_extent_native=path_extent_native,
+            dem_extent=leaflet_bounds(dem_extent) if dem_extent else None,
+            dem_extent_native=dem_extent_native,
+            tiles_extent=leaflet_bounds(tiles_extent),
+            tiles_extent_native=tiles_extent_native,
+            viewport=leaflet_bounds(viewport),
+            viewport_native=viewport_native,
+            SRID=settings.SRID,
+            API_SRID=settings.API_SRID,
+        )
 
-
-class UserArgMixin:
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 def import_file(uploaded, parser, encoding, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
     with open(destination_file, 'wb+') as f:
         f.write(uploaded.file.read())
-        zfile = ZipFile(f)
-        for name in zfile.namelist():
-            zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
-            if name.endswith('shp'):
-                import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
-                                   module=parser.__module__, encoding=encoding, user=user_pk)
+        if is_zipfile(uploaded.file):
+            uploaded.file.seek(0)
+            zfile = ZipFile(f)
+            for name in zfile.namelist():
+                zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
+                if name.endswith('shp'):
+                    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
+                                       module=parser.__module__, encoding=encoding, user=user_pk)
+                    return
+    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, str(uploaded.name))),
+                       module=parser.__module__, encoding=encoding, user=user_pk)
 
 
 @login_required
@@ -196,11 +201,9 @@ def import_view(request):
     Gets the existing declared parsers for the current project.
     This view handles only the file based import parsers.
     """
-    choices = []
-    choices_url = []
     render_dict = {}
 
-    choices, choices_url, classes = discover_available_parsers(request.user)
+    choices, choices_url, classes = discover_available_parsers(request)
     choices_suricate = [("everything", _("Reports"))]
 
     form = ImportDatasetFormWithFile(choices, prefix="with-file")
@@ -214,7 +217,7 @@ def import_view(request):
                 choices, request.POST, request.FILES, prefix="with-file")
 
             if form.is_valid():
-                uploaded = request.FILES['with-file-zipfile']
+                uploaded = request.FILES['with-file-file']
                 parser = classes[int(form['parser'].value())]
                 encoding = form.cleaned_data['encoding']
                 try:
@@ -437,6 +440,7 @@ class ServeAttachmentAccessibility(View):
 
 @require_POST
 @permission_required(settings_paperclip.get_attachment_permission('add_attachment'), raise_exception=True)
+@permission_required('authent.can_bypass_structure')
 def add_attachment_accessibility(request, app_label, model_name, pk,
                                  attachment_form=AttachmentAccessibilityForm,
                                  extra_context=None):
@@ -452,6 +456,7 @@ def add_attachment_accessibility(request, app_label, model_name, pk,
 
 @require_http_methods(["GET", "POST"])
 @permission_required(settings_paperclip.get_attachment_permission('change_attachment'), raise_exception=True)
+@permission_required('authent.can_bypass_structure')
 def update_attachment_accessibility(request, attachment_pk,
                                     attachment_form=AttachmentAccessibilityForm,
                                     extra_context=None):
@@ -474,6 +479,7 @@ def update_attachment_accessibility(request, attachment_pk,
 
 
 @permission_required(settings_paperclip.get_attachment_permission('delete_attachment'), raise_exception=True)
+@permission_required('authent.can_bypass_structure')
 def delete_attachment_accessibility(request, attachment_pk):
     g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = g.content_object

@@ -1,0 +1,15 @@
+{
+  "URL_1": {
+    "data_to_import": ["Trek", "POI"],
+    "portals": ["portal a", "portal b"],
+    "mapping": {
+      "trek_practice": {
+        "Randonnée Pédestre": ["Pédestre"],
+        "Vélo": ["VTT", "Vélo"]
+      },
+      "trek_difficulty": {
+        "Moyen": ["Facile"]
+      }
+    }
+  }
+}

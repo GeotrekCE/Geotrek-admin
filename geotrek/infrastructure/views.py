@@ -73,10 +73,7 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
     serializer_class = InfrastructureSerializer
     geojson_serializer_class = InfrastructureGeojsonSerializer
     filterset_class = InfrastructureFilterSet
-
-    def get_columns(self):
-        return InfrastructureList.mandatory_columns + settings.COLUMNS_LISTS.get('infrastructure_view',
-                                                                                 InfrastructureList.default_extra_columns)
+    mapentity_list_class = InfrastructureList
 
     def get_queryset(self):
         qs = self.model.objects.existing()

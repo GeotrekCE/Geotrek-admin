@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 
 from django.utils.timezone import utc, make_aware
 
-from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
+from geotrek.common.tests.factories import AttachmentFactory, LabelFactory, RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
 
 from geotrek.authent.tests.factories import StructureFactory
@@ -26,7 +26,16 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         cls.trek.date_insert = cls.creation
         cls.trek.save()
         TrekFactory.create(published=False, paths=[cls.path])
+        cls.portal_1 = TargetPortalFactory()
+        cls.portal_2 = TargetPortalFactory()
+        cls.source_1 = RecordSourceFactory()
+        cls.source_2 = RecordSourceFactory()
+        cls.trek.portal.set([cls.portal_1, cls.portal_2])
+        cls.trek.source.set([cls.source_1, cls.source_2])
         POIFactory.create(published=False, paths=[cls.path])
+        cls.label_1 = LabelFactory(advice_fr="Lorep ipsum 1 fr", advice_en="Lorep ipsum 1 en")
+        cls.label_2 = LabelFactory(advice_fr="Lorep ipsum 2 fr", advice_en="Lorep ipsum 2 en")
+        cls.trek.labels.set([cls.label_1, cls.label_2])
 
     def setUp(self):
         self.poi = POIFactory.create(published=True, paths=[self.path])
@@ -63,12 +72,30 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<information_complementaire><titre>Accessibility infrastructure</titre><description>Accessibility infrastructure</description></information_complementaire>'
             '<information_complementaire><titre>Advised parking</titre><description>Advised parking</description></information_complementaire>'
             '<information_complementaire><titre>Public transport</titre><description>Public transport</description></information_complementaire>'
-            '<information_complementaire><titre>Advice</titre><description>Advice</description></information_complementaire></informations_complementaires>'
+            '<information_complementaire><titre>Advice</titre><description>Advice</description></information_complementaire>'
+            '<information_complementaire><titre>Label</titre><description>Lorep ipsum 1 en</description></information_complementaire>'
+            '<information_complementaire><titre>Label</titre><description>Lorep ipsum 2 en</description></information_complementaire>'
+            '</informations_complementaires>'
             '</information>'
             '</informations>'
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
             '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
+            '<tracking_information>'
+            '<portals>'
+            f'<portal id="{self.portal_1.pk}" nom="{self.portal_1.name}">'
+            '</portal>'
+            f'<portal id="{self.portal_2.pk}" nom="{self.portal_2.name}">'
+            '</portal>'
+            '</portals>'
+            '<sources>'
+            f'<source id="{self.source_1.pk}" nom="{self.source_1.name}">'
+            '</source>'
+            f'<source id="{self.source_2.pk}" nom="{self.source_2.name}">'
+            '</source>'
+            '</sources>'
+            f'<structure id="{self.trek.structure.pk}" nom="My structure"></structure>'
+            '</tracking_information>'
             '<pois>'
             '<poi date_creation="1388534400" date_modification="{poi_date_update}" id_poi="{poi_pk}">'
             '<informations>'
@@ -159,12 +186,30 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<information_complementaire><titre>Accessibility infrastructure</titre><description>Accessibility infrastructure</description></information_complementaire>'
             '<information_complementaire><titre>Advised parking</titre><description>Advised parking</description></information_complementaire>'
             '<information_complementaire><titre>Public transport</titre><description>Public transport</description></information_complementaire>'
-            '<information_complementaire><titre>Advice</titre><description>Advice</description></information_complementaire></informations_complementaires>'
+            '<information_complementaire><titre>Advice</titre><description>Advice</description></information_complementaire>'
+            '<information_complementaire><titre>Label</titre><description>Lorep ipsum 1 en</description></information_complementaire>'
+            '<information_complementaire><titre>Label</titre><description>Lorep ipsum 2 en</description></information_complementaire>'
+            '</informations_complementaires>'
             '</information>'
             '</informations>'
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
             '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
+            '<tracking_information>'
+            '<portals>'
+            f'<portal id="{self.portal_1.pk}" nom="{self.portal_1.name}">'
+            '</portal>'
+            f'<portal id="{self.portal_2.pk}" nom="{self.portal_2.name}">'
+            '</portal>'
+            '</portals>'
+            '<sources>'
+            f'<source id="{self.source_1.pk}" nom="{self.source_1.name}">'
+            '</source>'
+            f'<source id="{self.source_2.pk}" nom="{self.source_2.name}">'
+            '</source>'
+            '</sources>'
+            f'<structure id="{self.trek.structure.pk}" nom="My structure"></structure>'
+            '</tracking_information>'
             '</circuit>'
             '</circuits>'.format(**attrs))
 

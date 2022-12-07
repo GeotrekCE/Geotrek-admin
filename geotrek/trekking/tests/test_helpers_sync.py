@@ -1,6 +1,6 @@
 import os
 from unittest.mock import patch
-import shutil
+
 from io import StringIO
 
 from django.test import TestCase
@@ -64,17 +64,17 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync_detail('fr', self.trek)
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), '%s.pdf' % self.trek.slug)))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'pois.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'dem.json')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'profile.png')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'touristiccontents.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'touristicevents.geojson')))
 
     @patch('sys.stdout', new_callable=StringIO)
@@ -82,13 +82,13 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand(skip_dem=True, skip_pdf=True, skip_profile_png=True)
         synchro = SyncRando(command)
         synchro.sync_detail('fr', self.trek)
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'pois.geojson')))
-        self.assertFalse(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertFalse(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                      str(self.trek.pk), '%s.pdf' % self.trek.slug)))
-        self.assertFalse(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertFalse(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                      str(self.trek.pk), 'dem.json')))
-        self.assertFalse(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertFalse(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                      str(self.trek.pk), 'profile.png')))
 
     @patch('sys.stdout', new_callable=StringIO)
@@ -97,12 +97,12 @@ class SyncRandoTestCase(TestCase):
         synchro = SyncRando(command)
         with override_settings(USE_BOOKLET_PDF=False):
             synchro.sync_detail('en', self.trek)
-            first_file = os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'treks', str(self.trek.pk),
+            first_file = os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'treks', str(self.trek.pk),
                                       '%s.pdf' % self.trek.slug)
             size_first = os.stat(first_file).st_size
         with override_settings(USE_BOOKLET_PDF=True):
             synchro.sync_detail('en', self.trek)
-            second_file = os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'treks', str(self.trek.pk),
+            second_file = os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'treks', str(self.trek.pk),
                                        '%s.pdf' % self.trek.slug)
             size_second = os.stat(second_file).st_size
         self.assertLess(size_first, size_second)
@@ -112,13 +112,13 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand(portal=self.portal_b.name, source=[self.source_b.name])
         synchro = SyncRando(command)
         synchro.sync_detail('fr', self.trek)
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), '%s.pdf' % self.trek.slug)))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'pois.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'touristiccontents.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'treks',
                                                     str(self.trek.pk), 'touristicevents.geojson')))
 
     @patch('sys.stdout', new_callable=StringIO)
@@ -129,7 +129,7 @@ class SyncRandoTestCase(TestCase):
         synchro = SyncRando(command)
         with patch('geotrek.trekking.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync):
             synchro.sync('fr')
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'static', 'trekking', 'trek.svg')))
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'static', 'trekking', 'trek.svg')))
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_language_portal_source(self, stdout, mock_prepare):
@@ -141,7 +141,3 @@ class SyncRandoTestCase(TestCase):
             synchro.sync('fr')
         self.assertEqual(len(mock_trek.call_args_list), 1)
         mock_trek.assert_called_with('fr', self.trek_fr)
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

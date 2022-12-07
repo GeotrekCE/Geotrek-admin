@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 09:07+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -21,6 +21,9 @@ msgstr ""
 
 msgid "content type"
 msgstr "type d'objet"
+
+msgid "Linked content"
+msgstr ""
 
 msgid "Common"
 msgstr "Commun"
@@ -36,9 +39,14 @@ msgstr "max %s"
 msgid "This field is required to publish object."
 msgstr "Ce champs est obligatoire pour publier l'objet."
 
+msgid "This field is required to review object."
+msgstr "Ce champs est obligatoire pour réviser l'objet."
+
 #, python-format
-msgid "Fields are missing to publish object: %(fields)s"
-msgstr "Ces champs doivent être renseignés pour publier l'objet : %(fields)s"
+msgid "Fields are missing to publish or review object: %(fields)s"
+msgstr ""
+"Ces champs doivent être renseignés pour publier ou réviser l'objet : "
+"%(fields)s"
 
 #, python-brace-format
 msgid ""
@@ -66,9 +74,6 @@ msgstr "Encodage"
 msgid "Data to import from local file"
 msgstr "Données à importer depuis un fichier local"
 
-msgid "File must be of ZIP type."
-msgstr "Le fichier doit être de type ZIP."
-
 msgid "Launch Sync"
 msgstr "Lancer la synchro"
 
@@ -83,6 +88,15 @@ msgstr "Annuler"
 
 msgid "Update attachment"
 msgstr "Modifier le fichier"
+
+msgid "The uploaded file is too large"
+msgstr "Le fichier sélectionné est trop lourd"
+
+msgid "The uploaded file is not wide enough"
+msgstr "L'image sélectionnée n'est pas assez large"
+
+msgid "The uploaded file is not tall enough"
+msgstr "L'image sélectionnée n'est pas assez haute"
 
 msgid "Global tiles syncing ..."
 msgstr "Synchro des tuiles globales..."
@@ -115,6 +129,9 @@ msgid ""
 msgstr ""
 "Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
 "réglementation qu’il est utile de connaître pour préparer son séjour"
+
+msgid "Merge"
+msgstr "Fusionner"
 
 msgid "Insertion date"
 msgstr "Date d'insertion"
@@ -152,11 +169,18 @@ msgstr "Nom public (changez prudemment)"
 msgid "Waiting for publication"
 msgstr "En attente de publication"
 
+#, python-brace-format
+msgid "{obj} need a review"
+msgstr "{obj} a besoin d'une review"
+
 msgid "Pictogram"
 msgstr "Pictogramme"
 
-msgid "Merge"
-msgstr "Fusionner"
+msgid "Attachment license"
+msgstr "Licence pièce-jointes"
+
+msgid "Attachment licenses"
+msgstr "Licences Pièce-jointes"
 
 msgid "Slope"
 msgstr "Pente"
@@ -214,12 +238,6 @@ msgstr "Organisme"
 
 msgid "Organisms"
 msgstr "Organismes"
-
-msgid "Attachment license"
-msgstr "Licence pièce-jointes"
-
-msgid "Attachment licenses"
-msgstr "Licences Pièce-jointes"
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
@@ -369,8 +387,9 @@ msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 "Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
 
-#, python-brace-format
-msgid "Bad value '{val}' for field {src}. Should be {values}"
+#, fuzzy, python-brace-format
+#| msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr ""
 "Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être {values}"
 
@@ -385,7 +404,9 @@ msgstr ""
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
 msgstr "{model} '{val}' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
 
-msgid "Filename is required"
+#, fuzzy
+#| msgid "Filename is required"
+msgid "Filename or url is required"
 msgstr "un nom de fichier est requis"
 
 #, python-brace-format
@@ -412,6 +433,33 @@ msgstr ""
 msgid "Failed to download '{url}'"
 msgstr "Impossible de télécharger '{url}'"
 
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"too large"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not wide enough"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not tall enough"
+msgstr ""
+
+#, python-brace-format
+msgid "Model {model}"
+msgstr ""
+
+#, fuzzy
+#| msgid "Geotrek Rando"
+msgid "Geotrek-admin"
+msgstr "Geotrek Admin"
+
 msgid "Import from web."
 msgstr "Importer du web."
 
@@ -425,6 +473,13 @@ msgstr ""
 
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
+
+msgid ""
+"You are not allowed to modify attachments on this object, this object is not "
+"from the same structure."
+msgstr ""
+"Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet "
+"objet n'est pas de la même structure"
 
 msgid "Accessibility type"
 msgstr "Type d'accessibilité"
@@ -444,7 +499,7 @@ msgstr "Pas de fichier attaché pour l'accessibilité"
 msgid "You are not allowed to see attachments."
 msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés."
 
-msgid "Confirm file deletion"
+msgid " Confirm file deletion"
 msgstr "Confirmer la suppression du fichier"
 
 #, python-brace-format
@@ -534,6 +589,11 @@ msgstr "ces champs doivent être renseignés :"
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide ;"
 
+#, fuzzy, python-format
+#| msgid "%(obj)s has changed  state, it needs a review to be published. "
+msgid "%(obj)s has changed state, it needs a review to be published. "
+msgstr "%(obj)s a changé d'état, et a besoin d'être review pour être publié."
+
 msgid "Sync verifications"
 msgstr "Vérification des synchros"
 
@@ -556,12 +616,12 @@ msgid "Sync"
 msgstr "Sync"
 
 #, python-format
-msgid "%s day"
-msgstr "%s jour"
-
-#, python-format
 msgid "%s days"
 msgstr "%s jours"
+
+#, python-format
+msgid "%s day"
+msgstr "%s jour"
 
 #, python-format
 msgid "%(hour)s h %(min)s"
@@ -623,9 +683,3 @@ msgstr "Votre fichier a été supprimé."
 
 msgid "You are not allowed to delete this attachment."
 msgstr "Vous n'êtes pas autorisé à supprimer ce fichier attaché."
-
-msgid "Any year"
-msgstr "N'importe quelle année"
-
-msgid "Any value"
-msgstr "N'importe quelle valeur"

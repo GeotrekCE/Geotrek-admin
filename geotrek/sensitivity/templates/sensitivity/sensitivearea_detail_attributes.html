@@ -49,6 +49,18 @@
         </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if sensitivearea.eid %}{{ sensitivearea.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if sensitivearea.provider %}{{ sensitivearea.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
     </table>
 
     {{ block.super }}

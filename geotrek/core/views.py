@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
 from django.core.cache import caches
-from django.db.models import Sum
+from django.db.models import Sum, Prefetch
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
@@ -27,12 +27,13 @@ from rest_framework.response import Response
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
 from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from . import graph as graph_lib
 from .filters import PathFilterSet, TrailFilterSet
-from .forms import PathForm, TrailForm
-from .models import AltimetryMixin, Path, Trail, Topology
+from .forms import PathForm, TrailForm, CertificationTrailFormSet
+from .models import AltimetryMixin, Path, Trail, Topology, CertificationTrail
 from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
 
 logger = logging.getLogger(__name__)
@@ -231,6 +232,7 @@ class PathViewSet(GeotrekMapentityViewSet):
     serializer_class = PathSerializer
     geojson_serializer_class = PathGeojsonSerializer
     filterset_class = PathFilterSet
+    mapentity_list_class = PathList
 
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator."""
@@ -269,9 +271,6 @@ class PathViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')
         return qs
-
-    def get_columns(self):
-        return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('path_view', PathList.default_extra_columns)
 
     def get_filter_count_infos(self, qs):
         """ Add total path length to count infos in List dropdown menu """
@@ -337,6 +336,11 @@ class PathViewSet(GeotrekMapentityViewSet):
         return Response(response)
 
 
+class CertificationTrailMixin(FormsetMixin):
+    context_name = 'certificationtrail_formset'
+    formset_class = CertificationTrailFormSet
+
+
 class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
     filterform = TrailFilterSet
@@ -348,10 +352,20 @@ class TrailList(CustomColumnsMixin, MapEntityList):
 class TrailFormatList(MapEntityFormat, TrailList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'structure', 'name', 'comments', 'departure', 'arrival',
-        'date_insert', 'date_update',
+        'structure', 'name', 'comments',
+        'departure', 'arrival', 'category',
+        'certifications', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',
     ] + AltimetryMixin.COLUMNS
+
+    def get_queryset(self):
+        return super().get_queryset() \
+            .select_related('category__structure') \
+            .prefetch_related(Prefetch('certifications',
+                                       queryset=CertificationTrail.objects.select_related(
+                                           'certification_label',
+                                           'certification_status'
+                                       )))
 
 
 class TrailDetail(MapEntityDetail):
@@ -388,12 +402,12 @@ class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 
 
-class TrailCreate(CreateFromTopologyMixin, MapEntityCreate):
+class TrailCreate(CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
     model = Trail
     form_class = TrailForm
 
 
-class TrailUpdate(MapEntityUpdate):
+class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
     queryset = Trail.objects.existing()
     form_class = TrailForm
 
@@ -415,9 +429,7 @@ class TrailViewSet(GeotrekMapentityViewSet):
     serializer_class = TrailSerializer
     geojson_serializer_class = TrailGeojsonSerializer
     filterset_class = TrailFilterSet
-
-    def get_columns(self):
-        return TrailList.mandatory_columns + settings.COLUMNS_LISTS.get('trail_view', TrailList.default_extra_columns)
+    mapentity_list_class = TrailList
 
     def get_queryset(self):
         qs = self.model.objects.existing()

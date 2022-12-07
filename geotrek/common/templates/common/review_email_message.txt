@@ -1,0 +1,6 @@
+{% load i18n l10n %}
+{% autoescape off %}
+
+{% blocktrans %}{{obj}} has changed state, it needs a review to be published. {% endblocktrans %}
+
+{% endautoescape %}

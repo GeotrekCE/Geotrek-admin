@@ -3,7 +3,7 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
@@ -158,6 +158,7 @@ class TouristicContentViewSet(GeotrekMapentityViewSet):
     serializer_class = TouristicContentSerializer
     geojson_serializer_class = TouristicContentGeojsonSerializer
     filterset_class = TouristicContentFilterSet
+    mapentity_list_class = TouristicContentList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -165,10 +166,6 @@ class TouristicContentViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
         return qs
-
-    def get_columns(self):
-        return TouristicContentList.mandatory_columns + settings.COLUMNS_LISTS.get('touristic_content_view',
-                                                                                   TouristicContentList.default_extra_columns)
 
 
 class TouristicContentAPIViewSet(APIViewSet):
@@ -202,17 +199,23 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
-        'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
-        'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
-        'participant_number', 'booking', 'target_audience', 'practical_info',
+        'begin_date', 'end_date', 'duration', 'meeting_point', 'start_time', 'end_time',
+        'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility', 'bookable',
+        'capacity', 'booking', 'target_audience', 'practical_info',
         'date_insert', 'date_update', 'source', 'portal',
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas', 'approved', 'uuid',
+        'cancelled', 'cancellation_reason', 'total_participants', 'place',
+        'preparation_duration', 'intervention_duration',
     ]
+
+    def get_queryset(self):
+        qs = super().get_queryset().select_related('place', 'cancellation_reason').prefetch_related('participants')
+        return qs.annotate(total_participants=Sum('participants__count'))
 
 
 class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
-    queryset = TouristicEvent.objects.existing()
+    queryset = TouristicEvent.objects.existing().select_related('place', 'cancellation_reason').prefetch_related('participants')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -294,17 +297,16 @@ class TouristicEventViewSet(GeotrekMapentityViewSet):
     serializer_class = TouristicEventSerializer
     geojson_serializer_class = TouristicEventGeojsonSerializer
     filterset_class = TouristicEventFilterSet
+    mapentity_list_class = TouristicEventList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
+        else:
+            qs = qs.select_related('place', 'cancellation_reason').prefetch_related('participants')
         return qs
-
-    def get_columns(self):
-        return TouristicEventList.mandatory_columns + settings.COLUMNS_LISTS.get('touristic_event_view',
-                                                                                 TouristicEventList.default_extra_columns)
 
 
 class TouristicEventAPIViewSet(APIViewSet):

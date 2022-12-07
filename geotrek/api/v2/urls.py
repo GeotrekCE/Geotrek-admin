@@ -14,6 +14,7 @@ router.register('source', api_views.SourceViewSet, basename='source')
 router.register('reservationsystem', api_views.ReservationSystemViewSet, basename='reservationsystem')
 router.register('label', api_views.LabelViewSet, basename='label')
 router.register('organism', api_views.OrganismViewSet, basename='organism')
+router.register('file_type', api_views.FileTypeViewSet, basename='filetype')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
@@ -49,6 +50,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristiccontent', api_views.TouristicContentViewSet, basename='touristiccontent')
     router.register('touristicevent', api_views.TouristicEventViewSet, basename='touristicevent')
     router.register('touristicevent_type', api_views.TouristicEventTypeViewSet, basename='touristiceventtype')
+    router.register('touristicevent_place', api_views.TouristicEventPlaceViewSet, basename='touristiceventplace')
     router.register('informationdesk', api_views.InformationDeskViewSet, basename='informationdesk')
     router.register('informationdesk_type', api_views.InformationDeskTypeViewSet, basename='informationdesktype')
     router.register('label_accessibility', api_views.LabelAccessibilityViewSet, basename='labelaccessibility')

@@ -19,7 +19,7 @@ from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
 from geotrek.feedback.models import TimerEvent, WorkflowDistrict, WorkflowManager
-from geotrek.feedback.tests.factories import PredefinedEmailFactory, ReportFactory
+from geotrek.feedback.tests.factories import PredefinedEmailFactory, ReportFactory, ReportStatusFactory
 from geotrek.feedback.tests.test_suricate_sync import (
     SuricateWorkflowTests, test_for_management_and_workflow_modes,
     test_for_report_and_basic_modes, test_for_workflow_mode, test_for_management_mode)
@@ -43,6 +43,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, external_uuid=uuid.uuid4())
         cls.predefined_email_1 = PredefinedEmailFactory()
         cls.predefined_email_2 = PredefinedEmailFactory()
+        cls.status_no_timer = ReportStatusFactory(identifier='notimer', label="No timer", timer_days=0)
+        cls.status_timer_6 = ReportStatusFactory(identifier='timer6', label="Timer 6", timer_days=6)
+        cls.status_timer_3 = ReportStatusFactory(identifier='timer3', label="Timer 3", timer_days=3)
         cls.other_user = UserFactory()
         UserProfileFactory.create(user=cls.other_user, extended_username="Communauté des Communes des Communautés Communataires")
         cls.district = DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
@@ -68,10 +71,11 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
         self.assertFalse(form.errors)
 
     @test_for_report_and_basic_modes
@@ -87,10 +91,11 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
         self.assertFalse(form.errors)  # assert form is valid
 
     @test_for_workflow_mode
@@ -111,6 +116,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
@@ -129,6 +135,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertIn('message_sentinel', keys)
+        self.assertIn('message_administrators', keys)
         self.assertIn('message_sentinel_predefined', keys)
         self.assertIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
@@ -152,10 +159,11 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
 
     @test_for_management_mode
     def test_update_form_specifics_2_management(self):
@@ -170,10 +178,11 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
         self.assertIsInstance(form.fields["related_trek"].widget, Select)
         self.assertNotIn('message_sentinel', keys)
+        self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -218,7 +227,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         # Assert user is notified
         self.assertEqual(len(mail.outbox), mails_before + 1)
-        self.assertEqual(mail.outbox[-1].subject, "Geotrek - Nouveau Signalement à traiter")
+        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] Nouveau Signalement à traiter")
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
 
     @test_for_workflow_mode
@@ -266,7 +275,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
         self.assertEqual(self.interv_report.assigned_user, WorkflowManager.objects.first().user)
         self.assertEqual(len(mail.outbox), mails_before + 1)
-        self.assertEqual(mail.outbox[-1].subject, "Geotrek - Un Signalement est à clôturer")
+        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] Un Signalement est à clôturer")
         self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])
 
     @test_for_report_and_basic_modes
@@ -315,7 +324,8 @@ class TestSuricateForms(SuricateWorkflowTests):
             'email': 'test@test.fr',
             'geom': self.solved_intervention_report.geom,
             'status': self.resolved_status.pk,
-            'message_sentinel': "Your message"
+            'message_sentinel': "Your message",
+            'message_administrators': "Your message admins"
         }
         form = ReportForm(instance=self.solved_intervention_report, data=data)
         form.save()
@@ -332,14 +342,10 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         call2 = mock.call(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_external_uuid, 'statut': 'solved', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.solved_intervention_report.formatted_external_uuid, 'statut': 'solved', 'txt_changestatut': 'Your message admins', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
             auth=('', '')
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
-        mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.solved_intervention_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
-            auth=('', '')
-        )
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -387,7 +393,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         ).hexdigest()
         mocked_post.assert_called_once_with(
             'http://suricate.wsmanagement.example.com/wsUpdateStatus',
-            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report_1.formatted_external_uuid, 'statut': 'waiting', 'txt_changestatut': 'Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département', 'txt_changestatut_sentinelle': 'Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département', 'check': check},
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report_1.formatted_external_uuid, 'statut': 'waiting', 'txt_changestatut': 'Le Signalement ne concerne pas le Département - Relocalisé hors du Département', 'txt_changestatut_sentinelle': 'Le Signalement ne concerne pas le Département - Relocalisé hors du Département', 'check': check},
             auth=('', '')
         )
         mocked_get.assert_called_once_with(
@@ -418,3 +424,53 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         self.filed_report_2.refresh_from_db()
         self.assertEqual(self.filed_report_2.status, self.rejected_status)
+
+    @test_for_report_and_basic_modes
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_timer_creation(self, mocked_post):
+        # Relocate report inside of main district
+        new_geom = Point(0, 0, srid=2154)
+        data = {
+            'commment': "We have important news",
+            'status': self.status_timer_3.pk,
+            'email': 'test@test.fr',
+            'geom': new_geom,
+            'uses_timers': True
+        }
+        # Test Timer is created when report is created
+        form = ReportForm(data=data)
+        report = form.save()
+        print(report.status)
+        self.assertEqual(TimerEvent.objects.count(), 1)
+        self.assertEqual(TimerEvent.objects.first().step.identifier, "timer3")
+        data = {
+            'commment': "We have important news",
+            'status': self.status_timer_6.pk,
+            'email': 'test@test.fr',
+            'geom': new_geom,
+            'uses_timers': True
+        }
+        form = ReportForm(instance=report, data=data)
+        form.save()
+        # Test Timers are updated when report is updated
+        self.assertEqual(TimerEvent.objects.count(), 2)
+        for timer in TimerEvent.objects.all():
+            if timer.is_obsolete():
+                timer.delete()
+        self.assertEqual(TimerEvent.objects.count(), 1)
+        self.assertEqual(TimerEvent.objects.first().step.identifier, "timer6")
+        # Test Timer is removed if unecessary
+        data = {
+            'commment': "We have important news",
+            'status': self.status_no_timer.pk,
+            'email': 'test@test.fr',
+            'geom': new_geom,
+            'uses_timers': True
+        }
+        form = ReportForm(instance=report, data=data)
+        form.save()
+        self.assertEqual(TimerEvent.objects.count(), 1)
+        for timer in TimerEvent.objects.all():
+            if timer.is_obsolete():
+                timer.delete()
+        self.assertEqual(TimerEvent.objects.count(), 0)

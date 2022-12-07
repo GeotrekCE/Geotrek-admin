@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-03 09:53+0000\n"
+"POT-Creation-Date: 2022-11-24 14:14+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -41,20 +41,23 @@ msgstr "Topologie valide"
 msgid "Valid geometry"
 msgstr "Géometrie valide"
 
-msgid "length"
-msgstr "Longueur"
-
 msgid "Name"
 msgstr "Nom"
 
 msgid "Comments"
 msgstr "Commentaires"
 
+msgid "Provider"
+msgstr "Fournisseur"
+
 msgid "Departure"
 msgstr "Départ"
 
 msgid "Arrival"
 msgstr "Arrivée"
+
+msgid "Certification labels"
+msgstr "Labellisations"
 
 msgid "Trail"
 msgstr "Sentier"
@@ -73,6 +76,12 @@ msgstr "La géométrie est non simple"
 
 msgid "Geometry overlaps another."
 msgstr "La géométrie en superpose une autre"
+
+msgid "Geometry is not valid."
+msgstr "La géométrie n'est pas valide"
+
+msgid "Certifications"
+msgstr "Labellisations"
 
 msgid "Validity"
 msgstr "Validité"
@@ -132,8 +141,14 @@ msgstr "Tronçon"
 msgid "Paths"
 msgstr "Tronçons"
 
+#, python-brace-format
+msgid "{obj} has been set to draft"
+msgstr "{obj} a été mis en brouillon"
+
 msgid "You can't delete this path, some topologies are linked with this path"
-msgstr "Vous ne pouvez pas supprimer ce tronçon, des topologies sont liés à ce tronçon"
+msgstr ""
+"Vous ne pouvez pas supprimer ce tronçon, des topologies sont liés à ce "
+"tronçon"
 
 msgid "Trails"
 msgstr "Sentiers"
@@ -213,6 +228,27 @@ msgstr "Usage"
 msgid "Network"
 msgstr "Réseau"
 
+msgid "Category"
+msgstr "Categorie"
+
+msgid "Trail category"
+msgstr "Categorie de sentier"
+
+msgid "Trail categories"
+msgstr "Categories de sentier"
+
+msgid "Certification label"
+msgstr "Labellisation"
+
+msgid "Certification status"
+msgstr "Statut de labellisation"
+
+msgid "Certification statuses"
+msgstr "Statuts de labellisation"
+
+msgid "Certification"
+msgstr "Labellisation"
+
 msgid "Management"
 msgstr "Gestion"
 
@@ -221,6 +257,10 @@ msgstr "Pas d'information"
 
 msgid "Add a new trail"
 msgstr "Ajouter un sentier"
+
+#, python-format
+msgid "%(obj)s has changed state to draft. "
+msgstr "%(obj)s a été mis en brouillon."
 
 #, python-format
 msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
@@ -239,7 +279,9 @@ msgstr "Différentes Topologies sont liées à ce tronçon"
 msgid ""
 "You can't delete <strong>%(object)s</strong>, some topologies are linked "
 "with this path. Modify these topologies before deleting this path."
-msgstr "Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies sont lié à ce tronçon. Modifié ces topologies avant de supprimer ce tronçon"
+msgstr ""
+"Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies "
+"sont lié à ce tronçon. Modifié ces topologies avant de supprimer ce tronçon"
 
 msgid "No, back to edit view"
 msgstr "Non, retour à la l'édition"
@@ -277,8 +319,17 @@ msgstr "Fusionner les tronçons"
 msgid "Cancel"
 msgstr "Annuler"
 
-msgid "path"
-msgstr "tronçon"
+msgid "No certification"
+msgstr "Aucune labellisation"
+
+msgid "Add"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "This field is required."
+msgstr ""
 
 msgid ""
 "Access to the requested resource is restricted. You have been redirected."
@@ -290,6 +341,9 @@ msgid ""
 msgstr ""
 "L'accès à cette ressource est restreint selon la structure. Vous avez été "
 "redirigé."
+
+msgid "path"
+msgstr "tronçon"
 
 msgid "You should select two paths"
 msgstr "Vous devez sélectionner 2 tronçons"
@@ -311,3 +365,6 @@ msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
 msgid "Paths merged successfully"
 msgstr "Les tronçons ont été fusionnés."
+
+#~ msgid "length"
+#~ msgstr "Longueur"

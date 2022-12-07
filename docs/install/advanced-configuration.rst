@@ -48,7 +48,7 @@ Geotrek-admin will send emails:
 * to managers when a feedback report is created
 
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
-recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
 
@@ -185,15 +185,13 @@ Be aware that, when enabling Suricate Management mode, Suricate becomes the mast
 This mode allows to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Management mode as well.
 You can find a detailled explanation on the workflow here : https://github.com/GeotrekCE/Geotrek-admin/issues/2366#issuecomment-1113435035
 
-- Set your settings in ``custom.py`` (timers are used to define after how long a report's processing is considered late):
+- Set your settings in ``custom.py`` :
 
 .. code-block :: python
 
     SURICATE_WORKFLOW_ENABLED = True
 
     SURICATE_WORKFLOW_SETTINGS = {
-        "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
-        "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
         "SURICATE_RELOCATED_REPORT_MESSAGE": "This report is not located in Workflow responsiblity area."
     }
 
@@ -227,6 +225,24 @@ Display reports with status defined colors
     ENABLE_REPORT_COLORS_PER_STATUS = True
  
 Go to the Admin Site and select colors to display for each status (`/admin/feedback/reportstatus/`).
+
+
+Use timers to receive alerts for your reports
+~~~~~~~~~~~~~~~~
+
+It is possible to enable receiving email alerts for reports that have remained in the same status for too long.
+For instance, I can create two report statuses "To program" with timer days set to 10 and "Programmed" with timer days set to 0.
+If a report has had status "To program" for 10 days, an email alert will be sent. If its status is changed to "Programmed" within these 10 days, this will cancel the alert.
+The email alert will be sent to the assigned user for this report, or to managers (setting `MANAGERS`) if there is no assigned user.
+
+To enable the alerts :
+- Go to the Admin Site and set "Timer days" to some integer other than 0 in relevant statuses (`/admin/feedback/reportstatus/`)
+- Select the "Uses timers" checkbox on reports that you wish to receive alerts for (in report update form)
+- Make sure to run this commands daily to send email alerts and clear obsolete timers (thanks to `cron` for instance) :
+
+.. code-block :: python
+
+    geotrek check_timers
 
 
 Anonymize feedback reports
@@ -271,6 +287,8 @@ The following settings are related to sensitive areas:
 
     # Buffer around treks to intersects sensitive areas
     SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
+    # Take care if you change this value after adding data. You should update buffered geometry in sql.
+    ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
 
 To take these changes into account, you need to run :
 
@@ -366,6 +384,19 @@ For more information on configuration entries available, please refer to the
 official documentation of *TinyMCE version 3*.
 
 
+Max characters count
+~~~~~~~~~~~~~~~~~~~~
+
+Add ``MAX_CHARACTERS`` setting to be able to define a maximum number of characters
+for text fields (to be used with django-mapentity >= 8.1).
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAX_CHARACTERS'] = 1500
+
+This will apply to all text fields.
+See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
+
 View attachments in the browser
 -------------------------------
 
@@ -398,16 +429,16 @@ Example with IGN and OSM basemaps :
 .. code-block :: python
 
     LEAFLET_CONFIG['TILES'] = [
-        ('IGN Scan', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Scan Express', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Ortho', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Cadastre', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=text/xml&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Scan', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Plan V2', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&EXCEPTIONS=image/png&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Ortho', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
         ('OSM', 'https//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap contributors'),
         ('OSM Stamen Terrain', '//tile.stamen.com/terrain/{z}/{x}/{y}.jpg', '© OpenStreetMap contributors / Stamen Design'),
         ('OpenTopoMap', 'https//a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)')
     ]
 
-To use IGN Geoportail WMTS tiles API, you need an API key with subscribing on http://professionnels.ign.fr/visualisation. Choose WebMercator WMTS tiles.
+To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-web-issus-des-scans-ign.
 
 
 External authent
@@ -505,6 +536,7 @@ In ``custom.py``, just add the following lines:
 .. code-block :: python
 
     LEAFLET_CONFIG['OVERLAYS'] = [
+        ('Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; IGN - GeoPortail')
         ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
     ]
 
@@ -770,7 +802,7 @@ You can also add ``{legend}``.
 
 
 Resizing uploaded pictures
----------------------
+--------------------------
 
 Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
 
@@ -784,6 +816,26 @@ These corresponding height/width parameters can be overriden to select resized i
 
     PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
     PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+
+
+Prohibits usage of big pictures and small width / height
+--------------------------------------------------------
+
+If you want to prohibit the usage of heavy pictures :
+
+::
+
+    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
+
+
+If you want to prohibit the usage of small pictures in pixels :
+
+::
+
+    PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
+    PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
+
+These 3 settings will not also allow downloading images from the parsers
 
 
 Share services between several Geotrek instances
@@ -1227,6 +1279,8 @@ All settings used to generate altimetric profile.
 
 ``BLADE_ENABLED`` and ``LINE_ENABLED`` settings (default to ``True``) allow to enable or disable blades and lines submodules.
 
+``DIRECTION_ON_LINES_ENABLED`` setting (default to ``False``) allow to have the `direction` field on lines instead of blades.
+
 ::
 
     BLADE_CODE_TYPE = int
@@ -1617,6 +1671,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
     COLUMNS_LISTS["trail_view"] = [
         "departure",
         "arrival",
+        "category",
         "length",
         "structure",
         "min_elevation",
@@ -1667,6 +1722,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["workmanagementedge_export"] = [
         "eid",
@@ -1692,6 +1748,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "maintenance_difficulty",
         "published",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["signage_view"] = [
         "code",
@@ -1784,6 +1842,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "reservation_id",
         "portal",
         "uuid",
+        "eid",
+        "eid2",
+        "provider"
     ]
     COLUMNS_LISTS["poi_view"] = [
         "structure",
@@ -1841,6 +1902,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["touristic_event_view"] = [
         "structure",
@@ -1848,7 +1911,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "description_teaser",
         "description",
         "meeting_point",
-        "meeting_time",
+        "start_time",
+        "end_time",
         "duration",
         "begin_date",
         "contact",
@@ -1859,7 +1923,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "speaker",
         "type",
         "accessibility",
-        "participant_number",
+        "capacity",
         "portal",
         "source",
         "practical_info",
@@ -1868,6 +1932,14 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "uuid",
+        "eid",
+        "provider",
+        "bookable",
+        "cancelled",
+        "cancellation_reason"
+        "place",
+        'preparation_duration',
+        'intervention_duration',
     ]
     COLUMNS_LISTS["feedback_view"] = [
         "email",
@@ -1988,6 +2060,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "comments",
         "departure",
         "arrival",
+        "category",
+        "certifications",
         "date_insert",
         "date_update",
         "cities",
@@ -2111,6 +2185,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "usage_difficulty",
         "maintenance_difficulty"
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["signage_export"] = [
         "structure",
@@ -2137,6 +2213,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "uuid",
+        "eid",
+        "provider"
     ]
     COLUMNS_LISTS["intervention_export"] = [
         "name",
@@ -2253,6 +2331,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["poi_export"] = [
         "structure",
@@ -2340,6 +2419,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
+        "provider"
     ]
     COLUMNS_LISTS["touristic_event_export"] = [
         "structure",
@@ -2353,14 +2433,15 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "end_date",
         "duration",
         "meeting_point",
-        "meeting_time",
+        "start_time",
+        "end_time",
         "contact",
         "email",
         "website",
         "organizer",
         "speaker",
         "accessibility",
-        "participant_number",
+        "capacity",
         "booking",
         "target_audience",
         "practical_info",
@@ -2376,9 +2457,15 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
+        "provider",
+        "bookable",
+        "cancelled",
+        "cancellation_reason"
+        "place",
+        'preparation_duration',
+        'intervention_duration'
     ]
     COLUMNS_LISTS["feedback_export"] = [
-        "email",
         "comment",
         "activity",
         "category",
@@ -2532,7 +2619,8 @@ An exhaustive list of form fields hideable in each module.
     HIDDEN_FORM_FIELDS["trail"] = [
             "departure",
             "arrival",
-            "comments"
+            "comments",
+            "category",
         ],
     HIDDEN_FORM_FIELDS["landedge"] = [
             "owner",
@@ -2673,11 +2761,11 @@ An exhaustive list of form fields hideable in each module.
             'description_teaser',
             'description',
             'themes',
-            'begin_date',
             'end_date',
             'duration',
             'meeting_point',
-            'meeting_time',
+            'start_time',
+            'end_time',
             'contact',
             'email',
             'website',
@@ -2685,7 +2773,7 @@ An exhaustive list of form fields hideable in each module.
             'speaker',
             'type',
             'accessibility',
-            'participant_number',
+            'capacity',
             'booking',
             'target_audience',
             'practical_info',
@@ -2693,6 +2781,12 @@ An exhaustive list of form fields hideable in each module.
             'source',
             'portal',
             'eid',
+            "bookable",
+            'cancelled',
+            'cancellation_reason'
+            'place',
+            'preparation_duration',
+            'intervention_duration'
         ],
     HIDDEN_FORM_FIELDS["report"] = [
             "email",
@@ -2771,10 +2865,39 @@ It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 If false, it forbid to delete a path when at least one topology is linked to this path.
 
 
-**Custom SQL**
+::
 
+    ALERT_DRAFT = False
+
+If True, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
+
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
+
+
+::
+
+    ALERT_REVIEW = False
+
+
+If True, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
+
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
+
+
+**Custom SQL**
+::
 Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``
 
 * app name is the name of the Django application, eg. trekking or tourism
 * ``pre_``… scripts are executed before Django migrations and ``post_``… scripts after
 * script are executed in INSTALLED_APPS order, then by alphabetical order of script names
+
+
+**Manage Cache**
+::
+* You can purge application cache with command or in admin interface
+
+::
+    sudo geotrek clearcache --cache_name default --cache_name fat --cache_name api_v2h ori

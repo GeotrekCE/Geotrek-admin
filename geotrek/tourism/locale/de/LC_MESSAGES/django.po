@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 17:15+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,6 +22,9 @@ msgstr ""
 msgid "Tourism"
 msgstr "Tourismus"
 
+msgid "Provider"
+msgstr ""
+
 msgid "After"
 msgstr "Ausgehend von der"
 
@@ -31,11 +34,34 @@ msgstr "Bis"
 msgid "Completed"
 msgstr "Abgeschlossen"
 
+msgid "Event"
+msgstr ""
+
+msgid "Assessment"
+msgstr ""
+
+msgid "Participants"
+msgstr ""
+
 msgid "dd/mm/yyyy"
 msgstr "tt/mm/jjjj"
 
 msgid "HH:MM"
 msgstr "ZZ:MM"
+
+msgid ""
+"Please add a participant category in admin interface in order to complete "
+"the number of participants."
+msgstr ""
+
+msgid "Start time is unset"
+msgstr ""
+
+msgid "Start time is after end time"
+msgstr ""
+
+msgid "Start date is after end date"
+msgstr ""
 
 msgid "Label"
 msgstr "Label"
@@ -51,6 +77,9 @@ msgstr ""
 
 msgid "Labels accessibility"
 msgstr ""
+
+msgid "External id"
+msgstr "Externer Identifikator"
 
 msgid "Title"
 msgstr "Titel"
@@ -203,9 +232,6 @@ msgstr "Quelle"
 msgid "Portal"
 msgstr "Portal"
 
-msgid "External id"
-msgstr "Externer Identifikator"
-
 msgid "Reservation system"
 msgstr "Buchungssystem"
 
@@ -236,6 +262,18 @@ msgstr "Art der touristischen Veranstaltung"
 msgid "Touristic event types"
 msgstr "Arten von touristischen Veranstaltungen"
 
+msgid "Cancellation reason"
+msgstr ""
+
+msgid "Cancellation reasons"
+msgstr ""
+
+msgid "Event place"
+msgstr ""
+
+msgid "Event places"
+msgstr ""
+
 msgid "Begin date"
 msgstr "Startdatum"
 
@@ -254,11 +292,14 @@ msgstr "Treffpunkt"
 msgid "Where exactly ?"
 msgstr "Wo genau?"
 
-msgid "Meeting time"
+msgid "Start time"
 msgstr "Terminzeit"
 
 msgid "11:00, 23:30"
 msgstr "11:00, 23:30"
+
+msgid "End time"
+msgstr ""
 
 msgid "Organizer"
 msgstr "Organisator"
@@ -266,8 +307,8 @@ msgstr "Organisator"
 msgid "Speaker"
 msgstr "Lautsprecher"
 
-msgid "Number of participants"
-msgstr "Anzahl der Plätze"
+msgid "Capacity"
+msgstr ""
 
 msgid "Booking"
 msgstr "Reservierung"
@@ -277,6 +318,21 @@ msgstr "Zielgruppe"
 
 msgid "Recommandations / To plan / Advices"
 msgstr "Empfehlungen / Zu erwarten / Beratung"
+
+msgid "Bookable"
+msgstr ""
+
+msgid "Cancelled"
+msgstr ""
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr ""
+
+msgid "Select a place to auto-locate event on map"
+msgstr ""
+
+msgid "Number of participants"
+msgstr ""
 
 msgid "Touristic event"
 msgstr "Touristische Veranstaltung"
@@ -289,15 +345,20 @@ msgid "starting from {begin}"
 msgstr "von der {begin}"
 
 #, python-brace-format
-msgid "up to {end}"
-msgstr "bis {end}"
-
-#, python-brace-format
 msgid "from {begin} to {end}"
 msgstr "von {begin} bis {end}"
 
 msgid "touristic-event"
 msgstr "touristische Veranstaltung"
+
+msgid "Display order"
+msgstr ""
+
+msgid "Participant category"
+msgstr ""
+
+msgid "Participant categories"
+msgstr ""
 
 msgid "Published touristic events"
 msgstr "Veröffentlichte touristische Veranstaltungen"
@@ -335,14 +396,20 @@ msgstr "Öffentliches Drucken"
 msgid "Print"
 msgstr "Druck"
 
+msgid "Public print booklet"
+msgstr ""
+
+msgid "Print booklet"
+msgstr ""
+
 msgid "Attributes"
 msgstr "Informationen"
 
-msgid "None"
-msgstr "Keine"
-
 msgid "yes,no"
 msgstr "Ja, nein,"
+
+msgid "None"
+msgstr "Keine"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"
@@ -362,8 +429,20 @@ msgstr "Geographische Lage"
 msgid "All useful information"
 msgstr "Alle praktischen Informationen"
 
+msgid "Yes,No"
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
 msgid "Date"
 msgstr "Datum"
 
 msgid "Invalid geometry value."
 msgstr "Ungültiger Geometriewert"
+
+#~ msgid "up to {end}"
+#~ msgstr "bis {end}"

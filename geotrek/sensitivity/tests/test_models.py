@@ -78,3 +78,8 @@ class SensitiveAreaModelTest(TestCase):
                  "700100 6600000, 700000 6600000))")
         trek = TrekFactory.create()
         self.assertEqual(trek.published_sensitive_areas.count(), 2)
+
+    def test_geom_buffered_trigger(self):
+        """ Geom buffered could be created and updated in instance after creation """
+        area = SensitiveAreaFactory()
+        self.assertIsNotNone(area.geom_buffered)

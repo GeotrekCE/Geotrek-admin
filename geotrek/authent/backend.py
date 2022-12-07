@@ -46,8 +46,10 @@ class DatabaseBackend(ModelBackend):
         user.is_active = True
         user.first_name = credentials.first_name
         user.last_name = credentials.last_name
+        user.is_staff = False
         if credentials.level >= 3:
             user.is_staff = True   # can access adminsite
+        user.is_superuser = False
         if credentials.level >= 6:
             user.is_superuser = True   # all permissions
         user.save()

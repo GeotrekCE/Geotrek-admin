@@ -26,6 +26,7 @@ from geotrek.zoning.mixins import ZoningPropertiesMixin
 from geotrek.zoning.models import District
 
 from .helpers import SuricateMessenger
+from .managers import SelectableUserManager
 
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     from geotrek.maintenance.models import Intervention
@@ -51,12 +52,6 @@ def status_default():
     if new_status_query:
         return new_status_query.get().pk
     return None
-
-
-class SelectableUserManager(models.Manager):
-
-    def get_queryset(self):
-        return super().get_queryset().filter(userprofile__isnull=False)
 
 
 class SelectableUser(User):
@@ -195,17 +190,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         ordering = ["-date_insert"]
 
     def __str__(self):
-        """
-        Also called 'tag' in views/serializers
-        """
         if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) and self.eid:
             return f"{_('Report')} {self.eid}"
         else:
             return f"{_('Report')} {self.pk}"
-
-    @property
-    def tag_verbose_name(self):
-        return _("Tag")
 
     @classmethod
     def get_suricate_messenger(cls):
@@ -230,7 +218,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
     @property
     def color(self):
         default = settings.MAPENTITY_CONFIG.get('MAP_STYLES', {}).get("detail", {}).get("color", "#ffff00")
-        if not(settings.ENABLE_REPORT_COLORS_PER_STATUS) or self.status is None or self.status.color is None:
+        if not (settings.ENABLE_REPORT_COLORS_PER_STATUS) or self.status is None or self.status.color is None:
             return default
         else:
             return self.status.color
@@ -302,14 +290,15 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     def try_send_email(self, subject, message):
         try:
-            success = send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [self.assigned_user.email], fail_silently=False)
+            recipient = [self.assigned_user.email] if self.assigned_user else [x[1] for x in settings.MANAGERS]
+            success = send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient, fail_silently=False)
         except Exception as e:
             success = 0  # 0 mails successfully sent
             logger.error("Email could not be sent to report's assigned user.")
             logger.exception(e)  # This sends an email to admins :)
             # Save failed email to database
             PendingEmail.objects.create(
-                recipient=self.assigned_user.email,
+                recipient=recipient[0],
                 subject=subject,
                 message=message,
                 error_message=e.args,
@@ -317,7 +306,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
             )
         finally:
             if success == 1:
-                self.attach_email(message, self.assigned_user.email)
+                self.attach_email(message, recipient[0])
 
     @property
     def formatted_external_uuid(self):
@@ -331,13 +320,16 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         return formatted_external_uuid
 
     def notify_assigned_user(self, message):
-        subject = _("Geotrek - New report to process")
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('New report to process')}"
         message = render_to_string("feedback/affectation_email.txt", {"report": self, "message": message})
         self.try_send_email(subject, message)
 
     def notify_late_report(self, status_id):
-        subject = _("Geotrek - Late report processsing")
-        message = render_to_string(f"feedback/late_{status_id}_email.txt", {"report": self})
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('Late report processing')}"
+        if settings.SURICATE_WORKFLOW_ENABLED:
+            message = render_to_string(f"feedback/late_{status_id}_email.txt", {"report": self})
+        else:
+            message = render_to_string("feedback/late_report_email.txt", {"report": self})
         self.try_send_email(subject, message)
 
     def lock_in_suricate(self):
@@ -351,14 +343,16 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
         long, lat = rep_gps
         self.get_suricate_messenger().update_gps(self.formatted_external_uuid, lat, long, force)
 
-    def update_status_in_suricate(self, status_identifier, message):
-        self.get_suricate_messenger().update_status(self.formatted_external_uuid, status_identifier, message)
+    def update_status_in_suricate(self, status_identifier, message_sentinel, message_admins=None):
+        if not message_admins:
+            message_admins = message_sentinel
+        self.get_suricate_messenger().update_status(self.formatted_external_uuid, status_identifier, message_sentinel, message_admins)
 
-    def send_notifications_on_status_change(self, old_status_identifier, message):
+    def send_notifications_on_status_change(self, old_status_identifier, message_sentinel, message_admins):
         if old_status_identifier in NOTIFY_SURICATE_AND_SENTINEL and (self.status.identifier in NOTIFY_SURICATE_AND_SENTINEL[old_status_identifier]):
-            self.update_status_in_suricate(self.status.identifier, message)
-            if message:
-                self.get_suricate_messenger().message_sentinel(self.formatted_external_uuid, message)
+            self.update_status_in_suricate(self.status.identifier, message_sentinel, message_admins)
+            if message_sentinel:
+                self.get_suricate_messenger().message_sentinel(self.formatted_external_uuid, message_sentinel)
 
     def save(self, *args, **kwargs):
         if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
@@ -391,7 +385,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin
 
     @property
     def eid_verbose_name(self):
-        return _("Label")
+        return _("Tag") if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else _("Label")
 
     def distance(self, to_cls):
         """Distance to associate this report to another class"""
@@ -420,7 +414,7 @@ if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     Report.add_property('interventions', lambda self: Report.report_interventions(self), _("Interventions"))
 
 
-class ReportActivity(models.Model):
+class ReportActivity(TimeStampedModelMixin, models.Model):
     """Activity involved in report"""
 
     label = models.CharField(verbose_name=_("Activity"), max_length=128)
@@ -437,7 +431,7 @@ class ReportActivity(models.Model):
         return self.label
 
 
-class ReportCategory(models.Model):
+class ReportCategory(TimeStampedModelMixin, models.Model):
     label = models.CharField(verbose_name=_("Category"), max_length=128)
     identifier = models.PositiveIntegerField(_("Suricate id"), null=True, blank=True)
 
@@ -450,7 +444,7 @@ class ReportCategory(models.Model):
         return self.label
 
 
-class ReportStatus(models.Model):
+class ReportStatus(TimeStampedModelMixin, models.Model):
     label = models.CharField(verbose_name=_("Status"), max_length=128)
     identifier = models.CharField(
         null=True,
@@ -460,6 +454,10 @@ class ReportStatus(models.Model):
         verbose_name=_("Identifiant"),
     )
     color = ColorField(verbose_name=_("Color"), default='#444444')
+    display_in_legend = models.BooleanField(verbose_name=_("Display in legend"), default=True,
+                                            help_text=_("Whether or not this status should be displayed in legend"))
+    timer_days = models.IntegerField(verbose_name=_("Timer days"), default=0,
+                                     help_text=_("How many days to wait before sending an email alert to the assigned user for a report that has this status and enabled timers. 0 days disables the alerts"))
 
     class Meta:
         verbose_name = _("Status")
@@ -469,7 +467,7 @@ class ReportStatus(models.Model):
         return self.label
 
 
-class ReportProblemMagnitude(models.Model):
+class ReportProblemMagnitude(TimeStampedModelMixin, models.Model):
     """Report problem magnitude"""
 
     label = models.CharField(verbose_name=_("Problem magnitude"), max_length=128)
@@ -520,30 +518,32 @@ class TimerEvent(models.Model):
     notification_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        if self.report.uses_timers:
+        days_nb = self.step.timer_days
+        if self.report.uses_timers and days_nb > 0:
             if not self.pk:
-                days_nb = settings.SURICATE_WORKFLOW_SETTINGS.get(f"TIMER_FOR_{self.step.identifier.upper()}_REPORTS_IN_DAYS", 30)
                 self.deadline = self.date_event + timedelta(days=days_nb)
             super().save(*args, **kwargs)
-        # Don't save if report doesn't use timers
+        # Don't save if report doesn't use timers or timers are set to 0 days for this status
 
     def is_linked_report_late(self):
         # Deadline is over and report status still hasn't changed
         return (timezone.now() > self.deadline) and (self.report.status.identifier == self.step.identifier)
 
     def notify_if_needed(self):
-        if not(self.notification_sent) and self.is_linked_report_late():
+        if not (self.notification_sent) and self.is_linked_report_late():
             self.report.notify_late_report(self.step.identifier)
-            late_status = ReportStatus.objects.get(identifier=STATUS_WHEN_REPORT_IS_LATE[self.step.identifier])
-            self.report.status = late_status
-            self.report.save()
+            if settings.SURICATE_WORKFLOW_ENABLED:
+                late_status = ReportStatus.objects.get(identifier=STATUS_WHEN_REPORT_IS_LATE[self.step.identifier])
+                self.report.status = late_status
+                self.report.save()
             self.notification_sent = True
             self.save()
 
     def is_obsolete(self):
         obsolete_notified = (timezone.now() > self.deadline) and self.notification_sent  # Notification sent by timer
         obsolete_unused = self.report.status.identifier != self.step.identifier  # Report status changed, therefore it was dealt with in time
-        return obsolete_notified or obsolete_unused
+        timer_disabled = not self.report.uses_timers
+        return obsolete_notified or obsolete_unused or timer_disabled
 
 
 class PendingEmail(models.Model):
@@ -631,15 +631,15 @@ class WorkflowManager(models.Model):
                 self.attach_email_to_report(report, message, self.user.email)
 
     def notify_report_to_solve(self, report):
-        subject = _("Geotrek - A report must be solved")
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('A report must be solved')}"
         message = render_to_string("feedback/cloture_email.txt", {"report": report})
         self.try_send_email(subject, message, report)
 
     def notify_new_reports(self, reports):
         reports_urls = []
         for report in Report.objects.filter(pk__in=reports):
-            reports_urls.append(report.full_url)
-        subject = _("Geotrek - New reports from Suricate")
+            reports_urls.append(f"https://{report.full_url}")
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('New reports from Suricate')}"
         message = render_to_string("feedback/reports_email.txt", {"reports_urls": reports_urls})
         self.try_send_email(subject, message)
 

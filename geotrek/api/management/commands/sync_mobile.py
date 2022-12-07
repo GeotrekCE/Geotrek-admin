@@ -2,9 +2,11 @@ import argparse
 import logging
 import filecmp
 import os
+import stat
 from PIL import Image
 import re
 import shutil
+import tempfile
 from time import sleep
 from zipfile import ZipFile
 import cairosvg
@@ -36,6 +38,8 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('path')
+        parser.add_argument('--empty-tmp-folder', dest='empty_tmp_folder', action='store_true', default=False,
+                            help='Empty tmp folder')
         parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
         parser.add_argument('--portal', '-P', dest='portal', default=None, help='Filter by portal(s)')
         parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
@@ -458,10 +462,10 @@ class Command(BaseCommand):
         if os.path.exists(self.dst_root):
             tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_mobile')
             os.rename(self.dst_root, tmp_root2)
-            os.rename(self.tmp_root, self.dst_root)
             shutil.rmtree(tmp_root2)
-        else:
-            os.rename(self.tmp_root, self.dst_root)
+        os.rename(self.tmp_root, self.dst_root)
+        os.chmod(self.dst_root, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+        os.mkdir(self.tmp_root)  # Recreate otherwise python3.6 will complain it does not find the tmp dir at cleanup.
 
     def handle(self, *args, **options):
         self.successfull = True
@@ -501,18 +505,17 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
+        sync_mobile_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_mobile')
+        if options['empty_tmp_folder']:
+            for dir in os.listdir(sync_mobile_tmp_dir):
+                shutil.rmtree(os.path.join(sync_mobile_tmp_dir, dir))
+        if not os.path.exists(settings.TMP_DIR):
+            os.mkdir(settings.TMP_DIR)
+        if not os.path.exists(sync_mobile_tmp_dir):
+            os.mkdir(sync_mobile_tmp_dir)
 
-        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_mobile')
-        try:
-            os.mkdir(self.tmp_root)
-        except OSError as e:
-            if e.errno != 17:
-                raise
-            raise CommandError(
-                "The {}/ directory already exists. Please check no other sync_mobile command is already running."
-                " If not, please delete this directory.".format(self.tmp_root)
-            )
-        try:
+        with tempfile.TemporaryDirectory(dir=sync_mobile_tmp_dir) as tmp_dir:
+            self.tmp_root = tmp_dir
             self.sync()
             if self.celery_task:
                 self.celery_task.update_state(
@@ -524,10 +527,7 @@ class Command(BaseCommand):
                         'infos': "{}".format(_("Sync mobile ended"))
                     }
                 )
-        except Exception:
-            shutil.rmtree(self.tmp_root)
-            raise
-        self.rename_root()
+            self.rename_root()
 
         done_message = 'Done'
         if self.successfull:

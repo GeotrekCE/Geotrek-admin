@@ -1,0 +1,6 @@
+{% load i18n l10n %}
+{% autoescape off %}
+
+{% blocktrans %}{{obj}} has changed state to draft. {% endblocktrans %}
+
+{% endautoescape %}

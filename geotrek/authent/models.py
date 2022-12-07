@@ -1,15 +1,17 @@
 """
     Models to manage users and profiles
 """
-from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.cache import cache
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from geotrek.common.mixins.models import TimeStampedModelMixin
 from geotrek.common.utils import reify
 
 
-class Structure(models.Model):
+class Structure(TimeStampedModelMixin, models.Model):
     """
     Represents an organisational structure, to which users are related.
     """
@@ -31,7 +33,16 @@ def default_structure():
 
 
 def default_structure_pk():
-    return default_structure().pk
+    if settings.TEST:
+        # test env can create multiple default structure and keep in cache already deleted
+        return default_structure().pk
+    structure_pk = cache.get("default_structure")
+    if structure_pk:
+        return int(structure_pk)
+    else:
+        pk = default_structure().pk
+        cache.set("default_structure", str(pk))
+        return pk
 
 
 class StructureRelated(models.Model):
@@ -63,7 +74,6 @@ class StructureOrNoneRelated(models.Model):
     structure = models.ForeignKey(Structure, on_delete=models.CASCADE,
                                   verbose_name=_("Related structure"), blank=True, null=True)
 
-    objects = models.Manager()
     check_structure_in_forms = True
 
     class Meta:

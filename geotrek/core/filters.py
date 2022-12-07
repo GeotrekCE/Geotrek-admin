@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.db.models import Count, F, Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import BooleanFilter, CharFilter, FilterSet
+from django_filters import BooleanFilter, CharFilter, FilterSet, ModelMultipleChoiceFilter, ChoiceFilter
 
-from .models import Topology, Path, Trail
+from .models import Topology, Path, Trail, CertificationLabel, Network, Usage, Comfort
 
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -99,23 +99,44 @@ class TopologyFilter(RightFilter):
 class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=Path.objects.provider_choices()
+    )
+    networks = ModelMultipleChoiceFilter(queryset=Network.objects.all().select_related("structure"))
+    usages = ModelMultipleChoiceFilter(queryset=Usage.objects.all().select_related("structure"))
+    comfort = ModelMultipleChoiceFilter(queryset=Comfort.objects.all().select_related("structure"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['valid', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
+            ['valid', 'networks', 'usages', 'comfort', 'stake', 'draft', 'provider']
 
 
 class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
+    """Trail filter set"""
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
+    certification_labels = ModelMultipleChoiceFilter(
+        field_name="certifications__certification_label",
+        label=_("Certification labels"),
+        queryset=CertificationLabel.objects.all(),
+    )
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=Trail.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['name', 'departure', 'arrival', 'comments']
+            ['name', 'category', 'departure', 'arrival', 'certification_labels', 'comments', 'provider']
 
 
 class TopologyFilterTrail(TopologyFilter):

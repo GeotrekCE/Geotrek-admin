@@ -1,5 +1,7 @@
+import csv
 import json
 from datetime import datetime
+from io import StringIO
 from unittest import mock
 
 from django.conf import settings
@@ -8,6 +10,7 @@ from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.utils import translation
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from freezegun import freeze_time
@@ -16,15 +19,21 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from geotrek.authent.tests.base import AuthentFixturesMixin
-from geotrek.common.tests import CommonTest, TranslationResetMixin, GeotrekAPITestCase
+from geotrek.common.tests import (CommonTest, GeotrekAPITestCase,
+                                  TranslationResetMixin)
 from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
-from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory, ReportInterventionFactory
+from geotrek.maintenance.tests.factories import (
+    InfrastructureInterventionFactory, ReportInterventionFactory)
+
 from . import factories as feedback_factories
-from .test_suricate_sync import SURICATE_REPORT_SETTINGS, test_for_all_suricate_modes, \
-    test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
+from .test_suricate_sync import (SURICATE_REPORT_SETTINGS,
+                                 test_for_all_suricate_modes,
+                                 test_for_management_mode,
+                                 test_for_report_and_basic_modes,
+                                 test_for_workflow_mode)
 
 
 class ReportViewsetMailSend(TestCase):
@@ -76,7 +85,7 @@ class ReportSerializationOptimizeTests(TestCase):
         cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
 
         # There are 5 queries to get layer
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             response = self.client.get(reverse("feedback:report-drf-list",
                                                format="geojson"))
         self.assertEqual(len(response.json()['features']), 4)
@@ -89,7 +98,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.assertEqual(response.content, cache_content.content)
 
         # We have 1 less query because the generation of report was cached
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get(reverse("feedback:report-drf-list",
                                     format="geojson"))
 
@@ -98,7 +107,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.classified_report_4.save_no_suricate()
 
         # Cache is updated when we add a report
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.client.get(reverse("feedback:report-drf-list",
                                     format="geojson"))
 
@@ -113,7 +122,12 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         'type': 'Point',
         'coordinates': [3.0, 46.5],
     }
-    extra_column_list = ['email', 'comment', 'advice']
+    extra_column_list = ['comment', 'advice']
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        feedback_factories.WorkflowManagerFactory(user=UserFactory())
 
     def get_expected_json_attrs(self):
         return {
@@ -198,14 +212,16 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 302)
 
+    @test_for_all_suricate_modes
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
             return
         with override_settings(COLUMNS_LISTS={'feedback_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'eid', 'activity', 'email', 'comment', 'advice'])
+                             ['id', 'eid', 'activity', 'comment', 'advice'])
 
+    @test_for_all_suricate_modes
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
@@ -351,8 +367,11 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         cls.report = feedback_factories.ReportFactory(assigned_user=cls.workflow_manager_user, status=cls.classified_status)
         cls.report = feedback_factories.ReportFactory(status=cls.classified_status)
         permission = Permission.objects.get(name__contains='Can read Report')
+        permission_export = Permission.objects.get(name__contains='Can export Report')
         cls.workflow_manager_user.user_permissions.add(permission)
+        cls.workflow_manager_user.user_permissions.add(permission_export)
         cls.normal_user.user_permissions.add(permission)
+        cls.normal_user.user_permissions.add(permission_export)
         cls.intervention = ReportInterventionFactory()
         cls.unrelated_intervention = InfrastructureInterventionFactory()
 
@@ -445,3 +464,55 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
                                            format="geojson"),
                                    data={"status": self.classified_status.pk})
         self.assertEqual(len(response.json()['features']), 3)
+
+    @test_for_workflow_mode
+    def test_csv_superuser_sees_emails(self):
+        '''Test CSV job costs export does contain emails for superuser'''
+        translation.activate('fr')
+        self.client.force_login(user=self.super_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)
+
+    @test_for_workflow_mode
+    def test_csv_hidden_emails(self):
+        '''Test CSV job costs export do not contain emails for supervisor'''
+        translation.activate('fr')
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertNotIn("Courriel", column_names)
+
+    @test_for_workflow_mode
+    def test_csv_manager_sees_emails(self):
+        '''Test CSV job costs export does contain emails for manager'''
+        translation.activate('fr')
+        self.client.force_login(user=self.workflow_manager_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)
+
+    @test_for_report_and_basic_modes
+    def test_normal_csv_emails(self):
+        '''Test CSV job costs export do not contain emails for supervisor'''
+        translation.activate('fr')
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)

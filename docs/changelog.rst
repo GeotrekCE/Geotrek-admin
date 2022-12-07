@@ -2,6 +2,335 @@
 CHANGELOG
 =========
 
+2.92.3+dev (XXXX-XX-XX)
+-----------------------
+
+
+2.92.3     (2022-12-02)
+-----------------------
+
+**Improvements**
+
+- API v2:
+  - revert ``?trek filter`` by direct intersecting geometry on sensitive area endpoint.
+  - improve ``?near_xxx`` filters by direct intersecting buffered geometry on sensitive area endpoint.
+
+
+2.92.2     (2022-12-01)
+-----------------------
+
+**Bug fixes**
+
+- Fix cache management in API v2
+
+
+2.92.1     (2022-12-01)
+-----------------------
+
+**Improvements**
+
+- Show direction on lines with setting ``DIRECTION_ON_LINES_ENABLED`` in signage detail
+- Add mobile nginx configuration directly on Geotrek-admin
+
+**Bug fixes**
+
+- Fix display lines on signage with setting ``DIRECTION_ON_LINES_ENABLED``
+- Show required's style for lines in blade form
+- Fix cache management in API v2
+
+
+2.92.0     (2022-11-29)
+-----------------------
+
+**Warning**
+
+!!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
+
+**Improvements**
+
+- Cache API v2 Detail endpoints and themes list endpoint
+- Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.
+- Zoning informations are now cached until instance or zoning is updated.
+- Show more decimal for coordinates in signage sql view
+
+**New feature**
+
+- Separate application and API v2 cache, ability to purge them with command or via admin
+
+**Bug fixes**
+
+- Check geom is valid before save
+- Fix old migration script of Topology.geom (actually causes Django to falsely detect model changes not yet with a migration in NDS mode)
+- Check that the Spatial Reference Identifier (SRID) unit is in meters before launching application (was during migration)
+- Fix filter_type1 and filter_type2 for EspritParcParser when val is a list
+- Fix "'NoneType' object is not iterable" when responseData is null for EspritParcParser
+
+**Documentation**
+
+- Fix parameter name ``MAIL_MANAGERS`` in documentation
+
+
+2.91.1     (2022-11-18)
+-----------------------
+
+**Bug fixes**
+
+- Fix flatpages can't be saved
+
+2.91.0     (2022-11-17)
+-----------------------
+
+**Minor improvements**
+
+- Add paths in overlays for elements which are not topologies
+
+**Bug fixes**
+
+- Add missing file field in Imports form layout
+- Add missing help texts and validators on ``TouristicEvent`` ``intervention_duration`` and ``preparation_duration``
+- Fix flatpages can't be saved
+
+
+2.90.1 (2022-11-04)
+-----------------------
+
+**Bug fixes**
+
+- Prevent providers from APIv2 from overriding local providers when using ``GeotrekParser``
+- Add missing sources parsing to ``GeotrekParser`` (for ``Trek``, ``Touristic Content``, ``Touristic Event``)
+
+2.90.0     (2022-11-03)
+-----------------------
+
+**New features**
+
+- Add new command to reorder pathaggregations of topologies
+
+**Bug fixes**
+
+- Fix APIv2 does not return sources related to published sites
+
+
+2.89.1 (2022-10-20)
+-----------------------
+
+**Bug fixes**
+
+- Prevent migration ``0033_auto_20220929_0840`` from failing by escaping Touristic Events ``participant_number``
+- Fix signage details page with DIRECTION_ON_LINES enabled (hide "Direction" column header)
+
+2.89.0 (2022-10-20)
+-----------------------
+
+**DO NOT USE IT!**
+
+**Warning**
+
+- Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
+
+**New features**
+
+- Add fields ``preparation_duration``, ``intervention_duration``  to TouristicEvents
+- Add new setting ``DIRECTION_ON_LINES_ENABLED`` to have the ``direction`` field on lines instead of blades
+- Partially handle translated fields: when setting ``fill_empty_translated_fields`` to True,
+  all empty translation fields for all languages will be set with the parsed value
+
+**Bug fixes**
+
+- Blade list view now takes into account custom columns from ``COLUMNS_LISTS`` setting
+- Fix Suricate Workflow : do not unlock reports when resolving them
+- Fix Suricate Workflow : display clickable links in report related emails
+
+
+2.88.0 (2022-10-11)
+-----------------------
+
+**DO NOT USE IT!**
+ 
+**Warning**
+
+- Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
+
+**New features**
+
+- Add optional places to TouristicEvents, using place selector to locate TouristicEvent on form map (#3266)
+- Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable`` and ``place`` to TouristicEvents (#3237)
+- ``cancellation_reason`` selector is displayed in Event form if ``bookable`` is checked (#3237)
+- ``booking`` text box is displayed in Event form if ``bookable`` is checked (#3237)
+- Create ``Assessment`` tab in Event form to input retrospective information such as number of attendees per category (#3237)
+- Create ``TouristicEventParticipantCategory`` model to define types of attendees for Events (#3237)
+
+**Breaking changes**
+
+- Rename ``meeting_time`` to ``start_time`` for TouristicEvent. APIv2 serialisation for TouristicEvent now exposes ``start_time`` instead of ``meeting_time`` (#3237)
+- Rename ``participant_number`` to ``capacity`` for TouristicEvent. APIv2 serialisation for TouristicEvent now exposes ``capacity`` instead of ``participant_number`` (#3237)
+- These fields are still available in API v2 for retrocompatibility but should not be used by default (#3237)
+- If you have specific parsers importing into TouristicEvents, you should rename ``meeting_time`` to ``start_time`` and ``participant_number`` to ``capacity`` (#3237)
+
+**Bug fixes**
+
+- Fix TouristicEvent with no end dates are not returned in APIv2 (#3127)
+
+**Minor improvements** 
+
+- Check ``begin_date`` is before ``end_date`` in TouristicEvent forms (#3237)
+- Set ``begin_date`` not null for TouristicEvents (#3237)
+- Change order of attributes in Event forms and detail view (#3237)
+- Update Event SQL view ``v_touristicevents`` according to above changes (#3237)
+
+**Suricate Workflow**  (#2366)
+
+- Show sentinel email addresses only to workflow manager
+
+
+**New features**
+
+- Add new setting `DIRECTION_ON_LINES_ENABLED` to have the `direction` field on lines instead of blades
+
+2.87.2 (2022-09-23)
+-----------------------
+
+**New features**
+
+- Add `default_language` attribute to Parsers to specify which language to update
+
+**Minor improvements**
+
+- Ensure attachments from parsers have generated thumbnails
+
+**Bug fixes**
+
+- Fix `provider` is not used properly when parsing TouristicContents
+- Improve Aggregator translation management
+- Fix PermissionError during sync-rando on fresh install from .deb package
+
+
+2.87.1 (2022-09-20)
+-----------------------
+
+**Bug fixes**
+
+- Fix acces rights on files after synchronization
+
+
+2.87.0 (2022-09-20)
+-----------------------
+
+**New features**
+
+- Add `provider` field to Trek, POI, Service, Signage, Infrastructure, TouristicContent, TouristicEvent, InformationDesk,
+  Path, Trail, Course, Site, SensitiveArea (#3189)
+- Add parser using api v2 (InformationDesk, TouristicContent, TouristicEvent, POI, Trek, Service, Signage, Infrastructure)
+- Add aggregator parser with a conductor using json file
+
+
+**Minor improvements**
+
+- Disable debug log in debian package post installation script.
+- Improve and fix error logging, now errors and warnings are logged to var/geotrek.log and console.
+- Allow configuring email alerts for late reports (generalized from Suricate Workflow #2366)
+
+**Bug fixes**
+
+- Fix filtering on Services List does not filter
+- Fix Site creation form is initialized with parent Site
+- Fix memory leak and optimize SQL queries on zoning intersections
+- Fix error message should not be displayed on attachments from the same structure as user
+
+**Maintenance**
+
+- Upgrade dependencies. The detail for the main dependencies:
+
+  - django to 3.2.15
+  - celery[redis] to 5.1.2
+
+**Warning**
+
+- You will need to delete your cache after this release upgrade.
+
+  - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
+  - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
+
+**Suricate Workflow**  (#2366)
+
+- Do not unlock reports when resolving them
+- Improve Suricate workflow alert emails
+
+
+2.86.0 (2022-09-05)
+-----------------------
+
+**New features**
+
+- Add sync_rando / sync_mobile option `empty_tmp_folder` which will force deletion of all directories / files in tmp directory
+- Add information desk uuid (#3189)
+- Add setting ``ALERT_DRAFT`` which send mail whenever a path has been changed to draft (#2904)
+- Add file type to attachments in API v2 (#3189)
+- Add possibility to use different type of file with import form
+- Add setting MAX_CHARACTERS for rich text fields with Mapentity 8.2.1 (#2901)
+- Set map resizable with Mapentity 8.2.1 (#3162)
+- Add Category, certification label and status fields on trails (#2900 & #3152)
+
+**Minor improvements**
+
+- Remove problems of tmp_sync_rando / tmp_sync_mobile which are not removed before new sync_rando / sync_mobile
+- Change translation for Tag in Feedback module
+- Change concatenation of null value for multiples values from '*' to '_' on sql views
+- Prevent "Internal Error" on API v2 when wrong url parameter is provided
+- Add 'source', 'portal', 'labels' and 'structure' to Cirkwi trek exports (#3220, #3164)
+
+**New ci**
+
+- New common interface github actions
+
+**Bug fixes**
+
+- Set relevant max zoom level for OpenTopoMap in the default config
+- Fix fields filter for infrastructure
+
+**Maintenance**
+
+- Upgrade mapentity to 8.2.1
+
+**/!\ Regression /!\**
+
+- System permissions on files output by `sync_rando` and `sync_mobile` commands were inadvertently changed to more restricted
+  with no reading allowed by group or other. This may cause trouble if your deployment relies on those permissions.
+  The original broader permissions have been restored with `v2.87.1`.
+
+
+2.85.0     (2022-07-26)
+-----------------------
+
+**New features**
+
+- Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
+- Use permission bypass_structure on attachments and accessibility attachments (#2899)
+- Add boolean field 'display_in_legend' to Report Status model
+- Add setting ``ALERT_REVIEW`` which send mail whenever an object has been changed to review (#2903)
+- Add setting ``PAPERCLIP_MAX_BYTES_SIZE_IMAGE`` unallow usage of huge image (#2902)
+- Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH`` unallow usage of images with small width (#2902)
+- Add setting ``PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT`` unallow usage of images with small height (#2902)
+  These settings will influence the attachments downloaded in parsers
+
+**Documentation**
+
+- Add tutorial to visualize sql views in Qgis
+- Add sql views for Qgis
+
+**Bug fixes**
+
+- Fix api v2 services are published by type
+- Fix form outdoor/trekking when rating scale is used with modification of practice
+- Fix initial value of rating was not shown in trekking form (#3121)
+
+
+**Suricate Workflow**  (#2366)
+
+- Add form field to enter messages for administrators in Report Workflow Mode
+- Improve Suricate workflow alert emails
+
+
 2.84.1     (2022-06-21)
 -----------------------
 
@@ -42,7 +371,7 @@ CHANGELOG
 - This release requires PostGIS 2.5 or later.
 
   - Ubuntu bionic 18.04 users, take care, PostGIS default is 2.4. You need to upgrade your PostGIS version.
-  
+
     - See documentation https://geotrek.readthedocs.io/en/latest/install/installation.html#ubuntu-bionic-postgis-2.5-upgrade)
 
 **Warning**
@@ -72,9 +401,9 @@ CHANGELOG
 
 - Display link to attachment in admin site for attachments
 - Add license field on attachments (#3089) [thanks to Paul Florence]
-- If ``COMPLETENESS_FIELDS`` is set for a model an object is published, 
+- If ``COMPLETENESS_FIELDS`` is set for a model an object is published,
   display completeness fields if missing on page detail (#2898)
-- Avoid publication or review if ``COMPLETENESS_FIELDS`` is set for a model, 
+- Avoid publication or review if ``COMPLETENESS_FIELDS`` is set for a model,
   and ``COMPLETENESS_LEVEL`` is one of 'error_on_publication' and 'error_on_review' (#2898)
 
 **Bug fixes**

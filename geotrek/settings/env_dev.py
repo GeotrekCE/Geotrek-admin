@@ -32,9 +32,12 @@ ALLOWED_HOSTS = ['*']
 MIDDLEWARE += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
-#
-# Use some default tiles
-# ..........................
 
-LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
+
+SYNC_RANDO_OPTIONS = {
+    'url': 'http://geotrek.local:8000'  # Mandatory for dev mode. Must point to the same domain than SERVER_NAME in .env
+}
+
 LOGGING['loggers']['']['level'] = 'DEBUG'
+
+CACHES['default']['BACKEND'] = 'django.core.cache.backends.locmem.LocMemCache'

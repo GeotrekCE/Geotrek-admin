@@ -14,7 +14,7 @@ from django.utils.translation import gettext as _
 from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    TourInSoftParser)
+                                    TourInSoftParser, GeotrekParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 
@@ -47,6 +47,8 @@ class TouristicContentMixin:
                 kwargs[dst] = field.remote_field.model.objects.get(**filters)
             except field.remote_field.model.DoesNotExist:
                 return None
+        if hasattr(self.model, 'provider') and self.provider is not None:
+            kwargs['provider__exact'] = self.provider
         return kwargs
 
 
@@ -269,7 +271,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'end_date': 'ouverture.periodesOuvertures.0.dateFin',
         'duration': ('ouverture.periodesOuvertures.0.horaireOuverture',
                      'ouverture.periodesOuvertures.-1.horaireFermeture'),
-        'meeting_time': 'ouverture.periodesOuvertures.0.horaireOuverture',
+        'start_time': 'ouverture.periodesOuvertures.0.horaireOuverture',
         'contact': (
             'localisation.adresse.adresse1',
             'localisation.adresse.adresse2',
@@ -282,7 +284,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'website': 'informations.moyensCommunication',
         'organizer': 'informations.structureGestion.nom.libelleFr',
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
-        'participant_number': 'informationsFeteEtManifestation.nbParticipantsAttendu',
+        'capacity': 'informationsFeteEtManifestation.nbParticipantsAttendu',
         'practical_info': (
             'ouverture.periodeEnClair.libelleFr',
             'informationsFeteEtManifestation.nbParticipantsAttendu',
@@ -371,6 +373,13 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
             tel,
         ] if line]
         return '<br>'.join(lines)
+
+    def filter_capacity(self, src, val):
+        if val.isnumeric():
+            return int(val)
+        else:
+            self.add_warning(f"Field {src} can't populate capacity field value: '{val}' isn't numeric")
+            return None
 
     def filter_email(self, src, val):
         return self._filter_comm(val, 204, multiple=False)
@@ -541,7 +550,7 @@ class HebergementsApidaeParser(TouristicContentApidaeParser):
         return self.apply_filter('type1', src, [val])
 
 
-class EspritParcParser(AttachmentParserMixin, Parser):
+class EspritParcParser(AttachmentParserMixin, TouristicContentMixin, Parser):
     model = TouristicContent
     eid = 'eid'
     separator = None
@@ -605,7 +614,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
 
     @property
     def items(self):
-        return self.root['responseData']
+        return self.root['responseData'] or []
 
     def next_row(self):
         response = self.request_or_retry(self.url)
@@ -645,22 +654,29 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     def filter_type1(self, src, val):
         dst = []
         if val:
-            try:
-                dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=val))
-            except TouristicContentType1.DoesNotExist:
-                self.add_warning(
-                    _("Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
-                        subval=val, cat=self.obj.category.label))
+            if isinstance(val, str):
+                val = [val]
+            for subval in val:
+                try:
+                    dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=subval))
+                except TouristicContentType1.DoesNotExist:
+                    self.add_warning(
+                        _("Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                            subval=subval, cat=self.obj.category.label))
         return dst
 
     def filter_type2(self, src, val):
         dst = []
         if val:
-            try:
-                dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=val))
-            except TouristicContentType2.DoesNotExist:
-                self.add_warning(_("Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
-                    subval=val, cat=self.obj.category.label))
+            if isinstance(val, str):
+                val = [val]
+            for subval in val:
+                try:
+                    dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=subval))
+                except TouristicContentType2.DoesNotExist:
+                    self.add_warning(
+                        _("Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                            subval=subval, cat=self.obj.category.label))
         return dst
 
 
@@ -888,3 +904,166 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
 
 class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
     version_tourinsoft = 3
+
+
+class GeotrekTouristicContentParser(GeotrekParser):
+    """Geotrek parser for TouristicContent"""
+
+    url = None
+    model = TouristicContent
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry",
+    }
+
+    m2m_replace_fields = {
+        "type1": "types",
+        "type2": "types"
+    }
+
+    url_categories = {
+        "category": "touristiccontent_category",
+        "themes": "theme",
+        "source": "source"
+    }
+
+    categories_keys_api_v2 = {
+        'category': 'label',
+        'themes': 'label',
+        'source': 'name'
+    }
+
+    natural_keys = {
+        'category': 'label',
+        'themes': 'label',
+        'type1': 'label',
+        'type2': 'label',
+        'source': 'name'
+    }
+
+    field_options = {
+        'type1': {'fk': 'category'},
+        'type2': {'fk': 'category'},
+        'geom': {'required': True},
+    }
+
+    def __init__(self, *args, **kwargs):
+        """Initialize parser with mapping for type1 and type2"""
+        super().__init__(*args, **kwargs)
+        response = self.request_or_retry(f"{self.url}/api/v2/touristiccontent_category/", )
+        self.field_options.setdefault("type1", {})
+        self.field_options.setdefault("type2", {})
+        self.field_options["type1"]["mapping"] = {}
+        self.field_options["type2"]["mapping"] = {}
+        for r in response.json()['results']:
+            for type_category in r['types']:
+                values = type_category["values"]
+                id_category = type_category["id"]
+                if self.create_categories:
+                    self.field_options['type1']["create"] = True
+                    self.field_options['type2']["create"] = True
+                for value in values:
+                    if id_category % 10 == 1:
+                        self.field_options['type1']["mapping"][value['id']] = self.replace_mapping(
+                            value['label'][settings.MODELTRANSLATION_DEFAULT_LANGUAGE], 'type1'
+                        )
+                    if id_category % 10 == 2:
+                        self.field_options['type2']["mapping"][value['id']] = self.replace_mapping(
+                            value['label'][settings.MODELTRANSLATION_DEFAULT_LANGUAGE], 'type2'
+                        )
+        self.next_url = f"{self.url}/api/v2/touristiccontent"
+
+    def filter_type1(self, src, val):
+        type1_result = []
+        for key, value in val.items():
+            if int(key) % 10 == 1:
+                type1_result.extend(value)
+        return self.apply_filter('type1', src, type1_result)
+
+    def filter_type2(self, src, val):
+        type2_result = []
+        for key, value in val.items():
+            if int(key) % 10 == 2:
+                type2_result.extend(value)
+        return self.apply_filter('type2', src, type2_result)
+
+
+class GeotrekTouristicEventParser(GeotrekParser):
+    """Geotrek parser for TouristicEvent"""
+
+    url = None
+    model = TouristicEvent
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry"
+    }
+    url_categories = {
+        "type": "touristicevent_type",
+        "source": "source"
+    }
+    categories_keys_api_v2 = {
+        'type': 'type',
+        'source': 'name'
+    }
+    natural_keys = {
+        'type': 'type',
+        'source': 'name'
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.next_url = f"{self.url}/api/v2/touristicevent"
+
+
+class GeotrekInformationDeskParser(GeotrekParser):
+    """Geotrek parser for InformationDesk"""
+    url = None
+    model = InformationDesk
+    constant_fields = {}
+    replace_fields = {
+        "eid": "uuid",
+        "geom": ["latitude", "longitude"],
+        "photo": "photo_url"
+    }
+    url_categories = {}
+    categories_keys_api_v2 = {}
+    natural_keys = {
+        'type': 'label',
+    }
+
+    field_options = {
+        "type": {"create": True},
+        'geom': {'required': True},
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.next_url = f"{self.url}/api/v2/informationdesk"
+
+    def filter_geom(self, src, val):
+        lat, lng = val
+        return Point(lng, lat, srid=settings.API_SRID).transform(settings.SRID, clone=True)
+
+    def filter_type(self, src, val):
+        return self.apply_filter('type', src, val["label"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE])
+
+    def filter_photo(self, src, val):
+        if not val:
+            return None
+        content = self.download_attachment(val)
+        if content is None:
+            return None
+        f = ContentFile(content)
+        basename, ext = os.path.splitext(os.path.basename(val))
+        name = '%s%s' % (basename[:128], ext)
+        file = UploadedFile(f, name=name)
+        return file

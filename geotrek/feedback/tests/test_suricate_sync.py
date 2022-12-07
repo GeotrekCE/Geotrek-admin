@@ -39,8 +39,6 @@ SURICATE_MANAGEMENT_SETTINGS = {
 }
 
 SURICATE_WORKFLOW_SETTINGS = {
-    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 6,
-    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 7,
     "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département"
 }
 
@@ -129,6 +127,7 @@ class SuricateTests(TestCase):
         UserProfileFactory.create(user=cls.user)
         cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
         cls.admin = SuperUserFactory(username="Admin", password="drowssap")
+        cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé", timer_days=7)
 
     def setUp(self):
         self.client.force_login(self.admin)
@@ -143,7 +142,7 @@ class SuricateAPITests(SuricateTests):
         """Test GET requests on Statuses endpoint creates statuses objects"""
         self.build_get_request_patch(mocked_get)
         call_command("sync_suricate", statuses=True)
-        self.assertEqual(ReportStatus.objects.count(), 5)
+        self.assertEqual(ReportStatus.objects.count(), 6)
         mocked_logger.info.assert_called_with("New status - id: classified, label: Classé sans suite")
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
@@ -163,7 +162,7 @@ class SuricateAPITests(SuricateTests):
         self.build_get_request_patch(mocked)
         call_command("sync_suricate", activities=True, statuses=True)
         self.assertEqual(ReportActivity.objects.count(), 32)
-        self.assertEqual(ReportStatus.objects.count(), 5)
+        self.assertEqual(ReportStatus.objects.count(), 6)
 
     @override_settings(SURICATE_MANAGEMENT_ENABLED=False)
     @mock.patch("geotrek.feedback.management.commands.sync_suricate.logger")
@@ -187,9 +186,9 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 6)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, "Geotrek - New reports from Suricate")
+        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
         self.assertIn("New reports have been imported from Suricate", sent_mail.body)
-        self.assertIn("Please consult your reports in Geotrek-Admin", sent_mail.body)
+        self.assertIn("Please consult your reports in Geotrek", sent_mail.body)
         for report in Report.objects.all():
             self.assertIn(report.full_url, sent_mail.body)
         r = Report.objects.all()[0]
@@ -222,6 +221,25 @@ class SuricateAPITests(SuricateTests):
         r.refresh_from_db()
         self.assertEquals(r.comment, "Lames cassées")
 
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.logger")
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_alerts_does_not_override_internal_status(self, mocked_get, mocked_logger):
+        # Test sync last report does not override internal status
+        self.build_get_request_patch(mocked_get, cause_JPG_error=True)
+        call_command("sync_suricate", verbosity=2)
+        r = Report.objects.get(external_uuid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
+        r.status = self.programmed_status
+        r.comment = "I was changed"
+        r.save()
+        r.refresh_from_db()
+        self.assertEquals(r.status.identifier, "programmed")
+        call_command("sync_suricate", report=0, verbosity=2)
+        r.refresh_from_db()
+        # Comment change was overriden, status change was not
+        self.assertEquals(r.status.identifier, "programmed")
+        self.assertEquals(r.comment, "Lames cassées")
+
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.ContentFile.__init__")
     @mock.patch("geotrek.feedback.parsers.logger")
@@ -247,7 +265,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 6)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, "Geotrek - New reports from Suricate")
+        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
         # Test update report does not send email and saves
         r = Report.objects.all()[0]
         r.category = None
@@ -483,8 +501,7 @@ class SuricateWorkflowTests(SuricateTests):
         SuricateTests.setUpTestData()
         cls.filed_status = ReportStatusFactory(identifier='filed', label="Déposé")
         cls.classified_status = ReportStatusFactory(identifier='classified', label="Classé sans suite")
-        cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé")
-        cls.waiting_status = ReportStatusFactory(identifier='waiting', label="En cours")
+        cls.waiting_status = ReportStatusFactory(identifier='waiting', label="En cours", timer_days=6)
         cls.rejected_status = ReportStatusFactory(identifier='rejected', label="Rejeté")
         cls.late_intervention_status = ReportStatusFactory(identifier='late_intervention', label="Intervention en retard")
         cls.late_resolution_status = ReportStatusFactory(identifier='late_resolution', label="Resolution en retard")
@@ -614,13 +631,14 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
                 'geom': self.report_filed_1.geom,
                 'email': self.report_filed_1.email,
                 'status': self.classified_status.pk,
-                'message_sentinel': "Problème déjà réglé"
+                'message_sentinel': "Problème déjà réglé",
+                'message_administrators': "Je ne fais rien"
             }
         )
         self.assertTrue(form.is_valid)
         form.save()
         mocked_mail_sentinel.assert_called_once_with(self.report_filed_1.formatted_external_uuid, "Problème déjà réglé")
-        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.formatted_external_uuid, self.classified_status.identifier, "Problème déjà réglé")
+        mocked_notify_suricate_status.assert_called_once_with(self.report_filed_1.formatted_external_uuid, self.classified_status.identifier, "Problème déjà réglé", "Je ne fais rien")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=False)
     @mock.patch("geotrek.feedback.helpers.requests.get")

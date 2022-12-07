@@ -29,6 +29,8 @@ The following settings are related to sensitive areas:
 
     # Buffer around treks to intersects sensitive areas
     SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
+    # Take care if you change this value after adding data. You should update buffered geometry in sql.
+    ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
 
 
 Import from https://biodiv-sports.fr

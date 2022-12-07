@@ -1,0 +1,133 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "accessibility": {
+        "fr": "",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "description": {
+        "fr": "Informations diverses",
+        "en": "Various information",
+        "es": "Informaciones diversas",
+        "it": null
+      },
+      "email": "",
+      "label_accessibility": null,
+      "latitude": 42.86365970075902,
+      "longitude": 1.2016725540161124,
+      "municipality": "Seix",
+      "name": {
+        "fr": "Office de Tourisme de Seix",
+        "en": "Seix Tourism Office",
+        "es": "Officio de Turismo de Seix",
+        "it": null
+      },
+      "phone": "09 64 46 55 12",
+      "photo_url": "https://foo.fr/media/upload/office-seix.jpg.150x150_q85.jpg",
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02016",
+      "postal_code": "09140",
+      "street": "33 Place Champ de Mars",
+      "type": {
+        "id": 1,
+        "label": {
+          "fr": "Maisons du parc",
+          "en": null,
+          "es": null,
+          "it": null
+        },
+        "pictogram": "https://foo.fr/media/upload/desktype-info.svg"
+      },
+      "website": "https://www.google.fr/maps/place/Office+Tourisme/@42.8772264,1.207959,15z/data=!4m2!3m1!1s0x12a8caa4377c469d:0xf8f00e9b653bb18f"
+    },
+    {
+      "id": 2,
+      "accessibility": {
+        "fr": "lkkll",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "description": {
+        "fr": "Test description avec\r\n<ul>\r\n<li><strong>des &eacute;l&eacute;ments HTML<br /></strong></li>\r\n<li>et des listes &agrave;</li>\r\n<li><em>puces</em></li>\r\n</ul>",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "email": null,
+      "label_accessibility": null,
+      "latitude": 43.58039085560773,
+      "longitude": 1.4282226562500002,
+      "municipality": "Toulouse",
+      "name": {
+        "fr": "Foo",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "phone": null,
+      "photo_url": "https://foo.fr/media/upload/office-seix.jpg.150x150_q85.jpg",
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02014",
+      "postal_code": "31300",
+      "street": "52 rue Jacques Babinet",
+      "type": {
+        "id": 2,
+        "label": {
+          "fr": "Relais d'information",
+          "en": null,
+          "es": null,
+          "it": null
+        },
+        "pictogram": "https://foo.fr/media/upload/desktype-info.svg"
+      },
+      "website": null
+    },
+    {
+      "id": 3,
+      "accessibility": {
+        "fr": "",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "description": {
+        "fr": "",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "email": null,
+      "label_accessibility": null,
+      "latitude": null,
+      "longitude": null,
+      "municipality": null,
+      "name": {
+        "fr": "Test fso sans carte",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "phone": null,
+      "photo_url": "",
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02015",
+      "postal_code": null,
+      "street": null,
+      "type": {
+        "id": 3,
+        "label": {
+          "fr": "Office du tourisme",
+          "en": null,
+          "es": null,
+          "it": null
+        },
+        "pictogram": "https://foo.fr/media/upload/desktype-info.svg"
+      },
+      "website": null
+    }
+  ]
+}

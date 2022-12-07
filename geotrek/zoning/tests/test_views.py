@@ -64,7 +64,8 @@ class RestrictedAreasSerializationTest(TestCase):
     def test_restricted_areas_by_type_serizalization(self):
         """ Test restricted areas are sorted by type and ordered alphabetically within types
         """
-        serizalized = restricted_areas_by_type()
+        with self.assertNumQueries(2):
+            serizalized = restricted_areas_by_type()
         correct_data = json.dumps({
             f"{self.type_1.pk}": {"areas": [{f"{self.area_1.pk}": "ABC - aaa"}, {f"{self.area_2.pk}": "ABC - aab"}]},
             f"{self.type_2.pk}": {"areas": [{f"{self.area_3.pk}": "AAC - aaa"}, {f"{self.area_4.pk}": "AAC - aab"}]},

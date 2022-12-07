@@ -18,6 +18,9 @@ function update_cotations(category) {
     for (var scale_id in scales) {
         // Hide form field if scale not in list for this category
         $('#div_id_rating_scale_' + scale_id).prop('hidden', !(scale_id in category['scales']));
+        if (!(scale_id in category['scales'])) {
+            $('#id_rating_scale_' + scale_id).val('').trigger("chosen:updated");
+        }
         $('#id_rating_scale_' + scale_id + '_chosen').width('100%');
     }
 }

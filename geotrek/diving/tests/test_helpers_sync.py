@@ -1,6 +1,5 @@
 import os
 from unittest.mock import patch
-import shutil
 from io import StringIO
 
 from django.test import TestCase
@@ -61,7 +60,7 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand()
         synchro = SyncRando(command)
         synchro.sync_detail('fr', self.dive)
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'dives',
                                                     str(self.dive.pk), '%s.pdf' % self.dive.slug)))
 
     @patch('sys.stdout', new_callable=StringIO)
@@ -69,13 +68,13 @@ class SyncRandoTestCase(TestCase):
         command = FakeSyncCommand(portal=self.portal_b.name, source=[self.source_b.name])
         synchro = SyncRando(command)
         synchro.sync_detail('fr', self.dive)
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'dives',
                                                     str(self.dive.pk), '%s.pdf' % self.dive.slug)))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'dives',
                                                     str(self.dive.pk), 'pois.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'dives',
                                                     str(self.dive.pk), 'touristiccontents.geojson')))
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'fr', 'dives',
                                                     str(self.dive.pk), 'touristicevents.geojson')))
 
     @patch('sys.stdout', new_callable=StringIO)
@@ -87,7 +86,7 @@ class SyncRandoTestCase(TestCase):
         with patch('geotrek.diving.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync) as mock_dive:
             synchro.sync('en')
         self.assertEqual(len(mock_dive.call_args_list), 3)
-        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'dives.geojson')))
+        self.assertTrue(os.path.exists(os.path.join(settings.VAR_DIR, command.tmp_root, 'api', 'en', 'dives.geojson')))
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_language_portal_source(self, stdout, mock_prepare):
@@ -99,7 +98,3 @@ class SyncRandoTestCase(TestCase):
             synchro.sync('en')
         self.assertEqual(len(mock_dive.call_args_list), 1)
         mock_dive.assert_called_with('en', self.dive_portal_source)
-
-    def tearDown(self):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

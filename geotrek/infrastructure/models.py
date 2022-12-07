@@ -9,9 +9,9 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.utils import classproperty
-from geotrek.common.mixins.models import BasePublishableMixin, OptionalPictogramMixin
-from geotrek.common.mixins.managers import NoDeleteManager
+from geotrek.common.mixins.models import BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin
 from geotrek.core.models import Topology, Path
+from geotrek.infrastructure.managers import InfrastructureGISManager
 
 INFRASTRUCTURE_TYPES = Choices(
     ('BUILDING', 'A', _("Building")),
@@ -19,7 +19,7 @@ INFRASTRUCTURE_TYPES = Choices(
 )
 
 
-class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
+class InfrastructureType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(max_length=128)
     type = models.CharField(max_length=1, choices=INFRASTRUCTURE_TYPES)
@@ -41,7 +41,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
 
 
-class InfrastructureCondition(StructureOrNoneRelated):
+class InfrastructureCondition(TimeStampedModelMixin, StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Name"), max_length=250)
 
     class Meta:
@@ -55,7 +55,7 @@ class InfrastructureCondition(StructureOrNoneRelated):
         return self.label
 
 
-class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
+class InfrastructureMaintenanceDifficultyLevel(TimeStampedModelMixin, StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), max_length=250)
 
     class Meta:
@@ -70,7 +70,7 @@ class InfrastructureMaintenanceDifficultyLevel(StructureOrNoneRelated):
         return self.label
 
 
-class InfrastructureUsageDifficultyLevel(StructureOrNoneRelated):
+class InfrastructureUsageDifficultyLevel(TimeStampedModelMixin, StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Label"), unique=True, max_length=250)
 
     class Meta:
@@ -99,6 +99,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                   on_delete=models.SET_NULL)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     class Meta:
         abstract = True
@@ -138,15 +139,6 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
         return settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN
-
-
-class InfrastructureGISManager(NoDeleteManager):
-    """ Override default typology mixin manager"""
-    def implantation_year_choices(self):
-        all_years = self.get_queryset().existing().filter(implantation_year__isnull=False) \
-            .order_by('-implantation_year').distinct('implantation_year') \
-            .values_list('implantation_year', 'implantation_year')
-        return all_years
 
 
 class Infrastructure(MapEntityMixin, BaseInfrastructure):

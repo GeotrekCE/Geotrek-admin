@@ -1,0 +1,37 @@
+{
+  "count": 5,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 3,
+      "label": "Information",
+      "pictogram": null,
+      "structure": null
+    },
+    {
+      "id": 4,
+      "label": "Limite Cœur",
+      "pictogram": null,
+      "structure": null
+    },
+    {
+      "id": 5,
+      "label": "Porte d'entrée du Parc",
+      "pictogram": "https://foo.fr/media/upload/Lieux_culturel.svg",
+      "structure": null
+    },
+    {
+      "id": 6,
+      "label": "Réglementaire",
+      "pictogram": null,
+      "structure": null
+    },
+    {
+      "id": 9,
+      "label": "Temporaire",
+      "pictogram": null,
+      "structure": null
+    }
+  ]
+}

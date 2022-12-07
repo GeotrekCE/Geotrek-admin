@@ -59,10 +59,7 @@ class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
     serializer_class = PhysicalEdgeSerializer
     geojson_serializer_class = PhysicalEdgeGeojsonSerializer
     filterset_class = PhysicalEdgeFilterSet
-
-    def get_columns(self):
-        return PhysicalEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('physicaledge_view',
-                                                                               PhysicalEdgeList.default_extra_columns)
+    mapentity_list_class = PhysicalEdgeList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related('physical_type')
@@ -117,10 +114,7 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
     serializer_class = LandEdgeSerializer
     geojson_serializer_class = LandEdgeGeojsonSerializer
     filterset_class = LandEdgeFilterSet
-
-    def get_columns(self):
-        return LandEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('landedge_view',
-                                                                           LandEdgeList.default_extra_columns)
+    mapentity_list_class = LandEdgeList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related('land_type')
@@ -172,10 +166,7 @@ class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
     serializer_class = CompetenceEdgeSerializer
     geojson_serializer_class = CompetenceEdgeGeojsonSerializer
     filterset_class = CompetenceEdgeFilterSet
-
-    def get_columns(self):
-        return CompetenceEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('competenceedge_view',
-                                                                                 CompetenceEdgeList.default_extra_columns)
+    mapentity_list_class = CompetenceEdgeList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related('organization')
@@ -226,10 +217,7 @@ class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
     serializer_class = WorkManagementEdgeSerializer
     geojson_serializer_class = WorkManagementEdgeGeojsonSerializer
     filterset_class = WorkManagementEdgeFilterSet
-
-    def get_columns(self):
-        return WorkManagementEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('workmanagementedge_view',
-                                                                                     WorkManagementEdgeList.default_extra_columns)
+    mapentity_list_class = WorkManagementEdgeList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related('organization')
@@ -280,10 +268,7 @@ class SignageManagementEdgeViewSet(GeotrekMapentityViewSet):
     serializer_class = SignageManagementEdgeSerializer
     geojson_serializer_class = SignageManagementEdgeGeojsonSerializer
     filterset_class = SignageManagementEdgeFilterSet
-
-    def get_columns(self):
-        return SignageManagementEdgeList.mandatory_columns + settings.COLUMNS_LISTS.get('competenceedge_view',
-                                                                                        SignageManagementEdgeList.default_extra_columns)
+    mapentity_list_class = SignageManagementEdgeList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related('organization')

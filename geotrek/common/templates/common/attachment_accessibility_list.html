@@ -5,76 +5,85 @@
 </div>
 <div class="file-attachment-accessibility file-attachment-accessibility-detail">
     <h3>{% trans "Photos accessibility" %}</h3>
-
-    {% if perms|read_attachment %}
-    {% if object.attachments_accessibility.exists %}
-    <table class="table">
-        <thead>
-        <th>{% trans "Filename" %}</th>
-        <th>{% trans "Accessibility type" %}</th>
-        <th>{% trans "Legend" %}</th>
-        <th>{% trans "Author" %}</th>
-        <th>{% trans "Insertion date" %}</th>
-        <th>{% trans "Update date" %}</th>
-        <th>{% trans "Actions" %}</th>
-        </thead>
-        <tbody>
-        {% for att in object.attachments_accessibility.all %}
-        <tr data-id="{{ att.pk }}"
-            data-title="{{ att.filename }}">
-            <td>
-                {% if att.attachment_accessibility_file %}
-                <a href="{{ att.attachment_accessibility_file.url }}" target="_blank">
-                    <img class="img-polaroid" src="{{ att.attachment_accessibility_file|thumbnail_url:'thumbnail' }}"
-                         alt="{{ att.title|default:att.filename }}" title="{{ att.title|default:att.filename }}">
-                </a>
-                {% endif %}
-            </td>
-            <td>{{ att.info_accessibility_display }}</td>
-            <td>{{ att.legend }}</td>
-            <td>{{ att.author }}</td>
-            <td>{{ att.date_insert }}</td>
-            <td>{{ att.date_update }}</td>
-            {% block extra_column_data %}{% endblock %}
-            <td>
-
-                {% if perms|change_attachment %}
-                &nbsp;
-                <a href="#"
-                   class="update-accessibility-action"
-                   data-update-url="{% url 'update_attachment_accessibility' att.pk %}">
-                    {% trans "Update" %}
-                </a>
-                {% endif %}
-
-                {% if perms|delete_attachment %}
-                &nbsp;
-                <a href="#"
-                   class="delete-accessibility-action"
-                   data-delete-url="{% url 'delete_attachment_accessibility' att.pk %}">
-                    {% trans "Delete" %}
-                </a>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    {% trans "No file attached for accessibility" %}
+    {% if not user.profile.structure == object.structure and not perms.authent.can_bypass_structure %}
+        <div class="alert alert-warning">
+            {% trans "You are not allowed to modify attachments on this object, this object is not from the same structure." %}
+        </div>
     {% endif %}
+    {% if perms|read_attachment %}
 
+        {% if object.attachments_accessibility.exists %}
+            <table class="table">
+                <thead>
+                <th>{% trans "Filename" %}</th>
+                <th>{% trans "Accessibility type" %}</th>
+                <th>{% trans "Legend" %}</th>
+                <th>{% trans "Author" %}</th>
+                <th>{% trans "Insertion date" %}</th>
+                <th>{% trans "Update date" %}</th>
+                {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
+                    <th>{% trans "Actions" %}</th>
+                {% endif %}
+                </thead>
+                <tbody>
+                {% for att in object.attachments_accessibility.all %}
+
+                <tr data-id="{{ att.pk }}"
+                    data-title="{{ att.filename }}">
+                    <td>
+                        {% if att.attachment_accessibility_file %}
+                        <a href="{{ att.attachment_accessibility_file.url }}" target="_blank">
+                            <img class="img-polaroid" src="{{ att.attachment_accessibility_file|thumbnail_url:'thumbnail' }}"
+                                 alt="{{ att.title|default:att.filename }}" title="{{ att.title|default:att.filename }}">
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td>{{ att.info_accessibility_display }}</td>
+                    <td>{{ att.legend }}</td>
+                    <td>{{ att.author }}</td>
+                    <td>{{ att.date_insert }}</td>
+                    <td>{{ att.date_update }}</td>
+                    {% block extra_column_data %}{% endblock %}
+                    {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
+                        <td>
+                            {% if perms|change_attachment %}
+                                <a href="#"
+                                   class="update-accessibility-action"
+                                   data-update-url="{% url 'update_attachment_accessibility' att.pk %}">
+                                    {% trans "Update" %}
+                                </a>
+                            {% endif %}
+
+                            {% if perms|delete_attachment %}
+                                &nbsp;
+                                <a href="#"
+                                   class="delete-accessibility-action"
+                                   data-delete-url="{% url 'delete_attachment_accessibility' att.pk %}">
+                                    {% trans "Delete" %}
+                                </a>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            {% trans "No file attached for accessibility" %}
+        {% endif %}
     {% else %}
-    {% trans "You are not allowed to see attachments." %}
+        {% trans "You are not allowed to see attachments." %}
     {% endif %}
 </div>
 
 {% if perms|add_attachment %}
-<div class="file-attachment-accessibility-form">
-    <div class="create">
-        {% crispy accessibility_form %}
-    </div>
-    <div class="update"></div>
-</div>
+    {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
+        <div class="file-attachment-accessibility-form">
+            <div class="create">
+                {% crispy accessibility_form %}
+            </div>
+            <div class="update"></div>
+        </div>
+    {% endif %}
 {% endif %}
 
 <div class="confirm-modal-accessibility"

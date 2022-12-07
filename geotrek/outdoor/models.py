@@ -20,6 +20,7 @@ from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.maintenance.models import Intervention
+from geotrek.outdoor.managers import SiteManager, CourseOrderedChildManager, CourseManager
 from geotrek.outdoor.mixins import ExcludedPOIsMixin
 from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
@@ -36,7 +37,7 @@ class AltimetryMixin(BaseAltimetryMixin):
         abstract = True
 
 
-class Sector(models.Model):
+class Sector(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
@@ -48,7 +49,7 @@ class Sector(models.Model):
         return self.name
 
 
-class Practice(OptionalPictogramMixin, models.Model):
+class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.PROTECT,
                                verbose_name=_("Sector"), null=True, blank=True)
@@ -82,7 +83,7 @@ class Rating(RatingMixin):
         ordering = ('order', 'name')
 
 
-class SiteType(models.Model):
+class SiteType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)
@@ -96,7 +97,7 @@ class SiteType(models.Model):
         return self.name
 
 
-class CourseType(models.Model):
+class CourseType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)
@@ -171,10 +172,13 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
+
+    objects = SiteManager()
 
     class Meta:
         verbose_name = _("Outdoor site")
@@ -315,14 +319,6 @@ Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, 
 Site.add_property('interventions', lambda self: Site.site_interventions(self), _("Interventions"))
 
 
-class CourseOrderedChildManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        # Select treks foreign keys by default
-        return super(CourseOrderedChildManager, self).get_queryset().select_related('parent', 'child')
-
-
 class OrderedCourseChild(models.Model):
     parent = models.ForeignKey('Course', related_name='course_children', on_delete=models.CASCADE)
     child = models.ForeignKey('Course', related_name='course_parents', on_delete=models.CASCADE)
@@ -355,6 +351,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True, verbose_name=_("Ratings"))
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
@@ -364,6 +361,8 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
+
+    objects = CourseManager()
 
     class Meta:
         verbose_name = _("Outdoor course")

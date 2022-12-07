@@ -85,7 +85,11 @@ class SuricateParser(SuricateGestionRequestManager):
         rep_status = ReportStatus.objects.get(identifier=report["statut"])
 
         # Keep or discard
-        should_import = rep_point.within(self.bbox) and rep_status.identifier != 'created' and bool(report["locked"])
+        should_import = rep_point.within(self.bbox) and rep_status.identifier != 'created'
+        should_update_status = True
+        if settings.SURICATE_WORKFLOW_ENABLED:
+            should_import = should_import and bool(report["locked"])  # In Workflow mode, only import locked reports. In Management mode, import locked or unlocked reports.
+            should_update_status = rep_status.identifier != 'waiting' or report["uid"] not in self.existing_uuids  # Do not override internal statuses with Waiting status
 
         if should_import:
             # Parse dates
@@ -121,14 +125,18 @@ class SuricateParser(SuricateGestionRequestManager):
                 "activity": rep_activity,
                 "category": rep_category,
                 "problem_magnitude": rep_magnitude,
-                "status": rep_status,
                 "created_in_suricate": rep_creation,
                 "last_updated_in_suricate": rep_updated,
                 "eid": str(report["shortkeylink"])
             }
+
+            if should_update_status:
+                fields["status"] = rep_status
+
             report_obj, created = Report.objects.update_or_create(
                 external_uuid=report["uid"], defaults=fields
             )
+
             if created:
                 logger.info(
                     f"New report - id: {report['uid']}, location: {report_obj.geom}"
@@ -145,7 +153,14 @@ class SuricateParser(SuricateGestionRequestManager):
             return report_obj.pk if created else 0
 
     def before_get_alerts(self, verbosity=1):
-        self.to_delete = set(Report.objects.values_list('pk', flat=True))
+        pk_and_uuid = Report.objects.values_list('pk', 'external_uuid')
+        if pk_and_uuid:
+            pks, uuids = zip(*pk_and_uuid)
+            self.existing_uuids = list(map(lambda x: "".join(str(x).upper().rsplit("-", 1)), uuids))  # Format UUIDs as they are found in Suricate
+            self.to_delete = set(pks)
+        else:
+            self.existing_uuids = []
+            self.to_delete = set()
         if verbosity >= 1:
             logger.info("Starting reports parsing from Suricate\n")
 
@@ -168,6 +183,7 @@ class SuricateParser(SuricateGestionRequestManager):
             report = data["alertes"][0]
         if verbosity >= 2:
             logger.info(f"Processing report {report['uid']}\n")
+        self.before_get_alerts(verbosity)
         self.to_delete = set()
         report_created = self.parse_report(report)
         if verbosity >= 1:

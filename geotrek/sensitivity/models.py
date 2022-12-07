@@ -11,16 +11,18 @@ from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.utils.translation import pgettext_lazy, gettext_lazy as _
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
+from pyopenair.factory import wkt2openair
+
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
-from geotrek.common.utils import intersecting, classproperty
-from geotrek.core.models import simplify_coords
-from pyopenair.factory import wkt2openair
+from geotrek.common.utils import intersecting, classproperty, simplify_coords
+from geotrek.sensitivity.managers import SensitiveAreaManager
 from geotrek.sensitivity.helpers import openair_atimes_concat
+from geotrek.core.models import simplify_coords
 
 logger = logging.getLogger("geotrek")
 
-class SportPractice(models.Model):
+class SportPractice(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
 
     class Meta:
@@ -32,7 +34,7 @@ class SportPractice(models.Model):
         return self.name
 
 
-class Species(OptionalPictogramMixin):
+class Species(TimeStampedModelMixin, OptionalPictogramMixin):
     SPECIES = 1
     REGULATORY = 2
 
@@ -78,12 +80,16 @@ class Species(OptionalPictogramMixin):
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
+    geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)
     species = models.ForeignKey(Species, verbose_name=_("Species or regulatory area"), on_delete=models.PROTECT)
     published = models.BooleanField(verbose_name=_("Published"), default=False, help_text=_("Visible on Geotrek-rando"))
     publication_date = models.DateField(verbose_name=_("Publication date"), null=True, blank=True, editable=False)
     description = models.TextField(verbose_name=_("Description"), blank=True)
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
+
+    objects = SensitiveAreaManager()
 
     class Meta:
         verbose_name = _("Sensitive area")
@@ -113,12 +119,23 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     def category_verbose_name(cls):
         return _("Category")
 
+    def reload(self):
+        """
+        Reload into instance all computed attributes in triggers.
+        """
+        if self.pk:
+            # Update computed values
+            fromdb = self.__class__.objects.get(pk=self.pk)
+            self.geom_buffered = fromdb.geom_buffered
+        return self
+
     def save(self, *args, **kwargs):
         if self.publication_date is None and self.published:
             self.publication_date = datetime.date.today()
         if self.publication_date is not None and not self.published:
             self.publication_date = None
         super().save(*args, **kwargs)
+        self.reload()
 
     @property
     def any_published(self):
@@ -236,19 +253,32 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core.models import Topology
-    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
-    Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
+
+    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, distance=0, ordering=False,
+                                                                       field='geom_buffered').select_related('species'),
+                          _("Sensitive areas"))
+    Topology.add_property('published_sensitive_areas',
+                          lambda self: intersecting(SensitiveArea, self, distance=0, ordering=False,
+                                                    field='geom_buffered').filter(published=True),
+                          _("Published sensitive areas"))
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
+
     SensitiveArea.add_property('pois', lambda self: intersecting(trekking_models.POI, self, 0), _("POIs"))
     SensitiveArea.add_property('treks', lambda self: intersecting(trekking_models.Trek, self, 0), _("Treks"))
     SensitiveArea.add_property('services', lambda self: intersecting(trekking_models.Service, self, 0), _("Services"))
 
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
-    Dive.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
-    Dive.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
+
+    Dive.add_property('sensitive_areas',
+                      lambda self: intersecting(SensitiveArea, self, distance=0, ordering=False, field='geom_buffered'),
+                      _("Sensitive areas"))
+    Dive.add_property('published_sensitive_areas',
+                      lambda self: intersecting(SensitiveArea, self, distance=0, ordering=False,
+                                                field='geom_buffered').filter(published=True),
+                      _("Published sensitive areas"))
     SensitiveArea.add_property('dives', lambda self: intersecting(Dive, self, 0), _("Dives"))
     SensitiveArea.add_property('published_dives',
                                lambda self: intersecting(Dive, self, 0).filter(published=True),
@@ -257,17 +287,33 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism import models as tourism_models
 
-    tourism_models.TouristicContent.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
+    tourism_models.TouristicContent.add_property('sensitive_areas',
+                                                 lambda self: intersecting(SensitiveArea, self, distance=0,
+                                                                           ordering=False, field='geom_buffered'),
+                                                 _("Sensitive areas"))
     tourism_models.TouristicContent.add_property('published_sensitive_areas',
-                                                 lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
-    tourism_models.TouristicEvent.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
+                                                 lambda self: intersecting(SensitiveArea, self, distance=0,
+                                                                           ordering=False,
+                                                                           field='geom_buffered').filter(
+                                                     published=True), _("Published sensitive areas"))
+    tourism_models.TouristicEvent.add_property('sensitive_areas',
+                                               lambda self: intersecting(SensitiveArea, self, distance=0,
+                                                                         ordering=False, field='geom_buffered'),
+                                               _("Sensitive areas"))
     tourism_models.TouristicEvent.add_property('published_sensitive_areas',
-                                               lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
+                                               lambda self: intersecting(SensitiveArea, self, distance=0,
+                                                                         ordering=False, field='geom_buffered').filter(
+                                                   published=True), _("Published sensitive areas"))
 
-    SensitiveArea.add_property('touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self, 0), _("Touristic contents"))
-    SensitiveArea.add_property('published_touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self, 0).filter(published=True),
+    SensitiveArea.add_property('touristic_contents',
+                               lambda self: intersecting(tourism_models.TouristicContent, self, 0),
+                               _("Touristic contents"))
+    SensitiveArea.add_property('published_touristic_contents',
+                               lambda self: intersecting(tourism_models.TouristicContent, self, 0).filter(
+                                   published=True),
                                _("Published touristic contents"))
-    SensitiveArea.add_property('touristic_events', lambda self: intersecting(tourism_models.TouristicEvent, self, 0), _("Touristic events"))
+    SensitiveArea.add_property('touristic_events', lambda self: intersecting(tourism_models.TouristicEvent, self, 0),
+                               _("Touristic events"))
     SensitiveArea.add_property('published_touristic_events',
                                lambda self: intersecting(tourism_models.TouristicEvent, self, 0).filter(published=True),
                                _("Published touristic events"))

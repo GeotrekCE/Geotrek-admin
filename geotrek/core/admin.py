@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from geotrek.core.models import (PathSource, Stake, Usage, Network, Comfort)
+from geotrek.core.models import (
+    PathSource, Stake, Usage, Network, Comfort, TrailCategory,
+    CertificationLabel, CertificationStatus
+)
 from geotrek.common.mixins.actions import MergeActionMixin
 
 
@@ -39,8 +42,32 @@ class ComfortAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "comfort"
 
 
+class TrailCategoryAdmin(MergeActionMixin, admin.ModelAdmin):
+    list_display = ('label', 'structure')
+    search_fields = ('label', 'structure')
+    list_filter = ('structure',)
+    merge_field = "label"
+
+
+class CertificationLabelAdmin(MergeActionMixin, admin.ModelAdmin):
+    list_display = ('label', 'structure')
+    search_fields = ('label', 'structure')
+    list_filter = ('structure',)
+    merge_field = "label"
+
+
+class CertificationStatusAdmin(MergeActionMixin, admin.ModelAdmin):
+    list_display = ('label', 'structure')
+    search_fields = ('label', 'structure')
+    list_filter = ('structure',)
+    merge_field = "label"
+
+
 admin.site.register(PathSource, PathSourceAdmin)
 admin.site.register(Stake, StakeAdmin)
 admin.site.register(Usage, UsageAdmin)
 admin.site.register(Network, NetworkAdmin)
 admin.site.register(Comfort, ComfortAdmin)
+admin.site.register(TrailCategory, TrailCategoryAdmin)
+admin.site.register(CertificationLabel, CertificationLabelAdmin)
+admin.site.register(CertificationStatus, CertificationStatusAdmin)

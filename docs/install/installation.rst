@@ -49,7 +49,7 @@ Run the following command in a shell prompt on your server:
 
 ::
 
-   curl https://github.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash
+   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh | bash
 
 If you don't want to use a local database, you can run the following command instead.
 This will prevent the script to install PostgreSQL server locally.
@@ -57,7 +57,7 @@ Don't forget to enable PostGIS extension in your remote database before installa
 
 ::
 
-   curl https://github.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash -s - --nodb
+   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash -s - --nodb
 
 Then create the application administrator account and connect to the web interface.
 
@@ -127,7 +127,7 @@ Then, go inside your existing Geotrek-admin installation directory and run the d
 
 ::
 
-   curl https://github.com/GeotrekCE/Geotrek-admin/blob/master/tools/migrate.sh | bash
+   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/blob/master/tools/migrate.sh | bash
 
 
 Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.py`` (see Advanced configuration section)

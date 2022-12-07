@@ -1,13 +1,16 @@
 import logging
 
+from django.conf import settings
+from django.contrib.gis.db.models.functions import LineLocatePoint, Intersection
+from django.contrib.gis.gdal import SpatialReference
+from django.contrib.gis.measure import Distance
 from django.db import connection
-from django.db.models import Func
 from django.db.models.base import ModelBase
+from django.db.models.expressions import Func
 from django.utils.timezone import utc
 from django.utils.translation import pgettext
-from django.conf import settings
-from django.contrib.gis.measure import Distance
-from django.contrib.gis.gdal import SpatialReference
+
+from geotrek.common.functions import DumpGeom, StartPoint
 
 logger = logging.getLogger(__name__)
 
@@ -50,23 +53,8 @@ def dbnow():
     return row[0].replace(tzinfo=utc)
 
 
-def sql_extent(sql):
-    """ Given a SQL query that returns a BOX(), returns
-    tuple (xmin, ymin, xmax, ymax)
-    """
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    result = cursor.fetchall()
-    row = result[0]
-    extent = row[0] or '0 0 0 0'
-    value = extent.replace('BOX(', '').replace(')', '').replace(',', ' ')
-    return tuple([float(v) for v in value.split()])
-
-
 def sqlfunction(function, *args):
-    """
-    Executes the SQL function with the specified args, and returns the result.
-    """
+    """ Executes the SQL function with the specified args, and returns the result. """
     sql = '%s(%s)' % (function, ','.join(args))
     logger.debug(sql)
     cursor = connection.cursor()
@@ -86,10 +74,8 @@ def uniquify(values):
     return unique
 
 
-def intersecting(qs, obj, distance=None, ordering=True, field='geom'):
-    """
-    Small helper to filter all model instances by geometry intersection
-    """
+def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None):
+    """ Small helper to filter all model instances by geometry intersection """
     if isinstance(qs, ModelBase):
         qs = qs.objects
         if hasattr(qs, 'existing'):
@@ -103,14 +89,16 @@ def intersecting(qs, obj, distance=None, ordering=True, field='geom'):
     else:
         qs = qs.filter(**{'{}__intersects'.format(field): obj.geom})
         if obj.geom.geom_type == 'LineString' and ordering:
-            # FIXME: move transform from DRF viewset to DRF itself and remove transform here
-            ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt
-            qs = qs.extra(select={'ordering': 'ST_LineLocatePoint(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
-            qs = qs.extra(order_by=['ordering'])
+            qs = qs.order_by(LineLocatePoint(obj.geom,
+                                             StartPoint(DumpGeom(Intersection(obj.geom,
+                                                                              field)))))
 
     if obj.__class__ == qs.model:
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
+    if defer:
+        qs = qs.defer(*defer)
+
     return qs
 
 
@@ -163,3 +151,15 @@ def collate_c(field):
 
 def spatial_reference():
     return "{epsg_name}".format(epsg_name=SpatialReference(settings.DISPLAY_SRID).name)
+
+
+def simplify_coords(coords):
+    if isinstance(coords, (list, tuple)):
+        return [simplify_coords(coord) for coord in coords]
+    elif isinstance(coords, float):
+        return round(coords, 7)
+    raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
+
+
+def leaflet_bounds(bbox):
+    return [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]

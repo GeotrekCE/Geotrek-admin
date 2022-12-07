@@ -310,7 +310,7 @@
     } ],
     "informationsFeteEtManifestation" : {
       "nomLieu" : "Embranchement de la route de Pomet",
-      "nbParticipantsAttendu": "100",
+      "nbParticipantsAttendu": "100 participants",
       "typesManifestation" : [ {
         "elementReferenceType" : "FeteEtManifestationType",
         "id" : 1971,

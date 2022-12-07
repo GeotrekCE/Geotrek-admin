@@ -1,19 +1,23 @@
 import math
-from unittest import skipIf
+from unittest import skipIf, mock
 import os
 
 from django.apps import apps
+from django.template.loader import get_template
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
+from django.core import mail
 from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 from django.db.models import ProtectedError
 from geotrek.common.utils import dbnow
-from geotrek.common.utils.postgresql import replace_settings_sql, replace_schemas_sql
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
-from geotrek.core.tests.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
+from geotrek.core.tests.factories import (
+    ComfortFactory, PathFactory, StakeFactory, TrailFactory, TrailCategoryFactory,
+    CertificationLabelFactory, CertificationStatusFactory, CertificationTrailFactory
+)
 from geotrek.core.models import Path, Trail
 
 
@@ -97,6 +101,26 @@ class PathTest(TestCase):
         self.assertAlmostEqual(lng_max, 3.0013039767202154)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
 
+    @override_settings(ALERT_DRAFT=True)
+    def test_status_draft_alert(self):
+        p1 = PathFactory.create()
+        p1.save()
+        self.assertEqual(len(mail.outbox), 0)
+        p1.draft = True
+        p1.save()
+        self.assertEqual(len(mail.outbox), 1)
+
+    @override_settings(ALERT_DRAFT=True)
+    @mock.patch('geotrek.core.models.mail_managers')
+    def test_status_draft_fail_mail(self, mock_mail):
+        mock_mail.side_effect = Exception("Test")
+        p1 = PathFactory.create()
+        p1.save()
+        self.assertEqual(len(mail.outbox), 0)
+        p1.draft = True
+        p1.save()
+        self.assertEqual(len(mail.outbox), 0)
+
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_delete_allow_path_trigger(self):
         p1 = PathFactory.create()
@@ -119,14 +143,17 @@ class PathTest(TestCase):
         cur = conn.cursor()
 
         app = apps.get_app_config('core')
-        sql_file = os.path.normpath(os.path.join(app.path, 'sql', 'post_80_paths_deletion.sql'))
-        f = open(sql_file)
-        sql = f.read()
-        f.close()
+        sql_file = os.path.normpath(os.path.join(app.path, 'templates', app.label, 'sql', 'post_80_paths_deletion.sql'))
+        template = get_template(sql_file)
+        context_settings = settings.__dict__['_wrapped'].__dict__
+        context = dict(
+            schema_geotrek='public',
+            schema_django='public',
+        )
+        context.update(context_settings)
+        rendered_sql = template.render(context)
         cur.execute("DROP FUNCTION IF EXISTS path_deletion() CASCADE;")
-        sql = replace_settings_sql(sql)
-        sql = replace_schemas_sql(sql)
-        cur.execute(sql)
+        cur.execute(rendered_sql)
 
         cur.execute(f"DELETE FROM core_path WHERE id = {p1.pk}")
         cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")
@@ -198,6 +225,13 @@ class TrailTest(TestCase):
     def test_trails_verbose_name(self):
         path = PathFactory.create()
         self.assertEqual(path.trails_verbose_name, 'Trails')
+
+
+class TrailTestDisplay(TestCase):
+    def test_trails_certifications_display(self):
+        t1 = TrailFactory.create()
+        certif = CertificationTrailFactory.create(trail=t1)
+        self.assertEqual(t1.certifications_display, f'{certif}')
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -306,3 +340,46 @@ class ComfortTest(TestCase):
     def test_name_without_structure(self):
         comfort = ComfortFactory.create(comfort="comfort")
         self.assertEqual("comfort", str(comfort))
+
+
+class TrailCategory(TestCase):
+    """Test trail category model"""
+    def test_trail_category_name_with_structure(self):
+        structure = StructureFactory.create(name="structure")
+        trail_category = TrailCategoryFactory.create(label="My category", structure=structure)
+        self.assertEqual("My category (structure)", str(trail_category))
+
+    def test_trail_category_name_without_structure(self):
+        trail_category = TrailCategoryFactory.create(label="My category")
+        self.assertEqual("My category", str(trail_category))
+
+
+class CertificationTest(TestCase):
+    """Test certifications trail models"""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.structure = StructureFactory.create(name="structure")
+        cls.certification_label = CertificationLabelFactory.create(label="certification label")
+        cls.certification_status = CertificationStatusFactory.create(label="certification status")
+
+    def test_certification_label_name_with_structure(self):
+        certification_label = CertificationLabelFactory.create(label="certification label", structure=self.structure)
+        self.assertEqual("certification label (structure)", str(certification_label))
+
+    def test_certification_label_name_without_structure(self):
+        self.assertEqual("certification label", str(self.certification_label))
+
+    def test_certification_status_name_with_structure(self):
+        certification_status = CertificationStatusFactory.create(label="certification status", structure=self.structure)
+        self.assertEqual("certification status (structure)", str(certification_status))
+
+    def test_certification_status_name_without_structure(self):
+        self.assertEqual("certification status", str(self.certification_status))
+
+    def test_certification_name(self):
+        certification_trail = CertificationTrailFactory.create(
+            certification_label=self.certification_label,
+            certification_status=self.certification_status,
+        )
+        self.assertEqual("certification label / certification status", str(certification_trail))

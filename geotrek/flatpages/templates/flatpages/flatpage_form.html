@@ -53,7 +53,7 @@
 
         tpl1 = "{% trans "Template 1" %}";
         tpl2 = "{% trans "Template 2" %}";
-
+        var gms = {};
         $('textarea[id^=id_content_]').each(function () {
             var id = 'grid_' + $(this).attr('id');
             $(this).hide();
@@ -62,8 +62,7 @@
 
             controlButtons = [[12], [6, 6], [4, 4, 4], [3, 3, 3, 3], [2, 2, 2, 2, 2, 2], [2, 8, 2], [4, 8], [8, 4]];
             controlButtons.push([tpl1], [tpl2]);
-
-            $('#' + id).gridmanager({
+            gms[id] = $('#' + id).gridmanager({
                 controlButtons: controlButtons,
                 customControls: {global_row: [], global_col: []},
                 rowCustomClasses: ["row-class-1", "row-class-2", "row-class-3", "row-class-4"],
@@ -176,7 +175,8 @@
         $("#save_changes").removeAttr("onclick");
         $('#save_changes').click(function () {
             $('textarea[id^=id_content_]').each(function () {
-                var gm = $(this).next().data('gridmanager');
+                var id = 'grid_' + $(this).attr('id');
+                var gm = gms[id].data('gridmanager');
                 gm.deinitCanvas();
                 var canvas = gm.$el.find("#" + gm.options.canvasId);
                 $(this).val(canvas.html());

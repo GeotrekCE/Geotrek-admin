@@ -9,6 +9,7 @@ from django.test import TestCase, override_settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
+from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
@@ -19,7 +20,8 @@ from geotrek.tourism.models import InformationDesk, TouristicContent, TouristicE
 from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEventApidaeParser, EspritParcParser,
                                      TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
                                      TouristicContentTourInSoftParser, TouristicEventTourInSoftParser,
-                                     InformationDeskApidaeParser)
+                                     InformationDeskApidaeParser, GeotrekTouristicContentParser,
+                                     GeotrekTouristicEventParser, GeotrekInformationDeskParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
@@ -46,6 +48,23 @@ class EauViveParser(TouristicContentApidaeParser):
     category = "Eau vive"
     type1 = ["Type A", "Type B"]
     type2 = []
+
+
+class Provider1Parser(TouristicContentApidaeParser):
+    category = "Eau vive"
+    provider = "Provider1"
+    delete = True
+
+
+class Provider2Parser(TouristicContentApidaeParser):
+    category = "Eau vive"
+    provider = "Provider2"
+    delete = True
+
+
+class NoProviderParser(TouristicContentApidaeParser):
+    category = "Eau vive"
+    delete = True
 
 
 class TestInformationDeskParser(InformationDeskApidaeParser):
@@ -127,6 +146,37 @@ class ParserTests(TranslationResetMixin, TestCase):
         with self.assertRaises(CommandError):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
         self.assertTrue(mocked.called)
+
+    @mock.patch('geotrek.common.parsers.requests.get')
+    @override_settings(PARSER_RETRY_SLEEP_TIME=0)
+    @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachments', False)
+    def test_create_content_by_provider(self, mocked):
+
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        def mocked_json2():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent2.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        TouristicContentCategoryFactory(label="Eau vive")
+        FileType.objects.create(type="Photographie")
+
+        # Parser with provider creates objects with provider
+        call_command('import', 'geotrek.tourism.tests.test_parsers.Provider1Parser')
+        self.assertEqual(TouristicContent.objects.count(), 1)
+        self.assertEqual(TouristicContent.objects.first().provider, "Provider1")
+        mocked.return_value.json = mocked_json2
+        # Parser with provider does not delete other providers' objects
+        call_command('import', 'geotrek.tourism.tests.test_parsers.Provider2Parser')
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        call_command('import', 'geotrek.tourism.tests.test_parsers.NoProviderParser')
+        # Parser with no provider behaves as if all objects are to handle (based on eid only)
+        self.assertEqual(TouristicContent.objects.count(), 1)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
@@ -338,6 +388,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(round(event.geom.x), 922920)
         self.assertEqual(round(event.geom.y), 6357103)
         self.assertEqual(event.practical_info[:38], "<b>Ouverture:</b><br>Mardi 6 août 2019")
+        self.assertIn("<b>Capacité totale:</b><br>100 participants<br>", event.practical_info)
         self.assertIn("><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
                       event.practical_info)
         self.assertIn("<b>Ouverture:</b><br>Mardi 6 août 2019 de 9h à midi.<br>", event.practical_info)
@@ -345,13 +396,14 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("<b>Accès:</b><br>TestFr<br>", event.practical_info)
         self.assertTrue(event.published)
         self.assertEqual(event.organizer, 'Toto')
-        self.assertEqual(str(event.meeting_time), '09:00:00')
+        self.assertEqual(str(event.start_time), '09:00:00')
         self.assertEqual(event.type.type, 'Sports')
         self.assertQuerysetEqual(
             event.themes.all(),
             ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
         )
         self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(TouristicEventApidaeParser().filter_capacity("capacity", "12"), 12)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_apidae_constant_fields(self, mocked):
@@ -647,3 +699,174 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         information_desk_2 = InformationDesk.objects.get(eid=2)
         self.assertEqual(information_desk_2.website, None)
+
+
+class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
+    url = "https://test.fr"
+
+    field_options = {
+        "category": {'create': True},
+        'themes': {'create': True},
+        'source': {'create': True},
+        'type1': {'create': True, 'fk': 'category'},
+        'type2': {'create': True, 'fk': 'category'},
+        'geom': {'required': True},
+    }
+
+
+class TestGeotrekTouristicContentCreateCategoriesParser(GeotrekTouristicContentParser):
+    url = "https://test.fr"
+    create_categories = True
+
+
+class TestGeotrekTouristicEventParser(GeotrekTouristicEventParser):
+    url = "https://test.fr"
+
+    field_options = {
+        'source': {'create': True},
+        'type': {'create': True, },
+        'geom': {'required': True},
+    }
+
+
+class TestGeotrekInformationDeskParser(GeotrekInformationDeskParser):
+    url = "https://test.fr"
+
+    field_options = {
+        'type': {'create': True, },
+        'geom': {'required': True},
+    }
+
+
+class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "tourism"
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['touristiccontent_category.json',
+                                'touristiccontent_themes.json',
+                                'sources.json',
+                                'touristiccontent_category.json',
+                                'touristiccontent_ids.json',
+                                'touristiccontent.json']
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekTouristicContentCreateCategoriesParser', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        touristic_content = TouristicContent.objects.all().first()
+        self.assertEqual(str(touristic_content.category), 'Sorties')
+        self.assertEqual(str(touristic_content.type1.first()), 'Ane')
+        self.assertEqual(str(touristic_content.name), "Balad'âne")
+        self.assertEqual(str(touristic_content.source.first().name), "Une source numero 2")
+        self.assertAlmostEqual(touristic_content.geom.x, 568112.6362873032, places=5)
+        self.assertAlmostEqual(touristic_content.geom.y, 6196929.676669887, places=5)
+        self.assertEqual(Attachment.objects.count(), 3)
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create_create_categories(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['touristiccontent_category.json',
+                                'touristiccontent_themes.json',
+                                'sources.json',
+                                'touristiccontent_category.json',
+                                'touristiccontent_ids.json',
+                                'touristiccontent.json']
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekTouristicContentParser', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        touristic_content = TouristicContent.objects.all().first()
+        self.assertEqual(str(touristic_content.category), 'Sorties')
+        self.assertEqual(str(touristic_content.name), "Balad'âne")
+        self.assertAlmostEqual(touristic_content.geom.x, 568112.6362873032, places=5)
+        self.assertAlmostEqual(touristic_content.geom.y, 6196929.676669887, places=5)
+        self.assertEqual(Attachment.objects.count(), 3)
+
+
+class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "tourism"
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['touristicevent_type.json',
+                                'sources.json',
+                                'touristicevent_ids.json',
+                                'touristicevent.json']
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekTouristicEventParser', verbosity=0)
+        self.assertEqual(TouristicEvent.objects.count(), 2)
+        touristic_event = TouristicEvent.objects.all().first()
+        self.assertEqual(str(touristic_event.type), 'Spectacle')
+        self.assertEqual(str(touristic_event.name), "Autrefois le Couserans")
+        self.assertEqual(str(touristic_event.source.first().name), "Une source numero 2")
+        self.assertAlmostEqual(touristic_event.geom.x, 548907.5259389633, places=5)
+        self.assertAlmostEqual(touristic_event.geom.y, 6208918.713349126, places=5)
+
+
+class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "tourism"
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachment')
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    def test_create(self, mocked_download_attachment, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = ['informationdesk_ids.json',
+                                'informationdesk.json', ]
+        self.mock_download = 0
+
+        def mocked_download(*args, **kwargs):
+            if self.mock_download > 0:
+                return None
+            self.mock_download += 1
+            return b'boo'
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_download_attachment.side_effect = mocked_download
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekInformationDeskParser', verbosity=0)
+        self.assertEqual(InformationDesk.objects.count(), 3)
+        information_desk = InformationDesk.objects.all().first()
+        self.assertEqual(str(information_desk.type), "Relais d'information")
+        self.assertEqual(str(information_desk.name), "Foo")
+        self.assertAlmostEqual(information_desk.geom.x, 573013.9272605104, places=5)
+        self.assertAlmostEqual(information_desk.geom.y, 6276967.321705549, places=5)
+        self.assertEqual(str(information_desk.photo), '')
+        self.assertEqual(InformationDesk.objects.exclude(photo='').first().photo.read(), b'boo')

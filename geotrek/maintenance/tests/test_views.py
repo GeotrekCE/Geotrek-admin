@@ -363,7 +363,7 @@ class InterventionViewsTest(CommonTest):
         """ % (PathFactory.create().pk, PathFactory.create().pk, PathFactory.create().pk)
         response = self.client.post(Intervention.get_add_url(), good_data)
         self.assertEqual(response.status_code, 302)
-        response = self.client.get(response._headers['location'][1])
+        response = self.client.get(response.headers['location'])
         self.assertTrue('object' in response.context)
         intervention = response.context['object']
         self.assertFalse(intervention.stake is None)
@@ -619,7 +619,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         self.assertIn('MultiLineString', geom_types)
 
         for layer in layers.values():
-            self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
+            self.assertRegex(layer.srs.name, "RGF.*93")
             self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
                 'global_cos', 'interventi', 'comments',
@@ -651,14 +651,14 @@ class TestDetailedJobCostsExports(TestCase):
 
         cls.job1 = InterventionJobFactory(job="Worker", cost=12)
         cls.job2 = InterventionJobFactory(job="Streamer", cost=60)
-        cls.job1_column_name = "Cost Worker"
-        cls.job2_column_name = "Cost Streamer"
+        cls.job1_column_name = "Cost_Worker"
+        cls.job2_column_name = "Cost_Streamer"
         cls.interv = InterventionFactory()
         cls.manday1 = ManDayFactory(nb_days=3, job=cls.job1, intervention=cls.interv)
         cls.manday2 = ManDayFactory(nb_days=2, job=cls.job2, intervention=cls.interv)
 
         cls.job3 = InterventionJobFactory(job="Banker", cost=5000)
-        cls.job3_column_name = "Cost Banker"
+        cls.job3_column_name = "Cost_Banker"
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -709,10 +709,10 @@ class TestDetailedJobCostsExports(TestCase):
         # Test column translations don't mess it up
         activate('fr')
         columns = InterventionFormatList().columns
-        self.assertIn(f"Coût {self.job2}", columns)
+        self.assertIn(f"Coût_{self.job2}", columns)
         qs = InterventionFormatList().get_queryset()
         interv_in_query_set = qs.get(id=self.interv.id)
-        cost2_in_query_set = getattr(interv_in_query_set, f"Coût {self.job2}")
+        cost2_in_query_set = getattr(interv_in_query_set, f"Coût_{self.job2}")
         self.assertEqual(cost2_in_query_set, self.job2.cost * self.manday2.nb_days)
         deactivate_all()
 

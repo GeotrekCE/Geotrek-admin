@@ -1,6 +1,4 @@
 from django.conf import settings
-from django.core.cache import caches
-from rest_framework.response import Response
 
 
 def get_translation_or_dict(model_field_name, serializer, instance):
@@ -38,19 +36,3 @@ def build_url(serializer, url):
     else:
         raise Exception('Bad context. No server variable found in the request !')
     return url
-
-
-def build_response_from_cache(cache_lookup, data_func, content_type):
-    # Choose adequate cache
-    if content_type == "application/json":
-        cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
-    else:
-        cache = caches['default']
-    # Retrieve data from cache
-    content = cache.get(cache_lookup)
-    if content:
-        return Response(content, content_type=content_type)
-    # Or set data to cache
-    content = data_func()
-    cache.set(cache_lookup, content)
-    return Response(content, content_type=content_type)

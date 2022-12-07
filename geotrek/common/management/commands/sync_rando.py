@@ -2,7 +2,9 @@ import argparse
 import logging
 import filecmp
 import os
+import stat
 import shutil
+import tempfile
 from time import sleep
 from zipfile import ZipFile
 
@@ -50,6 +52,8 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('path')
+        parser.add_argument('--empty-tmp-folder', dest='empty_tmp_folder', action='store_true', default=False,
+                            help='Empty tmp folder')
         parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
         parser.add_argument('--rando-url', '-r', dest='rando_url', default='http://localhost',
                             help='Base url of public rando site')
@@ -442,10 +446,10 @@ class Command(BaseCommand):
         if os.path.exists(self.dst_root):
             tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_rando')
             os.rename(self.dst_root, tmp_root2)
-            os.rename(self.tmp_root, self.dst_root)
             shutil.rmtree(tmp_root2)
-        else:
-            os.rename(self.tmp_root, self.dst_root)
+        os.rename(self.tmp_root, self.dst_root)
+        os.chmod(self.dst_root, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+        os.mkdir(self.tmp_root)  # Recreate otherwise python3.6 will complain it does not find the tmp dir at cleanup.
 
     def handle(self, *args, **options):
         self.options = options
@@ -502,17 +506,16 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
-        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
-        try:
-            os.mkdir(self.tmp_root)
-        except OSError as e:
-            if e.errno != 17:
-                raise
-            raise CommandError(
-                "The {}/ directory already exists. Please check no other sync_rando command is already running."
-                " If not, please delete this directory.".format(self.tmp_root)
-            )
-        try:
+        sync_rando_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_rando')
+        if options['empty_tmp_folder']:
+            for dir in os.listdir(sync_rando_tmp_dir):
+                shutil.rmtree(os.path.join(sync_rando_tmp_dir, dir))
+        if not os.path.exists(settings.TMP_DIR):
+            os.mkdir(settings.TMP_DIR)
+        if not os.path.exists(sync_rando_tmp_dir):
+            os.mkdir(sync_rando_tmp_dir)
+        with tempfile.TemporaryDirectory(dir=sync_rando_tmp_dir) as tmp_dir:
+            self.tmp_root = tmp_dir
             self.sync()
             if self.celery_task:
                 self.celery_task.update_state(
@@ -524,12 +527,7 @@ class Command(BaseCommand):
                         'infos': "{}".format(_("Sync ended"))
                     }
                 )
-
-        except Exception:
-            shutil.rmtree(self.tmp_root)
-            raise
-
-        self.rename_root()
+            self.rename_root()
 
         done_message = 'Done'
         if self.successfull:

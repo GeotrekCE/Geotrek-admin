@@ -1,0 +1,5 @@
+--10 
+
+DROP VIEW IF EXISTS a_v_signaletique CASCADE;
+DROP VIEW IF EXISTS v_signages CASCADE;
+DROP VIEW IF EXISTS v_signages_qgis CASCADE;

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 10:07+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,6 +34,9 @@ msgstr "Pratiche"
 
 msgid "Trekking"
 msgstr "Itinerario"
+
+msgid "Provider"
+msgstr ""
 
 msgid "Trek"
 msgstr "Itinerario"
@@ -481,6 +484,22 @@ msgid ""
 msgstr ""
 "Tipo di geometria non valida per il campo '{src}'. Dovrebbe essere "
 "LineString, non {geom_type}"
+
+#, python-brace-format
+msgid ""
+"Trying to retrieve children for missing trek : could not find trek with UUID "
+"{key}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"One trek has not be generated for {trek_parent_instance[0].name} : could not "
+"find trek with UUID {child}"
+msgstr ""
+
+msgid ""
+"An error occured in children generation : {getattr(e, 'message', repr(e))}"
+msgstr ""
 
 #. Translators: This is a slug (without space, accent or special char)
 msgid "itinerancy"

@@ -1,0 +1,22 @@
+{
+  "URL_1": {
+    "url": "URL_1",
+    "mapping": {
+      "trek_practice": {
+        "Randonnée Pédestre": [
+          "Pédestre"
+        ],
+        "Vélo": [
+          "VTT",
+          "Vélo"
+        ]
+      },
+      "trek_difficulty": {
+        "Moyen": [
+          "Facile"
+        ]
+      }
+    },
+    "create": true
+  }
+}

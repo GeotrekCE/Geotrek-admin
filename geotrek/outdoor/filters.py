@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django.utils.translation import gettext as _
-from django_filters.filters import MultipleChoiceFilter, ModelMultipleChoiceFilter
+from django_filters.filters import MultipleChoiceFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.models import Organism
 from geotrek.outdoor.models import Site, Practice, Sector, Course
@@ -13,12 +13,18 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     practice = ModelMultipleChoiceFilter(queryset=Practice.objects.all(), method='filter_super')
     sector = ModelMultipleChoiceFilter(queryset=Sector.objects.all(), method='filter_sector', label=_("Sector"))
     managers = ModelMultipleChoiceFilter(queryset=Organism.objects.all(), method='filter_manager', label=_("Manager"))
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=Site.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Site
         fields = StructureRelatedFilterSet.Meta.fields + [
             'sector', 'practice', 'labels', 'themes', 'portal', 'source', 'information_desks',
-            'web_links', 'type', 'orientation', 'wind',
+            'web_links', 'type', 'orientation', 'wind', 'provider'
         ]
 
     def filter_orientation(self, qs, name, values):
@@ -48,13 +54,19 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
                                        label=_("Orientation"))
     wind = MultipleChoiceFilter(choices=Site.WIND_CHOICES, method='filter_orientation',
                                 label=_("Wind"))
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=Course.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
         fields = StructureRelatedFilterSet.Meta.fields + [
             'parent_sites', 'parent_sites__practice__sector', 'parent_sites__practice', 'parent_sites__labels', 'parent_sites__themes',
             'parent_sites__portal', 'parent_sites__source', 'parent_sites__type', 'orientation', 'wind',
-            'height',
+            'height', 'provider'
         ]
 
     def filter_orientation(self, qs, name, values):

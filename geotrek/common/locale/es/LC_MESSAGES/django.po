@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 09:07+0000\n"
+"POT-Creation-Date: 2022-10-03 13:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivia Duval <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,9 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 msgid "content type"
+msgstr ""
+
+msgid "Linked content"
 msgstr ""
 
 msgid "Common"
@@ -35,8 +38,11 @@ msgstr "max %s"
 msgid "This field is required to publish object."
 msgstr ""
 
+msgid "This field is required to review object."
+msgstr ""
+
 #, python-format
-msgid "Fields are missing to publish object: %(fields)s"
+msgid "Fields are missing to publish or review object: %(fields)s"
 msgstr ""
 
 #, python-brace-format
@@ -63,9 +69,6 @@ msgstr ""
 msgid "Data to import from local file"
 msgstr ""
 
-msgid "File must be of ZIP type."
-msgstr ""
-
 msgid "Launch Sync"
 msgstr ""
 
@@ -79,6 +82,15 @@ msgid "Cancel"
 msgstr ""
 
 msgid "Update attachment"
+msgstr ""
+
+msgid "The uploaded file is too large"
+msgstr ""
+
+msgid "The uploaded file is not wide enough"
+msgstr ""
+
+msgid "The uploaded file is not tall enough"
 msgstr ""
 
 msgid "Global tiles syncing ..."
@@ -108,6 +120,9 @@ msgstr ""
 msgid ""
 "The national park is an unrestricted natural area but subjected to "
 "regulations which must be known by all visitors."
+msgstr ""
+
+msgid "Merge"
 msgstr ""
 
 msgid "Insertion date"
@@ -146,10 +161,17 @@ msgstr "Nombre público (cuidado si cambio)"
 msgid "Waiting for publication"
 msgstr ""
 
+#, python-brace-format
+msgid "{obj} need a review"
+msgstr ""
+
 msgid "Pictogram"
 msgstr "Pictograma"
 
-msgid "Merge"
+msgid "Attachment license"
+msgstr ""
+
+msgid "Attachment licenses"
 msgstr ""
 
 msgid "Slope"
@@ -208,12 +230,6 @@ msgstr "Organismo"
 
 msgid "Organisms"
 msgstr "Organismos"
-
-msgid "Attachment license"
-msgstr ""
-
-msgid "Attachment licenses"
-msgstr ""
 
 msgid "Cirkwi tag"
 msgstr ""
@@ -359,7 +375,7 @@ msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 
 #, python-brace-format
-msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr ""
 
 #, python-brace-format
@@ -371,7 +387,7 @@ msgstr ""
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
 msgstr ""
 
-msgid "Filename is required"
+msgid "Filename or url is required"
 msgstr ""
 
 #, python-brace-format
@@ -396,6 +412,31 @@ msgstr ""
 msgid "Failed to download '{url}'"
 msgstr ""
 
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"too large"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not wide enough"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not tall enough"
+msgstr ""
+
+#, python-brace-format
+msgid "Model {model}"
+msgstr ""
+
+msgid "Geotrek-admin"
+msgstr ""
+
 msgid "Import from web."
 msgstr ""
 
@@ -406,6 +447,11 @@ msgid "Photos to illustrate information related to the accessibility of treks."
 msgstr ""
 
 msgid "Photos accessibility"
+msgstr ""
+
+msgid ""
+"You are not allowed to modify attachments on this object, this object is not "
+"from the same structure."
 msgstr ""
 
 msgid "Accessibility type"
@@ -514,6 +560,10 @@ msgstr ""
 msgid "has invalid geometry;"
 msgstr "tiene una geometría invalida;"
 
+#, python-format
+msgid "%(obj)s has changed state, it needs a review to be published. "
+msgstr ""
+
 msgid "Sync verifications"
 msgstr ""
 
@@ -536,11 +586,11 @@ msgid "Sync"
 msgstr ""
 
 #, python-format
-msgid "%s day"
+msgid "%s days"
 msgstr ""
 
 #, python-format
-msgid "%s days"
+msgid "%s day"
 msgstr ""
 
 #, python-format
@@ -602,10 +652,4 @@ msgid "Your attachment was deleted."
 msgstr ""
 
 msgid "You are not allowed to delete this attachment."
-msgstr ""
-
-msgid "Any year"
-msgstr ""
-
-msgid "Any value"
 msgstr ""

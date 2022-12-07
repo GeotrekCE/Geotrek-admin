@@ -89,6 +89,7 @@ DATABASES = {
         },
     }
 }
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 #
 # Authentication
@@ -206,6 +207,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': (
             os.path.join(VAR_DIR, 'conf', 'extra_templates'),
+            os.path.join(VAR_DIR, 'conf', 'extra_sql'),
             os.path.join(PROJECT_DIR, 'templates'),
         ),
         'APP_DIRS': True,
@@ -274,12 +276,10 @@ PROJECT_APPS += (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'clearcache',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.gis',
-)
-
-PROJECT_APPS += (
     'crispy_forms',
     'compressor',
     'django_filters',
@@ -316,13 +316,20 @@ INSTALLED_APPS = PROJECT_APPS + (
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
         'TIMEOUT': 2592000,  # 30 days
+        'LOCATION': '{}:{}'.format(os.getenv('MEMCACHED_HOST', 'memcached'),
+                                   os.getenv('MEMCACHED_PORT', '11211'))
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': CACHE_ROOT,
+        'LOCATION': os.path.join(CACHE_ROOT, 'fat'),
+        'TIMEOUT': 2592000,  # 30 days
+    },
+    'api_v2': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(CACHE_ROOT, 'api_v2'),
         'TIMEOUT': 2592000,  # 30 days
     }
 }
@@ -405,7 +412,8 @@ MAPENTITY_CONFIG = {
                      'arrowColor': 'black', 'arrowSize': 10},
         }
     },
-    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg)$'
+    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg)$',
+    'MAX_CHARACTERS': None,
 }
 
 MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
@@ -435,7 +443,9 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 LEAFLET_CONFIG = {
     'SRID': 3857,
     'TILES': [
-        ('OpenTopoMap', 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 'Données: © Contributeurs OpenStreetMap, SRTM | Affichage: © OpenTopoMap (CC-BY-SA)'),
+        ('OpenTopoMap', 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+         {'attribution': 'Données: © Contributeurs OpenStreetMap, SRTM | Affichage: © OpenTopoMap (CC-BY-SA)',
+          'maxZoom': 17}),
         ('OSM', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© Contributeurs OpenStreetMap'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
@@ -509,6 +519,9 @@ COMPLETENESS_FIELDS = {
     'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
     'dive': ['practice', 'difficulty', 'description_teaser'],
 }
+
+ALERT_DRAFT = False
+ALERT_REVIEW = False
 
 EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.YoutubeBackend',
@@ -642,7 +655,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
     "toolbar": "bold italic forecolor | bullist numlist link image media | "
                "undo redo | "
-               "removeformat | code",
+               "removeformat | code | wordcount | help",
     "paste_as_text": True
 }
 
@@ -691,7 +704,7 @@ CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -703,49 +716,29 @@ LOGGING = {
         },
     },
     'handlers': {
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'log_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'simple',
+            'filename': os.path.join(VAR_DIR, 'log', 'geotrek.log'),
+            'when': 'midnight',
+            'backupCount': 30,
+        },
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'logging.NullHandler'
-        },
-        'console': {
-            'level': 'WARNING',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'class': 'django.utils.log.AdminEmailHandler',
         },
     },
     'loggers': {
-        'django.db.backends': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.request': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'geotrek': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'mapentity': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
         '': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
+            'handlers': ['console'],
         },
-    }
+    },
 }
 
 BLADE_ENABLED = True
@@ -755,6 +748,7 @@ LINE_ENABLED = True
 LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 LINE_DISTANCE_FORMAT = "{:0.1f} km"
 LINE_TIME_FORMAT = "{hours}h{minutes:02d}"
+DIRECTION_ON_LINES_ENABLED = False
 SHOW_EXTREMITIES = False  # Show a bullet at path extremities
 SHOW_LABELS = True  # Show labels on status
 
@@ -767,6 +761,9 @@ THUMBNAIL_COPYRIGHT_FORMAT = ""
 THUMBNAIL_COPYRIGHT_SIZE = 15
 PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
 PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = None
+PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = None
+PAPERCLIP_MAX_BYTES_SIZE_IMAGE = None
 PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = False
 
 ENABLED_MOBILE_FILTERS = [
@@ -811,9 +808,7 @@ SURICATE_MANAGEMENT_SETTINGS = {
 }
 
 SURICATE_WORKFLOW_SETTINGS = {
-    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
-    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
-    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département"
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département"
 }
 
 REPORT_FILETYPE = "Report"
@@ -843,12 +838,14 @@ ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
 env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(ENV))
 with open(env_settings_file, 'r') as f:
+    print("Read env configuration from {}".format(env_settings_file))
     exec(f.read())
 
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
 if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
+        print("Read custom configuration from {}".format(custom_settings_file))
         exec(f.read())
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
@@ -859,3 +856,11 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_USE_CACHE': 'api_v2',
+    'DEFAULT_CACHE_ERRORS': False
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")

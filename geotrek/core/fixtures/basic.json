@@ -187,5 +187,93 @@
         "fields": {
             "comfort": "Difficile"
         }
+    },
+    {
+        "model": "core.certificationlabel",
+        "pk": 1,
+        "fields": {
+            "structure": null,
+            "label": "PDIPR"
+        }
+    },
+    {
+        "model": "core.certificationlabel",
+        "pk": 2,
+        "fields": {
+            "structure": null,
+            "label": "PDESI"
+        }
+    },
+    {
+        "model": "core.certificationlabel",
+        "pk": 3,
+        "fields": {
+            "structure": null,
+            "label": "RLESI"
+        }
+    },
+    {
+        "model": "core.certificationlabel",
+        "pk": 4,
+        "fields": {
+            "structure": null,
+            "label": "PR"
+        }
+    },
+    {
+        "model": "core.certificationlabel",
+        "pk": 5,
+        "fields": {
+            "structure": null,
+            "label": "VTT-FFC"
+        }
+    },
+    {
+        "model": "core.certificationstatus",
+        "pk": 1,
+        "fields": {
+            "structure": null,
+            "label": "Constitution du dossier"
+        }
+    },
+    {
+        "model": "core.certificationstatus",
+        "pk": 2,
+        "fields": {
+            "structure": null,
+            "label": "En cours d'instruction"
+        }
+    },
+    {
+        "model": "core.certificationstatus",
+        "pk": 3,
+        "fields": {
+            "structure": null,
+            "label": "Validée"
+        }
+    },
+    {
+        "model": "core.certificationstatus",
+        "pk": 4,
+        "fields": {
+            "structure": null,
+            "label": "Rejetée"
+        }
+    },
+    {
+        "model": "core.trailcategory",
+        "pk": 1,
+        "fields": {
+            "structure": null,
+            "label": "Labellisation"
+        }
+    },
+    {
+        "model": "core.trailcategory",
+        "pk": 2,
+        "fields": {
+            "structure": null,
+            "label": "Entretien régulier"
+        }
     }
 ]

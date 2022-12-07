@@ -1,0 +1,46 @@
+{
+  "URL_1": {
+    "url": "URL_1",
+    "data_to_import": ["Trek", "POI"],
+    "portals": ["portal a", "portal b"],
+    "mapping": {
+      "trek_practice": {
+        "Randonnée Pédestre": ["Pédestre"],
+        "Vélo": ["VTT", "Vélo"]
+      },
+      "trek_difficulty": {
+        "Moyen": ["Facile"]
+      }
+    }
+  },
+  "URL_2": {
+    "url": "URL_2",
+    "data_to_import": ["Trek", "Service", "POI"],
+    "portals": null,
+    "mapping": {
+      "trek_practice": {
+        "Randonnée Pédestre": ["Pédestre"],
+        "Vélo": ["VTT", "Vélo"]
+      },
+      "trek_difficulty": {
+        "Moyen": ["Facile"]
+      }
+    },
+    "create": true
+  },
+  "URL_3": {
+    "url": "URL_3",
+    "data_to_import": ["POI", "InformationDesk", "TouristicContent"],
+    "portals": null,
+    "mapping": {
+      "trek_practice": {
+        "Randonnée Pédestre": ["Pédestre"],
+        "Vélo": ["VTT", "Vélo"]
+      },
+      "trek_difficulty": {
+        "Moyen": ["Facile"]
+      }
+    },
+    "create": true
+  }
+}

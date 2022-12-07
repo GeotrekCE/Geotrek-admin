@@ -6,28 +6,21 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 from django.contrib.postgres.indexes import GistIndex
-from django.db.models import Q, Min, Max
-from django.db.models.functions import ExtractYear
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
-from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
+from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
-
-
-class InterventionManager(NoDeleteManager):
-    def year_choices(self):
-        return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
-            .order_by('-year').distinct().values_list('year', 'year')
 
 
 class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
@@ -390,14 +383,6 @@ class ManDay(models.Model):
 
     def __str__(self):
         return str(self.nb_days)
-
-
-class ProjectManager(NoDeleteManager):
-    def year_choices(self):
-        bounds = self.existing().aggregate(min=Min('begin_year'), max=Max('end_year'))
-        if not bounds['min'] or not bounds['max']:
-            return []
-        return [(year, year) for year in range(bounds['min'], bounds['max'] + 1)]
 
 
 class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,

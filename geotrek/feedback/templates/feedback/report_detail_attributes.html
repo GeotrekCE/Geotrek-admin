@@ -3,35 +3,50 @@
 
 
 {% block attributes %}
+    {% suricate_workflow_enabled as suricate_workflow_enabled %}
+    {% suricate_management_enabled as suricate_management_enabled %}
+    {% workflow_manager as workflow_manager %}
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
-        <tr>
-            <th>{{ report|verbose:"email" }}</th>
-            <td>{{ report.email }}</td>
-        </tr>
+        {% if not suricate_workflow_enabled or request.user.pk == workflow_manager or request.user.is_superuser%}
+            <tr>
+                <th>{{ report|verbose:"email" }}</th>
+                <td>{{ report.email }}</td>
+            </tr>
+        {% endif %}
         <tr>
             <th>{{ report|verbose:"comment" }}</th>
             <td>{{ report.comment|safe|linebreaks }}</td>
         </tr>
         <tr>
             <th>{{ report|verbose:"activity" }}</th>
-            <td>{{ report.activity }}</td>
+            <td>{% if report.activity %}{{ report.activity|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ report|verbose:"category" }}</th>
-            <td>{{ report.category }}</td>
+            <td>{% if report.category %}{{ report.category|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ report|verbose:"problem_magnitude" }}</th>
-            <td>{{ report.problem_magnitude }}</td>
+            <td>{% if report.problem_magnitude %}{{ report.problem_magnitude|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ report|verbose:"status" }}</th>
-            <td>{{ report.status }}</td>
+            <td>{% if report.status %}{{ report.status|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ report|verbose:"related_trek" }}</th>
-            <td>{{ report.related_trek }}</td>
+            <td>{% if report.related_trek %}{{ report.related_trek|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Districts" %}</th>
@@ -51,7 +66,9 @@
         </tr>
         <tr>
             <th>{{ report|verbose:"assigned_user" }}</th>
-            <td>{{ report.assigned_user }}</td>
+            <td>{% if report.assigned_user %}{{ report.assigned_user|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         {% suricate_management_enabled as suricate_management_enabled %}
         {% if suricate_management_enabled %}
@@ -89,9 +106,11 @@
                 {% endfor %}
             </td>
         </tr>
+        <tr>
+            <th>{{ report|verbose:"uses_timers" }}</th>
+            <td>{% if report.uses_timers %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>
+        </tr>
         {% endif %}
-        {% suricate_workflow_enabled as suricate_workflow_enabled %}
-        {% suricate_management_enabled as suricate_management_enabled %}
         {% if suricate_management_enabled or suricate_workflow_enabled %}
             <tr>
                 <th>{{ report|verbose:"eid" }}</th>
@@ -100,12 +119,8 @@
         {% endif %}
         {% if suricate_workflow_enabled %}
         <tr>
-            <th>{{ report|verbose:"uses_timers" }}</th>
-            <td>{{ report.uses_timers }}</td>
-        </tr>
-        <tr>
             <th>{{ report|verbose:"locked" }}</th>
-            <td>{{ report.locked }}</td>
+            <td>{% if report.locked %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>
         </tr>
         {% endif %}
         {% include "mapentity/trackinfo_fragment.html" %}

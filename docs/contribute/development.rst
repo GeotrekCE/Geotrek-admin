@@ -18,7 +18,13 @@ Quickstart
     docker-compose run --rm web ./manage.py createsuperuser
     docker-compose up -d
 
-Got to http://localhost:8000
+Go to http://localhost:8000
+
+PDF generation might not work unless you add the following entry to ``/etc/hosts`` and use ``geotrek.local:8000`` to access Geotrek.
+
+::
+
+    127.0.0.1   localhost geotrek.local
 
 
 Contribution guide
@@ -66,8 +72,8 @@ On master branch:
 * Run ``dch -v <version>+dev --no-force-save-on-release`` and save
 * Commit with message 'Back to development'
 * Push branch and tag
-* When pushing a release tag 'x.y.z', CircleCI will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 * Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
+* When creating a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 
 
 Developement
@@ -118,13 +124,16 @@ When updating or adding a new field ``my_field`` to a model ``MyModel``, please 
 
     - If it exists, and if you wish to display a column for ``my_field`` in CSV/SHP exports for this model by default, simply add ``my_field`` to ``default_extra_colums`` on this class.
 
+- Follow the documentation you just edited to test that custom columns and hideable fields do work properly with your new field.
+
 - Look for sql file defaults ``geotrek/{app_name}/sql/post_90_defaults.sql`` :
 
     - If it exists find your modelname in the list and depending on the default value alter column ``my_field`` or add ``-- my_field``
 
     - If the modelname doesn't exist, create a new section (even if you don't need to alter column)
 
-Follow the documentation you just edited to test that custom columns and hideable fields do work properly with your new field.
+- Look for sql view file ``geotrek/{app_name}/sql/post_20_views.sql`` and update the view for your model with an alias for the new field
+
 
 **In API v2** :
 
@@ -192,6 +201,33 @@ Launch tests
 
 Pictures of the problem and videos are generated in cypress/videos and cypress/screenshots
 
+Setup to run rando synchronization locally
+------------------------------------------
+
+(sync rando is only relevant for an admin paired with geotrek rando v2)
+
+In your django settings you must set the 'url' key of SYNC_RANDO_OPTIONS to use the same domain as defined by SERVER_NAME in your .env.
+
+For instance with SERVER_NAME=geotrek.local (default value)
+
+::
+
+	SYNC_RANDO_OPTIONS = {
+		'url': 'http://geotrek.local:8000'
+	}
+
+Setup to use screamshotter-related features locally
+---------------------------------------------------
+
+Use the domain defined in SERVER_NAME in your .env to reach your local geotrek admin web instance. By default the address is `http://geotrek.local:8000`.
+
+Update the `/etc/hosts` on your machine to resolve `geotrek.local` on `127.0.0.1`.
+
+::
+
+	$ cat /etc/hosts
+	127.0.0.1	geotrek.local
+	127.0.0.1	localhost
 
 Database reset
 --------------
@@ -209,7 +245,7 @@ Assuming a dump of your database is located in your project directory:
 
 ::
 
-   docker-compose run --rm web pg_restore -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek/<path_to_backup>.dump
+   docker-compose run --rm web pg_restore --clean --no-owner --no-acl -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek-admin/<path_to_backup>.dump
 
 Restore your ``./var/conf/`` project files, and data files into ``./var/media``.
 

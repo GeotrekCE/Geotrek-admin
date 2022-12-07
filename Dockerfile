@@ -15,6 +15,7 @@ ENV CAPTURE_HOST="screamshotter"
 ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
 
 WORKDIR /opt/geotrek-admin
+RUN mkdir -p /opt/geotrek-admin/var/log /opt/geotrek-admin/var/cache
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update -qq && apt-get install -y -qq  \
@@ -48,11 +49,12 @@ RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 COPY geotrek/ geotrek/
 COPY manage.py manage.py
 COPY VERSION VERSION
-COPY .coveragerc .coveragerc
+COPY setup.cfg setup.cfg
 COPY docker/* /usr/local/bin/
+
+ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
+EXPOSE 8000
 
 RUN ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ./manage.py compilemessages
 
-EXPOSE 8000
-ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000"]

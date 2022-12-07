@@ -66,18 +66,18 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'external_id', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
     'next', 'parents', 'parking_location', 'pdf', 'points_reference',
-    'portal', 'practice', 'previous', 'public_transport', 'published', 'ratings', 'ratings_description',
+    'portal', 'practice', 'previous', 'public_transport', 'provider', 'published', 'ratings', 'ratings_description',
     'reservation_system', 'reservation_id', 'route', 'second_external_id', 'source', 'structure',
     'themes', 'update_datetime', 'url', 'uuid', 'web_links'
 ])
 
-PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url', 'uuid'])
+PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'provider', 'url', 'uuid'])
 
 TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + ['count_children', 'steps'])
 
 POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id',
-    'name', 'attachments', 'published', 'type', 'type_label', 'type_pictogram',
+    'name', 'attachments', 'published', 'provider', 'type', 'type_label', 'type_pictogram',
     'update_datetime', 'url', 'uuid'
 ])
 
@@ -92,7 +92,7 @@ TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
     'accessibility', 'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
     'description_teaser', 'departure_city', 'email', 'external_id', 'geometry', 'id', 'label_accessibility', 'name', 'pdf',
-    'portal', 'practical_info', 'published', 'reservation_id', 'reservation_system',
+    'portal', 'practical_info', 'provider', 'published', 'reservation_id', 'reservation_system',
     'source', 'structure', 'themes', 'types', 'update_datetime', 'url', 'uuid', 'website',
 ])
 
@@ -128,13 +128,15 @@ STRUCTURE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter', 'name', 'pictogram'])
 
+FILETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'structure', 'type'])
+
 INFORMATION_DESK_TYPE_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'label', 'pictogram'
 ])
 
 INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'description', 'email', 'label_accessibility', 'latitude', 'longitude',
-    'municipality', 'name', 'phone', 'photo_url',
+    'municipality', 'name', 'phone', 'photo_url', 'provider', 'uuid',
     'postal_code', 'street', 'type', 'website'
 ])
 
@@ -145,7 +147,7 @@ RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'accessibility', 'advice', 'ambiance', 'attachments', 'children', 'cities', 'courses', 'description', 'description_teaser', 'eid',
     'geometry', 'id', 'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent', 'period', 'portal',
-    'practice', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid', 'wind', 'web_links',
+    'practice', 'provider', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid', 'wind', 'web_links',
 ])
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector', 'pictogram'])
@@ -156,8 +158,8 @@ SITETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 
 SENSITIVE_AREA_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'contact', 'create_datetime', 'description', 'elevation', 'geometry',
-    'info_url', 'kml_url', 'openair_url', 'name', 'period', 'practices', 'published', 'species_id',
-    'structure', 'update_datetime', 'url'
+    'info_url', 'kml_url', 'openair_url', 'name', 'period', 'practices', 'provider', 'published', 
+    'species_id','structure', 'update_datetime', 'url'
 ])
 
 SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -170,7 +172,7 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
     'accessibility', 'advice', 'cities', 'description', 'eid', 'equipment', 'geometry', 'height', 'id',
     'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
-    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents',
+    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'provider',
     'pdf', 'points_reference', 'children', 'duration', 'gear', 'uuid'
 ])
 
@@ -179,7 +181,7 @@ COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 ORGANISM_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 SERVICE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'eid', 'geometry', 'structure', 'type', 'uuid'
+    'id', 'eid', 'geometry', 'provider', 'structure', 'type', 'uuid'
 ])
 
 SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -188,7 +190,7 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 
 INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'attachments', 'condition', 'description', 'eid', 'geometry',
-    'implantation_year', 'maintenance_difficulty', 'name', 'structure',
+    'implantation_year', 'maintenance_difficulty', 'name', 'provider', 'structure',
     'type', 'usage_difficulty', 'uuid'
 ])
 
@@ -209,11 +211,15 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking', 'cities', 'contact', 'create_datetime',
+    'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'duration', 'email', 'end_date', 'external_id', 'geometry',
-    'meeting_point', 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
-    'practical_info', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
-    'type', 'update_datetime', 'url', 'uuid', 'website'
+    'meeting_point', 'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'capacity', 'pdf', 'place', 'portal',
+    'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
+    'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason', 'participant_number'
+])
+
+TOURISTIC_EVENT_PLACE_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'name', 'geometry'
 ])
 
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -223,7 +229,7 @@ TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 SIGNAGE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
     'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
-    'structure', 'type', 'uuid'
+    'provider', 'structure', 'type', 'uuid'
 ])
 
 SIGNAGE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
@@ -248,9 +254,7 @@ SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 
 
 class BaseApiTest(TestCase):
-    """
-    Base TestCase for all API profile
-    """
+    """ Base TestCase for all API profiles """
 
     @classmethod
     def setUpTestData(cls):
@@ -323,6 +327,7 @@ class BaseApiTest(TestCase):
         cls.info_desk.save()
         cls.content2.portal.add(cls.portal)
         common_factory.FileTypeFactory.create(type='Topoguide')
+        cls.filetype = common_factory.FileTypeFactory.create(type='Foo')
         cls.sensitivearea = sensitivity_factory.SensitiveAreaFactory()
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
@@ -381,9 +386,13 @@ class BaseApiTest(TestCase):
         cls.reference_point = Point(x=1.4388656616210938,
                                     y=44.448487178796235, srid=4326)
         cls.service_type = trek_factory.ServiceTypeFactory()
+        cls.service_type_2 = trek_factory.ServiceTypeFactory(published=False)
         cls.service1 = trek_factory.ServiceFactory()
         cls.service = trek_factory.ServiceFactory(
             type=cls.service_type
+        )
+        cls.service_2 = trek_factory.ServiceFactory(
+            type=cls.service_type_2
         )
         cls.infrastructure_type = infrastructure_factory.InfrastructureTypeFactory()
         cls.infrastructure_condition = infrastructure_factory.InfrastructureConditionFactory()
@@ -547,6 +556,12 @@ class BaseApiTest(TestCase):
     def get_label_detail(self, id_label, params=None):
         return self.client.get(reverse('apiv2:label-detail', args=(id_label,)), params)
 
+    def get_filetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:filetype-list'), params)
+
+    def get_filetype_detail(self, id_label, params=None):
+        return self.client.get(reverse('apiv2:filetype-detail', args=(id_label,)), params)
+
     def get_informationdesk_list(self, params=None):
         return self.client.get(reverse('apiv2:informationdesk-list'), params)
 
@@ -646,6 +661,12 @@ class BaseApiTest(TestCase):
     def get_touristiceventtype_detail(self, id_touristiceventtype, params=None):
         return self.client.get(reverse('apiv2:touristiceventtype-detail', args=(id_touristiceventtype,)), params)
 
+    def get_touristiceventplace_list(self, params=None):
+        return self.client.get(reverse('apiv2:touristiceventplace-list'), params)
+
+    def get_touristiceventplace_detail(self, id_touristiceventplace, params=None):
+        return self.client.get(reverse('apiv2:touristiceventplace-detail', args=(id_touristiceventplace,)), params)
+
     def get_servicetype_list(self, params=None):
         return self.client.get(reverse('apiv2:servicetype-list'), params)
 
@@ -738,9 +759,7 @@ class BaseApiTest(TestCase):
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase for anonymous API profile """
 
     def test_path_list(self):
         response = self.get_path_list()
@@ -1355,10 +1374,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_service_list(self):
-        self.check_number_elems_response(
-            self.get_service_list(),
-            trek_models.Service
-        )
+        response = self.get_service_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        services = trek_models.Service.objects.all()
+        self.assertEquals(len(json_response['results']), services.count() - 1, services.filter(type__published=True).count())
 
     def test_service_detail(self):
         self.check_structure_response(
@@ -1427,10 +1447,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_servicetype_list(self):
-        self.check_number_elems_response(
-            self.get_servicetype_list(),
-            trek_models.ServiceType
-        )
+        response = self.get_servicetype_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        services = trek_models.ServiceType.objects.all()
+        self.assertEquals(len(json_response['results']), services.count() - 1, services.filter(published=True).count())
 
     def test_servicetype_detail(self):
         self.check_structure_response(
@@ -1560,7 +1581,6 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             len(json_response.get('results')),
             trek_models.POI.objects.all().count()
         )
-
         obj.pois_excluded.add(self.poi)
         obj.save()
 
@@ -1685,8 +1705,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 404)
 
     def test_poi_not_published_detail(self):
-        id_poi = trek_factory.POIFactory.create(published=False)
-        response = self.get_poi_detail(id_poi.pk)
+        poi_not_published = trek_factory.POIFactory.create(published=False)
+        response = self.get_poi_detail(poi_not_published.pk)
         self.assertEqual(response.status_code, 404)
 
     def test_touristiccontentcategory_detail(self):
@@ -1915,6 +1935,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_label_detail(self.label.pk),
             TREK_LABEL_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_filetype_detail(self):
+        self.check_structure_response(
+            self.get_filetype_detail(self.filetype.pk),
+            FILETYPE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_filetype_list(self):
+        self.check_number_elems_response(
+            self.get_filetype_list(),
+            common_models.FileType
         )
 
     def test_informationdesk_list(self):
@@ -2152,37 +2184,26 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'trek': trek.id,
             'period': '1'
         })
-        self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.status_code, 200)
-        with override_settings(SENSITIVE_AREA_INTERSECTION_MARGIN=700):
-            response = self.get_sensitivearea_list({
-                'trek': trek.id,
-                'period': '1'
-            })
-            self.assertEqual(response.json()['count'], 2)
+        self.assertEqual(response.json()['count'], 1)
+        # validate wrong trek id get 404
+        response = self.get_sensitivearea_list({
+            'trek': 9999
+        })
+        self.assertEqual(response.status_code, 404)
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase for administrator API profile """
+
     @classmethod
     def setUpTestData(cls):
         #  created user
         cls.administrator = SuperUserFactory()
         BaseApiTest.setUpTestData()
 
-    def login(self):
-        """
-        Override base class login method, used before all function request 'get_api_element'
-        """
-        self.client.force_login(self.administrator)
-
-    def setUp(self):
-        self.login()
-
     def test_path_list(self):
-        self.login()
+        self.client.force_login(self.administrator)
         response = self.get_path_list()
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
@@ -2206,9 +2227,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
 
 class APISwaggerTestCase(BaseApiTest):
-    """
-    TestCase for administrator API profile
-    """
+    """ TestCase API documentation """
 
     @classmethod
     def setUpTestData(cls):
@@ -2483,7 +2502,6 @@ class OutdoorRatingTestCase(TestCase):
 
 
 class FlatPageTestCase(TestCase):
-    maxDiff = None
 
     @classmethod
     def setUpTestData(cls):
@@ -2868,8 +2886,9 @@ class TouristicEventTestCase(BaseApiTest):
 
     @classmethod
     def setUpTestData(cls):
-        cls.maxDiff = None
         cls.touristic_event_type = tourism_factory.TouristicEventTypeFactory()
+        cls.place = tourism_factory.TouristicEventPlaceFactory(name="Here")
+        cls.other_place = tourism_factory.TouristicEventPlaceFactory(name="Over here")
         cls.touristic_event1 = tourism_factory.TouristicEventFactory(
             name_fr="Exposition - Du vent, du sable et des étoiles",
             name_en="Wind and sand",
@@ -2883,14 +2902,20 @@ class TouristicEventTestCase(BaseApiTest):
             accessibility="HA",
             target_audience="De 4 à 121 ans",
             published=True,
+            bookable=True,
             type=cls.touristic_event_type,
-            meeting_time=datetime.time(11, 20),
+            start_time=datetime.time(11, 20),
+            end_time=datetime.time(12, 20),
+            cancelled=True,
+            place=cls.other_place,
+            cancellation_reason=tourism_factory.CancellationReasonFactory(label_en="Fire", label_fr="Incendie")
         )
         cls.touristic_event1.portal.set([common_factory.TargetPortalFactory()])
         cls.touristic_event2 = tourism_factory.TouristicEventFactory(
             name_fr="expo",
             geom=Point(5.77802, 2.047482, srid=4326),
             published=True,
+            bookable=False
         )
         cls.touristic_event2.portal.set([common_factory.TargetPortalFactory()])
         cls.path = core_factory.PathFactory.create(geom=LineString((0.77802, 43.047482), (0.77803, 43.047483), srid=4326))
@@ -2908,42 +2933,70 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event4 = tourism_factory.TouristicEventFactory(
             deleted=True
         )
+        cls.place_unpublished = tourism_factory.TouristicEventPlaceFactory(name="There")
+        cls.touristic_event5 = tourism_factory.TouristicEventFactory(
+            end_date=None,
+            published=True,
+            name="No end date",
+            begin_date='2022-02-20',
+            start_time="12:34",
+            capacity=12,
+            bookable=False,
+            place=cls.place
+        )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
     def test_touristic_event_list(self):
         response = self.get_touristicevent_list()
-        self.assertEqual(response.json().get("count"), 2)
+        self.assertEqual(response.json().get("count"), 3)
 
     @freeze_time("2022-02-02")
     def test_touristic_event_list_2(self):
         response = self.get_touristicevent_list()
-        # Only one because past events are filter by default
-        self.assertEqual(response.json().get("count"), 1)
+        # Only two because past events are filter by default
+        self.assertEqual(response.json().get("count"), 2)
+        # Event with no end date is returned with begin date as end date
+        self.assertEqual(response.json().get("results")[0]['end_date'], "2022-02-20")
+        # start_time replaces meeting_time
+        self.assertEqual(response.json().get("results")[0]['meeting_time'], "12:34:00")
+        # capacity replaces participant_number
+        self.assertEqual(response.json().get("results")[0]['participant_number'], '12')
+        # Event with end date returns right end date
+        self.assertEqual(response.json().get("results")[1]['end_date'], "2202-02-22")
 
     def test_touristic_event_dates_filters_1(self):
-        response = self.get_touristicevent_list()
-        self.assertEqual(response.json().get("count"), 2)
+        response = self.get_touristicevent_list({'dates_before': '2200-01-01', 'dates_after': '1970-01-01'})
+        self.assertEqual(response.json().get("count"), 3)
 
     def test_touristic_event_dates_filters_2(self):
-        response = self.get_touristicevent_list({'dates_before': '2200-01-01', 'dates_after': '1970-01-01'})
-        self.assertEqual(response.json().get("count"), 2)
-
-    def test_touristic_event_dates_filters_3(self):
         response = self.get_touristicevent_list({'dates_before': '2021-09-01', 'dates_after': '1970-01-01'})
         self.assertEqual(response.json().get("count"), 2)
 
-    def test_touristic_event_dates_filters_4(self):
+    def test_touristic_event_dates_filters_3(self):
         response = self.get_touristicevent_list({'dates_after': '2021-07-03'})
-        self.assertEqual(response.json().get("count"), 2)
+        self.assertEqual(response.json().get("count"), 3)
 
-    def test_touristic_event_dates_filters_5(self):
+    def test_touristic_event_dates_filters_4(self):
         response = self.get_touristicevent_list({'dates_after': '2021-07-04'})
         # Event 1 finishes on 3rd of july
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_cancelled_filter(self):
+        response = self.get_touristicevent_list({'cancelled': 'True'})
         self.assertEqual(response.json().get("count"), 1)
+        self.assertTrue(response.json().get("results")[0].get("cancelled"))
+        self.assertEqual(response.json().get("results")[0].get("cancellation_reason").get('en'), "Fire")
+        self.assertEqual(response.json().get("results")[0].get("cancellation_reason").get('fr'), "Incendie")
+        response = self.get_touristicevent_list({'cancelled': 'False'})
+        self.assertEqual(response.json().get("count"), 2)
 
     def test_touristic_event_detail(self):
         response = self.get_touristicevent_detail(self.touristic_event1.pk)
         self.check_structure_response(response, TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE)
+
+    def test_touristic_event_place_detail(self):
+        response = self.get_touristiceventplace_detail(self.place.pk)
+        self.check_structure_response(response, TOURISTIC_EVENT_PLACE_DETAIL_JSON_STRUCTURE)
 
     def test_touristicevent_near_trek(self):
         response = self.get_touristicevent_list({'near_trek': self.trek.pk})
@@ -2968,6 +3021,20 @@ class TouristicEventTestCase(BaseApiTest):
         response = self.get_touristicevent_list({'types': self.touristic_event_type.pk})
         self.assertEqual(response.json().get("count"), 1)
 
+    def test_touristic_event_bookable(self):
+        response = self.get_touristicevent_list({'bookable': 'True'})
+        self.assertEqual(response.json().get("count"), 1)
+        response = self.get_touristicevent_list({'bookable': 'False'})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_place_filter(self):
+        response = self.get_touristicevent_list({'place': f"{self.place.pk},{self.other_place.pk}"})
+        self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_place_list(self):
+        response = self.get_touristiceventplace_list()
+        self.assertEqual(response.json().get("count"), 2)
+
 
 class TouristicEventTypeTestCase(BaseApiTest):
     @classmethod
@@ -2989,8 +3056,7 @@ class TouristicEventTypeTestCase(BaseApiTest):
 
 
 class TouristicEventTypeFilterTestCase(BaseApiTest):
-    """ Test filtering depending on published, deleted content for touristic event types
-    """
+    """ Test filtering depending on published, deleted content for touristic event types """
 
     @classmethod
     def setUpTestData(cls):
@@ -3055,8 +3121,7 @@ class TouristicEventTypeFilterTestCase(BaseApiTest):
 
 
 class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase):
-    """ Test filtering depending on portal for touristic event types
-    """
+    """ Test filtering depending on portal for touristic event types """
 
     @classmethod
     def setUpTestData(cls):
@@ -3123,8 +3188,7 @@ class TouristicEventTypeFilterByPortalTestCase(TouristicEventTypeFilterTestCase)
 
 
 class NearOutdoorFilterTestCase(BaseApiTest):
-    """ Test near_outdoorsite and near_outdoorcourse filter on routes
-    """
+    """ Test near_outdoorsite and near_outdoorcourse filter on routes """
 
     @classmethod
     def setUpTestData(cls):
@@ -3327,7 +3391,6 @@ class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
 
     def setUp(self):
         self.client.force_login(self.user)
-        return super().setUp()
 
     def test_updated_after_filter(self):
         two_years_ago = (timezone.now() - relativedelta(years=2)).date()
@@ -4126,16 +4189,7 @@ class OutdoorFilterByPortal(BaseApiTest):
 
 
 class AltimetryCacheTests(BaseApiTest):
-    """ Test APIV2 DEM serialization is cached
-    """
-
-    TMP_CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': settings.CACHE_ROOT
-        }
-    }
-
+    """ Test APIV2 DEM serialization is cached """
     @classmethod
     def setUpTestData(cls):
         # Create a simple fake DEM
@@ -4151,55 +4205,53 @@ class AltimetryCacheTests(BaseApiTest):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM(self):
-        # There are 8 queries to get trek DEM
-        with self.assertNumQueries(8):
+        # There are 9 queries to get trek DEM
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 7 queries to get trek DEM
-        with self.assertNumQueries(7):
+        # When cache is used there is single query to get trek DEM
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_cache_is_used_when_getting_trek_DEM_nds(self):
-        self.trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
-        # There are 8 queries to get trek DEM
-        with self.assertNumQueries(8):
-            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        trek = trek_factory.TrekFactory.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        # There are 9 queries to get trek DEM
+        with self.assertNumQueries(9):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
-        # When cache is used there are only 7 queries to get trek DEM
-        with self.assertNumQueries(7):
-            response = self.client.get(reverse('apiv2:trek-dem', args=(self.trek.pk,)))
+        # When cache is used there is single query to get trek DEM
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:trek-dem', args=(trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_cache_is_used_when_getting_trek_profile(self):
         # There are 8 queries to get trek profile
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertIn("profile", response.json().keys())
-        # When cache is used there are only 7 queries to get trek profile
-        with self.assertNumQueries(7):
+        # When cache is used there is single query to get trek profile
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertIn("profile", response.json().keys())
 
-    # Override default cache with fat cache since we can't use memcached in tests
-    @override_settings(CACHES=TMP_CACHES)
     def test_cache_is_used_when_getting_trek_profile_svg(self):
         # There are 8 queries to get trek profile svg
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'image/svg+xml')
-        # When cache is used there are only 7 queries to get trek profile
-        with self.assertNumQueries(7):
+        self.assertIn('image/svg+xml', response['Content-Type'])
+        # When cache is used there is single query to get trek profile
+        with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'image/svg+xml')
+        self.assertIn('image/svg+xml', response['Content-Type'])

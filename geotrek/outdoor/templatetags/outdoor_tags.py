@@ -43,7 +43,7 @@ def course_sites():
                 str(scale.pk): scale.name
                 for scale in site.practice.rating_scales.all()
             },
-        } if not(site.practice is None) else {'practice': None, 'types': {}, 'scales': {}}
+        } if not (site.practice is None) else {'practice': None, 'types': {}, 'scales': {}}
         for site in Site.objects.all()
     }
     return json.dumps(sites)

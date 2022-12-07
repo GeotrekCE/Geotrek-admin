@@ -1,0 +1,385 @@
+{
+  "count": 7,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "label": {
+        "fr": "Hébergement",
+        "en": "Accommodation",
+        "es": null,
+        "it": null
+      },
+      "order": 20,
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-accommodation.svg",
+      "types": [
+        {
+          "id": 101,
+          "label": {
+            "fr": "Type d'usage",
+            "en": "Type of use",
+            "es": null,
+            "it": null
+          },
+          "values": [
+            {
+              "id": 4,
+              "label": {
+                "fr": "Gite d'étape",
+                "en": "Stopover",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            },
+            {
+              "id": 6,
+              "label": {
+                "fr": "Village de vacances",
+                "en": "Holiday village",
+                "es": null,
+                "it": null
+              },
+              "pictogram": "/media/upload/Lieux_culturel_0rT7C2L.svg"
+            }
+          ]
+        },
+        {
+          "id": 102,
+          "label": {
+            "fr": "Label",
+            "en": "Label",
+            "es": null,
+            "it": null
+          },
+          "values": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "label": {
+        "fr": "Pleine Nature",
+        "en": "Outdoor",
+        "es": null,
+        "it": null
+      },
+      "order": 13,
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-outdoor.svg",
+      "types": [
+        {
+          "id": 201,
+          "label": {
+            "fr": "Type d'usage",
+            "en": "Type of use",
+            "es": null,
+            "it": null
+          },
+          "values": [
+            {
+              "id": 14,
+              "label": {
+                "fr": "Canyoning",
+                "en": "Canyoning",
+                "es": null,
+                "it": null
+              },
+              "pictogram": "/media/upload/noun_canyon_3005142.png"
+            },
+            {
+              "id": 17,
+              "label": {
+                "fr": "Course d'orientation",
+                "en": "Orienteering",
+                "es": null,
+                "it": null
+              },
+              "pictogram": "/media/upload/noun_Running_65866.png"
+            }
+          ]
+        },
+        {
+          "id": 202,
+          "label": {
+            "fr": "",
+            "en": null,
+            "es": null,
+            "it": null
+          },
+          "values": []
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "label": {
+        "fr": "Sorties",
+        "en": "Visits",
+        "es": null,
+        "it": null
+      },
+      "order": 28,
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-visits.svg",
+      "types": [
+        {
+          "id": 301,
+          "label": {
+            "fr": "Type d'usage",
+            "en": "Type of use",
+            "es": null,
+            "it": null
+          },
+          "values": [
+            {
+              "id": 24,
+              "label": {
+                "fr": "Ane",
+                "en": "Donkey",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            },
+            {
+              "id": 30,
+              "label": {
+                "fr": "Canoë-Kayak",
+                "en": "Canoe-Kayak",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            },
+            {
+              "id": 29,
+              "label": {
+                "fr": "Canyoning",
+                "en": "Canyoning",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            },
+            {
+              "id": 32,
+              "label": {
+                "fr": "Vol libre",
+                "en": "Free fly",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            }
+          ]
+        },
+        {
+          "id": 302,
+          "label": {
+            "fr": "Service",
+            "en": "Prestation",
+            "es": null,
+            "it": null
+          },
+          "values": [
+            {
+              "id": 38,
+              "label": {
+                "fr": "Accompagnée",
+                "en": "Guided",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "label": {
+        "fr": "Restaurants",
+        "en": "Restaurants",
+        "es": null,
+        "it": null
+      },
+      "order": 30,
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-restaurants.svg",
+      "types": [
+        {
+          "id": 501,
+          "label": {
+            "fr": "Type d'usage",
+            "en": "Type of use",
+            "es": null,
+            "it": null
+          },
+          "values": [
+            {
+              "id": 43,
+              "label": {
+                "fr": "Restaurant",
+                "en": "Restaurant",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            }
+          ]
+        },
+        {
+          "id": 502,
+          "label": {
+            "fr": "",
+            "en": null,
+            "es": null,
+            "it": null
+          },
+          "values": []
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "label": {
+        "fr": "Séjours",
+        "en": "Destinations",
+        "es": null,
+        "it": null
+      },
+      "order": 25,
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-destination.svg",
+      "types": [
+        {
+          "id": 701,
+          "label": {
+            "fr": "Thématique",
+            "en": "Theme",
+            "es": null,
+            "it": null
+          },
+          "values": [
+            {
+              "id": 49,
+              "label": {
+                "fr": "Bien être",
+                "en": "Wellness",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            },
+            {
+              "id": 50,
+              "label": {
+                "fr": "Nature",
+                "en": "Nature",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            }
+          ]
+        },
+        {
+          "id": 702,
+          "label": {
+            "fr": "",
+            "en": null,
+            "es": null,
+            "it": null
+          },
+          "values": []
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "label": {
+        "fr": "Musée",
+        "en": "Museum",
+        "es": null,
+        "it": null
+      },
+      "order": 40,
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-museum.svg",
+      "types": [
+        {
+          "id": 801,
+          "label": {
+            "fr": "Type d'usage",
+            "en": "Type of use",
+            "es": null,
+            "it": null
+          },
+          "values": [
+            {
+              "id": 58,
+              "label": {
+                "fr": "Lieu de visite",
+                "en": "Visit site",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            },
+            {
+              "id": 57,
+              "label": {
+                "fr": "Musée",
+                "en": "Museum",
+                "es": null,
+                "it": null
+              },
+              "pictogram": null
+            }
+          ]
+        },
+        {
+          "id": 802,
+          "label": {
+            "fr": "",
+            "en": null,
+            "es": null,
+            "it": null
+          },
+          "values": []
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "label": {
+        "fr": "Course d'orientation",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "order": 12,
+      "pictogram": "https://foo.fr/media/upload/touristiccontent-sites_2.svg",
+      "types": [
+        {
+          "id": 901,
+          "label": {
+            "fr": "Genre",
+            "en": null,
+            "es": null,
+            "it": null
+          },
+          "values": []
+        },
+        {
+          "id": 902,
+          "label": {
+            "fr": "Label",
+            "en": null,
+            "es": null,
+            "it": null
+          },
+          "values": []
+        }
+      ]
+    }
+  ]
+}

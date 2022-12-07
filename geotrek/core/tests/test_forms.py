@@ -8,9 +8,13 @@ from unittest.mock import patch
 
 from django.test.utils import override_settings
 
-from geotrek.core.tests.factories import TrailFactory, PathFactory
+from geotrek.core.tests.factories import (
+    TrailFactory, PathFactory,
+    CertificationLabelFactory, CertificationStatusFactory
+)
 from geotrek.authent.tests.factories import UserFactory
-from geotrek.core.forms import TrailForm, PathForm
+from geotrek.core.forms import TrailForm, PathForm, CertificationTrailFormSet
+from geotrek.core.models import CertificationTrail
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -67,3 +71,38 @@ class PathFormTest(TestCase):
         form = PathForm(user=user)
         self.assertIsInstance(form.fields['name'].widget, HiddenInput)
         self.assertIsInstance(form.fields['departure'].widget, HiddenInput)
+
+    def test_invalid_geom_path(self):
+        user = UserFactory()
+        # Just intersecting
+        form1 = PathForm(
+            user=user,
+            data={'geom': '{"geom": "LINESTRING(2.5 45.5, 2.5 45.5)", "snap": [null, null]}'}
+        )
+        self.assertFalse(form1.is_valid(), str(form1.errors))
+
+
+class TrailFormTest(TestCase):
+
+    def test_certifications_formset(self):
+        trail = TrailFactory.create()
+        data = {
+            'certifications-TOTAL_FORMS': '2',
+            'certifications-INITIAL_FORMS': '0',
+            'certifications-MIN_NUM_FORMS': '0',
+            'certifications-MAX_NUM_FORMS': '1000',
+
+            'certifications-0-id': '',
+            'certifications-0-DELETE': '',
+            'certifications-0-certification_label': str(CertificationLabelFactory.create().pk),
+            'certifications-0-certification_status': str(CertificationStatusFactory.create().pk),
+
+            'certifications-1-id': '',
+            'certifications-1-DELETE': '',
+            'certifications-1-certification_label': str(CertificationLabelFactory.create().pk),
+            'certifications-1-certification_status': str(CertificationStatusFactory.create().pk),
+        }
+        formset = CertificationTrailFormSet(data, instance=trail)
+        self.assertTrue(formset.is_valid())
+        formset.save()
+        self.assertEqual(CertificationTrail.objects.count(), 2)

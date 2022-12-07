@@ -14,3 +14,7 @@
   font-size: 20px;
   font-weight: bold;
 }
+
+fieldset {
+  margin-left: 80px;
+}

@@ -2,18 +2,13 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Count, F, Q
 from django_filters.rest_framework.backends import DjangoFilterBackend
-
-from geotrek.api.mobile.serializers import trekking as api_serializers_trekking
-from geotrek.api.mobile.serializers import tourism as api_serializers_tourism
-
-from geotrek.api.v2.functions import StartPoint, EndPoint
-from geotrek.trekking import models as trekking_models
-
-from rest_framework_extensions.mixins import DetailSerializerMixin
+from rest_framework import response, viewsets, decorators
 from rest_framework.permissions import AllowAny
-from rest_framework import response
-from rest_framework import viewsets
-from rest_framework import decorators
+from rest_framework_extensions.mixins import DetailSerializerMixin
+
+from geotrek.api.mobile.serializers import trekking as api_serializers_trekking, tourism as api_serializers_tourism
+from geotrek.common.functions import StartPoint, EndPoint
+from geotrek.trekking import models as trekking_models
 
 
 class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
@@ -29,9 +24,9 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'attachments') \
             .order_by('pk')
-        if not self.action == 'list':
+        if self.action != 'list':
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
-        if self.action == 'list':
+        else:
             queryset = queryset.annotate(count_parents=Count('trek_parents')).\
                 exclude(Q(count_parents__gt=0) & Q(published=False))
         if 'portal' in self.request.GET:
@@ -51,7 +46,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         root_pk = self.request.GET.get('root_pk') or trek.pk
         qs = trek.pois.filter(published=True).select_related('topo_object', 'type', )\
             .prefetch_related('topo_object__aggregations', 'attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)).order_by('pk')
         data = api_serializers_trekking.POIListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 

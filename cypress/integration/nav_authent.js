@@ -1,5 +1,9 @@
 describe('Login from home page / admin page', () => {
 
+  beforeEach(() => {
+    cy.setCookie('django_language', 'en');
+  })
+
   it('Redirects to login page.', () => {
     cy.visit('/')
     cy.url().should('include', '/login/?next=/')
