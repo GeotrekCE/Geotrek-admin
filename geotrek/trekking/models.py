@@ -700,7 +700,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
-    view_points = GenericRelation('common.HDViewPoint', related_query_name='trek')
+    view_points = GenericRelation('common.HDViewPoint', related_query_name='poi')
 
     geometry_types_allowed = ["POINT"]
 

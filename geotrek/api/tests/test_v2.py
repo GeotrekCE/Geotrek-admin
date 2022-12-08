@@ -80,7 +80,7 @@ TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + [
 POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id',
     'name', 'attachments', 'published', 'provider', 'type', 'type_label', 'type_pictogram',
-    'update_datetime', 'url', 'uuid'
+    'update_datetime', 'url', 'uuid', 'view_points'
 ])
 
 LABEL_ACCESSIBILITY_DETAIL_JSON_STRUCTURE = sorted([
@@ -149,7 +149,8 @@ RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'accessibility', 'advice', 'ambiance', 'attachments', 'children', 'cities', 'courses', 'description', 'description_teaser', 'eid',
     'geometry', 'id', 'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent', 'period', 'portal',
-    'practice', 'provider', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid', 'wind', 'web_links',
+    'practice', 'provider', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid',
+    'view_points', 'wind', 'web_links'
 ])
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector', 'pictogram'])
@@ -256,7 +257,7 @@ SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 
 HDVIEWPOINT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'annotations', 'author', 'create_datetime', 'geometry', 'legend',
-    'license', 'picture_tiles_url', 'site', 'title', 'trek', 'update_datetime', 'uuid'
+    'license', 'picture_tiles_url', 'poi', 'site', 'title', 'trek', 'update_datetime', 'uuid'
 ])
 
 
@@ -318,9 +319,9 @@ class BaseApiTest(TestCase):
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
+            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)], published=True)
         else:
-            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
+            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)', published=True)
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
@@ -2231,7 +2232,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(
             json_response.get('picture_tiles_url'),
-            f"http://testserver/api/hdviewpoint/drf/hdviewpoints/{self.hdviewpoint_trek.pk}/tiles/{{z}}/{{x}}/{{y}}.png"
+            f"http://testserver/api/hdviewpoint/drf/hdviewpoints/{self.hdviewpoint_trek.pk}/tiles/%7Bz%7D/%7Bx%7D/%7By%7D.png"
         )
         json.dumps(json_response.get('annotations'))
         self.assertIsNone(json_response.get('site'))
