@@ -1,0 +1,316 @@
+{% extends "mapentity/base.html" %} {% load static crispy_forms_tags %} {% load
+i18n %} {% load i18n static %} {% block extrahead %}
+<script type="text/javascript"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css"
+  crossorigin=""
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+  crossorigin=""
+/>
+<script
+  src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+  crossorigin=""
+  defer
+></script>
+<script src="//unpkg.com/vue2-leaflet" defer></script>
+
+<style>
+  html,
+  body {
+    min-height: 100vh !important;
+  }
+  #container {
+    padding-top: unset;
+    flex: 1;
+  }
+  #app {
+    flex: 1;
+    height: 100vh;
+    max-height: 100vh !important;
+  }
+  #desc {
+    overflow-y: auto;
+    height: 100%;
+    max-height: 100vh !important;
+  }
+  #descHeader {
+    background-color: #e6e6e6;
+  }
+
+  #map {
+    border: 1px solid green;
+    min-height: 500px;
+  }
+  .current-month {
+    border-bottom: 5px solid var(--danger);
+  }
+  h2,
+  h3 {
+    color: var(--primary);
+  }
+</style>
+
+{% endblock extrahead %} {% block navbar %}
+<!-- No bar -->
+{% endblock navbar %} {% block mainpanel %}
+<div class="container-fluid h-100">
+  <div id="app" class="row min-vh-100">
+    <div class="col-sm p-0">
+      <div id="desc" class="h-100 d-flex flex-column">
+        <div v-if="sensitiveArea">
+          <div id="descHeader" class="p-3">
+            <span
+              v-for="p in properties.practices"
+              class="m-1 p-1 badge badge-info float-right"
+              >[[ sportPractices.find(i => i.id === p).name[lang] ]]</span
+            >
+            <h2 class="text-uppercase">[[properties.name]]</h2>
+            <p>
+              <span class="badge badge-success">[[typeZone]]</span>
+              créée par <strong>[[properties.structure]]</strong>
+            </p>
+          </div>
+          <div id="descContent" class="p-3">
+            <div class="block">
+              <h3>Période de sensibilité</h3>
+
+              <div class="text-center">
+                <span
+                  data-toggle="tooltip"
+                  data-placement="bottom"
+                  :data-toggle-title="p ? 'Période sensible': 'Hors période sensible'"
+                  :title="p ? 'Période sensible': 'Hors période sensible'"
+                  v-for="(p,i) in properties.period"
+                  class="m-1 p-1 badge text-uppercase"
+                  :class="[p ? 'badge-warning' : 'badge-success', i === currentMonth ? 'current-month':null ]"
+                  >[[ months[i] ]]</span
+                >
+              </div>
+              <div
+                class="alert"
+                role="alert"
+                :class="[ properties.period[this.currentMonth] ? 'alert-warning':'alert-success',]"
+              >
+                Statut de sensibilité aujourd'hui&nbsp;:
+                <span
+                  class="badge text-uppercase"
+                  :class="[ properties.period[this.currentMonth] ? 'badge-warning':'badge-success',]"
+                  >[[ currentSensitivity ]]</span
+                >
+              </div>
+            </div>
+            <div class="block">
+              <h3>Description</h3>
+              <div
+                v-if="properties.description"
+                v-html="properties.description"
+              ></div>
+              <div v-else class="text-muted">Pas de description</div>
+            </div>
+            <div class="block">
+              <h3>Contact</h3>
+              <div v-if="properties.contact" v-html="properties.contact"></div>
+              <div v-else class="text-muted">Pas de contact</div>
+            </div>
+
+            <div v-if="properties.attachments" id="attachments">
+              <h3>Documents joints</h3>
+              <ul class="list-unstyled">
+                <li v-for="a in properties.attachments" class="media py-2">
+                  <img
+                    :src="a.thumbnail ? a.thumbnail : a.type === 'image' && a.url ? a.url : emptyThumb(a.type)"
+                    class="mr-3"
+                    :alt="a.title"
+                    class="img-thumbnail rounded"
+                    height="100"
+                    width="100"
+                  />
+                  <div class="media-body">
+                    <span
+                      class="float-right m-1 p-1 badge text-uppercase badge-success"
+                      >[[a.filetype.type]]</span
+                    >
+                    <h5 class="mt-0 mb-1">
+                      <a :href="a.url" targer="_blank" title="Télécharger"
+                        >[[a.title]]</a
+                      >
+                    </h5>
+
+                    <small v-if="a.author">[[a.author]]</small>
+                    <small v-if="a.license">Licence: [[a.license]]</small>
+                    <p v-if="a.legend">[[a.legend]]</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div id="links" class="text-center">
+              <a
+                v-if="properties.info_url"
+                :href="properties.info_url"
+                class="btn btn-success m-2"
+                target="_blank"
+                ><i class="fa fa-fw fa-info-circle"></i> Plus d'informations</a
+              >
+              <a
+                v-if="properties.kml_url"
+                :href="properties.kml_url"
+                class="btn btn-primary m-2"
+                target="_blank"
+                ><i class="fa fa-fw fa-download"></i>KML</a
+              >
+              <a
+                v-if="properties.openair_url"
+                :href="properties.openair_url"
+                class="btn btn-primary m-2"
+                target="_blank"
+                ><i class="fa fa-fw fa-download"></i> OpenAir</a
+              >
+              <a
+                v-if="properties.url"
+                :href="`${properties.url}&language${lang}`"
+                class="btn btn-primary m-2"
+                target="_blank"
+                ><i class="fa fa-fw fa-link"></i> GeoJSON</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm p-0">
+      <div id="map" class="h-100 d-flex flex-column">MAP</div>
+    </div>
+    {% comment %}
+    <pre><code>[[properties]]</code></pre>
+    {% endcomment %}
+  </div>
+</div>
+<script>
+  const { createApp } = Vue;
+
+  console.log(createApp);
+
+  const app = createApp({
+    data() {
+      return {
+        message: "Hello Vue!",
+        lang: "en",
+        sensitiveArea: null,
+        // TEST Vue2Leaflet
+
+        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attribution:
+          '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        zoom: 8,
+        map: null,
+        center: [47.31322, -1.319482],
+        geojson: null,
+        sportPractices: [],
+        currentMonth: new Date().getMonth(),
+        months: [
+          "jan",
+          "fév",
+          "mar",
+          "avr",
+          "mai",
+          "juin",
+          "juil",
+          "aout",
+          "sep",
+          "oct",
+          "nov",
+          "déc",
+        ],
+      };
+    },
+    computed: {
+      properties() {
+        return this.sensitiveArea ? this.sensitiveArea.properties : null;
+      },
+      typeZone() {
+        return this.properties.species_id
+          ? "Zone espèce"
+          : "Zone réglementaire";
+      },
+      currentSensitivity() {
+        return this.sensitiveArea.properties.period[this.currentMonth]
+          ? "Sensible"
+          : "Non sensible";
+      },
+    },
+    methods: {
+      emptyThumb(fileType) {
+        return (
+          "data:image/svg+xml;charset=utf-8," +
+          encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+            <rect width="100" height="100" style="fill:#dddddd;" />
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" style="fill:#333;font-size:20px;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';">
+              ${fileType}
+            </text>
+          </svg>
+          `)
+        );
+      },
+      getSportPractices() {
+        fetch(`/api/v2/sensitivearea_practice/?format=json`)
+          .then((response) => response.json())
+          .then((data) => (this.sportPractices = data.results));
+      },
+      getLang() {
+        const lang = navigator.language.split("-")[0];
+        const supportedLangs = ["en", "it", "fr"];
+        this.lang = supportedLangs.includes(lang) ? lang : supportedLangs[0];
+      },
+      async getData() {
+        const response = await fetch(
+          //`/api/${this.lang || "fr"}/sensitiveareas/{{object.pk}}.geojson`
+          `/api/v2/sensitivearea/{{object.pk}}/?format=geojson&period=any&language=${
+            this.lang || "fr"
+          }`
+        );
+        this.sensitiveArea = await response.json();
+      },
+      addLayer() {
+        const area = L.geoJSON(this.sensitiveArea, {}).bindPopup(function (
+          layer
+        ) {
+          return layer.feature.properties.name;
+        });
+        this.map.fitBounds(area.getBounds());
+        this.map.setMaxBounds(area.getBounds());
+        area.addTo(this.map);
+      },
+      initMap() {
+        this.map = L.map("map").setView([51.505, -0.09], 13);
+        this.map.setMaxZoom(17);
+
+        L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+          attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>,
+              <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy;
+              <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>`,
+        }).addTo(this.map);
+      },
+    },
+    mounted() {
+      this.getLang();
+      this.getSportPractices();
+      this.getData()
+        .then(() => this.initMap())
+        .then(() => this.addLayer());
+    },
+  });
+
+  app.config.compilerOptions.delimiters = ["[[", "]]"];
+  $(document).ready(function () {
+    app.mount("#app");
+  });
+</script>
+{% endblock mainpanel %}

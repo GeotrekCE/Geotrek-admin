@@ -6,7 +6,7 @@ from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic.detail import BaseDetailView
+from django.views.generic.detail import BaseDetailView, DetailView
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityFormat, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
@@ -197,3 +197,13 @@ class SensitiveAreaKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetai
         response = HttpResponse(area.kml(),
                                 content_type='application/vnd.google-earth.kml+xml')
         return response
+
+
+class SensitiveAreaPublicDetailView(DetailView):
+
+    queryset = SensitiveArea.objects.filter(published=True)
+    template_name: str = 'sensitivity/sensitivearea_detail_public.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context

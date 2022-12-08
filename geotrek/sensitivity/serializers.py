@@ -49,13 +49,18 @@ class SensitiveAreaGeojsonSerializer(MapentityGeojsonModelSerializer):
 class SensitiveAreaAPISerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
     kml_url = rest_serializers.SerializerMethodField()
+    public_url = rest_serializers.SerializerMethodField()
 
     def get_kml_url(self, obj):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
 
+
+    def get_public_url(self, obj):
+        return reverse('sensitivity:sensitivearea_public_detail', kwargs={'pk': obj.pk})
+
     class Meta:
         model = sensitivity_models.SensitiveArea
-        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url')
+        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url', 'public_url')
 
 
 class SensitiveAreaAPIGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaAPISerializer):
