@@ -14,3 +14,11 @@
     {% include "common/publishable_completeness_fragment.html" %}
     {{ block.super }}
 {% endblock detailspanel %}
+
+
+{% block attachmentspanel %}
+    {{ block.super }}
+    <br>
+    <br>
+    {% include "common/hdviewpoint_detail_fragment.html" %}
+{% endblock attachmentspanel %}

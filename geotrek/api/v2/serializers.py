@@ -1066,6 +1066,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
+        view_points = HDViewPointSerializer(many=True)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
@@ -1121,7 +1122,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
                 'description_teaser', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
                 'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice', 'provider',
-                'ratings', 'sector', 'source', 'structure', 'themes',
+                'ratings', 'sector', 'source', 'structure', 'themes', 'view_points',
                 'type', 'url', 'uuid', 'courses', 'web_links', 'wind',
             )
 
