@@ -85,6 +85,16 @@ Don't forget the u character before strings if they contain non-ascii characters
 To apply changes, you may have to run ``sudo service geotrek restart``.
 
 
+Import Treks from APIDAE
+------------------------
+
+A parser implementation is available to import Treks from APIDAE. Use it by defining a subclass of ```geotrek.trekking.parsers.ApidaeTrekParser`` in your ``var/conf/parsers.py`` configuration file as shown above.
+
+You'll have to configure how to access your APIDAE data: ``api_key``, ``project_id`` and ``selection_id`` (those are setting attributes from the APIDAE base parser).
+
+The ``practices_mapped_with_activities_ids`` and ``practices_mapped_with_default_activities_ids`` attributes define default mapping with the trekking module data fixture. You may override this to match your own types of Trek Practice.
+
+
 Configure Marque Esprit Parc import
 -----------------------------------
 

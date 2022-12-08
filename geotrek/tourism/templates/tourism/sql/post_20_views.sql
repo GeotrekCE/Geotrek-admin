@@ -69,7 +69,7 @@ LEFT JOIN
                JOIN tourism_touristiccontent c ON b.id = c.category_id
                AND b.id = c.category_id
                JOIN tourism_touristiccontent_type1 d ON d.touristiccontent_id = c.id
-               AND d.touristiccontenttype1_id = a.id) SELECT {% for lang in MODELTRANSLATION_LANGUAGES %}array_to_string(ARRAY_AGG (label_{{ lang }}), ', ', '_') labels_{{ lang }},{% endfor %}
+               AND d.touristiccontenttype1_id = a.id) SELECT {% for lang in MODELTRANSLATION_LANGUAGES %}array_to_string(ARRAY_AGG (label_{{ lang }} ORDER BY id), ', ', '_') labels_{{ lang }},{% endfor %}
                                                              id
           FROM labels
           GROUP BY id) a
@@ -105,7 +105,7 @@ LEFT JOIN
                JOIN tourism_touristiccontent c ON b.id = c.category_id
                AND b.id = c.category_id
                JOIN tourism_touristiccontent_type2 e ON e.touristiccontent_id = c.id
-               AND e.touristiccontenttype2_id = a.id) SELECT {% for lang in MODELTRANSLATION_LANGUAGES %}array_to_string(ARRAY_AGG (label_{{ lang }}), ', ', '_') labels_{{ lang }},{% endfor %}
+               AND e.touristiccontenttype2_id = a.id) SELECT {% for lang in MODELTRANSLATION_LANGUAGES %}array_to_string(ARRAY_AGG (label_{{ lang }} ORDER BY id), ', ', '_') labels_{{ lang }},{% endfor %}
                                                              id
           FROM labels
           GROUP BY id) a
@@ -130,7 +130,7 @@ LEFT JOIN
      JOIN tourism_touristiccontent c ON b.touristiccontent_id = c.id) o ON a.id = o.id
 LEFT JOIN
     (SELECT c.id,
-            array_to_string(ARRAY_AGG (a.label), ', ', '_') labels
+            array_to_string(ARRAY_AGG (a.label ORDER BY a.id), ', ', '_') labels
      FROM common_theme a
      JOIN tourism_touristiccontent_themes b ON a.id = b.theme_id
      JOIN tourism_touristiccontent c ON b.touristiccontent_id = c.id
@@ -138,13 +138,13 @@ LEFT JOIN
 LEFT JOIN authent_structure c ON a.structure_id = c.id
 LEFT JOIN common_reservationsystem d ON a.reservation_system_id = d.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM tourism_touristiccontent a
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM tourism_touristiccontent a
      JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
@@ -221,20 +221,20 @@ LEFT JOIN public.authent_structure c ON a.structure_id = c.id
 LEFT JOIN public.tourism_cancellationreason cr ON a.cancellation_reason_id = cr.id
 LEFT JOIN public.tourism_touristiceventplace p ON a.place_id = p.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM tourism_touristicevent a
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM tourism_touristicevent a
      JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) g ON a.id = g.id
 LEFT JOIN
     (SELECT c.id,
-            array_to_string(ARRAY_AGG (a.label), ', ', '_') labels
+            array_to_string(ARRAY_AGG (a.label ORDER BY a.id), ', ', '_') labels
      FROM common_theme a
      JOIN tourism_touristicevent_themes b ON a.id = b.theme_id
      JOIN tourism_touristicevent c ON b.touristicevent_id = c.id

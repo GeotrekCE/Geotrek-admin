@@ -31,7 +31,7 @@ SELECT a.id,
 FROM v_trails a
 LEFT JOIN authent_structure d ON a.structure_id = d.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM
          (SELECT core_topology.geom,
@@ -43,7 +43,7 @@ LEFT JOIN
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM
          (SELECT core_topology.geom,

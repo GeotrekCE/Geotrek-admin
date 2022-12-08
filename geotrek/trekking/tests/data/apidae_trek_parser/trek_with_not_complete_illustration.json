@@ -1,0 +1,26 @@
+{
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "id": 123123,
+      "illustrations": [
+        {
+          "type": "IMAGE",
+          "nom": {
+            "libelleEn": "The title of the picture"
+          },
+          "legende": {
+            "libelleEn": "The legend of the picture"
+          },
+          "copyright": {
+            "libelleEn": "The author of the picture"
+          },
+          "traductionFichiers": null
+        }
+      ],
+      "nom": {
+        "libelleEn": "A trek with an illustration missing its file metadata"
+      }
+    }
+  ]
+}

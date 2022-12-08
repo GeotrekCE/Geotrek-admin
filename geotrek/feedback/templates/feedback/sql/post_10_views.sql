@@ -23,12 +23,12 @@ LEFT JOIN public.feedback_reportactivity b ON a.activity_id = b.id
 LEFT JOIN public.feedback_reportcategory c ON a.category_id = c.id
 LEFT JOIN public.feedback_reportstatus d ON a.status_id = d.id
 LEFT JOIN public.feedback_reportproblemmagnitude e ON a.problem_magnitude_id = e.id
-LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM       feedback_report a
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM            feedback_report a
      JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)

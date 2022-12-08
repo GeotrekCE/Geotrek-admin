@@ -73,7 +73,7 @@ LEFT JOIN infrastructure_infrastructurecondition c ON a.condition_id = c.id
 LEFT JOIN infrastructure_infrastructureusagedifficultylevel d ON a.usage_difficulty_id = d.id
 LEFT JOIN infrastructure_infrastructuremaintenancedifficultylevel e ON a.maintenance_difficulty_id = e.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM
          (SELECT e.geom,
@@ -87,7 +87,7 @@ LEFT JOIN
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM
          (SELECT e.geom,
