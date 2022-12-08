@@ -338,6 +338,7 @@ class HDViewPointSerializer(serializers.ModelSerializer):
     picture_tiles_url = serializers.SerializerMethodField()
     trek = serializers.SerializerMethodField()
     site = serializers.SerializerMethodField()
+    poi = serializers.SerializerMethodField()
     license = serializers.SlugRelatedField(
         read_only=True,
         slug_field='label'
@@ -360,11 +361,17 @@ class HDViewPointSerializer(serializers.ModelSerializer):
             return {'uuid': related_obj.uuid, 'id': related_obj.id}
         return None
 
+    def get_poi(self, obj):
+        related_obj = obj.content_object
+        if isinstance(related_obj, trekking_models.POI):
+            return {'uuid': related_obj.uuid, 'id': related_obj.id}
+        return None
+
     class Meta:
         model = common_models.HDViewPoint
         fields = (
             'id', 'annotations', 'author', 'create_datetime', 'geometry', 'legend', 'license', 'picture_tiles_url',
-            'title', 'site', 'trek', 'update_datetime', 'uuid'
+            'poi', 'title', 'site', 'trek', 'update_datetime', 'uuid'
         )
 
 
@@ -815,6 +822,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         update_datetime = serializers.DateTimeField(source='topo_object.date_update')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        view_points = HDViewPointSerializer(many=True)
 
         def get_type_label(self, obj):
             return get_translation_or_dict('label', self, obj.type)
@@ -834,7 +842,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'id', 'description', 'external_id',
                 'geometry', 'name', 'attachments', 'provider', 'published', 'type',
                 'type_label', 'type_pictogram', 'url', 'uuid',
-                'create_datetime', 'update_datetime'
+                'create_datetime', 'update_datetime', 'view_points'
             )
 
     class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
