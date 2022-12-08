@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('common', '0029_alter_hdviewpoint_picture'),
+        ('common', '0030_alter_hdviewpoint_picture'),
     ]
 
     operations = [
