@@ -166,7 +166,7 @@
                 <Crit CLEF_CRITERE="1900783" CLEF_MODA="0">
                     <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Restaurant gastronomique]]></Crit>
                 <Crit CLEF_CRITERE="1900784" CLEF_MODA="0">
-                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Espace bien-être]]></Crit>
+                    <![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet risus nullam. Amet consectetur adipiscing elit pellentesque. Massa tincidunt dui ut ornare lectus sit amet. Et egestas quis ipsum suspendisse ultrices gravida. Mattis aliquam faucibus purus in massa. Et molestie ac feugiat sed lectus vestibulum mattis ullamcorper. Tristique senectus et netus et malesuada fames. Euismod elementum nisi quis eleifend quam adipiscing vitae proin. Ac felis donec et odio pellentesque. Nisl tincidunt eget nullam non nisi est. Ultrices mi tempus imperdiet nulla.]]></Crit>
                 <Crit CLEF_CRITERE="1901129" CLEF_MODA="1908717">
                     <![CDATA[facebook/]]></Crit>
                 <Crit CLEF_CRITERE="30000100" CLEF_MODA="30000144"><![CDATA[Bar]]></Crit>
@@ -295,8 +295,6 @@
                     <![CDATA[url.url/photo1.jpg]]></Crit>
                 <Crit CLEF_CRITERE="1900783" CLEF_MODA="0">
                     <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Restaurant gastronomique]]></Crit>
-                <Crit CLEF_CRITERE="1900784" CLEF_MODA="0">
-                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Espace bien-être]]></Crit>
                 <Crit CLEF_CRITERE="1901129" CLEF_MODA="1908717">
                     <![CDATA[facebook/]]></Crit>
                 <Crit CLEF_CRITERE="30000100" CLEF_MODA="30000144"><![CDATA[Bar]]></Crit>
@@ -583,10 +581,6 @@
             <MODAL CLEF="30002592" ORDRE="5"><![CDATA[Vendredi]]></MODAL>
             <MODAL CLEF="30002593" ORDRE="6"><![CDATA[Samedi]]></MODAL>
             <MODAL CLEF="30002594" ORDRE="7"><![CDATA[Dimanche]]></MODAL>
-        </CRIT>
-        <CRIT CLEF="1900421">
-            <NOMCRIT><![CDATA[Photo]]></NOMCRIT>
-            <MODAL CLEF="1" ORDRE="1"><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet risus nullam. Amet consectetur adipiscing elit pellentesque. Massa tincidunt dui ut ornare lectus sit amet. Et egestas quis ipsum suspendisse ultrices gravida. Mattis aliquam faucibus purus in massa. Et molestie ac feugiat sed lectus vestibulum mattis ullamcorper. Tristique senectus et netus et malesuada fames. Euismod elementum nisi quis eleifend quam adipiscing vitae proin. Ac felis donec et odio pellentesque. Nisl tincidunt eget nullam non nisi est. Ultrices mi tempus imperdiet nulla.]]></MODAL>
         </CRIT>
     </NOMENCLATURE>
 </LEI>

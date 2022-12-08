@@ -132,9 +132,11 @@ class RestaurantALEIParser(LEITouristicContentParser):
     type2 = "Type 2"
     practical_info = "Practical Info"
     non_fields = {
-        'attachments': ('CRITERES/Crit[@CLEF_CRITERE="1900604"]',
-                        'CRITERES/Crit[@CLEF_CRITERE="1900421"]',
-                        'CRITERES/Crit[@CLEF_CRITERE="1900268"]'),
+        'attachments': [
+            ('CRITERES/Crit[@CLEF_CRITERE="1900604"]', 'CRITERES/Crit[@CLEF_CRITERE="1900480"]'),
+            ('CRITERES/Crit[@CLEF_CRITERE="1900421"]', 'CRITERES/Crit[@CLEF_CRITERE="1900784"]'),
+            ('CRITERES/Crit[@CLEF_CRITERE="1900268"]', 'CRITERES/Crit[@CLEF_CRITERE="1900784"]')
+        ],
     }
 
 
@@ -180,7 +182,7 @@ class RestaurantBLEIParser(LEITouristicContentParser):
 class EventALEIParser(LEITouristicEventParser):
     url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
     non_fields = {
-        'attachments': ('CRITERES/Crit[@CLEF_CRITERE="30000279"]', ),
+        'attachments': [('CRITERES/Crit[@CLEF_CRITERE="30000279"]', 'CRITERES/Crit[@CLEF_CRITERE="30000346"]'), ],
     }
     type = "Type event A"
 
@@ -807,8 +809,7 @@ class LEIParserTest(TranslationResetMixin, TestCase):
         self.assertEqual(content.eid, "LEI219006400")
         self.assertEqual(Attachment.objects.count(), 2)
         self.assertEqual(Attachment.objects.exclude(legend='').first().legend,
-                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, '
-                         'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nec')
+                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolo')
         self.assertEqual(Attachment.objects.first().content_object, content)
 
     def test_create_content_lei_filename(self):

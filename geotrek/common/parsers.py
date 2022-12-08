@@ -1010,8 +1010,9 @@ class LEIParser(AttachmentParserMixin, XmlParser):
         'geom': ('LATITUDE', 'LONGITUDE'),
     }
 
-    non_fields = {
-        'attachments': ('CRITERES/Crit[@CLEF_CRITERE="30000279"]', 'CRITERES/Crit[@CLEF_CRITERE="900003"]'),
+    non_fields = {     # URL                                         # Legend
+        'attachments': [('CRITERES/Crit[@CLEF_CRITERE="30000279"]', 'CRITERES/Crit[@CLEF_CRITERE="900003"]'),
+                        ('CRITERES/Crit[@CLEF_CRITERE="30000280"]', 'CRITERES/Crit[@CLEF_CRITERE="900004"]')],
     }
     """
     results_path = 'Resultat/sit_liste'
@@ -1060,12 +1061,19 @@ class LEIParser(AttachmentParserMixin, XmlParser):
         """
         photos = []
         for crits in val:
-            for crit in crits:
-                (url, legend) = crit.text, self.get_crit_value(crit)
-                if not url:
-                    continue
+            url_crits = crits[0]
+            legend_crits = crits[1]
+            if legend_crits:
+                legend_crit = legend_crits[0]
+                legend = legend_crit.text
                 if legend:
                     legend = legend[:128]
+            else:
+                legend = ""
+            for crit in url_crits:
+                url = crit.text
+                if not url:
+                    continue
                 url = url.replace('https://', 'http://')
                 if url[:7] != 'http://':
                     url = 'http://' + url
