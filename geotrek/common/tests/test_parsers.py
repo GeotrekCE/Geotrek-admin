@@ -502,6 +502,8 @@ class XMLParserTests(TestCase):
             results_path = 'Result/el'
             model = Organism
 
+            fields = {'organism': 'ORGANISM'}
+
             def __init__(self):
                 self.filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
                 self.filetype = FileType.objects.create(type="Photographie")
@@ -510,6 +512,7 @@ class XMLParserTests(TestCase):
         parser = TestXmlParser()
         parser.parse()
         self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Organism.objects.get().organism, 'Organism a')
 
 
 class TourInSoftParserTests(TestCase):
