@@ -14,7 +14,6 @@ from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import (
     ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeBaseParser
 )
-from geotrek.common.utils.translation import get_translated_fields
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
 
 
@@ -525,7 +524,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     }
 
     def __init__(self, *args, **kwargs):
-        self._translated_fields = [field for field in get_translated_fields(self.model)]
         self._related_treks_mapping = defaultdict(list)
         super().__init__(*args, **kwargs)
 

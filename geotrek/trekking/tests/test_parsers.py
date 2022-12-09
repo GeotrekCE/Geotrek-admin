@@ -575,7 +575,6 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
 
 class TestApidaeTrekParser(ApidaeTrekParser):
-    warn_on_missing_fields = True
     url = 'https://example.net/fake/api/'
     api_key = 'ABCDEF'
     project_id = 1234
