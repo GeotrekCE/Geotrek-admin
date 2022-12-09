@@ -22,6 +22,7 @@ from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.core.models import Path
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
+import geotrek.trekking.parsers  # noqa
 
 
 class DocumentPublicPortalTest(TestCase):
@@ -177,7 +178,8 @@ class ViewsImportTest(TestCase):
 
     @mock.patch('geotrek.common.tasks.current_task')
     @mock.patch('geotrek.common.tasks.import_datas.delay')
-    def test_import_from_file_good_geojson_file(self, mocked, mocked_current_task):
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    def test_import_from_file_good_geojson_file(self, mocked_stdout, mocked, mocked_current_task):
         self.user.is_superuser = True
         self.user.save()
         FileType.objects.create(type="Photographie")
