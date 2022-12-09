@@ -1043,7 +1043,7 @@ class LEIParser(AttachmentParserMixin, XmlParser):
         )
 
     def start(self):
-        super(LEIParser, self).start()
+        super().start()
         lei = set(self.model.objects.filter(eid__startswith='LEI').values_list('pk', flat=True))
         self.to_delete = self.to_delete & lei
 

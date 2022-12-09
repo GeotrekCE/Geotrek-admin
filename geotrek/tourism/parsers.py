@@ -908,7 +908,7 @@ class LEITouristicContentParser(LEIParser):
     non_fields = {}
 
     def __init__(self, *args, **kwargs):
-        LEIParser.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.category:
             self.constant_fields['category'] = self.category
         if self.type1 is not None:
@@ -951,7 +951,7 @@ class LEITouristicEventParser(LEIParser):
     non_fields = {}
 
     def __init__(self, *args, **kwargs):
-        LEIParser.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.type:
             self.constant_fields['type'] = self.type
 
