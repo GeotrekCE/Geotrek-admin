@@ -3,7 +3,7 @@ from geotrek.common.models import HDViewPoint
 from mapentity.registry import MapEntityOptions
 from rest_framework.routers import DefaultRouter
 
-from .views import (HDViewPointAPIViewSet, HDViewPointCreate, HDViewPointDetail, HDViewPointUpdate, HDViewPointDelete,
+from .views import (HDViewPointAPIViewSet, HDViewPointAnnotate, HDViewPointCreate, HDViewPointDetail, HDViewPointUpdate, HDViewPointDelete,
                     TiledHDViewPointViewSet, JSSettings, DocumentPublic, DocumentBookletPublic, import_view,
                     import_update_json, ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect,
                     CheckExtentsView)
@@ -31,6 +31,7 @@ urlpatterns = [
     path('hdviewpoint/<int:pk>', HDViewPointDetail.as_view(), name="hdviewpoint_detail"),
     path('hdviewpoint/edit/<int:pk>', HDViewPointUpdate.as_view(), name="hdviewpoint_change"),
     path('hdviewpoint/delete/<int:pk>', HDViewPointDelete.as_view(), name="hdviewpoint_delete"),
+    path('hdviewpoint/annotate/<int:pk>', HDViewPointAnnotate.as_view(), name="hdviewpoint_annotate"),
 ]
 
 rest_router = DefaultRouter(trailing_slash=False)

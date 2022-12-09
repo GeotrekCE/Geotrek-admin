@@ -45,10 +45,10 @@ function initAnnotationsWidget(map) {
 
     var layer, fromButtonSelect, fromGeojsonUpdate;
 
-    var initialGeoJSON = query.geojson;
+    var initialGeoJSON = $('#id_annotations').text();
 
     $('#controls').on('change', change_controls);
-    $('#geojson[type=textarea]').on('input propertychange', change_geojson);
+    $('#id_annotations[type=textarea]').on('input propertychange', change_geojson);
     $('#controls').on('click', 'a', select_control);
     $('.annotationtype button').on('click', select_annotation);
 
@@ -238,6 +238,7 @@ function initAnnotationsWidget(map) {
             }
             var entry = $('#annotationlist .entry#sample').clone();
             entry.attr({ id: '', 'annotation-id': id });
+            entry.find('.entry-name').on('click', () => edit_label(entry));
             entry.find('.entry-name').text(annotation.name());
             $('#annotationlist').append(entry);
         });
@@ -245,12 +246,49 @@ function initAnnotationsWidget(map) {
             'display', $('#annotationlist .entry').length <= 1 ? 'none' : 'block');
         if (!fromGeojsonUpdate) {
             var geojson = layer.geojson();
-            $('#geojson').val(geojson ? JSON.stringify(geojson, undefined, 2) : '');
+            $('#id_annotations').val(geojson ? JSON.stringify(geojson, undefined, 2) : '');
             if (query.save) {
                 query.geojson = geojson ? JSON.stringify(geojson) : undefined;
                 setQuery(query);
             }
         }
+    }
+
+    function edit_label(entry) {
+        // When clicking annotation name, display text input allowing to change it
+        span = entry.find('.entry-name')
+        text_input = `<input id="label_input" value='${span.text()}' />`;
+        $(span).html(text_input);
+        $('#label_input').focus();
+        $('#label_input').on('blur', () => update_edited_label(entry));
+        $('#label_input').on('keydown', (key) => update_edited_label_on_enter(entry, key));
+    }
+
+    function update_edited_label_on_enter(entry, key) {
+        if (key.keyCode === 13) {
+            update_edited_label(entry)
+        }
+    }
+
+    function update_edited_label(entry) {
+        // After changing annotation name in input, update it in geojson and layer
+        new_label = $('#label_input').val()
+        // Replace input with span again
+        span = entry.find('.entry-name')
+        span.text(new_label);
+        // Replace name in GEOJson form
+        annotation_id = entry[0].getAttribute('annotation-id');
+        current_data = JSON.parse($('#id_annotations[type=textarea]').val())
+        for (var i = 0; i < current_data['features'].length; ++i) {
+            if (current_data['features'][i]['properties']['annotationId'] == annotation_id) {
+                current_data['features'][i]['properties']['name'] = new_label;
+            }
+        }
+        $('#id_annotations[type=textarea]').val(JSON.stringify(current_data, null, 2));
+        $('#id_annotations[type=textarea]').trigger('propertychange')
+        // Replace name in GEOJson layer
+        var annotation = layer.annotationById(annotation_id);
+        annotation.name(new_label);
     }
 
     /**
@@ -262,7 +300,8 @@ function initAnnotationsWidget(map) {
         var mode,
             ctl = $(evt.target),
             action = ctl.attr('action'),
-            id = ctl.closest('.entry').attr('annotation-id'),
+            entry = ctl.closest('.entry'),
+            id = entry.attr('annotation-id'),
             annotation = layer.annotationById(id);
         switch (action) {
             case 'adjust':

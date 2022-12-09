@@ -40,9 +40,17 @@
       </li>
       {% endif %}
       {% if can_edit %}
-      <a class="btn btn-primary ml-auto" href="{{ object.get_update_url }}"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</a>
+        <a class="ml-auto">
+          <a class="btn btn-primary" href="{{ object.get_annotate_url }}"><i class="bi bi-pencil-square"></i> {% trans "Annotate" %}</a>
+        <a style="width: 5px;"/>
+          <a class="btn btn-primary" href="{{ object.get_update_url }}"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</a>
+        </a>
       {% else %}
-      <span class="btn disabled ml-auto" href="#"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</span>
+        <a class="ml-auto">
+          <span class="btn disabled" href="#"><i class="bi bi-pencil-square"></i> {% trans "Annotate" %}</span>
+        <a style="width: 5px;"/>
+          <span class="btn disabled" href="#"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</span>
+        </a>
       {% endif %}
     </ul>
     <div class="tab-content scrollable">
@@ -98,7 +106,6 @@
             {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
             {{object.annotations|json_script:"geojson_annotations"}}
             <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
-            {% include "common/annotations_widget.html" %}
             <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
             <script>
               $(window).on('detailmap:ready', function (e, data) {
@@ -121,7 +128,6 @@
                       max: 12,
                     });
                     viewer.createLayer('osm', params.layer);
-                    initAnnotationsWidget(viewer);
 
                     // Change default interactor options
                     const interactorOpts = viewer.interactor().options();
@@ -207,5 +213,4 @@
 {% block extrabody %}
   {{ block.super}}
   <script type="text/javascript" src="{% static 'mapentity/mapentity.detail.js' %}"></script>
-  <script type="text/javascript" src="{% static 'common/js/annotations.js' %}"></script>
 {% endblock %}

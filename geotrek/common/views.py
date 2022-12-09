@@ -29,7 +29,7 @@ from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
 from django.views.decorators.http import require_http_methods, require_POST
-from django.views.generic import RedirectView, TemplateView, View
+from django.views.generic import RedirectView, TemplateView, View, UpdateView
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from mapentity import views as mapentity_views
@@ -46,7 +46,7 @@ from geotrek.celery import app as celery_app
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.feedback.parsers import SuricateParser
 
-from .forms import (AttachmentAccessibilityForm, HDViewPointForm,
+from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm, HDViewPointForm,
                     ImportDatasetForm, ImportDatasetFormWithFile,
                     ImportSuricateForm, SyncRandoForm)
 from .mixins.views import (BookletMixin, CompletenessMixin,
@@ -380,6 +380,16 @@ class HDViewPointDelete(mapentity_views.MapEntityDelete):
 
     def get_success_url(self):
         return self.get_object().content_object.get_detail_url()
+
+
+class HDViewPointAnnotate(UpdateView):
+    model = HDViewPoint
+    form_class = HDViewPointAnnotationForm
+    template_name_suffix = '_annotation_form'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 
 class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):

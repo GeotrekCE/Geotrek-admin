@@ -355,6 +355,9 @@ class HDViewPoint(TimeStampedModelMixin):
     def get_update_url(self):
         return reverse('common:hdviewpoint_change', args=[self.pk])
 
+    def get_annotate_url(self):
+        return reverse('common:hdviewpoint_annotate', args=[self.pk])
+
     def get_delete_url(self):
         return reverse('common:hdviewpoint_delete', args=[self.pk])
 

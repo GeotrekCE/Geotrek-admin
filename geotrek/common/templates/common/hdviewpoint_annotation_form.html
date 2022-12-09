@@ -1,0 +1,81 @@
+{% extends "mapentity/mapentity_form.html" %}
+{% load i18n static crispy_forms_tags %}
+
+{% block mainpanel %}
+    <div class="form-panel {{ modelname }}">
+        <div>
+            <div id="controls">
+               <div class="form-group annotationtype" title="Select the type of annotation to add.">
+                  <div class="shortlabel">Add</div>
+                  <button class="lastused" id="rectangle" next="square">Rectangle</button><button id="square" next="ellipse">Square</button><button id="ellipse" next="circle">Ellipse</button><button id="circle" next="polygon">Circle</button><button id="polygon" next="point">Polygon</button><button id="point" next="line">Point</button><button id="line" next="rectangle">Line</button>
+               </div>
+               <div class="form-group" title="If disabled, hide all annotation labels."><label for="showLabels">Show annotation labels</label><input id="showLabels" param-name="labels" type="checkbox" placeholder="true"/></div> 
+               <div class="form-group" id="annotationheader">
+                  <div class="shortlabel">Created Annotations</div>
+                  <a class="entry-remove-all" action="remove-all" title="Delete all annotations">&#x2716;</a>
+               </div>
+               <div class="form-group">
+                  <div id="annotationlist">
+                     <div class="entry" id="sample"><span class="entry-name">Sample</span><a/><a class="entry-adjust" action="adjust" title="Modify geometry">&#x270E;</a><a class="entry-remove" action="remove" title="Delete this annotation">&#x2716;</a></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+        {% block mainform %}
+        {% crispy form form.helper %}
+        {% endblock mainform %}
+    </div>
+    {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
+    {{object.annotations|json_script:"geojson_annotations"}}
+    <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
+    <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
+    <script>
+        const containerRef = document.getElementById('hdviewpoint-map')
+        var tileUrl = "{{base_tile_url}}" + `/tiles/{z}/{x}/{y}.png?source=vips`;
+        var metadataUrl = "{{base_tile_url}}" + "/info/metadata?source=vips";
+        var viewer;
+
+        fetch(metadataUrl)
+        .then(response => response.json())
+        .then(tileinfo => {
+            const params = geo.util.pixelCoordinateParams(
+            '#hdviewpoint-map', tileinfo.sizeX, tileinfo.sizeY, tileinfo.tileWidth, tileinfo.tileHeight);
+            params.layer.url = tileUrl;
+            viewer = geo.map(params.map);
+            viewer.zoomRange({
+            // do not set a min limit so that bounds clamping determines min
+            min: -Infinity,
+            max: 12,
+            });
+            viewer.createLayer('osm', params.layer);
+
+            // Change default interactor options
+            const interactorOpts = viewer.interactor().options();
+            interactorOpts.zoomAnimation = {
+            enabled: false,
+            };
+            interactorOpts.momentum = {
+            enabled: true,
+            };
+            viewer.interactor().options(interactorOpts);
+
+            var ui = viewer.createLayer('ui');
+            // Create a zoom slider widget
+            ui.createWidget('slider', {
+            position: {
+                left: 40,
+                top: 40
+            }
+            });
+            // layer = viewer.createLayer('annotation');
+            // layer.geojson($('#geojson_annotations').text());
+            $(".loader-wrapper").remove();
+            initAnnotationsWidget(viewer);
+        });
+    </script>
+{% endblock mainpanel %}
+
+{% block extrabody %}
+  {{ block.super}}
+<script type="text/javascript" src="{% static 'common/js/annotations.js' %}"></script>
+{% endblock extrabody %}
