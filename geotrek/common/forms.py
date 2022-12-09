@@ -1,10 +1,9 @@
-import json
 import logging
 from copy import deepcopy
 
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML, Button, Div, Layout, Submit
+from crispy_forms.layout import Button, Div, Layout, Submit
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
