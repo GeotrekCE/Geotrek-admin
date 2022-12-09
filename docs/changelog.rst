@@ -4,6 +4,10 @@ CHANGELOG
 2.93.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix shp zipfile import
+
 
 2.93.0     (2022-12-06)
 -----------------------

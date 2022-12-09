@@ -187,10 +187,9 @@ def import_file(uploaded, parser, encoding, user_pk):
             zfile = ZipFile(f)
             for name in zfile.namelist():
                 zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
-                if name.endswith('shp'):
-                    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
-                                       module=parser.__module__, encoding=encoding, user=user_pk)
-                    return
+            import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, f'{os.path.basename(os.path.splitext(f.name)[0])}.shp')),
+                               module=parser.__module__, encoding=encoding, user=user_pk)
+            return
     import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, str(uploaded.name))),
                        module=parser.__module__, encoding=encoding, user=user_pk)
 
