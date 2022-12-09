@@ -291,6 +291,25 @@ class ApidaeBaseTrekkingParser(ApidaeBaseParser):
         return cls.apidae_translation_prefix + settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()
 
 
+def _prepare_attachment_from_apidae_illustration(illustration, translation_src):
+
+    def get_translation_value_of(key):
+        translated_field = illustration.get(key)
+        if not translated_field:
+            return ''
+        return translated_field.get(translation_src, '')
+
+    legende = get_translation_value_of('legende')
+    copyright = get_translation_value_of('copyright')
+    title = get_translation_value_of('nom')
+    return (
+        illustration['traductionFichiers'][0]['url'],
+        legende or title,
+        copyright,
+        title,
+    )
+
+
 class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     model = Trek
     eid = 'eid'
@@ -1022,3 +1041,71 @@ class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
     model = Accessibility
     element_reference_ids = ApidaeTrekParser.natures_de_terrain_ids_as_accessibilities
     name_field = 'name'
+
+
+class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
+    model = POI
+    eid = 'eid'
+    separator = None
+
+    # Parameters to build the request
+    api_key = None
+    project_id = None
+    selection_id = None
+    size = 20
+    skip = 0
+    responseFields = [
+        'id',
+        'nom',
+        'presentation',
+        'localisation',
+        'informationsPatrimoineCulturel',
+        'illustrations',
+    ]
+    locales = ['fr', 'en']
+
+    # Fields mapping
+    fill_empty_translated_fields = True
+    fields = {
+        'name': 'nom',
+        'description': 'presentation.descriptifCourt',
+        'geom': 'localisation.geolocalisation.geoJson',
+        'eid': 'id',
+        'type': 'type',
+    }
+    natural_keys = {
+        'type': 'label',
+    }
+    field_options = {
+        'type': {'create': True},
+        'name': {'expand_translations': True},
+        'description': {'expand_translations': True},
+    }
+    non_fields = {
+        'attachments': 'illustrations'
+    }
+
+    def filter_type(self, src, val):
+        type_label = val.replace('_', ' ').lower().capitalize()
+        return self.apply_filter(
+            dst='type',
+            src=src,
+            val=type_label
+        )
+
+    def filter_geom(self, src, val):
+        geom = GEOSGeometry(str(val))
+        geom.transform(settings.SRID)
+        return geom
+
+    def filter_attachments(self, src, val):
+        translation_src = self._get_default_translation_src()
+        illustrations = val
+        rv = []
+        for illustration in illustrations:
+            if not illustration.get('traductionFichiers'):
+                continue
+            rv.append(
+                _prepare_attachment_from_apidae_illustration(illustration, translation_src)
+            )
+        return rv

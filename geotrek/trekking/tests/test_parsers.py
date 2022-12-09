@@ -21,7 +21,8 @@ from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.trekking.tests.factories import RouteFactory
 from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
-    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser
+    TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser,
+    ApidaePOIParser, _prepare_attachment_from_apidae_illustration
 )
 
 
@@ -1144,3 +1145,136 @@ class MakeDurationTests(SimpleTestCase):
 
     def test_it_rounds_output_to_two_decimal_places(self):
         self.assertEqual(Decimal(ApidaeTrekParser._make_duration(duration_in_minutes=20)), Decimal('0.33'))
+
+
+class TestApidaePOIParser(ApidaePOIParser):
+    url = 'https://example.net/fake/api/'
+    api_key = 'ABCDEF'
+    project_id = 1234
+    selection_id = 654321
+
+
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class ApidaePOIParserTests(TestCase):
+
+    @staticmethod
+    def make_dummy_get(apidae_data_file):
+        return make_dummy_apidae_get(
+            parser_class=TestApidaePOIParser,
+            test_data_dir='geotrek/trekking/tests/data/apidae_poi_parser',
+            data_filename=apidae_data_file
+        )
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    def test_POI_is_imported(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('a_poi.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaePOIParser', verbosity=0)
+
+        self.assertEqual(POI.objects.count(), 1)
+        poi = POI.objects.all().first()
+        self.assertEqual(poi.name_fr, 'Un point d\'intérêt')
+        self.assertEqual(poi.name_en, 'A point of interest')
+        self.assertEqual(poi.description_fr, 'La description courte en français.')
+        self.assertEqual(poi.description_en, 'The short description in english.')
+
+        self.assertEqual(poi.geom.srid, settings.SRID)
+        self.assertAlmostEqual(poi.geom.coords[0], 729136.5, delta=0.1)
+        self.assertAlmostEqual(poi.geom.coords[1], 6477050.1, delta=0.1)
+
+        self.assertEqual(Attachment.objects.count(), 1)
+        photo = Attachment.objects.first()
+        self.assertEqual(photo.author, 'The author of the picture')
+        self.assertEqual(photo.legend, 'The legend of the picture')
+        self.assertEqual(photo.attachment_file.size, len(testdata.IMG_FILE))
+        self.assertEqual(photo.title, 'The title of the picture')
+
+        self.assertEqual(poi.type.label_en, 'Patrimoine culturel')
+        self.assertEqual(poi.type.label_fr, None)
+
+    @mock.patch('requests.get')
+    def test_trek_illustration_is_not_imported_on_missing_file_metadata(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('poi_with_not_complete_illustration.json')
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaePOIParser', verbosity=0)
+        self.assertEqual(Attachment.objects.count(), 0)
+
+
+class PrepareAttachmentFromIllustrationTests(TestCase):
+
+    def setUp(self):
+        self.illustration = {
+            'nom': {
+                'libelleEn': 'The title of the picture'
+            },
+            'legende': {
+                'libelleEn': 'The legend of the picture'
+            },
+            'copyright': {
+                'libelleEn': 'The author of the picture'
+            },
+            'traductionFichiers': [
+                {
+                    'url': 'https://example.net/a_picture.jpg'
+                }
+            ]
+        }
+
+    def test_given_full_illustration_it_returns_attachment_info(self):
+        expected_result = (
+            'https://example.net/a_picture.jpg',
+            'The legend of the picture',
+            'The author of the picture',
+            'The title of the picture'
+        )
+        self.assertEqual(
+            _prepare_attachment_from_apidae_illustration(self.illustration, 'libelleEn'),
+            expected_result
+        )
+
+    def test_it_returns_empty_strings_for_missing_info(self):
+        del self.illustration['legende']
+        del self.illustration['copyright']
+        del self.illustration['nom']
+        expected_result = (
+            'https://example.net/a_picture.jpg',
+            '',
+            '',
+            ''
+        )
+        self.assertEqual(
+            _prepare_attachment_from_apidae_illustration(self.illustration, 'libelleEn'),
+            expected_result
+        )
+
+    def test_it_substitutes_name_to_missing_legend(self):
+        del self.illustration['legende']
+        self.illustration['nom'] = {'libelleEn': 'The title of the picture which will also be the legend'}
+        expected_result = (
+            'https://example.net/a_picture.jpg',
+            'The title of the picture which will also be the legend',
+            'The author of the picture',
+            'The title of the picture which will also be the legend'
+        )
+        self.assertEqual(
+            _prepare_attachment_from_apidae_illustration(self.illustration, 'libelleEn'),
+            expected_result
+        )
+
+    def test_it_returns_empty_strings_if_translation_not_found(self):
+        self.illustration['legende'] = {}
+        self.illustration['copyright'] = {}
+        self.illustration['nom'] = {}
+        expected_result = (
+            'https://example.net/a_picture.jpg',
+            '',
+            '',
+            ''
+        )
+        self.assertEqual(
+            _prepare_attachment_from_apidae_illustration(self.illustration, 'libelleEn'),
+            expected_result
+        )
