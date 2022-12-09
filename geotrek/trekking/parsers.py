@@ -247,7 +247,52 @@ class ApidaeTranslatedField:
         return rv
 
 
-class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
+class ApidaeBaseTrekkingParser(ApidaeBaseParser):
+    """Add the `expand_translations` field option.
+    Map an APIDAE translated field as src to a Geotrek translated field as dst in the parser's `fields` attribute. Set
+    the `expand_translations` option to True on that field for the corresponding mapping to be expanded into a mapping
+    of all translation sub-fields for all configured languages.
+
+    For instance:
+
+    fields = {
+        'name': 'nom',
+    }
+
+    turns into
+
+    fields = {
+        'name_fr': 'nom.libelleFr',
+        'name_en': 'nom.libelleEn',
+        'name_es': 'nom.libelleEs',
+        'name_it': 'nom.libelleIt',
+    }
+    """
+
+    apidae_translation_prefix = 'libelle'
+
+    def __init__(self, *args, **kwargs):
+        self._expand_fields_mapping_with_translation_fields()
+        super().__init__(*args, **kwargs)
+
+    def _expand_fields_mapping_with_translation_fields(self):
+        self.fields = self.fields.copy()
+        translated_fields_to_expand = [
+            field for field, options in self.field_options.items()
+            if options.get('expand_translations') is True
+        ]
+        for translated_field in translated_fields_to_expand:
+            src = self.fields[translated_field]
+            del self.fields[translated_field]
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                self.fields[f'{translated_field}_{lang}'] = f'{src}.{self.apidae_translation_prefix}{lang.capitalize()}'
+
+    @classmethod
+    def _get_default_translation_src(cls):
+        return cls.apidae_translation_prefix + settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()
+
+
+class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     model = Trek
     eid = 'eid'
     separator = None
@@ -478,25 +523,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         'libelleFr': 'Cet itinéraire n\'est pas balisé',
         'libelleEn': 'This trek is not marked',
     }
-    apidae_translation_prefix = 'libelle'
 
     def __init__(self, *args, **kwargs):
         self._translated_fields = [field for field in get_translated_fields(self.model)]
-        self._expand_fields_mapping_with_translation_fields()
         self._related_treks_mapping = defaultdict(list)
         super().__init__(*args, **kwargs)
-
-    def _expand_fields_mapping_with_translation_fields(self):
-        self.fields = self.fields.copy()
-        translated_fields_to_expand = [
-            field for field, options in self.field_options.items()
-            if options.get('expand_translations') is True
-        ]
-        for translated_field in translated_fields_to_expand:
-            src = self.fields[translated_field]
-            del self.fields[translated_field]
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                self.fields[f'{translated_field}_{lang}'] = f'{src}.{self.apidae_translation_prefix}{lang.capitalize()}'
 
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
@@ -919,10 +950,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             return duration_in_days * 24
         else:
             return None
-
-    @classmethod
-    def _get_default_translation_src(cls):
-        return cls.apidae_translation_prefix + settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()
 
 
 class ApidaeReferenceElementParser(Parser):
