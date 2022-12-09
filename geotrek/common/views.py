@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.gis.db.models import Extent, GeometryField
 from django.core.exceptions import PermissionDenied
@@ -20,14 +21,14 @@ from django.db.models import Q
 from django.db.models.functions import Cast
 from django.http import JsonResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
 from django.views.decorators.http import require_POST, require_http_methods
-from django.views.generic import RedirectView, View
+from django.views.generic import RedirectView, View, FormView
 from django.views.generic import TemplateView
 from django_celery_results.models import TaskResult
 from mapentity import views as mapentity_views
@@ -328,17 +329,20 @@ def last_list(request):
     return redirect('trekking:trek_list')
 
 
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def sync_view(request):
-    """
-    Custom views to view / track / launch a sync rando
-    """
+class SyncRandoFormView(LoginRequiredMixin, UserPassesTestMixin, FormView):
+    form_class = SyncRandoForm
+    template_name = 'common/sync_rando.html'
+    success_url = reverse_lazy('common:sync_randos_view')
 
-    return render(request,
-                  'common/sync_rando.html',
-                  {'form': SyncRandoForm(), },
-                  )
+    def test_func(self):
+        """ Only superuser can use this view """
+        return self.request.user.is_superuser
+
+    def form_valid(self, form):
+        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
+                                         host=self.request.get_host())
+        launch_sync_rando.delay(url=url)
+        return super().form_valid(form)
 
 
 @login_required
@@ -387,12 +391,14 @@ def sync_update_json(request):
                         content_type="application/json")
 
 
-class SyncRandoRedirect(RedirectView):
+class SyncRandoRedirect(LoginRequiredMixin, UserPassesTestMixin, RedirectView):
     http_method_names = ['post']
     pattern_name = 'common:sync_randos_view'
 
-    @method_decorator(login_required)
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def test_func(self):
+        """ Only superuser can use this view """
+        return self.request.user.is_superuser
+
     def post(self, request, *args, **kwargs):
         url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
                                          host=self.request.get_host())

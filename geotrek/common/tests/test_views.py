@@ -99,24 +99,28 @@ class DocumentPublicPortalTest(TestCase):
 class ViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory.create(username='homer', password='dooh')
-
-    def setUp(self):
-        self.client.force_login(user=self.user)
+        cls.user = UserFactory()
+        cls.super_user = SuperUserFactory()
 
     def test_settings_json(self):
+        self.client.force_login(self.user)
         url = reverse('common:settings_json')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_admin_check_extents(self):
+        """ Admin can access to extents view"""
         url = reverse('common:check_extents')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(self.super_user)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_simple_user_check_extents(self):
+        """ Simple user can't access to extents view"""
+        url = reverse('common:check_extents')
+        self.client.force_login(self.user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
 
     @override_settings(COLUMNS_LISTS={})
     @mock.patch('geotrek.common.mixins.views.logger')
@@ -134,7 +138,8 @@ class ViewsTest(TestCase):
 class ViewsImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory.create(username='homer', password='dooh')
+        cls.user = UserFactory()
+        cls.super_user = SuperUserFactory()
 
     def setUp(self):
         self.client.force_login(user=self.user)
@@ -157,8 +162,7 @@ class ViewsImportTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_import_from_file_good_zip_file(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         with open('geotrek/common/tests/data/test.zip', 'rb') as real_archive:
             url = reverse('common:import_dataset')
@@ -177,8 +181,7 @@ class ViewsImportTest(TestCase):
     @mock.patch('geotrek.common.tasks.current_task')
     @mock.patch('geotrek.common.tasks.import_datas.delay')
     def test_import_from_file_good_geojson_file(self, mocked, mocked_current_task):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.user)
         FileType.objects.create(type="Photographie")
         mocked.side_effect = import_datas
         mocked_current_task.request.id = '1'
@@ -200,8 +203,7 @@ class ViewsImportTest(TestCase):
 
     @mock.patch('geotrek.common.tasks.import_datas.delay')
     def test_import_from_file_bad_file(self, mocked):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.user)
 
         Parser.label = "Test"
 
@@ -223,8 +225,7 @@ class ViewsImportTest(TestCase):
         Parser.label = None
 
     def test_import_form_no_parser_no_superuser(self):
-        self.user.is_superuser = False
-        self.user.save()
+        self.client.force_login(user=self.user)
 
         real_archive = open('geotrek/common/tests/data/test.zip', 'rb+')
         url = reverse('common:import_dataset')
@@ -241,8 +242,7 @@ class ViewsImportTest(TestCase):
         self.assertNotContains(response_real, '<form  method="post"')
 
     def test_import_from_web_bad_parser(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.user)
 
         url = reverse('common:import_dataset')
 
@@ -257,8 +257,7 @@ class ViewsImportTest(TestCase):
         # There is no parser available for user not superuser
 
     def test_import_from_web_good_parser(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.user)
 
         url = reverse('common:import_dataset')
         real_key = self.client.get(url).context['form_without_file'].fields['parser'].choices[0][0]
@@ -276,47 +275,44 @@ class ViewsImportTest(TestCase):
 class SyncRandoViewTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.super_user = SuperUserFactory.create(username='admin', password='super')
-        cls.simple_user = User.objects.create_user(username='homer', password='doooh')
+        cls.super_user = SuperUserFactory()
+        cls.simple_user = UserFactory()
 
     def setUp(self):
         if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
             shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
 
     def test_get_sync_superuser(self):
-        self.client.login(username='admin', password='super')
-        response = self.client.get(reverse('common:sync_randos_view'))
+        self.client.force_login(self.super_user)
+        response = self.client.get(reverse('common:sync_randos'))
         self.assertEqual(response.status_code, 200)
 
     def test_post_sync_superuser(self):
-        """
-        test if sync can be launched by superuser post
-        """
-        self.client.login(username='admin', password='super')
-        response = self.client.post(reverse('common:sync_randos'), data={})
+        """ Sync can be launched by superuser post """
+        self.client.force_login(self.super_user)
+        response = self.client.post(reverse('common:sync_randos_view'), data={})
         self.assertRedirects(response, '/commands/syncview')
 
-    def test_get_sync_simpleuser(self):
-        self.client.login(username='homer', password='doooh')
+    def test_get_sync_simple_user(self):
+        """ Simple user can't access to Sync rando view """
+        self.client.force_login(self.simple_user)
         response = self.client.get(reverse('common:sync_randos_view'))
-        self.assertRedirects(response, '/login/?next=/commands/syncview')
+        self.assertEquals(response.status_code, 403)
 
-    def test_post_sync_simpleuser(self):
-        """
-        test if sync can be launched by simple user post
-        """
-        self.client.login(username='homer', password='doooh')
+    def test_post_sync_simple_user(self):
+        """ Sync can't be launched by simple user post """
+        self.client.force_login(self.simple_user)
         response = self.client.post(reverse('common:sync_randos'), data={})
-        self.assertRedirects(response, '/login/?next=/commands/sync')
+        self.assertEquals(response.status_code, 403)
 
     def test_get_sync_states_superuser(self):
-        self.client.login(username='admin', password='super')
+        self.client.force_login(self.super_user)
         response = self.client.post(reverse('common:sync_randos_state'), data={})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b'[]')
 
-    def test_get_sync_states_simpleuser(self):
-        self.client.login(username='homer', password='doooh')
+    def test_get_sync_states_simple_user(self):
+        self.client.force_login(self.simple_user)
         response = self.client.post(reverse('common:sync_randos_state'), data={})
         self.assertRedirects(response, '/login/?next=/commands/statesync/')
 
@@ -327,9 +323,7 @@ class SyncRandoViewTest(TestCase):
                                            'skip_tiles': True, 'skip_pdf': True,
                                            'skip_dem': True, 'skip_profile_png': True})
     def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-        self.client.login(username='admin', password='super')
+        self.client.force_login(self.super_user)
         launch_sync_rando.apply()
         response = self.client.post(reverse('common:sync_randos_state'), data={})
         self.assertEqual(response.status_code, 200)
@@ -344,7 +338,7 @@ class SyncRandoViewTest(TestCase):
                                            'skip_tiles': True, 'skip_pdf': True,
                                            'skip_dem': True, 'skip_profile_png': True})
     def test_get_sync_rando_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
-        self.client.login(username='admin', password='super')
+        self.client.force_login(self.super_user)
         launch_sync_rando.apply()
         response = self.client.post(reverse('common:sync_randos_state'), data={})
         self.assertEqual(response.status_code, 200)

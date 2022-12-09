@@ -46,6 +46,7 @@ CHANGELOG
 
 - Show direction on lines with setting ``DIRECTION_ON_LINES_ENABLED`` in signage detail
 - Add mobile nginx configuration directly on Geotrek-admin
+- Improve sync rando, sync mobile and import views.
 
 **Bug fixes**
 
@@ -61,7 +62,7 @@ CHANGELOG
 
 !!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
 
-**Improvements**
+**Improvments**
 
 - Cache API v2 Detail endpoints and themes list endpoint
 - Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.
@@ -161,7 +162,7 @@ CHANGELOG
 -----------------------
 
 **DO NOT USE IT!**
- 
+
 **Warning**
 
 - Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
@@ -186,7 +187,7 @@ CHANGELOG
 
 - Fix TouristicEvent with no end dates are not returned in APIv2 (#3127)
 
-**Minor improvements** 
+**Minor improvements**
 
 - Check ``begin_date`` is before ``end_date`` in TouristicEvent forms (#3237)
 - Set ``begin_date`` not null for TouristicEvents (#3237)
