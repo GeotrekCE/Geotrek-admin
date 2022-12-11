@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from decimal import Decimal
 import json
 from collections import defaultdict
 import re
@@ -872,7 +873,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         """Returns the duration in hours. The method expects one argument or the other, not both. If both arguments have
          non-zero values the method only considers `duration_in_minutes` and discards `duration_in_days`."""
         if duration_in_minutes:
-            return duration_in_minutes / 60
+            return (Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01'))
         elif duration_in_days:
             return duration_in_days * 24
         else:

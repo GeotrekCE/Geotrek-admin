@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 import json
 import os
 from copy import copy
@@ -1127,3 +1128,6 @@ class MakeDurationTests(SimpleTestCase):
 
     def test_giving_both_duration_arguments_only_duration_in_minutes_is_considered(self):
         self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90, duration_in_days=0.5), 1.5)
+
+    def test_it_rounds_output_to_two_decimal_places(self):
+        self.assertEqual(Decimal(ApidaeTrekParser._make_duration(duration_in_minutes=20)), Decimal('0.33'))

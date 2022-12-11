@@ -13,7 +13,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix shp zipfile import
-
+- ApidaeTrekParser: round computed duration
 
 2.93.0     (2022-12-06)
 -----------------------
