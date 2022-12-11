@@ -14,6 +14,7 @@ CHANGELOG
 
 - Fix shp zipfile import
 - ApidaeTrekParser: round computed duration
+- ApidaeTrekParser: fix attached pictures import
 
 2.93.0     (2022-12-06)
 -----------------------

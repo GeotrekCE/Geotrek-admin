@@ -271,6 +271,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         'ouverture',
         'descriptionTarif',
         'informationsEquipement',
+        'illustrations',
     ]
     locales = ['fr', 'en']
 
