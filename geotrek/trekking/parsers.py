@@ -671,17 +671,13 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         illustrations = val
         rv = []
         for illustration in illustrations:
-            files_metadata_list = illustration['traductionFichiers']
-            if not ApidaeTrekParser._is_still_publishable_tomorrow(illustration) or not files_metadata_list:
+            if (
+                    not ApidaeTrekParser._is_still_publishable_tomorrow(illustration)
+                    or not illustration.get('traductionFichiers')
+            ):
                 continue
-            first_file_metadata = files_metadata_list[0]
             rv.append(
-                (
-                    first_file_metadata['url'],
-                    illustration['legende'][translation_src],
-                    illustration['copyright'][translation_src],
-                    illustration['nom'][translation_src],
-                )
+                _prepare_attachment_from_apidae_illustration(illustration, translation_src)
             )
         return rv
 
