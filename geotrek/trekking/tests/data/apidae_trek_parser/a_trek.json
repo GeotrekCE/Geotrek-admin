@@ -219,6 +219,58 @@
           "nom": "Office de tourisme de Sallanches",
           "siteWeb": "https://www.example.net/ot-sallanches"
         }
+      },
+      "informations": {
+        "moyensCommunication": [
+          {
+            "type": {
+              "id": 201,
+              "libelleFr": "Téléphone",
+              "libelleEn": "Telephone",
+              "libelleEs": "Teléfono",
+              "libelleIt": "Telefono"
+            },
+            "coordonnees": {
+              "fr": "01 23 45 67 89"
+            }
+          },
+          {
+            "type": {
+              "id": 12345,
+              "libelleFr": "Signaux de fumée",
+              "libelleEn": "Smoke signals"
+            },
+            "coordonnees": {
+              "fr": "1 gros nuage suivi de 2 petits"
+            }
+          },
+          {
+            "type": {
+              "id": 204,
+              "libelleFr": "Mél",
+              "libelleEn": "e-mail",
+              "libelleEs": "Correo electrónico",
+              "libelleIt": "Posta elettronica",
+              "libelleDe": "E-Mail-Adresse",
+              "libelleNl": "Mail"
+            },
+            "coordonnees": {
+              "fr": "accueil-rando@example.com"
+            }
+          },
+          {
+            "type": {
+              "id": 205,
+              "libelleFr": "Site web (URL)",
+              "libelleEn": "Website",
+              "libelleEs": "Sitio web (URL)",
+              "libelleIt": "Sito Web (URL)"
+            },
+            "coordonnees": {
+              "fr": "https://example.com/ma_rando.html"
+            }
+          }
+        ]
       }
     }
   ]

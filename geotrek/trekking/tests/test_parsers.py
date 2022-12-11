@@ -641,6 +641,10 @@ class ApidaeTrekParserTests(TestCase):
             '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
             '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
             '<p>Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.</p>'
+            '<p><strong>Site web (URL):</strong>https://example.com/ma_rando.html<br>'
+            '<strong>Téléphone:</strong>01 23 45 67 89<br>'
+            '<strong>Mél:</strong>accueil-rando@example.com<br>'
+            '<strong>Signaux de fumée:</strong>1 gros nuage suivi de 2 petits</p>'
         )
         self.assertEqual(trek.description_fr, expected_fr_description)
         expected_en_description = (
@@ -652,6 +656,10 @@ class ApidaeTrekParserTests(TestCase):
             '<p>Exceptionally closed during heavy rain</p>'
             '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
             '<p>Ski lift ticket office: 2 shops - Frastaz and Bois Noir ski lifts.</p>'
+            '<p><strong>Website:</strong>https://example.com/ma_rando.html<br>'
+            '<strong>Telephone:</strong>01 23 45 67 89<br>'
+            '<strong>e-mail:</strong>accueil-rando@example.com<br>'
+            '<strong>Smoke signals:</strong>1 gros nuage suivi de 2 petits</p>'
         )
         self.assertEqual(trek.description_en, expected_en_description)
         self.assertEqual(trek.advised_parking_fr, 'Parking sur la place du village')
