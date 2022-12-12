@@ -238,7 +238,7 @@ function initAnnotationsWidget(map) {
             }
             var entry = $('#annotationlist .entry#sample').clone();
             entry.attr({ id: '', 'annotation-id': id });
-            entry.find('.entry-name').on('click', () => edit_label(entry));
+            entry.on('click', () => edit_label(entry));
             entry.find('.entry-name').text(annotation.name());
             $('#annotationlist').append(entry);
         });
