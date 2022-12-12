@@ -23,7 +23,7 @@ from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
                                     ExcelParser, GeotrekAggregatorParser,
                                     GeotrekParser, OpenSystemParser,
                                     TourInSoftParser, TourismSystemParser,
-                                    ValueImportError)
+                                    ValueImportError, XmlParser)
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_img
@@ -494,6 +494,25 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         self.assertEqual(Attachment.objects.count(), 0)
+
+
+class XMLParserTests(TestCase):
+    def test_xml(self):
+        class TestXmlParser(XmlParser):
+            results_path = 'Result/el'
+            model = Organism
+
+            fields = {'organism': 'ORGANISM'}
+
+            def __init__(self):
+                self.filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
+                self.filetype = FileType.objects.create(type="Photographie")
+                super().__init__()
+
+        parser = TestXmlParser()
+        parser.parse()
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Organism.objects.get().organism, 'Organism a')
 
 
 class TourInSoftParserTests(TestCase):

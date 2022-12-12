@@ -13,7 +13,7 @@ from django.utils.translation import gettext as _
 from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    TourInSoftParser, GeotrekParser, ApidaeBaseParser)
+                                    TourInSoftParser, GeotrekParser, ApidaeBaseParser, LEIParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 
@@ -867,6 +867,123 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
 
 class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
     version_tourinsoft = 3
+
+
+class LEITouristicContentParser(LEIParser):
+    """LEI Parser for Touristic contents"""
+    model = TouristicContent
+    eid = 'eid'
+    delete = True
+    category = None
+    type1 = None
+    type2 = None
+    practical_info = []
+    fields = {
+        'eid': 'PRODUIT',
+        'name': 'NOM',
+        'description': 'COMMENTAIRE',
+        'contact': ('ADRPROD_NUM_VOIE', 'ADRPROD_LIB_VOIE', 'ADRPROD_CP', 'ADRPROD_LIBELLE_COMMUNE',
+                    'ADRPROD_TEL', 'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'),
+        'email': ('ADRPROD_EMAIL', 'ADRPREST_EMAIL', 'ADRPREST_EMAIL2'),
+        'website': ('ADRPROD_URL', 'ADRPREST_URL'),
+        'geom': ('LATITUDE', 'LONGITUDE'),
+    }
+
+    field_options = {
+        'geom': {'required': True},
+        'type1': {'create': True, 'fk': 'category'},
+        'type2': {'create': True, 'fk': 'category'},
+    }
+
+    constant_fields = {
+        'published': True,
+    }
+    natural_keys = {
+        'category': 'label',
+        'type1': 'label',
+        'type2': 'label',
+    }
+    m2m_fields = {}
+    m2m_constant_fields = {}
+    non_fields = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.category:
+            self.constant_fields['category'] = self.category
+        if self.type1 is not None:
+            self.m2m_fields['type1'] = self.type1
+        if self.type2 is not None:
+            self.m2m_fields['type2'] = self.type2
+        if self.practical_info is not None:
+            self.fields['practical_info'] = self.practical_info
+
+
+class LEITouristicEventParser(LEIParser):
+    """LEI Parser for touristic events"""
+    model = TouristicEvent
+    fields = {
+        'eid': 'PRODUIT',
+        'name': 'NOM',
+        'description': 'COMMENTAIRE',
+        'description_teaser': 'COMMENTAIREL1',
+        'begin_date': 'PERIODE_DU',
+        'end_date': 'PERIODE_AU',
+        'duration': ('PERIODE_DU', 'PERIODE_AU'),
+        'contact': ('ADRPROD_NUM_VOIE', 'ADRPROD_LIB_VOIE', 'ADRPROD_CP', 'ADRPROD_LIBELLE_COMMUNE',
+                    'ADRPROD_TEL', 'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'),
+        'email': ('ADRPROD_EMAIL', 'ADRPREST_EMAIL', 'ADRPREST_EMAIL2'),
+        'website': ('ADRPROD_URL', 'ADRPREST_URL'),
+        'organizer': ('RAISONSOC_PERSONNE_EN_CHARGE', 'RAISONSOC_RESPONSABLE'),
+        'speaker': ('CIVILITE_RESPONSABLE', 'NOM_RESPONSABLE', 'PRENOM_RESPONSABLE'),
+        'type': 'TYPE_NOM',
+        'geom': ('LATITUDE', 'LONGITUDE'),
+    }
+    m2m_fields = {}
+    type = None
+    natural_keys = {
+        'category': 'label',
+        'geom': {'required': True},
+        'type': 'type',
+    }
+    constant_fields = {}
+    m2m_constant_fields = {}
+    non_fields = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.type:
+            self.constant_fields['type'] = self.type
+
+    def filter_description_teaser(self, src, val):
+        if val:
+            val = val.replace('\n', '<br>')
+        return val
+
+    def filter_organizer(self, src, val):
+        (first, second) = val
+        return first if first else second
+
+    def filter_speaker(self, src, val):
+        (civilite, nom, prenom) = val
+        return "{civ} {pre} {nom}".format(civ=civilite, pre=prenom, nom=nom)
+
+    def filter_begin_date(self, src, val):
+        values_tab = val.split('/')
+        return '-'.join(values_tab[::-1])
+
+    def filter_end_date(self, src, val):
+        values_tab = val.split('/')
+        return '-'.join(values_tab[::-1])
+
+    def filter_duration(self, src, val):
+        (debut, fin) = val
+        date_y_m_d_begin = debut.split('/')
+        date_y_m_d_end = fin.split('/')
+        d0 = datetime.date(int(date_y_m_d_begin[2]), int(date_y_m_d_begin[1]), int(date_y_m_d_begin[0]))
+        d1 = datetime.date(int(date_y_m_d_end[2]), int(date_y_m_d_end[1]), int(date_y_m_d_end[0]))
+        delta = d1 - d0
+        return str(delta.days + 1)
 
 
 class GeotrekTouristicContentParser(GeotrekParser):

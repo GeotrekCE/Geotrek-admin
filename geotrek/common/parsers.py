@@ -20,7 +20,7 @@ from urllib.parse import urlparse
 
 from django.contrib.gis.geos import GEOSGeometry, WKBWriter
 from django.db import models, connection
-from django.db.utils import DatabaseError
+from django.db.utils import DatabaseError, InternalError
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
 from django.contrib.gis.geos import Point, Polygon
@@ -35,6 +35,7 @@ from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment, License
+from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
 
 
@@ -552,6 +553,33 @@ class Parser:
         raise DownloadImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url, status_code=response.status_code))
 
 
+class XmlParser(Parser):
+    """XML Parser"""
+    ns = {}
+    results_path = ''
+
+    def next_row(self):
+        if self.filename:
+            with open(self.filename) as f:
+                self.root = ET.fromstring(f.read())
+        else:
+            response = requests.get(self.url, params={})
+            if response.status_code != 200:
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(
+                    url=self.url, status_code=response.status_code))
+            self.root = ET.fromstring(response.content)
+        entries = self.root.findall(self.results_path, self.ns)
+        self.nb = len(entries)
+        for row in entries:
+            yield row
+
+    def get_part(self, dst, src, val):
+        return val.findtext(src, None, self.ns)
+
+    def normalize_field_name(self, name):
+        return name
+
+
 class ShapeParser(Parser):
     def next_row(self):
         datasource = DataSource(self.filename, encoding=self.encoding)
@@ -961,6 +989,127 @@ class OpenSystemParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+
+class LEIParser(AttachmentParserMixin, XmlParser):
+    """
+    Parser for LEI tourism SIT
+
+    You can define :
+
+    fields = {
+        'eid': 'PRODUIT',
+        'name': 'NOM',
+        'description': 'COMMENTAIRE',
+        'contact': (
+            'ADRPROD_NUM_VOIE', 'ADRPROD_LIB_VOIE', 'ADRPROD_CP', 'ADRPROD_LIBELLE_COMMUNE',
+            'ADRPROD_TEL', 'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'
+        ),
+        'email': ('ADRPROD_EMAIL'),
+        'website': ('ADRPROD_URL', 'ADRPREST_URL'),
+        'geom': ('LATITUDE', 'LONGITUDE'),
+    }
+
+    non_fields = {     # URL                                         # Legend
+        'attachments': [('CRITERES/Crit[@CLEF_CRITERE="30000279"]', 'CRITERES/Crit[@CLEF_CRITERE="900003"]'),
+                        ('CRITERES/Crit[@CLEF_CRITERE="30000280"]', 'CRITERES/Crit[@CLEF_CRITERE="900004"]')],
+    }
+    """
+    results_path = 'Resultat/sit_liste'
+    eid = 'eid'
+
+    def get_part(self, dst, src, val):
+        """For generic CRITERES return XML Crit element"""
+        if 'CRITERES/Crit' in src:
+            # Return list of Crit elements
+            return val.findall(src)
+        return val.findtext(src, None, self.ns)
+
+    def get_crit_kv(self, crit):
+        """Get Crit key / value according to Nomenclature"""
+        crit_name = self.root.findtext(
+            f'NOMENCLATURE/CRIT[@CLEF="{crit.attrib["CLEF_CRITERE"]}"]/NOMCRIT'
+        )
+        crit_value = self.get_crit_value(crit)
+        # If value is available for crit, add it to result
+        if crit.text is not None and crit_value != 'Photos':
+            crit_value = "{0} : {1}".format(crit_value, crit.text)
+        return crit_name, crit_value
+
+    def get_crit_value(self, crit):
+        """Get Crit value only, according to Nomenclature"""
+        return self.root.findtext(
+            f'NOMENCLATURE/CRIT[@CLEF="{crit.attrib["CLEF_CRITERE"]}"]/MODAL[@CLEF="{crit.attrib["CLEF_MODA"]}"]'
+        )
+
+    def start(self):
+        super().start()
+        lei = set(self.model.objects.filter(eid__startswith='LEI').values_list('pk', flat=True))
+        self.to_delete = self.to_delete & lei
+
+    def filter_eid(self, src, val):
+        return 'LEI' + val
+
+    def filter_attachments(self, src, val):
+        """Get Photos url and legend from Crit element list
+
+        Keyword arguments:
+        src --
+        val -- Crit element list
+
+        returns photos list of tuples (url, legend, '')
+        """
+        photos = []
+        for crits in val:
+            url_crits = crits[0]
+            legend_crits = crits[1]
+            if legend_crits:
+                legend_crit = legend_crits[0]
+                legend = legend_crit.text
+                if legend:
+                    legend = legend[:128]
+            else:
+                legend = ""
+            for crit in url_crits:
+                url = crit.text
+                if not url:
+                    continue
+                url = url.replace('https://', 'http://')
+                if url[:7] != 'http://':
+                    url = 'http://' + url
+                photos.append((url, legend, ''))
+        return photos
+
+    def filter_description(self, src, val):
+        if val is None:
+            return ""
+        val = val.replace('\n', '<br>')
+        return val
+
+    def filter_geom(self, src, val):
+        lat, lng = val
+        if lat is None or lng is None:
+            raise ValueImportError("Empty geometry")
+        lat = lat.replace(',', '.')
+        lng = lng.replace(',', '.')
+        try:
+            geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        except ValueError:
+            raise ValueImportError("Empty geometry")
+
+        try:
+            geom.transform(settings.SRID)
+        except (GDALException, InternalError) as e:
+            raise ValueImportError(e)
+        return geom
+
+    def filter_website(self, src, val):
+        (val1, val2) = val
+
+        if val1:
+            return add_http_prefix(val1)
+        if val2:
+            return add_http_prefix(val2)
 
 
 class GeotrekAggregatorParser:
