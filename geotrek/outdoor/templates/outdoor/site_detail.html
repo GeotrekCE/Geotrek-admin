@@ -15,6 +15,14 @@
     {{ block.super }}
 {% endblock detailspanel %}
 
+{% block attachments_extra_tab_nav %}
+    {% with attachments_count=object.attachments.count|add:object.view_points.count %}
+        <li class="nav-item">
+        <a id="tab-attachments" class="nav-link" href="#attachments" data-toggle="tab"><i class="bi bi-file-earmark"></i>
+            <span class="d-none d-sm-inline">{% trans "Attached files" %} ({{ attachments_count }})</span></a>
+        </li>
+    {% endwith %%}
+{% endblock %}
 
 {% block attachmentspanel %}
     {{ block.super }}

@@ -100,7 +100,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
 
 class TrekDetail(CompletenessMixin, MapEntityDetail):
-    queryset = Trek.objects.existing().select_related('topo_object')
+    queryset = Trek.objects.existing().select_related('topo_object').prefetch_related('view_points')
 
     @property
     def icon_sizes(self):
