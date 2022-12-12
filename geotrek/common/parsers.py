@@ -697,9 +697,14 @@ class AttachmentParserMixin:
             ) and not self.has_size_changed(kwargs.get('url'), attachment):
                 found = True
                 attachments_to_delete.remove(attachment)
-                if kwargs.get('author') != attachment.author or kwargs.get('legend') != attachment.legend:
+                if (
+                        kwargs.get('author') != attachment.author
+                        or kwargs.get('legend') != attachment.legend
+                        or kwargs.get('title') != attachment.title
+                ):
                     attachment.author = kwargs.get('author')
                     attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+                    attachment.title = textwrap.shorten(kwargs.get('title', ''), width=127)
                     attachment.save()
                     updated = True
                 break
@@ -745,23 +750,25 @@ class AttachmentParserMixin:
         attachment.creator = self.creator
         attachment.author = kwargs.get('author')
         attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+        attachment.title = textwrap.shorten(kwargs.get('title'), width=127)
         return attachment
 
     def generate_attachments(self, src, val, attachments_to_delete, updated):
         attachments = []
-        for url, legend, author in self.filter_attachments(src, val):
-            url = self.base_url + url
-            legend = legend or ""
-            author = author or ""
+        for attachment_data in self.filter_attachments(src, val):
+            url = self.base_url + attachment_data[0]
+            legend = attachment_data[1] or ""
+            author = attachment_data[2] or ""
+            title = attachment_data[3] if len(attachment_data) > 3 else ""
             basename, ext = os.path.splitext(os.path.basename(url))
             name = '%s%s' % (basename[:128], ext)
             found, updated = self.check_attachment_updated(attachments_to_delete, updated, name=name, url=url,
-                                                           legend=legend, author=author)
+                                                           legend=legend, author=author, title=title)
             if found:
                 continue
 
             parsed_url = urlparse(url)
-            attachment = self.generate_attachment(author=author, legend=legend)
+            attachment = self.generate_attachment(author=author, legend=legend, title=title)
             save, updated = self.generate_content_attachment(attachment, parsed_url, url, updated, name)
             if not save:
                 continue
@@ -1234,3 +1241,47 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 yield row
 
             self.next_url = self.root['next']
+
+
+class ApidaeBaseParser(Parser):
+    """Parser to import "anything" from APIDAE"""
+    separator = None
+    api_key = None
+    project_id = None
+    selection_id = None
+    url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
+    size = 100
+    skip = 0
+
+    # A list of locales to be fetched (i.e. ['fr', 'en']). Leave empty to fetch default locales.
+    locales = None
+
+    @property
+    def items(self):
+        if self.nb == 0:
+            return []
+        return self.root['objetsTouristiques']
+
+    def next_row(self):
+        while True:
+            params = {
+                'apiKey': self.api_key,
+                'projetId': self.project_id,
+                'selectionIds': [self.selection_id],
+                'count': self.size,
+                'first': self.skip,
+                'responseFields': self.responseFields
+            }
+            if self.locales:
+                params['locales'] = self.locales
+            response = self.request_or_retry(self.url, params={'query': json.dumps(params)})
+            self.root = response.json()
+            self.nb = int(self.root['numFound'])
+            for row in self.items:
+                yield row
+            self.skip += self.size
+            if self.skip >= self.nb:
+                return
+
+    def normalize_field_name(self, name):
+        return name

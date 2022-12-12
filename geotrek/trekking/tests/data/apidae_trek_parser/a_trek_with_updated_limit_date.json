@@ -1,0 +1,226 @@
+{
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "id": 123123,
+      "informationsEquipement": {
+        "activites": [
+          {
+            "id": 3184,
+            "libelleFr": "Sports pédestres",
+            "libelleEn": "Pedestrian sports"
+          },
+          {
+            "id": 3333,
+            "libelleFr": "Itinéraire de randonnée pédestre",
+            "libelleEn": "Hiking itinerary"
+          }
+        ],
+        "itineraire": {
+          "dureeJournaliere": 150,
+          "referencesCartographiques": {
+            "libelleFr": "TOP 25 IGN 3531 OT",
+            "libelleEn": "Map IGN3531OT Top 25"
+          },
+          "referencesTopoguides": {
+            "libelleFr": "Cartoguide en vente à l'Office de Tourisme",
+            "libelleEn": "Guidebook sold at the tourist board"
+          },
+          "passagesDelicats": {
+            "libelleFr": "À éviter après de grosses pluies.",
+            "libelleEn": "Avoid after heavy rain."
+          },
+          "itineraireType": "BOUCLE",
+          "itineraireBalise": "BALISE",
+          "precisionsBalisage": {
+            "libelleFr": "Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).",
+            "libelleEn": "Follow the GR (white / red) or GRP (yellow / red) markings."
+          },
+          "naturesTerrain": [
+            {
+              "id": 4245,
+              "libelleEn": "Suitable for all terrain strollers"
+            },
+            {
+              "id": 4239,
+              "libelleEn": "Rock",
+              "libelleFr": "Rocher"
+            },
+            {
+              "id": 4241,
+              "libelleEn": "Ground",
+              "libelleFr": "Terre"
+            }
+          ]
+        }
+      },
+      "localisation": {
+        "adresse": {
+          "adresse1": "Parking sur la place du village",
+          "commune": {
+            "nom": "Sallanches"
+          }
+        },
+        "geolocalisation": {
+          "complement": {
+            "libelleFr": "En voiture, rejoindre le village de Salanches.",
+            "libelleEn": "By car, go to the village of Sallanches.",
+            "libelleIt": "In auto, andare al villaggio di Sallances."
+          }
+        },
+        "environnements": [
+          {
+            "elementReferenceType": "Environnement",
+            "id": 135,
+            "libelleFr": "A la campagne",
+            "libelleEn": "In the country",
+            "libelleEs": "En el campo",
+            "libelleIt": "Campagna",
+            "libelleDe": "Auf dem Land",
+            "libelleNl": "Platteland"
+          }
+        ]
+      },
+      "illustrations": [
+        {
+          "type": "IMAGE",
+          "nom": {
+            "libelleEn": "The title of the picture"
+          },
+          "legende": {
+            "libelleEn": "The legend of the picture"
+          },
+          "copyright": {
+            "libelleEn": "The author of the picture"
+          },
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/a_picture.jpg"
+            }
+          ],
+          "dateLimiteDePublication": "2013-02-17T00:00:00.000+0000"
+        },
+        {
+          "type": "IMAGE",
+          "nom": {
+            "libelleEn": "This picture should not be imported"
+          },
+          "legende": {
+            "libelleEn": "This picture should not be imported"
+          },
+          "copyright": {
+            "libelleEn": "This picture should not be imported"
+          },
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/another_picture.jpg"
+            }
+          ],
+          "dateLimiteDePublication": "2002-08-23T00:00:00.000+0000"
+        }
+      ],
+      "prestations": {
+        "typesClientele": [
+          {
+            "id": 589,
+            "libelleFr": "Niveau rouge - Difficile",
+            "libelleEn": "Level red – hard",
+            "libelleEs": "Rojo",
+            "libelleIt": "Livello rosso – difficile",
+            "libelleDe": "Rot",
+            "libelleNl": "Rood"
+          }
+        ]
+      },
+      "multimedias": [
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/apidae_test_trek.gpx",
+              "extension": "gpx"
+            }
+          ]
+        }
+      ],
+      "nom": {
+        "libelleFr": "Une belle randonnée de test",
+        "libelleEn": "A great hike to test"
+      },
+      "ouverture": {
+        "periodeEnClair": {
+          "libelleFr": "Ouvert toute l'année\n\nFermeture exceptionnelle en cas de pluie forte",
+          "libelleEn": "Open all year long\n\nExceptionally closed during heavy rain"
+        }
+      },
+      "descriptionTarif": {
+        "indicationTarif": "PAYANT",
+        "tarifsEnClair": {
+          "libelleFr": "Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.",
+          "libelleEn": "Ski lift ticket office: 2 shops - Frastaz and Bois Noir ski lifts."
+        }
+      },
+      "presentation": {
+        "descriptifCourt": {
+          "libelleFr": "La description courte en français.",
+          "libelleEn": "The short description in english."
+        },
+        "descriptifDetaille": {
+          "libelleFr": "La description détaillée en français.",
+          "libelleEn": "The longer description in english."
+        },
+        "descriptifsThematises": [
+          {
+            "theme": {
+              "id": 6527
+            },
+            "description": {
+              "libelleFr": "Départ : du parking de la Chapelle Saint Michel \r\n1/ Suivre le chemin qui part à droite, traversant le vallon.\r\n2/ Au carrefour tourner à droite et suivre la rivière\r\n3/ Retour à la chapelle en passant à travers le petit bois.",
+              "libelleEn": "Start: from the parking near the Chapelle Saint Michel \r\n1/ Follow the path starting at right-hand, cross the valley.\r\n2/ At the crossroad turn left and follow the river.\r\n3/ Back to the chapelle by the woods."
+            }
+          }
+        ],
+        "typologiesPromoSitra": [
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 6157,
+            "libelleFr": "Géologie",
+            "libelleEn": "Geology",
+            "libelleEs": "Geología",
+            "libelleIt": "Geologia"
+          },
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 6158,
+            "libelleFr": "Historique",
+            "libelleEn": "Historic",
+            "libelleEs": "Histórico",
+            "libelleIt": "Storico"
+          },
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 1599,
+            "libelleFr": "Déconseillé par mauvais temps",
+            "libelleEn": "Not recommended in bad weather",
+            "libelleEs": "Desaconsejado en época de mal tiempo",
+            "libelleIt": "Sconsigliato con cattivo tempo"
+          },
+          {
+            "elementReferenceType": "TypologiePromoSitra",
+            "id": 4971,
+            "libelleFr": "Inscrit au PDIPR",
+            "libelleEn": "Listed PDIPR",
+            "libelleEs": "Listado en el PDIPR",
+            "libelleIt": "Elencato nel PDIPR"
+          }
+        ]
+      },
+      "gestion": {
+        "membreProprietaire": {
+          "nom": "Office de tourisme de Sallanches",
+          "siteWeb": "https://www.example.net/ot-sallanches"
+        }
+      }
+    }
+  ]
+}

@@ -1,9 +1,20 @@
 =========
 CHANGELOG
 =========
-
-2.92.3+dev (XXXX-XX-XX)
+2.93.0+dev (XXXX-XX-XX)
 -----------------------
+
+
+2.93.0     (2022-12-06)
+-----------------------
+
+**New feature**
+
+- New ``Parser`` subclass to import treks from the APIDAE touristic data system.
+
+**Improvements**
+
+- Use MapEntity widget for geometries even without setting ``TREKKING_TOPOLOGY_ENABLED`` (to always display file layer leaflet plugin)
 
 
 2.92.3     (2022-12-02)
