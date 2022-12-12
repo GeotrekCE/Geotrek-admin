@@ -18,8 +18,9 @@ from django.test.utils import override_settings
 from geotrek.common.utils import testdata
 from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
+from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.tests.factories import RouteFactory
-from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
+from geotrek.trekking.models import POI, POIType, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
     TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser,
     ApidaePOIParser, _prepare_attachment_from_apidae_illustration
@@ -141,6 +142,29 @@ class TrekParserTests(TestCase):
         self.assertEqual(trek.route, self.route)
         self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)
         self.assertEqual(WKTWriter(precision=4).write(trek.geom), WKT)
+
+
+WKT_POI = (
+    b'POINT (1.5238 43.5294)'
+)
+
+
+class POIParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.poi_type_e = POIType.objects.create(label="équipement")
+        cls.poi_type_s = POIType.objects.create(label="signaletique")
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    def test_create(self):
+        PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'poi.shp')
+        call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=0)
+        poi = POI.objects.all().last()
+        self.assertEqual(poi.name, "pont")
+        poi.reload()
+        self.assertEqual(WKTWriter(precision=4).write(poi.geom), WKT_POI)
+        self.assertEqual(poi.geom, poi.geom_3d)
 
 
 class TestGeotrekTrekParser(GeotrekTrekParser):

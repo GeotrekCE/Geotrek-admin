@@ -14,6 +14,7 @@ from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import (
     ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeBaseParser
 )
+from geotrek.core.models import Topology
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
 
 
@@ -36,6 +37,44 @@ class DurationParserMixin:
         except (TypeError, ValueError):
             self.add_warning(_("Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(val=val, src=src)))
             return None
+
+
+class POIParser(AttachmentParserMixin, ShapeParser):
+    label = "Import POI"
+    label_fr = "Import POI"
+    label_en = "Import POI"
+    model = POI
+    simplify_tolerance = 2
+    eid = 'name'
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    natural_keys = {
+        'type': 'label',
+    }
+    topology = Topology.objects.none()
+
+    def filter_geom(self, src, val):
+        if val is None:
+            return None
+        if val is None or val.geom_type != 'Point':
+            self.add_warning(_("Invalid geometry type for field '{src}'. Should be Point, not {geom_type}").format(src=src, geom_type=val.geom_type))
+            return None
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            # Use existing topology helpers to transform a Point(x, y)
+            # to a path aggregation (topology)
+            geometry = val.transform(settings.API_SRID, clone=True)
+            geometry.coord_dim = 2
+            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            self.topology = Topology.deserialize(serialized)
+            # Move deserialization aggregations to the POI
+        return val
+
+    def parse_obj(self, row, operation):
+        super().parse_obj(row, operation)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.obj.mutate(self.topology)
 
 
 class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
