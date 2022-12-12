@@ -16,6 +16,7 @@ class CityParser(ShapeParser):
         'name': 'nom',
         'geom': 'geom',
     }
+    m2m_fields = {}
 
     def filter_code(self, src, val):
         return str(val)

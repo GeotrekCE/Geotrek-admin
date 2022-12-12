@@ -21,7 +21,8 @@ from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEven
                                      TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParserV3withMedias,
                                      TouristicContentTourInSoftParser, TouristicEventTourInSoftParser,
                                      InformationDeskApidaeParser, GeotrekTouristicContentParser,
-                                     GeotrekTouristicEventParser, GeotrekInformationDeskParser)
+                                     GeotrekTouristicEventParser, GeotrekInformationDeskParser,
+                                     LEITouristicContentParser, LEITouristicEventParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
@@ -119,11 +120,103 @@ class FMA28OtherPortal(TouristicEventTourInSoftParser):
     m2m_aggregate_fields = ["portal"]
 
 
+class FilenameLEIParser(LEITouristicContentParser):
+    filename = 'geotrek/tourism/tests/data/LEIContent.xml'
+    category = "Restaurant"
+
+
+class RestaurantALEIParser(LEITouristicContentParser):
+    url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
+    category = "Restaurant"
+    type1 = "Type 1"
+    type2 = "Type 2"
+    practical_info = "Practical Info"
+    non_fields = {
+        'attachments': [
+            ('CRITERES/Crit[@CLEF_CRITERE="1900604"]', 'CRITERES/Crit[@CLEF_CRITERE="1900480"]'),
+            ('CRITERES/Crit[@CLEF_CRITERE="1900421"]', 'CRITERES/Crit[@CLEF_CRITERE="1900784"]'),
+            ('CRITERES/Crit[@CLEF_CRITERE="1900268"]', 'CRITERES/Crit[@CLEF_CRITERE="1900784"]')
+        ],
+    }
+
+
+class RestaurantBLEIParser(LEITouristicContentParser):
+    url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
+    category = "Restaurant"
+    type1 = "Type 1"
+    type2 = "Type 2"
+    practical_info = (
+        "CRITERES/Crit",
+        "COMMENTAIREL1"
+    )
+    non_fields = {}
+    practical_info_criteria = [
+        "Tox",
+    ]
+
+    def filter_practical_info(self, src, val):
+        criteres = {}
+        crit_elements, coml1 = val
+        if coml1:
+            criteres['Infos 1'] = coml1
+        for elt in crit_elements:
+            crit_name, crit_value = self.get_crit_kv(elt)
+            if crit_value is not None and crit_name in self.practical_info_criteria:
+                if crit_name in criteres.keys():
+                    criteres[crit_name].append(crit_value)
+                else:
+                    criteres[crit_name] = [crit_value]
+        result = ""
+        for elt in criteres.items():
+            formatted_value = ""
+            if elt[1] == "" or elt[1] == []:
+                continue
+            elif isinstance(elt[1], str):
+                formatted_value = elt[1]
+            elif isinstance(elt[1], list):
+                formatted_value = '<br>'.join(elt[1])
+            result += '<p><strong>{0}</strong> : {1}</p>'.format(elt[0], formatted_value)
+        return result
+
+
+class EventALEIParser(LEITouristicEventParser):
+    url = "https://apps.tourisme-alsace.info/xml/exploitation/listeproduits.asp"
+    non_fields = {
+        'attachments': [('CRITERES/Crit[@CLEF_CRITERE="30000279"]', 'CRITERES/Crit[@CLEF_CRITERE="30000346"]'), ],
+    }
+    type = "Type event A"
+
+
+class ParserNoStructureTests(TranslationResetMixin, TestCase):
+
+    @mock.patch('geotrek.common.parsers.requests.get')
+    def test_filetype_structure_none(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+
+        FileType.objects.create(type="Photographie", structure=None)
+        TouristicContentCategoryFactory(label="Eau vive")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
+        self.assertTrue(mocked.called)
+        self.assertEqual(TouristicContent.objects.count(), 1)
+
+
 class ParserTests(TranslationResetMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        FileType.objects.create(type="Photographie")
+
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_apidae_failed(self, mocked):
         mocked.return_value.status_code = 404
-        FileType.objects.create(type="Photographie")
         TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
@@ -134,7 +227,6 @@ class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_espritparc_failed(self, mocked):
         mocked.return_value.status_code = 404
-        FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
         TouristicContentType1Factory(label="Gelée royale, propolis et pollen", category=category)
@@ -164,7 +256,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         TouristicContentCategoryFactory(label="Eau vive")
-        FileType.objects.create(type="Photographie")
 
         # Parser with provider creates objects with provider
         call_command('import', 'geotrek.tourism.tests.test_parsers.Provider1Parser')
@@ -199,7 +290,6 @@ class ParserTests(TranslationResetMixin, TestCase):
                               side_effect(EauViveParser.url, None, None, 503),
                               side_effect(EauViveParser.url, None, None, 200)]
 
-        FileType.objects.create(type="Photographie")
         TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
@@ -223,7 +313,6 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         mocked.side_effect = side_effect
 
-        FileType.objects.create(type="Photographie")
         TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
@@ -247,7 +336,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         # Mock HEAD
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {'content-length': 666}
-        FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType2Factory(label="Hautes Alpes Naturellement", category=category)
         TouristicContentType2Factory(label="Bienvenue à la ferme", category=category)
@@ -275,7 +363,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         # Mock HEAD
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {'content-length': 666}
-        FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
         TouristicContentType1Factory(label="Gelée royale, propolis et pollen", category=category)
@@ -297,7 +384,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
-        FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
@@ -330,24 +416,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.first().content_object, content)
 
     @mock.patch('geotrek.common.parsers.requests.get')
-    def test_filetype_structure_none(self, mocked):
-        def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
-            with open(filename, 'r') as f:
-                return json.load(f)
-
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-        mocked.return_value.content = b'Fake image'
-        FileType.objects.create(type="Photographie", structure=None)
-        TouristicContentCategoryFactory(label="Eau vive")
-        TouristicContentType1Factory(label="Type A")
-        TouristicContentType1Factory(label="Type B")
-        call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
-        self.assertTrue(mocked.called)
-        self.assertEqual(TouristicContent.objects.count(), 1)
-
-    @mock.patch('geotrek.common.parsers.requests.get')
     def test_no_event_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeNoEvent.json')
@@ -356,7 +424,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
-        FileType.objects.create(type="Photographie")
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
         self.assertTrue(mocked.called)
@@ -371,7 +438,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
-        FileType.objects.create(type="Photographie")
         self.assertEqual(TouristicEvent.objects.count(), 0)
         output = io.StringIO()
         call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
@@ -414,7 +480,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
-        FileType.objects.create(type="Photographie")
         TargetPortalFactory(name='Portal 1')
         TargetPortalFactory(name='Portal 2')
         RecordSourceFactory(name='Source 1')
@@ -440,7 +505,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
-        FileType.objects.create(type="Photographie")
         TargetPortalFactory(name='Portal 1')
         TargetPortalFactory(name='Portal 2')
         RecordSourceFactory(name='Source 1')
@@ -475,7 +539,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         # Mock HEAD
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {'content-length': 666}
-        FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentType1Factory(label="Miel", category=category)
         TouristicContentType1Factory(label="Gelée royale, propolis et pollen", category=category)
@@ -516,7 +579,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
-        FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Où dormir")
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
@@ -554,7 +616,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         mocked.return_value.content = b'Fake image'
-        FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Où dormir")
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
@@ -599,7 +660,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {'content-length': 666}
 
-        FileType.objects.create(type="Photographie")
         type = TouristicEventTypeFactory(type="Agenda rando")
         source = RecordSourceFactory(name="CDT 28")
         portal = TargetPortalFactory(name="Itinérance")
@@ -644,7 +704,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {'content-length': 666}
 
-        FileType.objects.create(type="Photographie")
         TouristicEventTypeFactory(type="Agenda rando")
         RecordSourceFactory(name="CDT 28")
         TargetPortalFactory(name="Itinérance")
@@ -699,6 +758,116 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         information_desk_2 = InformationDesk.objects.get(eid=2)
         self.assertEqual(information_desk_2.website, None)
+
+
+class LEIParserTest(TranslationResetMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        FileType.objects.create(type="Photographie")
+        TouristicContentCategoryFactory.create(label="Restaurant")
+        TouristicContentType1Factory.create(label="Type A")
+        TouristicContentType1Factory.create(label="Type B")
+
+    @mock.patch('requests.get')
+    def test_fail_lei_url(self, mocked):
+        self.x_time = 0
+
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 404
+            return response
+
+        mocked.side_effect = mocked_requests_get
+        with self.assertRaisesRegex(CommandError, "Failed to download %s. HTTP status code 404"
+                                                  % RestaurantALEIParser.url):
+            call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantALEIParser', verbosity=0)
+            self.assertTrue(mocked.called)
+
+    @mock.patch('requests.get')
+    def test_create_content_lei_url(self, mocked):
+        self.x_time = 0
+
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 200
+            if self.x_time == 0:
+                filename = os.path.join(os.path.dirname(__file__), 'data', 'LEIContent.xml')
+                with open(filename, 'r') as f:
+                    self.x_time += 1
+                    response._content = f.read()
+                    return response
+            else:
+                response._content = b'test'
+                return response
+
+        mocked.side_effect = mocked_requests_get
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantALEIParser', verbosity=0)
+        self.assertTrue(mocked.called)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        content = TouristicContent.objects.get(name="Restaurant B")
+        self.assertEqual(content.eid, "LEI219006400")
+        self.assertEqual(Attachment.objects.count(), 2)
+        self.assertEqual(Attachment.objects.exclude(legend='').first().legend,
+                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolo')
+        self.assertEqual(Attachment.objects.first().content_object, content)
+
+    def test_create_content_lei_filename(self):
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.FilenameLEIParser', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+
+    @mock.patch('requests.get')
+    def test_create_content_kv_critere_lei(self, mocked):
+
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 200
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'LEIContent.xml')
+            with open(filename, 'r') as f:
+                response._content = f.read()
+                return response
+
+        mocked.side_effect = mocked_requests_get
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.RestaurantBLEIParser', verbosity=0)
+        self.assertTrue(mocked.called)
+        self.assertEqual(TouristicContent.objects.count(), 2)
+        content_a = TouristicContent.objects.get(name="Restaurant A")
+        self.assertEqual(content_a.eid, "LEI219006399")
+        self.assertIn("Commentaire A", content_a.description)
+        self.assertEqual("<p><strong>Tox</strong> : Foo : Bar</p>", content_a.practical_info)
+        content_b = TouristicContent.objects.get(name="Restaurant B")
+        self.assertEqual(content_b.eid, "LEI219006400")
+
+    @mock.patch('requests.get')
+    def test_create_event_lei(self, mocked):
+        self.x_time = 0
+
+        def mocked_requests_get(*args, **kwargs):
+            response = requests.Response()
+            response.status_code = 200
+            if self.x_time == 0:
+                filename = os.path.join(os.path.dirname(__file__), 'data', 'LEIEvent.xml')
+                with open(filename, 'r') as f:
+                    self.x_time += 1
+                    response._content = f.read()
+                    return response
+            else:
+                response._content = b'test'
+                return response
+
+        mocked.side_effect = mocked_requests_get
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.EventALEIParser', verbosity=0)
+        self.assertTrue(mocked.called)
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertEqual(event.eid, "LEI188003953")
+        self.assertEqual(event.name, "Event A")
+        self.assertIn("Description A", event.description)
+        self.assertEqual(Attachment.objects.count(), 2)
+        self.assertEqual(Attachment.objects.first().content_object, event)
 
 
 class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
