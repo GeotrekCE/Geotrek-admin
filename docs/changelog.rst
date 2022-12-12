@@ -11,6 +11,10 @@ CHANGELOG
 - New ``XMLParser`` to import content from XML
 - ApidaeTrekParser: import trek's contact info into description
 
+**Improvements**
+
+- Sensitivity: Add missing attachments list to sensitive areas API
+
 **Bug fixes**
 
 - Fix shp zipfile import
