@@ -10,6 +10,7 @@ CHANGELOG
 - New ``LEIParser`` to import touristic content and event from LEI touristic data system
 - New ``XMLParser`` to import content from XML
 - ApidaeTrekParser: import trek's contact info into description
+- New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
 
 **Bug fixes**
 
