@@ -12,8 +12,9 @@ from django.utils.translation import gettext as _, get_language
 
 from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import (
-    ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeBaseParser
+    ShapeParser, AttachmentParserMixin, GeotrekParser, GlobalImportError, RowImportError, Parser, ApidaeBaseParser
 )
+from geotrek.core.models import Path, Topology
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
 
 
@@ -36,6 +37,54 @@ class DurationParserMixin:
         except (TypeError, ValueError):
             self.add_warning(_("Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(val=val, src=src)))
             return None
+
+
+class POIParser(AttachmentParserMixin, ShapeParser):
+    label = "Import POI"
+    label_fr = "Import POI"
+    label_en = "Import POI"
+    model = POI
+    simplify_tolerance = 2
+    eid = 'name'
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    natural_keys = {
+        'type': 'label',
+    }
+    field_options = {
+        'geom': {'required': True},
+        'type': {'required': True}
+    }
+    topology = Topology.objects.none()
+
+    def start(self):
+        super().start()
+        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
+            raise GlobalImportError(_("You need to add a network of paths before importing POIs"))
+
+    def filter_geom(self, src, val):
+        self.topology = Topology.objects.none()
+        if val is None:
+            # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
+            raise RowImportError(_("Invalid geometry"))
+        if val.geom_type != 'Point':
+            raise RowImportError(_("Invalid geometry type for field '{src}'. Should be Point, not {geom_type}").format(src=src, geom_type=val.geom_type))
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            # Use existing topology helpers to transform a Point(x, y)
+            # to a path aggregation (topology)
+            geometry = val.transform(settings.API_SRID, clone=True)
+            geometry.coord_dim = 2
+            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            self.topology = Topology.deserialize(serialized)
+            # Move deserialization aggregations to the POI
+        return val
+
+    def parse_obj(self, row, operation):
+        super().parse_obj(row, operation)
+        if settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
+            self.obj.mutate(self.topology)
 
 
 class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):

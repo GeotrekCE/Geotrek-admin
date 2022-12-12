@@ -12,14 +12,16 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
 from geotrek.common.utils import testdata
 from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
+from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.tests.factories import RouteFactory
-from geotrek.trekking.models import POI, Service, Trek, DifficultyLevel, Route
+from geotrek.trekking.models import POI, POIType, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
     TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser,
     ApidaePOIParser, _prepare_attachment_from_apidae_illustration
@@ -141,6 +143,51 @@ class TrekParserTests(TestCase):
         self.assertEqual(trek.route, self.route)
         self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)
         self.assertEqual(WKTWriter(precision=4).write(trek.geom), WKT)
+
+
+WKT_POI = (
+    b'POINT (1.5238 43.5294)'
+)
+
+
+class POIParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.poi_type_e = POIType.objects.create(label="équipement")
+        cls.poi_type_s = POIType.objects.create(label="signaletique")
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_import_cmd_raises_error_when_no_path(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'poi.shp')
+        with self.assertRaisesRegex(CommandError, 'You need to add a network of paths before importing POIs'):
+            call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=0)
+
+    def test_import_cmd_raises_wrong_geom_type(self):
+        PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'trek.shp')
+        output = StringIO()
+        call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=2, stdout=output)
+        self.assertEqual(POI.objects.count(), 0)
+        self.assertIn("Invalid geometry type for field 'GEOM'. Should be Point, not LineString,", output.getvalue())
+
+    def test_import_cmd_raises_no_geom(self):
+        PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'empty_geom.geojson')
+        output = StringIO()
+        call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=2, stdout=output)
+        self.assertEqual(POI.objects.count(), 0)
+        self.assertIn("Invalid geometry", output.getvalue())
+
+    def test_create(self):
+        PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'poi.shp')
+        call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=0)
+        poi = POI.objects.all().last()
+        self.assertEqual(poi.name, "pont")
+        poi.reload()
+        self.assertEqual(WKTWriter(precision=4).write(poi.geom), WKT_POI)
+        self.assertEqual(poi.geom, poi.geom_3d)
 
 
 class TestGeotrekTrekParser(GeotrekTrekParser):
