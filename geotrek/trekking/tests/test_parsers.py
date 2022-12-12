@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 import json
 import os
 from copy import copy
@@ -640,6 +641,10 @@ class ApidaeTrekParserTests(TestCase):
             '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
             '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
             '<p>Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.</p>'
+            '<p><strong>Site web (URL):</strong>https://example.com/ma_rando.html<br>'
+            '<strong>Téléphone:</strong>01 23 45 67 89<br>'
+            '<strong>Mél:</strong>accueil-rando@example.com<br>'
+            '<strong>Signaux de fumée:</strong>1 gros nuage suivi de 2 petits</p>'
         )
         self.assertEqual(trek.description_fr, expected_fr_description)
         expected_en_description = (
@@ -651,6 +656,10 @@ class ApidaeTrekParserTests(TestCase):
             '<p>Exceptionally closed during heavy rain</p>'
             '<p>Follow the GR (white / red) or GRP (yellow / red) markings.</p>'
             '<p>Ski lift ticket office: 2 shops - Frastaz and Bois Noir ski lifts.</p>'
+            '<p><strong>Website:</strong>https://example.com/ma_rando.html<br>'
+            '<strong>Telephone:</strong>01 23 45 67 89<br>'
+            '<strong>e-mail:</strong>accueil-rando@example.com<br>'
+            '<strong>Smoke signals:</strong>1 gros nuage suivi de 2 petits</p>'
         )
         self.assertEqual(trek.description_en, expected_en_description)
         self.assertEqual(trek.advised_parking_fr, 'Parking sur la place du village')
@@ -1127,3 +1136,6 @@ class MakeDurationTests(SimpleTestCase):
 
     def test_giving_both_duration_arguments_only_duration_in_minutes_is_considered(self):
         self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90, duration_in_days=0.5), 1.5)
+
+    def test_it_rounds_output_to_two_decimal_places(self):
+        self.assertEqual(Decimal(ApidaeTrekParser._make_duration(duration_in_minutes=20)), Decimal('0.33'))
