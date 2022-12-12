@@ -2,21 +2,26 @@
 {% load i18n static crispy_forms_tags %}
 
 {% block mainpanel %}
-    <div class="form-panel {{ modelname }}">
+    <div class="form-panel" id="annotations">
         <div>
             <div id="controls">
                <div class="form-group annotationtype" title="Select the type of annotation to add.">
-                  <div class="shortlabel">Add</div>
                   <button class="lastused" id="rectangle" next="square">Rectangle</button><button id="square" next="ellipse">Square</button><button id="ellipse" next="circle">Ellipse</button><button id="circle" next="polygon">Circle</button><button id="polygon" next="point">Polygon</button><button id="point" next="line">Point</button><button id="line" next="rectangle">Line</button>
                </div>
-               <div class="form-group" title="If disabled, hide all annotation labels."><label for="showLabels">Show annotation labels</label><input id="showLabels" param-name="labels" type="checkbox" placeholder="true"/></div> 
+               {% comment %} <div class="form-group" title="If disabled, hide all annotation labels."><label for="showLabels">Show annotation labels</label><input id="showLabels" param-name="labels" type="checkbox" placeholder="true"/></div>  {% endcomment %}
                <div class="form-group" id="annotationheader">
                   <div class="shortlabel">Created Annotations</div>
                   <a class="entry-remove-all" action="remove-all" title="Delete all annotations">&#x2716;</a>
                </div>
                <div class="form-group">
                   <div id="annotationlist">
-                     <div class="entry" id="sample"><span class="entry-name">Sample</span><a/><a class="entry-adjust" action="adjust" title="Modify geometry">&#x270E;</a><a class="entry-remove" action="remove" title="Delete this annotation">&#x2716;</a></div>
+                     <div class="entry" id="sample">
+                        <span class="entry-name">Sample</span>
+                        <a id="tinybuttons">
+                        <span class="entry-adjust" action="adjust" title="Modify geometry">&#x270E;</span>
+                        <span class="entry-remove" action="remove" title="Delete this annotation">&#x2716;</span>
+                        </a>
+                    </div>
                   </div>
                </div>
             </div>
@@ -27,7 +32,7 @@
     </div>
     {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
     {{object.annotations|json_script:"geojson_annotations"}}
-    <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
+    <div id="hdviewpoint-map" class='large'><span class="loader-wrapper"><span class="loader"></span></span></div>
     <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
     <script>
         const containerRef = document.getElementById('hdviewpoint-map')

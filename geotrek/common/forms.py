@@ -512,10 +512,8 @@ class HDViewPointAnnotationForm(forms.ModelForm):
             SubmitButton('save_changes', _('Save changes')),
         ]
 
-        leftpanel_css = "col-12 col-sm-6 col-lg-5"
         leftpanel = Div(
             'annotations',
-            css_class=leftpanel_css,
             css_id="modelfields",
         )
         formactions = FormActions(

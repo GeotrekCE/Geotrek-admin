@@ -102,7 +102,7 @@
             </tr>
           </table>
 
-          <h3>{% trans "Image" %}</h3>
+
             {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
             {{object.annotations|json_script:"geojson_annotations"}}
             <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
