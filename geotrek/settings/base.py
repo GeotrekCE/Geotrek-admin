@@ -403,6 +403,8 @@ MAPENTITY_CONFIG = {
         'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
 
+        'filelayer': {'color': 'blue', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 3, 'radius': 5},
+
         'detail': {'color': '#ffff00'},
         'others': {'color': '#ffff00'},
 

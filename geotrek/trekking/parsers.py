@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from decimal import Decimal
 import json
 from collections import defaultdict
 import re
@@ -270,6 +271,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         'ouverture',
         'descriptionTarif',
         'informationsEquipement',
+        'illustrations',
+        'informations',
     ]
     locales = ['fr', 'en']
 
@@ -284,6 +287,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             'presentation.descriptifsThematises.*',
             'informationsEquipement.itineraire',
             'descriptionTarif',
+            'informations.moyensCommunication',
         ),
         'geom': 'multimedias',
         'eid': 'id',
@@ -545,11 +549,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         )
 
     def filter_description(self, src, val):
-        ouverture, descriptifs, itineraire, tarifs = val
+        ouverture, descriptifs, itineraire, tarifs, moyen_communication = val
         return self.apply_filter(
             dst='description',
             src=src,
-            val=self.__class__._make_description(ouverture, descriptifs, itineraire, tarifs)
+            val=self.__class__._make_description(ouverture, descriptifs, itineraire, tarifs, moyen_communication)
         )
 
     def filter_source(self, src, val):
@@ -722,6 +726,41 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         return cls._transform_description_to_html(text)
 
     @classmethod
+    def _assemble_infos_contact_to_html(cls, info_pieces):
+        """Format "infos contact" into an HTML paragraph with break lines."""
+        rv = defaultdict(list)
+
+        def append_translated_values(info_piece):
+            info_type = info_piece['type']
+            info_value = info_piece['coordonnees']['fr']
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                src = f'libelle{lang.capitalize()}'
+                info_label = info_type.get(src)
+                if info_label:
+                    rv[src].append(f'<strong>{info_label}:</strong>{info_value}')
+
+        ordered_info_type_ids = [
+            205,  # Site web (URL)
+            207,  # Page facebook
+            201,  # Téléphone
+            204,  # Mél
+        ]
+        for info_type_id in ordered_info_type_ids:
+            for info_piece in info_pieces:
+                if info_piece['type']['id'] == info_type_id:
+                    append_translated_values(info_piece)
+
+        # Not specifically ordered info types go at the end
+        for info_piece in info_pieces:
+            if info_piece['type']['id'] not in ordered_info_type_ids:
+                append_translated_values(info_piece)
+
+        for key, value in rv.items():
+            rv[key] = '<p>' + '<br>'.join(value) + '</p>'
+
+        return rv
+
+    @classmethod
     def _make_marking_description(cls, itineraire):
         is_marked = itineraire['itineraireBalise'] == 'BALISE'
         if is_marked:
@@ -829,7 +868,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         return max_date > a_date
 
     @classmethod
-    def _make_description(cls, ouverture=None, descriptifs=None, itineraire=None, tarifs=None):
+    def _make_description(cls, ouverture=None, descriptifs=None, itineraire=None, tarifs=None, infos_contact=None):
 
         def get_guidebook():
             if not descriptifs:
@@ -865,6 +904,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             tf.append(translated_value=tarifs['tarifsEnClair'],
                       transform_func=cls._transform_description_to_html)
 
+        if infos_contact:
+            tf.append(translated_value=cls._assemble_infos_contact_to_html(infos_contact))
+
         return tf
 
     @staticmethod
@@ -872,7 +914,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         """Returns the duration in hours. The method expects one argument or the other, not both. If both arguments have
          non-zero values the method only considers `duration_in_minutes` and discards `duration_in_days`."""
         if duration_in_minutes:
-            return duration_in_minutes / 60
+            return (Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01'))
         elif duration_in_days:
             return duration_in_days * 24
         else:
