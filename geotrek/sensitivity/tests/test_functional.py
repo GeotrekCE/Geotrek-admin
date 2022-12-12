@@ -92,7 +92,7 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
 
     def get_expected_json_attrs(self):
         return {
-            'attachments':[],
+            'attachments': [],
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
             'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
