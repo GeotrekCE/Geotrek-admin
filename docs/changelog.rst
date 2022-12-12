@@ -10,6 +10,7 @@ CHANGELOG
 - New ``LEIParser`` to import touristic content and event from LEI touristic data system
 - New ``XMLParser`` to import content from XML
 - ApidaeTrekParser: import trek's contact info into description
+- New sensitivity area detail public view : New sensitivity public view for sensitive areas (``/public/sensitiveareas/{pk}``).
 
 **Bug fixes**
 

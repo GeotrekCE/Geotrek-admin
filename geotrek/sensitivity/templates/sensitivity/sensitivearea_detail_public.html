@@ -7,19 +7,7 @@ i18n %} {% load i18n static %} {% block extrahead %}
   href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css"
   crossorigin=""
 />
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-  crossorigin=""
-/>
-<script
-  src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-  crossorigin=""
-  defer
-></script>
-<script src="//unpkg.com/vue2-leaflet" defer></script>
+
 
 <style>
   html,
@@ -45,7 +33,6 @@ i18n %} {% load i18n static %} {% block extrahead %}
   }
 
   #map {
-    border: 1px solid green;
     min-height: 500px;
   }
   .current-month {
@@ -185,7 +172,7 @@ i18n %} {% load i18n static %} {% block extrahead %}
       </div>
     </div>
     <div class="col-sm p-0">
-      <div id="map" class="h-100 d-flex flex-column">MAP</div>
+      <div id="map" class="h-100 d-flex flex-column"></div>
     </div>
     {% comment %}
     <pre><code>[[properties]]</code></pre>
@@ -274,7 +261,7 @@ i18n %} {% load i18n static %} {% block extrahead %}
         this.sensitiveArea = await response.json();
       },
       addLayer() {
-        const area = L.geoJSON(this.sensitiveArea, {}).bindPopup(function (
+        const area = L.geoJson(this.sensitiveArea, {}).bindPopup(function (
           layer
         ) {
           return layer.feature.properties.name;
@@ -285,7 +272,7 @@ i18n %} {% load i18n static %} {% block extrahead %}
       },
       initMap() {
         this.map = L.map("map").setView([51.505, -0.09], 13);
-        this.map.setMaxZoom(17);
+        this.map.maxZoom = 17;
 
         L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
           attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>,
