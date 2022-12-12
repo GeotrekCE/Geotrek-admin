@@ -34,5 +34,6 @@ Depends:
  screamshotter (>= 2.0.9),
  screamshotter (<< 3.0.0),
  convertit,
- python3.8 (>= 3.8)
+ python3.8 (>= 3.8),
+ libvips
 Description: Manage and promote your tourist trails and activites
