@@ -339,6 +339,17 @@ Treks are now imported into your own instance.
 Import other datas from a file
 ==============================
 
+You can add parsers in your custom `parsers.py` file (``/opt/geotrek-admin/var/conf/parsers.py``) which will allow you to
+import data from files directly in your admin (superusers only).
+For example, some parsers are not available by default but you can use them adding some lines in your parsers file :
+
+::
+
+    from geotrek.trekking.parsers import TrekParser # only without dynamic segmentation (`TREKKING_TOPOLOGY_ENABLED` = False)
+    from geotrek.trekking.parsers import POIParser
+
+
+
 You can also use some of Geotrek commands to import data from a vector file handled by GDAL (https://gdal.org/drivers/vector/index.htm) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 
 Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas, dives, paths.
