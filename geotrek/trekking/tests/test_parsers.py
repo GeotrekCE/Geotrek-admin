@@ -158,10 +158,26 @@ class POIParserTests(TestCase):
         cls.filetype = FileType.objects.create(type="Photographie")
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-    def test_no_path_trekking_topology_enable(self):
+    def test_import_cmd_raises_error_when_no_path(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'poi.shp')
         with self.assertRaisesRegex(CommandError, 'You need to add a network of paths before importing POIs'):
             call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=0)
+
+    def test_import_cmd_raises_wrong_geom_type(self):
+        PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'trek.shp')
+        output = StringIO()
+        call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=2, stdout=output)
+        self.assertEqual(POI.objects.count(), 0)
+        self.assertIn("Invalid geometry type for field 'GEOM'. Should be Point, not LineString,", output.getvalue())
+
+    def test_import_cmd_raises_no_geom(self):
+        PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'empty_geom.geojson')
+        output = StringIO()
+        call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=2, stdout=output)
+        self.assertEqual(POI.objects.count(), 0)
+        self.assertIn("Invalid geometry", output.getvalue())
 
     def test_create(self):
         PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))

@@ -53,6 +53,10 @@ class POIParser(AttachmentParserMixin, ShapeParser):
     natural_keys = {
         'type': 'label',
     }
+    field_options = {
+        'geom': {'required': True},
+        'type': {'required': True}
+    }
     topology = Topology.objects.none()
 
     def start(self):
@@ -61,11 +65,12 @@ class POIParser(AttachmentParserMixin, ShapeParser):
             raise GlobalImportError(_("You need to add a network of paths before importing POIs"))
 
     def filter_geom(self, src, val):
+        self.topology = Topology.objects.none()
         if val is None:
-            return None
+            # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
+            raise RowImportError(_("Invalid geometry"))
         if val.geom_type != 'Point':
-            self.add_warning(_("Invalid geometry type for field '{src}'. Should be Point, not {geom_type}").format(src=src, geom_type=val.geom_type))
-            return None
+            raise RowImportError(_("Invalid geometry type for field '{src}'. Should be Point, not {geom_type}").format(src=src, geom_type=val.geom_type))
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
@@ -78,7 +83,7 @@ class POIParser(AttachmentParserMixin, ShapeParser):
 
     def parse_obj(self, row, operation):
         super().parse_obj(row, operation)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
             self.obj.mutate(self.topology)
 
 

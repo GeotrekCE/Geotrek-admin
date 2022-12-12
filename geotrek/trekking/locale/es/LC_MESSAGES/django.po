@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-12 14:10+0000\n"
+"POT-Creation-Date: 2022-12-12 16:05+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -465,6 +465,9 @@ msgid ""
 msgstr ""
 
 msgid "You need to add a network of paths before importing POIs"
+msgstr ""
+
+msgid "Invalid geometry"
 msgstr ""
 
 #, python-brace-format
