@@ -33,50 +33,10 @@
     {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
     {{object.annotations|json_script:"geojson_annotations"}}
     <div id="hdviewpoint-map" class='large'><span class="loader-wrapper"><span class="loader"></span></span></div>
+    <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>
     <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
     <script>
-        const containerRef = document.getElementById('hdviewpoint-map')
-        var tileUrl = "{{base_tile_url}}" + `/tiles/{z}/{x}/{y}.png?source=vips`;
-        var metadataUrl = "{{base_tile_url}}" + "/info/metadata?source=vips";
-        var viewer;
-
-        fetch(metadataUrl)
-        .then(response => response.json())
-        .then(tileinfo => {
-            const params = geo.util.pixelCoordinateParams(
-            '#hdviewpoint-map', tileinfo.sizeX, tileinfo.sizeY, tileinfo.tileWidth, tileinfo.tileHeight);
-            params.layer.url = tileUrl;
-            viewer = geo.map(params.map);
-            viewer.zoomRange({
-            // do not set a min limit so that bounds clamping determines min
-            min: -Infinity,
-            max: 12,
-            });
-            viewer.createLayer('osm', params.layer);
-
-            // Change default interactor options
-            const interactorOpts = viewer.interactor().options();
-            interactorOpts.zoomAnimation = {
-            enabled: false,
-            };
-            interactorOpts.momentum = {
-            enabled: true,
-            };
-            viewer.interactor().options(interactorOpts);
-
-            var ui = viewer.createLayer('ui');
-            // Create a zoom slider widget
-            ui.createWidget('slider', {
-            position: {
-                left: 40,
-                top: 40
-            }
-            });
-            // layer = viewer.createLayer('annotation');
-            // layer.geojson($('#geojson_annotations').text());
-            $(".loader-wrapper").remove();
-            initAnnotationsWidget(viewer);
-        });
+        initializeViewer("{{base_tile_url}}", edit_annotations=true);
     </script>
 {% endblock mainpanel %}
 
