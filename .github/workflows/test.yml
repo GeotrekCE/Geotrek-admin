@@ -45,7 +45,7 @@ jobs:
         tests-env: ['tests', 'tests_nds']
         include:
           - os: ubuntu-18.04
-            python-version: 3.6  # default python version in 18.04
+            python-version: 3.8  # default python version in 18.04
           - os: ubuntu-20.04
             python-version: 3.8  # default python version in 20.04
 
@@ -181,8 +181,7 @@ jobs:
         - name: Install build dependencies
           run: |
             apt-get -q update
-            apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
-        - name: Building package debian 18.04
+            apt-get -q -y install dpkg-dev debhelper dh-virtualenv git software-properties-common python3.8 python3.8-venv python3.8-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
           run: |
             dpkg-buildpackage -uc -us -b
         - name: Archive package artifact
