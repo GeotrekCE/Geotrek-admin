@@ -201,10 +201,8 @@ i18n %} {% load i18n static %} {% block extrahead %}
     data() {
       return {
         message: "Hello Vue!",
-        lang: "en",
+        lang: "fr",
         sensitiveArea: null,
-        // TEST Vue2Leaflet
-
         url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         attribution:
           '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -271,10 +269,7 @@ i18n %} {% load i18n static %} {% block extrahead %}
       },
       async getData() {
         const response = await fetch(
-          //`/api/${this.lang || "fr"}/sensitiveareas/{{object.pk}}.geojson`
-          `/api/v2/sensitivearea/{{object.pk}}/?format=geojson&period=any&language=${
-            this.lang || "fr"
-          }`
+          `/api/v2/sensitivearea/{{object.pk}}/?format=geojson&period=any&language=${this.lang}`
         );
         this.sensitiveArea = await response.json();
       },
