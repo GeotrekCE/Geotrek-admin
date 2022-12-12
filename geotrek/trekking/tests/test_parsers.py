@@ -624,7 +624,7 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 def make_dummy_apidae_get(parser_class, test_data_dir, data_filename):
     """Returns a mocked_get. The mocked_get may return:
     - `data_filename` content on call to APIDAE API,
-    - GPX data file content (the filename is taken from the request's path),
+    - Geometric data file content (the filename is taken from the request's path),
     - a dummy jpg content if a jpg file is requested.
 
     parser_class: the class of the parser instance which will call this mocked_get
@@ -647,11 +647,11 @@ def make_dummy_apidae_get(parser_class, test_data_dir, data_filename):
             extension = url_path.split('.')[1]
             if extension == 'jpg':
                 rv.content = copy(testdata.IMG_FILE)
-            elif extension == 'gpx':
+            elif extension in ['gpx', 'kml']:
                 filename = os.path.join(test_data_dir, url_path.lstrip('/'))
                 with open(filename, 'r') as f:
-                    gpx = f.read()
-                rv.content = bytes(gpx, 'utf-8')
+                    geodata = f.read()
+                rv.content = bytes(geodata, 'utf-8')
         return rv
 
     return dummy_get
@@ -837,25 +837,26 @@ class ApidaeTrekParserTests(TestCase):
         self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
 
     @mock.patch('requests.get')
-    def test_trek_not_imported_when_multiple_plans(self, mocked_get):
-        output_stdout = StringIO()
-        mocked_get.side_effect = self.make_dummy_get('trek_multiple_plans_error.json')
+    def test_trek_geometry_can_be_imported_from_kml(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('trek_with_kml_trace.json')
 
-        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2, stdout=output_stdout)
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 
-        self.assertEqual(Trek.objects.count(), 0)
-        self.assertIn('has more than one map defined', output_stdout.getvalue())
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.geom.srid, 2154)
+        self.assertEqual(len(trek.geom.coords), 61)
 
     @mock.patch('requests.get')
-    def test_trek_not_imported_when_no_gpx_file(self, mocked_get):
+    def test_trek_not_imported_when_no_supported_format(self, mocked_get):
         output_stdout = StringIO()
-        mocked_get.side_effect = self.make_dummy_get('trek_plan_no_gpx_error.json')
+        mocked_get.side_effect = self.make_dummy_get('trek_no_supported_plan_format_error.json')
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
                      stdout=output_stdout)
 
         self.assertEqual(Trek.objects.count(), 0)
-        self.assertIn('pas au format GPX', output_stdout.getvalue())
+        self.assertIn('has no plan in a supported format', output_stdout.getvalue())
 
     @mock.patch('requests.get')
     def test_trek_not_imported_when_no_plan(self, mocked_get):
@@ -1187,6 +1188,27 @@ class GpxToGeomTests(SimpleTestCase):
         self.assertEqual(geom.srid, 2154)
         self.assertEqual(geom.geom_type, 'LineString')
         self.assertEqual(len(geom.coords), 13)
+
+
+class KmlToGeomTests(SimpleTestCase):
+
+    @staticmethod
+    def _get_kml_from(filename):
+        with open(filename, 'r') as f:
+            kml = f.read()
+        return bytes(kml, 'utf-8')
+
+    def test_kml_can_be_converted(self):
+        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace.kml')
+
+        geom = ApidaeTrekParser._get_geom_from_kml(kml)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 61)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 973160.8, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6529320.1, delta=0.1)
 
 
 class GetPracticeNameFromActivities(SimpleTestCase):
