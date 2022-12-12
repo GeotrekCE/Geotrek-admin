@@ -1,6 +1,10 @@
 {% load i18n mapentity_tags %}
 
-<h3>{% trans "HD Views" %}</h3>
+<h3 id="with-tooltip" >{% trans "HD Views" %}
+    <span id="viewpoint-tooltip" data-tooltip="Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage,
+    and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 oThe Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum,  comes from a line in section 1.10.32.
+    The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.">?</span>
+</h3>
 {% if not user.profile.structure == object.structure and not perms.authent.can_bypass_structure %}
 <div class="alert alert-warning">
     {% trans "You are not allowed to modify attachments on this object, this object is not from the same structure." %}
