@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-03 13:51+0000\n"
+"POT-Creation-Date: 2022-12-12 14:10+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -462,6 +462,14 @@ msgstr ""
 #, python-brace-format
 msgid ""
 "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+msgstr ""
+
+msgid "You need to add a network of paths before importing POIs"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be Point, not {geom_type}"
 msgstr ""
 
 #, python-brace-format

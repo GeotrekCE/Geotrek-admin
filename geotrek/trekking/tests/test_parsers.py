@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
@@ -155,6 +156,12 @@ class POIParserTests(TestCase):
         cls.poi_type_e = POIType.objects.create(label="équipement")
         cls.poi_type_s = POIType.objects.create(label="signaletique")
         cls.filetype = FileType.objects.create(type="Photographie")
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_no_path_trekking_topology_enable(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'poi.shp')
+        with self.assertRaisesRegex(CommandError, 'You need to add a network of paths before importing POIs'):
+            call_command('import', 'geotrek.trekking.parsers.POIParser', filename, verbosity=0)
 
     def test_create(self):
         PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))

@@ -12,9 +12,9 @@ from django.utils.translation import gettext as _, get_language
 
 from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import (
-    ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeBaseParser
+    ShapeParser, AttachmentParserMixin, GeotrekParser, GlobalImportError, RowImportError, Parser, ApidaeBaseParser
 )
-from geotrek.core.models import Topology
+from geotrek.core.models import Path, Topology
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
 
 
@@ -55,10 +55,15 @@ class POIParser(AttachmentParserMixin, ShapeParser):
     }
     topology = Topology.objects.none()
 
+    def start(self):
+        super().start()
+        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
+            raise GlobalImportError(_("You need to add a network of paths before importing POIs"))
+
     def filter_geom(self, src, val):
         if val is None:
             return None
-        if val is None or val.geom_type != 'Point':
+        if val.geom_type != 'Point':
             self.add_warning(_("Invalid geometry type for field '{src}'. Should be Point, not {geom_type}").format(src=src, geom_type=val.geom_type))
             return None
         if settings.TREKKING_TOPOLOGY_ENABLED:

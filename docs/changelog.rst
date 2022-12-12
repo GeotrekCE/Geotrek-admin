@@ -11,6 +11,7 @@ CHANGELOG
 - New ``XMLParser`` to import content from XML
 - ApidaeTrekParser: import trek's contact info into description
 - New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
+- New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
 
 **Bug fixes**
 
