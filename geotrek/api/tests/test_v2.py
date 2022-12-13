@@ -159,7 +159,7 @@ SITETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 SENSITIVE_AREA_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'contact', 'create_datetime', 'description', 'elevation', 'geometry',
     'info_url', 'kml_url', 'name', 'period', 'practices', 'provider', 'published', 'species_id',
-    'structure', 'update_datetime', 'url'
+    'structure', 'update_datetime', 'url', 'public_url',
 ])
 
 SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([

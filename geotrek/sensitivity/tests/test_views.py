@@ -91,6 +91,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             "elevation": None,
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'kml_url': 'http://testserver/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
+            'public_url': 'http://testserver/public/sensitiveareas/{pk}'.format(pk=self.pk),
             'info_url': self.species.url,
             'species_id': self.species.id,
             "name": self.species.name,
