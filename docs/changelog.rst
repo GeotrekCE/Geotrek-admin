@@ -2,7 +2,11 @@
 CHANGELOG
 =========
 
-2.93.0+dev (XXXX-XX-XX)
+2.94.0+dev (XXXX-XX-XX)
+-----------------------
+
+
+2.94.0     (2022-12-12)
 -----------------------
 
 **New feature**
@@ -10,6 +14,8 @@ CHANGELOG
 - New ``LEIParser`` to import touristic content and event from LEI touristic data system
 - New ``XMLParser`` to import content from XML
 - ApidaeTrekParser: import trek's contact info into description
+- New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
+- New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
 - New sensitivity area detail public view : New sensitivity public view for sensitive areas (``/public/sensitiveareas/{pk}``).
 
 **Bug fixes**
