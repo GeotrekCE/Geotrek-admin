@@ -1,0 +1,45 @@
+{
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "type": "PATRIMOINE_CULTUREL",
+      "id": 123123,
+      "localisation": {
+        "geolocalisation": {
+          "geoJson": {
+            "type": "point",
+            "coordinates": [
+              3.372365,
+              45.392244
+            ]
+          }
+        }
+      },
+      "illustrations": [
+        {
+          "type": "IMAGE",
+          "nom": {
+            "libelleEn": "The title of the picture"
+          },
+          "legende": {
+            "libelleEn": "The legend of the picture"
+          },
+          "copyright": {
+            "libelleEn": "The author of the picture"
+          },
+          "traductionFichiers": null
+        }
+      ],
+      "nom": {
+        "libelleFr": "Un point d'intérêt",
+        "libelleEn": "A point of interest"
+      },
+      "presentation": {
+        "descriptifCourt": {
+          "libelleFr": "La description courte en français.",
+          "libelleEn": "The short description in english."
+        }
+      }
+    }
+  ]
+}
