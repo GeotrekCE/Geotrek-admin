@@ -5,8 +5,16 @@ CHANGELOG
 2.94.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Warning**
+
+Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8:
+``apt-get install software-properties-common``
+``add-apt-repository --yes ppa:deadsnakes/ppa``
+``apt-get install python3.8``
+
 **Maintenance**
 
+In preparation for HD Views developments (PR #3298)
 - Bump Python to 3.8
 - Bump MapEntity to 8.3.0
 - Add libvips to dependencies
