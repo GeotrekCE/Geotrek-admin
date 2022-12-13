@@ -5,6 +5,11 @@ CHANGELOG
 2.94.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Maintenance**
+
+- Bump Python to 3.8
+- Bump MapEntity to 8.3.0
+- Add libvips to dependencies
 
 2.94.0     (2022-12-12)
 -----------------------
