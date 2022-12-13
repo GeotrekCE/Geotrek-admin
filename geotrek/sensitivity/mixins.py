@@ -9,11 +9,10 @@ from geotrek.common.functions import GeometryType, Buffer, Area
 logger = logging.getLogger(__name__)
 
 class SensitiveAreaQueryset:
-    """Mixin used for Place lists filtering"""
+    """Mixin used for to properly querying SensitiveAreas"""
 
     def get_queryset(self, *args, **kwargs):
         qs = super(SensitiveAreaQueryset, self).get_queryset()
-        logger.debug(f'QSSSS {str(qs)}')
         qs = (
             (
                 qs
