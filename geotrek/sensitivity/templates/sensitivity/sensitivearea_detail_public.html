@@ -1,13 +1,12 @@
 {% extends "mapentity/base.html" %} {% load static crispy_forms_tags %} {% load
 i18n %} {% load i18n static %} {% block extrahead %}
 <script type="text/javascript"></script>
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="{% static "vue.global.prod.js" %}"></script>
 <link
   rel="stylesheet"
   href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css"
   crossorigin=""
 />
-
 
 <style>
   html,
@@ -180,119 +179,9 @@ i18n %} {% load i18n static %} {% block extrahead %}
   </div>
 </div>
 <script>
-  const { createApp } = Vue;
-
-  console.log(createApp);
-
-  const app = createApp({
-    data() {
-      return {
-        message: "Hello Vue!",
-        lang: "fr",
-        sensitiveArea: null,
-        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        attribution:
-          '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        zoom: 8,
-        map: null,
-        center: [47.31322, -1.319482],
-        geojson: null,
-        sportPractices: [],
-        currentMonth: new Date().getMonth(),
-        months: [
-          "jan",
-          "fév",
-          "mar",
-          "avr",
-          "mai",
-          "juin",
-          "juil",
-          "aout",
-          "sep",
-          "oct",
-          "nov",
-          "déc",
-        ],
-      };
-    },
-    computed: {
-      properties() {
-        return this.sensitiveArea ? this.sensitiveArea.properties : null;
-      },
-      typeZone() {
-        return this.properties.species_id
-          ? "Zone espèce"
-          : "Zone réglementaire";
-      },
-      currentSensitivity() {
-        return this.sensitiveArea.properties.period[this.currentMonth]
-          ? "Sensible"
-          : "Non sensible";
-      },
-    },
-    methods: {
-      emptyThumb(fileType) {
-        return (
-          "data:image/svg+xml;charset=utf-8," +
-          encodeURIComponent(`
-          <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
-            <rect width="100" height="100" style="fill:#dddddd;" />
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" style="fill:#333;font-size:20px;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';">
-              ${fileType}
-            </text>
-          </svg>
-          `)
-        );
-      },
-      getSportPractices() {
-        fetch(`/api/v2/sensitivearea_practice/?format=json`)
-          .then((response) => response.json())
-          .then((data) => (this.sportPractices = data.results));
-      },
-      getLang() {
-        const lang = navigator.language.split("-")[0];
-        const supportedLangs = ["en", "it", "fr"];
-        this.lang = supportedLangs.includes(lang) ? lang : supportedLangs[0];
-      },
-      async getData() {
-        const response = await fetch(
-          `/api/v2/sensitivearea/{{object.pk}}/?format=geojson&period=any&language=${this.lang}`
-        );
-        this.sensitiveArea = await response.json();
-      },
-      addLayer() {
-        const area = L.geoJson(this.sensitiveArea, {}).bindPopup(function (
-          layer
-        ) {
-          return layer.feature.properties.name;
-        });
-        this.map.fitBounds(area.getBounds());
-        this.map.setMaxBounds(area.getBounds());
-        area.addTo(this.map);
-      },
-      initMap() {
-        this.map = L.map("map").setView([51.505, -0.09], 13);
-        this.map.maxZoom = 17;
-
-        L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-          attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>,
-              <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy;
-              <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>`,
-        }).addTo(this.map);
-      },
-    },
-    mounted() {
-      this.getLang();
-      this.getSportPractices();
-      this.getData()
-        .then(() => this.initMap())
-        .then(() => this.addLayer());
-    },
-  });
-
-  app.config.compilerOptions.delimiters = ["[[", "]]"];
+  const sensitiveAreaPk = "{{object.pk}}";
   $(document).ready(function () {
-    app.mount("#app");
+    sensitiveAreaPublicDetailView.mount("#app");
   });
 </script>
 {% endblock mainpanel %}
