@@ -4,9 +4,10 @@ from django.core.files import File
 from django.test import TestCase
 
 from geotrek.authent.models import default_structure
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory, UserFactory
 from geotrek.common.models import Theme
-from geotrek.common.tests.factories import (HDViewPointFactory, LabelFactory, LicenseFactory,
-                                            OrganismFactory)
+from geotrek.common.tests.factories import (HDViewPointFactory, LabelFactory, OrganismFactory)
+from geotrek.trekking.tests.factories import TrekFactory
 
 
 class ThemeModelTest(TestCase):
@@ -57,7 +58,13 @@ class OrganismTestCase(TestCase):
 class HDViewPointTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.vp = HDViewPointFactory(content_object=LicenseFactory())
+        structure = StructureFactory(name="MyStructure")
+        cls.trek = TrekFactory(structure=structure)
+        cls.vp = HDViewPointFactory(content_object=cls.trek)
+        profile = UserProfileFactory(structure=structure)
+        cls.user = UserFactory()
+        cls.user.profile = profile
+        cls.user.save()
 
     def test_thumbnail_url(self):
         self.assertEqual(
@@ -72,3 +79,6 @@ class HDViewPointTestCase(TestCase):
     def test_icons(self):
         self.assertIn('hdviewpoint-16.png', self.vp.icon_small)
         self.assertIn('hdviewpoint-96.png', self.vp.icon_big)
+
+    def test_same_structure(self):
+        self.assertTrue(self.vp.same_structure(self.user))
