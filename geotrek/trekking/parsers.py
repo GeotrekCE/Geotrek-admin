@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from decimal import Decimal
 import json
 from collections import defaultdict
 import re
@@ -11,9 +12,9 @@ from django.utils.translation import gettext as _, get_language
 
 from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import (
-    ShapeParser, AttachmentParserMixin, GeotrekParser, RowImportError, Parser, ApidaeBaseParser
+    ShapeParser, AttachmentParserMixin, GeotrekParser, GlobalImportError, RowImportError, Parser, ApidaeBaseParser
 )
-from geotrek.common.utils.translation import get_translated_fields
+from geotrek.core.models import Path, Topology
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
 
 
@@ -36,6 +37,54 @@ class DurationParserMixin:
         except (TypeError, ValueError):
             self.add_warning(_("Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(val=val, src=src)))
             return None
+
+
+class POIParser(AttachmentParserMixin, ShapeParser):
+    label = "Import POI"
+    label_fr = "Import POI"
+    label_en = "Import POI"
+    model = POI
+    simplify_tolerance = 2
+    eid = 'name'
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    natural_keys = {
+        'type': 'label',
+    }
+    field_options = {
+        'geom': {'required': True},
+        'type': {'required': True}
+    }
+    topology = Topology.objects.none()
+
+    def start(self):
+        super().start()
+        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
+            raise GlobalImportError(_("You need to add a network of paths before importing POIs"))
+
+    def filter_geom(self, src, val):
+        self.topology = Topology.objects.none()
+        if val is None:
+            # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
+            raise RowImportError(_("Invalid geometry"))
+        if val.geom_type != 'Point':
+            raise RowImportError(_("Invalid geometry type for field '{src}'. Should be Point, not {geom_type}").format(src=src, geom_type=val.geom_type))
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            # Use existing topology helpers to transform a Point(x, y)
+            # to a path aggregation (topology)
+            geometry = val.transform(settings.API_SRID, clone=True)
+            geometry.coord_dim = 2
+            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            self.topology = Topology.deserialize(serialized)
+            # Move deserialization aggregations to the POI
+        return val
+
+    def parse_obj(self, row, operation):
+        super().parse_obj(row, operation)
+        if settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
+            self.obj.mutate(self.topology)
 
 
 class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
@@ -246,7 +295,71 @@ class ApidaeTranslatedField:
         return rv
 
 
-class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
+class ApidaeBaseTrekkingParser(ApidaeBaseParser):
+    """Add the `expand_translations` field option.
+    Map an APIDAE translated field as src to a Geotrek translated field as dst in the parser's `fields` attribute. Set
+    the `expand_translations` option to True on that field for the corresponding mapping to be expanded into a mapping
+    of all translation sub-fields for all configured languages.
+
+    For instance:
+
+    fields = {
+        'name': 'nom',
+    }
+
+    turns into
+
+    fields = {
+        'name_fr': 'nom.libelleFr',
+        'name_en': 'nom.libelleEn',
+        'name_es': 'nom.libelleEs',
+        'name_it': 'nom.libelleIt',
+    }
+    """
+
+    apidae_translation_prefix = 'libelle'
+
+    def __init__(self, *args, **kwargs):
+        self._expand_fields_mapping_with_translation_fields()
+        super().__init__(*args, **kwargs)
+
+    def _expand_fields_mapping_with_translation_fields(self):
+        self.fields = self.fields.copy()
+        translated_fields_to_expand = [
+            field for field, options in self.field_options.items()
+            if options.get('expand_translations') is True
+        ]
+        for translated_field in translated_fields_to_expand:
+            src = self.fields[translated_field]
+            del self.fields[translated_field]
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                self.fields[f'{translated_field}_{lang}'] = f'{src}.{self.apidae_translation_prefix}{lang.capitalize()}'
+
+    @classmethod
+    def _get_default_translation_src(cls):
+        return cls.apidae_translation_prefix + settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()
+
+
+def _prepare_attachment_from_apidae_illustration(illustration, translation_src):
+
+    def get_translation_value_of(key):
+        translated_field = illustration.get(key)
+        if not translated_field:
+            return ''
+        return translated_field.get(translation_src, '')
+
+    legende = get_translation_value_of('legende')
+    copyright = get_translation_value_of('copyright')
+    title = get_translation_value_of('nom')
+    return (
+        illustration['traductionFichiers'][0]['url'],
+        legende or title,
+        copyright,
+        title,
+    )
+
+
+class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     model = Trek
     eid = 'eid'
     separator = None
@@ -270,6 +383,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         'ouverture',
         'descriptionTarif',
         'informationsEquipement',
+        'illustrations',
+        'informations',
     ]
     locales = ['fr', 'en']
 
@@ -284,6 +399,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             'presentation.descriptifsThematises.*',
             'informationsEquipement.itineraire',
             'descriptionTarif',
+            'informations.moyensCommunication',
         ),
         'geom': 'multimedias',
         'eid': 'id',
@@ -474,25 +590,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         'libelleFr': 'Cet itinéraire n\'est pas balisé',
         'libelleEn': 'This trek is not marked',
     }
-    apidae_translation_prefix = 'libelle'
 
     def __init__(self, *args, **kwargs):
-        self._translated_fields = [field for field in get_translated_fields(self.model)]
-        self._expand_fields_mapping_with_translation_fields()
         self._related_treks_mapping = defaultdict(list)
         super().__init__(*args, **kwargs)
-
-    def _expand_fields_mapping_with_translation_fields(self):
-        self.fields = self.fields.copy()
-        translated_fields_to_expand = [
-            field for field, options in self.field_options.items()
-            if options.get('expand_translations') is True
-        ]
-        for translated_field in translated_fields_to_expand:
-            src = self.fields[translated_field]
-            del self.fields[translated_field]
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                self.fields[f'{translated_field}_{lang}'] = f'{src}.{self.apidae_translation_prefix}{lang.capitalize()}'
 
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
@@ -545,11 +646,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         )
 
     def filter_description(self, src, val):
-        ouverture, descriptifs, itineraire, tarifs = val
+        ouverture, descriptifs, itineraire, tarifs, moyen_communication = val
         return self.apply_filter(
             dst='description',
             src=src,
-            val=self.__class__._make_description(ouverture, descriptifs, itineraire, tarifs)
+            val=self.__class__._make_description(ouverture, descriptifs, itineraire, tarifs, moyen_communication)
         )
 
     def filter_source(self, src, val):
@@ -619,17 +720,13 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         illustrations = val
         rv = []
         for illustration in illustrations:
-            files_metadata_list = illustration['traductionFichiers']
-            if not ApidaeTrekParser._is_still_publishable_tomorrow(illustration) or not files_metadata_list:
+            if (
+                    not ApidaeTrekParser._is_still_publishable_tomorrow(illustration)
+                    or not illustration.get('traductionFichiers')
+            ):
                 continue
-            first_file_metadata = files_metadata_list[0]
             rv.append(
-                (
-                    first_file_metadata['url'],
-                    illustration['legende'][translation_src],
-                    illustration['copyright'][translation_src],
-                    illustration['nom'][translation_src],
-                )
+                _prepare_attachment_from_apidae_illustration(illustration, translation_src)
             )
         return rv
 
@@ -720,6 +817,41 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         # This method can be overridden in var/conf/parsers.py.
         # FIXME: is there a better way to provide specific behaviors for parsing?
         return cls._transform_description_to_html(text)
+
+    @classmethod
+    def _assemble_infos_contact_to_html(cls, info_pieces):
+        """Format "infos contact" into an HTML paragraph with break lines."""
+        rv = defaultdict(list)
+
+        def append_translated_values(info_piece):
+            info_type = info_piece['type']
+            info_value = info_piece['coordonnees']['fr']
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                src = f'libelle{lang.capitalize()}'
+                info_label = info_type.get(src)
+                if info_label:
+                    rv[src].append(f'<strong>{info_label}:</strong>{info_value}')
+
+        ordered_info_type_ids = [
+            205,  # Site web (URL)
+            207,  # Page facebook
+            201,  # Téléphone
+            204,  # Mél
+        ]
+        for info_type_id in ordered_info_type_ids:
+            for info_piece in info_pieces:
+                if info_piece['type']['id'] == info_type_id:
+                    append_translated_values(info_piece)
+
+        # Not specifically ordered info types go at the end
+        for info_piece in info_pieces:
+            if info_piece['type']['id'] not in ordered_info_type_ids:
+                append_translated_values(info_piece)
+
+        for key, value in rv.items():
+            rv[key] = '<p>' + '<br>'.join(value) + '</p>'
+
+        return rv
 
     @classmethod
     def _make_marking_description(cls, itineraire):
@@ -829,7 +961,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         return max_date > a_date
 
     @classmethod
-    def _make_description(cls, ouverture=None, descriptifs=None, itineraire=None, tarifs=None):
+    def _make_description(cls, ouverture=None, descriptifs=None, itineraire=None, tarifs=None, infos_contact=None):
 
         def get_guidebook():
             if not descriptifs:
@@ -865,6 +997,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
             tf.append(translated_value=tarifs['tarifsEnClair'],
                       transform_func=cls._transform_description_to_html)
 
+        if infos_contact:
+            tf.append(translated_value=cls._assemble_infos_contact_to_html(infos_contact))
+
         return tf
 
     @staticmethod
@@ -872,15 +1007,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseParser):
         """Returns the duration in hours. The method expects one argument or the other, not both. If both arguments have
          non-zero values the method only considers `duration_in_minutes` and discards `duration_in_days`."""
         if duration_in_minutes:
-            return duration_in_minutes / 60
+            return (Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01'))
         elif duration_in_days:
             return duration_in_days * 24
         else:
             return None
-
-    @classmethod
-    def _get_default_translation_src(cls):
-        return cls.apidae_translation_prefix + settings.MODELTRANSLATION_DEFAULT_LANGUAGE.capitalize()
 
 
 class ApidaeReferenceElementParser(Parser):
@@ -955,3 +1086,71 @@ class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
     model = Accessibility
     element_reference_ids = ApidaeTrekParser.natures_de_terrain_ids_as_accessibilities
     name_field = 'name'
+
+
+class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
+    model = POI
+    eid = 'eid'
+    separator = None
+
+    # Parameters to build the request
+    api_key = None
+    project_id = None
+    selection_id = None
+    size = 20
+    skip = 0
+    responseFields = [
+        'id',
+        'nom',
+        'presentation',
+        'localisation',
+        'informationsPatrimoineCulturel',
+        'illustrations',
+    ]
+    locales = ['fr', 'en']
+
+    # Fields mapping
+    fill_empty_translated_fields = True
+    fields = {
+        'name': 'nom',
+        'description': 'presentation.descriptifCourt',
+        'geom': 'localisation.geolocalisation.geoJson',
+        'eid': 'id',
+        'type': 'type',
+    }
+    natural_keys = {
+        'type': 'label',
+    }
+    field_options = {
+        'type': {'create': True},
+        'name': {'expand_translations': True},
+        'description': {'expand_translations': True},
+    }
+    non_fields = {
+        'attachments': 'illustrations'
+    }
+
+    def filter_type(self, src, val):
+        type_label = val.replace('_', ' ').lower().capitalize()
+        return self.apply_filter(
+            dst='type',
+            src=src,
+            val=type_label
+        )
+
+    def filter_geom(self, src, val):
+        geom = GEOSGeometry(str(val))
+        geom.transform(settings.SRID)
+        return geom
+
+    def filter_attachments(self, src, val):
+        translation_src = self._get_default_translation_src()
+        illustrations = val
+        rv = []
+        for illustration in illustrations:
+            if not illustration.get('traductionFichiers'):
+                continue
+            rv.append(
+                _prepare_attachment_from_apidae_illustration(illustration, translation_src)
+            )
+        return rv

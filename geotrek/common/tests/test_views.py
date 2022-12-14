@@ -27,6 +27,7 @@ from geotrek.common.tests.factories import HDViewPointFactory, LicenseFactory, T
 from geotrek.core.models import Path
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
+import geotrek.trekking.parsers  # noqa
 
 
 class DocumentPublicPortalTest(TestCase):
@@ -167,11 +168,12 @@ class ViewsImportTest(TestCase):
 
         with open('geotrek/common/tests/data/test.zip', 'rb') as real_archive:
             url = reverse('common:import_dataset')
-
+            choices = {choice: id_choice for id_choice, choice in
+                       self.client.get(url).context['form'].fields['parser'].choices}
             response_real = self.client.post(
                 url, {
                     'upload-file': 'Upload',
-                    'with-file-parser': '1',
+                    'with-file-parser': choices['Cities'],
                     'with-file-file': real_archive,
                     'with-file-encoding': 'UTF-8'
                 }
@@ -181,7 +183,8 @@ class ViewsImportTest(TestCase):
 
     @mock.patch('geotrek.common.tasks.current_task')
     @mock.patch('geotrek.common.tasks.import_datas.delay')
-    def test_import_from_file_good_geojson_file(self, mocked, mocked_current_task):
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    def test_import_from_file_good_geojson_file(self, mocked_stdout, mocked, mocked_current_task):
         self.user.is_superuser = True
         self.user.save()
         FileType.objects.create(type="Photographie")
@@ -192,10 +195,12 @@ class ViewsImportTest(TestCase):
             resp = self.client.get(url)
             self.assertEqual(resp.status_code, 200)
             self.assertIn("id_with-file-file", resp.content.decode("utf-8"))
+            choices = {choice: id_choice for id_choice, choice in
+                       self.client.get(url).context['form'].fields['parser'].choices}
             response_real = self.client.post(
                 url, {
                     'upload-file': 'Upload',
-                    'with-file-parser': '4',
+                    'with-file-parser': choices['Import trek'],
                     'with-file-file': geojson,
                     'with-file-encoding': 'UTF-8'
                 }
@@ -213,11 +218,12 @@ class ViewsImportTest(TestCase):
         fake_archive = SimpleUploadedFile(
             "file.doc", b"file_content", content_type="application/msword")
         url = reverse('common:import_dataset')
-
+        choices = {choice: id_choice for id_choice, choice in
+                   self.client.get(url).context['form'].fields['parser'].choices}
         response_fake = self.client.post(
             url, {
                 'upload-file': 'Upload',
-                'with-file-parser': '1',
+                'with-file-parser': choices['Cities'],
                 'with-file-file': fake_archive,
                 'with-file-encoding': 'UTF-8'
             }

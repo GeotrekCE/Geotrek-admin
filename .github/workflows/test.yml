@@ -182,7 +182,7 @@ jobs:
         - name: Install build dependencies
           run: |
             apt-get -q update
-            apt-get -q -y install dpkg-dev debhelper dh-virtualenv git software-properties-common python3.8 python3.8-venv python3.8-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
+            apt-get -q -y install dpkg-dev debhelper dh-virtualenv git python3.8 python3.8-venv python3.8-dev libffi-dev libxml2-dev libxslt1-dev libgdal-dev
         - name: Building package debian 18.04
           run: |
             dpkg-buildpackage -uc -us -b

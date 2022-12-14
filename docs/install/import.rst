@@ -95,6 +95,25 @@ You'll have to configure how to access your APIDAE data: ``api_key``, ``project_
 The ``practices_mapped_with_activities_ids`` and ``practices_mapped_with_default_activities_ids`` attributes define default mapping with the trekking module data fixture. You may override this to match your own types of Trek Practice.
 
 
+Import from LEI
+---------------
+
+To import touristic content or touristic event from LEI , create (or update) ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.tourism.parsers import LEITouristicContentParser, LEITouristicEventParser
+
+    class XXXLEIContentParser(LEITouristicContentParser):
+        label = "LEI TouristicContent"
+        url = "https://url.asp"
+
+    class XXXLEIEventParser(LEITouristicEventParser):
+        label = "LEI TouristicEvent"
+        url = "https://url.asp"
+
+
+
 Configure Marque Esprit Parc import
 -----------------------------------
 
@@ -319,6 +338,17 @@ Treks are now imported into your own instance.
 
 Import other datas from a file
 ==============================
+
+You can add parsers in your custom `parsers.py` file (``/opt/geotrek-admin/var/conf/parsers.py``) which will allow you to
+import data from files directly in your admin (superusers only).
+For example, some parsers are not available by default but you can use them adding some lines in your parsers file :
+
+::
+
+    from geotrek.trekking.parsers import TrekParser # only without dynamic segmentation (`TREKKING_TOPOLOGY_ENABLED` = False)
+    from geotrek.trekking.parsers import POIParser
+
+
 
 You can also use some of Geotrek commands to import data from a vector file handled by GDAL (https://gdal.org/drivers/vector/index.htm) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 

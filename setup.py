@@ -33,7 +33,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.2.*',
-        'mapentity==8.2.1',
+        'mapentity==8.3.0',
         'cairosvg',
         'cairocffi==0.9.0',  # Latest version dh-virtualenv can handle to build the .deb package
         'env_file',
