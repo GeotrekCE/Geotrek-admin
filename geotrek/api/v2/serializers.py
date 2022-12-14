@@ -869,7 +869,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         def get_kml_url(self, obj):
             url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
             return build_url(self, url)
-        
+
         def get_public_url(self, obj):
             url = reverse('sensitivity:sensitivearea_public_detail', kwargs={'pk': obj.pk})
             return build_url(self, url)

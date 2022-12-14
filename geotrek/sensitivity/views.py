@@ -1,5 +1,6 @@
 import json
 import logging
+import datetime
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
@@ -206,4 +207,8 @@ class SensitiveAreaPublicDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        obj = self.get_object()
+        current_month = datetime.date.today().month
+        context['current_month'] = current_month
+        context['current_sensitivity'] = obj.species.list_period()[current_month - 1]
         return context
