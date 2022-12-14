@@ -444,6 +444,10 @@ class BaseApiTest(TestCase):
             content_type=ContentType.objects.get_for_model(trek_models.POI),
             object_id=cls.poi.pk
         )
+        cls.hdviewpoint_site = common_factory.HDViewPointFactory(
+            content_type=ContentType.objects.get_for_model(outdoor_factory.Site),
+            object_id=cls.site.pk
+        )
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -2240,7 +2244,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEquals(json_response.get('trek').get('uuid'), str(self.treks[0].uuid))
         self.assertEquals(json_response.get('trek').get('id'), self.treks[0].id)
 
-    def test_hdviewpoint_detail_content_2(self):
+    def test_hdviewpoint_detail_content_poi(self):
         response = self.get_hdviewpoint_detail(self.hdviewpoint_poi.pk)
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
@@ -2249,6 +2253,16 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertIsNone(json_response.get('trek'))
         self.assertEquals(json_response.get('poi').get('uuid'), str(self.poi.uuid))
         self.assertEquals(json_response.get('poi').get('id'), self.poi.id)
+
+    def test_hdviewpoint_detail_content_site(self):
+        response = self.get_hdviewpoint_detail(self.hdviewpoint_site.pk)
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        json.dumps(json_response.get('annotations'))
+        self.assertIsNone(json_response.get('poi'))
+        self.assertIsNone(json_response.get('trek'))
+        self.assertEquals(json_response.get('site').get('uuid'), str(self.site.uuid))
+        self.assertEquals(json_response.get('site').get('id'), self.site.id)
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):
