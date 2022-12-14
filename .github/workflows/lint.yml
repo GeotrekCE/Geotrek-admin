@@ -13,10 +13,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.6
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6  # lint with minimal version supported (3.6 in 18.04)
+          python-version: 3.8  # lint with minimal version supported (3.8 in 18.04)
 
       - name: Install dependencies
         run: |
