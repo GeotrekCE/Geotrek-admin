@@ -336,6 +336,7 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class HDViewPointSerializer(serializers.ModelSerializer):
     geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
     picture_tiles_url = serializers.SerializerMethodField()
+    thumbnail_url = serializers.SerializerMethodField()
     trek = serializers.SerializerMethodField()
     site = serializers.SerializerMethodField()
     poi = serializers.SerializerMethodField()
@@ -348,6 +349,9 @@ class HDViewPointSerializer(serializers.ModelSerializer):
 
     def get_picture_tiles_url(self, obj):
         return build_url(self, obj.get_generic_picture_tile_url())
+
+    def get_thumbnail_url(self, obj):
+        return build_url(self, obj.thumbnail_url)
 
     def get_trek(self, obj):
         related_obj = obj.content_object
@@ -371,7 +375,7 @@ class HDViewPointSerializer(serializers.ModelSerializer):
         model = common_models.HDViewPoint
         fields = (
             'id', 'annotations', 'author', 'create_datetime', 'geometry', 'legend', 'license', 'picture_tiles_url',
-            'poi', 'title', 'site', 'trek', 'update_datetime', 'uuid'
+            'poi', 'title', 'site', 'trek', 'thumbnail_url', 'update_datetime', 'uuid'
         )
 
 

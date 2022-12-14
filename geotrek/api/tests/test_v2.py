@@ -257,7 +257,7 @@ SIGNAGE_BLADE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 
 HDVIEWPOINT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'annotations', 'author', 'create_datetime', 'geometry', 'legend',
-    'license', 'picture_tiles_url', 'poi', 'site', 'title', 'trek', 'update_datetime', 'uuid'
+    'license', 'picture_tiles_url', 'poi', 'site', 'title', 'trek', 'thumbnail_url', 'update_datetime', 'uuid'
 ])
 
 
