@@ -66,7 +66,7 @@ class HDViewPointTestCase(TestCase):
 
     def test_tiles_url(self):
         self.assertEqual(
-            self.vp.get_generic_picture_tile_url(), f"/api/hdviewpoint/drf/hdviewpoints/{self.vp.pk}/tiles/{{z}}/{{x}}/{{y}}.png"
+            self.vp.get_generic_picture_tile_url(), f"/api/hdviewpoint/drf/hdviewpoints/{self.vp.pk}/tiles/{{z}}/{{x}}/{{y}}.png?source=vips"
         )
 
     def test_icons(self):

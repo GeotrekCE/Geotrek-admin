@@ -2232,7 +2232,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(
             json_response.get('picture_tiles_url'),
-            f"http://testserver/api/hdviewpoint/drf/hdviewpoints/{self.hdviewpoint_trek.pk}/tiles/%7Bz%7D/%7Bx%7D/%7By%7D.png"
+            f"http://testserver/api/hdviewpoint/drf/hdviewpoints/{self.hdviewpoint_trek.pk}/tiles/%7Bz%7D/%7Bx%7D/%7By%7D.png?source=vips"
         )
         json.dumps(json_response.get('annotations'))
         self.assertIsNone(json_response.get('site'))

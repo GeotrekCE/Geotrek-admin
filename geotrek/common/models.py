@@ -337,8 +337,8 @@ class HDViewPoint(TimeStampedModelMixin):
         return f"{url}?{urlencode({'source': 'vips'})}"
 
     def get_generic_picture_tile_url(self):
-        thumbnail_path = reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': 0, 'y': 0, 'z': 0, 'fmt': 'png'})
-        return thumbnail_path.replace("/0/0/0.png", "/{z}/{x}/{y}.png")
+        url = self.get_picture_tile_url(0, 0, 0).replace("/0/0/0.png", "/{z}/{x}/{y}.png")
+        return url
 
     def get_layer_detail_url(self):
         return reverse("{app_name}:{model_name}-drf-detail".format(app_name=self._meta.app_label.lower(),
