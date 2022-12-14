@@ -14,6 +14,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from geotrek.common.forms import HDViewPointAnnotationForm
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from mapentity.tests.factories import UserFactory, SuperUserFactory
 from mapentity.views.generic import MapEntityList
@@ -505,3 +506,14 @@ class HDViewPointViewTest(TestCase):
         self.client.force_login(user=self.user_perm)
         response = self.client.get(tile_url)
         self.assertEqual(response.status_code, 200)
+
+    def test_annotate_view(self):
+        """
+        Test annotations form view contains form and title
+        """
+        self.client.force_login(user=self.user_perm)
+        vp = HDViewPointFactory(content_object=self.trek)
+        response = self.client.get(vp.get_annotate_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.context['form'], HDViewPointAnnotationForm)
+        self.assertEqual(response.context['title'], vp.title)
