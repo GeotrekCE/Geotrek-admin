@@ -529,3 +529,11 @@ class HDViewPointViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'], HDViewPointAnnotationForm)
         self.assertEqual(response.context['title'], vp.title)
+
+    def test_API_viewset(self):
+        vp = HDViewPointFactory(content_object=self.trek)
+        qs = HDViewPointAPIViewSet().get_queryset()
+        transformed_geom = vp.geom.transform(settings.API_SRID, clone=True)
+        api_geom = qs.first().api_geom
+        self.assertAlmostEqual(api_geom.x, transformed_geom.x)
+        self.assertAlmostEqual(api_geom.y, transformed_geom.y)
