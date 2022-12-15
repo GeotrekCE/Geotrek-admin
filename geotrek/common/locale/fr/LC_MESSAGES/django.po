@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-15 14:39+0000\n"
+"POT-Creation-Date: 2022-12-15 15:41+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -560,6 +560,27 @@ msgstr "Imports"
 msgid "Sync mobile"
 msgstr "Synchro mobile"
 
+msgid "Rectangle"
+msgstr ""
+
+msgid "Square"
+msgstr ""
+
+msgid "Ellispe"
+msgstr ""
+
+msgid "Circle"
+msgstr ""
+
+msgid "Polygon"
+msgstr ""
+
+msgid "Point"
+msgstr ""
+
+msgid "Line"
+msgstr ""
+
 msgid "Properties"
 msgstr "Propriétés"
 
@@ -583,6 +604,14 @@ msgstr "Action"
 
 msgid "Full history"
 msgstr "Historique complet"
+
+msgid ""
+"Add very high resolution images that will be automatically tiled and add "
+"annotations on it (points, lines, polygons and text)"
+msgstr ""
+"Ajouter des images de très haute résolution qui seront tuilées "
+"automatiquement et ajouter des annotations sur celles-ci (points, lignes, "
+"polygones et texte)"
 
 msgid "You are not allowed to see HD views."
 msgstr "Vous n'êtes pas autorisé à voir les vues HD."

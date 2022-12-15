@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-15 14:39+0000\n"
+"POT-Creation-Date: 2022-12-15 15:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivia Duval <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -535,6 +535,27 @@ msgstr ""
 msgid "Sync mobile"
 msgstr ""
 
+msgid "Rectangle"
+msgstr ""
+
+msgid "Square"
+msgstr ""
+
+msgid "Ellispe"
+msgstr ""
+
+msgid "Circle"
+msgstr ""
+
+msgid "Polygon"
+msgstr ""
+
+msgid "Point"
+msgstr ""
+
+msgid "Line"
+msgstr ""
+
 msgid "Properties"
 msgstr ""
 
@@ -557,6 +578,11 @@ msgid "Action"
 msgstr ""
 
 msgid "Full history"
+msgstr ""
+
+msgid ""
+"Add very high resolution images that will be automatically tiled and add "
+"annotations on it (points, lines, polygons and text)"
 msgstr ""
 
 msgid "You are not allowed to see HD views."
