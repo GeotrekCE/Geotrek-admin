@@ -17,7 +17,7 @@ Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3
 In preparation for HD Views developments (PR #3298)
 - Bump Python to 3.8
 - Bump MapEntity to 8.3.0
-- Bump Pillow to 0.3.0
+- Bump Pillow to 9.3.0
 - Bump Celery to 5.2.1
 - Bump django-celery-results to 2.4.0
 - Bump django-clearcache to 1.2.1
