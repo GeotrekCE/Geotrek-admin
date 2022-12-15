@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-03 13:51+0000\n"
+"POT-Creation-Date: 2022-12-15 14:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -327,7 +327,16 @@ msgstr ""
 msgid "Boolean indicating if Event is cancelled"
 msgstr ""
 
-msgid "Select a place to auto-locate event on map"
+msgid "Preparation duration"
+msgstr ""
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr ""
+
+msgid "Intervention duration"
+msgstr ""
+
+msgid "Select a place in the list or locate the event directly on the map"
 msgstr ""
 
 msgid "Number of participants"

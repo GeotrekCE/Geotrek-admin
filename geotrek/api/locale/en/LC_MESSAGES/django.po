@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-03 13:51+0000\n"
+"POT-Creation-Date: 2022-12-15 14:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -230,7 +230,7 @@ msgid "Trek"
 msgstr ""
 
 msgid ""
-"Filter by a trek id. It will show only the sensitive areas related to this "
+"Filter by a trek id. It will show only the sensitive areas intersecting this "
 "trek."
 msgstr ""
 
@@ -338,13 +338,13 @@ msgstr ""
 msgid "Filter by one or more category id, comma-separated."
 msgstr ""
 
+msgid "Filter by one or more Place id, comma-separated."
+msgstr ""
+
 msgid "Filter events on bookable boolean : true/false expected"
 msgstr ""
 
 msgid "Filter events on cancelled boolean : true/false expected"
-msgstr ""
-
-msgid "Filter by one or more Place id, comma-separated."
 msgstr ""
 
 msgid "Dates before"
