@@ -474,6 +474,10 @@ class HDViewPointViewTest(TestCase):
         self.assertEqual(vp.legend, "Something else")
         self.assertEqual(vp.license, None)
 
+        # Test detail view
+        response = self.client.get(vp.get_detail_url())
+        self.assertIn(b"Un titre", response.content)
+
         # Test delete view
         vp = HDViewPoint.objects.first()
         response = self.client.post(vp.get_delete_url(), {}, follow=True)
