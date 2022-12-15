@@ -6,7 +6,7 @@ from io import StringIO
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.core.files import File
@@ -14,20 +14,22 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-from geotrek.common.forms import HDViewPointAnnotationForm
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from mapentity.tests.factories import UserFactory, SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.views.generic import MapEntityList
 
+import geotrek.trekking.parsers  # noqa
+from geotrek.common.forms import HDViewPointAnnotationForm
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import FileType, HDViewPoint
 from geotrek.common.parsers import Parser
-from geotrek.common.tasks import launch_sync_rando, import_datas
-from geotrek.common.tests.factories import HDViewPointFactory, LicenseFactory, TargetPortalFactory
+from geotrek.common.tasks import import_datas, launch_sync_rando
+from geotrek.common.tests.factories import (HDViewPointFactory, LicenseFactory,
+                                            TargetPortalFactory)
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.common.views import HDViewPointAPIViewSet
 from geotrek.core.models import Path
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
-import geotrek.trekking.parsers  # noqa
 
 
 class DocumentPublicPortalTest(TestCase):
@@ -435,9 +437,9 @@ class HDViewPointViewTest(TestCase):
         img = get_dummy_uploaded_image()
         data = {
             'picture': img,
-            'title': "Un titre",
-            'author': "Someone",
-            'legend': "Something",
+            'title_en': "Un titre",
+            'author_en': "Someone",
+            'legend_en': "Something",
             'geom': "SRID=2154;POINT(0 0)",
             "license": self.license.pk
         }
@@ -463,9 +465,9 @@ class HDViewPointViewTest(TestCase):
         img = get_dummy_uploaded_image()
         data = {
             'picture': img,
-            'title': "Un titre",
-            'author': "Someone",
-            'legend': "Something else",
+            'title_en': "Un titre",
+            'author_en': "Someone",
+            'legend_en': "Something else",
             'geom': "SRID=2154;POINT(0 0)"
         }
         response = self.client.post(vp.get_update_url(), data)
