@@ -1,5 +1,4 @@
 import os
-from sqlite3 import OperationalError
 import uuid
 
 from colorfield.fields import ColorField
@@ -379,10 +378,7 @@ class HDViewPoint(TimeStampedModelMixin):
 
     @classmethod
     def get_content_type_id(cls):
-        try:
-            return ContentType.objects.get_for_model(cls).pk
-        except OperationalError:  # table is not yet created
-            return None
+        return ContentType.objects.get_for_model(cls).pk
 
     def get_geom(self):
         return self.geom
