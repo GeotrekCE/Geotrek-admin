@@ -117,7 +117,7 @@ django-crispy-forms==1.13.0
     # via mapentity
 django-debug-toolbar==3.2.4
     # via geotrek (setup.py)
-django-embed-video==1.4.3
+django-embed-video==1.4.8
     # via
     #   mapentity
     #   paperclip
