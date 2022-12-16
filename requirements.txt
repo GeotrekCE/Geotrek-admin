@@ -188,7 +188,7 @@ gunicorn==20.1.0
     # via geotrek (setup.py)
 html5lib==1.1
     # via weasyprint
-idna==3.3
+idna==3.4
     # via requests
 importlib-metadata==5.1.0
     # via markdown
