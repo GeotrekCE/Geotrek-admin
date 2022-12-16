@@ -187,7 +187,7 @@ jobs:
           run: |
             dpkg-buildpackage -uc -us -b
         - name: Archive package artifact
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v3
           with:
             name: debian-18-04
             path: |
@@ -213,7 +213,7 @@ jobs:
         run: |
           dpkg-buildpackage -uc -us -b
       - name: Archive package artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: debian-20-04
           path: |
@@ -286,7 +286,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: docker-cypress
           path: |
@@ -450,7 +450,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: cypress-20.04
           path: |
