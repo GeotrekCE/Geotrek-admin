@@ -5,6 +5,11 @@ CHANGELOG
 2.94.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New feature**
+
+- Handle very high resolution images (HD Views) that will automatically be tiled, for ``Trek``, ``POI`` and ``Site``
+- Handle annotations on HD Views (points, lines, polygons and text)
+
 **Warning**
 
 Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8:
