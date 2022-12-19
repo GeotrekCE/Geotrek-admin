@@ -15,6 +15,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
 from geotrek.common.utils import intersecting, classproperty, simplify_coords
 from geotrek.sensitivity.managers import SensitiveAreaManager
+from geotrek.common.models import Label
 
 
 class SportPractice(TimeStampedModelMixin, models.Model):
@@ -83,6 +84,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
+    labels = models.ManyToManyField(Label, verbose_name=_("Labels"))
 
     objects = SensitiveAreaManager()
 

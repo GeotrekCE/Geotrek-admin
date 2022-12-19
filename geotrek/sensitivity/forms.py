@@ -1,3 +1,5 @@
+import logging
+
 from django import forms
 from .models import SensitiveArea, SportPractice, Species
 from geotrek.common.forms import CommonForm
@@ -5,6 +7,7 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import pgettext, gettext as _
 from mapentity.widgets import MapWidget
 
+logger = logging.getLogger(__name__)
 
 class BubbleMapWidget(MapWidget):
     geometry_field_class = 'bubbleGeometryField'
@@ -20,7 +23,7 @@ class SensitiveAreaForm(CommonForm):
                                      label=pgettext("Singular", "Species"))
 
     class Meta:
-        fields = ['structure', 'species', 'published', 'description', 'contact', 'geom']
+        fields = ['structure', 'species', 'published', 'description', 'contact', 'labels', 'geom']
         model = SensitiveArea
         widgets = {'geom': BubbleMapWidget()}
 
@@ -46,7 +49,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
     url = forms.URLField(label=_("URL"), required=False)
 
     class Meta:
-        fields = ['structure', 'name', 'elevation', 'published', 'description', 'contact', 'pictogram', 'practices'] + \
+        fields = ['structure', 'name', 'elevation', 'published', 'description', 'contact', 'pictogram', 'practices', 'labels'] + \
                  ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
         widgets = {'geom': PolygonMapWidget()}
@@ -83,6 +86,9 @@ class RegulatorySensitiveAreaForm(CommonForm):
         species.save()
         species.practices.set(self.cleaned_data['practices'])
         area = super().save(commit=False)
+        logger.debug(f'LABELS {self.cleaned_data["labels"]}')
+        area.labels.set(self.cleaned_data["labels"])
+        logger.debug(f'AREALABELS {area.labels}')
         area.species = species
         area.save()
         return area
