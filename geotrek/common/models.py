@@ -279,7 +279,7 @@ class HDViewPoint(TimeStampedModelMixin):
     object_id = models.PositiveIntegerField()
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     content_object = GenericForeignKey('content_type', 'object_id')
-    annotations = models.JSONField(null=True, verbose_name=_("Annotations"), blank=True)
+    annotations = models.JSONField(verbose_name=_("Annotations"), blank=True, default=dict)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     author = models.CharField(blank=True, default='', max_length=128,
                               verbose_name=_('Author'),
