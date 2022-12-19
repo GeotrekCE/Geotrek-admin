@@ -7,7 +7,7 @@ CHANGELOG
 
 **New feature**
 
-- Handle very high resolution images (HD Views) that will automatically be tiled, for ``Trek``, ``POI`` and ``Site``
+- Handle very high resolution images (HD Views) that will automatically be tiled, for ``Trek``, ``POI`` and ``Site`` (#3378)
 - Handle annotations on HD Views (points, lines, polygons and text)
 
 **Warning**
