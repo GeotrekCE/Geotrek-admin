@@ -1,6 +1,5 @@
-{% extends "mapentity/base.html" %}
-{% load i18n static sensitivity_extras attachments_tags thumbnail leaflet_tags %} 
-{% block extrahead %}
+{% extends "mapentity/base.html" %} 
+{% load i18n static sensitivity_extras attachments_tags thumbnail leaflet_tags %} {% block extrahead %}
 
 <style>
   html,
@@ -36,26 +35,32 @@
   h3 {
     color: var(--primary);
   }
+  .legend {
+    background-color: rgba(255,255,255,0.8);
+    padding: 5px;
+    border-radius: 5px;
+  }
 </style>
+
 {% endblock extrahead %} {% block navbar %}
 <!-- No bar -->
 {% endblock navbar %} {% block mainpanel %}
 <div class="container-fluid h-100">
-  <div id="app" class="row min-vh-100">
+  <div class="row min-vh-100">
+    {% if object %}
     <div class="col-sm p-0">
       <div id="desc" class="h-100 d-flex flex-column">
         <div v-if="sensitiveArea">
           <div id="descHeader" class="p-3">
             {% for p in object.species.practices.all %}
-            <span
-              
-              class="m-1 p-1 badge badge-info float-right"
-              >{{p}}</span
-            >
+            <span class="m-1 p-1 badge badge-info float-right">{{p}}</span>
             {%endfor%}
             <h2 class="text-uppercase">{{object.species.name}}</h2>
             <p>
-              <span class="badge badge-success">{% if object.species.category == 1 %}Zone espèce{%else%}Zone réglementaire{%endif%}</span>
+              <span class="badge badge-success"
+                >{% if object.species.category == 1 %}Zone espèce{%else%}Zone
+                réglementaire{%endif%}</span
+              >
               créée par <strong>{{object.structure}}</strong>
             </p>
           </div>
@@ -82,15 +87,18 @@
                 Statut de sensibilité aujourd'hui&nbsp;:
                 <span
                   class="badge text-uppercase {% if current_sensitivity %}badge-warning{%else%}badge-success{% endif %}"
-                  >{% if current_sensitivity %}Sensible{%else%}Non sensible{% endif %}</span
-                >
+                  >{% if current_sensitivity %}
+                  Sensible
+                  {%else%}
+                  Non sensible
+                  {% endif %}
+                </span>
               </div>
             </div>
             <div class="block">
-              
               <h3>Description</h3>
               {% if object.description %}
-              <div >{{object.description|safe}}</div>
+              <div>{{object.description|safe}}</div>
               {%else%}
               <div class="text-muted">Pas de description</div>
               {%endif%}
@@ -98,12 +106,11 @@
             <div class="block">
               <h3>Contact</h3>
               {% if object.contact %}
-              <div >{{object.contact|safe}}</div>
+              <div>{{object.contact|safe}}</div>
               {%else%}
               <div class="text-muted">Pas de contact</div>
               {%endif%}
             </div>
-            
 
             {% if object.attachments.count > 0 %}
             <div id="attachments">
@@ -112,7 +119,7 @@
                 {% for a in object.attachments.all %}
                 <li class="media py-2">
                   <img
-                    src="{%if a.is_image %}{{a.attachment_file.url}}{%else%}{{a.filetype|svg_thumbnail}}{%endif%}"
+                    src="{%if a.is_image %}{{a.attachment_file.url}}{%else%}{% svg_thumbnail a.filetype width=100 height=100 %}{%endif%}"
                     class="mr-3"
                     alt="{{a.title}}"
                     class="img-thumbnail rounded"
@@ -126,13 +133,17 @@
                       >{{a.filetype.type}}</span
                     >
                     <h5 class="mt-0 mb-1">
-                      <a href="{{a.attachment_file}}" targer="_blank" title="Télécharger"
+                      <a
+                        href="{{a.attachment_file}}"
+                        targer="_blank"
+                        title="Télécharger"
                         >{{a.title}}</a
                       >
                     </h5>
 
-                    <small >Autheur: {{a.author}}</small> |                     <small >Licence: {{a.license}}</small><br>
-                    <p >{{a.legend}}</p>
+                    <small>Autheur: {{a.author}}</small> |
+                    <small>Licence: {{a.license}}</small><br />
+                    <p>{{a.legend}}</p>
                   </div>
                 </li>
                 {%endfor%}
@@ -147,25 +158,21 @@
                 target="_blank"
                 ><i class="bi bi-info-circle-fill"></i> Plus d'informations</a
               >
-              {% endif %}
-              {% if object.kml %}
+              {% endif %} {% if object.kml %}
               <a
                 href="{% url 'sensitivity:sensitivearea_kml_detail' lang=LANGUAGE_CODE pk=object.pk %}"
                 class="btn btn-primary m-2"
                 target="_blank"
                 ><i class="bi bi-cloud-download-fill"></i> KML</a
               >
-              {% endif %}
-
-              {% if object.openair %}
+              {% endif %} {% if object.openair %}
               <a
                 href="{% url 'sensitivity:sensitivearea_openair_detail' lang=LANGUAGE_CODE pk=object.pk %}"
                 class="btn btn-primary m-2"
                 target="_blank"
                 ><i class="bi bi-cloud-download-fill"></i> OpenAir</a
               >
-              {% endif %}
-              {% if object %}
+              {% endif %} {% if object %}
               <a
                 href="{% url 'apiv2:sensitivearea-detail' pk=object.pk format='geojson' %}"
                 class="btn btn-primary m-2"
@@ -178,39 +185,92 @@
         </div>
       </div>
     </div>
+    {% endif %}
     <div class="col-sm p-0">
       {% leaflet_map "map" callback="window.map_init_basic" %}
     </div>
   </div>
 </div>
 <script>
-  
   sensitiveAreaPk = "{{object.pk}}";
 
   saMap = document.getElementById("map");
   saMap.classList.add("h100", "d-flex", "flex-column");
 
-  const getArea = async (sensitiveAreaPk) => {
-    const response = await fetch(
-      `/api/v2/sensitivearea/${sensitiveAreaPk}/?format=geojson&period=any`
-    );
+  const url = "{{object.pk}}"
+    ? `/api/v2/sensitivearea/${sensitiveAreaPk}/?format=geojson&period=any`
+    : `/api/v2/sensitivearea/?format=geojson&period=any`;
+
+  const getGeoJson = async () => {
+    const response = await fetch(url);
     return await response.json();
   };
 
-  const addLayer = (sensitiveAreaPk, map) => {
-    getArea(sensitiveAreaPk).then((r) => {
-      const area = L.geoJson(r, {}).bindPopup(function (layer) {
-        return layer.feature.properties.name;
-      });
+  const styleColor = (d)=>{
+    return d > 0 ? 'var(--success)' : 'var(--info)';
+  };
+
+  const styleArea = (feature) => {
+    return {
+        fillColor: styleColor(feature.properties.species_id),
+        weight: 2,
+        opacity: 0.9,
+        color: styleColor(feature.properties.species_id),
+        fillOpacity: 0.3
+    };
+  };
+
+  const typeZoneBadgeStyle = (species_id) => {
+    return `badge ${species_id > 0 ? 'badge-success' : 'badge-info'}`
+  }
+
+  function onEachFeature(feature, layer) {
+    if (feature.properties && feature.properties.name) {
+      const featureName = feature.properties.name;
+      // Find first not null name if local name is null
+      const name = featureName["{{LANGUAGE_CODE}}"]
+        ? featureName["{{LANGUAGE_CODE}}"]
+        : Object.entries(featureName).filter(([key, value]) => !!value)[0][1];
+      layer.bindPopup(`
+        <p class="text-center">
+          <a href="/api/v2/sensitivearea/${feature.id}.html">
+            ${name} 
+          </a><br>
+          <span class="badge ${typeZoneBadgeStyle(feature.properties.species_id)}"
+            >${feature.properties.species_id > 0 ? 'Zone espèce' : 'Zone réglementaire'}</span
+          >
+        </p>`);
+    }
+  }
+
+  const Legend = (map) => {
+    const legend = L.control({position: 'bottomleft'})
+    legend.onAdd = function (map) {
+        const div = L.DomUtil.create("div", "info legend");
+        const items = [["badge-info","Zone réglementaire"], ["badge-success","Zone espèce"]];
+        items.forEach((e) => div.innerHTML += '<span class="badge ' + e[0] + '">' + e[1] + "</span><br>")
+        return div;
+      };
+    legend.addTo(map);
+    };
+
+  
+
+  const loadMapData = (map) => {
+    getGeoJson().then((r) => {
+      const area = L.geoJson(r, { onEachFeature: onEachFeature, style: styleArea });
       map.fitBounds(area.getBounds());
       map.setMaxBounds(area.getBounds());
       area.addTo(map);
+      Legend(map);
     });
   };
 
   function map_init_basic(map, options) {
-    addLayer(sensitiveAreaPk, map);
+    loadMapData(map);
+    console.log('MAP', map)
+    
   }
-
 </script>
+
 {% endblock mainpanel %}

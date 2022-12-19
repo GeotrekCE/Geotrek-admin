@@ -871,7 +871,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             return build_url(self, url)
 
         def get_public_url(self, obj):
-            url = reverse('sensitivity:sensitivearea_public_detail', kwargs={'pk': obj.pk})
+            url = reverse('apiv2:sensitivearea-detail', kwargs={'pk': obj.pk, 'format': 'html'})
             return build_url(self, url)
 
         class Meta:

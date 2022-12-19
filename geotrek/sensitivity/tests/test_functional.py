@@ -24,7 +24,7 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
             'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
-            'public_url': '/public/sensitiveareas/{}'.format(self.obj.pk),
+            'public_url': '/api/v2/sensitivearea/{}.html'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,
             'species': {
@@ -95,7 +95,7 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
             'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
-            'public_url': '/public/sensitiveareas/{}'.format(self.obj.pk),
+            'public_url': '/api/v2/sensitivearea/{}.html'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,
             'species': {

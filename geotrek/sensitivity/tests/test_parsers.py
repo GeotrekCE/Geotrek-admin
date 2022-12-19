@@ -72,7 +72,7 @@ json_test_species = {
             "structure": "LPO",
             "species_id": 7,
             "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/46.kml",
-            "public_url": "https://biodiv-sports.fr/public/sensitiveareas/46",
+            "public_url": "https://biodiv-sports.fr/api/v2/sensitivearea/46.html",
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [[[3.1, 45], [3.2, 45], [3.2, 46], [3.1, 46], [3.1, 45]],
@@ -103,7 +103,7 @@ json_test_species_page_2 = {
             "structure": "LPO",
             "species_id": 7,
             "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47.kml",
-            "public_url": "https://biodiv-sports.fr/public/sensitiveareas/47",
+            "public_url": "https://biodiv-sports.fr/api/v2/sensitivearea/47.html",
             "geometry": {
                 "type": "MultiPolygon",
                 "coordinates": [[[[3.1, 45], [3.2, 45], [3.2, 46], [3.1, 46], [3.1, 45]],

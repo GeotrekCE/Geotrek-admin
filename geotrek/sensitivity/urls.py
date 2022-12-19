@@ -24,8 +24,7 @@ register_converter(LangConverter, 'lang')
 app_name = 'sensitivity'
 urlpatterns = [
     path('api/<lang:lang>/sensitiveareas/<int:pk>.kml',
-         views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),
-    path('public/sensitiveareas/<int:pk>', views.SensitiveAreaPublicDetailView.as_view(), name="sensitivearea_public_detail")
+         views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail")
 ]
 
 router = DefaultRouter(trailing_slash=False)

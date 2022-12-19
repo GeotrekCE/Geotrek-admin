@@ -55,7 +55,7 @@ class SensitiveAreaAPISerializer(TranslatedModelSerializer):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
 
     def get_public_url(self, obj):
-        return reverse('sensitivity:sensitivearea_public_detail', kwargs={'pk': obj.pk})
+        return reverse('apiv2:sensitivearea-detail', kwargs={'pk': obj.pk, 'format': 'html'})
 
     class Meta:
         model = sensitivity_models.SensitiveArea
