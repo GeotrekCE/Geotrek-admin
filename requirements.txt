@@ -176,7 +176,7 @@ fiona==1.8.21
     # via
     #   geotrek (setup.py)
     #   mapentity
-freezegun==1.2.1
+freezegun==1.2.2
     # via geotrek (setup.py)
 geojson==2.5.0
     # via
