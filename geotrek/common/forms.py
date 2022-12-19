@@ -504,8 +504,7 @@ class HDViewPointAnnotationForm(forms.ModelForm):
         self._init_layout()
 
     def _init_layout(self):
-        """ Setup form buttons, submit URL, layout
-        """
+        """ Setup form buttons, submit URL, layout """
 
         actions = [
             Button('cancel', _('Cancel'), css_class="btn btn-light ml-auto mr-2"),

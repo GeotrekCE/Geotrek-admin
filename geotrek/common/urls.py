@@ -1,5 +1,4 @@
 from django.urls import path, converters, register_converter
-from geotrek.common.models import HDViewPoint
 from mapentity.registry import MapEntityOptions
 from rest_framework.routers import DefaultRouter
 
@@ -35,9 +34,9 @@ urlpatterns = [
 ]
 
 rest_router = DefaultRouter(trailing_slash=False)
-rest_router.register(r'api/' + HDViewPoint._meta.model_name + '/drf/' + HDViewPoint._meta.model_name + 's',
-                     HDViewPointAPIViewSet, basename=f"{HDViewPoint._meta.model_name}-drf")
-rest_router.register(r'api/' + HDViewPoint._meta.model_name + '/drf/' + HDViewPoint._meta.model_name + 's', TiledHDViewPointViewSet)
+rest_router.register(r'api/hdviewpoint/drf/hdviewpoints',
+                     HDViewPointAPIViewSet, basename="hdviewpoint-drf")
+rest_router.register(r'api/hdviewpoint/drf/hdviewpoints', TiledHDViewPointViewSet)
 urlpatterns += rest_router.urls
 
 

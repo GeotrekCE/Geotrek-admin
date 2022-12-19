@@ -334,13 +334,9 @@ class HDViewPointAPIViewSet(APIViewSet):
         return HDViewPoint.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
-class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
+class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail, LoginRequiredMixin):
     model = HDViewPoint
     queryset = HDViewPoint.objects.all().select_related('content_type', 'license')
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -348,13 +344,9 @@ class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail):
         return context
 
 
-class HDViewPointCreate(mapentity_views.MapEntityCreate):
+class HDViewPointCreate(mapentity_views.MapEntityCreate, LoginRequiredMixin):
     model = HDViewPoint
     form_class = HDViewPointForm
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -363,39 +355,22 @@ class HDViewPointCreate(mapentity_views.MapEntityCreate):
         return kwargs
 
 
-class HDViewPointUpdate(mapentity_views.MapEntityUpdate):
+class HDViewPointUpdate(mapentity_views.MapEntityUpdate, LoginRequiredMixin):
     queryset = HDViewPoint.objects.all()
     form_class = HDViewPointForm
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
-
-class HDViewPointDelete(mapentity_views.MapEntityDelete):
+class HDViewPointDelete(mapentity_views.MapEntityDelete, LoginRequiredMixin):
     model = HDViewPoint
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
     def get_success_url(self):
         return self.get_object().content_object.get_detail_url()
 
 
-class HDViewPointAnnotate(UpdateView):
+class HDViewPointAnnotate(UpdateView, LoginRequiredMixin):
     model = HDViewPoint
     form_class = HDViewPointAnnotationForm
     template_name_suffix = '_annotation_form'
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = self.get_object().title
-        return context
 
 
 class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):

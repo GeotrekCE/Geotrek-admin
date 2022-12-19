@@ -61,10 +61,8 @@ class HDViewPointTestCase(TestCase):
         structure = StructureFactory(name="MyStructure")
         cls.trek = TrekFactory(structure=structure)
         cls.vp = HDViewPointFactory(content_object=cls.trek)
-        profile = UserProfileFactory(structure=structure)
         cls.user = UserFactory()
-        cls.user.profile = profile
-        cls.user.save()
+        UserProfileFactory(structure=structure, user=cls.user)
 
     def test_thumbnail_url(self):
         self.assertEqual(

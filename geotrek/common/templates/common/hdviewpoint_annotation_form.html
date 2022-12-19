@@ -1,6 +1,6 @@
 {% extends "mapentity/mapentity_form.html" %}
 {% load i18n static crispy_forms_tags %}
-
+{% block title %}{{ object.title }} {{ block.super }}{% endblock title %}
 {% block mainpanel %}
     <div class="form-panel" id="annotations">
         <div>

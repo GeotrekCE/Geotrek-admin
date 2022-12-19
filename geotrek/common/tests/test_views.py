@@ -426,7 +426,6 @@ class HDViewPointViewTest(TestCase):
         Test CRUD rights and views for HD View Point object
         """
         self.client.force_login(user=self.user_perm)
-        ContentType.objects.clear_cache()  # Sometimes cache can contain bad values
         # Test create view
         response = self.client.get('%s?object_id=%s&content_type=%s' % (HDViewPoint.get_add_url(),
                                                                         self.trek.pk,
@@ -438,7 +437,7 @@ class HDViewPointViewTest(TestCase):
         data = {
             'picture': img,
             'title_en': "Un titre",
-            'author_en': "Someone",
+            'author': "Someone",
             'legend_en': "Something",
             'geom': "SRID=2154;POINT(0 0)",
             "license": self.license.pk
@@ -528,7 +527,6 @@ class HDViewPointViewTest(TestCase):
         response = self.client.get(vp.get_annotate_url())
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'], HDViewPointAnnotationForm)
-        self.assertEqual(response.context['title'], vp.title)
 
     def test_API_viewset(self):
         vp = HDViewPointFactory(content_object=self.trek)

@@ -16,7 +16,7 @@ class LabelTO(TranslationOptions):
 
 
 class HDViewPointTO(TranslationOptions):
-    fields = ('author', 'title', 'legend')
+    fields = ('title', 'legend')
 
 
 translator.register(Theme, ThemeTO)

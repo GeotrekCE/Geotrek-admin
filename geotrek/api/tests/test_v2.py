@@ -4,7 +4,6 @@ from unittest import skipIf
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
                                      Point, Polygon)
 from django.contrib.gis.geos.collections import GeometryCollection
@@ -437,16 +436,13 @@ class BaseApiTest(TestCase):
         cls.label_3 = common_factory.LabelFactory()
         cls.site2.labels.add(cls.label_3)
         cls.hdviewpoint_trek = common_factory.HDViewPointFactory(
-            content_type=ContentType.objects.get_for_model(trek_models.Trek),
-            object_id=cls.treks[0].pk
+            content_object=cls.treks[0]
         )
         cls.hdviewpoint_poi = common_factory.HDViewPointFactory(
-            content_type=ContentType.objects.get_for_model(trek_models.POI),
-            object_id=cls.poi.pk
+            content_object=cls.poi
         )
         cls.hdviewpoint_site = common_factory.HDViewPointFactory(
-            content_type=ContentType.objects.get_for_model(outdoor_factory.Site),
-            object_id=cls.site.pk
+            content_object=cls.site
         )
 
     def check_number_elems_response(self, response, model):
