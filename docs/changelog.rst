@@ -31,9 +31,9 @@ In preparation for HD Views developments (PR #3298)
 - New ``LEIParser`` to import touristic content and event from LEI touristic data system
 - New ``XMLParser`` to import content from XML
 - ApidaeTrekParser: import trek's contact info into description
-- New sensitivity area detail public view : New sensitivity public view for sensitive areas (``/public/sensitiveareas/{pk}``).
 - New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
 - New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
+- New sensitivity area detail public view : New sensitivity public view for sensitive areas (``/public/sensitiveareas/{pk}``).
 
 **Bug fixes**
 

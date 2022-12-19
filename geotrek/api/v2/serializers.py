@@ -847,6 +847,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         species_id = serializers.SerializerMethodField()
         kml_url = serializers.SerializerMethodField()
+        public_url = serializers.SerializerMethodField()
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj.species)
@@ -869,13 +870,17 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
             return build_url(self, url)
 
+        def get_public_url(self, obj):
+            url = reverse('sensitivity:sensitivearea_public_detail', kwargs={'pk': obj.pk})
+            return build_url(self, url)
+
         class Meta:
             model = sensitivity_models.SensitiveArea
             fields = (
                 'id', 'contact', 'create_datetime', 'description', 'elevation',
                 'geometry', 'info_url', 'kml_url', 'name', 'period',
                 'practices', 'published', 'species_id', 'provider', 'structure',
-                'update_datetime', 'url'
+                'update_datetime', 'url', 'public_url'
             )
 
     class BubbleSensitiveAreaSerializer(SensitiveAreaSerializer):

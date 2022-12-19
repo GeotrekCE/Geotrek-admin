@@ -68,6 +68,9 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
                           for p in range(1, 13)
                           if getattr(self, 'period{:02}'.format(p))])
 
+    def list_period(self):
+        return [getattr(self, 'period{:02}'.format(p)) for p in range(1, 13)]
+
     def pretty_practices(self):
         return ", ".join([str(practice) for practice in self.practices.all()])
 
