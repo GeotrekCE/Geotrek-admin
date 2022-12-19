@@ -46,8 +46,10 @@
                 <td>{{ viewpoint.date_update }}</td>
                 {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure and perms.common.change_hdviewpoint or perms.common.delete_hdviewpoint%}
                     <td>
+                        <a href="{{ viewpoint.get_detail_url }}">
+                            {% trans "Details" %}
+                        </a>
                         {% if perms.common.change_hdviewpoint %}
-                        
                             &nbsp;
                             <a href="{% url 'common:hdviewpoint_change' viewpoint.pk %}" class="update-action">
                                 {% trans "Update" %}
