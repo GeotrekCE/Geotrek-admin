@@ -9,6 +9,7 @@ from mapentity.widgets import MapWidget
 
 logger = logging.getLogger(__name__)
 
+
 class BubbleMapWidget(MapWidget):
     geometry_field_class = 'bubbleGeometryField'
 
