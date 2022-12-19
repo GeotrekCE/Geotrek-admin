@@ -27,6 +27,7 @@ fieldset {
   overflow: hidden;
   border: 1px solid lightgrey;
   border-radius: 5px;
+  z-index: -1;
 }
 
 #hdviewpoint-map.large {
