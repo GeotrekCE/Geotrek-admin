@@ -7,7 +7,6 @@ from django.db.models import F, Case, When
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound
 
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
@@ -35,22 +34,18 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
     template_name = 'sensitivity/sensitivearea_detail_public.html'
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if request.accepted_renderer.format == 'html':
-            logger.debug(f'INSTANCE {instance}')
-            if instance:
-                current_month = datetime.date.today().month
-                return Response(
-                    {
-                        'object': instance,
-                        'current_month': current_month,
-                        'current_sensitivity': instance.species.list_period()[current_month - 1]
-                    }
-                )
-            else:
-                return NotFound()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        retrieve = super().retrieve(request, *args, **kwargs)
+        if request.accepted_renderer.format == 'html' and self.get_object():
+            instance = self.get_object()
+            current_month = datetime.date.today().month
+            return Response(
+                {
+                    'object': instance,
+                    'current_month': current_month,
+                    'current_sensitivity': instance.species.list_period()[current_month - 1]
+                }
+            )
+        return retrieve
 
     def get_serializer_class(self):
         if 'bubble' in self.request.GET:
