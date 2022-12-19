@@ -2,7 +2,28 @@
 CHANGELOG
 =========
 
-2.93.0+dev (XXXX-XX-XX)
+2.94.0+dev (XXXX-XX-XX)
+-----------------------
+
+**Warning**
+
+Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8:
+``apt-get install software-properties-common``
+``add-apt-repository --yes ppa:deadsnakes/ppa``
+``apt-get install python3.8``
+
+**Maintenance**
+
+In preparation for HD Views developments (PR #3298)
+- Bump Python to 3.8
+- Bump MapEntity to 8.3.0
+- Bump Pillow to 9.3.0
+- Bump Celery to 5.2.1
+- Bump django-celery-results to 2.4.0
+- Bump django-clearcache to 1.2.1
+- Add libvips to dependencies
+
+2.94.0     (2022-12-12)
 -----------------------
 
 **New feature**
@@ -11,6 +32,8 @@ CHANGELOG
 - New ``XMLParser`` to import content from XML
 - ApidaeTrekParser: import trek's contact info into description
 - New sensitivity area detail public view : New sensitivity public view for sensitive areas (``/public/sensitiveareas/{pk}``).
+- New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
+- New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
 
 **Bug fixes**
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-03 13:51+0000\n"
+"POT-Creation-Date: 2022-12-12 16:05+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -487,6 +487,19 @@ msgid ""
 msgstr ""
 "Valeur '{val}' erronée pour le champ {src}. Devrait être similaire à '2h30', "
 "'2,5' ou '2.5'"
+
+msgid "You need to add a network of paths before importing POIs"
+msgstr "Tu as besoin d'ajouter un réseau de tronçons avant d'importer des POIs"
+
+msgid "Invalid geometry"
+msgstr "Geométrie invalide"
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be Point, not {geom_type}"
+msgstr ""
+"Le type de géométrie du champ '{src}' est invalide. Il devrait être un "
+"Point, pas {geom_type}"
 
 #, python-brace-format
 msgid ""
