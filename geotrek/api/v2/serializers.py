@@ -61,6 +61,14 @@ class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
         auto_bbox = True
 
 
+class TimeStampedSerializer(serializers.ModelSerializer):
+    create_datetime = serializers.DateTimeField(source='date_insert')
+    update_datetime = serializers.DateTimeField(source='date_update')
+
+    class Meta:
+        fields = ('create_datetime', 'update_datetime')
+
+
 def override_serializer(format_output, base_serializer_class):
     """
     Override Serializer switch output format and dimension data
@@ -333,7 +341,7 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'advice', 'filter', 'name', 'pictogram')
 
 
-class HDViewPointSerializer(serializers.ModelSerializer):
+class HDViewPointSerializer(TimeStampedSerializer):
     geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
     picture_tiles_url = serializers.SerializerMethodField()
     thumbnail_url = serializers.SerializerMethodField()
@@ -344,8 +352,6 @@ class HDViewPointSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='label'
     )
-    create_datetime = serializers.DateTimeField(source='date_insert')
-    update_datetime = serializers.DateTimeField(source='date_update')
 
     def get_picture_tiles_url(self, obj):
         return build_url(self, obj.get_generic_picture_tile_url())
@@ -371,11 +377,11 @@ class HDViewPointSerializer(serializers.ModelSerializer):
             return {'uuid': related_obj.uuid, 'id': related_obj.id}
         return None
 
-    class Meta:
+    class Meta(TimeStampedSerializer.Meta):
         model = common_models.HDViewPoint
-        fields = (
-            'id', 'annotations', 'author', 'create_datetime', 'geometry', 'legend', 'license', 'picture_tiles_url',
-            'poi', 'title', 'site', 'trek', 'thumbnail_url', 'update_datetime', 'uuid'
+        fields = TimeStampedSerializer.Meta.fields + (
+            'id', 'annotations', 'author', 'geometry', 'legend', 'license', 'picture_tiles_url',
+            'poi', 'title', 'site', 'trek', 'thumbnail_url', 'uuid'
         )
 
 
@@ -427,11 +433,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             model = tourism_models.TouristicEventType
             fields = ('id', 'pictogram', 'type')
 
-    class TouristicModelSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
+    class TouristicModelSerializer(PDFSerializerMixin, DynamicFieldsMixin, TimeStampedSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         accessibility = serializers.SerializerMethodField()
-        create_datetime = serializers.DateTimeField(source='date_insert')
-        update_datetime = serializers.DateTimeField(source='date_update')
         external_id = serializers.CharField(source='eid')
         cities = serializers.SerializerMethodField()
         name = serializers.SerializerMethodField()
@@ -464,15 +468,15 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         types = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
 
-        class Meta:
+        class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicContent
-            fields = (
+            fields = TimeStampedSerializer.Meta.fields + (
                 'id', 'accessibility', 'attachments', 'approved', 'category', 'description',
                 'description_teaser', 'departure_city', 'geometry', 'label_accessibility',
-                'practical_info', 'url', 'cities', 'create_datetime',
+                'practical_info', 'url', 'cities',
                 'external_id', 'name', 'pdf', 'portal', 'provider', 'published',
                 'source', 'structure', 'themes',
-                'update_datetime', 'types', 'contact', 'email',
+                'types', 'contact', 'email',
                 'website', 'reservation_system', 'reservation_id', 'uuid'
             )
 
@@ -523,17 +527,17 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         def get_end_date(self, obj):
             return obj.end_date or obj.begin_date
 
-        class Meta:
+        class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicEvent
-            fields = (
+            fields = TimeStampedSerializer.Meta.fields + (
                 'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable',
                 'booking', 'cancellation_reason', 'cancelled', 'capacity', 'cities',
-                'contact', 'create_datetime', 'description', 'description_teaser', 'duration',
+                'contact', 'description', 'description_teaser', 'duration',
                 'email', 'end_date', 'end_time', 'external_id', 'geometry', 'meeting_point',
                 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'place',
                 'portal', 'practical_info', 'provider', 'published', 'source', 'speaker',
                 'start_time', 'structure', 'target_audience', 'themes', 'type',
-                'update_datetime', 'url', 'uuid', 'website'
+                'url', 'uuid', 'website'
             )
 
     class TouristicEventPlaceSerializer(serializers.ModelSerializer):
@@ -624,8 +628,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         arrival = serializers.SerializerMethodField()
         external_id = serializers.CharField(source='eid')
         second_external_id = serializers.CharField(source='eid2')
-        create_datetime = serializers.SerializerMethodField()
-        update_datetime = serializers.SerializerMethodField()
+        create_datetime = serializers.DateTimeField(source='topo_object.date_insert')
+        update_datetime = serializers.DateTimeField(source='topo_object.date_update')
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
         gear = serializers.SerializerMethodField()
@@ -652,12 +656,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)
-
-        def get_update_datetime(self, obj):
-            return obj.topo_object.date_update
-
-        def get_create_datetime(self, obj):
-            return obj.topo_object.date_insert
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
@@ -880,7 +878,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'name')
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-    class SensitiveAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class SensitiveAreaSerializer(DynamicFieldsMixin, TimeStampedSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
         name = serializers.SerializerMethodField()
         elevation = serializers.SerializerMethodField()
@@ -889,8 +887,6 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         practices = serializers.PrimaryKeyRelatedField(many=True, source='species.practices', read_only=True)
         info_url = serializers.URLField(source='species.url')
         structure = serializers.CharField(source='structure.name')
-        create_datetime = serializers.DateTimeField(source='date_insert')
-        update_datetime = serializers.DateTimeField(source='date_update')
         published = serializers.BooleanField()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         species_id = serializers.SerializerMethodField()
@@ -917,13 +913,13 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
             return build_url(self, url)
 
-        class Meta:
+        class Meta(TimeStampedSerializer.Meta):
             model = sensitivity_models.SensitiveArea
-            fields = (
-                'id', 'contact', 'create_datetime', 'description', 'elevation',
+            fields = TimeStampedSerializer.Meta.fields + (
+                'id', 'contact', 'description', 'elevation',
                 'geometry', 'info_url', 'kml_url', 'name', 'period',
                 'practices', 'published', 'species_id', 'provider', 'structure',
-                'update_datetime', 'url'
+                'url'
             )
 
     class BubbleSensitiveAreaSerializer(SensitiveAreaSerializer):
