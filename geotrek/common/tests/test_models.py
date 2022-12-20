@@ -60,7 +60,7 @@ class HDViewPointTestCase(TestCase):
     def setUpTestData(cls):
         structure = StructureFactory(name="MyStructure")
         cls.trek = TrekFactory(structure=structure)
-        cls.vp = HDViewPointFactory(content_object=cls.trek)
+        cls.vp = HDViewPointFactory(content_object=cls.trek, title='Panorama')
         cls.user = UserFactory()
         UserProfileFactory(structure=structure, user=cls.user)
 
@@ -74,9 +74,6 @@ class HDViewPointTestCase(TestCase):
             self.vp.get_generic_picture_tile_url(), f"/api/hdviewpoint/drf/hdviewpoints/{self.vp.pk}/tiles/{{z}}/{{x}}/{{y}}.png?source=vips"
         )
 
-    def test_icons(self):
-        self.assertIn('hdviewpoint-16.png', self.vp.icon_small)
-        self.assertIn('hdviewpoint-96.png', self.vp.icon_big)
-
-    def test_same_structure(self):
-        self.assertTrue(self.vp.same_structure(self.user))
+    def test_properties(self):
+        self.assertEqual(str(self.vp), 'Panorama')
+        self.assertIn('admin/', self.vp.get_list_url())

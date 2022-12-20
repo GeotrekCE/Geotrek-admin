@@ -1,10 +1,10 @@
 from django.urls import path, converters, register_converter
-from mapentity.registry import MapEntityOptions
+from geotrek.common.models import HDViewPoint
+from mapentity.registry import MapEntityOptions, registry
 from rest_framework.routers import DefaultRouter
 
-from .views import (HDViewPointAPIViewSet, HDViewPointAnnotate, HDViewPointCreate, HDViewPointDetail, HDViewPointUpdate, HDViewPointDelete,
-                    TiledHDViewPointViewSet, JSSettings, DocumentPublic, DocumentBookletPublic, import_view,
-                    import_update_json, ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect,
+from .views import (HDViewPointAnnotate, TiledHDViewPointViewSet, JSSettings, DocumentPublic, DocumentBookletPublic,
+                    import_view, import_update_json, ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect,
                     CheckExtentsView)
 
 
@@ -15,8 +15,6 @@ class LangConverter(converters.StringConverter):
 register_converter(LangConverter, 'lang')
 
 app_name = 'common'
-
-
 urlpatterns = [
     path('api/settings.json', JSSettings.as_view(), name='settings_json'),
     path('tools/extents/', CheckExtentsView.as_view(), name='check_extents'),
@@ -26,17 +24,12 @@ urlpatterns = [
     path('commands/syncview', sync_view, name='sync_randos_view'),
     path('commands/statesync/', sync_update_json, name='sync_randos_state'),
     path('api/<lang:lang>/themes.json', ThemeViewSet.as_view({'get': 'list'}), name="themes_json"),
-    path('hdviewpoint/add', HDViewPointCreate.as_view(), name="hdviewpoint_add"),
-    path('hdviewpoint/<int:pk>', HDViewPointDetail.as_view(), name="hdviewpoint_detail"),
-    path('hdviewpoint/edit/<int:pk>', HDViewPointUpdate.as_view(), name="hdviewpoint_change"),
-    path('hdviewpoint/delete/<int:pk>', HDViewPointDelete.as_view(), name="hdviewpoint_delete"),
     path('hdviewpoint/annotate/<int:pk>', HDViewPointAnnotate.as_view(), name="hdviewpoint_annotate"),
 ]
 
 rest_router = DefaultRouter(trailing_slash=False)
-rest_router.register(r'api/hdviewpoint/drf/hdviewpoints',
-                     HDViewPointAPIViewSet, basename="hdviewpoint-drf")
 rest_router.register(r'api/hdviewpoint/drf/hdviewpoints', TiledHDViewPointViewSet)
+urlpatterns += registry.register(HDViewPoint, menu=False)
 urlpatterns += rest_router.urls
 
 

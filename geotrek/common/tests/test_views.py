@@ -412,8 +412,8 @@ class HDViewPointViewTest(TestCase):
         cls.license = LicenseFactory()
         # Create user with proper permissions
         cls.user_perm = UserFactory.create()
-        read_perm = Permission.objects.get(codename="read_hdviewpoint")
         add_perm = Permission.objects.get(codename="add_hdviewpoint")
+        read_perm = Permission.objects.get(codename="read_hdviewpoint")
         update_perm = Permission.objects.get(codename="change_hdviewpoint")
         delete_perm = Permission.objects.get(codename="delete_hdviewpoint")
         cls.user_perm.user_permissions.add(add_perm, read_perm, update_perm, delete_perm)
@@ -470,7 +470,7 @@ class HDViewPointViewTest(TestCase):
             'geom': "SRID=2154;POINT(0 0)"
         }
         response = self.client.post(vp.get_update_url(), data)
-        self.assertRedirects(response, f"/hdviewpoint/{vp.pk}", status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+        self.assertRedirects(response, f"/hdviewpoint/{vp.pk}/", status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
         vp = HDViewPoint.objects.first()
         self.assertEqual(vp.legend, "Something else")
         self.assertEqual(vp.license, None)

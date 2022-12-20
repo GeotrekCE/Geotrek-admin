@@ -285,11 +285,6 @@ fieldset {
   visibility: visible;
   opacity: 1;
 }
-li.history.hdviewpoint > a,
-li.history.hdviewpoint button:first-child {
-    background: url(/static/images/hdviewpoint-16.png) no-repeat;
-    background-position: left center;
-}
 .form-actions {
   z-index: 1000;
 }

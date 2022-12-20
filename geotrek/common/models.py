@@ -3,7 +3,6 @@ import uuid
 
 from colorfield.fields import ColorField
 from django.conf import settings
-from django.contrib import auth
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models as gis_models
@@ -13,14 +12,17 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.http import urlencode
 from django.utils.translation import gettext_lazy as _
+from mapentity.models import MapEntityMixin
 from paperclip.models import Attachment as BaseAttachment
 from paperclip.models import FileType as BaseFileType
 from paperclip.models import License as BaseLicense
 from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
+
 from .managers import AccessibilityAttachmentManager
-from .mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
+from .mixins.models import (OptionalPictogramMixin, PictogramMixin,
+                            TimeStampedModelMixin)
 
 
 def attachment_accessibility_upload(instance, filename):
@@ -272,7 +274,7 @@ class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
         abstract = True
 
 
-class HDViewPoint(TimeStampedModelMixin):
+class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     picture = models.FileField(verbose_name=_("Picture"), upload_to="hdviewpoints/")
     geom = gis_models.PointField(verbose_name=_("Location"),
                                  srid=settings.SRID)
@@ -306,26 +308,8 @@ class HDViewPoint(TimeStampedModelMixin):
         return self.title
 
     @property
-    def structure(self):
-        return self.content_object.structure
-
-    def same_structure(self, user):
-        """ Returns True if the user is in the same structure or has
-            bypass_structure permission, False otherwise. """
-        return (user.profile.structure == self.structure
-                or user.is_superuser
-                or user.has_perm('authent.can_bypass_structure'))
-
-    @property
     def full_url(self):
         return reverse('common:hdviewpoint_detail', kwargs={'pk': self.pk})
-
-    def get_absolute_url(self):
-        return self.full_url
-
-    @classmethod
-    def get_add_url(cls):
-        return reverse('common:hdviewpoint_add')
 
     @classmethod
     def get_list_url(cls):
@@ -339,67 +323,9 @@ class HDViewPoint(TimeStampedModelMixin):
         url = self.get_picture_tile_url(0, 0, 0).replace("/0/0/0.png", "/{z}/{x}/{y}.png")
         return url
 
-    def get_layer_detail_url(self):
-        return reverse("{app_name}:{model_name}-drf-detail".format(app_name=self._meta.app_label.lower(),
-                                                                   model_name=self._meta.model_name.lower()),
-                       kwargs={"format": "geojson", "pk": self.pk})
-
-    def get_detail_url(self):
-        return reverse('common:hdviewpoint_detail', args=[self.pk])
-
     @property
     def thumbnail_url(self):
         return reverse('common:hdviewpoint-thumbnail', kwargs={'pk': self.pk, 'fmt': 'png'})
 
-    def get_update_url(self):
-        return reverse('common:hdviewpoint_change', args=[self.pk])
-
     def get_annotate_url(self):
         return reverse('common:hdviewpoint_annotate', args=[self.pk])
-
-    def get_delete_url(self):
-        return reverse('common:hdviewpoint_delete', args=[self.pk])
-
-    @classmethod
-    def get_permission_codename(cls, entity_kind):
-        operations = {
-            'update': 'change',
-            'update_geom': 'change_geom',
-            'detail': 'read',
-            'layer': 'read',
-            'list': 'read',
-            '-drf-list': 'read',
-            'markup': 'read',
-        }
-        perm = operations.get(entity_kind, entity_kind)
-        opts = cls._meta
-        appname = opts.app_label.lower()
-        return '%s.%s' % (appname, auth.get_permission_codename(perm, opts))
-
-    @classmethod
-    def get_content_type_id(cls):
-        return ContentType.objects.get_for_model(cls).pk
-
-    def get_geom(self):
-        return self.geom
-
-    def get_map_image_extent(self, srid=settings.API_SRID):
-        obj = self.geom
-        obj.transform(srid)
-        return obj.extent
-
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new HD view")
-
-    @property
-    def icon_small(self):
-        return 'images/hdviewpoint-16.png'
-
-    @property
-    def icon_big(self):
-        return 'images/hdviewpoint-96.png'
-
-    @property
-    def modelname(self):
-        return self._meta.model_name

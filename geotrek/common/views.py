@@ -10,18 +10,19 @@ import redis
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.gis.db.models.functions import Transform
 from django.contrib.admin.models import CHANGE, LogEntry
 from django.contrib.auth.decorators import (login_required,
                                             permission_required,
                                             user_passes_test)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.gis.db.models import Extent, GeometryField
+from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db.models.functions import Cast
-from django.http import JsonResponse, Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
@@ -29,12 +30,14 @@ from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
 from django.views.decorators.http import require_http_methods, require_POST
-from django.views.generic import RedirectView, TemplateView, View, UpdateView
+from django.views.generic import RedirectView, TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
+from geotrek.common.filters import HDViewPointFilterSet
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
+from mapentity.views import MapEntityList
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
 from rest_framework import mixins
@@ -44,22 +47,27 @@ from rest_framework import viewsets
 from geotrek import __version__
 from geotrek.celery import app as celery_app
 from geotrek.common.mixins.api import APIViewSet
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.parsers import SuricateParser
 
-from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm, HDViewPointForm,
-                    ImportDatasetForm, ImportDatasetFormWithFile,
-                    ImportSuricateForm, SyncRandoForm)
+from ..altimetry.models import Dem
+from ..core.models import Path
+from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
+                    HDViewPointForm, ImportDatasetForm,
+                    ImportDatasetFormWithFile, ImportSuricateForm,
+                    SyncRandoForm)
 from .mixins.views import (BookletMixin, CompletenessMixin,
                            DocumentPortalMixin, DocumentPublicMixin, MetaMixin)
 from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
 from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
 from .serializers import (HDViewPointAPIGeoJSONSerializer,
-                          HDViewPointAPISerializer, ThemeSerializer)
+                          HDViewPointAPISerializer,
+                          HDViewPointGeoJSONSerializer, HDViewPointSerializer,
+                          ThemeSerializer)
 from .tasks import import_datas, import_datas_from_web, launch_sync_rando
 from .utils import leaflet_bounds
-from .utils.import_celery import create_tmp_destination, discover_available_parsers
-from ..altimetry.models import Dem
-from ..core.models import Path
+from .utils.import_celery import (create_tmp_destination,
+                                  discover_available_parsers)
 
 
 class Meta(MetaMixin, TemplateView):
@@ -323,6 +331,25 @@ class ParametersView(View):
             'geotrek_admin_version': settings.VERSION,
         }
         return JsonResponse(response)
+
+
+class HDViewPointList(MapEntityList):
+    queryset = HDViewPoint.objects.all()
+    filterform = HDViewPointFilterSet
+    columns = ['id', 'title']
+
+
+class HDViewPointViewSet(GeotrekMapentityViewSet):
+    model = HDViewPoint
+    serializer_class = HDViewPointSerializer
+    geojson_serializer_class = HDViewPointGeoJSONSerializer
+    mapentity_list_class = HDViewPointList
+
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        if self.format_kwarg == 'geojson':
+            qs = qs.only('id', 'title')
+        return qs
 
 
 class HDViewPointAPIViewSet(APIViewSet):

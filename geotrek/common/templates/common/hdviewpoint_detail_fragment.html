@@ -51,7 +51,7 @@
                         </a>
                         {% if perms.common.change_hdviewpoint %}
                             &nbsp;
-                            <a href="{% url 'common:hdviewpoint_change' viewpoint.pk %}" class="update-action">
+                            <a href="{% url 'common:hdviewpoint_update' viewpoint.pk %}" class="update-action">
                                 {% trans "Update" %}
                             </a>
                         {% endif %} 

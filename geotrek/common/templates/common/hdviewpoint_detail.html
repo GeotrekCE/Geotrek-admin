@@ -4,17 +4,6 @@
 {% block head %}
   {% block title %}{{ object }} | {{ block.super }}{% endblock title %}
   {{ block.super }}
-  <style>
-      .list-panel.{{ object.modelname }},
-      .form-panel.{{ object.modelname }},
-      .details-panel.{{ object.modelname }} {
-          background-image: url({% static object.icon_big %});
-          background-position: left top -3%;
-      }
-      .nav-item.{{ object.modelname }} .btn-list {
-          background-image: url({% static object.icon_big %});
-      }
-</style>
 {% endblock head %}
 {% block mainpanel %}
 <div class="details-panel detail col-12 col-lg-7 {{ object.modelname }}">
