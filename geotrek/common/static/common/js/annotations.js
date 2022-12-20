@@ -240,6 +240,10 @@ function initAnnotationsWidget(map) {
             entry.attr({ id: '', 'annotation-id': id });
             entry.on('click', () => edit_label(entry));
             entry.find('.entry-name').text(annotation.name());
+            if (query.editing == id) {
+                entry.find('.entry-adjust').hide();
+                entry.find('.entry-validate').show();
+            }
             $('#annotationlist').append(entry);
         });
         $('#annotationheader').css(
@@ -304,9 +308,19 @@ function initAnnotationsWidget(map) {
             id = entry.attr('annotation-id'),
             annotation = layer.annotationById(id);
         switch (action) {
+            case 'validate':
+                layer.mode(null);
+                query.editing = undefined;
+                setQuery(query)
+                layer.draw();
+                handleAnnotationChange(evt);
+                break;
             case 'adjust':
                 layer.mode(layer.modes.edit, annotation);
+                query.editing = id;
+                setQuery(query)
                 layer.draw();
+                handleAnnotationChange(evt);
                 break;
             case 'remove':
                 layer.removeAnnotation(annotation);
