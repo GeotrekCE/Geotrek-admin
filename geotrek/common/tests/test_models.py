@@ -73,7 +73,10 @@ class HDViewPointTestCase(TestCase):
         self.assertEqual(
             self.vp.get_generic_picture_tile_url(), f"/api/hdviewpoint/drf/hdviewpoints/{self.vp.pk}/tiles/{{z}}/{{x}}/{{y}}.png?source=vips"
         )
+<<<<<<< HEAD
 
     def test_properties(self):
         self.assertEqual(str(self.vp), 'Panorama')
         self.assertIn('admin/', self.vp.get_list_url())
+=======
+>>>>>>> :recycle: Refactor HD Views using `MapEntityMixin`

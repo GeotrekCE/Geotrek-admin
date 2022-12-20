@@ -421,6 +421,7 @@ class HDViewPointViewTest(TestCase):
         cls.directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
         cls.files = [f for f in os.listdir(cls.directory)]
 
+<<<<<<< HEAD
     def test_crud_view(self):
         """
         Test CRUD rights and views for HD View Point object
@@ -485,6 +486,8 @@ class HDViewPointViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(HDViewPoint.objects.count(), 0)
 
+=======
+>>>>>>> :recycle: Refactor HD Views using `MapEntityMixin`
     def test_tiles_view(self):
         """
         Test access rights for HD View Point tile endpoint
@@ -527,11 +530,3 @@ class HDViewPointViewTest(TestCase):
         response = self.client.get(vp.get_annotate_url())
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'], HDViewPointAnnotationForm)
-
-    def test_API_viewset(self):
-        vp = HDViewPointFactory(content_object=self.trek)
-        qs = HDViewPointAPIViewSet().get_queryset()
-        transformed_geom = vp.geom.transform(settings.API_SRID, clone=True)
-        api_geom = qs.first().api_geom
-        self.assertAlmostEqual(api_geom.x, transformed_geom.x)
-        self.assertAlmostEqual(api_geom.y, transformed_geom.y)
