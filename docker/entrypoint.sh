@@ -7,6 +7,8 @@ mkdir -p /opt/geotrek-admin/var/static \
          /opt/geotrek-admin/var/media/upload \
          /opt/geotrek-admin/var/data \
          /opt/geotrek-admin/var/cache/sessions \
+         /opt/geotrek-admin/var/cache/api_v2 \
+         /opt/geotrek-admin/var/cache/fat \
          /opt/geotrek-admin/var/log \
          /opt/geotrek-admin/var/conf/extra_templates \
          /opt/geotrek-admin/var/conf/extra_locale \
