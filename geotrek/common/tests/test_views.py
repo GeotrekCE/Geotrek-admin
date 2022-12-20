@@ -421,7 +421,6 @@ class HDViewPointViewTest(TestCase):
         cls.directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
         cls.files = [f for f in os.listdir(cls.directory)]
 
-<<<<<<< HEAD
     def test_crud_view(self):
         """
         Test CRUD rights and views for HD View Point object
@@ -486,8 +485,6 @@ class HDViewPointViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(HDViewPoint.objects.count(), 0)
 
-=======
->>>>>>> :recycle: Refactor HD Views using `MapEntityMixin`
     def test_tiles_view(self):
         """
         Test access rights for HD View Point tile endpoint
