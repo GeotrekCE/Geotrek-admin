@@ -25,7 +25,7 @@ In preparation for HD Views developments (PR #3298)
 
 **Bug fixes**
 
-- Recreate cache folders if missing.
+- Recreate cache folders if missing. (#3384)
 
 2.94.0     (2022-12-12)
 -----------------------
