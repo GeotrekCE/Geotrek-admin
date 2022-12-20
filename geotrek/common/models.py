@@ -300,9 +300,6 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     class Meta:
         verbose_name = _("HD View")
         verbose_name_plural = _("HD Views")
-        permissions = (
-            ("read_hdviewpoint", "Can read hd view point"),
-        )
 
     def __str__(self):
         return self.title
