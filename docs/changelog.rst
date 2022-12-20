@@ -24,6 +24,11 @@ In preparation for HD Views developments (PR #3298)
 - Bump MapEntity to 8.3.0
 - Add libvips to dependencies
 
+**Improvments**
+
+- Update maximum request size in Nginx from 10M to 200M to allow uploading HD pictures (#3378)
+
+
 2.94.0     (2022-12-12)
 -----------------------
 
