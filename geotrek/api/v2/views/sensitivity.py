@@ -36,6 +36,7 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
             .filter(published=True) \
             .select_related('species', 'structure') \
             .prefetch_related('species__practices') \
+            .prefetch_related('labels') \
             .alias(geom_type=GeometryType(F('geom')))
         if 'bubble' in self.request.GET:
             queryset = queryset.annotate(geom_transformed=Transform(F('geom'), settings.API_SRID))
