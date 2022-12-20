@@ -21,7 +21,6 @@ from geotrek.api.v2.mixins import PDFSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
-from geotrek.common.serializers import LabelSerializer
 from geotrek.common.utils import simplify_coords
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
@@ -877,7 +876,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
                 'id', 'contact', 'create_datetime', 'description', 'elevation',
                 'geometry', 'info_url', 'kml_url', 'name', 'period',
                 'practices', 'published', 'species_id', 'provider', 'structure',
-                'update_datetime', 'url','labels'
+                'update_datetime', 'url', 'labels'
             )
 
     class BubbleSensitiveAreaSerializer(SensitiveAreaSerializer):
