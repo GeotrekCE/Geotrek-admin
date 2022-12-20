@@ -27,7 +27,6 @@ from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
-from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 from django.views import static
 from django.views.decorators.http import require_http_methods, require_POST

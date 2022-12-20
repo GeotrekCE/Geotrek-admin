@@ -26,7 +26,6 @@ from geotrek.common.tasks import import_datas, launch_sync_rando
 from geotrek.common.tests.factories import (HDViewPointFactory, LicenseFactory,
                                             TargetPortalFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.common.views import HDViewPointAPIViewSet
 from geotrek.core.models import Path
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
