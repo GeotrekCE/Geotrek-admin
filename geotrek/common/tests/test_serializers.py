@@ -1,9 +1,10 @@
 
-from geotrek.common import serializers
-from .factories import HDViewPointFactory
-from geotrek.trekking.tests.factories import TrekFactory
 from django.test import TestCase
+
 from geotrek.common.serializers import HDViewPointGeoJSONSerializer
+from geotrek.trekking.tests.factories import TrekFactory
+
+from .factories import HDViewPointFactory
 
 
 class HDViewPointSerializerTest(TestCase):

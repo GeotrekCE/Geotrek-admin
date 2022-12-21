@@ -14,7 +14,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-from geotrek.common.views import HDViewPointViewSet
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.views.generic import MapEntityList
 
