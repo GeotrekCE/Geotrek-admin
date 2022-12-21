@@ -14,6 +14,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from geotrek.common.views import HDViewPointViewSet
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.views.generic import MapEntityList
 
@@ -535,3 +536,11 @@ class HDViewPointViewTest(TestCase):
         api_geom = qs.first().api_geom
         self.assertAlmostEqual(api_geom.x, transformed_geom.x)
         self.assertAlmostEqual(api_geom.y, transformed_geom.y)
+
+    def test_viewset(self):
+        self.client.force_login(user=self.user_perm)
+        vp = HDViewPointFactory(content_object=self.trek)
+        response = self.client.get(reverse('common:hdviewpoint-drf-detail', kwargs={'pk': vp.pk, 'format': 'geojson'}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('id', response.json().get('properties'))
+        self.assertIn('title', response.json().get('properties'))
