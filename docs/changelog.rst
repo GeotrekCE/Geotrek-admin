@@ -22,12 +22,19 @@ Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3
 In preparation for HD Views developments (PR #3298)
 - Bump Python to 3.8
 - Bump MapEntity to 8.3.0
+- Bump Pillow to 9.3.0
+- Bump Celery to 5.2.1
+- Bump django-celery-results to 2.4.0
+- Bump django-clearcache to 1.2.1
 - Add libvips to dependencies
 
 **Improvments**
 
 - Update maximum request size in Nginx from 10M to 200M to allow uploading HD pictures (#3378)
 
+**Bug fixes**
+
+- Recreate cache folders if missing. (#3384)
 
 2.94.0     (2022-12-12)
 -----------------------
@@ -296,13 +303,6 @@ In preparation for HD Views developments (PR #3298)
   - django to 3.2.15
   - celery[redis] to 5.1.2
 
-**Warning**
-
-- You will need to delete your cache after this release upgrade.
-
-  - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
-  - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
-
 **Suricate Workflow**  (#2366)
 
 - Do not unlock reports when resolving them
@@ -427,11 +427,6 @@ In preparation for HD Views developments (PR #3298)
     - See documentation https://geotrek.readthedocs.io/en/latest/install/installation.html#ubuntu-bionic-postgis-2.5-upgrade)
 
 **Warning**
-
-- You need to delete cache after this release upgrade.
-
-  - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
-  - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
 
 - From now, Geotrek-admin is not installable on Ubuntu 18.04 bionic anymore. But upgrade are still available.
 - The default Nginx configuration template `has been improved <https://github.com/GeotrekCE/Geotrek-admin/commit/3d44447893037944f35cd4280e89021f693b3a1f>`_ to increase data loading performances. It is highly recommanded to apply changes to your Nginx configuration template (in ``/opt/geotrek-admin/var/conf/nginx.conf.in``).

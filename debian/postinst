@@ -48,6 +48,9 @@ fi
 mkdir -p /opt/geotrek-admin/var/conf/extra_static || true
 mkdir -p /opt/geotrek-admin/var/log || true
 mkdir -p /opt/geotrek-admin/var/media/upload || true
+mkdir -p /opt/geotrek-admin/var/cache/sessions || true
+mkdir -p /opt/geotrek-admin/var/cache/api_v2 || true
+mkdir -p /opt/geotrek-admin/var/cache/fat || true
 mkdir -p /opt/geotrek-admin/var/pid || true
 mkdir -p /opt/geotrek-admin/var/mobile || true
 chown -R geotrek.geotrek /opt/geotrek-admin/var || true
