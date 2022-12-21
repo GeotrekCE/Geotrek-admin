@@ -35,6 +35,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'HD View',
                 'verbose_name_plural': 'HD Views',
+                'permissions': (('read_hdviewpoint', 'Can read hd view point'),),
             },
         ),
     ]

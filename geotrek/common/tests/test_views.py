@@ -528,8 +528,7 @@ class HDViewPointViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'], HDViewPointAnnotationForm)
 
-    def test_viewset(self):
-        self.client.force_login(user=self.user_perm)
+    def test_API_viewset(self):
         vp = HDViewPointFactory(content_object=self.trek)
         qs = HDViewPointAPIViewSet().get_queryset()
         transformed_geom = vp.geom.transform(settings.API_SRID, clone=True)
