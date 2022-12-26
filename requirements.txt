@@ -345,7 +345,7 @@ wrapt==1.14.0
     # via deprecated
 xlrd==2.0.1
     # via geotrek (setup.py)
-xmltodict==0.12.0
+xmltodict==0.13.0
     # via tif2geojson
 zc-lockfile==2.0
     # via zodb
