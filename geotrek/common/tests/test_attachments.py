@@ -181,7 +181,8 @@ class UploadAddAttachmentTestCase(TestCase):
             'title': "A title",
             'legend': "A legend",
             'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
-            'info_accessibility': 'slope'
+            'info_accessibility': 'slope',
+            'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
         }
         return data
 
@@ -228,7 +229,8 @@ class UploadUpdateAttachmentTestCase(TestCase):
             'title': "A title",
             'legend': "A legend",
             'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
-            'info_accessibility': 'slope'
+            'info_accessibility': 'slope',
+            'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
         }
         return data
 
@@ -239,7 +241,8 @@ class UploadUpdateAttachmentTestCase(TestCase):
 
     def test_post_update_url(self):
         response = self.client.post(update_url_for_obj(self.attachment),
-                                    data=self.attachmentPostData())
+                                    data=self.attachmentPostData(),
+                                    )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
         self.attachment.refresh_from_db()
@@ -380,7 +383,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -395,8 +399,10 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': big_image,
                 'author': "newauthor",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
@@ -419,7 +425,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -438,8 +445,10 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
@@ -463,7 +472,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -482,8 +492,10 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
 
         self.assertEqual(response.status_code, 200)
@@ -504,7 +516,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': "file",
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
