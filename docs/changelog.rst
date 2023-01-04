@@ -37,6 +37,7 @@ In preparation for HD Views developments (PR #3298)
 - ApidaeTrekParser: import trek's contact info into description
 - New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
 - New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
+- Change default color of imported filelayer (#306)
 
 **Bug fixes**
 
