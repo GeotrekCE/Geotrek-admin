@@ -834,6 +834,8 @@ REST_FRAMEWORK = {
 
 ALLOW_PATH_DELETION_TOPOLOGY = True
 
+ENABLE_HD_VIEWS = True
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')

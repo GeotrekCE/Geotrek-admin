@@ -45,9 +45,12 @@
 {% block attachmentspanel %}
     {% include "trekking/ratio_info_fragment.html" %}
     {{ block.super }}
-    <br>
-    <br>
-    {% include "common/hdviewpoint_detail_fragment.html" %}
+    {% are_hdviews_enabled as are_hdviews_enabled %}
+    {% if are_hdviews_enabled %}
+        <br>
+        <br>
+        {% include "common/hdviewpoint_detail_fragment.html" %}
+    {% endif %}
 {% endblock attachmentspanel %}
 
 {% block detailspanel %}
