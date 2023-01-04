@@ -836,6 +836,31 @@ ALLOW_PATH_DELETION_TOPOLOGY = True
 
 ENABLE_HD_VIEWS = True
 
+PAPERCLIP_ALLOWED_EXTENSIONS = [
+    'jpeg',
+    'jpg',
+    'mp3',
+    'mp4',
+    'odt',
+    'pdf',
+    'png',
+    'svg',
+    'txt',
+    'gif',
+    'tif',
+    'docx',
+    'webp',
+    'bmp',
+    'flac',
+    'mpeg',
+    'doc',
+    'ods',
+    'gpx',
+    'xls',
+    'xlsx',
+    'odg',
+]
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
