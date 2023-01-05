@@ -438,15 +438,22 @@ class AddPropertyMixin:
         setattr(cls, '%s_verbose_name' % name, verbose_name)
 
 
+def get_uuid_duplication(uid_field):
+    return uuid.uuid4()
+
+
 class GeotrekMapEntityMixin(MapEntityMixin):
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication},
+        "avoid_fields": ["aggregations"],
+        "uuid": get_uuid_duplication,
+    }
+
     class Meta:
         abstract = True
 
     def duplicate(self, **kwargs):
-        elements_duplication = {"attachments": {"uuid": uuid.uuid4},
-                                "avoid_fields": ["aggregations"],
-                                "uuid": uuid.uuid4(),
-                                }
+        elements_duplication = self.elements_duplication.copy()
         if "name" in [field.name for field in self._meta.get_fields()]:
             elements_duplication['name'] = f"{self.name} (copy)"
         if "structure" in [field.name for field in self._meta.get_fields()]:

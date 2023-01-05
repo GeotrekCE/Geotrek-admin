@@ -11,7 +11,8 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, GeotrekMapEntityMixin
+from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,
+                                          GeotrekMapEntityMixin, get_uuid_duplication)
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
@@ -71,6 +72,10 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     objects = InterventionManager()
 
     geometry_types_allowed = ["LINESTRING", "POINT"]
+
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
 
     class Meta:
         verbose_name = _("Intervention")
@@ -413,6 +418,10 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     objects = ProjectManager()
+
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
 
     class Meta:
         verbose_name = _("Project")

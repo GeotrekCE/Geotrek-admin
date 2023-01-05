@@ -13,7 +13,7 @@ from django.utils.translation import pgettext_lazy, gettext_lazy as _
 from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin,
-                                          AddPropertyMixin, GeotrekMapEntityMixin)
+                                          AddPropertyMixin, GeotrekMapEntityMixin, get_uuid_duplication)
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.sensitivity.managers import SensitiveAreaManager
 from geotrek.core.models import simplify_coords
@@ -87,6 +87,10 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     objects = SensitiveAreaManager()
+
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
 
     class Meta:
         verbose_name = _("Sensitive area")

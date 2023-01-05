@@ -23,7 +23,7 @@ from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.models import AccessibilityAttachment
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
-    TimeStampedModelMixin, GeotrekMapEntityMixin
+    TimeStampedModelMixin, GeotrekMapEntityMixin, get_uuid_duplication
 from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 
@@ -480,7 +480,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     def duplicate(self, **kwargs):
         clone = super().duplicate(**kwargs)
         for attachment in AccessibilityAttachment.objects.filter(object_id=self.pk):
-            clone_attachment(attachment, 'attachment_file', {"content_object": clone, "uuid": uuid.uuid4})
+            clone_attachment(attachment, 'attachment_file', {"content_object": clone, "uuid": get_uuid_duplication})
         return clone
 
     @property
