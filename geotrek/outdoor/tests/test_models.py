@@ -2,7 +2,7 @@ import json
 
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.geos.collections import GeometryCollection
-from django.contrib.gis.geos.point import Point
+from django.contrib.gis.geos.point import Point, GEOSGeometry
 from django.test import TestCase, override_settings
 
 from geotrek.common.tests.factories import OrganismFactory
@@ -24,6 +24,16 @@ class SiteTest(TestCase):
         SiteFactory(name='child2', parent=parent, published_en=True)
         SiteFactory(name='child3', parent=parent, published_fr=True)
         self.assertQuerysetEqual(parent.published_children, ['<Site: child2>', '<Site: child3>'])
+
+    def test_validate_collection_geometrycollection(self):
+        site_simple = SiteFactory.create(name='site', description='LUL', geom='GEOMETRYCOLLECTION(POINT(0 0), POLYGON((1 1, 2 2, 1 2, 1 1))))')
+        self.assertEqual(site_simple.geom.wkt,
+                         GEOSGeometry('GEOMETRYCOLLECTION(POINT(0 0), POLYGON((1 1, 2 2, 1 2, 1 1)))').wkt
+                         )
+        site_complex_geom = SiteFactory.create(name='site', geom='GEOMETRYCOLLECTION(MULTIPOINT(0 0, 1 1), POLYGON((1 1, 2 2, 1 2, 1 1))))')
+        self.assertEqual(site_complex_geom.geom.wkt,
+                         GEOSGeometry('GEOMETRYCOLLECTION(POINT(0 0), POINT(1 1), POLYGON((1 1, 2 2, 1 2, 1 1)))').wkt
+                         )
 
 
 class SiteSuperTest(TestCase):

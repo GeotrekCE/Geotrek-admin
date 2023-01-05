@@ -2,10 +2,12 @@ import uuid
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import GEOSGeometry, GeometryCollection
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
 from django.db.models import Q
+from django.db import connection
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
@@ -298,6 +300,15 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         ]
         qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
         return Intervention.objects.existing().filter(qs).distinct('pk')
+
+    def save(self, *args, **kwargs):
+        with connection.cursor() as c:
+            c.callproc('ST_Dump', [self.geom.wkt])
+            geometries = []
+            for ids, geometry in c.fetchall():
+                geometries.append(GEOSGeometry(geometry, srid=settings.SRID))
+        self.geom = GeometryCollection(geometries, srid=settings.SRID)
+        return super().save(*args, **kwargs)
 
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
