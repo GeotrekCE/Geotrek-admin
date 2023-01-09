@@ -299,6 +299,10 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.refresh_from_db()
+
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Topology.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))

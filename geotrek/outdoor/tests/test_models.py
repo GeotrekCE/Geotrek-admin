@@ -28,20 +28,17 @@ class SiteTest(TestCase):
     def test_validate_collection_geometrycollection(self):
         site_simple = SiteFactory.create(name='site',
                                          geom='GEOMETRYCOLLECTION(POINT(0 0), POLYGON((1 1, 2 2, 1 2, 1 1))))')
-        site_simple.refresh_from_db()
         self.assertEqual(site_simple.geom.wkt,
                          GEOSGeometry('GEOMETRYCOLLECTION(POINT(0 0), POLYGON((1 1, 2 2, 1 2, 1 1)))').wkt
                          )
         site_complex_geom = SiteFactory.create(name='site',
                                                geom='GEOMETRYCOLLECTION(MULTIPOINT(0 0, 1 1), '
                                                     'POLYGON((1 1, 2 2, 1 2, 1 1))))')
-        site_complex_geom.refresh_from_db()
         self.assertEqual(site_complex_geom.geom.wkt,
                          GEOSGeometry('GEOMETRYCOLLECTION(POINT(0 0), POINT(1 1), POLYGON((1 1, 2 2, 1 2, 1 1)))').wkt
                          )
         site_multiple_point = SiteFactory.create(name='site',
                                                  geom='GEOMETRYCOLLECTION(POINT(0 0), POINT(1 1), POINT(1 2))')
-        site_multiple_point.refresh_from_db()
         self.assertEqual(site_multiple_point.geom.wkt,
                          GEOSGeometry('GEOMETRYCOLLECTION(POINT(0 0), POINT(1 1), POINT(1 2)))').wkt
                          )
@@ -50,7 +47,6 @@ class SiteTest(TestCase):
                                                                'GEOMETRYCOLLECTION(POINT(0 0)),'
                                                                'GEOMETRYCOLLECTION(POINT(1 1)), '
                                                                'GEOMETRYCOLLECTION(POINT(1 2)))')
-        site_multiple_geomcollection.refresh_from_db()
         self.assertEqual(site_multiple_geomcollection.geom.wkt,
                          'GEOMETRYCOLLECTION (POINT (0 0), POINT (1 1), POINT (1 2))')
 
