@@ -26,6 +26,8 @@ In preparation for HD Views developments (PR #3298)
 **Bug fixes**
 
 - Recreate cache folders if missing. (#3384)
+- Modify site's geometry before saving to avoid edition and export of shapefiles (#3399)
+
 
 2.94.0     (2022-12-12)
 -----------------------
