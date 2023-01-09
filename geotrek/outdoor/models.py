@@ -301,15 +301,6 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
-    def save(self, *args, **kwargs):
-        with connection.cursor() as c:
-            c.callproc('ST_Dump', [self.geom.wkt])
-            geometries = []
-            for ids, geometry in c.fetchall():
-                geometries.append(GEOSGeometry(geometry, srid=settings.SRID))
-        self.geom = GeometryCollection(geometries, srid=settings.SRID)
-        return super().save(*args, **kwargs)
-
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Topology.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
