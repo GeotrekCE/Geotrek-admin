@@ -17,5 +17,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(flatten_geometrycollection),
+        migrations.RunPython(flatten_geometrycollection, migrations.RunPython.noop),
     ]
