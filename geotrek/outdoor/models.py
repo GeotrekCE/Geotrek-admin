@@ -2,12 +2,10 @@ import uuid
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import GEOSGeometry, GeometryCollection
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
 from django.db.models import Q
-from django.db import connection
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
