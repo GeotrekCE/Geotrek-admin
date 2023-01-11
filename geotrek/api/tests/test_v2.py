@@ -13,6 +13,7 @@ from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
 from mapentity.tests.factories import SuperUserFactory
+from rest_framework.test import APITestCase
 
 from geotrek import __version__
 from geotrek.authent import models as authent_models
@@ -38,6 +39,7 @@ from geotrek.tourism import models as tourism_models
 from geotrek.tourism.tests import factories as tourism_factory
 from geotrek.trekking import models as trek_models
 from geotrek.trekking.tests import factories as trek_factory
+from geotrek.trekking.tests.factories import PracticeFactory
 from geotrek.zoning import models as zoning_models
 from geotrek.zoning.tests import factories as zoning_factory
 
@@ -4255,3 +4257,41 @@ class AltimetryCacheTests(BaseApiTest):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
         self.assertIn('image/svg+xml', response['Content-Type'])
+
+
+class GenericCacheTestCase(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice = PracticeFactory.create()
+
+    def test_cache_invalidates_along_x_forwarded_proto_header(self):
+        with self.assertNumQueries(2):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)))
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('http://'))
+
+        # after cache hit, query number is 1
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)))
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('http://'))
+
+        # we used custom header, cache is invalidate and url is now https
+        with self.assertNumQueries(2):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)),
+                                       HTTP_X_FORWARDED_PROTO='https')
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('https://'))
+
+        # cache is hit
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)),
+                                       HTTP_X_FORWARDED_PROTO='https')
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('https://'))
+
+        # first request is always cached
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)))
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('http://'))
