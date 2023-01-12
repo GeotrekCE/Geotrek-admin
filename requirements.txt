@@ -137,7 +137,7 @@ django-modeltranslation==0.17.5
     # via mapentity
 django-mptt==0.13.4
     # via geotrek (setup.py)
-django-tinymce==3.4.0
+django-tinymce==3.5.0
     # via mapentity
 django-weasyprint==1.1.0.post2
     # via
