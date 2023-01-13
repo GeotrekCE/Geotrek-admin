@@ -7,9 +7,12 @@ CHANGELOG
 
 **Warning**
 
-Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8:
+Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8 updates:
+
 ``apt-get install software-properties-common``
+
 ``add-apt-repository --yes ppa:deadsnakes/ppa``
+
 ``apt-get install python3.8``
 
 **Maintenance**
