@@ -43,7 +43,7 @@ from .factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFac
                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
-                        TrekWithSignagesFactory)
+                        TrekWithSignagesFactory, PracticeFactory)
 from ..models import POI, Trek, Service, OrderedTrekChild
 
 
@@ -499,6 +499,19 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
         for row in reader:
             self.assertEqual(row['Cities'], "Trifouilli, Refouilli")
             self.assertEqual(row['Districts'], self.district.name)
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_public_export_without_pictogram(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+        practice = PracticeFactory.create(pictogram=None)
+        obj = self.modelfactory.create(practice=practice)
+        response = self.client.get(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable',
+                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+        self.assertEqual(response.status_code, 200)
 
 
 class TrekViewsLiveTests(CommonLiveTest):
