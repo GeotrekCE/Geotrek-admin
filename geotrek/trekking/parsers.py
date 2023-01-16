@@ -1007,9 +1007,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         """Returns the duration in hours. The method expects one argument or the other, not both. If both arguments have
          non-zero values the method only considers `duration_in_minutes` and discards `duration_in_days`."""
         if duration_in_minutes:
-            return (Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01'))
+            return float((Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01')))
         elif duration_in_days:
-            return duration_in_days * 24
+            return float(duration_in_days * 24)
         else:
             return None
 
