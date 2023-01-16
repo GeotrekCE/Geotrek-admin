@@ -36,6 +36,11 @@ In preparation for HD Views developments (PR #3298)
 
 - Recreate cache folders if missing. (#3384)
 
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/3298/commits/f9c72d95c1fd7eee2dee26dc73a5927966a812bf) to allow uploading big images. It is highly recommanded to apply changes to your Nginx configuration template (in /opt/geotrek-admin/var/conf/nginx.conf.in).
+
+
 2.94.0     (2022-12-12)
 -----------------------
 
