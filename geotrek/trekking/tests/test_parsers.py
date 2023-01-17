@@ -1,5 +1,4 @@
 from datetime import date
-from decimal import Decimal
 import json
 import os
 from copy import copy
@@ -819,6 +818,17 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn('pas au format GPX', output_stdout.getvalue())
 
     @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_plan(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_no_plan_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('APIDAE Trek has no map defined', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
     def test_trek_linked_entities_are_imported(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get('a_trek.json')
 
@@ -1191,7 +1201,7 @@ class MakeDurationTests(SimpleTestCase):
         self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90, duration_in_days=0.5), 1.5)
 
     def test_it_rounds_output_to_two_decimal_places(self):
-        self.assertEqual(Decimal(ApidaeTrekParser._make_duration(duration_in_minutes=20)), Decimal('0.33'))
+        self.assertEqual(ApidaeTrekParser._make_duration(duration_in_minutes=20), 0.33)
 
 
 class TestApidaePOIParser(ApidaePOIParser):
