@@ -1,16 +1,23 @@
+import os
+
+from crispy_forms.helper import FormHelper
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models.functions import Transform
+from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.core.mail import send_mail
-from django.db.models import F, Value, CharField
+from django.db.models import CharField, F, Value
 from django.db.models.functions import Concat
 from django.urls.base import reverse
-from django.utils.translation import gettext as _, get_language
+from django.utils.translation import get_language
+from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
-from crispy_forms.helper import FormHelper
 from mapentity import views as mapentity_views
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from PIL import Image
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication)
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -21,9 +28,15 @@ from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.viewsets import GeotrekMapentityViewSet
-from . import models as feedback_models, serializers as feedback_serializers
+
+from . import models as feedback_models
+from . import serializers as feedback_serializers
 from .filters import ReportFilterSet, ReportNoEmailFilterSet
 from .forms import ReportForm
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
@@ -194,7 +207,7 @@ class ReportAPIViewSet(APIViewSet):
             username="feedback", defaults={"is_active": False}
         )
         for file in request._request.FILES.values():
-            Attachment.objects.create(
+            attachment = Attachment(
                 filetype=FileType.objects.get_or_create(type=settings.REPORT_FILETYPE)[
                     0
                 ],
@@ -203,6 +216,28 @@ class ReportAPIViewSet(APIViewSet):
                 creator=creator,
                 attachment_file=file,
             )
+            name, extension = os.path.splitext(file.name)
+            try:
+                attachment.full_clean()  # Check that file extension and mimetypes are allowed
+            except ValidationError:
+                logger.error(f"Invalid attachment {name}{extension} for report {response.data.get('id')}")
+            else:
+                try:
+                    # Reencode file to bitmap then back to jpeg lfor safety
+                    if not os.path.exists(f"{settings.TMP_DIR}/report_file/"):
+                        os.mkdir(f"{settings.TMP_DIR}/report_file/")
+                    tmp_bmp_path = os.path.join(f"{settings.TMP_DIR}/report_file/", f"{name}.bmp")
+                    tmp_jpeg_path = os.path.join(f"{settings.TMP_DIR}/report_file/", f"{name}.jpeg")
+                    Image.open(file).save(tmp_bmp_path)
+                    Image.open(tmp_bmp_path).save(tmp_jpeg_path)
+                    with open(tmp_jpeg_path, 'rb') as converted_file:
+                        attachment.attachment_file = File(converted_file, name=f"{name}.jpeg")
+                        attachment.save()
+                    os.remove(tmp_bmp_path)
+                    os.remove(tmp_jpeg_path)
+                except Exception:
+                    logger.error(f"Failed to convert attachment {name}{extension} for report {response.data.get('id')}")
+
         if settings.SEND_REPORT_ACK and response.status_code == 201:
             send_mail(
                 _("Geotrek : Signal a mistake"),
