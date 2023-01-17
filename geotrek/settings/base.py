@@ -847,6 +847,7 @@ PAPERCLIP_ALLOWED_EXTENSIONS = [
     'svg',
     'txt',
     'gif',
+    'tiff',
     'tif',
     'docx',
     'webp',
@@ -860,6 +861,11 @@ PAPERCLIP_ALLOWED_EXTENSIONS = [
     'xlsx',
     'odg',
 ]
+PAPERCLIP_EXTRA_ALLOWED_MIMETYPES = {
+    'bmp': ['image/bmp'],
+    'gpx': ['text/xml'],
+    'webp': ['image/webp']
+}
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
