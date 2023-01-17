@@ -869,6 +869,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         plans = list(filter(lambda item: item['type'] == 'PLAN', items))
         if len(plans) > 1:
             raise RowImportError("APIDAE Trek has more than one map defined")
+        if len(plans) == 0:
+            raise RowImportError("APIDAE Trek has no map defined")
         return plans[0]
 
     @staticmethod
