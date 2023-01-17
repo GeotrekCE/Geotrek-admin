@@ -252,9 +252,12 @@ class Parser:
         val = val or ""
         modified = False
         old_values = {}
+        # We keep every old values for each langs to get tracability during filter or apply filter
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
             old_values[lang] = getattr(self.obj, dst_field_lang)
+        # If during filter, the traduction of the field has been changed
+        # we can still check if this value has been changed
         if hasattr(self, 'filter_{0}'.format(dst)):
             val_default_language = getattr(self, 'filter_{0}'.format(dst))(src, val)
         else:
@@ -266,9 +269,10 @@ class Parser:
             old_value = old_values[lang]
             # Field not translated, use same val for all translated
             val_default_language = val_default_language or ""
+            # Set val_default_language only if new empty
             if not new_value:
                 # If there is no new value check if old value is different form the default value
-                # Set dst_field_lang only if new empty
+                # If this is the same, it means old value was empty and was fill with default value in previous import
                 if old_value != val_default_language:
                     self.set_value(dst_field_lang, src, val_default_language)
                     modified = True
