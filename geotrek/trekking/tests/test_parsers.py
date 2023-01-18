@@ -652,6 +652,11 @@ def make_dummy_apidae_get(parser_class, test_data_dir, data_filename):
                 with open(filename, 'r') as f:
                     geodata = f.read()
                 rv.content = bytes(geodata, 'utf-8')
+            elif extension == 'kmz':
+                filename = os.path.join(test_data_dir, url_path.lstrip('/'))
+                with open(filename, 'rb') as f:
+                    geodata = f.read()
+                rv.content = geodata
         return rv
 
     return dummy_get
@@ -839,6 +844,17 @@ class ApidaeTrekParserTests(TestCase):
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_kml(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get('trek_with_kml_trace.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.geom.srid, 2154)
+        self.assertEqual(len(trek.geom.coords), 61)
+
+    @mock.patch('requests.get')
+    def test_trek_geometry_can_be_imported_from_kmz(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('trek_with_kmz_trace.json')
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 

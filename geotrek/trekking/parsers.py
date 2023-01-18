@@ -1,9 +1,11 @@
 from datetime import date, timedelta
 from decimal import Decimal
+import io
 import json
 from collections import defaultdict
 import re
 from tempfile import NamedTemporaryFile
+import zipfile
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
@@ -619,7 +621,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         return str(val)
 
     def filter_geom(self, src, val):
-        supported_extensions = ['gpx', 'kml']
+        supported_extensions = ['gpx', 'kml', 'kmz']
         plan = self._find_first_plan_with_supported_file_extension(val, supported_extensions)
         geom_file = self._fetch_geometry_file(plan)
 
@@ -628,6 +630,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             return ApidaeTrekParser._get_geom_from_gpx(geom_file)
         elif ext == 'kml':
             return ApidaeTrekParser._get_geom_from_kml(geom_file)
+        elif ext == 'kmz':
+            kml_file = zipfile.ZipFile(io.BytesIO(geom_file)).read('doc.kml')
+            return ApidaeTrekParser._get_geom_from_kml(kml_file)
 
     def filter_labels(self, src, val):
         typologies, environnements = val
