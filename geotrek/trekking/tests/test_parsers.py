@@ -870,6 +870,17 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn('APIDAE Trek has no map defined', output_stdout.getvalue())
 
     @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_multimedia_attachments(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_no_multimedia_attachments_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('missing required field \'multimedias\'', output_stdout.getvalue().lower())
+
+    @mock.patch('requests.get')
     def test_trek_linked_entities_are_imported(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get('a_trek.json')
 

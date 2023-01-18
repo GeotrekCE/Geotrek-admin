@@ -460,7 +460,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 'ALLER_ITINERANCE': 'Traversée',
             }
         },
-        'accessibilities': {'create': True}
+        'accessibilities': {'create': True},
+        'geom': {'required': True},
     }
     non_fields = {
         'attachments': 'illustrations'
