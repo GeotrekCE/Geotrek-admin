@@ -920,7 +920,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 for t in types:
                     if g.geom_type.name.startswith(t):
                         return g
-            return None
+            raise RowImportError('The attached KML geometry does not have any LineString or MultiLineString data')
 
         with NamedTemporaryFile(mode='w+b', dir=settings.TMP_DIR) as ntf:
             ntf.write(data)

@@ -23,7 +23,7 @@ from geotrek.trekking.tests.factories import RouteFactory
 from geotrek.trekking.models import POI, POIType, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
     TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser,
-    ApidaePOIParser, _prepare_attachment_from_apidae_illustration
+    ApidaePOIParser, _prepare_attachment_from_apidae_illustration, RowImportError
 )
 
 
@@ -1247,6 +1247,12 @@ class KmlToGeomTests(SimpleTestCase):
         first_point = geom.coords[0]
         self.assertAlmostEqual(first_point[0], 973160.8, delta=0.1)
         self.assertAlmostEqual(first_point[1], 6529320.1, delta=0.1)
+
+    def test_it_raises_exception_when_no_linear_data(self):
+        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_line.kml')
+
+        with self.assertRaises(RowImportError):
+            ApidaeTrekParser._get_geom_from_kml(kml)
 
 
 class GetPracticeNameFromActivities(SimpleTestCase):
