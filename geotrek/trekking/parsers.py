@@ -870,17 +870,16 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 
     @staticmethod
     def _find_first_plan_with_supported_file_extension(items, supported_extensions):
-        plans = list(
-            filter(
-                lambda item: item['type'] == 'PLAN' and item['traductionFichiers'][0]['extension'] in supported_extensions,
-                items)
-        )
+        plans = [item for item in items if item['type'] == 'PLAN']
         if not plans:
+            raise RowImportError('The trek from APIDAE has no attachment with the type "PLAN"')
+        supported_plans = [plan for plan in plans if plan['traductionFichiers'][0]['extension'] in supported_extensions]
+        if not supported_plans:
             raise RowImportError(
-                "The trek from APIDAE has no plan in a supported format. "
+                "The trek from APIDAE has no attached \"PLAN\" in a supported format. "
                 f"Supported formats are : {', '.join(supported_extensions)}"
             )
-        return plans[0]
+        return supported_plans[0]
 
     @staticmethod
     def _get_geom_from_gpx(data):

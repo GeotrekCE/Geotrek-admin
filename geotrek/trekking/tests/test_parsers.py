@@ -856,7 +856,18 @@ class ApidaeTrekParserTests(TestCase):
                      stdout=output_stdout)
 
         self.assertEqual(Trek.objects.count(), 0)
-        self.assertIn('has no plan in a supported format', output_stdout.getvalue())
+        self.assertIn('has no attached "PLAN" in a supported format', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_plan_attached(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_no_plan_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('no attachment with the type "PLAN"', output_stdout.getvalue())
 
     @mock.patch('requests.get')
     def test_trek_not_imported_when_no_plan(self, mocked_get):
@@ -867,7 +878,7 @@ class ApidaeTrekParserTests(TestCase):
                      stdout=output_stdout)
 
         self.assertEqual(Trek.objects.count(), 0)
-        self.assertIn('APIDAE Trek has no map defined', output_stdout.getvalue())
+        self.assertIn('has no attachment with the type "PLAN"', output_stdout.getvalue())
 
     @mock.patch('requests.get')
     def test_trek_not_imported_when_no_multimedia_attachments(self, mocked_get):
