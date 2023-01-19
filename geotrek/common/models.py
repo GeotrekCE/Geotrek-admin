@@ -1,4 +1,6 @@
 import os
+import random
+import string
 import uuid
 
 from colorfield.fields import ColorField
@@ -16,6 +18,7 @@ from mapentity.models import MapEntityMixin
 from paperclip.models import Attachment as BaseAttachment
 from paperclip.models import FileType as BaseFileType
 from paperclip.models import License as BaseLicense
+from paperclip.validators import FileMimetypeValidator
 from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
@@ -28,11 +31,15 @@ from .mixins.models import (OptionalPictogramMixin, PictogramMixin,
 def attachment_accessibility_upload(instance, filename):
     """Stores the attachment in a "per module/appname/primary key" folder"""
     name, ext = os.path.splitext(filename)
-    renamed = slugify(instance.title or name) + ext
-    return 'attachments_accessibility/%s/%s/%s' % (
+    randomized = ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
+    subfolder = '%s/%s/' % (
         '%s_%s' % (instance.content_object._meta.app_label,
                    instance.content_object._meta.model_name),
-        instance.content_object.pk,
+        instance.content_object.pk)
+    max_filename_size = instance._meta.get_field('attachment_accessibility_file').max_length - len('attachments_accessibility/') - len(randomized) - len(subfolder) - len(ext) - 1
+    renamed = slugify(instance.title or name)[:max_filename_size] + "-" + randomized + ext
+    return 'attachments_accessibility/%s/%s' % (
+        subfolder,
         renamed)
 
 
@@ -58,7 +65,7 @@ class AccessibilityAttachment(models.Model):
 
     attachment_accessibility_file = models.ImageField(_('Image'), blank=True,
                                                       upload_to=attachment_accessibility_upload,
-                                                      max_length=512, null=False)
+                                                      max_length=512, null=False, validators=[FileMimetypeValidator()])
     info_accessibility = models.CharField(verbose_name=_("Information accessibility"),
                                           max_length=7,
                                           choices=InfoAccessibilityChoices.choices,

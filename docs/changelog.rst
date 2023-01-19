@@ -131,6 +131,11 @@ In preparation for HD Views developments (PR #3298)
 - Disable scroll propagation on layers list to avoid zoom changes on map (#2687)
 
 
+**Security**
+
+- Add safety checks on uploaded files
+
+
 2.94.0     (2022-12-12)
 -----------------------
 
