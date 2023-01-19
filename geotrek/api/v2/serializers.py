@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import json
 
 from django.conf import settings
@@ -618,8 +619,29 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
 
+        def replace_src_absolute(self, data):
+            soup = BeautifulSoup(data, features="lxml")
+            imgs = soup.find_all('img')
+            for img in imgs:
+                if img.attrs['src'][0] == '/':
+                    img['src'] = f'{self.context.get("request").build_absolute_uri("/")}{img.attrs["src"]}'
+
         def get_description(self, obj):
-            return get_translation_or_dict('description', self, obj)
+            lang = self.context.get('request').GET.get('language', 'all') if self.context.get('request') else 'all'
+
+            if lang != 'all':
+                data = getattr(obj, '{}_{}'.format('description', lang))
+                if data:
+                    self.replace_src_absolute(data)
+            else:
+                data = {}
+                for language in settings.MODELTRANSLATION_LANGUAGES:
+                    data_lang = getattr(obj, '{}_{}'.format('description', language), )
+                    if data_lang:
+                        self.replace_src_absolute(data_lang)
+                    data.update({language: data_lang})
+
+            return data
 
         def get_access(self, obj):
             return get_translation_or_dict('access', self, obj)

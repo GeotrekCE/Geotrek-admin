@@ -42,6 +42,7 @@ In preparation for HD Views developments (PR #3298)
 - Fix ApidaeParsers does not update every time
 - Add fixtures licenses initial install
 - Fix default conf nginx for mobile
+- Replace image's relative URLs with absolute URLs in API v2 trek descriptions (#3321)
 
 
 2.94.0     (2022-12-12)
