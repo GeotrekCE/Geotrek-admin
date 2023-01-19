@@ -5,6 +5,10 @@ CHANGELOG
 2.94.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- Add blade type on signage detail view (#3325)
+
 **Warning**
 
 Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8 updates:
