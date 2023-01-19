@@ -276,6 +276,9 @@ class Parser:
                 if old_value != val_default_language:
                     self.set_value(dst_field_lang, src, val_default_language)
                     modified = True
+            if new_value != old_value:
+                modified = True
+
         return modified
 
     def parse_field(self, row, dst, src, updated, non_field):
