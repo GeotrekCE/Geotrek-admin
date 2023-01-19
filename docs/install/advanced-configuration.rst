@@ -815,7 +815,7 @@ These corresponding height/width parameters can be overriden to select resized i
     PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
 
 
-Prohibits usage of big pictures and small width / height
+Prohibit usage of big pictures and small width / height
 --------------------------------------------------------
 
 If you want to prohibit the usage of heavy pictures :
@@ -832,7 +832,56 @@ If you want to prohibit the usage of small pictures in pixels :
     PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
     PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
 
-These 3 settings will not also allow downloading images from the parsers
+These 3 settings will also not allow downloading images from the parsers.
+
+
+Prohibit usage of certain file types
+--------------------------------------------------------
+
+Paperclip will only accept attachment files matching a list of allowed extensions.
+Here is the default value for this setting, which you can extend if needed :
+
+::
+
+    PAPERCLIP_ALLOWED_EXTENSIONS = [
+        'jpeg',
+        'jpg',
+        'mp3',
+        'mp4',
+        'odt',
+        'pdf',
+        'png',
+        'svg',
+        'txt',
+        'gif',
+        'tiff',
+        'tif',
+        'docx',
+        'webp',
+        'bmp',
+        'flac',
+        'mpeg',
+        'doc',
+        'ods',
+        'gpx',
+        'xls',
+        'xlsx',
+        'odg',
+    ]
+
+It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax :
+
+::
+
+    PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
+
+You can also entirely deactivate these checks with the following :
+
+::
+
+    PAPERCLIP_ALLOWED_EXTENSIONS = None
+
+These 2 settings will also not allow downloading images from the parsers.
 
 
 Share services between several Geotrek instances
