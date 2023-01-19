@@ -664,6 +664,13 @@ class TestApidaeTrekParser(ApidaeTrekParser):
     selection_id = 654321
 
 
+class TestApidaeTrekSameValueDefaultLanguageDifferentTranslationParser(TestApidaeTrekParser):
+    def filter_description(self, src, val):
+        description = super().filter_description(src, val)
+        self.set_value('description_fr', src, "FOOBAR")
+        return description
+
+
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class ApidaeTrekParserTests(TestCase):
 
@@ -781,6 +788,39 @@ class ApidaeTrekParserTests(TestCase):
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 
         self.assertEqual(Attachment.objects.count(), 0)
+
+    @mock.patch('requests.get')
+    def test_trek_import_multiple_time(self, mocked_get):
+        RouteFactory(route='Boucle')
+        mocked_get.side_effect = self.make_dummy_get('a_trek.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        old_description_en = trek.description_en
+        old_description = trek.description
+        description_fr = (
+            '<p>Départ : du parking de la Chapelle Saint Michel </p>'
+            '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
+            '<p>2/ Au carrefour tourner à droite et suivre la rivière</p>'
+            '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
+            '<p>Ouvert toute l\'année</p>'
+            '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
+            '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
+            '<p>Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.</p>'
+            '<p><strong>Site web (URL):</strong>https://example.com/ma_rando.html<br>'
+            '<strong>Téléphone:</strong>01 23 45 67 89<br>'
+            '<strong>Mél:</strong>accueil-rando@example.com<br>'
+            '<strong>Signaux de fumée:</strong>1 gros nuage suivi de 2 petits</p>'
+        )
+        self.assertEqual(trek.description_fr, description_fr)
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekSameValueDefaultLanguageDifferentTranslationParser',
+                     verbosity=0)
+        trek.refresh_from_db()
+        self.assertEqual(trek.description_fr, 'FOOBAR')
+        self.assertEqual(old_description_en, trek.description_en)
+        self.assertEqual(old_description, trek.description)
 
     @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
