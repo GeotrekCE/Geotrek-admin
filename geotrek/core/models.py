@@ -486,17 +486,16 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
             select={'ordering': ordering}, order_by=('ordering',))
         return queryset
 
-    def mutate(self, other, delete=True):
+    def mutate(self, other):
         """
         Take alls attributes of the other topology specified and
         save them into this one. Optionnally deletes the other.
         """
         self.offset = other.offset
         self.save(update_fields=['offset'])
-        if delete:
-            PathAggregation.objects.filter(topo_object=self).delete()
-            # The previous operation has put deleted = True (in triggers)
-            # and NULL in geom (see update_geometry_of_topology:: IF t_count = 0)
+        PathAggregation.objects.filter(topo_object=self).delete()
+        # The previous operation has put deleted = True (in triggers)
+        # and NULL in geom (see update_geometry_of_topology:: IF t_count = 0)
         self.deleted = False
         self.geom = other.geom
         self.save(update_fields=['deleted', 'geom'])
