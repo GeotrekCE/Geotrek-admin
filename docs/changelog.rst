@@ -41,6 +41,7 @@ In preparation for HD Views developments (PR #3298)
 - Check pictogram exist on categories during generation of pdfs
 - Fix ApidaeParsers does not update every time
 - Add fixtures licenses initial install
+- Fix default conf nginx for mobile
 
 
 2.94.0     (2022-12-12)
