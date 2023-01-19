@@ -35,6 +35,7 @@ In preparation for HD Views developments (PR #3298)
 
 **Bug fixes**
 
+- Fix loaddem command update other types of geometry
 - Recreate cache folders if missing. (#3384)
 - Modify site's geometry before saving to avoid edition and export of shapefiles (#3399)
 - Fix API V2 cache key with X-Forwarded-Proto header (#3404)
