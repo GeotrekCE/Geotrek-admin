@@ -461,4 +461,6 @@ class GeotrekMapEntityMixin(MapEntityMixin):
             if request:
                 elements_duplication['structure'] = request.user.profile.structure
         clone = super(MapEntityMixin, self).duplicate(**elements_duplication)
+        if hasattr(clone, 'mutate'):
+            clone.mutate(self)
         return clone
