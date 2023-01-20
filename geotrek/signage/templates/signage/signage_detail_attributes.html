@@ -76,6 +76,7 @@
             {% if object.order_blades %}
                 <tr>
                     <th>{% trans "Code" %}</th>
+                    <th>{% trans "Type" %}</th>
                     <th>{% trans "Color" %}</th>
                     {% if not is_direction_on_lines_enabled %}
                         <th>{% trans "Direction" %}</th>
@@ -95,6 +96,7 @@
                 <tr {% if blade.order_lines.all|length > 1 %}class="dashed-line"{% endif %}>
                     {% if not is_direction_on_lines_enabled %}
                         <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
+                        <td>{{ blade.type|default_if_none:"" }}</td>
                         <td>{{ blade.color|default_if_none:"" }}</td>
                         <td>{{ blade.direction }}</td>
                         <td>{{ blade.condition|default_if_none:"" }}</td>
@@ -111,6 +113,7 @@
                         {% endfor %}
                     {% else %}
                         <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
+                        <td>{{ blade.type|default_if_none:"" }}</td>
                         <td>{{ blade.color|default_if_none:"" }}</td>
                         <td>{{ blade.condition|default_if_none:"" }}</td>
                         {% for line in blade.order_lines.all %}
