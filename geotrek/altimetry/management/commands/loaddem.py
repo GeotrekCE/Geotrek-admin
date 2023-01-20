@@ -9,7 +9,8 @@ import os.path
 from subprocess import call, PIPE
 import tempfile
 
-from geotrek.altimetry.models import Dem
+from geotrek.altimetry.models import AltimetryMixin, Dem
+from geotrek.core.models import Topology
 
 
 class Command(BaseCommand):
@@ -110,9 +111,12 @@ class Command(BaseCommand):
             if verbose:
                 self.stdout.write('Updating 3d geometries.\n')
             for model in apps.get_models():
-                if 'geom' in [field.name for field in model._meta.get_fields()]:
-                    model.objects.all().update(geom=F('geom'))
-
+                if 'geom' in [field.name for field in model._meta.get_fields()] and issubclass(model, AltimetryMixin):
+                    if settings.TREKKING_TOPOLOGY_ENABLED:
+                        if not issubclass(model, Topology):
+                            model.objects.all().update(geom=F('geom'))
+                    else:
+                        model.objects.all().update(geom=F('geom'))
         return
 
     def call_command_system(self, cmd, **kwargs):
