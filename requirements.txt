@@ -341,7 +341,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-wrapt==1.14.0
+wrapt==1.14.1
     # via deprecated
 xlrd==2.0.1
     # via geotrek (setup.py)
