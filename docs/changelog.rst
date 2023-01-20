@@ -5,6 +5,10 @@ CHANGELOG
 2.94.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Add possibility to duplicate objects with geometries
+
 **Minor improvements**
 
 - Add blade type on signage detail view (#3325)
@@ -266,6 +270,7 @@ In preparation for HD Views developments (PR #3298)
 **New features**
 
 - Add new setting `DIRECTION_ON_LINES_ENABLED` to have the `direction` field on lines instead of blades
+
 
 2.87.2 (2022-09-23)
 -----------------------

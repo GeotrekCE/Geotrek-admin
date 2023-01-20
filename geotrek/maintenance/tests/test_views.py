@@ -24,7 +24,7 @@ from geotrek.core.tests.factories import StakeFactory
 from geotrek.core.models import PathAggregation
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.maintenance.models import Intervention, InterventionStatus, Project
+from geotrek.maintenance.models import Funding, Intervention, InterventionStatus, ManDay, Project
 from geotrek.maintenance.views import InterventionFormatList, ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
@@ -437,6 +437,10 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(Intervention.objects.first().geom, path.geom)
         self.assertEqual(Intervention.objects.first().target.kind, 'INTERVENTION')
 
+    def test_duplicate(self):
+        super().test_duplicate()
+        self.assertEqual(ManDay.objects.count(), 2)
+
 
 class ProjectViewsTest(CommonTest):
     model = Project
@@ -559,6 +563,10 @@ class ProjectViewsTest(CommonTest):
         response = self.client.get(project.get_detail_url())
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, intervention.name)
+
+    def test_duplicate(self):
+        super().test_duplicate()
+        self.assertEqual(Funding.objects.count(), 2)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

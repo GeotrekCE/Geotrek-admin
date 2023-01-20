@@ -388,7 +388,7 @@ class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer)
 
 class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='name_display')
-    type = serializers.CharField(source='name_display')
+    type = serializers.CharField(source='type_display')
 
     class Meta:
         model = trekking_models.Service
