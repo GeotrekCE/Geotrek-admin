@@ -341,7 +341,10 @@ class BaseApiTest(TestCase):
             reservation_system=cls.reservation_system,
             practice=cls.practice,
             difficulty=cls.difficulty,
-            accessibility_level=cls.accessibility_level
+            accessibility_level=cls.accessibility_level,
+            description='<p>Description</p>'
+                        '<img src="/media/upload/steep_descent.svg" alt="Descent">'
+                        '<img src="https://testserver/media/upload/pedestre.svg" alt="" width="1848" height="1848">'
         )
         cls.parent.accessibilities.add(cls.accessibility)
         cls.parent.source.add(cls.source)
