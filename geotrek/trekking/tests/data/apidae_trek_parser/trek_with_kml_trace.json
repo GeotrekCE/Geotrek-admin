@@ -5,17 +5,17 @@
       "id": 123123,
       "multimedias": [
         {
-          "type": "DOCUMENT",
+          "type": "PLAN",
           "traductionFichiers": [
             {
-              "url": "https://example.net/some_document.pdf",
-              "extension": "pdf"
+              "url": "https://example.net/trace.kml",
+              "extension": "kml"
             }
           ]
         }
       ],
       "nom": {
-        "libelleFr": "Une belle randonnée de test mais sans plan"
+        "libelleFr": "Une belle randonnée de test avec un plan au format KML"
       }
     }
   ]
