@@ -678,6 +678,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 
     def filter_difficulty(self, src, val):
         types_clientele = val
+        difficulty_level = None
         for tc in types_clientele:
             if tc['id'] in self.types_clientele_ids_as_difficulty_levels:
                 difficulty_level = tc
