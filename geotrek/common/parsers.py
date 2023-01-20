@@ -2,9 +2,12 @@ from io import BytesIO
 import importlib
 import json
 import os
+from pathlib import PurePath
 import re
 import requests
 import logging
+import magic
+import mimetypes
 from requests.auth import HTTPBasicAuth
 import textwrap
 import xlrd
@@ -31,7 +34,7 @@ from django.utils import translation
 from django.utils.translation import gettext as _
 from django.utils.encoding import force_str
 from django.conf import settings
-from paperclip.models import attachment_upload
+from paperclip.models import attachment_upload, random_suffix_regexp
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment, License
@@ -729,11 +732,10 @@ class AttachmentParserMixin:
     def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
         found = False
         for attachment in attachments_to_delete:
-            upload_name, ext = os.path.splitext(attachment_upload(attachment, kwargs.get('name')))
+            upload_name, ext = os.path.splitext(attachment_upload(attachment, kwargs.get('name'), randomized=False))
             existing_name = attachment.attachment_file.name
-            if re.search(r"^{name}(_[a-zA-Z0-9]{{7}})?{ext}$".format(
-                    name=upload_name, ext=ext), existing_name
-            ) and not self.has_size_changed(kwargs.get('url'), attachment):
+            regexp = f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
+            if re.search(r"^{regexp}$".format(regexp=regexp), existing_name) and not self.has_size_changed(kwargs.get('url'), attachment):
                 found = True
                 attachments_to_delete.remove(attachment)
                 if (
@@ -769,6 +771,28 @@ class AttachmentParserMixin:
                     logger.warning(
                         _(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not tall enough"))
                     return False, updated
+                if settings.PAPERCLIP_ALLOWED_EXTENSIONS is not None:
+                    extension = PurePath(url).suffix.lower().strip('.')
+                    if extension not in settings.PAPERCLIP_ALLOWED_EXTENSIONS:
+                        logger.warning(
+                            _(
+                                f"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj.pk}"
+                                f"File type “{extension}” is not allowed. "
+                            )
+                        )
+                        return False, updated
+                    f.seek(0)
+                    file_mimetype = magic.from_buffer(f.read(), mime=True)
+                    file_mimetype_allowed = f".{extension}" in mimetypes.guess_all_extensions(file_mimetype)
+                    file_mimetype_allowed = file_mimetype_allowed or settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension) and file_mimetype in settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension)
+                    if not file_mimetype_allowed:
+                        logger.warning(
+                            _(
+                                f"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj.pk}"
+                                f"File mime type {file_mimetype} is not allowed for {extension}."
+                            )
+                        )
+                        return False, updated
             except UnidentifiedImageError:
                 pass
             attachment.attachment_file.save(name, f, save=False)
