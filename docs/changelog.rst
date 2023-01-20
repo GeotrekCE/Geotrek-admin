@@ -29,7 +29,7 @@ In preparation for HD Views developments (PR #3298)
 
 - Bump Python to 3.8
 
-- Bump MapEntity to 8.3.0
+- Bump MapEntity to 8.4.0
 
 - Bump Pillow to 9.3.0
 
@@ -57,6 +57,7 @@ In preparation for HD Views developments (PR #3298)
 - Add fixtures licenses initial install
 - Fix default conf nginx for mobile
 - Replace image's relative URLs with absolute URLs in API v2 trek descriptions (#3321)
+- Disable scroll propagation on layers list to avoid zoom changes on map (#2687)
 
 
 2.94.0     (2022-12-12)
