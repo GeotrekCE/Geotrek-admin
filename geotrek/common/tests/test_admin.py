@@ -34,8 +34,12 @@ class AttachmentAdminTest(TestCase):
         list_url = reverse('admin:common_attachment_changelist')
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'img1.png')
-        self.assertContains(response, 'img2.png')
+        self.assertIn('img1', self.picture.filename)
+        self.assertIn('.png', self.picture.filename)
+        self.assertIn('img2', self.picture_2.filename)
+        self.assertIn('.png', self.picture_2.filename)
+        self.assertContains(response, self.picture.filename)
+        self.assertContains(response, self.picture_2.filename)
         self.assertContains(response, self.poi.get_detail_url())
         self.assertContains(response, self.trek.get_detail_url())
         self.assertContains(response, self.theme.pk)
@@ -48,8 +52,8 @@ class AttachmentAdminTest(TestCase):
 
         response = self.client.get(list_url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'img1.png')
-        self.assertNotContains(response, 'img2.png')
+        self.assertContains(response, self.picture.filename)
+        self.assertNotContains(response, self.picture_2.filename)
 
     def test_attachment_can_be_change(self):
         change_url = reverse('admin:common_attachment_change', args=[self.picture.pk])

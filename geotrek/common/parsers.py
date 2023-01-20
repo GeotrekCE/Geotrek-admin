@@ -758,38 +758,38 @@ class AttachmentParserMixin:
                 return False, updated
             f = ContentFile(content)
             if settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < f.size:
-                logger.warning(
+                self.add_warning(
                     _(f'{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is too large'))
                 return False, updated
             try:
                 image = Image.open(BytesIO(content))
                 if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > image.width:
-                    logger.warning(
+                    self.add_warning(
                         _(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not wide enough"))
                     return False, updated
                 if settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > image.height:
-                    logger.warning(
+                    self.add_warning(
                         _(f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not tall enough"))
                     return False, updated
                 if settings.PAPERCLIP_ALLOWED_EXTENSIONS is not None:
                     extension = PurePath(url).suffix.lower().strip('.')
                     if extension not in settings.PAPERCLIP_ALLOWED_EXTENSIONS:
-                        logger.warning(
+                        self.add_warning(
                             _(
-                                f"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj.pk}"
-                                f"File type “{extension}” is not allowed. "
+                                f"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj.pk}: "
+                                f"File type '{extension}' is not allowed. "
                             )
                         )
                         return False, updated
                     f.seek(0)
                     file_mimetype = magic.from_buffer(f.read(), mime=True)
                     file_mimetype_allowed = f".{extension}" in mimetypes.guess_all_extensions(file_mimetype)
-                    file_mimetype_allowed = file_mimetype_allowed or settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension) and file_mimetype in settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension)
+                    file_mimetype_allowed = file_mimetype_allowed or settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension, False) and file_mimetype in settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension)
                     if not file_mimetype_allowed:
-                        logger.warning(
+                        self.add_warning(
                             _(
-                                f"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj.pk}"
-                                f"File mime type {file_mimetype} is not allowed for {extension}."
+                                f"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj.pk}: "
+                                f"File mime type '{file_mimetype}' is not allowed for {extension}."
                             )
                         )
                         return False, updated

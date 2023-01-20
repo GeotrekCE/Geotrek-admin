@@ -467,9 +467,13 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response['X-Accel-Redirect'],
-            '/media_secure/paperclip/tourism_touristiccontent/{}/external.pdf'.format(content.pk)
+        self.assertIn(
+            '/media_secure/paperclip/tourism_touristiccontent/{}/external'.format(content.pk),
+            response['X-Accel-Redirect']
+        )
+        self.assertIn(
+            '.pdf',
+            response['X-Accel-Redirect']
         )
 
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)

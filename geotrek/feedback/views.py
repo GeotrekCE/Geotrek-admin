@@ -219,8 +219,8 @@ class ReportAPIViewSet(APIViewSet):
             name, extension = os.path.splitext(file.name)
             try:
                 attachment.full_clean()  # Check that file extension and mimetypes are allowed
-            except ValidationError:
-                logger.error(f"Invalid attachment {name}{extension} for report {response.data.get('id')}")
+            except ValidationError as e:
+                logger.error(f"Invalid attachment {name}{extension} for report {response.data.get('id')} :" + str(e))
             else:
                 try:
                     # Reencode file to bitmap then back to jpeg lfor safety

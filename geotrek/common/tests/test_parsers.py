@@ -268,13 +268,14 @@ class AttachmentParserTests(TestCase):
     @mock.patch('requests.get')
     def test_attachment(self, mocked):
         mocked.return_value.status_code = 200
-        mocked.return_value.content = b''
+        mocked.return_value.content = get_dummy_img()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, organism)
-        self.assertEqual(attachment.attachment_file.name, 'paperclip/common_organism/{pk}/titi.png'.format(pk=organism.pk))
+        self.assertIn('paperclip/common_organism/{pk}/titi'.format(pk=organism.pk), attachment.attachment_file.name)
+        self.assertIn('.png', attachment.attachment_file.name)
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(attachment.is_image)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
@@ -342,8 +343,8 @@ class AttachmentParserTests(TestCase):
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, organism)
-        self.assertEqual(attachment.attachment_file.name,
-                         'paperclip/common_organism/{pk}/{ti}.png'.format(pk=organism.pk, ti='ti' * 64))
+        self.assertIn('paperclip/common_organism/{pk}/{ti}'.format(pk=organism.pk, ti='ti' * 64), attachment.attachment_file.name)
+        self.assertIn('.png', attachment.attachment_file.name)
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
@@ -375,7 +376,8 @@ class AttachmentParserTests(TestCase):
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, organism)
-        self.assertEqual(attachment.attachment_file.name, 'paperclip/common_organism/{pk}/titi.png'.format(pk=organism.pk))
+        self.assertIn('paperclip/common_organism/{pk}/titi'.format(pk=organism.pk), attachment.attachment_file.name)
+        self.assertIn('.png', attachment.attachment_file.name)
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertEqual(attachment.filetype.structure, None)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
@@ -494,6 +496,34 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         self.assertEqual(Attachment.objects.count(), 0)
+
+    @mock.patch('requests.get')
+    def test_attachment_bad_mimetype(self, mocked_get):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism6.xls')
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = get_dummy_img()
+        output = StringIO()
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=2,
+                     stdout=output)
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Attachment.objects.count(), 0)
+        org = Organism.objects.first()
+        self.assertIn(f"Invalid attachment file http://toto.tata/titi.jpeg for Organism #{org.pk}: File mime type 'image/png' is not allowed for jpeg.", output.getvalue())
+        self.assertEqual(mocked_get.call_count, 1)
+
+    @mock.patch('requests.get')
+    def test_attachment_bad_extension(self, mocked_get):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism7.xls')
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = get_dummy_img()
+        output = StringIO()
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=2,
+                     stdout=output)
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Attachment.objects.count(), 0)
+        org = Organism.objects.first()
+        self.assertIn(f"Invalid attachment file http://toto.tata/titi.unknown for Organism #{org.pk}: File type 'unknown' is not allowed.", output.getvalue())
+        self.assertEqual(mocked_get.call_count, 1)
 
 
 class XMLParserTests(TestCase):

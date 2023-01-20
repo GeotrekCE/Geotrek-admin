@@ -180,7 +180,7 @@ class UploadAddAttachmentTestCase(TestCase):
             'creator': self.user,
             'title': "A title",
             'legend': "A legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
             'info_accessibility': 'slope',
             'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
         }
@@ -228,7 +228,7 @@ class UploadUpdateAttachmentTestCase(TestCase):
             'creator': self.user,
             'title': "A title",
             'legend': "A legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
             'info_accessibility': 'slope',
             'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
         }
@@ -507,13 +507,12 @@ class ReduceSaveSettingsTestCase(TestCase):
         self.client.force_login(self.superuser)
         attachment = AttachmentAccessibilityFactory.create(content_object=self.object)
         os.remove(attachment.attachment_accessibility_file.path)
-
         response = self.client.post(
             update_url_for_obj(attachment),
             data={
                 'creator': self.superuser,
                 'title': "A title",
-                'attachment_accessibility_file': "file",
+                'attachment_accessibility_file': get_dummy_uploaded_image("title.png"),
                 'author': "newauthor",
                 'legend': "A legend",
                 'info_accessibility': 'slope',
