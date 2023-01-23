@@ -237,11 +237,10 @@ class GeotrekPOIFilter(BaseFilterBackend):
     def get_pois_to_filter_outdoor_objects(self, model, elems):
         list_pois = POI.objects.none()
         objects_outdoor = model.objects.filter(pk__in=elems.split(','))
-        pois_excluded = [poi for poi in objects_outdoor.values_list('pois_excluded', flat=True) if poi is not None]
         collected_geom = objects_outdoor.aggregate(collected_geom=Collect('geom'))['collected_geom']
         if collected_geom:
             list_pois = POI.objects.existing().filter(geom__dwithin=(collected_geom, settings.OUTDOOR_INTERSECTION_MARGIN))\
-                .exclude(pk__in=pois_excluded)
+                .exclude(pk__in=objects_outdoor.values_list('pois_excluded', flat=True).filter(pois_excluded__isnull=False))
         return list_pois.distinct()
 
     def get_schema_fields(self, view):
