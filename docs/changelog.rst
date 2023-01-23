@@ -5,6 +5,9 @@ CHANGELOG
 2.95.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix intervention datatable list if one intervention has no target
 
 
 2.95.0     (2023-01-24)
