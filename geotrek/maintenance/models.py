@@ -121,14 +121,16 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     @property
     def target_display(self):
-        icon = 'path'
-        title = _('Paths')
-        if not self.target._meta.model_name == "topology":
-            icon = self.target._meta.model_name
-            title = self.target.name_display
-        return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
-                                                      icon,
-                                                      title)
+        if self.target:
+            icon = 'path'
+            title = _('Paths')
+            if not self.target._meta.model_name == "topology":
+                icon = self.target._meta.model_name
+                title = self.target.name_display
+            return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
+                                                          icon,
+                                                          title)
+        return '-'
 
     @property
     def target_csv_display(self):

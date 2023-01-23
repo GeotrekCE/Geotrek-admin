@@ -28,6 +28,7 @@ In preparation for HD Views developments (PR #3298)
 - Recreate cache folders if missing. (#3384)
 - Modify site's geometry before saving to avoid edition and export of shapefiles (#3399)
 - Fix API V2 cache key with X-Forwarded-Proto header (#3404)
+- Fix error on intervention list if no target defined
 
 
 2.94.0     (2022-12-12)
