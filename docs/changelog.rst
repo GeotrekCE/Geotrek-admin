@@ -53,6 +53,7 @@ In preparation for HD Views developments (PR #3298)
 - Modify site's geometry before saving to avoid edition and export of shapefiles (#3399)
 - Fix API V2 cache key with X-Forwarded-Proto header (#3404)
 - Check pictogram exist on categories during generation of pdfs
+- Prevent "Internal Error" on API v2 when wrong url parameter is provided on courses and sites filter for pois
 - Fix ApidaeParsers does not update every time
 - Add fixtures licenses initial install
 - Fix default conf nginx for mobile

@@ -314,12 +314,16 @@ class BaseApiTest(TestCase):
         cls.network = trek_factory.TrekNetworkFactory()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
+            poi_excluded = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
         else:
             cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
+            poi_excluded = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
+        cls.treks[0].pois_excluded.add(poi_excluded)
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
         cls.site = outdoor_factory.SiteFactory(managers=[cls.organism])
+        cls.site.pois_excluded.add(poi_excluded)
         cls.label_accessibility = tourism_factory.LabelAccessibilityFactory()
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         cls.content2.category = cls.category
@@ -386,6 +390,7 @@ class BaseApiTest(TestCase):
             type=cls.coursetype,
             points_reference=MultiPoint(Point(12, 12))
         )
+        cls.course.pois_excluded.add(poi_excluded)
         cls.course.parent_sites.set([cls.site])
         # create a reference point for distance filter (in 4326, Cahors city)
         cls.reference_point = Point(x=1.4388656616210938,
@@ -1584,7 +1589,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             len(json_response.get('results')),
-            trek_models.POI.objects.all().count()
+            trek_models.POI.objects.all().count() - 1  # 1 excluded POI
         )
         obj.pois_excluded.add(self.poi)
         obj.save()
@@ -1595,7 +1600,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             len(json_response.get('results')),
-            trek_models.POI.objects.all().count() - 1
+            trek_models.POI.objects.all().count() - 2  # 1 excluded POI
         )
 
     def test_poi_list_filter_trek(self):

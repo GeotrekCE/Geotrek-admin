@@ -6,6 +6,7 @@ from coreapi.document import Field
 from django.conf import settings
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
+from django.contrib.gis.db.models import Collect
 from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter
 from django_filters import rest_framework as filters
@@ -235,11 +236,11 @@ class GeotrekPOIFilter(BaseFilterBackend):
 
     def get_pois_to_filter_outdoor_objects(self, model, elems):
         list_pois = POI.objects.none()
-        for obj in elems.split(','):
-            o = model.objects.get(pk=obj)
-            tmp = POI.outdoor_all_pois(o)
-            tmp = tmp.exclude(pk__in=o.pois_excluded.all())
-            list_pois |= tmp
+        objects_outdoor = model.objects.filter(pk__in=elems.split(','))
+        collected_geom = objects_outdoor.aggregate(collected_geom=Collect('geom'))['collected_geom']
+        if collected_geom:
+            list_pois = POI.objects.existing().filter(geom__dwithin=(collected_geom, settings.OUTDOOR_INTERSECTION_MARGIN))\
+                .exclude(pk__in=objects_outdoor.values_list('pois_excluded', flat=True).filter(pois_excluded__isnull=False))
         return list_pois.distinct()
 
     def get_schema_fields(self, view):
