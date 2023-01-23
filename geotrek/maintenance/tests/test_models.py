@@ -247,3 +247,7 @@ class InterventionTest(TestCase):
         ManDayFactory(nb_days=3, job=job, intervention=interv)
         interv.jobs.add(job)
         self.assertEqual(interv.jobs_display, f'{interv.jobs.first().job}, Worker')
+
+    def test_target_display_none(self):
+        infra = InterventionFactory.create(target=None, target_id=None, target_type=None)
+        self.assertEqual(infra.target_display, '-')
