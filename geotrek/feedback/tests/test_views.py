@@ -332,7 +332,7 @@ class CreateReportsAPITest(BaseAPITest):
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
         report = feedback_models.Report.objects.get(pk=new_report_id)
         self.assertEqual(report.comment, "We have a problem")
-        mock_logger.error.assert_called_with(f"Invalid attachment dummy_file.odt for report {new_report_id}")
+        mock_logger.error.assert_called_with(f"Invalid attachment dummy_file.odt for report {new_report_id} : {{\'attachment_file\': ['File mime type “text/plain” is not allowed for “odt”.']}}")
         self.assertEqual(report.attachments.count(), 0)
 
 
