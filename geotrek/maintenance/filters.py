@@ -7,7 +7,6 @@ from django_filters import ChoiceFilter, MultipleChoiceFilter
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
 from geotrek.altimetry.filters import AltimetryPointFilterSet
-from geotrek.core.models import Topology
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import OptionalRangeFilter, RightFilter
 from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDistrict,
@@ -45,7 +44,7 @@ class PolygonInterventionFilterMixin:
             elements_in_bbox = []
             for value in values:
                 elements_in_bbox.extend(model.objects.filter(**{'geom__%s' % self.lookup_expr: self.get_geom(value)}).values_list('id',
-                                                                                                                        flat=True))
+                                                                                                                                  flat=True))
             if 'geotrek.outdoor' in settings.INSTALLED_APPS and issubclass(model, Site) or issubclass(model, Course):
                 interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
                     target_id__in=model.objects.values_list('id', flat=True)
@@ -176,7 +175,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     city = ProjectIntersectionFilterCity(label=_('City'), lookup_expr='intersects', required=False)
     district = ProjectIntersectionFilterDistrict(label=_('District'), lookup_expr='intersects', required=False)
     area_type = ProjectIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), lookup_expr='intersects', required=False)
-    area = ProjectIntersectionFilterRestrictedArea(label=_('Restricted area'),lookup_expr='intersects',  required=False)
+    area = ProjectIntersectionFilterRestrictedArea(label=_('Restricted area'), lookup_expr='intersects', required=False)
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
