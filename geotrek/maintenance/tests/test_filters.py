@@ -304,6 +304,14 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                                                geom=GeometryCollection(Point(5, 5), srid=settings.SRID))
         cls.intervention_course_in_2 = InterventionFactory.create(target=cls.course_in_2)
 
+        course_deleted = CourseFactory.create(geom=GeometryCollection(Point(1, 1), srid=settings.SRID))
+        cls.intervention_course_deleted = InterventionFactory.create(target=course_deleted)
+        course_deleted.delete()
+
+        site_deleted = SiteFactory.create(geom=GeometryCollection(Point(1, 1), srid=settings.SRID))
+        cls.intervention_site_deleted = InterventionFactory.create(target=site_deleted)
+        site_deleted.delete()
+
         cls.blade_in_1 = BladeFactory.create(signage=signage_in_1)
         cls.intervention_blade_in_1 = InterventionFactory.create(target=cls.blade_in_1)
 
@@ -325,8 +333,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                             {self.intervention_topology_in_1,
                              self.intervention_site_in_1,
                              self.intervention_course_in_1,
-                             self.intervention_blade_in_1})
-        self.assertEqual(len(filter.qs), 4)
+                             self.intervention_blade_in_1,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 6)
 
     def test_filter_in_2_city(self):
         """
@@ -339,8 +349,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                             {self.intervention_topology_in_2,
                              self.intervention_site_in_2,
                              self.intervention_course_in_2,
-                             self.intervention_blade_in_2})
-        self.assertEqual(len(filter.qs), 4)
+                             self.intervention_blade_in_2,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 6)
 
     def test_filter_in_1_and_2_city(self):
         """
@@ -358,8 +370,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                              self.intervention_topology_in_1,
                              self.intervention_site_in_1,
                              self.intervention_course_in_1,
-                             self.intervention_blade_in_1})
-        self.assertEqual(len(filter.qs), 8)
+                             self.intervention_blade_in_1,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 10)
 
     def test_filter_out_city(self):
         """
@@ -367,7 +381,7 @@ class InterventionIntersectionFilterZoningTest(TestCase):
         """
         filter = InterventionFilterSet(data={'city': [CityFactory.create(geom=self.geom_out)]})
         self.assertTrue(filter.is_valid())
-        self.assertEqual(len(filter.qs), 0)
+        self.assertEqual(len(filter.qs), 2)
 
     def test_filter_in_1_district(self):
         """
@@ -380,8 +394,11 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                             {self.intervention_topology_in_1,
                              self.intervention_site_in_1,
                              self.intervention_course_in_1,
-                             self.intervention_blade_in_1})
-        self.assertEqual(len(filter.qs), 4)
+                             self.intervention_blade_in_1,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted
+                             })
+        self.assertEqual(len(filter.qs), 6)
 
     def test_filter_in_2_district(self):
         """
@@ -394,8 +411,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                             {self.intervention_topology_in_2,
                              self.intervention_site_in_2,
                              self.intervention_course_in_2,
-                             self.intervention_blade_in_2})
-        self.assertEqual(len(filter.qs), 4)
+                             self.intervention_blade_in_2,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 6)
 
     def test_filter_in_1_and_2_district(self):
         """
@@ -413,8 +432,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                              self.intervention_topology_in_1,
                              self.intervention_site_in_1,
                              self.intervention_course_in_1,
-                             self.intervention_blade_in_1})
-        self.assertEqual(len(filter.qs), 8)
+                             self.intervention_blade_in_1,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 10)
 
     def test_filter_out_district(self):
         """
@@ -422,7 +443,7 @@ class InterventionIntersectionFilterZoningTest(TestCase):
         """
         filter = InterventionFilterSet(data={'district': [DistrictFactory.create(geom=self.geom_out)]})
         self.assertTrue(filter.is_valid())
-        self.assertEqual(len(filter.qs), 0)
+        self.assertEqual(len(filter.qs), 2)
 
     def test_filter_in_1_restricted_area(self):
         """
@@ -434,8 +455,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                             {self.intervention_topology_in_1,
                              self.intervention_site_in_1,
                              self.intervention_course_in_1,
-                             self.intervention_blade_in_1})
-        self.assertEqual(len(filter.qs), 4)
+                             self.intervention_blade_in_1,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 6)
 
     def test_filter_in_2_restricted_area(self):
         """
@@ -448,8 +471,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                             {self.intervention_topology_in_2,
                              self.intervention_site_in_2,
                              self.intervention_course_in_2,
-                             self.intervention_blade_in_2})
-        self.assertEqual(len(filter.qs), 4)
+                             self.intervention_blade_in_2,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 6)
 
     def test_filter_in_1_and_2_restricted_area(self):
         """
@@ -467,8 +492,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                              self.intervention_topology_in_1,
                              self.intervention_site_in_1,
                              self.intervention_course_in_1,
-                             self.intervention_blade_in_1})
-        self.assertEqual(len(filter.qs), 8)
+                             self.intervention_blade_in_1,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 10)
 
     def test_filter_out_restricted_area(self):
         """
@@ -476,7 +503,7 @@ class InterventionIntersectionFilterZoningTest(TestCase):
         """
         filter = InterventionFilterSet(data={'area': [RestrictedAreaFactory.create(geom=self.geom_out)]})
         self.assertTrue(filter.is_valid())
-        self.assertEqual(len(filter.qs), 0)
+        self.assertEqual(len(filter.qs), 2)
 
     def test_filter_in_1_restricted_area_type(self):
         """
@@ -491,8 +518,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                             {self.intervention_topology_in_1,
                              self.intervention_site_in_1,
                              self.intervention_course_in_1,
-                             self.intervention_blade_in_1})
-        self.assertEqual(len(filter.qs), 4)
+                             self.intervention_blade_in_1,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 6)
 
     def test_filter_in_2_restricted_area_type(self):
         """
@@ -507,8 +536,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                             {self.intervention_topology_in_2,
                              self.intervention_site_in_2,
                              self.intervention_course_in_2,
-                             self.intervention_blade_in_2})
-        self.assertEqual(len(filter.qs), 4)
+                             self.intervention_blade_in_2,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 6)
 
     def test_filter_in_1_and_in_2_restricted_area_type(self):
         """
@@ -531,8 +562,10 @@ class InterventionIntersectionFilterZoningTest(TestCase):
                              self.intervention_topology_in_1,
                              self.intervention_site_in_1,
                              self.intervention_course_in_1,
-                             self.intervention_blade_in_1})
-        self.assertEqual(len(filter.qs), 8)
+                             self.intervention_blade_in_1,
+                             self.intervention_site_deleted,
+                             self.intervention_course_deleted})
+        self.assertEqual(len(filter.qs), 10)
 
     def test_filter_out_restricted_area_type(self):
         """
@@ -542,7 +575,7 @@ class InterventionIntersectionFilterZoningTest(TestCase):
         RestrictedAreaFactory.create(geom=self.geom_out, area_type=restricted_area_type)
         filter = InterventionFilterSet(data={'area_type': [restricted_area_type.pk]})
         self.assertTrue(filter.is_valid())
-        self.assertEqual(len(filter.qs), 0)
+        self.assertEqual(len(filter.qs), 2)
 
     def test_filter_restricted_area_type_without_restricted_area(self):
         """
