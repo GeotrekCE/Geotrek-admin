@@ -42,10 +42,12 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     apt-get install -y --no-install-recommends postgis && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
-COPY requirements.txt requirements.txt
 RUN python3 -m venv /opt/venv
 RUN /opt/venv/bin/pip install -U pip setuptools wheel
+COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
+COPY requirements-dev.txt requirements-dev.txt
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements-dev.txt -U
 
 COPY geotrek/ geotrek/
 COPY manage.py manage.py
