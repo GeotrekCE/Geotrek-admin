@@ -9,6 +9,7 @@ from mapentity.filters import PolygonFilter, PythonPolygonFilter
 from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import OptionalRangeFilter, RightFilter
+from geotrek.feedback.models import Report
 from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDistrict,
                                     IntersectionFilterRestrictedArea, IntersectionFilterRestrictedAreaType,
                                     ZoningFilterSet)
@@ -43,12 +44,16 @@ class PolygonInterventionFilterMixin:
             model = ContentType.objects.get(pk=target_type).model_class()
             elements_in_bbox = []
             for value in values:
-                elements_in_bbox.extend(model.objects.filter(**{'geom__%s' % self.lookup_expr: self.get_geom(value)}).values_list('id',
-                                                                                                                                  flat=True))
+                elements_in_bbox.extend(
+                    model.objects.filter(**{'geom__%s' % self.lookup_expr: self.get_geom(value)}).values_list('id', flat=True)
+                )
             if 'geotrek.outdoor' in settings.INSTALLED_APPS and issubclass(model, Site) or issubclass(model, Course):
                 interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
                     target_id__in=model.objects.values_list('id', flat=True)
                 ))
+            if 'geotrek.feedback' in settings.INSTALLED_APPS and issubclass(model, Report):
+                interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
+                    target_id__in=model.objects.values_list('id', flat=True)))
             if 'geotrek.signage' in settings.INSTALLED_APPS and issubclass(model, Topology) or issubclass(model, Signage):
                 signages = elements_in_bbox
             interventions += qs.values_list('id', flat=True).filter(target_type=target_type,
@@ -61,7 +66,7 @@ class PolygonInterventionFilterMixin:
                                                                          target_type=blade_content_type).values_list('id',
                                                                                                                      flat=True)
             interventions.extend(blades_intervention)
-        qs = qs.filter(pk__in=interventions)
+        qs = qs.filter(pk__in=interventions).existing()
         return qs
 
 

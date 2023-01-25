@@ -37,6 +37,10 @@ CREATE TRIGGER maintenance_topology_interventions_d_tgr
 AFTER UPDATE OF deleted ON core_topology
 FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention();
 
+CREATE TRIGGER maintenance_report_interventions_d_tgr
+AFTER UPDATE OF deleted ON feedback_report
+FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention();
+
 -------------------------------------------------------------------------------
 -- Denormalized altimetry information
 -------------------------------------------------------------------------------
