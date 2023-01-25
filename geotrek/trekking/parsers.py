@@ -614,6 +614,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 val = val.get(get_language())
         return val
 
+    def add_warning(self, msg):
+        key = _("APIDAE Trek #%(eid_val)s at line %(line)s") % {"eid_val": self.eid_val, "line": self.line}
+        warnings = self.warnings.setdefault(key, [])
+        warnings.append(msg)
+
     def end(self):
         self._finalize_related_treks_association()
 
