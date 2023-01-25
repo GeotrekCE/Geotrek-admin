@@ -12,11 +12,13 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Not evaluated values in migration files
         run: |
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
-      - uses: actions/checkout@v2
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
