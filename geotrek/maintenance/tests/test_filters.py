@@ -304,12 +304,11 @@ class InterventionIntersectionFilterZoningTest(TestCase):
         cls.course_in_2 = CourseFactory.create(parent_sites=[cls.site_in_2.pk],
                                                geom=GeometryCollection(Point(5, 5), srid=settings.SRID))
         cls.intervention_course_in_2 = InterventionFactory.create(target=cls.course_in_2)
-
         cls.report_in_1 = ReportFactory.create(geom=Point(1, 1, srid=settings.SRID))
         cls.intervention_report_in_1 = InterventionFactory.create(target=cls.report_in_1)
 
         cls.report_in_2 = ReportFactory.create(geom=Point(5, 5, srid=settings.SRID))
-        cls.intervention_report_in_2 = InterventionFactory.create(target=cls.site_in_2)
+        cls.intervention_report_in_2 = InterventionFactory.create(target=cls.report_in_2)
 
         report_deleted = ReportFactory.create(geom=Point(1, 1, srid=settings.SRID))
         cls.intervention_report_deleted = InterventionFactory.create(target=report_deleted)

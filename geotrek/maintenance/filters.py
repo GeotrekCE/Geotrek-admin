@@ -62,9 +62,9 @@ class PolygonInterventionFilterMixin:
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=signages).values_list('id', flat=True))
 
-            blades_intervention = Intervention.objects.existing().filter(target_id__in=blades,
-                                                                         target_type=blade_content_type).values_list('id',
-                                                                                                                     flat=True)
+            blades_intervention = Intervention.objects.filter(target_id__in=blades,
+                                                              target_type=blade_content_type).values_list('id',
+                                                                                                          flat=True)
             interventions.extend(blades_intervention)
         qs = qs.filter(pk__in=interventions).existing()
         return qs
