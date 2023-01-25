@@ -70,8 +70,6 @@ coreschema==0.0.4
     # via
     #   coreapi
     #   drf-yasg
-coverage==6.5.0
-    # via geotrek (setup.py)
 cssselect2==0.7.0
     # via
     #   cairosvg
@@ -87,9 +85,7 @@ django==3.2.16
     #   django-appconf
     #   django-appypod
     #   django-clearcache
-    #   django-debug-toolbar
     #   django-embed-video
-    #   django-extensions
     #   django-filter
     #   django-js-asset
     #   django-leaflet
@@ -115,15 +111,11 @@ django-compressor==3.1
     # via mapentity
 django-crispy-forms==1.13.0
     # via mapentity
-django-debug-toolbar==3.8.1
-    # via geotrek (setup.py)
 django-embed-video==1.4.8
     # via
     #   mapentity
     #   paperclip
 django-extended-choices==1.3.3
-    # via geotrek (setup.py)
-django-extensions==3.2.1
     # via geotrek (setup.py)
 django-filter==22.1
     # via mapentity
@@ -168,16 +160,10 @@ easy-thumbnails==2.7
     #   paperclip
 env-file==2020.12.3
     # via geotrek (setup.py)
-factory-boy==3.2.1
-    # via geotrek (setup.py)
-faker==13.3.4
-    # via factory-boy
 fiona==1.8.21
     # via
     #   geotrek (setup.py)
     #   mapentity
-freezegun==1.2.2
-    # via geotrek (setup.py)
 geojson==2.5.0
     # via
     #   geotrek (setup.py)
@@ -256,10 +242,6 @@ pypdf2==1.27.5
     # via pdfimpose
 pyphen==0.11.0
     # via weasyprint
-python-dateutil==2.8.2
-    # via
-    #   faker
-    #   freezegun
 pytz==2022.1
     # via
     #   celery
@@ -297,14 +279,11 @@ six==1.16.0
     #   html5lib
     #   munch
     #   pymemcache
-    #   python-dateutil
     #   zodb
 soupsieve==2.3.2
     # via beautifulsoup4
 sqlparse==0.4.2
-    # via
-    #   django
-    #   django-debug-toolbar
+    # via django
 tif2geojson==0.1.3
     # via geotrek (setup.py)
 tinycss2==1.2.1
