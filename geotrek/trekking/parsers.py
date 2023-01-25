@@ -962,6 +962,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         geos = ApidaeTrekParser._convert_to_geos(first_feature.geom)
         if geos.geom_type == 'MultiLineString':
             geos = geos.merged
+            if geos.geom_type == 'MultiLineString':
+                raise RowImportError(_("The geometry cannot be converted to a single continuous LineString feature"))
         return geos
 
     @staticmethod
