@@ -36,20 +36,26 @@ Conventions
 * Use flake8
 * KISS & DRY as much as possible
 * Elegant and generic is good, simple is better
+* Before contributing, open an issue and discuss about it with community (is it a bug or a feature ? What is the best way to achieve my goal ?)
+* Separate bug fixes and new features in several pull requests.
+* Open a new Pull Request in "Draft" status until tests passed. Use at least 'bug', 'improvement' or 'feature' label.
 * Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``)
-* Features are developed in a branch and merged from Github pull-requests. A git hook to is available to prevent pushing to master, to enable it, developpers should run the following command from root directory (`Geotrek-admin/`) : `ln -s -f ../../.githooks/pre-push .git/hooks/pre-push`
+* Features are developed in a branch and merged from Github pull-requests.
+* Several git hooks are available. Install them with following commands:
+  * pre-push: `ln -s -f ../../.githooks/pre-push .git/hooks/pre-push`
+  * pre-commit: `ln -s -f ../../.githooks/pre-commit .git/hooks/pre-commit`
 
 
 Definition of done
 ------------------
 
 * ``docs/changelog.rst`` is up-to-date
-* A unit-test covers the bugfix or the new feature
+* An explicit unit-test covers the bugfix or the new feature.
 * A frontend test (:path:jstests/nav-\*.js) covers the navigation bug fix or feature
 * A JS *Mocha* test (:path:jstests/tests.\*.js) covers the JavaScript bug fix or feature
-* Unit-tests coverage is above or at least equal with previous commits
-* Settings have default value in ``settings/base.py`` or ``conf/settings-default.ini``
-* Installation instructions are up-to-date
+* Unit-tests total coverage is above or at least equal with previous commits. Patch coverage is 100% on new lines.
+* Settings have default value in ``settings/base.py``
+* Installation instructions and documentation are up-to-date
 
 Check TODO in the source tree:
 
@@ -76,16 +82,29 @@ On master branch:
 * When creating a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
 
 
-Developement
-============
+Development
+===========
+
+Adding or upgrade dependencies
+------------------------------
+
+Consider using pip-tools to manage dependencies.
+
+* add your dependency in setup.py for general dependency, requirements-dev.in for dev dependency, then run :
+
+::
+
+   docker-compose run --rm web pip-compile
+   docker-compose run --rm web pip-compile requirements-dev.in
+
 
 Model modification
 ------------------
 
 ::
 
-   docker-compose run web ./manage.py makemigrations <appName>
-   docker-compose run web ./manage.py migrate
+   docker-compose run --rm web ./manage.py makemigrations <appName>
+   docker-compose run --rm web ./manage.py migrate
 
 .. note ::
 
@@ -236,7 +255,7 @@ Data only:
 
 ::
 
-   docker-compose run web ./manage.py flush
+   docker-compose run --rm web ./manage.py flush
 
 Restore existing Database
 -------------------------

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if ! command -v docker-compose &> /dev/null
+then
+    echo "toto";
+    alias docker-compose="docker compose"
+fi
+
+echo "run Flake8"
+
+docker-compose run -T --rm web flake8 geotrek
+status=$?
+
+if test $status -eq 1
+then
+  exit $status
+fi
