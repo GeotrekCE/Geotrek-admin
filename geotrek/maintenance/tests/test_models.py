@@ -6,7 +6,7 @@ from unittest import skipIf
 
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
-from geotrek.signage.tests.factories import SignageFactory
+from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 from geotrek.maintenance.models import Intervention
 from geotrek.maintenance.tests.factories import (InterventionFactory,
                                                  InfrastructureInterventionFactory,
@@ -14,6 +14,7 @@ from geotrek.maintenance.tests.factories import (InterventionFactory,
                                                  SignageInterventionFactory,
                                                  ProjectFactory, ManDayFactory, InterventionJobFactory,
                                                  InterventionDisorderFactory)
+from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.core.tests.factories import PathFactory, TopologyFactory, StakeFactory, TrailFactory
 
 
@@ -87,7 +88,23 @@ class InterventionTest(TestCase):
         TrailFactory.create(paths=[p], name='trail_2')
         infra = InfrastructureFactory.create(paths=[p])
         intervention = InterventionFactory.create(target=infra)
-        self.assertQuerysetEqual(intervention.trails, ['<Trail: trail_1>', '<Trail: trail_2>'])
+        self.assertQuerysetEqual(intervention.trails, ['trail_1', 'trail_2'], transform=str)
+
+    def test_paths_property(self):
+        p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        infra = InfrastructureFactory.create(paths=[p_infra])
+        intervention_infra = InterventionFactory.create(target=infra)
+        self.assertQuerysetEqual(intervention_infra.paths, [p_infra.name, ], transform=str)
+
+        p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
+        signage = SignageFactory.create(paths=[p_signage])
+        blade = BladeFactory.create(signage=signage)
+        intervention_blade = InterventionFactory.create(target=blade)
+        self.assertQuerysetEqual(intervention_blade.paths, [p_signage.name, ], transform=str)
+
+        course = CourseFactory.create()
+        intervention_course = InterventionFactory.create(target=course)
+        self.assertQuerysetEqual(intervention_course.paths, [], transform=str)
 
     def test_helpers(self):
         """
@@ -227,6 +244,28 @@ class InterventionTest(TestCase):
         name = interv.target.name
         self.assertIn(name, interv.target_display)
 
+    def test_target_deleted_display_previous_object(self):
+        course = CourseFactory.create()
+        site = SiteFactory.create()
+        interv_course = InterventionFactory.create(target=course)
+        interv_site = InterventionFactory.create(target=site)
+        course.delete()
+        site.delete()
+
+        self.assertIn('Deleted', interv_course.target_display)
+        self.assertIn('Deleted', interv_site.target_display)
+
+    def test_target_deleted_display_csv_previous_object(self):
+        course = CourseFactory.create()
+        site = SiteFactory.create()
+        interv_course = InterventionFactory.create(target=course)
+        interv_site = InterventionFactory.create(target=site)
+        course.delete()
+        site.delete()
+
+        self.assertIn('Deleted', interv_course.target_csv_display)
+        self.assertIn('Deleted', interv_site.target_csv_display)
+
     def test_total_cost(self):
         interv = InfrastructureInterventionFactory.create(
             material_cost=1,
@@ -251,3 +290,50 @@ class InterventionTest(TestCase):
     def test_target_display_none(self):
         infra = InterventionFactory.create(target=None, target_id=None, target_type=None)
         self.assertEqual(infra.target_display, '-')
+
+    def test_target_display_csv_none(self):
+        interv = InterventionFactory.create(target=None)
+        self.assertIn('-', interv.target_csv_display)
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class ProjectModelTest(TestCase):
+    def test_paths_property(self):
+        p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        infra = InfrastructureFactory.create(paths=[p_infra])
+        intervention_infra = InterventionFactory.create(target=infra)
+
+        p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
+        signage = SignageFactory.create(paths=[p_signage])
+        blade = BladeFactory.create(signage=signage)
+        intervention_blade = InterventionFactory.create(target=blade)
+
+        course = CourseFactory.create()
+        intervention_course = InterventionFactory.create(target=course)
+
+        project = ProjectFactory.create()
+        project.interventions.add(intervention_infra)
+        project.interventions.add(intervention_blade)
+        project.interventions.add(intervention_course)
+        self.assertQuerysetEqual(list(project.paths), [p_infra.name, p_signage.name], transform=str)
+
+    def test_trails_property(self):
+        p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        infra = InfrastructureFactory.create(paths=[p_infra])
+        intervention_infra = InterventionFactory.create(target=infra)
+        TrailFactory.create(paths=[p_infra], name='trail_1')
+        TrailFactory.create(paths=[p_infra], name='trail_2')
+        p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
+        TrailFactory.create(paths=[p_signage], name='trail_signage')
+        signage = SignageFactory.create(paths=[p_signage])
+        blade = BladeFactory.create(signage=signage)
+        intervention_blade = InterventionFactory.create(target=blade)
+
+        course = CourseFactory.create()
+        intervention_course = InterventionFactory.create(target=course)
+
+        project = ProjectFactory.create()
+        project.interventions.add(intervention_infra)
+        project.interventions.add(intervention_blade)
+        project.interventions.add(intervention_course)
+        self.assertQuerysetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], transform=str)

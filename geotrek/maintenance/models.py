@@ -135,7 +135,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
 
             if not self.target:
                 title = model._meta.verbose_name + f' {self.target_id}'
-                return '<i>' + _('Deleted') + ':</i><img src="%simages/%s-16.png"> <i>%s<i/>' % (settings.STATIC_URL, icon, title)
+                return '<i>' + _('Deleted') + ' :</i><img src="%simages/%s-16.png"> <i>%s<i/>' % (settings.STATIC_URL, icon, title)
             if not model._meta.model_name == "topology":
                 title = self.target.name_display
                 icon = model._meta.model_name
@@ -148,6 +148,9 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     def target_csv_display(self):
         if self.target_type:
             model = self.target_type.model_class()
+            if not self.target:
+                title = model._meta.verbose_name + f' {self.target_id}'
+                return _('Deleted') + title
             if model._meta.model_name == "topology":
                 title = _('Path')
                 return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all()])
@@ -166,7 +169,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
         if self.target_type:
             model = self.target_type.model_class()
             if model._meta.model_name == 'blade':
-                return model.signage.paths.all()
+                return self.target.signage.paths.all()
             if self.target and hasattr(self.target, 'paths'):
                 return self.target.paths.all()
         return Path.objects.none()
@@ -449,7 +452,8 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
     def paths(self):
         s = []
         for i in self.interventions.existing():
-            s += i.paths
+            if hasattr(i, 'paths'):
+                s += i.paths
         return Path.objects.filter(pk__in=[p.pk for p in set(s)])
 
     @property
