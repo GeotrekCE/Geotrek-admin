@@ -13,10 +13,6 @@ Conventions
 * Open a new Pull Request in "Draft" status until tests passed. Use at least 'bug', 'improvement' or 'feature' label.
 * Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``)
 * Features are developed in a branch and merged from Github pull-requests.
-* Several git hooks are available. Install them with following commands:
-  * pre-push: `ln -s -f ../../.githooks/pre-push .git/hooks/pre-push`
-
-  * pre-commit: `ln -s -f ../../.githooks/pre-commit .git/hooks/pre-commit`
 
 
 Definition of done
