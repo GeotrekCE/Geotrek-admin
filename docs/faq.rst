@@ -121,5 +121,5 @@ the source code is probably the least common action. For example :
 * Fix bugs or improve layout and apparence (*requires Webmaster skills*) ;
 * Fix bugs or improve core modules (*requires python/Django skills*).
 
-Join us on the `mailing-list <https://groups.google.com/forum/#!forum/geotrek-fr>`_! Send an email to ``geotrek-fr+subscribe@googlegroups.com``
+Join us on the `mailing list <https://groups.google.com/forum/#!forum/geotrek-fr>`_! Send an email to ``geotrek-fr+subscribe@googlegroups.com``
 and you will receive an invitation automatically :)

@@ -178,7 +178,7 @@ In your django settings you must set the 'url' key of SYNC_RANDO_OPTIONS to use 
 
 For instance with SERVER_NAME=geotrek.local (default value)
 
-::
+.. code-block :: python
 
 	SYNC_RANDO_OPTIONS = {
 	    'url': 'http://geotrek.local:8000'
