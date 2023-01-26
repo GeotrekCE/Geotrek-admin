@@ -17,7 +17,8 @@ Les objets ponctuels ne sont associés qu'à un seul tronçon, sauf dans le cas 
 
 Chaque évènement dispose néanmoins d'une géométrie calculée à partir de leur segmentation dynamique pour faciliter leur affichage dans Geotrek ou dans QGIS. Il ne faut néanmoins pas modifier directement ces géométries, elles sont calculées automatiquement quand on modifie l'évènement d'un objet.
 
-.. notes::
+.. notes
+
     Des vues SQL sont disponibles pour accéder aux objets de manière plus lisible et simplifiée (``v_interventions`` par exemple).
 
 Snapping - Aimantage - Accrochage

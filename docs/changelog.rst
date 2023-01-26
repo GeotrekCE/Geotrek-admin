@@ -377,7 +377,7 @@ In preparation for HD Views developments (PR #3298)
 
 - Upgrade mapentity to 8.2.1
 
-**/!\ Regression /!\**
+**! Regression !**
 
 - System permissions on files output by `sync_rando` and `sync_mobile` commands were inadvertently changed to more restricted
   with no reading allowed by group or other. This may cause trouble if your deployment relies on those permissions.
@@ -4166,8 +4166,7 @@ In order to enable those features under construction, add ``experimental = True`
 :notes:
 
     Give related permissions to the managers group in order to allow edition
-    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``,
-     ``add_touristiccontent`` ...).
+    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``, ``add_touristiccontent`` ...).
 
 
 0.27.2 (2010-10-14)
@@ -4351,6 +4350,7 @@ Since the map export have changed, empty the cache :
 * Rework display of lists in detail pages, better factorization
 * Removed links in logbook list for certain models
 * Display messages in login page too (useful for redirections)
+
 Support edition of several fields on the same map, via django-leaflet new feature (fixes #53)
 
 

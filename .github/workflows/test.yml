@@ -120,7 +120,9 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip setuptools wheel
         pip3 wheel --wheel-dir=~/.wheel_dir -r requirements.txt
+        pip3 wheel --wheel-dir=~/.wheel_dir -r requirements-dev.txt
         pip3 install --find-links=~/.wheel_dir -r requirements.txt
+        pip3 install --find-links=~/.wheel_dir -r requirements-dev.txt
 
     - name: Create test required directories
       run: |

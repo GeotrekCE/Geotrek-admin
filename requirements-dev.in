@@ -1,2 +1,9 @@
+-c requirements.txt
+
 pip-tools
 flake8
+freezegun
+coverage
+factory_boy
+django-extensions
+django-debug-toolbar
