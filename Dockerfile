@@ -50,11 +50,11 @@ RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 COPY requirements-dev.txt requirements-dev.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements-dev.txt -U
 
-COPY geotrek/ geotrek/
-COPY manage.py manage.py
-COPY VERSION VERSION
-COPY setup.cfg setup.cfg
-COPY docker/* /usr/local/bin/
+COPY --chown=geotrek:geotrek geotrek/ geotrek/
+COPY --chown=geotrek:geotrek manage.py manage.py
+COPY --chown=geotrek:geotrek VERSION VERSION
+COPY --chown=geotrek:geotrek setup.cfg setup.cfg
+COPY --chown=geotrek:geotrek docker/* /usr/local/bin/
 
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 EXPOSE 8000
