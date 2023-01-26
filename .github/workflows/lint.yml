@@ -9,7 +9,7 @@ env:
 jobs:
   quality:
     name: Checking dependency graph and code quality
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v3
