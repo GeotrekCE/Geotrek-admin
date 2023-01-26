@@ -7,8 +7,8 @@ env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
-  flake8:
-    name: Check code styling
+  quality:
+    name: Checking dependency graph and code quality
     runs-on: ubuntu-18.04
 
     steps:
@@ -28,6 +28,25 @@ jobs:
         run: |
           pip3 install --upgrade pip wheel setuptools
           pip3 install -r requirements-dev.txt -U
+
+      - name: Check dependency graph
+        run: |
+          pip-compile -q
+          pip-compile -q requirements-dev.in
+
+      - name: Verify dependency graph is ok
+        uses: tj-actions/verify-changed-files@v13
+        id: verify-changed-files
+        with:
+          files: |
+             requirements.txt
+             requirements-dev.txt
+
+      - name: Validating graph
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        run: |
+          echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
+          core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
 
       - name: Flake8
         run: |
