@@ -43,7 +43,7 @@ jobs:
              requirements-dev.txt
 
       - name: Validating graph
-        if: steps.verify-changed-files.outputs.files_changed == 'true' && ${{ github.actor != 'dependabot[bot]' }}
+        if: steps.verify-changed-files.outputs.files_changed == 'true' && github.actor != 'dependabot[bot]'
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
