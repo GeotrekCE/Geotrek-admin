@@ -30,7 +30,7 @@ cairosvg==2.5.2
     # via
     #   geotrek (setup.py)
     #   weasyprint
-celery[redis]==5.2.7
+celery==5.2.7
     # via
     #   django-celery-results
     #   geotrek (setup.py)
@@ -228,7 +228,7 @@ pillow==9.3.0
     #   weasyprint
 prompt-toolkit==3.0.30
     # via click-repl
-psycopg2==2.9.3
+psycopg2==2.9.5
     # via geotrek (setup.py)
 pycparser==2.21
     # via cffi
@@ -253,7 +253,7 @@ pytz==2022.1
 rcssmin==1.1.0
     # via django-compressor
 redis==4.2.2
-    # via celery
+    # via geotrek (setup.py)
 requests==2.28.2
     # via
     #   coreapi
