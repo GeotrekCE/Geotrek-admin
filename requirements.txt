@@ -78,8 +78,6 @@ datetime==4.4
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-deprecated==1.2.13
-    # via redis
 django==3.2.16
     # via
     #   django-appconf
@@ -203,9 +201,7 @@ munch==2.5.0
 netifaces==0.11.0
     # via mapentity
 packaging==21.3
-    # via
-    #   drf-yasg
-    #   redis
+    # via drf-yasg
 paperclip==2.6.1
     # via
     #   geotrek (setup.py)
@@ -320,8 +316,6 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-wrapt==1.14.1
-    # via deprecated
 xlrd==2.0.1
     # via geotrek (setup.py)
 xmltodict==0.13.0
