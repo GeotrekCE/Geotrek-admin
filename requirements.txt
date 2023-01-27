@@ -123,7 +123,7 @@ django-js-asset==2.0.0
     # via django-mptt
 django-leaflet==0.19.post9
     # via mapentity
-django-modelcluster==5.3
+django-modelcluster==6.0
     # via geotrek (setup.py)
 django-modeltranslation==0.17.5
     # via mapentity
