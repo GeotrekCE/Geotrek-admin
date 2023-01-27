@@ -89,6 +89,7 @@ django==3.2.16
     #   django-filter
     #   django-js-asset
     #   django-leaflet
+    #   django-modelcluster
     #   django-modeltranslation
     #   django-weasyprint
     #   djangorestframework
