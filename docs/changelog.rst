@@ -5,13 +5,18 @@ CHANGELOG
 2.95.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix intervention datatable list if one intervention has no target
+
+
 **Development**
 
-- New contributing guide (docs/CONTRIBUTING.rst)
+- New contributing guide (docs/CONTRIBUTING.rst).
 - Development dependencies are now split in dedicated file.
-- pip-tools and flake8 are now available in developer environment
-- Dependency graph is now checked in CI (see docs/contribute/development to how add a new dependency)
-- New git pre-commit hook to check all is alright before commit (see docs/contribute/development)
+- pip-tools and flake8 are now available in developer environment.
+- Dependency graph is now checked in CI (see docs/contribute/development to how add a new dependency).
+- New git pre-commit hook to check all is alright before commit (see docs/contribute/development).
 
 
 2.95.0     (2023-01-24)

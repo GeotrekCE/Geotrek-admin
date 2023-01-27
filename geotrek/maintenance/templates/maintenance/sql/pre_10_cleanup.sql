@@ -6,6 +6,7 @@ DROP FUNCTION IF EXISTS update_altimetry_topology_intervention() CASCADE;
 DROP FUNCTION IF EXISTS update_altimetry_intervention() CASCADE;
 DROP FUNCTION IF EXISTS update_area_intervention() CASCADE;
 DROP FUNCTION IF EXISTS delete_related_intervention_blade() CASCADE;
+DROP FUNCTION IF EXISTS delete_related_intervention_report() CASCADE;
 
 -- 20
 

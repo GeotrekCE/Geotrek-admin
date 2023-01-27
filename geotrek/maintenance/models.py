@@ -130,22 +130,35 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     def target_display(self):
         icon = 'path'
         title = _('Paths')
-        if not self.target._meta.model_name == "topology":
-            icon = self.target._meta.model_name
-            title = self.target.name_display
-        return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
-                                                      icon,
-                                                      title)
+        if self.target_type:
+            model = self.target_type.model_class()
+
+            if not self.target:
+                title = model._meta.verbose_name + f' {self.target_id}'
+                return '<i>' + _('Deleted') + ' :</i><img src="%simages/%s-16.png"> <i>%s<i/>' % (settings.STATIC_URL, icon, title)
+            if not model._meta.model_name == "topology":
+                title = self.target.name_display
+                icon = model._meta.model_name
+            return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
+                                                          icon,
+                                                          title)
+        return '-'
 
     @property
     def target_csv_display(self):
-        if self.target._meta.model_name == "topology":
-            title = _('Path')
-            return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all()])
-        return "%s: %s (%s)" % (
-            _(self.target._meta.verbose_name),
-            self.target,
-            self.target.pk)
+        if self.target_type:
+            model = self.target_type.model_class()
+            if not self.target:
+                title = model._meta.verbose_name + f' {self.target_id}'
+                return _('Deleted') + title
+            if model._meta.model_name == "topology":
+                title = _('Path')
+                return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all()])
+            return "%s: %s (%s)" % (
+                _(self.target._meta.verbose_name),
+                self.target,
+                self.target.pk)
+        return '-'
 
     @property
     def in_project(self):
@@ -153,18 +166,21 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
 
     @property
     def paths(self):
-        if self.target._meta.model_name == 'blade':
-            return self.target.signage.paths.all()
-        if self.target:
-            return self.target.paths.all()
+        if self.target_type:
+            model = self.target_type.model_class()
+            if model._meta.model_name == 'blade':
+                return self.target.signage.paths.all()
+            if self.target and hasattr(self.target, 'paths'):
+                return self.target.paths.all()
         return Path.objects.none()
 
     @property
     def trails(self):
         s = []
-        for p in self.target.paths.all():
-            for t in p.trails.all():
-                s.append(t.pk)
+        if hasattr(self.target, 'paths'):
+            for p in self.target.paths.all():
+                for t in p.trails.all():
+                    s.append(t.pk)
 
         return Trail.objects.filter(pk__in=s)
 
@@ -436,16 +452,18 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
     def paths(self):
         s = []
         for i in self.interventions.existing():
-            s += i.paths
+            if hasattr(i, 'paths'):
+                s += i.paths
         return Path.objects.filter(pk__in=[p.pk for p in set(s)])
 
     @property
     def trails(self):
         s = []
         for i in self.interventions.existing():
-            for p in i.target.paths.all():
-                for t in p.trails.all():
-                    s.append(t.pk)
+            if i.target and hasattr(i.target, 'paths'):
+                for p in i.target.paths.all():
+                    for t in p.trails.all():
+                        s.append(t.pk)
 
         return Trail.objects.filter(pk__in=s)
 
