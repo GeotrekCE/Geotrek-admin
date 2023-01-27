@@ -43,10 +43,16 @@ jobs:
              requirements-dev.txt
 
       - name: Validating graph
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        if: steps.verify-changed-files.outputs.files_changed == 'true' && github.actor != 'dependabot[bot]'
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+
+      - name: Dependabot commit dependencies
+        uses: stefanzweifel/git-auto-commit-action@v4
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        with:
+          commit_message: Apply dependencies update by dependabot
 
       - name: Flake8
         run: |
