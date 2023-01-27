@@ -32,7 +32,7 @@ setup(
                       + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     scripts=['manage.py'],
     install_requires=[
-        'Django==3.2.*',
+        'Django>=3.2,<4.2',
         'mapentity',
         'cairosvg',
         'cairocffi',
