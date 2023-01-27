@@ -1,4 +1,5 @@
 import sphinx_rtd_theme # noqa
+import datetime
 # Geotrek documentation build configuration file, created by
 # sphinx-quickstart on Wed May 15 09:50:19 2013.
 #
@@ -41,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Geotrek'
-copyright = '2013-2021, Makina Corpus'
+copyright = f'2013-{datetime.date.today().year}, Makina Corpus'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

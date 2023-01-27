@@ -67,13 +67,6 @@ setup(
         # prod,
         'gunicorn',
         'sentry-sdk',
-        # tests
-        'freezegun',
-        'coverage',
-        'factory_boy',
-        # dev,
-        'django-extensions',
-        'django-debug-toolbar',
     ],
     cmdclass={"build": BuildCommand},
     include_package_data=True,

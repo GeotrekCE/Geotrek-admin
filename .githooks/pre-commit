@@ -1,0 +1,25 @@
+#!/bin/bash
+
+function dockercompose {
+  # use docker-compose then fallback to new docker compose
+  docker-compose  "$@"
+  docker compose  "$@"
+}
+
+echo "Check dependency graph and fix requirements"
+
+dockercompose run -T --rm web bash -c "pip-compile -q && pip-compile requirements-dev.in"
+
+
+
+echo "run Flake8..."
+
+dockercompose run -T --rm web flake8 geotrek
+status=$?
+
+if test $status -eq 1
+then
+  exit $status
+else
+  echo "Flake8 check is ok..."
+fi

@@ -7,12 +7,18 @@ env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
-  flake8:
-    name: Check code styling
-    runs-on: ubuntu-18.04
+  quality:
+    name: Checking dependency graph and code quality
+    runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Not evaluated values in migration files
+        run: |
+          test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
+
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
@@ -20,13 +26,28 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install --upgrade pip
-          pip3 install flake8
+          pip3 install --upgrade pip wheel setuptools
+          pip3 install -r requirements-dev.txt -U
+
+      - name: Check dependency graph
+        run: |
+          pip-compile -q
+          pip-compile -q requirements-dev.in
+
+      - name: Verify dependency graph is ok
+        uses: tj-actions/verify-changed-files@v13
+        id: verify-changed-files
+        with:
+          files: |
+             requirements.txt
+             requirements-dev.txt
+
+      - name: Validating graph
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        run: |
+          echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
+          core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
 
       - name: Flake8
         run: |
           flake8 geotrek
-
-      - name: Not evaluated values in migration files
-        run: |
-          test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
