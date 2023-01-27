@@ -30,6 +30,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.models import Path
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
+import geotrek.trekking.parsers  # noqa
 
 
 class DocumentPublicPortalTest(TestCase):
