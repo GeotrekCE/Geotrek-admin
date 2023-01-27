@@ -201,12 +201,12 @@ Setup to run rando synchronization locally
 
 In your django settings you must set the 'url' key of SYNC_RANDO_OPTIONS to use the same domain as defined by SERVER_NAME in your .env.
 
-For instance with SERVER_NAME=geotrek.local (default value)
+For instance with SERVER_NAME=geotrek.localhost (default value)
 
 .. code-block :: python
 
     SYNC_RANDO_OPTIONS = {
-        'url': 'http://geotrek.local:8000'
+        'url': 'http://geotrek.localhost:8000'
     }
 
 Setup to use screamshotter-related features locally
