@@ -8,7 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix intervention datatable list if one intervention has no target
-
+- Fix intervention datatable list with interventions on lands
 
 **Development**
 

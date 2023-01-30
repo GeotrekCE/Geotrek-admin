@@ -60,6 +60,10 @@ class PhysicalEdge(GeotrekMapEntityMixin, Topology):
         return self.physical_type_csv_display
 
     @property
+    def name_display(self):
+        return self.physical_type_display
+
+    @property
     def physical_type_display(self):
         return '<a data-pk="%s" href="%s" >%s</a>' % (
             self.pk,
@@ -128,6 +132,10 @@ class LandEdge(GeotrekMapEntityMixin, Topology):
         return self.land_type_csv_display
 
     @property
+    def name_display(self):
+        return self.land_type_display
+
+    @property
     def land_type_display(self):
         return '<a data-pk="%s" href="%s" >%s</a>' % (
             self.pk,
@@ -177,6 +185,10 @@ class CompetenceEdge(GeotrekMapEntityMixin, Topology):
     @property
     def name(self):
         return self.organization_csv_display
+
+    @property
+    def name_display(self):
+        return self.organization_display
 
     @property
     def organization_display(self):
@@ -230,6 +242,10 @@ class WorkManagementEdge(GeotrekMapEntityMixin, Topology):
         return self.organization_csv_display
 
     @property
+    def name_display(self):
+        return self.organization_display
+
+    @property
     def organization_display(self):
         return '<a data-pk="%s" href="%s" >%s</a>' % (
             self.pk,
@@ -279,6 +295,10 @@ class SignageManagementEdge(GeotrekMapEntityMixin, Topology):
     @property
     def name(self):
         return self.organization_csv_display
+
+    @property
+    def name_display(self):
+        return self.organization_display
 
     @property
     def organization_display(self):
