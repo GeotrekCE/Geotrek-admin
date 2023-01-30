@@ -14,6 +14,7 @@ CHANGELOG
 
 - Fix intervention datatable list if one intervention has no target
 - Fix intervention datatable list with interventions on lands
+- Fix signage's blade detail
 
 **Development**
 
