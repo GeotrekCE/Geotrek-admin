@@ -1,18 +1,22 @@
 name: Linting
 
 on:
-  push:
+  pull_request:
+    paths:
+      - 'geotrek/**'
+      - '.github/workflows/lint.yml'
 
 env:
   DEBIAN_FRONTEND: noninteractive
 
-permissions:
-  contents: write
-
 jobs:
-  quality:
-    name: Checking dependency graph and code quality
-    runs-on: ubuntu-20.04
+  flake8:
+    name: Checking Flake8 rules
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-20.04']
+        python-version: ['3.8']
 
     steps:
       - uses: actions/checkout@v3
@@ -22,40 +26,27 @@ jobs:
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
 
-      - name: Set up Python 3.8
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8  # lint with minimal version supported (3.8 in 18.04)
+          python-version: ${{ matrix.python-version }}
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.wheel_dir
+
+          key: ${{ matrix.os }}-pip-${{ matrix.python-version }}
+          restore-keys: |
+            ${{ matrix.os }}-pip-${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
-          pip3 install --upgrade pip wheel setuptools
-          pip3 install -r requirements-dev.txt -U
-
-      - name: Check dependency graph
-        run: |
-          pip-compile -q
-          pip-compile -q requirements-dev.in
-
-      - name: Verify dependency graph is ok
-        uses: tj-actions/verify-changed-files@v13
-        id: verify-changed-files
-        with:
-          files: |
-             requirements.txt
-             requirements-dev.txt
-
-      - name: Validating graph
-        if: steps.verify-changed-files.outputs.files_changed == 'true' && github.actor != 'dependabot[bot]'
-        run: |
-          echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
-          core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
-
-      - name: Dependabot commit dependencies
-        uses: stefanzweifel/git-auto-commit-action@v4
-        if: ${{ github.actor == 'dependabot[bot]' }}
-        with:
-          commit_message: Apply dependencies update by dependabot
+          pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
+          pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
+          pip3 wheel --wheel-dir=~/.wheel_dir -r requirements-dev.txt
+          pip3 install --find-links=~/.wheel_dir --upgrade -r requirements-dev.txt
 
       - name: Flake8
         run: |

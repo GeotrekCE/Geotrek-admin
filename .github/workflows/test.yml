@@ -83,9 +83,9 @@ jobs:
           ~/.cache/pip
           ~/.wheel_dir
 
-        key: ${{ runner.os }}-pip-${{ matrix.python-version }}
+        key: ${{ matrix.os }}-pip-${{ matrix.python-version }}
         restore-keys: |
-          ${{ runner.os }}-pip-${{ matrix.python-version }}
+          ${{ matrix.os }}-pip-${{ matrix.python-version }}
 
     - name: Install System dependencies
       run: |
@@ -118,7 +118,8 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        python3 -m pip install --upgrade pip setuptools wheel
+        pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
+        pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
         pip3 wheel --wheel-dir=~/.wheel_dir -r requirements.txt
         pip3 wheel --wheel-dir=~/.wheel_dir -r requirements-dev.txt
         pip3 install --find-links=~/.wheel_dir -r requirements.txt
