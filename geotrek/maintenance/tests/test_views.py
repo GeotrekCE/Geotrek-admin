@@ -29,6 +29,9 @@ from geotrek.maintenance.views import InterventionFormatList, ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
+                                          CompetenceEdgeFactory, WorkManagementEdgeFactory,
+                                          SignageManagementEdgeFactory)
 from geotrek.outdoor.tests.factories import CourseFactory
 from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 from geotrek.signage.models import Signage
@@ -142,10 +145,20 @@ class InterventionViewsTest(CommonTest):
             service = ServiceFactory.create(paths=[(path, .5, .5)])
             topo = TopologyFactory.create(paths=[(path, .5, .5)])
             topo.save()
-
+            land = LandEdgeFactory.create(paths=[(path, 0, .5)])
+            physical = PhysicalEdgeFactory.create(paths=[(path, 0, .5)])
+            competence = CompetenceEdgeFactory.create(paths=[(path, 0, .5)])
+            workmanagement = WorkManagementEdgeFactory.create(paths=[(path, 0, .5)])
+            signagemanagement = SignageManagementEdgeFactory.create(paths=[(path, 0, .5)])
+            intervention_land = InterventionFactory.create(target=land)
+            intervention_physical = InterventionFactory.create(target=physical)
+            intervention_competence = InterventionFactory.create(target=competence)
+            intervention_workmanagement = InterventionFactory.create(target=workmanagement)
+            intervention_signagemanagement = InterventionFactory.create(target=signagemanagement)
             path_other = PathFactory.create(geom=LineString((10000, 0), (10010, 0)))
             signa_other = SignageFactory.create(paths=[(path_other, .5, .5)])
             signa_other.save()
+
         else:
             signa = SignageFactory.create(geom='SRID=2154;POINT (250 250)')
             infrastructure = InfrastructureFactory.create(geom='SRID=2154;POINT (250 250)')
@@ -177,7 +190,12 @@ class InterventionViewsTest(CommonTest):
         self.assertContains(response, intervention_service.target_display)
         self.assertContains(response, intervention_blade.target_display)
         self.assertContains(response, intervention_topo.target_display)
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertContains(response, intervention_land.target_display)
+            self.assertContains(response, intervention_physical.target_display)
+            self.assertContains(response, intervention_competence.target_display)
+            self.assertContains(response, intervention_workmanagement.target_display)
+            self.assertContains(response, intervention_signagemanagement.target_display)
         self.assertNotContains(response, intervention_other.target_display)
 
     def test_creation_form_on_signage_with_errors(self):
