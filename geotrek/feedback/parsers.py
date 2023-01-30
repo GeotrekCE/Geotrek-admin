@@ -19,6 +19,7 @@ from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
                                      ReportStatus, WorkflowManager)
 
 from .helpers import SuricateGestionRequestManager
+from paperclip.models import attachment_upload
 
 logger = logging.getLogger(__name__)
 
@@ -230,10 +231,12 @@ class SuricateParser(SuricateGestionRequestManager):
                     'creator': self.creator
                 }
             )
+            attachment_final_name = attachment.prepare_file_suffix(basename=uid + ext)
+            attachment_final_path = attachment_upload(attachment, attachment_final_name)
+            # If attachment is either new or had a failed download last time => download file
+            # If attachment isn't new and was downloaded before => skip this file
 
-            # If this is False then attachment is either new or had a failed download last time => download file
-            # If this is True then attachment isn't new and was downloaded before => skip this file
-            if attachment.attachment_file.name:
+            if attachment.attachment_file.storage.exists(attachment_final_path):
                 continue
 
             if parsed_url.scheme in ('http', 'https'):
@@ -241,8 +244,8 @@ class SuricateParser(SuricateGestionRequestManager):
                 try:
                     if response.status_code in [200, 201]:
                         f = ContentFile(response.content)
-                        attachment.attachment_file.save(file_url, f, save=False)
-                    attachment.save()
+                        attachment.attachment_file.save(attachment_final_name, f, save=False)
+                    attachment.save(**{'skip_file_save': True})
                 except Exception as e:
                     logger.error(f"Could not download image : {file_url} \n{e}\n{traceback.format_exc()}")
 

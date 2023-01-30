@@ -732,7 +732,7 @@ class AttachmentParserMixin:
     def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
         found = False
         for attachment in attachments_to_delete:
-            upload_name, ext = os.path.splitext(attachment_upload(attachment, kwargs.get('name'), randomized=False))
+            upload_name, ext = os.path.splitext(attachment_upload(attachment, kwargs.get('name')))
             existing_name = attachment.attachment_file.name
             regexp = f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             if re.search(r"^{regexp}$".format(regexp=regexp), existing_name) and not self.has_size_changed(kwargs.get('url'), attachment):
@@ -795,6 +795,7 @@ class AttachmentParserMixin:
                         return False, updated
             except UnidentifiedImageError:
                 pass
+            name = attachment.prepare_file_suffix(name)
             attachment.attachment_file.save(name, f, save=False)
             attachment.is_image = attachment.is_an_image()
         else:

@@ -321,7 +321,7 @@ class CreateReportsAPITest(BaseAPITest):
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
         report = feedback_models.Report.objects.get(pk=new_report_id)
         self.assertEqual(report.comment, "We have a problem")
-        mock_logger.error.assert_called_with(f"Failed to convert attachment dummy_img.svg for report {new_report_id}")
+        mock_logger.error.assert_called_with(f"Failed to convert attachment dummy_img.svg for report {new_report_id}: cannot identify image file <InMemoryUploadedFile: dummy_img.svg (image/svg)>")
         self.assertEqual(report.attachments.count(), 0)
 
     @mock.patch('geotrek.feedback.views.logger')

@@ -51,15 +51,16 @@ class SQLDefaultValuesTest(TestCase):
                                    content_type_id,
                                    object_id,
                                    creator_id,
-                                   filetype_id
+                                   filetype_id,
+                                   random_suffix
                                    ) VALUES
                                    (
                                    'attachments/trekking_trek/1/foo.png',
                                    {ct.pk},
                                    {trek.pk},
                                    {user.pk},
-                                   {filetype.pk}
-                                   )""")
+                                   {filetype.pk},
+                                   '')""")
         attachment = Attachment.objects.first()
         self.assertEqual(attachment.author, '')
 

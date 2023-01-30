@@ -235,8 +235,8 @@ class ReportAPIViewSet(APIViewSet):
                         attachment.save()
                     os.remove(tmp_bmp_path)
                     os.remove(tmp_jpeg_path)
-                except Exception:
-                    logger.error(f"Failed to convert attachment {name}{extension} for report {response.data.get('id')}")
+                except Exception as e:
+                    logger.error(f"Failed to convert attachment {name}{extension} for report {response.data.get('id')}: " + str(e))
 
         if settings.SEND_REPORT_ACK and response.status_code == 201:
             send_mail(
