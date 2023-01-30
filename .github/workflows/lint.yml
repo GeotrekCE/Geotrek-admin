@@ -9,12 +9,9 @@ on:
 env:
   DEBIAN_FRONTEND: noninteractive
 
-permissions:
-  contents: write
-
 jobs:
-  quality:
-    name: Checking dependency graph and code quality
+  flake8:
+    name: Checking Flake8 rules
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
