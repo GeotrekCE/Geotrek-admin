@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-03 13:51+0000\n"
+"POT-Creation-Date: 2023-01-30 15:57+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -331,9 +331,19 @@ msgstr "Annulé"
 msgid "Boolean indicating if Event is cancelled"
 msgstr "Booléen indiquant si l'évènement est annulé"
 
-msgid "Select a place in the list or locate the event directly on the map"
-msgstr "Sélectionnez un lieu dans la liste ou pointez directement l'événement sur la carte"
+msgid "Preparation duration"
+msgstr "Temps de préparation"
 
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr ""
+
+msgid "Intervention duration"
+msgstr "Temps d'intervention"
+
+msgid "Select a place in the list or locate the event directly on the map"
+msgstr ""
+"Sélectionnez un lieu dans la liste ou pointez directement l'événement sur la "
+"carte"
 
 msgid "Number of participants"
 msgstr "Nombre de participants"
@@ -447,9 +457,3 @@ msgstr "Date"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
-
-msgid "Preparation duration"
-msgstr "Temps de préparation"
-
-msgid "Intervention duration"
-msgstr "Temps d'intervention"
