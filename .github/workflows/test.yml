@@ -83,9 +83,9 @@ jobs:
           ~/.cache/pip
           ~/.wheel_dir
 
-        key: ${{ runner.os }}-pip-${{ matrix.python-version }}
+        key: ${{ matrix.os }}-pip-${{ matrix.python-version }}
         restore-keys: |
-          ${{ runner.os }}-pip-${{ matrix.python-version }}
+          ${{ matrix.os }}-pip-${{ matrix.python-version }}
 
     - name: Install System dependencies
       run: |

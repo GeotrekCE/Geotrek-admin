@@ -17,7 +17,11 @@ permissions:
 jobs:
   quality:
     name: Checking dependency graph and code quality
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-20.04']
+        python-version: ['3.8']
 
     steps:
       - uses: actions/checkout@v3
@@ -27,10 +31,10 @@ jobs:
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
 
-      - name: Set up Python 3.8
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8  # lint with minimal version supported (3.8 in 18.04)
+          python-version: ${{ matrix.python-version }}
 
       - uses: actions/cache@v3
         with:
