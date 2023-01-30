@@ -2,11 +2,17 @@ name: Check deps
 
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
+    paths:
+      - setup.py
+      - requirements.txt
+      - requirements-dev.in
+      - requirements-dev.txt
   push:
-    paths-ignore:
-      - 'docs/**'
+    paths:
+      - setup.py
+      - requirements.txt
+      - requirements-dev.in
+      - requirements-dev.txt
 
 env:
   DEBIAN_FRONTEND: noninteractive
