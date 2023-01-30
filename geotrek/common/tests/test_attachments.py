@@ -497,7 +497,6 @@ class ReduceSaveSettingsTestCase(TestCase):
             },
             follow=True
         )
-
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
         self.assertIn(b'The uploaded file is not tall enough', response.content)
