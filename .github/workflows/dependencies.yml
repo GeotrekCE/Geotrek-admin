@@ -1,12 +1,7 @@
-name: Linting
+name: Check deps
 
 on:
-  pull_request:
-    paths-ignore:
-      - 'docs/**'
   push:
-    paths-ignore:
-      - 'docs/**'
 
 env:
   DEBIAN_FRONTEND: noninteractive
@@ -16,16 +11,11 @@ permissions:
 
 jobs:
   quality:
-    name: Checking dependency graph and code quality
+    name: Checking dependency graph
     runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Not evaluated values in migration files
-        run: |
-          test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
-
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
@@ -64,8 +54,3 @@ jobs:
           commit_user_name: dependabot[bot]
           commit_user_email: support@github.com
           commit_author: dependabot[bot] <support@github.com>
-
-
-      - name: Flake8
-        run: |
-          flake8 geotrek
