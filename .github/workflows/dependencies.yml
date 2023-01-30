@@ -7,12 +7,15 @@ on:
       - requirements.txt
       - requirements-dev.in
       - requirements-dev.txt
+      - .github/workflows/dependencies.yml
+
   push:
     paths:
       - setup.py
       - requirements.txt
       - requirements-dev.in
       - requirements-dev.txt
+      - .github/workflows/dependencies.yml
 
 env:
   DEBIAN_FRONTEND: noninteractive
