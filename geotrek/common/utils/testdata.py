@@ -19,7 +19,7 @@ def get_dummy_uploaded_image(name='dummy_img.png'):
 
 
 def get_dummy_uploaded_image_svg(name='dummy_img.svg'):
-    return SimpleUploadedFile(name, SVG_FILE, content_type='image/svg')
+    return SimpleUploadedFile(name, SVG_FILE, content_type='image/svg+xml')
 
 
 def get_dummy_uploaded_file(name='dummy_file.txt'):
