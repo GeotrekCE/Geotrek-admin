@@ -55,6 +55,8 @@ setup(
         'drf-yasg',
         'xlrd',
         'landez',
+        'large-image-source-vips',
+        'django-large-image',
         'celery',
         'redis',
         'django-celery-results',

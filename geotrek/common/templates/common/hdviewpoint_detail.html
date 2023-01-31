@@ -1,0 +1,160 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n static mapentity_tags leaflet_tags %}
+
+{% block head %}
+  {% block title %}{{ object }} | {{ block.super }}{% endblock title %}
+  {{ block.super }}
+{% endblock head %}
+{% block mainpanel %}
+<div class="details-panel detail col-12 col-lg-7 {{ object.modelname }}">
+  <h1 class="details-title">{{ object }}</h1>
+  <div class="download-group"></div>
+  <div class="tabbable">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a id="tab-properties" class="nav-link active" href="#properties" data-toggle="tab"><i class="bi bi-list-task"></i>
+            <span class="d-none d-sm-inline">{% trans "Properties" %}</span>
+            {% smart_include "propertiestab" %}
+          </a>
+        </li>
+      {% if ACTION_HISTORY_ENABLED %}
+      <li class="nav-item">
+        <a id="tab-history" class="nav-link" href="#history" data-toggle="tab"><i class="bi bi-clock-history"></i>
+          <span class="d-none d-sm-inline">{% trans "History" %}</span></a>
+      </li>
+      {% endif %}
+      {% if can_edit %}
+        <a class="ml-auto">
+          <a class="btn btn-primary" href="{{ object.get_annotate_url }}"><i class="bi bi-pencil-square"></i> {% trans "Annotate" %}</a>
+        <a style="width: 5px;"/>
+          <a class="btn btn-primary" href="{{ object.get_update_url }}"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</a>
+        </a>
+      {% else %}
+        <a class="ml-auto">
+          <span class="btn disabled" href="#"><i class="bi bi-pencil-square"></i> {% trans "Annotate" %}</span>
+        <a style="width: 5px;"/>
+          <span class="btn disabled" href="#"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</span>
+        </a>
+      {% endif %}
+    </ul>
+    <div class="tab-content scrollable">
+
+        <div id="properties" class="tab-pane active show">
+          {% block detailspanel %}
+
+          <h3>{% trans "Attributes" %}</h3>
+          <table class="table-striped table-bordered table">
+                <tr>
+                    <th>{{ object|verbose:"title" }}</th>
+                    <td>{% if object.title %}{{ object.title|safe }}
+                        {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{{ object|verbose:"legend" }}</th>
+                    <td>{% if object.legend %}{{ object.legend|safe }}
+                        {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{{ object|verbose:"license" }}</th>
+                    <td>{% if object.license %}{{ object.license|safe }}
+                        {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{{ object|verbose:"author" }}</th>
+                    <td>{% if object.author %}{{ object.author|safe }}
+                        {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{% trans "Related to" %}</th>
+                    <td>{% if object.content_object %}{{ object.content_object.name_display|safe }}
+                        {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                  <th>{{ object|verbose:"date_insert" }}</th>
+                  <td>{{ object.date_insert|date }}
+                  </td>
+              </tr>
+              <tr>
+                <th>{{ object|verbose:"date_update" }}</th>
+                <td>{{ object.date_update|date }}
+                </td>
+            </tr>
+          </table>
+
+
+            {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
+            {{object.annotations|json_script:"geojson_annotations"}}
+            <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
+            <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
+            <script>
+              $(window).on('detailmap:ready', function (e, data) {
+                initializeViewer("{{base_tile_url}}");
+              });
+            </script>
+          {% endblock detailspanel %}
+        </div>
+      {% if ACTION_HISTORY_ENABLED %}
+      <div id="history" class="tab-pane">
+        <table id="logentries-list" class="table table-striped table-bordered">
+          <thead>
+          <tr>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Action" %}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for logentry in logentries %}
+          <tr>
+            <td>{{ logentry.action_time }} ({{ logentry.action_time|timesince }})</td>
+            <td>{{ logentry.user }}</td>
+            <td>{{ logentry.action_flag_display }}{% if logentry.change_message %} - {{ logentry.change_message }}{% endif %}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">{% trans "None" %}</td>
+          </tr>
+          {% endfor %}
+          {% if logentries_hellip %}
+          <tr>
+            <td>&hellip;</td>
+            <td>&hellip;</td>
+            <td>&hellip;</td>
+          </tr>
+          {% endif %}
+          </tbody>
+        </table>
+        {% if 'mapentity.read_logentry' in perms %}
+        <a href="{% url 'mapentity:logentry_list' %}?content_type={{ object.get_content_type_id }}&object_id={{ object.pk }}" class="btn btn-light">
+            {% trans "Full history" %}
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div><!-- col-md-7 -->
+
+<div class="splitter"></div>
+
+<div class="map-panel detail col-12 col-lg-5" {% if mapwidth and mapheight %}style="width: {{ mapwidth }}px; height: {{ mapheight }}px;"{% endif %}>
+  {% block mappanel %}
+  {% if object.get_geom %}
+  {% include "mapentity/mapgeometry_fragment.html" with mapname="detailmap" %}
+  {% else %}
+  <p class="nomap">{{ empty_map_message }}</p>
+  {% endif %}
+  {% endblock mappanel %}
+</div><!-- col-md-5 -->
+
+{% endblock mainpanel %}
+{% block extrabody %}
+  {{ block.super}}
+  <script type="text/javascript" src="{% static 'mapentity/mapentity.detail.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>
+{% endblock %}

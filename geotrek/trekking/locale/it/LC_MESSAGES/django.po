@@ -532,6 +532,9 @@ msgstr "itinerari a tappe"
 msgid "Hike"
 msgstr "Escursione"
 
+msgid "Attached files"
+msgstr ""
+
 msgid "Attributes"
 msgstr "Attributi"
 

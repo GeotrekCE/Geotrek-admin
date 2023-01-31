@@ -5,7 +5,7 @@ from django.urls import reverse
 from tempfile import TemporaryDirectory
 
 from geotrek.common.models import Attachment, FileType, Theme
-from geotrek.common.tests.factories import AttachmentFactory, ThemeFactory
+from geotrek.common.tests.factories import AttachmentFactory, HDViewPointFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.models import DifficultyLevel, POI, Trek
 from geotrek.trekking.tests.factories import DifficultyLevelFactory, POIFactory, TrekFactory
@@ -164,3 +164,21 @@ class MergeActionAdminTest(TestCase):
         self.assertEqual(self.trek.themes.first().label,
                          "*********************************************************************************************"
                          "******************************* ...")
+
+
+class HDViewPointAdminTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory()
+        cls.trek = TrekFactory()
+        cls.vp = HDViewPointFactory(content_object=cls.trek)
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_changelist_hdviewpoint(self):
+        list_url = reverse('admin:common_hdviewpoint_changelist')
+        response = self.client.get(list_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'<a data-pk="{self.trek.pk}" href="{self.trek.get_detail_url()}" >{str(self.trek)}</a>')
+        self.assertContains(response, f'<a data-pk="{self.vp.pk}" href="{self.vp.full_url}" >{self.vp.title}</a>')

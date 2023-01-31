@@ -1,6 +1,7 @@
 import uuid
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
@@ -173,6 +174,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    view_points = GenericRelation('common.HDViewPoint', related_query_name='site')
 
     check_structure_in_forms = False
 

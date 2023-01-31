@@ -5,10 +5,15 @@ CHANGELOG
 2.95.0+dev (XXXX-XX-XX)
 -----------------------
 
-**Minor improvements**
+**New feature**
+
+- Handle very high resolution images (HD Views) that will automatically be tiled, for ``Trek``, ``POI`` and ``Site`` (#3378)
+- Handle annotations on HD Views (points, lines, polygons and text)
+
+**Improvements**
 
 - APIDAE Trek Parser output now shows APIDAE IDs of entities triggering warnings during import
-
+- Update maximum request size in Nginx from 10M to 200M to allow uploading HD pictures (#3378)
 
 **Bug fixes**
 
@@ -24,6 +29,10 @@ CHANGELOG
 - pip-tools and flake8 are now available in developer environment.
 - Dependency graph is now checked in CI (see docs/contribute/development to how add a new dependency).
 - New git pre-commit hook to check all is alright before commit (see docs/contribute/development).
+
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/3298/commits/f9c72d95c1fd7eee2dee26dc73a5927966a812bf) to allow uploading big images. It is highly recommanded to apply changes to your Nginx configuration template (in /opt/geotrek-admin/var/conf/nginx.conf.in).
 
 
 2.95.0     (2023-01-24)

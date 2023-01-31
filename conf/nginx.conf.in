@@ -25,7 +25,7 @@ server {
     access_log /var/log/nginx/geotrek_access.log;
     error_log /var/log/nginx/geotrek_error.log;
 
-    client_max_body_size 10M;
+    client_max_body_size 200M;
 
     location /static {
         expires 1d;

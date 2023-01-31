@@ -550,6 +550,9 @@ msgstr "Itinérance"
 msgid "Hike"
 msgstr "Randonnée"
 
+msgid "Attached files"
+msgstr ""
+
 msgid "Attributes"
 msgstr "Informations"
 

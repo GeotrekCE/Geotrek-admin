@@ -535,6 +535,9 @@ msgstr "Roaming"
 msgid "Hike"
 msgstr "Wander"
 
+msgid "Attached files"
+msgstr ""
+
 msgid "Attributes"
 msgstr "Informationen"
 

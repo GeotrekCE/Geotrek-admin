@@ -20,6 +20,8 @@ billiard==3.6.4.0
     # via celery
 btrees==4.10.0
     # via zodb
+cachetools==5.2.0
+    # via large-image
 cairocffi==0.9.0
     # via
     #   cairosvg
@@ -43,6 +45,7 @@ cffi==1.15.0
     # via
     #   cairocffi
     #   persistent
+    #   pyvips
     #   weasyprint
 charset-normalizer==3.0.1
     # via requests
@@ -86,6 +89,7 @@ django==3.2.16
     #   django-embed-video
     #   django-filter
     #   django-js-asset
+    #   django-large-image
     #   django-leaflet
     #   django-modelcluster
     #   django-modeltranslation
@@ -120,6 +124,8 @@ django-filter==22.1
     # via mapentity
 django-js-asset==2.0.0
     # via django-mptt
+django-large-image==0.8.1
+    # via geotrek (setup.py)
 django-leaflet==0.19.post9
     # via mapentity
 django-modelcluster==6.0
@@ -136,6 +142,7 @@ django-weasyprint==1.1.0.post2
     #   mapentity
 djangorestframework==3.13.1
     # via
+    #   django-large-image
     #   djangorestframework-datatables
     #   djangorestframework-gis
     #   drf-extensions
@@ -152,13 +159,17 @@ drf-dynamic-fields==0.4.0
 drf-extensions==0.7.1
     # via geotrek (setup.py)
 drf-yasg==1.20.0
-    # via geotrek (setup.py)
+    # via
+    #   django-large-image
+    #   geotrek (setup.py)
 easy-thumbnails==2.7
     # via
     #   mapentity
     #   paperclip
 env-file==2020.12.3
     # via geotrek (setup.py)
+filelock==3.8.0
+    # via django-large-image
 fiona==1.8.21
     # via
     #   geotrek (setup.py)
@@ -187,6 +198,12 @@ kombu==5.2.4
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
+large-image==1.17.2
+    # via
+    #   django-large-image
+    #   large-image-source-vips
+large-image-source-vips==1.17.2
+    # via geotrek (setup.py)
 lxml==4.9.1
     # via mapentity
 mapentity==8.4.0
@@ -201,8 +218,16 @@ munch==2.5.0
     # via fiona
 netifaces==0.11.0
     # via mapentity
+numpy==1.23.4
+    # via
+    #   large-image
+    #   large-image-source-vips
 packaging==21.3
-    # via drf-yasg
+    # via
+    #   drf-yasg
+    #   large-image-source-vips
+palettable==3.3.0
+    # via large-image
 paperclip==2.6.1
     # via
     #   geotrek (setup.py)
@@ -221,10 +246,13 @@ pillow==9.3.0
     #   django-colorfield
     #   easy-thumbnails
     #   geotrek (setup.py)
+    #   large-image
     #   paperclip
     #   weasyprint
 prompt-toolkit==3.0.30
     # via click-repl
+psutil==5.9.3
+    # via large-image
 psycopg2==2.9.5
     # via geotrek (setup.py)
 pycparser==2.21
@@ -247,6 +275,8 @@ pytz==2022.7.1
     #   django-modelcluster
     #   djangorestframework
     #   djangorestframework-datatables
+pyvips==2.2.1
+    # via large-image-source-vips
 rcssmin==1.1.0
     # via django-compressor
 redis==4.4.2

@@ -520,6 +520,9 @@ msgstr ""
 msgid "Hike"
 msgstr "Wandelen"
 
+msgid "Attached files"
+msgstr ""
+
 msgid "Attributes"
 msgstr ""
 
