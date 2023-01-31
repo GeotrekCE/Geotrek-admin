@@ -1,7 +1,7 @@
 {% load i18n mapentity_tags %}
 
 <h3 id="with-tooltip" >{% trans "HD Views" %}
-    <span id="viewpoint-tooltip" data-tooltip="Add very high resolution images that will be automatically tiled and add annotations on it (points, lines, polygons and text)">?</span>
+    <span id="viewpoint-tooltip" data-tooltip="{% trans "Add very high resolution images that will be automatically tiled and add annotations on it (points, lines, polygons and text)" %}">?</span>
 </h3>
 {% if not user.profile.structure == object.structure and not perms.authent.can_bypass_structure %}
 <div class="alert alert-warning">
