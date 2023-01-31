@@ -159,7 +159,7 @@ easy-thumbnails==2.7
     #   paperclip
 env-file==2020.12.3
     # via geotrek (setup.py)
-fiona==1.8.21
+fiona==1.9.0
     # via
     #   geotrek (setup.py)
     #   mapentity
