@@ -8,6 +8,13 @@ on:
       - requirements-dev.in
       - requirements-dev.txt
       - .github/workflows/dependencies.yml
+  pull_request_target:
+    paths:
+      - setup.py
+      - requirements.txt
+      - requirements-dev.in
+      - requirements-dev.txt
+      - .github/workflows/dependencies.yml
 
 env:
   DEBIAN_FRONTEND: noninteractive
