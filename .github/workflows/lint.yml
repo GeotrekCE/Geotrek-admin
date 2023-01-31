@@ -37,16 +37,13 @@ jobs:
             ~/.cache/pip
             ~/.wheel_dir
 
-          key: ${{ matrix.os }}-pip-${{ matrix.python-version }}
+          key: pip-${{ matrix.python-version }}
           restore-keys: |
-            ${{ matrix.os }}-pip-${{ matrix.python-version }}
+            pip-${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
-          pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
-          pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
-          pip3 wheel --wheel-dir=~/.wheel_dir -r requirements-dev.txt
-          pip3 install --find-links=~/.wheel_dir --upgrade -r requirements-dev.txt
+          pip3 install --find-links=~/.wheel_dir --upgrade flake8 -c requirements-dev.txt
 
       - name: Flake8
         run: |
