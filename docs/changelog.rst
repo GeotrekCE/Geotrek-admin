@@ -5,6 +5,11 @@ CHANGELOG
 2.95.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Minor improvements**
+
+- APIDAE Trek Parser output now shows APIDAE IDs of entities triggering warnings during import
+
+
 **Bug fixes**
 
 - Fix intervention datatable list if one intervention has no target
