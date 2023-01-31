@@ -272,7 +272,6 @@ six==1.16.0
     #   click-repl
     #   django-extended-choices
     #   django-modeltranslation
-    #   fiona
     #   html5lib
     #   munch
     #   pymemcache
