@@ -301,7 +301,6 @@ six==1.16.0
     # via
     #   click-repl
     #   django-extended-choices
-    #   django-modeltranslation
     #   fiona
     #   html5lib
     #   munch
@@ -320,6 +319,8 @@ tinycss2==1.2.1
     #   weasyprint
 transaction==3.0.1
     # via zodb
+typing-extensions==4.4.0
+    # via django-modeltranslation
 uritemplate==4.1.1
     # via
     #   coreapi
