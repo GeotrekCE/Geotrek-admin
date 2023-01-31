@@ -506,6 +506,10 @@ msgstr ""
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr ""
 
+msgid ""
+"The geometry cannot be converted to a single continuous LineString feature"
+msgstr ""
+
 #. Translators: This is a slug (without space, accent or special char)
 msgid "itinerancy"
 msgstr ""
