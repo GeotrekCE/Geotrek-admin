@@ -235,7 +235,7 @@ pymemcache==3.5.2
     # via geotrek (setup.py)
 pyparsing==3.0.8
     # via packaging
-pypdf2==1.27.5
+pypdf2==3.0.1
     # via pdfimpose
 pyphen==0.11.0
     # via weasyprint
