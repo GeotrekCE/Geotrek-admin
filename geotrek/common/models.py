@@ -28,18 +28,19 @@ from .mixins.models import (OptionalPictogramMixin, PictogramMixin,
                             TimeStampedModelMixin)
 
 
+def random_suffix_regexp():
+    return f"-[a-z0-9]{{{settings.PAPERCLIP_RANDOM_SUFFIX_SIZE}}}"
+
+
 def attachment_accessibility_upload(instance, filename):
     """Stores the attachment in a "per module/appname/primary key" folder"""
-    name, ext = os.path.splitext(filename)
-    randomized = ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
-    subfolder = '%s/%s/' % (
+    _, name = os.path.split(filename)
+    name, ext = os.path.splitext(name)
+    renamed = slugify(name) + ext
+    return 'attachments_accessibility/%s/%s/%s' % (
         '%s_%s' % (instance.content_object._meta.app_label,
                    instance.content_object._meta.model_name),
-        instance.content_object.pk)
-    max_filename_size = instance._meta.get_field('attachment_accessibility_file').max_length - len('attachments_accessibility/') - len(randomized) - len(subfolder) - len(ext) - 1
-    renamed = slugify(instance.title or name)[:max_filename_size] + "-" + randomized + ext
-    return 'attachments_accessibility/%s/%s' % (
-        subfolder,
+        instance.content_object.pk,
         renamed)
 
 
@@ -93,6 +94,7 @@ class AccessibilityAttachment(models.Model):
                                        verbose_name=_("Insertion date"))
     date_update = models.DateTimeField(editable=False, auto_now=True,
                                        verbose_name=_("Update date"))
+    random_suffix = models.CharField(null=False, blank=True, default='', max_length=128)
 
     class Meta:
         ordering = ['-date_insert']
@@ -106,6 +108,16 @@ class AccessibilityAttachment(models.Model):
             self.attachment_accessibility_file.name
         )
 
+    def save(self, *args, **kwargs):
+        if self.attachment_accessibility_file:
+            name = self.attachment_accessibility_file.name
+            if self.pk is None:
+                name = self.prepare_file_suffix()
+                self.attachment_accessibility_file.name = name
+        if self.attachment_accessibility_file and not kwargs.pop("skip_file_save", False):
+            self.attachment_accessibility_file.save(name, self.attachment_accessibility_file, save=False)
+        super().save(*args, **kwargs)
+
     @property
     def info_accessibility_display(self):
         return self.get_info_accessibility_display()
@@ -113,6 +125,29 @@ class AccessibilityAttachment(models.Model):
     @property
     def filename(self):
         return os.path.split(self.attachment_accessibility_file.name)[1]
+
+    def prepare_file_suffix(self, basename=None):
+        """ Add random file suffix and return new filename to use in attachment_accessibility_file.save
+        """
+        if not self.random_suffix:
+            # Create random suffix
+            # #### /!\ If you change this line, make sure to update 'random_suffix_regexp' method above
+            self.random_suffix = '-' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=settings.PAPERCLIP_RANDOM_SUFFIX_SIZE))
+            # #### /!\ If you change this line, make sure to update 'random_suffix_regexp' method above
+            if basename:
+                basename, ext = os.path.splitext(basename)
+            else:
+                name, ext = os.path.splitext(self.attachment_accessibility_file.name)
+            subfolder = '%s/%s' % (
+                '%s_%s' % (self.content_object._meta.app_label,
+                           self.content_object._meta.model_name),
+                self.content_object.pk)
+            # Compute maximum size left for filename
+            max_filename_size = self._meta.get_field('attachment_accessibility_file').max_length - len('attachments_accessibility/') - settings.PAPERCLIP_RANDOM_SUFFIX_SIZE - len(subfolder) - len(ext) - 1
+            # Create new name with suffix and proper size
+            name = slugify(basename or self.title or name)[:max_filename_size]
+            return name + self.random_suffix + ext
+        return self.attachment_accessibility_file.name
 
 
 class Organism(TimeStampedModelMixin, StructureOrNoneRelated):

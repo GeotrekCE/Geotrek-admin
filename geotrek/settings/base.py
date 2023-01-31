@@ -867,6 +867,7 @@ PAPERCLIP_EXTRA_ALLOWED_MIMETYPES = {
     'webp': ['image/webp'],
     'svg': ['image/svg']
 }
+PAPERCLIP_RANDOM_SUFFIX_SIZE = 12
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
