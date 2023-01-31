@@ -8,6 +8,7 @@ ALTER TABLE common_accessibilityattachment ALTER COLUMN uuid SET DEFAULT gen_ran
 ALTER TABLE common_accessibilityattachment ALTER COLUMN author SET DEFAULT '';
 ALTER TABLE common_accessibilityattachment ALTER COLUMN title SET DEFAULT '';
 ALTER TABLE common_accessibilityattachment ALTER COLUMN legend SET DEFAULT '';
+ALTER TABLE common_accessibilityattachment ALTER COLUMN random_suffix SET DEFAULT '';
 ALTER TABLE common_accessibilityattachment ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE common_accessibilityattachment ALTER COLUMN date_update SET DEFAULT now();
 
@@ -36,6 +37,7 @@ ALTER TABLE common_attachment ALTER COLUMN attachment_link SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN author SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN title SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN legend SET DEFAULT '';
+ALTER TABLE common_attachment ALTER COLUMN random_suffix SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN starred SET DEFAULT False;
 ALTER TABLE common_attachment ALTER COLUMN is_image SET DEFAULT False;
 ALTER TABLE common_attachment ALTER COLUMN date_insert SET DEFAULT now();

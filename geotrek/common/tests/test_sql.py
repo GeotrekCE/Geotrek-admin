@@ -27,14 +27,15 @@ class SQLDefaultValuesTest(TestCase):
                            attachment_accessibility_file,
                            content_type_id,
                            object_id,
-                           creator_id
+                           creator_id,
+                           random_suffix
                            ) VALUES
                            (
                            'attachments_accessibility/trekking_trek/1/foo.png',
                            {ct.pk},
                            {trek.pk},
-                           {user.pk}
-                           )""")
+                           {user.pk},
+                           '')""")
         accessibility_attachment = AccessibilityAttachment.objects.first()
         self.assertEqual(accessibility_attachment.author,
                          '')
