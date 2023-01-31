@@ -26,6 +26,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -38,16 +40,16 @@ jobs:
             ~/.cache/pip
             ~/.wheel_dir
 
-          key: ${{ matrix.os }}-pip-${{ matrix.python-version }}
+          key: pip-${{ matrix.python-version }}
           restore-keys: |
-            ${{ matrix.os }}-pip-${{ matrix.python-version }}
+            pip-${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
           pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
           pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
-          pip3 wheel --wheel-dir=~/.wheel_dir -r requirements-dev.txt
-          pip3 install --find-links=~/.wheel_dir --upgrade -r requirements-dev.txt
+          pip3 wheel --wheel-dir=~/.wheel_dir pip-tools -c requirements-dev.txt
+          pip3 install --find-links=~/.wheel_dir --upgrade pip-tools -c requirements-dev.txt
 
       - name: Check dependency graph
         run: |
@@ -73,6 +75,3 @@ jobs:
         if: ${{ github.actor == 'dependabot[bot]' }}
         with:
           commit_message: Apply dependencies update by dependabot
-          commit_user_name: dependabot[bot]
-          commit_user_email: support@github.com
-          commit_author: dependabot[bot] <support@github.com>
