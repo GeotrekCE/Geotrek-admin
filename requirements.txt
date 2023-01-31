@@ -290,6 +290,8 @@ tinycss2==1.2.1
     #   weasyprint
 transaction==3.0.1
     # via zodb
+typing-extensions==4.4.0
+    # via pypdf2
 uritemplate==4.1.1
     # via
     #   coreapi
