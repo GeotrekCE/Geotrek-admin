@@ -184,6 +184,7 @@ Geotrek-admin requires at least PostGIS 2.5.
 
 If you installed Geotrek-admin on bionic ubuntu with provided install method, you should update your database :
 ::
+
     # Firstly, backup your database (see previous section)
     # install postgresql APT repository
     # (from https://wiki.postgresql.org/wiki/Apt)

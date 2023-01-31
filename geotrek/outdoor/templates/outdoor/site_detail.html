@@ -1,5 +1,5 @@
 {% extends "common/common_detail.html" %}
-{% load i18n l10n static thumbnail %}
+{% load i18n l10n static thumbnail geotrek_tags %}
 
 {% block download %}
     {{ block.super }}
@@ -26,7 +26,10 @@
 
 {% block attachmentspanel %}
     {{ block.super }}
-    <br>
-    <br>
-    {% include "common/hdviewpoint_detail_fragment.html" %}
+    {% are_hdviews_enabled as are_hdviews_enabled %}
+    {% if are_hdviews_enabled %}
+        <br>
+        <br>
+        {% include "common/hdviewpoint_detail_fragment.html" %}
+    {% endif %}
 {% endblock attachmentspanel %}

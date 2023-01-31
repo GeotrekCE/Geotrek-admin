@@ -43,7 +43,7 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
         return {
             'category': self.obj.category_display,
             'id': self.obj.pk,
-            'species': self.obj.species_display
+            'species': self.obj.species_display,
         }
 
     def setUp(self):

@@ -18,7 +18,7 @@ from geotrek.core.tests.factories import (
     ComfortFactory, PathFactory, StakeFactory, TrailFactory, TrailCategoryFactory,
     CertificationLabelFactory, CertificationStatusFactory, CertificationTrailFactory
 )
-from geotrek.core.models import Path, Trail
+from geotrek.core.models import Path, PathAggregation, Trail
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -225,6 +225,16 @@ class TrailTest(TestCase):
     def test_trails_verbose_name(self):
         path = PathFactory.create()
         self.assertEqual(path.trails_verbose_name, 'Trails')
+
+    def test_trails_duplicate(self):
+        path_1 = PathFactory.create()
+        path_2 = PathFactory.create()
+        t = TrailFactory.create(paths=[path_1, path_2])
+        self.assertEqual(Trail.objects.count(), 1)
+        self.assertEqual(PathAggregation.objects.count(), 2)
+        t.duplicate()
+        self.assertEqual(PathAggregation.objects.count(), 4)
+        self.assertEqual(Trail.objects.count(), 2)
 
 
 class TrailTestDisplay(TestCase):

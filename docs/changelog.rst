@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.94.0+dev (XXXX-XX-XX)
+2.95.0+dev (XXXX-XX-XX)
 -----------------------
 
 **New feature**
@@ -10,31 +10,89 @@ CHANGELOG
 - Handle very high resolution images (HD Views) that will automatically be tiled, for ``Trek``, ``POI`` and ``Site`` (#3378)
 - Handle annotations on HD Views (points, lines, polygons and text)
 
+**Improvements**
+
+- APIDAE Trek Parser output now shows APIDAE IDs of entities triggering warnings during import
+- Update maximum request size in Nginx from 10M to 200M to allow uploading HD pictures (#3378)
+
+**Bug fixes**
+
+- Fix intervention datatable list if one intervention has no target
+- Fix intervention datatable list with interventions on lands
+- Fix signage's blade detail
+- APIDAE Trek parser now raises an import error on geometry with not continuous segments
+
+**Development**
+
+- New contributing guide (docs/CONTRIBUTING.rst).
+- Development dependencies are now split in dedicated file.
+- pip-tools and flake8 are now available in developer environment.
+- Dependency graph is now checked in CI (see docs/contribute/development to how add a new dependency).
+- New git pre-commit hook to check all is alright before commit (see docs/contribute/development).
+
 **Warning**
 
-Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8:
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/3298/commits/f9c72d95c1fd7eee2dee26dc73a5927966a812bf) to allow uploading big images. It is highly recommanded to apply changes to your Nginx configuration template (in /opt/geotrek-admin/var/conf/nginx.conf.in).
+
+
+2.95.0     (2023-01-24)
+-----------------------
+
+**New features**
+
+- Add possibility to duplicate objects with geometries
+
+**Minor improvements**
+
+- Add blade type on signage detail view (#3325)
+
+**Warning**
+
+Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8 updates:
+
 ``apt-get install software-properties-common``
+
 ``add-apt-repository --yes ppa:deadsnakes/ppa``
+
 ``apt-get install python3.8``
 
 **Maintenance**
 
 In preparation for HD Views developments (PR #3298)
+
 - Bump Python to 3.8
-- Bump MapEntity to 8.3.0
+
+- Bump MapEntity to 8.4.0
+
 - Bump Pillow to 9.3.0
+
 - Bump Celery to 5.2.1
+
 - Bump django-celery-results to 2.4.0
+
 - Bump django-clearcache to 1.2.1
+
 - Add libvips to dependencies
 
-**Improvments**
+**Improvements**
 
-- Update maximum request size in Nginx from 10M to 200M to allow uploading HD pictures (#3378)
+- Apidae trek parser supports geometry import from kml or kmz attachment
+- More checks on Apidae trek parser in order not to import trek without a geometry
 
 **Bug fixes**
 
+- Fix loaddem command update other types of geometry
 - Recreate cache folders if missing. (#3384)
+- Modify site's geometry before saving to avoid edition and export of shapefiles (#3399)
+- Fix API V2 cache key with X-Forwarded-Proto header (#3404)
+- Check pictogram exist on categories during generation of pdfs
+- Prevent "Internal Error" on API v2 when wrong url parameter is provided on courses and sites filter for pois
+- Fix ApidaeParsers does not update every time
+- Add fixtures licenses initial install
+- Fix default conf nginx for mobile
+- Replace image's relative URLs with absolute URLs in API v2 trek descriptions (#3321)
+- Disable scroll propagation on layers list to avoid zoom changes on map (#2687)
+
 
 2.94.0     (2022-12-12)
 -----------------------
@@ -46,12 +104,14 @@ In preparation for HD Views developments (PR #3298)
 - ApidaeTrekParser: import trek's contact info into description
 - New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
 - New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
+- Change default color of imported filelayer (#306)
 
 **Bug fixes**
 
 - Fix shp zipfile import
 - ApidaeTrekParser: round computed duration
 - ApidaeTrekParser: fix attached pictures import
+
 
 2.93.0     (2022-12-06)
 -----------------------
@@ -246,6 +306,7 @@ In preparation for HD Views developments (PR #3298)
 
 - Add new setting `DIRECTION_ON_LINES_ENABLED` to have the `direction` field on lines instead of blades
 
+
 2.87.2 (2022-09-23)
 -----------------------
 
@@ -344,7 +405,7 @@ In preparation for HD Views developments (PR #3298)
 
 - Upgrade mapentity to 8.2.1
 
-**/!\ Regression /!\**
+**! Regression !**
 
 - System permissions on files output by `sync_rando` and `sync_mobile` commands were inadvertently changed to more restricted
   with no reading allowed by group or other. This may cause trouble if your deployment relies on those permissions.
@@ -4133,8 +4194,7 @@ In order to enable those features under construction, add ``experimental = True`
 :notes:
 
     Give related permissions to the managers group in order to allow edition
-    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``,
-     ``add_touristiccontent`` ...).
+    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``, ``add_touristiccontent`` ...).
 
 
 0.27.2 (2010-10-14)
@@ -4318,6 +4378,7 @@ Since the map export have changed, empty the cache :
 * Rework display of lists in detail pages, better factorization
 * Removed links in logbook list for certain models
 * Display messages in login page too (useful for redirections)
+
 Support edition of several fields on the same map, via django-leaflet new feature (fixes #53)
 
 
