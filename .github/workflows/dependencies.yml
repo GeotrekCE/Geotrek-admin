@@ -75,6 +75,3 @@ jobs:
         if: ${{ github.actor == 'dependabot[bot]' }}
         with:
           commit_message: Apply dependencies update by dependabot
-          commit_user_name: dependabot[bot]
-          commit_user_email: support@github.com
-          commit_author: dependabot[bot] <support@github.com>
