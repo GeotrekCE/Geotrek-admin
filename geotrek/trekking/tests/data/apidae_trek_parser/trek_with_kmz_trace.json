@@ -8,14 +8,14 @@
           "type": "PLAN",
           "traductionFichiers": [
             {
-              "url": "https://example.net/un_plan.kmz",
+              "url": "https://example.net/trace.kmz",
               "extension": "kmz"
             }
           ]
         }
       ],
       "nom": {
-        "libelleFr": "Une belle randonnée de test avec un plan... mais pas au format gpx"
+        "libelleFr": "Une belle randonnée de test avec un plan au format KMZ (zipped KML)"
       }
     }
   ]

@@ -1,9 +1,11 @@
 from datetime import date, timedelta
 from decimal import Decimal
+import io
 import json
 from collections import defaultdict
 import re
 from tempfile import NamedTemporaryFile
+import zipfile
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
@@ -460,7 +462,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 'ALLER_ITINERANCE': 'Traversée',
             }
         },
-        'accessibilities': {'create': True}
+        'accessibilities': {'create': True},
+        'geom': {'required': True},
     }
     non_fields = {
         'attachments': 'illustrations'
@@ -611,6 +614,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 val = val.get(get_language())
         return val
 
+    def add_warning(self, msg):
+        key = _("APIDAE Trek #%(eid_val)s at line %(line)s") % {"eid_val": self.eid_val, "line": self.line}
+        warnings = self.warnings.setdefault(key, [])
+        warnings.append(msg)
+
     def end(self):
         self._finalize_related_treks_association()
 
@@ -618,10 +626,18 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         return str(val)
 
     def filter_geom(self, src, val):
-        plan = self._find_gpx_plan_in_multimedia_items(val)
-        gpx = self._fetch_gpx_from_url(plan)
+        supported_extensions = ['gpx', 'kml', 'kmz']
+        plan = self._find_first_plan_with_supported_file_extension(val, supported_extensions)
+        geom_file = self._fetch_geometry_file(plan)
 
-        return ApidaeTrekParser._get_geom_from_gpx(gpx)
+        ext = plan['traductionFichiers'][0]['extension']
+        if ext == 'gpx':
+            return ApidaeTrekParser._get_geom_from_gpx(geom_file)
+        elif ext == 'kml':
+            return ApidaeTrekParser._get_geom_from_kml(geom_file)
+        elif ext == 'kmz':
+            kml_file = zipfile.ZipFile(io.BytesIO(geom_file)).read('doc.kml')
+            return ApidaeTrekParser._get_geom_from_kml(kml_file)
 
     def filter_labels(self, src, val):
         typologies, environnements = val
@@ -667,6 +683,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 
     def filter_difficulty(self, src, val):
         types_clientele = val
+        difficulty_level = None
         for tc in types_clientele:
             if tc['id'] in self.types_clientele_ids_as_difficulty_levels:
                 difficulty_level = tc
@@ -794,10 +811,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 otc.save()
                 order += 1
 
-    def _fetch_gpx_from_url(self, plan):
+    def _fetch_geometry_file(self, plan):
         ref_fichier_plan = plan['traductionFichiers'][0]
-        if ref_fichier_plan['extension'] != 'gpx':
-            raise RowImportError("Le plan de l'itinéraire APIDAE n'est pas au format GPX")
         response = self.request_or_retry(url=ref_fichier_plan['url'])
         return response.content
 
@@ -865,11 +880,17 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         return marking_description
 
     @staticmethod
-    def _find_gpx_plan_in_multimedia_items(items):
-        plans = list(filter(lambda item: item['type'] == 'PLAN', items))
-        if len(plans) > 1:
-            raise RowImportError("APIDAE Trek has more than one map defined")
-        return plans[0]
+    def _find_first_plan_with_supported_file_extension(items, supported_extensions):
+        plans = [item for item in items if item['type'] == 'PLAN']
+        if not plans:
+            raise RowImportError('The trek from APIDAE has no attachment with the type "PLAN"')
+        supported_plans = [plan for plan in plans if plan['traductionFichiers'][0]['extension'] in supported_extensions]
+        if not supported_plans:
+            raise RowImportError(
+                "The trek from APIDAE has no attached \"PLAN\" in a supported format. "
+                f"Supported formats are : {', '.join(supported_extensions)}"
+            )
+        return supported_plans[0]
 
     @staticmethod
     def _get_geom_from_gpx(data):
@@ -884,6 +905,34 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 geos = ApidaeTrekParser._maybe_get_linestring_from_layer(layer)
                 if geos:
                     break
+            geos.transform(settings.SRID)
+            return geos
+
+    @staticmethod
+    def _get_geom_from_kml(data):
+        """Given KML data as bytes it returns a geom."""
+
+        def get_geos_linestring(datasource):
+            layer = datasource[0]
+            geom = get_first_geom_with_type_in(types=['MultiLineString', 'LineString'], geoms=layer.get_geoms())
+            geom.coord_dim = 2
+            geos = geom.geos
+            if geos.geom_type == 'MultiLineString':
+                geos = geos.merged
+            return geos
+
+        def get_first_geom_with_type_in(types, geoms):
+            for g in geoms:
+                for t in types:
+                    if g.geom_type.name.startswith(t):
+                        return g
+            raise RowImportError('The attached KML geometry does not have any LineString or MultiLineString data')
+
+        with NamedTemporaryFile(mode='w+b', dir=settings.TMP_DIR) as ntf:
+            ntf.write(data)
+            ntf.flush()
+            ds = DataSource(ntf.name)
+            geos = get_geos_linestring(ds)
             geos.transform(settings.SRID)
             return geos
 
@@ -913,6 +962,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         geos = ApidaeTrekParser._convert_to_geos(first_feature.geom)
         if geos.geom_type == 'MultiLineString':
             geos = geos.merged
+            if geos.geom_type == 'MultiLineString':
+                raise RowImportError(_("The geometry cannot be converted to a single continuous LineString feature"))
         return geos
 
     @staticmethod
@@ -1007,9 +1058,9 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         """Returns the duration in hours. The method expects one argument or the other, not both. If both arguments have
          non-zero values the method only considers `duration_in_minutes` and discards `duration_in_days`."""
         if duration_in_minutes:
-            return (Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01'))
+            return float((Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01')))
         elif duration_in_days:
-            return duration_in_days * 24
+            return float(duration_in_days * 24)
         else:
             return None
 

@@ -1,8 +1,14 @@
-geotrek-admin (2.94.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.95.0+dev) UNRELEASED; urgency=medium
 
-  * 
+  *
 
- -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Mon, 12 Dec 2022 19:01:52 +0100
+ -- Timothée de Montety <timothee.montety@gmail.com>  Tue, 24 Jan 2023 11:28:52 +0100
+
+geotrek-admin (2.95.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothée de Montety <timothee.montety@gmail.com>  Tue, 24 Jan 2023 11:18:52 +0100
 
 geotrek-admin (2.94.0) RELEASED; urgency=medium
 

@@ -26,6 +26,7 @@ class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityLis
 
 
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
+    mandatory_columns = ['id', 'physical_type']
     default_extra_columns = [
         'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid',
@@ -133,6 +134,7 @@ class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
 
 
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid', 'length_2d'
@@ -185,6 +187,7 @@ class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
 
 
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
@@ -236,6 +239,7 @@ class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
 
 
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
+    mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS

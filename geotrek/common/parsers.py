@@ -243,7 +243,6 @@ class Parser:
     def parse_translation_field(self, dst, src, val):
         """Specific treatment for translated fields
         TODO: check self.default_language to get default values
-        TODO: handle flow with a field for each language (ex: APIDAE)
         TODO: compare each translated fields with source fields :
         this only compares old 'name' with new 'name' but it should compare
             - old 'name_en' with new 'name_en',
@@ -252,22 +251,34 @@ class Parser:
         """
         val = val or ""
         modified = False
-
-        if hasattr(self, 'filter_{0}'.format(dst)):
-            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
-        else:
-            val = self.apply_filter(dst, src, val)
+        old_values = {}
+        # We keep every old values for each langs to get tracability during filter or apply filter
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
-            old = getattr(self.obj, dst_field_lang)
-            # Field not translated, use same val for all translated
-            val = val or ""
+            old_values[lang] = getattr(self.obj, dst_field_lang)
+        # If during filter, the traduction of the field has been changed
+        # we can still check if this value has been changed
+        if hasattr(self, 'filter_{0}'.format(dst)):
+            val_default_language = getattr(self, 'filter_{0}'.format(dst))(src, val)
+        else:
+            val_default_language = self.apply_filter(dst, src, val)
 
-            if old != val:
-                # Set dst_field_lang only if empty
-                if not old:
-                    self.set_value(dst_field_lang, src, val)
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
+            new_value = getattr(self.obj, dst_field_lang)
+            old_value = old_values[lang]
+            # Field not translated, use same val for all translated
+            val_default_language = val_default_language or ""
+            # Set val_default_language only if new empty
+            if not new_value:
+                # If there is no new value check if old value is different form the default value
+                # If this is the same, it means old value was empty and was fill with default value in previous import
+                if old_value != val_default_language:
+                    self.set_value(dst_field_lang, src, val_default_language)
                     modified = True
+            if new_value != old_value:
+                modified = True
+
         return modified
 
     def parse_field(self, row, dst, src, updated, non_field):

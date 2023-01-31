@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
 from mapentity.tests.factories import SuperUserFactory
+from rest_framework.test import APITestCase
 
 from geotrek import __version__
 from geotrek.authent import models as authent_models
@@ -39,6 +40,7 @@ from geotrek.tourism import models as tourism_models
 from geotrek.tourism.tests import factories as tourism_factory
 from geotrek.trekking import models as trek_models
 from geotrek.trekking.tests import factories as trek_factory
+from geotrek.trekking.tests.factories import PracticeFactory
 from geotrek.zoning import models as zoning_models
 from geotrek.zoning.tests import factories as zoning_factory
 
@@ -318,13 +320,17 @@ class BaseApiTest(TestCase):
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)], published=True)
+            cls.poi = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
+            poi_excluded = trek_factory.POIFactory(paths=[(cls.treks[0].paths.first(), 0.5, 0.5)])
         else:
-            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)', published=True)
+            cls.poi = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
+            poi_excluded = trek_factory.POIFactory(geom='SRID=2154;POINT(0 5)')
+        cls.treks[0].pois_excluded.add(poi_excluded)
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.treks[0].reservation_system = cls.reservation_system
         cls.site = outdoor_factory.SiteFactory(managers=[cls.organism])
+        cls.site.pois_excluded.add(poi_excluded)
         cls.label_accessibility = tourism_factory.LabelAccessibilityFactory()
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         cls.content2.category = cls.category
@@ -346,7 +352,10 @@ class BaseApiTest(TestCase):
             reservation_system=cls.reservation_system,
             practice=cls.practice,
             difficulty=cls.difficulty,
-            accessibility_level=cls.accessibility_level
+            accessibility_level=cls.accessibility_level,
+            description='<p>Description</p>'
+                        '<img src="/media/upload/steep_descent.svg" alt="Descent">'
+                        '<img src="https://testserver/media/upload/pedestre.svg" alt="" width="1848" height="1848">'
         )
         cls.parent.accessibilities.add(cls.accessibility)
         cls.parent.source.add(cls.source)
@@ -388,6 +397,7 @@ class BaseApiTest(TestCase):
             type=cls.coursetype,
             points_reference=MultiPoint(Point(12, 12))
         )
+        cls.course.pois_excluded.add(poi_excluded)
         cls.course.parent_sites.set([cls.site])
         # create a reference point for distance filter (in 4326, Cahors city)
         cls.reference_point = Point(x=1.4388656616210938,
@@ -1613,7 +1623,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             len(json_response.get('results')),
-            trek_models.POI.objects.all().count()
+            trek_models.POI.objects.all().count() - 1  # 1 excluded POI
         )
         obj.pois_excluded.add(self.poi)
         obj.save()
@@ -1624,7 +1634,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             len(json_response.get('results')),
-            trek_models.POI.objects.all().count() - 1
+            trek_models.POI.objects.all().count() - 2  # 1 excluded POI
         )
 
     def test_poi_list_filter_trek(self):
@@ -4323,3 +4333,41 @@ class AltimetryCacheTests(BaseApiTest):
             response = self.client.get(reverse('apiv2:trek-profile', args=(self.trek.pk,)), {"format": "svg"})
         self.assertEqual(response.status_code, 200)
         self.assertIn('image/svg+xml', response['Content-Type'])
+
+
+class GenericCacheTestCase(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice = PracticeFactory.create()
+
+    def test_cache_invalidates_along_x_forwarded_proto_header(self):
+        with self.assertNumQueries(2):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)))
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('http://'))
+
+        # after cache hit, query number is 1
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)))
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('http://'))
+
+        # we used custom header, cache is invalidate and url is now https
+        with self.assertNumQueries(2):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)),
+                                       HTTP_X_FORWARDED_PROTO='https')
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('https://'))
+
+        # cache is hit
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)),
+                                       HTTP_X_FORWARDED_PROTO='https')
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('https://'))
+
+        # first request is always cached
+        with self.assertNumQueries(1):
+            response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)))
+        data = response.json()
+        self.assertTrue(data['pictogram'].startswith('http://'))

@@ -7,18 +7,19 @@ from django_filters import ChoiceFilter, MultipleChoiceFilter
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
 from geotrek.altimetry.filters import AltimetryPointFilterSet
-from geotrek.core.models import Topology
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import OptionalRangeFilter, RightFilter
+from geotrek.feedback.models import Report
 from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDistrict,
                                     IntersectionFilterRestrictedArea, IntersectionFilterRestrictedAreaType,
                                     ZoningFilterSet)
 from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
 
 from .models import Intervention, Project
+from geotrek.core.models import Topology
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
-    from geotrek.signage.models import Blade
+    from geotrek.signage.models import Blade, Signage
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Site, Course
@@ -34,50 +35,50 @@ class PolygonInterventionFilterMixin:
         if not isinstance(values, list):
             values = [values]
 
-        lookup = self.lookup_expr
-        content_type_exclude = []
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blade_content_type = ContentType.objects.get_for_model(Blade)
-            content_type_exclude.append(blade_content_type)
-        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-            site_content_type = ContentType.objects.get_for_model(Site)
-            course_content_type = ContentType.objects.get_for_model(Course)
-            content_type_exclude.append(site_content_type)
-            content_type_exclude.append(course_content_type)
-        topologies = []
-        sites = []
-        courses = []
-        for value in values:
-            topologies += Topology.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True)
+        signages = []
+        target_types = qs.values_list('target_type', flat=True).exclude(target_type=blade_content_type)
+        interventions = []
+        for target_type in target_types:
+            model = ContentType.objects.get(pk=target_type).model_class()
+            elements_in_bbox = []
+            for value in values:
+                elements_in_bbox.extend(
+                    model.objects.filter(**{'geom__%s' % self.lookup_expr: self.get_geom(value)}).values_list('id', flat=True)
+                )
+            if 'geotrek.outdoor' in settings.INSTALLED_APPS and issubclass(model, Site) or issubclass(model, Course):
+                interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
+                    target_id__in=model.objects.values_list('id', flat=True)
+                ))
+            if 'geotrek.feedback' in settings.INSTALLED_APPS and issubclass(model, Report):
+                interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
+                    target_id__in=model.objects.values_list('id', flat=True)))
+            if 'geotrek.signage' in settings.INSTALLED_APPS and issubclass(model, Topology) or issubclass(model, Signage):
+                signages = elements_in_bbox
+            interventions += qs.values_list('id', flat=True).filter(target_type=target_type,
+                                                                    target_id__in=elements_in_bbox)
 
-            if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-                sites += Site.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True)
-                courses += Course.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True)
-        topologies_intervention = Intervention.objects.existing().filter(target_id__in=topologies).exclude(
-            target_type__in=content_type_exclude).distinct('pk').values_list('id', flat=True)
-
-        interventions = list(topologies_intervention)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
-            blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
-            blades_intervention = Intervention.objects.existing().filter(target_id__in=blades,
-                                                                         target_type=blade_content_type).values_list('id',
-                                                                                                                     flat=True)
+            blades = list(Blade.objects.filter(signage__in=signages).values_list('id', flat=True))
+
+            blades_intervention = Intervention.objects.filter(target_id__in=blades,
+                                                              target_type=blade_content_type).values_list('id',
+                                                                                                          flat=True)
             interventions.extend(blades_intervention)
-        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-            sites_intervention = Intervention.objects.existing() \
-                .filter(target_id__in=sites, target_type=site_content_type) \
-                .values_list('id', flat=True)
-            interventions.extend(sites_intervention)
-            courses_intervention = Intervention.objects.existing() \
-                .filter(target_id__in=courses, target_type=course_content_type) \
-                .values_list('id', flat=True)
-            interventions.extend(courses_intervention)
-        if hasattr(self, 'lookup_queryset_in'):
-            lookup_queryset = self.lookup_queryset_in
-        else:
-            lookup_queryset = 'pk__in'
-        qs = qs.filter(**{'%s' % lookup_queryset: interventions})
+        qs = qs.filter(pk__in=interventions).existing()
         return qs
+
+
+class PolygonProjectFilterMixin(PolygonInterventionFilterMixin):
+    def get_geom(self, value):
+        return value.geom
+
+    def filter(self, qs, values):
+        if not values:
+            return qs
+        interventions = Intervention.objects.all()
+        return qs.filter(interventions__in=super().filter(interventions, values).values_list('id', flat=True))
 
 
 class InterventionIntersectionFilterRestrictedAreaType(PolygonInterventionFilterMixin,
@@ -115,58 +116,26 @@ class PolygonTopologyFilter(PolygonInterventionFilterMixin, PolygonFilter):
     pass
 
 
-class ProjectIntersectionFilterCity(PolygonInterventionFilterMixin, RightFilter):
+class ProjectIntersectionFilterCity(PolygonProjectFilterMixin, RightFilter):
     model = City
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.lookup_expr = 'intersects'
-        self.lookup_queryset_in = 'interventions__in'
 
-    def get_geom(self, value):
-        return value.geom
-
-
-class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFilter):
+class ProjectIntersectionFilterDistrict(PolygonProjectFilterMixin, RightFilter):
     model = District
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.lookup_expr = 'intersects'
-        self.lookup_queryset_in = 'interventions__in'
 
-    def get_geom(self, value):
-        return value.geom
-
-
-class ProjectIntersectionFilterRestrictedArea(PolygonInterventionFilterMixin, RightFilter):
+class ProjectIntersectionFilterRestrictedArea(PolygonProjectFilterMixin, RightFilter):
     model = RestrictedArea
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.lookup_expr = 'intersects'
-        self.lookup_queryset_in = 'interventions__in'
 
-    def get_geom(self, value):
-        return value.geom
-
-
-class ProjectIntersectionFilterRestrictedAreaType(PolygonInterventionFilterMixin, RightFilter):
+class ProjectIntersectionFilterRestrictedAreaType(PolygonProjectFilterMixin, RightFilter):
     model = RestrictedAreaType
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.lookup_expr = 'intersects'
-        self.lookup_queryset_in = 'interventions__in'
 
     def filter(self, qs, values):
         restricted_areas = RestrictedArea.objects.filter(area_type__in=values)
         if not restricted_areas and values:
             return qs.none()
         return super().filter(qs, list(restricted_areas))
-
-    def get_geom(self, value):
-        return value.geom
 
 
 class AltimetryInterventionFilterSet(AltimetryPointFilterSet):
@@ -208,10 +177,10 @@ class ProjectFilterSet(StructureRelatedFilterSet):
         label=_("Year of activity"), method='filter_year',
         choices=lambda: Project.objects.year_choices()  # Could change over time
     )
-    city = ProjectIntersectionFilterCity(label=_('City'), required=False)
-    district = ProjectIntersectionFilterDistrict(label=_('District'), required=False)
-    area_type = ProjectIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False)
-    area = ProjectIntersectionFilterRestrictedArea(label=_('Restricted area'), required=False)
+    city = ProjectIntersectionFilterCity(label=_('City'), lookup_expr='intersects', required=False)
+    district = ProjectIntersectionFilterDistrict(label=_('District'), lookup_expr='intersects', required=False)
+    area_type = ProjectIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), lookup_expr='intersects', required=False)
+    area = ProjectIntersectionFilterRestrictedArea(label=_('Restricted area'), lookup_expr='intersects', required=False)
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
