@@ -21,7 +21,7 @@ from geotrek.sensitivity.managers import SensitiveAreaManager
 from geotrek.sensitivity.helpers import openair_atimes_concat
 from geotrek.core.models import simplify_coords
 
-logger = logging.getLogger("geotrek")
+logger = logging.getLogger(__name__)
 
 
 class SportPractice(TimeStampedModelMixin, models.Model):

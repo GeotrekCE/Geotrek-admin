@@ -34,7 +34,6 @@ class BiodivParser(Parser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        print('URL', self.url)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             self.fields['description_' + lang] = 'description.' + lang
 
