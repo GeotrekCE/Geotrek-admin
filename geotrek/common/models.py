@@ -1,20 +1,28 @@
 import os
 import uuid
 
-from PIL import Image
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
+from django.urls import reverse
+from django.utils.http import urlencode
 from django.utils.translation import gettext_lazy as _
-from paperclip.models import Attachment as BaseAttachment, FileType as BaseFileType, License as BaseLicense
+from mapentity.models import MapEntityMixin
+from paperclip.models import Attachment as BaseAttachment
+from paperclip.models import FileType as BaseFileType
+from paperclip.models import License as BaseLicense
+from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
+
 from .managers import AccessibilityAttachmentManager
-from .mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
+from .mixins.models import (OptionalPictogramMixin, PictogramMixin,
+                            TimeStampedModelMixin)
 
 
 def attachment_accessibility_upload(instance, filename):
@@ -172,7 +180,7 @@ class Theme(TimeStampedModelMixin, PictogramMixin):
 
 
 class RecordSource(TimeStampedModelMixin, OptionalPictogramMixin):
-    name = models.CharField(verbose_name=_("Name"), max_length=50)
+    name = models.CharField(verbose_name=_("Name"), max_length=80)
     website = models.URLField(verbose_name=_("Website"), max_length=256, blank=True, null=True)
 
     class Meta:
@@ -264,3 +272,60 @@ class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
 
     class Meta:
         abstract = True
+
+
+class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
+    picture = models.FileField(verbose_name=_("Picture"), upload_to="hdviewpoints/")
+    geom = gis_models.PointField(verbose_name=_("Location"),
+                                 srid=settings.SRID)
+    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    annotations = models.JSONField(verbose_name=_("Annotations"), blank=True, default=dict)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    author = models.CharField(blank=True, default='', max_length=128,
+                              verbose_name=_('Author'),
+                              help_text=_("Original creator"))
+    title = models.CharField(max_length=1024,
+                             verbose_name=_("Title"),
+                             help_text=_("Title for this view point"))
+    legend = models.CharField(blank=True, default='', max_length=1024,
+                              verbose_name=_("Legend"),
+                              help_text=_("Details about this view"))
+    license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
+                                verbose_name=_("License"),
+                                null=True, blank=True,
+                                on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = _("HD View")
+        verbose_name_plural = _("HD Views")
+        permissions = (
+            ("read_hdviewpoint", "Can read hd view point"),
+        )
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def full_url(self):
+        return reverse('common:hdviewpoint_detail', kwargs={'pk': self.pk})
+
+    @classmethod
+    def get_list_url(cls):
+        return reverse('admin:common_hdviewpoint_changelist')
+
+    def get_picture_tile_url(self, x, y, z):
+        url = reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': x, 'y': y, 'z': z, 'fmt': 'png'})
+        return f"{url}?{urlencode({'source': 'vips'})}"
+
+    def get_generic_picture_tile_url(self):
+        url = self.get_picture_tile_url(0, 0, 0).replace("/0/0/0.png", "/{z}/{x}/{y}.png")
+        return url
+
+    @property
+    def thumbnail_url(self):
+        return reverse('common:hdviewpoint-thumbnail', kwargs={'pk': self.pk, 'fmt': 'png'})
+
+    def get_annotate_url(self):
+        return reverse('common:hdviewpoint_annotate', args=[self.pk])

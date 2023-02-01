@@ -9,18 +9,20 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.utils.translation import pgettext_lazy, gettext_lazy as _
-from mapentity.models import MapEntityMixin
+
 from mapentity.serializers import plain_text
 from pyopenair.factory import wkt2openair
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
-from geotrek.common.utils import intersecting, classproperty, simplify_coords
+from geotrek.common.mixins.models import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin,
+                                          AddPropertyMixin, GeotrekMapEntityMixin, get_uuid_duplication)
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.sensitivity.managers import SensitiveAreaManager
 from geotrek.sensitivity.helpers import openair_atimes_concat
 from geotrek.core.models import simplify_coords
 
 logger = logging.getLogger("geotrek")
+
 
 class SportPractice(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
@@ -77,7 +79,7 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
         return ", ".join([str(practice) for practice in self.practices.all()])
 
 
-class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
+class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
     geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)
@@ -90,6 +92,10 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     objects = SensitiveAreaManager()
+
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
 
     class Meta:
         verbose_name = _("Sensitive area")
@@ -207,19 +213,22 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         geom = geom.simplify(0.001, preserve_topology=True)
         other = {}
         other['*AUID'] = "GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity){{{{{id}}}}}".format(id=str(self.pk))
-        other['*ADescr'] = "{name} (published on {published_date})".format(name=self.species.name, published_date=self.publication_date.strftime("%d/%m/%Y"))
+        adescr = (self.species.name,)
+        if self.publication_date:
+            adescr += (f"(published on {self.publication_date.strftime('%d/%m/%Y')})",)
+        other['*ADescr'] = " ".join(adescr)
         other['*ATimes'] = openair_atimes_concat(self)
         wkt = geom.wkt
         data = {
-            'wkt' : wkt, 
-            'an': self.species.name, 
-            'ac': 'ZSM', 
-            'ah_unit':'m', 
-            'ah_alti': self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 
-            'ah_mode':'AGL', 
-            'al_mode':'SFC', 
+            'wkt': wkt,
+            'an': self.species.name,
+            'ac': 'ZSM',
+            'ah_unit': 'm',
+            'ah_alti': self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS,
+            'ah_mode': 'AGL',
+            'al_mode': 'SFC',
             # 'comment': self.species.name + ' (published on '+self.publication_date.strftime("%d/%m/%Y")+')',
-            'other': other 
+            'other': other
         }
         return wkt2openair(**data)
 

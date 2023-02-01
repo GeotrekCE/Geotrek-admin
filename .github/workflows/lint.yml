@@ -1,32 +1,51 @@
 name: Linting
 
 on:
-  push:
+  pull_request:
+    paths:
+      - 'geotrek/**'
+      - '.github/workflows/lint.yml'
 
 env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
   flake8:
-    name: Check code styling
-    runs-on: ubuntu-18.04
+    name: Checking Flake8 rules
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-20.04']
+        python-version: ['3.8']
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.6
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.6  # lint with minimal version supported (3.6 in 18.04)
-
-      - name: Install dependencies
-        run: |
-          pip3 install --upgrade pip
-          pip3 install flake8
-
-      - name: Flake8
-        run: |
-          flake8 geotrek
+      - uses: actions/checkout@v3
 
       - name: Not evaluated values in migration files
         run: |
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
+
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.wheel_dir
+
+          key: pip-${{ matrix.python-version }}
+          restore-keys: |
+            pip-${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip3 wheel --wheel-dir=~/.wheel_dir flake8 -c requirements-dev.txt
+          pip3 install --find-links=~/.wheel_dir --upgrade flake8 -c requirements-dev.txt
+
+      - name: Flake8
+        run: |
+          flake8 geotrek

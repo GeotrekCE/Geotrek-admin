@@ -46,6 +46,14 @@ Documentation
 * `Installation and configuration instructions <http://geotrek.readthedocs.org>`_
 * Help us translate `on Weblate <https://weblate.makina-corpus.net/>`_
 
+
+Contribution
+------------
+
+* `Contributing guide <https://geotrek.readthedocs.io/en/master/CONTRIBUTING.html>`_
+* `Development documentation <https://geotrek.readthedocs.io/en/master/contribute/development.html>`_
+
+
 License
 -------
 

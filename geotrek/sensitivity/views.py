@@ -22,7 +22,8 @@ from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
-from .models import SensitiveArea, Species
+from .mixins import SensitiveAreaQueryset
+from .models import SensitiveArea, Species, SportPractice
 from .serializers import SensitiveAreaSerializer, SensitiveAreaAPIGeojsonSerializer, SensitiveAreaAPISerializer, \
     SensitiveAreaGeojsonSerializer
 
@@ -113,28 +114,11 @@ class SensitiveAreaViewSet(GeotrekMapentityViewSet):
         return qs
 
 
-class SensitiveAreaAPIViewSet(APIViewSet):
+class SensitiveAreaAPIViewSet(SensitiveAreaQueryset, APIViewSet):
     model = SensitiveArea
     serializer_class = SensitiveAreaAPISerializer
     geojson_serializer_class = SensitiveAreaAPIGeojsonSerializer
-
-    def get_queryset(self):
-        qs = SensitiveArea.objects.existing()
-        qs = qs.filter(published=True)
-        qs = qs.prefetch_related('species')
-        qs = qs.annotate(geom_type=GeometryType(F('geom')))
-        qs = qs.annotate(geom2d_transformed=Case(
-            When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
-            When(geom_type__in=('POLYGON', 'MULTIPOLYGON'), then=Transform(F('geom'), settings.API_SRID))
-        ))
-        # Ensure smaller areas are at the end of the list, ie above bigger areas on the map
-        # to ensure we can select every area in case of overlapping
-        qs = qs.annotate(area=Area('geom2d_transformed')).order_by('-area')
-
-        if 'practices' in self.request.GET:
-            qs = qs.filter(species__practices__name__in=self.request.GET['practices'].split(','))
-
-        return qs
+    queryset = SensitiveArea.objects.existing()
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:

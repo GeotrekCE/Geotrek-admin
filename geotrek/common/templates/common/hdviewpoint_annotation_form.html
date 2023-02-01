@@ -1,0 +1,47 @@
+{% extends "mapentity/mapentity_form.html" %}
+{% load i18n static crispy_forms_tags %}
+{% block title %}{{ object.title }} {{ block.super }}{% endblock title %}
+{% block mainpanel %}
+    <div class="form-panel" id="annotations">
+        <div>
+            <div id="controls">
+               <div class="form-group annotationtype" title="Select the type of annotation to add.">
+                  <button class="lastused" id="rectangle" next="square">{% trans "Rectangle" %}</button><button id="square" next="ellipse">{% trans "Square" %}</button><button id="ellipse" next="circle">{% trans "Ellipse" %}</button><button id="circle" next="polygon">{% trans "Circle" %}</button><button id="polygon" next="point">{% trans "Polygon" %}</button><button id="point" next="line">{% trans "Point" %}</button><button id="line" next="rectangle">{% trans "Line" %}</button>
+               </div>
+               {% comment %} <div class="form-group" title="If disabled, hide all annotation labels."><label for="showLabels">Show annotation labels</label><input id="showLabels" param-name="labels" type="checkbox" placeholder="true"/></div>  {% endcomment %}
+               <div class="form-group" id="annotationheader">
+                  <div class="shortlabel">{% trans "Created annotations" %}</div>
+                  <a class="entry-remove-all" action="remove-all" title="Delete all annotations">&#x2716;</a>
+               </div>
+               <div class="form-group">
+                  <div id="annotationlist">
+                     <div class="entry" id="sample">
+                        <span class="entry-name">Sample</span>
+                        <a id="tinybuttons">
+                        <span class="entry-validate" style="display: none;" action="validate" title="Validate geometry">&#10003;</span>
+                        <span class="entry-adjust" action="adjust" title="Modify geometry">&#x270E;</span>
+                        <span class="entry-remove" action="remove" title="Delete this annotation">&#x2716;</span>
+                        </a>
+                    </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+        {% block mainform %}
+        {% crispy form form.helper %}
+        {% endblock mainform %}
+    </div>
+    {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
+    {{object.annotations|json_script:"geojson_annotations"}}
+    <div id="hdviewpoint-map" class='large'><span class="loader-wrapper"><span class="loader"></span></span></div>
+    <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>
+    <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
+    <script>
+        initializeViewer("{{base_tile_url}}", edit_annotations=true);
+    </script>
+{% endblock mainpanel %}
+
+{% block extrabody %}
+  {{ block.super}}
+<script type="text/javascript" src="{% static 'common/js/annotations.js' %}"></script>
+{% endblock extrabody %}

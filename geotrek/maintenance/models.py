@@ -11,19 +11,22 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins.models import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
+from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,
+                                          GeotrekMapEntityMixin, get_uuid_duplication)
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-from mapentity.models import MapEntityMixin
+
+from mapentity.models import DuplicateMixin
+
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
-class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     target_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
@@ -69,6 +72,10 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     objects = InterventionManager()
 
     geometry_types_allowed = ["LINESTRING", "POINT"]
+
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
 
     class Meta:
         verbose_name = _("Intervention")
@@ -123,22 +130,35 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
     def target_display(self):
         icon = 'path'
         title = _('Paths')
-        if not self.target._meta.model_name == "topology":
-            icon = self.target._meta.model_name
-            title = self.target.name_display
-        return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
-                                                      icon,
-                                                      title)
+        if self.target_type:
+            model = self.target_type.model_class()
+
+            if not self.target:
+                title = model._meta.verbose_name + f' {self.target_id}'
+                return '<i>' + _('Deleted') + ' :</i><img src="%simages/%s-16.png"> <i>%s<i/>' % (settings.STATIC_URL, icon, title)
+            if not model._meta.model_name == "topology":
+                title = self.target.name_display
+                icon = model._meta.model_name
+            return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
+                                                          icon,
+                                                          title)
+        return '-'
 
     @property
     def target_csv_display(self):
-        if self.target._meta.model_name == "topology":
-            title = _('Path')
-            return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all()])
-        return "%s: %s (%s)" % (
-            _(self.target._meta.verbose_name),
-            self.target,
-            self.target.pk)
+        if self.target_type:
+            model = self.target_type.model_class()
+            if not self.target:
+                title = model._meta.verbose_name + f' {self.target_id}'
+                return _('Deleted') + title
+            if model._meta.model_name == "topology":
+                title = _('Path')
+                return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all()])
+            return "%s: %s (%s)" % (
+                _(self.target._meta.verbose_name),
+                self.target,
+                self.target.pk)
+        return '-'
 
     @property
     def in_project(self):
@@ -146,18 +166,21 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, Alti
 
     @property
     def paths(self):
-        if self.target._meta.model_name == 'blade':
-            return self.target.signage.paths.all()
-        if self.target:
-            return self.target.paths.all()
+        if self.target_type:
+            model = self.target_type.model_class()
+            if model._meta.model_name == 'blade':
+                return self.target.signage.paths.all()
+            if self.target and hasattr(self.target, 'paths'):
+                return self.target.paths.all()
         return Path.objects.none()
 
     @property
     def trails(self):
         s = []
-        for p in self.target.paths.all():
-            for t in p.trails.all():
-                s.append(t.pk)
+        if hasattr(self.target, 'paths'):
+            for p in self.target.paths.all():
+                for t in p.trails.all():
+                    s.append(t.pk)
 
         return Trail.objects.filter(pk__in=s)
 
@@ -367,7 +390,7 @@ class InterventionJob(StructureOrNoneRelated):
         return self.job
 
 
-class ManDay(models.Model):
+class ManDay(DuplicateMixin, models.Model):
 
     nb_days = models.DecimalField(verbose_name=_("Mandays"), decimal_places=2, max_digits=6)
     intervention = models.ForeignKey(Intervention, on_delete=models.CASCADE)
@@ -385,7 +408,7 @@ class ManDay(models.Model):
         return str(self.nb_days)
 
 
-class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
+class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, TimeStampedModelMixin,
               StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
@@ -412,6 +435,10 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStamp
 
     objects = ProjectManager()
 
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
+
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
@@ -425,16 +452,18 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStamp
     def paths(self):
         s = []
         for i in self.interventions.existing():
-            s += i.paths
+            if hasattr(i, 'paths'):
+                s += i.paths
         return Path.objects.filter(pk__in=[p.pk for p in set(s)])
 
     @property
     def trails(self):
         s = []
         for i in self.interventions.existing():
-            for p in i.target.paths.all():
-                for t in p.trails.all():
-                    s.append(t.pk)
+            if i.target and hasattr(i.target, 'paths'):
+                for p in i.target.paths.all():
+                    for t in p.trails.all():
+                        s.append(t.pk)
 
         return Trail.objects.filter(pk__in=s)
 
@@ -617,7 +646,7 @@ class Contractor(StructureOrNoneRelated):
         return self.contractor
 
 
-class Funding(models.Model):
+class Funding(DuplicateMixin, models.Model):
 
     amount = models.FloatField(verbose_name=_("Amount"))
     project = models.ForeignKey(Project, verbose_name=_("Project"), on_delete=models.CASCADE)

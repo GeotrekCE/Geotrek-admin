@@ -2,11 +2,10 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
 
-from mapentity.models import MapEntityMixin
-
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
+from geotrek.common.mixins.models import GeotrekMapEntityMixin
 from geotrek.maintenance.models import Intervention, Project
 
 
@@ -14,7 +13,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
-class Status(MapEntityMixin):
+class Status(GeotrekMapEntityMixin):
     """
     Model with a verbose name to represent this module (meta-class)
     """
@@ -37,7 +36,7 @@ class PhysicalType(StructureOrNoneRelated):
         return self.name
 
 
-class PhysicalEdge(MapEntityMixin, Topology):
+class PhysicalEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"),
                                       on_delete=models.CASCADE)
@@ -59,6 +58,10 @@ class PhysicalEdge(MapEntityMixin, Topology):
     @property
     def name(self):
         return self.physical_type_csv_display
+
+    @property
+    def name_display(self):
+        return self.physical_type_display
 
     @property
     def physical_type_display(self):
@@ -104,7 +107,7 @@ class LandType(StructureOrNoneRelated):
         return self.name
 
 
-class LandEdge(MapEntityMixin, Topology):
+class LandEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     land_type = models.ForeignKey(LandType, verbose_name=_("Land type"), on_delete=models.CASCADE)
     owner = models.TextField(verbose_name=_("Owner"), blank=True)
@@ -127,6 +130,10 @@ class LandEdge(MapEntityMixin, Topology):
     @property
     def name(self):
         return self.land_type_csv_display
+
+    @property
+    def name_display(self):
+        return self.land_type_display
 
     @property
     def land_type_display(self):
@@ -157,7 +164,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('land_edges', lambda self: self.signage.land_edges, _("Land edges"))
 
 
-class CompetenceEdge(MapEntityMixin, Topology):
+class CompetenceEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -178,6 +185,10 @@ class CompetenceEdge(MapEntityMixin, Topology):
     @property
     def name(self):
         return self.organization_csv_display
+
+    @property
+    def name_display(self):
+        return self.organization_display
 
     @property
     def organization_display(self):
@@ -208,7 +219,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('competence_edges', lambda self: self.signage.competence_edges, _("Competence edges"))
 
 
-class WorkManagementEdge(MapEntityMixin, Topology):
+class WorkManagementEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -229,6 +240,10 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     @property
     def name(self):
         return self.organization_csv_display
+
+    @property
+    def name_display(self):
+        return self.organization_display
 
     @property
     def organization_display(self):
@@ -259,7 +274,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('work_edges', lambda self: self.signage.work_edges, _("Work management edges"))
 
 
-class SignageManagementEdge(MapEntityMixin, Topology):
+class SignageManagementEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -280,6 +295,10 @@ class SignageManagementEdge(MapEntityMixin, Topology):
     @property
     def name(self):
         return self.organization_csv_display
+
+    @property
+    def name_display(self):
+        return self.organization_display
 
     @property
     def organization_display(self):

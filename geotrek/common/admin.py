@@ -4,7 +4,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import NoReverseMatch
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+
 from geotrek.common.mixins.actions import MergeActionMixin
+
 from . import models as common_models
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -58,8 +60,7 @@ class AttachmentAdmin(admin.ModelAdmin):
     readonly_fields = ('content_type', 'content_link', 'creator', 'title')
 
     def has_add_permission(self, request):
-        """ Do not add from Adminsite.
-        """
+        """ Do not add from Adminsite. """
         return False
 
     def content_link(self, obj):
@@ -104,6 +105,38 @@ class LabelAdmin(TabbedTranslationAdmin):
     search_fields = ('name', )
 
 
+class HDViewPointAdmin(admin.ModelAdmin):
+    date_hierarchy = 'date_update'
+    search_fields = ('title', 'legend', 'author', 'object_id')
+    list_display = ('update_link', 'legend', 'author', 'related_object_link', 'content_type', 'license')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.list_display_links = None
+
+    def has_add_permission(self, request):
+        """ Do not add from Adminsite. """
+        return False
+
+    def update_link(self, obj):
+        """Returns link to HD View"""
+        return format_html(
+            '<a data-pk="{}" href="{}" >{}</a>',
+            obj.pk, obj.full_url, obj.title
+        )
+
+    def related_object_link(self, obj):
+        """Returns content object link"""
+        content_url = obj.content_object.get_detail_url()
+        return format_html(
+            '<a data-pk="{}" href="{}" >{}</a>',
+            obj.object_id, content_url, str(obj.content_object)
+        )
+
+    related_object_link.short_description = _('Related to')
+    update_link.short_description = _('Title')
+
+
 admin.site.register(common_models.Organism, OrganismAdmin)
 admin.site.register(common_models.Attachment, AttachmentAdmin)
 admin.site.register(common_models.FileType, FileTypeAdmin)
@@ -113,3 +146,4 @@ admin.site.register(common_models.TargetPortal, TargetPortalAdmin)
 admin.site.register(common_models.ReservationSystem, ReservationSystemAdmin)
 admin.site.register(common_models.Label, LabelAdmin)
 admin.site.register(common_models.License, LicenseAdmin)
+admin.site.register(common_models.HDViewPoint, HDViewPointAdmin)

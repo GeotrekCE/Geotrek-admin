@@ -1,14 +1,13 @@
+from crispy_forms.layout import Div
 from django import forms
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+from mapentity.widgets import MapWidget
+
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
 
-from leaflet.forms.widgets import LeafletWidget
-
 from .models import Infrastructure
-from django.utils.translation import gettext_lazy as _
-
-from crispy_forms.layout import Div
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseInfrastructureForm(TopologyForm):
@@ -26,7 +25,7 @@ else:
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             modifiable = self.fields['geom'].widget.modifiable
-            self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['geom'].widget = MapWidget(attrs={'geom_type': 'POINT'})
             self.fields['geom'].widget.modifiable = modifiable
 
         class Meta(CommonForm.Meta):

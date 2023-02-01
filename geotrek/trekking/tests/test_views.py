@@ -25,8 +25,8 @@ from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
-from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
-                                            RecordSourceFactory, TargetPortalFactory)
+from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory, RecordSourceFactory,
+                                            TargetPortalFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure
@@ -43,7 +43,7 @@ from .factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFac
                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
-                        TrekWithSignagesFactory)
+                        TrekWithSignagesFactory, PracticeFactory)
 from ..models import POI, Trek, Service, OrderedTrekChild
 
 
@@ -342,7 +342,7 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
             'duration': 1.5,
             'id': self.obj.pk,
             'name': self.obj.name_display,
-            'thumbnail': 'None'
+            'thumbnail': 'None',
         }
 
     def get_bad_data(self):
@@ -499,6 +499,19 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
         for row in reader:
             self.assertEqual(row['Cities'], "Trifouilli, Refouilli")
             self.assertEqual(row['Districts'], self.district.name)
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_public_export_without_pictogram(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+        practice = PracticeFactory.create(pictogram=None)
+        obj = self.modelfactory.create(practice=practice)
+        response = self.client.get(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable',
+                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+        self.assertEqual(response.status_code, 200)
 
 
 class TrekViewsLiveTests(CommonLiveTest):
@@ -1444,7 +1457,7 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_datatables_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name_display
+            'name': self.obj.name_display,
         }
 
     def get_good_data(self):

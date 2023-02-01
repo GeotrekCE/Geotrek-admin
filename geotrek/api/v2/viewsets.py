@@ -33,7 +33,8 @@ class GeotrekViewSet(RetrieveCacheResponseMixin, viewsets.ReadOnlyModelViewSet):
 
     def get_base_cache_string(self):
         """ return cache string as url path + ordered query params """
-        return f"{self.request.path}:{self.get_ordered_query_params()}:{self.request.accepted_renderer.format}"
+        proto_scheme = self.request.headers.get('X-Forwarded-Proto', self.request.scheme)  # take care about scheme defined in nginx.conf
+        return f"{self.request.path}:{self.get_ordered_query_params()}:{self.request.accepted_renderer.format}:{proto_scheme}"
 
     def get_object_cache_key(self, pk):
         """ return specific object cache key based on object date_update column"""

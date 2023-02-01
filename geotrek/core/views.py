@@ -308,9 +308,9 @@ class PathViewSet(GeotrekMapentityViewSet):
 
             if len(ids_path_merge) != 2:
                 raise Exception(_("You should select two paths"))
-
-            path_a = Path.objects.get(pk=ids_path_merge[0])
-            path_b = Path.objects.get(pk=ids_path_merge[1])
+            paths = [int(path) for path in ids_path_merge]
+            path_a = Path.objects.get(pk=min(paths))
+            path_b = Path.objects.get(pk=max(paths))
 
             if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
                 raise Exception(_("You don't have the right to change these paths"))
